@@ -1,0 +1,18 @@
+<html>
+<head>
+<title>Welcome</title>
+<script type="text/javascript" src="jquery.js"></script>
+<?php require('kiosk-page.inc'); ?>
+<script type="text/javascript" src="kiosk-update.js"></script>
+<?php require('stylesheet.inc'); ?>
+</head>
+<body>
+<div class="full_page_center">
+<img src="Cub_Scout_emblem_800.png"/>
+</div>
+<p class="kiosk_title">Welcome</p>
+<div id="ajax_failure" class="hidden">
+  Ajax request failed with <span id="ajax_status">0</span>.
+</div>
+</body>
+</html>

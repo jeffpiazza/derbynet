@@ -1,0 +1,81 @@
+<html>
+<head>
+<title>Thank You</title>
+<script type="text/javascript" src="jquery.js"></script>
+<?php require('kiosk-page.inc'); ?>
+<?php require('stylesheet.inc'); ?>
+<script type="text/javascript">
+function fire_reload() {
+  location.reload(true);
+}
+
+function queue_reload() {
+  setTimeout(fire_reload, 5000);
+}
+  
+$(document).ready(queue_reload);
+</script>
+</head>
+<body>
+<p class="kiosk_title">Thank You!</p>
+
+<div class="wanted_container">
+<p>Thank you to our great volunteers!</p>
+
+<div class="kiosk_wanted">
+    <p class="kiosk_heading">Check-In</p>
+    <ul>
+        <li>Cathleen Dehn</li>
+		<li>Linda Keenan</li>
+		<li>Steve Mendes</li>
+		<li>Tom Ford</li>
+		<li>Bruce MacKinnon</li>
+	</ul>
+</div>
+
+<div class="kiosk_wanted">
+    <p class="kiosk_heading">Set Up</p>
+    <ul>
+        <li>Scott Bender</li>
+	</ul>
+</div>
+
+<div class="kiosk_wanted">
+    <p class="kiosk_heading">Race Operation</p>
+    <ul>
+        <li>Michael Watson</li>
+		<li>Jeremy Ditelberg</li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+
+<div class="kiosk_wanted">
+    <p class="kiosk_heading">Judging</p>
+    <ul>
+        <li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+
+<div class="kiosk_wanted">
+    <p class="kiosk_heading">Refreshments</p>
+    <ul>
+		<li>Shaune-Marie Berg</li>
+        <li>Steve Berg</li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+</div>
+
+</div>
+
+<img height="300" src="Cub_Scout_emblem_800.png"/>
+
+</body>
+</html>
