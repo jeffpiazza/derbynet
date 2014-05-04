@@ -1,0 +1,160 @@
+<!DOCTYPE HTML> 
+<html>
+<head>
+<title>Experiments</title>
+<style>
+/* http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/ */
+
+body {
+    margin: 0;
+}
+
+.row, .col {
+    overflow: hidden;
+    position: absolute; 
+}
+
+.row { left: 0; right: 0; }
+.col { top: 0; bottom: 0; }
+
+.scroll-x { overflow-x: auto; }
+.scroll-y { overflow-y: auto; }
+
+
+/* Ad hoc stuff */
+.header.row {
+    height: 75px;
+    top: 0;
+
+  color: white;
+  background-color: #003882;
+}
+.header.row { height: 75px; line-height: 75px; }
+
+.body.row {
+    top: 75px;
+    /* bottom: 50px; */
+    bottom: 0;
+
+    border: red solid 2px;
+}
+
+.left.col { width: 250px; }
+.right.col { left: 250px; right: 0; }
+
+.body.row { top: 75px; /* bottom: 50px; */ }
+/* .footer.row { height: 50px; bottom: 0; line-height: 50px; } */
+
+</style>
+</head>
+<body>
+
+<div id="banner" class="header row">
+  <div>Banner</div>
+</div>
+<!-- banner-version div is position: absolute; right: 10px;  That takes it out of the flow (so it may well overlap other stuff) and shifts it over to the right.  Apparently in the absence of explicit control, it generally gets placed where it would otherwise.
+-->
+<!--
+<div id="refresh">
+    Refresh
+</div>
+-->
+<div id="main-content" class="body row">
+<!--  <div id="stepstool">
+	 &nbsp;
+  </div>
+-->
+<div id="left" class="left col scroll-y">
+  <ul>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+	<li>This is a list item</li>
+  </ul>
+</div>
+
+<div id="right" class="right col scroll-y">
+                <p>To Sherlock Holmes she is always <i>the</i> woman. I have seldom heard
+him mention her under any other name. In his eyes she eclipses
+and predominates the whole of her sex. It was not that he felt
+any emotion akin to love for Irene Adler. All emotions, and that
+one particularly, were abhorrent to his cold, precise but
+admirably balanced mind. He was, I take it, the most perfect
+reasoning and observing machine that the world has seen, but as a
+lover he would have placed himself in a false position. He never
+spoke of the softer passions, save with a gibe and a sneer. They
+were admirable things for the observer&#8212;excellent for drawing the
+veil from men&#8217;s motives and actions. But for the trained reasoner
+to admit such intrusions into his own delicate and finely
+adjusted temperament was to introduce a distracting factor which
+might throw a doubt upon all his mental results. Grit in a
+sensitive instrument, or a crack in one of his own high-power
+lenses, would not be more disturbing than a strong emotion in a
+nature such as his. And yet there was but one woman to him, and
+that woman was the late Irene Adler, of dubious and questionable
+memory.
+</p>
+</div>
+
+</div>
+
+</body>
+</html>
