@@ -10,7 +10,7 @@
    if (isset($banner_title)) {
 	 echo '<div class="banner_title">'.$banner_title.'</div>'."\n";
    }
-   if (isset($_SESSION['role'])) {
+   if (isset($_SESSION['role']) && $_SESSION['role']) {
 	 echo '<div class="role">In '.$_SESSION['role'].' role.  <a href="login.php?logout">Log out</a></div>'."\n";
    }
 ?>
