@@ -12,7 +12,7 @@
     var g_last_update_time = ""; // First refresh is for everything
     var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
     var g_high_water_group = <?php echo $high_water_rounds['roundid']; ?>;
-    var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
+    var g_use_master_sched = <?php echo isset($use_master_sched) && $use_master_sched ? 1 : 0; ?>;
     var g_using_groupid = false;
 </script>
 <script type="text/javascript" src="update.js"></script>

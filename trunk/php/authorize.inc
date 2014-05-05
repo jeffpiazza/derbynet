@@ -3,6 +3,10 @@ require_once('data.inc');
 require_once('permissions.inc');
 require_once('roles.inc');
 
+if (!isset($_SESSION['role'])) {
+  $_SESSION['role'] = '';
+}
+
 if (!isset($_SESSION['permissions'])) {
   $_SESSION['permissions'] = $roles['']['permissions'];
 }

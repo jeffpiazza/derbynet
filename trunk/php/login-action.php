@@ -7,9 +7,12 @@ require_once('roles.inc');
 if (isset($_POST['name'])) {
   $name = $_POST['name'];
   $password = $_POST['password'];
-} else {
+ } else if (isset($_GET['name'])) {
   $name = $_GET['name'];
   $password = $_GET['password'];
+ } else {
+  $name = '';
+  $password = '';
 }
 
 
@@ -22,11 +25,13 @@ $role = $roles[$name];
 if ($role) {
   if ($password == $role['password']) {
     $_SESSION['permissions'] = $role['permissions'];
-    if ($password)
+    if ($password) {
       $_SESSION['role'] = $name;
-    else
+	  echo '<success>'.$_SESSION['role'].'</success>'."\n";
+	} else {
       unset($_SESSION['role']);
-    echo '<success>'.$_SESSION['role'].'</success>'."\n";
+	  echo '<success/>'."\n";
+	}
   } else {
     echo '<failure>Incorrect password</failure>'."\n";
   }
