@@ -143,7 +143,7 @@ foreach ($rounds as $round) {
     $ft = odbc_result($rs, 'FinishTime');
     $racer_cells[$lane - 1][] = '<td class="resultid_'.odbc_result($rs, 'ResultID').'">'
                  .'<a class="heat_link" href="ondeck.php#heat_'.$roundid.'_'.odbc_result($rs, 'Heat').'">'
-                 .'<span class="time">'.($ft ? number_format($ft, 3) : '--').'</span></td>'
+                 .'<span class="time">'.($ft ? number_format($ft, 3) : '--').'</span>'
                  .'</a>'
                  .'</td>'."\n";
     if (count($racer_cells[$lane - 1]) > $nrows) {

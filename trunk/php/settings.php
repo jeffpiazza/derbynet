@@ -41,16 +41,16 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
 <div class="block_buttons">
 <form method="POST">
   <div class="settings_group">
-    <input id="group-label" name="group-label" type-"text" value="<?php echo group_label(); ?>"/>
+    <input id="group-label" name="group-label" type="text" value="<?php echo group_label(); ?>"/>
     <label for="group-label">Group Label</label>
     <br/>
     <input id="use-subgroups" name="do-use-subgroups" type="checkbox"<?php if ($use_subgroups) echo ' checked="checked"';?>/>
     <label for="use-subgroups">Use subgroups?</label>
     <br/>
-    <input id="subgroup-label" name="subgroup-label" type-"text" value="<?php echo subgroup_label(); ?>"/>
+    <input id="subgroup-label" name="subgroup-label" type="text" value="<?php echo subgroup_label(); ?>"/>
     <label for="subgroup-label">Subgroup Label</label>
     <br/>
-    <input id="supergroup-label" name="supergroup-label" type-"text" value="<?php echo supergroup_label(); ?>"/>
+    <input id="supergroup-label" name="supergroup-label" type="text" value="<?php echo supergroup_label(); ?>"/>
     <label for="supergroup-label">Super-Group Label</label>
   </div>
 
@@ -107,7 +107,7 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
     </optgroup>
     </select>
   </div>
-  </br>
+  <br/>
 
   <div class="settings_group">
     <label for="photo_dir">Directory for racer photos:</label>
