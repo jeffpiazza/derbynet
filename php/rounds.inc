@@ -17,37 +17,32 @@ Master schedules:
  */
 
 function all_rounds() {
-  global $conn;
-  $sql = 'SELECT RoundID, Round, classes.ClassID, Class'
-    .' FROM rounds INNER JOIN classes'
-    .' ON rounds.ClassID = classes.ClassID'
-    .' ORDER BY Class, Round';
-  $rs = odbc_exec($conn, $sql);
-  $rounds = array();
-  while (odbc_fetch_row($rs)) {
-    $rounds[] = array('RoundID' => odbc_result($rs, 'RoundID'),
-		      'Round' => odbc_result($rs, 'Round'),
-		      'ClassID' => odbc_result($rs, 'ClassID'),
-		      'Class' => odbc_result($rs, 'Class'),
-		      'GroupID' => odbc_result($rs, 'RoundID'),
-		      'GroupName' => odbc_result($rs, 'Class').', Round '.odbc_result($rs, 'Round'));
+  global $db;
+  foreach ($db->query('SELECT roundid, round, Classes.classid, class'
+					  .' FROM Rounds INNER JOIN Classes'
+					  .' ON Rounds.classid = Classes.classid'
+					  .' ORDER BY class, round') as $row) {
+    $rounds[] = array('roundid' => $row['roundid'],
+					  'round' => $row['round'],
+					  'classid' => $row['classid'],
+					  'class' => $row['class'],
+					  'groupid' => $row['roundid'],
+					  'groupname' => $row['class'].', Round '.$row['round']);
   }
 
   return $rounds;
 }
 
 function all_racing_groups() {
-  global $conn;
+  global $db;
   if (use_master_sched()) {
-    $sql = 'SELECT distinct Round'
-      .' FROM rounds'
-      .' ORDER BY Round';
-    $rs = odbc_exec($conn, $sql);
     $groups = array();
-    while (odbc_fetch_row($rs)) {
-      $groups[] = array('Round' => odbc_result($rs, 'Round'),
-			'GroupID' => odbc_result($rs, 'Round'),
-			'GroupName' => 'Round '.odbc_result($rs, 'Round'));
+	foreach ($db->query('SELECT DISTINCT round'
+						.' FROM Rounds'
+						.' ORDER BY round') as $row) {
+      $groups[] = array('round' => $row['round'],
+						'groupid' => $row['round'],
+						'groupname' => 'Round '.$row['round']);
     }
 
     return $groups;

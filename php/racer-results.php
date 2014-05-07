@@ -32,26 +32,27 @@ running_round_header($now_running, /* Use RoundID */ TRUE);
 require_once('rounds.inc');
 $rounds = all_rounds();
 
-$sql = 'SELECT registrationinfo.RacerID,'
-  .' classes.Class, Round, Heat, Lane, FinishTime, ResultID,'
-  .' CarNumber, registrationinfo.FirstName, registrationinfo.LastName,'
-  .' classes.ClassID, rounds.RoundID'
-  .' FROM classes'
-  .' INNER JOIN (rounds'
-  .' INNER JOIN (roster'
-  .' INNER JOIN (registrationinfo'
-  .' INNER JOIN racechart'
-  .' ON registrationinfo.RacerID = racechart.RacerID)'
-  .' ON roster.RacerID = registrationinfo.RacerID)'
-  .' ON rounds.RoundID = roster.RoundID)'
-  .' ON rounds.ClassID = classes.ClassID'
-  .' WHERE rounds.RoundID = racechart.RoundID'
+$sql = 'SELECT RegistrationInfo.racerid,'
+  .' Classes.class, round, heat, lane, finishtime, resultid,'
+  .' carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
+  .' Classes.classid, Rounds.roundid'
+  .' FROM Classes'
+  .' INNER JOIN (Rounds'
+  .' INNER JOIN (Roster'
+  .' INNER JOIN (RegistrationInfo'
+  .' INNER JOIN RaceChart'
+  .' ON RegistrationInfo.racerid = RaceChart.racerid)'
+  .' ON Roster.racerid = RegistrationInfo.racerid)'
+  .' ON Rounds.roundid = Roster.roundid)'
+  .' ON Rounds.classid = Classes.classid'
+  .' WHERE Rounds.roundid = RaceChart.roundid'
   .(isset($_GET['racerid'])
-    ? ' AND racechart.RacerID = '.$_GET['racerid'] : '')
-  .' ORDER BY Class, Round, LastName, FirstName, CarNumber, ResultID, Lane';
-$rs = odbc_exec($conn, $sql);
-if ($rs === FALSE) {
-  echo '<h2>Error: '.odbc_errormsg($conn).'</h2>'."\n";
+    ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
+  .' ORDER BY class, round, lastname, firstname, carnumber, resultid, lane';
+$stmt = $db->query($sql);
+if ($stmt === FALSE) {
+  $info = $db->errorInfo();
+  echo '<h2>Error: '.$info[2].'</h2>'."\n";
  }
 ?>
 <table class="main_table">
@@ -91,12 +92,12 @@ function write_rr($racer_label, $racer_cells, $nrows) {
   echo $rrow;
 }
 
-$valid = odbc_fetch_row($rs);
+$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($rounds as $round) {
   // Generate header and tbody
-  $roundid = $round['RoundID'];
-  $classid = $round['ClassID'];
-  $groupid = $round['GroupID'];
+  $roundid = $round['roundid'];
+  $classid = $round['classid'];
+  $groupid = $round['groupid'];
 
   $is_current = 0;
   if ($now_running['roundid'] == $roundid and
@@ -107,7 +108,7 @@ foreach ($rounds as $round) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-            .$round['Class'].', Round '.$round['Round'].'</th>'
+            .$round['class'].', Round '.$round['round'].'</th>'
       .'</tr>'."\n";
 
   echo '<tr>';
@@ -119,30 +120,29 @@ foreach ($rounds as $round) {
   $row = 1;
   $racerid = 0;
   $racer_label = '';
-  while ($valid and odbc_result($rs, 'RoundID') == $roundid) {
-    if ($racerid <> odbc_result($rs, 'RacerID')) {
+  while ($rs and $rs['roundid'] == $roundid) {
+    if ($racerid <> $rs['racerid']) {
       if ($racer_label) {
-	write_rr($racer_label, $racer_cells, $nrows);
+		write_rr($racer_label, $racer_cells, $nrows);
       }
-      $racerid = odbc_result($rs, 'RacerID');
+      $racerid = $rs['racerid'];
       $racer_label = '<span class="racer">'
-	.odbc_result($rs, 'LastName')
-	.', '.odbc_result($rs, 'FirstName').'</span>'
-	.' (<span class="car">'.odbc_result($rs, 'CarNumber').'</span>)';
+		.$rs['lastname'].', '.$rs['firstname'].'</span>'
+		.' (<span class="car">'.$rs['carnumber'].'</span>)';
       $racer_cells = array();
       for ($i = 1; $i <= $nlanes; ++$i) {
-	$racer_cells[] = array();
+		$racer_cells[] = array();
       }
       //++$row;
       $lane = 1;
       $nrows = 1;
     }
 
-    $lane = odbc_result($rs, 'Lane');
+    $lane = $rs['lane'];
 
-    $ft = odbc_result($rs, 'FinishTime');
-    $racer_cells[$lane - 1][] = '<td class="resultid_'.odbc_result($rs, 'ResultID').'">'
-                 .'<a class="heat_link" href="ondeck.php#heat_'.$roundid.'_'.odbc_result($rs, 'Heat').'">'
+    $ft = $rs['finishtime'];
+    $racer_cells[$lane - 1][] = '<td class="resultid_'.$rs['resultid'].'">'
+                 .'<a class="heat_link" href="ondeck.php#heat_'.$roundid.'_'.$rs['heat'].'">'
                  .'<span class="time">'.($ft ? number_format($ft, 3) : '--').'</span>'
                  .'</a>'
                  .'</td>'."\n";
@@ -150,7 +150,7 @@ foreach ($rounds as $round) {
       $nrows = count($racer_cells[$lane - 1]);
     }
     ++$lane;
-    $valid = odbc_fetch_row($rs);
+    $rs = $stmt->fetch(PDO::FETCH_ASSOC);
   }
 
   if ($racer_label) {
@@ -159,7 +159,7 @@ foreach ($rounds as $round) {
   echo '</tbody>'."\n";
 }
 
-odbc_close($conn);
+$stmt->closeCursor();
 ?>
 </table>
 <div class="block_buttons">

@@ -19,29 +19,26 @@ function xml_for_reload() {
 }
 
 function take_action_silently($sql) {
-  global $conn;
+  global $db;
   $log_sql = $sql;
-  if (strlen($log_sql) > 250)
+  if (strlen($log_sql) > 250) {
 	$log_sql = substr($log_sql, 1, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
-  // MS Access quotes single-quotes within single-quotes by doubling,
-  // not by prefixing with backslash, so addslashes is insufficient.
-  // The str_replace gets us through this, but there's a more general problem lurking here...
-  @odbc_exec($conn, 'INSERT INTO CheckinAudit(tstamp, stmt) VALUES(NOW(), \''
-			        .str_replace('\'', '`', addslashes($log_sql)).'\')');
-
-  if (odbc_exec($conn, $sql) === false) {
-	return false;
-  } else {
-	return true;
   }
+
+  $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES(NOW(), :sql)');
+  @$stmt->execute(array(':sql' => $log_sql));
+
+  // TODO Return true/false for success/fail?
+  return $db->exec($sql) > 0;
 }
 
 function take_action($sql, $body_xml = '') {
-  global $conn;
+  global $db;
   if (take_action_silently($sql)) {
 	echo '<checkin><success/>'.$body_xml.'</checkin>';
   } else {
-	echo '<checkin><failure>'.$sql.' failed: '.odbc_errormsg($conn).' [EOM]</failure></checkin>';
+	$info = $db->errorInfo();
+	echo '<checkin><failure>'.$sql.' failed: '.$info[2].' [EOM]</failure></checkin>';
   }
 }
 
@@ -142,6 +139,4 @@ if ($_POST['action'] == 'pass') {
 } else {
     echo '<checkin><failure>Unrecognized post: '.$_POST['action'].'</failure></checkin>';
 }
-  
-  odbc_close($conn);
 ?>

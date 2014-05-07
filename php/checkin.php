@@ -105,15 +105,15 @@ require('banner.inc');
   <input id="rank_racer" type="hidden" name="racer" value=""/>
 
   <select id="rank_picker"><?php
-    $sql = 'SELECT RankID, Rank, Ranks.ClassID, Class'
-           .' from Ranks INNER JOIN Classes'
-           .' ON Ranks.ClassID = Classes.ClassID'
-           .' order by Class, Rank';
-    $rs = odbc_exec($conn, $sql);
-    while (odbc_fetch_row($rs)) {
-      echo "\n".'<option value="'.odbc_result($rs, 'RankID').'">'
-		.htmlspecialchars(odbc_result($rs, 'Class'))
-		.' / '.htmlspecialchars(odbc_result($rs, 'Rank'))
+    $sql = 'SELECT rankid, rank, Ranks.classid, class'
+           .' FROM Ranks INNER JOIN Classes'
+           .' ON Ranks.classid = Classes.classid'
+           .' ORDER BY class, rank';
+    $stmt = $db->query($sql);
+    foreach ($stmt as $rs) {
+      echo "\n".'<option value="'.$rs['rankid'].'">'
+		.htmlspecialchars($rs['class'])
+		.' / '.htmlspecialchars($rs['rank'])
 	   .'</option>';
     }
   ?>
@@ -128,24 +128,23 @@ require('banner.inc');
 <table class="main_table">
 
 <?php
-$sql = 'SELECT RacerID, CarNumber, LastName, FirstName,'
-  .' RegistrationInfo.ClassID, Class, RegistrationInfo.RankID, Rank, PassedInspection, Exclude,'
-  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.RacerID = RegistrationInfo.RacerID) AS Scheduled,'
-  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.ClassID = RegistrationInfo.ClassID) AS DenScheduled,'
-  .' EXISTS(SELECT 1 FROM Awards WHERE Awards.AwardName = \''.addslashes($xbs_award_name).'\' AND'
-  .'                                   Awards.RacerID = RegistrationInfo.RacerID) AS xbs'
+$sql = 'SELECT racerid, carnumber, lastname, firstname,'
+  .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
+  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
+  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
+  .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
+  .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
   .' FROM (Ranks'
   .' INNER JOIN (Classes'
   .' INNER JOIN RegistrationInfo'
-  .' ON RegistrationInfo.ClassID = Classes.ClassID)'
-  .' ON RegistrationInfo.RankID = Ranks.RankID'
-  .' AND RegistrationInfo.ClassID = Ranks.ClassID)'
+  .' ON RegistrationInfo.classid = Classes.classid)'
+  .' ON RegistrationInfo.rankid = Ranks.rankid'
+  .' AND RegistrationInfo.classid = Ranks.classid)'
   .' ORDER BY '
-  .($order == 'car' ? 'CarNumber, LastName, FirstName' :
-    ($order == 'den'  ? 'Class, LastName, FirstName' :
-	 'LastName, FirstName'));
-
-$rs = odbc_exec($conn, $sql);
+  .($order == 'car' ? 'carnumber, lastname, firstname' :
+    ($order == 'den'  ? 'class, lastname, firstname' :
+	 'lastname, firstname'));
+$stmt = $db->query($sql);
 
 echo '<tr>'
   .'<th>'.column_header(group_label(), 'den').'</th>'
@@ -159,12 +158,13 @@ echo '<tr>'
   .'</tr>';
 
 $n = 1;
-while (odbc_fetch_row($rs)) {
-  $racer_id = odbc_result($rs, 'RacerID');
-  $passed = odbc_result($rs, 'PassedInspection');
-  $dsched = odbc_result($rs, 'DenScheduled');
-  $first_name = odbc_result($rs, 'FirstName');
-  $last_name = odbc_result($rs, 'LastName');
+foreach ($stmt as $rs) {
+  $racer_id = $rs['racerid'];
+  $passed = $rs['passedinspection'];
+  $dsched = $rs['denscheduled'];
+  // TODO: Use of htmlspecialchars should be universal...
+  $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES);
+  $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES);
   
   echo '<tr class="d'.($n & 1).($dsched ? ' dsched' : '').'">';
 
@@ -172,12 +172,12 @@ while (odbc_fetch_row($rs)) {
   if (have_permission(CHANGE_RACER_RANK_PERMISSION)) {
     echo ' class="clickable"'
       .' onclick=\'show_rank_change_form("'.$first_name.' '.$last_name.'", '
-                    .$racer_id.', '.odbc_result($rs, 'RankID').', this);\'';
+                    .$racer_id.', '.$rs['rankid'].', this);\'';
   }
-  echo '>'.odbc_result($rs, 'Class').'</td>';
+  echo '>'.$rs['class'].'</td>';
 
   if ($use_subgroups)
-    echo '<td>'.odbc_result($rs, 'Rank').'</td>';
+    echo '<td>'.$rs['rank'].'</td>';
 
   echo '<td id="renumber'.$racer_id.'"';
   if (have_permission(RENUMBER_CAR_PERMISSION)) {
@@ -185,7 +185,7 @@ while (odbc_fetch_row($rs)) {
         .' onclick=\'show_renumber_form("'.$first_name.' '.$last_name.'", '.$racer_id.', this);\'';
   }
   echo '>'
-        .odbc_result($rs, 'CarNumber')
+        .$rs['carnumber']
         .'</td>';
 
   echo '<td>'.$last_name.'</td>'
@@ -193,7 +193,7 @@ while (odbc_fetch_row($rs)) {
     // If a race schedule exists for this racer, don't offer the option to un-pass through this interface.
     // Instead, have go through the native GPRM interface, which may require regenerating schedules, etc.
 
-  if (odbc_result($rs, 'Scheduled')) {
+  if ($rs['scheduled']) {
     echo '<td>'.($passed ? 'Racing' : 'Scheduled but not passed').'</td>';
   } else {
       echo '<td>'
@@ -210,12 +210,12 @@ while (odbc_fetch_row($rs)) {
 		.'</td>';
   }
     // Racers are normally excluded ahead of time, not as part of the check-in process.
-    //.'<td>'.odbc_result($rs, 'Exclude').'</td>'
+    //.'<td>'.$rs['exclude'].'</td>'
     if ($xbs) {
         echo '<td>'
 		  .'<label for="xbs-'.$racer_id.'">Exclusively By Scout?</label>'
 		  .'<input type="checkbox" data-role="flipswitch" name="xbs-'.$racer_id.'" '
-                      .(odbc_result($rs, 'xbs') ? ' checked="checked"' : '')
+                      .($rs['xbs'] ? ' checked="checked"' : '')
 		              .' data-on-text="Yes" data-off-text="No"'
                       .' onchange="handlechange_xbs(this);"/>'
 	    .'</td>';
@@ -223,8 +223,6 @@ while (odbc_fetch_row($rs)) {
     echo '</tr>'."\n";
   ++$n;
 }
-
-odbc_close($conn);
 ?>
 </table>
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>

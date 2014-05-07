@@ -314,6 +314,13 @@ $sql_script = array(
 "INSERT INTO Ranks (RankID, Rank, ClassID) VALUES (4, '4-Webelos', 4)",
 "INSERT INTO Ranks (RankID, Rank, ClassID) VALUES (5, '5-Friends', 5)",
 
+// Effectively: there's a Round 1 for every class
+"INSERT INTO Rounds (RoundID, Round, ClassID, ChartType, Phase) VALUES(1, 1, 1, 0,0)",
+"INSERT INTO Rounds (RoundID, Round, ClassID, ChartType, Phase) VALUES(2, 1, 2, 0,0)",
+"INSERT INTO Rounds (RoundID, Round, ClassID, ChartType, Phase) VALUES(3, 1, 3, 0,0)",
+"INSERT INTO Rounds (RoundID, Round, ClassID, ChartType, Phase) VALUES(4, 1, 4, 0,0)",
+"INSERT INTO Rounds (RoundID, Round, ClassID, ChartType, Phase) VALUES(5, 1, 5, 0,0)",
+
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (1, 'H1', 'Title1')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (2, 'H2', 'Title2')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (4, 'ClassID', '7')",
@@ -328,7 +335,9 @@ $sql_script = array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (18, 'StepSchedules', 'Incomplete')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (19, 'StepRacing', 'Incomplete')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (20, 'StepAwardsCeremony', 'Incomplete')",
-"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (21, 'StepOrgSetup', 'Complete')"
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (21, 'StepOrgSetup', 'Complete')",
+
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (25, 'xbs-award', 'Exclusively By Scout')"
 
 );
 
@@ -337,7 +346,7 @@ try {
   $db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	if (true) {
+	if (false) {
 	  $rs = $db->query('SELECT COUNT(*) FROM RegistrationInfo');
 	  $result = $rs->fetch();
 	  // Should be empty:

@@ -3,16 +3,16 @@ require_once('data.inc');
 date_default_timezone_set('America/New_York');
 
 function set_current_heat($entry) {
-	global $conn;
-	odbc_exec($conn, "update RaceInfo set ItemValue = '".$entry['classid']."' where ItemKey = 'ClassID'");
-	odbc_exec($conn, "update RaceInfo set ItemValue = '".$entry['roundid']."' where ItemKey = 'RoundID'");
-	odbc_exec($conn, "update RaceInfo set ItemValue = '".$entry['heat']."' where ItemKey = 'Heat'");
+  global $db;
+  $db->exec("UPDATE RaceInfo SET itemvalue = '".$entry['classid']."' WHERE itemkey = 'ClassID'");
+  $db->exec("UPDATE RaceInfo SET itemvalue = '".$entry['roundid']."' WHERE itemkey = 'RoundID'");
+  $db->exec("UPDATE RaceInfo SET itemvalue = '".$entry['heat']."' WHERE itemkey = 'Heat'");
 }
 
 function racechart_where_condition($entry) {
-	return " ClassID = ".$entry['classid']
-	  ." and RoundID = ".$entry['roundid']
-	  ." and Heat = ".$entry['heat'];
+	return " classid = ".$entry['classid']
+	  ." AND roundid = ".$entry['roundid']
+	  ." AND heat = ".$entry['heat'];
 }
 
 // Classes: ClassID, Class (name)
@@ -21,23 +21,23 @@ function racechart_where_condition($entry) {
 
 // Compute an array of entries, each of which identifies one heat to simulate
 function construct_race_order() {
-	global $conn;
-    $sql = 'SELECT distinct classes.Class, classes.ClassID, Round, rounds.RoundID, Heat'
-       .' from rounds'
-       .' INNER JOIN (classes'
-       .' INNER JOIN racechart'
-       .' ON racechart.ClassID = classes.ClassID)'
-       .' ON racechart.RoundID = rounds.RoundID'
-       .' ORDER BY Class, Round, Heat';
-	$rs = odbc_exec($conn, $sql);
+  global $db;
+    $sql = 'SELECT DISTINCT Classes.class, Classes.classid, round, Rounds.roundid, heat'
+       .' FROM Rounds'
+       .' INNER JOIN (Classes'
+       .' INNER JOIN RaceChart'
+       .' ON RaceChart.classid = Classes.classid)'
+       .' ON RaceChart.roundid = Rounds.roundid'
+       .' ORDER BY class, round, heat';
+	$stmt = $db->query($sql);
 
 	$race_order = array();
-	while (odbc_fetch_row($rs)) {
-		$race_order[] = array("classid" => odbc_result($rs, 'ClassID'),
-							  "roundid" => odbc_result($rs, 'RoundID'),
-							  "heat" => odbc_result($rs, 'Heat'),
-							  "class" => odbc_result($rs, 'Class'),
-							  "round" => odbc_result($rs, 'Round')
+	foreach ($stmt as $rs) {
+		$race_order[] = array("classid" => $rs['classid'],
+							  "roundid" => $rs['roundid'],
+							  "heat" => $rs['heat'],
+							  "class" => $rs['class'],
+							  "round" => $rs['round']
 			);
 	}
 
@@ -45,11 +45,9 @@ function construct_race_order() {
 }
 
 function backup_race_data() {
-	global $conn;
-
-	@odbc_exec($conn, 'DROP TABLE Simulate_Rounds');
+	@$db->exec('DROP TABLE Simulate_Rounds');
 /*
-	odbc_exec($conn, 'CREATE TABLE Simulate_Rounds ('
+	$db->exec('CREATE TABLE Simulate_Rounds ('
 			  .' RoundID INTEGER NOT NULL AUTO_INCREMENT, '
 			  .'  Round INTEGER NOT NULL, '
 			  .'  ClassID INTEGER NOT NULL, '
@@ -60,10 +58,10 @@ function backup_race_data() {
 			  .'  INDEX (Round), '
 			  .'  INDEX (RoundID)'
 			  .')');
-	odbc_exec($conn, 'insert into Simulate_Rounds select * from Rounds');
+	$db->exec('INSERT INTO Simulate_Rounds SELECT * FROM Rounds');
 */
-	@odbc_exec($conn, 'DROP TABLE Simulate_RaceChart');
-	odbc_exec($conn, 'CREATE TABLE Simulate_RaceChart ('
+	@$db->exec('DROP TABLE Simulate_RaceChart');
+	$db->exec('CREATE TABLE Simulate_RaceChart ('
 			  .'  ResultID INTEGER NOT NULL AUTO_INCREMENT, '
 			  .'  ClassID INTEGER NOT NULL, '
 			  .'  RoundID INTEGER NOT NULL, '
@@ -88,15 +86,15 @@ function backup_race_data() {
 			  .'  INDEX (RacerID), '
 			  .'  INDEX (RoundID)'
 			  .')');
-	odbc_exec($conn, 'insert into Simulate_RaceChart select * from RaceChart');
+	$db->exec('INSERT INTO Simulate_RaceChart SELECT * FROM RaceChart');
 }
 
 backup_race_data();
 echo "Backup completed\n";
 $race_order = construct_race_order();
 
-odbc_exec($conn, 'update Simulate_RaceChart set Completed = null');
-odbc_exec($conn, 'delete from RaceChart');
+$db->exec('UPDATE Simulate_RaceChart SET completed = NULL');
+$db->exec('DELETE FROM RaceChart');
 
 $roundid = -1;
 foreach ($race_order as $entry) {
@@ -104,10 +102,9 @@ foreach ($race_order as $entry) {
 		sleep(5);
 		echo "Simulate scheduling ".$entry['class']." round ".$entry['round']
 		     ." (round id ".$entry['roundid'].")...\n";
-		odbc_exec($conn, 
-				  'insert into RaceChart'
-				  .' select * from Simulate_RaceChart'
-				  .' where RoundID = '.$entry['roundid']);
+		$db->exec('INSERT INTO RaceChart'
+				  .' SELECT * FROM Simulate_RaceChart'
+				  .' WHERE roundid = '.$entry['roundid']);
 		sleep(5);
 		$roundid = $entry['roundid'];
 	}
@@ -115,20 +112,18 @@ foreach ($race_order as $entry) {
 	echo 'ClassID '.$entry['classid'].' RoundID '.$entry['roundid'].' Heat '.$entry['heat']."\n";
 	sleep(4);
 	$now = date('Y-m-d H:i:s');
-	odbc_exec($conn, "update RaceChart rc"
-			  ." set FinishTime = "
-			  ." (select FinishTime from Simulate_RaceChart"
-			  ."  where ".racechart_where_condition($entry)
-			  ."  and Lane = rc.Lane"  // TODO: Don't know if this syntax works for Access
+	$db->exec("UPDATE RaceChart rc"
+			  ." SET finishtime = "
+			  ." (SELECT finishtime FROM Simulate_RaceChart"
+			  ."  WHERE ".racechart_where_condition($entry)
+			  ."  AND lane = rc.lane"  // TODO: Don't know if this syntax works for Access
 			  .")"
-			  ." where ".racechart_where_condition($entry));
-	odbc_exec($conn, "update RaceChart"
-			  ." set Completed = '".$now."'"
-			  ." where ".racechart_where_condition($entry));
+			  ." WHERE ".racechart_where_condition($entry));
+	$db->exec("UPDATE RaceChart"
+			  ." SET completed = '".$now."'"
+			  ." WHERE ".racechart_where_condition($entry));
 }
 
 // Not sure what GPRM actually does here -- unset the ClassID/RoundID/Heat?  Advance to some nonexistent value?
 set_current_heat(array('classid' => -1, 'roundid' => -1, 'heat' => -1));
-
-odbc_close($conn);
 ?>

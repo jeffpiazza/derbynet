@@ -87,23 +87,24 @@ $awards = Array(Array('Most', 'Aerodynamic'),
 				Array('Best', 'Wedge Shape'),
 				Array('', 'Zaniest'));
 
-$sql = 'SELECT RacerID, CarNumber, LastName, FirstName, Class'
+$sql = 'SELECT racerid, carnumber, lastname, firstname, class'
       .' FROM RegistrationInfo'
       .' INNER JOIN Classes'
-      .' ON Classes.ClassID = RegistrationInfo.ClassID'
-      .' WHERE PassedInspection = 1 AND Exclude = 0'
-      .' ORDER BY CarNumber';
-$racers = Array();
-$rs = odbc_exec($conn, $sql);
-while (odbc_fetch_row($rs)) {
-  $racerid = odbc_result($rs, 'RacerID');
-  $racers[$racerid] = Array('RacerID' => $racerid,
-							'CarNumber' => odbc_result($rs, 'CarNumber'),
-							'LastName' => odbc_result($rs, 'LastName'),
-							'FirstName' => odbc_result($rs, 'FirstName'),
-							'Class' => odbc_result($rs, 'Class'),
-							'Awards' => Array());
+      .' ON Classes.classid = RegistrationInfo.classid'
+      .' WHERE passedinspection = 1 AND exclude = 0'
+      .' ORDER BY carnumber';
+$racers = array();
+$stmt = $db->query($sql);
+foreach ($stmt as $rs) {
+  $racerid = $rs['racerid'];
+  $racers[$racerid] = array('racerid' => $racerid,
+							'carnumber' => $rs['carnumber'],
+							'lastname' => $rs['lastname'],
+							'firstname' => $rs['firstname'],
+							'class' => $rs['class'],
+							'awards' => array());
 }
+$stmt->closeCursor();
 
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
@@ -114,27 +115,24 @@ $speed_trophies = top_finishers_by_class($n_den_trophies);
 foreach ($speed_trophies as $classid => $den_trophies) {
   for ($place = 0; $place < count($den_trophies); ++$place) {
 	$racerid = $den_trophies[$place];
-	$racers[$racerid]['Awards'][] = $ordinal[1 + $place].' in '.group_label_lc();
+	$racers[$racerid]['awards'][] = $ordinal[1 + $place].' in '.group_label_lc();
   }
 }
 
 $pack_trophies = top_finishers_overall($n_pack_trophies);
 for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racerid = $pack_trophies[$place];
-  $racers[$racerid]['Awards'][] = $ordinal[1 + $place].' in '.supergroup_label_lc();
+  $racers[$racerid]['awards'][] = $ordinal[1 + $place].' in '.supergroup_label_lc();
 }
 
-$sql = 'SELECT AwardName, RacerID'
+$sql = 'SELECT awardname, racerid'
   .' FROM Awards'
-  .' ORDER BY Sort';
-
-
-$rs = odbc_exec($conn, $sql);
-
-while (odbc_fetch_row($rs)) {
-  $racerid = odbc_result($rs, 'RacerID');
+  .' ORDER BY sort';
+$stmt = $db->query($sql);
+foreach ($stmt as $rs) {
+  $racerid = $rs['racerid'];
   if (isset($racers[$racerid]))
-	$racers[$racerid]['Awards'][] = odbc_result($rs, 'AwardName');
+	$racers[$racerid]['awards'][] = $rs['awardname'];
 }
 
 
@@ -148,8 +146,8 @@ while (odbc_fetch_row($rs)) {
 <ul>
 <?php
 foreach ($racers as $racer) {
-  echo '<li>'.$racer['CarNumber'].' - '.$racer['LastName'].', '.$racer['FirstName'];
-  foreach ($racer['Awards'] as $award) {
+  echo '<li>'.$racer['carnumber'].' - '.$racer['lastname'].', '.$racer['firstname'];
+  foreach ($racer['awards'] as $award) {
 	echo '; '.$award;
   }
   echo '</li>'."\n";
@@ -172,8 +170,8 @@ foreach ($awards as $award) {
   echo '<select>'."\n";
   echo '<option value="0">&lt;None&gt;</option>';
   foreach ($racers as $racer) {
-	echo '<option value="'.$racer['RacerID'].'">'
-	  .$racer['CarNumber'].' - '.$racer['LastName'].', '.$racer['FirstName']
+	echo '<option value="'.$racer['racerid'].'">'
+	  .$racer['carnumber'].' - '.$racer['lastname'].', '.$racer['firstname']
 	  .'</option>'."\n";
   }
   echo '</select>';

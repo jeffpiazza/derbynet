@@ -131,12 +131,8 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
 <table>
 <?php
     if (FALSE) {
-      $rs = odbc_exec($conn, 'select ItemKey, ItemValue from RaceInfo');
-
-      while (odbc_fetch_row($rs)) {
-	$key = odbc_result($rs, 'ItemKey');
-	$val = odbc_result($rs, 'ItemValue');
-	echo '<tr><td>'.$key.'</td><td>'.$val.'</td></tr>'."\n";
+	  foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $row) {
+		echo '<tr><td>'.$row['itemkey'].'</td><td>'.$row['itemvalue'].'</td></tr>'."\n";
       }
     }
 ?>

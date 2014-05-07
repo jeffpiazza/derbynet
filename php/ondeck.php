@@ -35,25 +35,27 @@ require_once('rounds.inc');
 $groups = all_racing_groups();
 
 $sql = 'SELECT'
-  .' classes.Class, Round, Heat, Lane, FinishTime, ResultID, Completed, '
-  .($use_master_sched ? 'Round' : 'rounds.RoundID').' as RacingGroup,'
-  .($use_master_sched ? 'MasterHeat' : 'Heat').' as Seq,'
-  .' registrationinfo.CarNumber, registrationinfo.FirstName, registrationinfo.LastName,'
-  .' classes.ClassID, rounds.RoundID, racechart.RacerID'
-  .' FROM classes'
-  .' INNER JOIN (rounds'
-  .' INNER JOIN (roster'
-  .' INNER JOIN (registrationinfo'
-  .' INNER JOIN racechart'
-  .' ON registrationinfo.RacerID = racechart.RacerID)'
-  .' ON roster.RacerID = registrationinfo.RacerID)'
-  .' ON rounds.RoundID = roster.RoundID)'
-  .' ON rounds.ClassID = classes.ClassID'
-  .' WHERE rounds.RoundID = racechart.RoundID'
-  .' ORDER BY '.($use_master_sched ? 'Round, MasterHeat, Lane' : 'Class, Round, Heat, Lane');
-
-$rs = odbc_exec($conn, $sql);
-if ($rs === FALSE) echo odbc_errormsg($conn);
+  .' Classes.class, round, heat, lane, finishtime, resultid, completed, '
+  .($use_master_sched ? 'round' : 'Rounds.roundid').' as racinggroup,'
+  .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
+  .' RegistrationInfo.carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
+  .' Classes.classid, Rounds.roundid, RaceChart.racerid'
+  .' FROM Classes'
+  .' INNER JOIN (Rounds'
+  .' INNER JOIN (Roster'
+  .' INNER JOIN (RegistrationInfo'
+  .' INNER JOIN RaceChart'
+  .' ON RegistrationInfo.racerid = RaceChart.racerid)'
+  .' ON Roster.racerid = RegistrationInfo.Racerid)'
+  .' ON Rounds.roundid = Roster.roundid)'
+  .' ON Rounds.classid = Classes.classid'
+  .' WHERE Rounds.roundid = RaceChart.roundid'
+  .' ORDER BY '.($use_master_sched ? 'round, masterheat, lane' : 'class, round, heat, lane');
+$stmt = $db->query($sql);
+if ($stmt === FALSE) {
+  $info = $db->errorInfo();
+  echo '<h2>Error: '.$info[2].'</h2>'."\n";
+ }
 ?>
 <table class="main_table">
 <?php
@@ -84,16 +86,16 @@ function write_heat_row($entry, $heat_row, $lane) {
   }
 }
 
-$valid = odbc_fetch_row($rs);
+$rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($groups as $group) {
   // Generate header and tbody
-  $roundno = $group['Round'];
-  $groupid = $group['GroupID'];
+  $roundno = $group['round'];
+  $groupid = $group['groupid'];
 
   echo '<tbody id="group_'.$groupid.'" class="group_'.$groupid.'">'."\n";
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
-      .'<th class="group_title wide" colspan="'.$nlanes.'">'.$group['GroupName'].'</th>'
+      .'<th class="group_title wide" colspan="'.$nlanes.'">'.$group['groupname'].'</th>'
       .'</tr>'."\n";
 
   // Draw a new set of lane headers.
@@ -108,15 +110,16 @@ foreach ($groups as $group) {
   $seq = -1;
   $first_entry = '';
   $heat_row = '';
-  while ($valid and odbc_result($rs, 'RacingGroup') == $groupid) {
-    if ($seq <> odbc_result($rs, 'Seq')) {
-      write_heat_row($first_entry, $heat_row, $lane);
+  while ($rs and $rs['racinggroup'] == $groupid) {
+    if ($seq <> $rs['seq']) {
+      write_heat_row($first_entry, $heat_row, @$lane);
       $heat_row = '';
-      $seq = odbc_result($rs, 'Seq');
-      $first_entry = array('RoundID' => odbc_result($rs, 'RoundID'),
-			   'Heat' => odbc_result($rs, 'Heat'),
-			   'Class' => odbc_result($rs, 'Class'),
-			   'Seq' => $seq);
+      $seq = $rs['seq'];
+	  // TODO: Make all lowercase keys
+      $first_entry = array('RoundID' => $rs['roundid'],
+						   'Heat' => $rs['heat'],
+						   'Class' => $rs['class'],
+						   'Seq' => $seq);
       $lane = 1;
     }
 
@@ -124,36 +127,35 @@ foreach ($groups as $group) {
     // group/heat.  $new_lane will be the lane number of the current result.  Normally
     // $new_lane equals $lane, unless there are byes (empty lanes) in between.
 
-    $new_lane = odbc_result($rs, 'Lane');
+    $new_lane = $rs['lane'];
     if ($new_lane) {
       $heat_row .= byes($new_lane - $lane);
       $lane = $new_lane;
 
       // Add the cell with the result we just got.
-      // $ft = odbc_result($rs, 'FinishTime');
-      $heat_row .= '<td class="lane_'.$lane.' resultid_'.odbc_result($rs, 'ResultID').'">'
-	.'<a class="racer_link" href="racer-results.php?racerid='.odbc_result($rs, 'RacerID').'">'
-	.'<span class="car">'.odbc_result($rs, 'CarNumber').'</span><br/>'."\n"
-	.'<span class="racer">('.odbc_result($rs, 'FirstName').' '
-	.odbc_result($rs, 'LastName').')</span><br/>'."\n"
-	.'<span class="time"></span>' // Javascript will fill in the times, later
-	.'</a>'
-	.'</td>';
+      // $ft = $rs['finishtime'];
+      $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">'
+		.'<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
+		.'<span class="car">'.$rs['carnumber'].'</span><br/>'."\n"
+		.'<span class="racer">('.$rs['firstname'].' '.$rs['lastname'].')</span><br/>'."\n"
+		.'<span class="time"></span>' // Javascript will fill in the times, later
+		.'</a>'
+		.'</td>';
       ++$lane;
     } else {
       echo '<tr>'
 	.'<th class="unsched wide" colspan="'.$nlanes.'">Heats have not yet been scheduled.</th>'
 	.'</tr>'."\n";
     }
-    $valid = odbc_fetch_row($rs);
+    $rs = $stmt->fetch(PDO::FETCH_ASSOC);
   }
 
-  write_heat_row($first_entry, $heat_row, $lane);
+  write_heat_row($first_entry, $heat_row, @$lane);
 
   echo '</tbody>'."\n";
 }
 
-odbc_close($conn);
+$stmt->closeCursor();
 ?>
 </table>
 <div id="ajax_failure" class="hidden">

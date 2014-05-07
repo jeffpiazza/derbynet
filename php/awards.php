@@ -42,34 +42,18 @@ for ($place = 0; $place < count($pack_trophies); ++$place) {
 
 // TODO: Order by den, then by award "weight" within each den.
 
-$sql = 'SELECT AwardName, RacerID'
-  .' FROM Awards'
-  .' ORDER BY Sort';
-
-
-$rs = odbc_exec($conn, $sql);
-
-while (odbc_fetch_row($rs)) {
-  $racerid = odbc_result($rs, 'RacerID');
+foreach ($db->query('SELECT awardname, racerid'
+					.' FROM Awards'
+					.' ORDER BY sort') as $row) {
+  $racerid = $row['racerid'];
   $comma = isset($awards[$racerid]) ? ', ' : '';
-  $awards[$racerid] .= $comma.odbc_result($rs, 'AwardName');
+  @$awards[$racerid] .= $comma.$row['awardname'];
 }
 
 ?>
 
 <table>
 <?php
-
-$sql = 'SELECT Class, Rank, CarNumber, LastName, FirstName, RacerID'
-  .' FROM Ranks'
-  .' INNER JOIN (Classes'
-  .' INNER JOIN RegistrationInfo'
-  .' ON RegistrationInfo.ClassID = Classes.ClassID)'
-  .' ON RegistrationInfo.RankID = Ranks.RankID'
-  .' WHERE PassedInspection = 1 AND Exclude = 0'
-  .' ORDER BY CarNumber';
-
-$rs = odbc_exec($conn, $sql);
 
 echo '<tr>'
   .'<th>Car Number</th>'
@@ -80,19 +64,24 @@ echo '<tr>'
   .'<th>Award(s)</th>'
   .'</tr>';
 
-while (odbc_fetch_row($rs)) {
+foreach ($db->query('SELECT class, rank, carnumber, lastname, firstname, racerid'
+					.' FROM Ranks'
+					.' INNER JOIN (Classes'
+					.' INNER JOIN RegistrationInfo'
+					.' ON RegistrationInfo.classid = Classes.classid)'
+					.' ON RegistrationInfo.rankid = Ranks.rankid'
+					.' WHERE passedinspection = 1 AND exclude = 0'
+					.' ORDER BY carnumber') as $row) {
+  $racerid = $row['racerid'];
   echo '<tr>'
-    .'<td>'.odbc_result($rs, 'CarNumber').'</td>'
-    .'<td>'.odbc_result($rs, 'Class')
-    .($use_subgroups ? '<td>'.odbc_result($rs, 'Rank').'</td>' : '')
-    .'</td>'
-    .'<td>'.odbc_result($rs, 'LastName').'</td>'
-    .'<td>'.odbc_result($rs, 'FirstName').'</td>'
-    .'<td>'.$awards[odbc_result($rs, 'RacerID')].'</td>'
+    .'<td>'.$row['carnumber'].'</td>'
+    .'<td>'.$row['class'].'</td>'
+    .($use_subgroups ? '<td>'.$row['rank'].'</td>' : '')
+    .'<td>'.$row['lastname'].'</td>'
+    .'<td>'.$row['firstname'].'</td>'
+    .'<td>'.@$awards[$racerid].'</td>'
     .'</tr>';
 }
-
-odbc_close($conn);
 ?>
 </table>
 </body>
