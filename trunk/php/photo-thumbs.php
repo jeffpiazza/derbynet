@@ -197,24 +197,23 @@ img { z-index: 30; }
 <ul data-role="listview" class="ui-listview">
 <?php
 require_once('data.inc');
-$rs = odbc_exec($conn, 'select racerid, lastname, firstname, imagefile, carnumber, class'
-				.' from registrationinfo'
-				.' inner join classes'
-				.' on registrationinfo.classid = classes.classid'
-				.' order by lastname, firstname');
-
 $racers_by_photo = array();
-while (odbc_fetch_row($rs)) {
-  $raw_imagefile = odbc_result($rs, 'imagefile');
-  $racer = array('firstname' => odbc_result($rs, 'firstname'),
-				 'lastname' => odbc_result($rs, 'lastname'),
-				 'class' => odbc_result($rs, 'class'),
-				 'racerid' => odbc_result($rs, 'racerid'),
+$stmt = $db->query('SELECT racerid, lastname, firstname, imagefile, carnumber, class'
+				   .' FROM RegistrationInfo'
+				   .' INNER JOIN Classes'
+				   .' ON RegistrationInfo.classid = Classes.classid'
+				   .' ORDER BY lastname, firstname');
+foreach ($stmt as $rs) {
+  $raw_imagefile = $rs['imagefile'];
+  $racer = array('firstname' => $rs['firstname'],
+				 'lastname' => $rs['lastname'],
+				 'class' => $rs['class'],
+				 'racerid' => $rs['racerid'],
 				 'imagefile' => $raw_imagefile);
 
 
   $css_classes = 'ui-li-static ui-li-has-thumb';
-  if (odbc_result($rs, 'imagefile') !== "") {  // If there's an associated photo...
+  if ($raw_imagefile !== "") {  // If there's an associated photo...
 	$image_filename = basename($raw_imagefile);
 	$racers_by_photo[$image_filename] = $racer;
 	if (array_search($image_filename, $allfiles) === false) {
@@ -234,8 +233,8 @@ while (odbc_fetch_row($rs)) {
 	  .' src="photo-fetch.php/tiny/'.urlencode($image_filename).'"'
 	  .'/>';
   }
-  echo odbc_result($rs, 'FirstName').' '.odbc_result($rs, 'LastName');
-  echo '<p><strong>'.odbc_result($rs, 'carnumber').':</strong> '.odbc_result($rs, 'class').'</p>';
+  echo $rs['firstname'].' '.$rs['lastname'];
+  echo '<p><strong>'.$rs['carnumber'].':</strong> '.$rs['class'].'</p>';
   echo '</li>'."\n";
 }
 
@@ -288,5 +287,4 @@ function removeRacerPhoto(previous) {
   <span id="ajax_num_requests">0</span> request(s) pending.
 </div>
 </body>
-<?php odbc_close($conn); ?>
 </html>

@@ -1,18 +1,16 @@
 <?php
-  //$conn = odbc_connect('DSN=gprm;ReadOnly=YES;Exclusive=NO','','');
-$conn = odbc_connect('DSN=gprm;Exclusive=NO','','');
-if (!$conn) {
-  echo '<p>Connection by System DSN failed: '.odbc_error().' '.odbc_errormsg().'.</p>';
-  exit();
-}
+$db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 function read_single_value($sql, $def = false) {
-  global $conn;
-  $rs = odbc_exec($conn, $sql);
-  if (odbc_fetch_row($rs)) {
-	return odbc_result($rs, 1);
+  global $db;
+  $rs = $db->query($sql);
+  $row = $rs->fetch(PDO::FETCH_NUM);
+  $rs->closeCursor();
+  if ($row === false) {
+	return $def;
   }
-  return $def;
+  return $row[0];
 }
 
 
@@ -28,12 +26,18 @@ function read_raceinfo_boolean($key) {
 }
 
 function write_raceinfo($key, $val) {
-  global $conn;
-  odbc_exec($conn, 'update RaceInfo set ItemValue = \''.$val.'\' where ItemKey = \''.$key.'\'');
-  $rs = odbc_exec($conn, 'select ItemValue from RaceInfo where ItemKey = \''.$key.'\'');
-  if (!odbc_fetch_row($rs)) {
-    odbc_exec($conn, 'insert into RaceInfo(ItemKey, ItemValue) values (\''.$key.'\', \''.$val.'\')');
+  global $db;
+  //$db->exec('update RaceInfo set ItemValue = \''.$val.'\' where ItemKey = \''.$key.'\'');
+
+  $stmt = $db->prepare('select count(*) from RaceInfo where ItemKey = :key');
+  $stmt->execute(array(':key' => $key));
+  if ($stmt->fetchColumn() == 0) {
+	$stmt = $db->prepare('insert into RaceInfo(ItemKey, ItemValue) values(:key, :value)');
+  } else {
+	$stmt = $db->prepare('update RaceInfo set ItemValue = :value where ItemKey = :key');
   }
+  $stmt->execute(array(':key' => $key,
+					   ':value' => $val));
 }
 
 
@@ -79,15 +83,14 @@ function photo_size() {
 }
 
 function get_lane_count() {
-  global $conn;
-  $rs = odbc_exec($conn, 'select max(lane), count(*) from racechart');
-  if ($rs === FALSE) {
-    return odbc_errormsg($conn);
+  global $db;
+  $rs = $db->query('select max(lane), count(*) from racechart');
+  $row = $rs->fetch(PDO::FETCH_NUM);
+  if (!$row) {
+	return -1;
+  } else {
+	return $row[0];
   }
-  if (odbc_fetch_row($rs))
-    return odbc_result($rs, 1);
-  else
-    return -1;
 }
 
 // Returns the highest ResultID from the RaceChart table.
@@ -102,24 +105,22 @@ function high_water_resultid() {
 // Returns the highest RoundID from the Rounds table.
 // For ondeck, a new high-water RoundID signals a page reload.
 function high_water_rounds() {
-  global $conn;
-  $rs = odbc_exec($conn, 'select max(RoundID), max(Round) from Rounds');
-  odbc_fetch_row($rs);
-  return array('roundid' => odbc_result($rs, 1),
-			   'round' => odbc_result($rs, 2));
+  global $db;
+  $stmt = $db->query('SELECT MAX(roundid), MAX(round) FROM Rounds');
+  $rs = $stmt->fetch(PDO::FETCH_NUM);
+  return array('roundid' => $rs[0],
+			   'round' => $rs[1]);
 }
 
 // Returns an array value with elements for { classid => , roundid => , heat => }
 // describing the currently-running round and heat.
 function get_running_round() {
-  global $conn;
+  global $db;
   $config = array('use_master_sched' => 0);  // May be overwritten
 
-  $rs = odbc_exec($conn, 'select ItemKey, ItemValue from RaceInfo');
-
-  while (odbc_fetch_row($rs)) {
-    $key = odbc_result($rs, 'ItemKey');
-    $val = odbc_result($rs, 'ItemValue');
+  foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $rs) {
+    $key = $rs['itemkey'];
+    $val = $rs['itemvalue'];
     if ($key == 'ClassID')
       $config['classid'] = $val;
     else if ($key == 'RoundID')
@@ -130,15 +131,16 @@ function get_running_round() {
       $config['use_master_sched'] = $val ? 1 : 0;
   }
 
-  $rs = odbc_exec($conn, 'select Round, Class'
-		  .' from Rounds'
-		  .' inner join Classes'
-		  .' on Rounds.ClassID = Classes.ClassID'
-		  .' where RoundID = '.$config['roundid']
-		  .' and Rounds.ClassID = '.$config['classid']);
-  if (odbc_fetch_row($rs)) {
-    $config['class'] = odbc_result($rs, 'Class');
-    $config['round'] = odbc_result($rs, 'Round');
+  $stmt = $db->query('SELECT round, class'
+					 .' FROM Rounds'
+					 .' INNER JOIN Classes'
+					 .' ON Rounds.classid = Classes.classid'
+					 .' WHERE roundid = '.$config['roundid']
+					 .' AND Rounds.classid = '.$config['classid']);
+  $rs = $stmt->fetch(PDO::FETCH_ASSOC);
+  if ($rs) {
+    $config['class'] = $rs['class'];
+    $config['round'] = $rs['round'];
   }
 
   return $config;

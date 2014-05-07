@@ -25,12 +25,12 @@ $sql = 'SELECT Class, LastName, FirstName'
 	.' ON RegistrationInfo.ClassID = Classes.ClassID'
 	.' WHERE NOT PassedInspection'
 	.' ORDER BY Class, LastName, FirstName';
-$rs = odbc_exec($conn, $sql);
+$stmt = $db->query($sql);
 
 $prev_class = '';
-while (odbc_fetch_row($rs)) {
-  $classname = odbc_result($rs, 'Class');
-  $name = odbc_result($rs, 'LastName').', '.odbc_result($rs, 'FirstName');
+foreach ($stmt as $rs) {
+  $classname = $rs['class'];
+  $name = $rs['lastname'].', '.$rs['firstname'];
   if ($classname <> $prev_class) {
 	if ($prev_class)
 	  echo '</div>'."\n";

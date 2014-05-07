@@ -8,26 +8,36 @@ require_permission(REGISTER_NEW_RACER_PERMISSION);
 
 if ($_POST) {
   if ($_POST['firstname'] and $_POST['lastname'] and $_POST['carno'] and $_POST['den']) {
-    odbc_exec($conn, 'INSERT INTO RegistrationInfo (CarNumber, LastName, FirstName, RankID, ClassID, Exclude)'
-	      .' VALUES('.$_POST['carno'].', \''.$_POST['lastname'].'\', \''.$_POST['firstname'].'\', '
-	      .$_POST['den'] // $_POST['den'] is <rankid>,<classid>
-	      .', '.($_POST['exclude'] ? 1 : 0).')');
+	// TODO: PDO constructor shouldn't be here; just an interim solution
+	try {
+	  //	$db = new PDO('mysql:dbname=pack140-2013;host=127.0.0.1', 'root', 'myrootsql');
+	  $db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
+	  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // The new racer won't be recognized without a Roster record to go with it.
-    // Rounds has ChartType and Phase fields whose meaning isn't obvious.  This just enrolls
-    // everyone into Round 1 for their Class.
-    odbc_exec($conn, 'INSERT INTO Roster(RoundID, ClassID, RacerID)'
-	      .' SELECT RoundID, RegistrationInfo.ClassID, RacerID'
-	      .' FROM Rounds'
-	      .' INNER JOIN RegistrationInfo'
-	      .' ON Rounds.ClassID = RegistrationInfo.ClassID'
-	      .' WHERE Round = 1'
-	      .' AND NOT EXISTS(SELECT 1 FROM Roster'
-	          .' WHERE Roster.RoundID = Rounds.RoundID'
-	          .' AND Roster.ClassID = RegistrationInfo.ClassID'
-	          .' AND Roster.RacerID = RegistrationInfo.RacerID)');
+	  $stmt = $db->prepare('INSERT INTO RegistrationInfo (CarNumber, LastName, FirstName, RankID, ClassID, Exclude)'
+						   .' VALUES(:carno, :lastname, :firstname, '
+						   .$_POST['den'] // $_POST['den'] is <rankid>,<classid>
+						   .', '.($_POST['exclude'] ? 1 : 0).')');
+	  $stmt->execute(array(':carno' => $_POST['carno'],
+						   ':firstname' => $_POST['firstname'],
+						   ':lastname' => $_POST['lastname']));
 
-    odbc_close($conn);
+	  // The new racer won't be recognized without a Roster record to go with it.
+	  // Rounds has ChartType and Phase fields whose meaning isn't obvious.  This just enrolls
+	  // everyone into Round 1 for their Class.
+	  $db->exec('INSERT INTO Roster(RoundID, ClassID, RacerID)'
+				.' SELECT RoundID, RegistrationInfo.ClassID, RacerID'
+				.' FROM Rounds'
+				.' INNER JOIN RegistrationInfo'
+				.' ON Rounds.ClassID = RegistrationInfo.ClassID'
+				.' WHERE Round = 1'
+				.' AND NOT EXISTS(SELECT 1 FROM Roster'
+				.' WHERE Roster.RoundID = Rounds.RoundID'
+				.' AND Roster.ClassID = RegistrationInfo.ClassID'
+				.' AND Roster.RacerID = RegistrationInfo.RacerID)');
+	} catch (Exception $e) {
+	  echo 'Exception: '.$e;
+	}
 
     header('Location: checkin.php');
     exit();
@@ -50,29 +60,24 @@ if ($_POST) {
 <select name="den">
 <?php
 
-$rs = odbc_exec($conn, 'SELECT max(Class & \'/\' & Rank) as MaxRank'
-                       .' FROM Ranks'
-                       .' INNER JOIN Classes'
-                       .' ON Ranks.ClassID = Classes.ClassID');
-odbc_fetch_row($rs);
-$max_rank = odbc_result($rs, 'MaxRank');
-
-$rs = odbc_exec($conn, 'SELECT RankID, Ranks.ClassID, Rank, Class'
-                       .' FROM Ranks'
-                       .' INNER JOIN Classes'
-                       .' ON Ranks.ClassID = Classes.ClassID'
-                       .' ORDER BY Class, Rank');
-while (odbc_fetch_row($rs)) {
-  echo '<option value="'.odbc_result($rs, 'RankID').','.odbc_result($rs, 'ClassID').'"'
-    .(odbc_result($rs, 'Class').'/'.odbc_result($rs, 'Rank') == $max_rank ? ' selected="selected"' : '')
-         .'>'.odbc_result($rs, 'Class').', '.odbc_result($rs, 'Rank').'</option>'."\n";
+$max_rank = read_single_value('SELECT max(Class & \'/\' & Rank) AS maxrank'
+							  .' FROM Ranks'
+							  .' INNER JOIN Classes'
+							  .' ON Ranks.classid = Classes.classid');
+$stmt = $db->query('SELECT rankid, Ranks.classid, rank, class'
+				   .' FROM Ranks'
+				   .' INNER JOIN Classes'
+				   .' ON Ranks.classid = Classes.classid'
+				   .' ORDER BY class, rank');
+foreach ($stmt as $rs) {
+  echo '<option value="'.$rs['rankid'].','.$rs['classid'].'"'
+    .($rs['class'].'/'.$rs['rank'] == $max_rank ? ' selected="selected"' : '')
+	.'>'.$rs['class'].', '.$rs['rank'].'</option>'."\n";
 }
-
-odbc_close($conn);
 
 ?>
 </select>
-</span><br>
+</span><br/>
 <span class="nrlabel">Exclude?</span>
     <span class="nrfield"><input type="checkbox" name="exclude" value="exclude"/></span><br/>
 <span class="nrlabel"> </span>

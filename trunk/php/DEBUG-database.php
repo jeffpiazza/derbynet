@@ -21,11 +21,9 @@ session_start(); ?>
 
 require_once('data.inc');
 
-$sql ='SELECT'
-  .' classes.Class, Round, Heat, Lane, FinishTime, ResultID, Completed, '
-  .' registrationinfo.CarNumber, registrationinfo.FirstName, registrationinfo.LastName,'
-  .' classes.ClassID, rounds.RoundID, racechart.RacerID'
-.' FROM (RegistrationInfo INNER JOIN ((Classes INNER JOIN Rounds ON Classes.ClassID = Rounds.ClassID) LEFT JOIN Roster ON Rounds.RoundID = Roster.RoundID) ON RegistrationInfo.RacerID = Roster.RacerID) LEFT JOIN RaceChart ON (Roster.RoundID = RaceChart.RoundID) AND (RegistrationInfo.RacerID = RaceChart.RacerID)'
+
+// This query doesn't work: unsupported join
+if (false) {
   /*
   .' FROM classes'
   .' RIGHT JOIN (rounds'
@@ -43,8 +41,13 @@ $sql ='SELECT'
   //.'  OR racechart.RoundID is null'
   */
 
-  .' ORDER BY Class, Round, Heat, Lane';
+$sql ='SELECT'
+  .' classes.Class, Round, Heat, Lane, FinishTime, ResultID, Completed, '
+  .' registrationinfo.CarNumber, registrationinfo.FirstName, registrationinfo.LastName,'
+  .' classes.ClassID, rounds.RoundID, racechart.RacerID'
+.' FROM (RegistrationInfo INNER JOIN ((Classes INNER JOIN Rounds ON Classes.ClassID = Rounds.ClassID) LEFT JOIN Roster ON Rounds.RoundID = Roster.RoundID) ON RegistrationInfo.RacerID = Roster.RacerID) LEFT JOIN RaceChart ON (Roster.RoundID = RaceChart.RoundID) AND (RegistrationInfo.RacerID = RaceChart.RacerID)'
 
+  .' ORDER BY class, round, heat, lane';
 
 ?>
 
@@ -53,34 +56,35 @@ $sql ='SELECT'
     <th>ResultID</th><th>FirstName</th><th>Completed</th>
 </tr>
 <?php
-$rs = odbc_exec($conn, $sql);
-if ($rs === FALSE) {
-  echo '<tr><td>Error: '.odbc_errormsg($conn).'</td></tr>'."\n";
+
+$stmt = $db->query($sql);
+if ($stmt === FALSE) {
+  $info = $db->errorInfo();
+  echo '<tr><td>Error: '.$info[2].'</td></tr>'."\n";
 }
 
-while (odbc_fetch_row($rs)) {
-  echo '<tr><td>'.odbc_result($rs, 'Class').'</td>'
-    .'<td>'.odbc_result($rs, 'Round').' (ID='.odbc_result($rs, 'RoundID').')</td>'
-    .'<td>'.odbc_result($rs, 'Heat').'</td>'
-    .'<td>'.odbc_result($rs, 'Lane').'</td>'
-    .'<td>'.odbc_result($rs, 'ResultID').'</td>'
-    .'<td>'.odbc_result($rs, 'FirstName').'</td>'
-    .'<td>'.odbc_result($rs, 'Completed').'</td>'
+foreach ($stmt as $rs) {
+  echo '<tr><td>'.$rs['class'].'</td>'
+    .'<td>'.$rs['round'].' (ID='.$rs['roundid'].')</td>'
+    .'<td>'.$rs['heat'].'</td>'
+    .'<td>'.$rs['lane'].'</td>'
+    .'<td>'.$rs['resultid'].'</td>'
+    .'<td>'.$rs['firstname'].'</td>'
+    .'<td>'.$rs['completed'].'</td>'
     .'</tr>'."\n";
  }
 ?>
 </table>
+<?php
+	}
+?>
 
 <p>RaceInfo table</p>
 <table>
 <?php
-$rs = odbc_exec($conn, 'select ItemKey, ItemValue from RaceInfo');
-
-while (odbc_fetch_row($rs)) {
-  $key = odbc_result($rs, 'ItemKey');
-  $val = odbc_result($rs, 'ItemValue');
-  echo '<tr><td>'.$key.'</td><td>'.$val.'</td></tr>'."\n";
- }
+foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $rs) {
+  echo '<tr><td>'.$rs['itemkey'].'</td><td>'.$rs['itemvalue'].'</td></tr>'."\n";
+}
 ?>
 </table>
 
@@ -88,10 +92,9 @@ while (odbc_fetch_row($rs)) {
 <table>
 <tr><th>ClassID</th><th>Class</th></tr>
 <?php
-$rs = odbc_exec($conn, 'select ClassID, Class from Classes order by ClassID');
-while (odbc_fetch_row($rs)) {
-	echo '<tr><td>'.odbc_result($rs, 'ClassID').'</td>'
-	.'<td>'.odbc_result($rs, 'Class').'</td></tr>'."\n";
+foreach ($db->query('SELECT classid, class FROM Classes ORDER BY classid') as $rs) {
+	echo '<tr><td>'.$rs['classid'].'</td>'
+	.'<td>'.$rs['class'].'</td></tr>'."\n";
 }
 ?>
 </table>
@@ -100,48 +103,51 @@ while (odbc_fetch_row($rs)) {
 <table>
 <tr><th>RankID</th><th>Rank</th><th>ClassID</th></tr>
 <?php
-$rs = odbc_exec($conn, 'select RankID, Rank, ClassID from Ranks order by RankID');
-while (odbc_fetch_row($rs)) {
-	echo '<tr><td>'.odbc_result($rs, 'RankID').'</td>'
-	.'<td>'.odbc_result($rs, 'Rank').'</td>'
-	.'<td>'.odbc_result($rs, 'ClassID').'</td></tr>'."\n";
+foreach ($db->query('SELECT rankid, rank, classid FROM Ranks ORDER BY rankid') as $rs) {
+	echo '<tr><td>'.$rs['rankid'].'</td>'
+	.'<td>'.$rs['rank'].'</td>'
+	.'<td>'.$rs['classid'].'</td></tr>'."\n";
 }
 ?>
 </table>
 
+<?php
+  // This doesn't work, either:
+if (false) {
+?>
 <p>Classes and Ranks</p>
 <table>
 <tr><th>ClassID</th><th>RankID</th><th>Rank</th><th>Registered</th><th>Passed</th></tr>
 <?php
-$rs = odbc_exec($conn, 'select ranks.ClassID, ranks.RankID, Rank, count(*) as n, sum(PassedInspection) as passed'
-				.' from registrationinfo'
-				.' join ranks'
-				.' on registrationinfo.RankID = ranks.RankID'
-				.' group by ClassID, ranks.RankID order by ClassID, ranks.RankID');
-while (odbc_fetch_row($rs)) {
-	echo '<tr><td>'.odbc_result($rs, 'ClassID').'</td>'
-	.'<td>'.odbc_result($rs, 'RankID').'</td>'
-	.'<td>'.odbc_result($rs, 'Rank').'</td>'
-	.'<td>'.odbc_result($rs, 'n').'</td>'
-	.'<td>'.odbc_result($rs, 'passed').'</td>'
+foreach ($db->query('SELECT Ranks.classid, Ranks.rankid, rank, COUNT(*) AS n, SUM(passedinspection) AS passed'
+					.' FROM RegistrationInfo'
+					.' JOIN Ranks'
+					.' ON RegistrationInfo.rankid = Ranks.rankid'
+					.' GROUP BY classid, Ranks.rankid ORDER BY classid, Ranks.rankid') as $rs) {
+	echo '<tr><td>'.$rs['classid'].'</td>'
+	.'<td>'.$rs['rankid'].'</td>'
+	.'<td>'.$rs['rank'].'</td>'
+	.'<td>'.$rs['n'].'</td>'
+	.'<td>'.$rs['passed'].'</td>'
 	.'</tr>'."\n";
 }
 ?>
 </table>
-
+<?php
+	}
+?>
 <p>Roster</p>
 <table>
 <tr><th>RosterID</th><th>RoundID</th><th>ClassID</th><th>RacerID</th><th>Finalist</th><th>Grand Finalist</th></tr>
 <?php
-$rs = odbc_exec($conn, 'select RosterID, RoundID, ClassID, RacerID, Finalist, GrandFinalist'
-				.' from Roster order by RosterID');
-while (odbc_fetch_row($rs)) {
-	echo '<tr><td>'.odbc_result($rs, 'RosterID').'</td>'
-	.'<td>'.odbc_result($rs, 'RoundID').'</td>'
-	.'<td>'.odbc_result($rs, 'ClassID').'</td>'
-	.'<td>'.odbc_result($rs, 'RacerID').'</td>'
-	.'<td>'.odbc_result($rs, 'Finalist').'</td>'
-	.'<td>'.odbc_result($rs, 'GrandFinalist').'</td>'
+foreach ($db->query('SELECT rosterid, roundid, classid, racerid, finalist, grandfinalist'
+					.' FROM Roster ORDER BY rosterid') as $rs) {
+	echo '<tr><td>'.$rs['rosterid'].'</td>'
+	.'<td>'.$rs['roundid'].'</td>'
+	.'<td>'.$rs['classid'].'</td>'
+	.'<td>'.$rs['racerid'].'</td>'
+	.'<td>'.$rs['finalist'].'</td>'
+	.'<td>'.$rs['grandfinalist'].'</td>'
 	.'</tr>'."\n";
 }
 ?>
@@ -158,40 +164,34 @@ while (odbc_fetch_row($rs)) {
   // Rounds table: Round, RoundID, ClassID
   // RegistrationInfo table: CarNumber, FirstName, LastName
   // racechart table: ResultID, Lane, FinishTime, Completed (time)
-$sql = 'select RoundID, Round, rounds.ClassID, Class, ChartType, Phase'
-       .' FROM rounds'
-       .' LEFT JOIN classes'
-       .' ON rounds.ClassID = classes.ClassID'
-       .' ORDER BY RoundID';
-$rs = odbc_exec($conn, $sql);
+$sql = 'SELECT roundid, round, Rounds.classid, class, charttype, phase'
+       .' FROM Rounds'
+       .' LEFT JOIN Classes'
+       .' ON Rounds.classid = Classes.classid'
+       .' ORDER BY roundid';
+$stmt = $db->query($sql);
 $rounds = array();
-while (odbc_fetch_row($rs)) {
-	$rounds[] = array('RoundID' => odbc_result($rs, 'RoundID'),
-					 'Round' => odbc_result($rs, 'Round'),
-					 'ClassID' => odbc_result($rs, 'ClassID'),
-					 'Class' => odbc_result($rs, 'Class'),
-					  'ChartType' => odbc_result($rs, 'ChartType'),
-					  'Phase' => odbc_result($rs, 'Phase'));
+foreach ($stmt as $rs) {
+	$rounds[] = array('roundid' => $rs['roundid'],
+					  'round' => $rs['round'],
+					  'classid' => $rs['classid'],
+					  'class' => $rs['class'],
+					  'charttype' => $rs['charttype'],
+					  'phase' => $rs['phase']);
 }
 
 foreach ($rounds as $round) {
-	echo '<tr><td>'.$round['RoundID'].'</td>'
-	.'<td>'.$round['Round'].'</td>'
-	.'<td>'.$round['ClassID'].'</td>'
-	.'<td>'.$round['Class'].'</td>'
-	.'<td>'.$round['ChartType'].'</td>'
-	.'<td>'.$round['Phase'].'</td>';
-	$rs = odbc_exec($conn, 'select count(*) from roster where RoundID = '.$round['RoundID']);
-	odbc_fetch_row($rs);
-	echo '<td>'.odbc_result($rs, 1).'</td>';
-	$rs = odbc_exec($conn, 'select count(*) from racechart where RoundID = '.$round['RoundID']);
-	odbc_fetch_row($rs);
-	echo '<td>'.odbc_result($rs, 1).'</td>';
-	$rs = odbc_exec($conn, 'select count(*) from racechart where RoundID = '.$round['RoundID']
-					.' AND Completed is not null');
-	odbc_fetch_row($rs);
-	echo '<td>'.odbc_result($rs, 1).'</td>';
-	echo "\n";
+	echo '<tr><td>'.$round['roundid'].'</td>'
+	.'<td>'.$round['round'].'</td>'
+	.'<td>'.$round['classid'].'</td>'
+	.'<td>'.$round['class'].'</td>'
+	.'<td>'.$round['charttype'].'</td>'
+	.'<td>'.$round['phase'].'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = '.$round['roundid']).'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = '.$round['roundid']).'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = '.$round['roundid']
+								  .' AND completed IS NOT NULL').'</td>';
+	echo '</tr>'."\n";
 }
 ?>
 </table>
@@ -201,25 +201,21 @@ foreach ($rounds as $round) {
 <tr><th>ResultID</th><th>ClassID</th><th>RoundID</th><th>Heat</th><th>Lane</th><th>RacerID</th>
     <th>FinishTime</th><th>Completed</th></tr>
 <?php
-$rs = odbc_exec($conn, 'select ResultID, ClassID, RoundID, Heat, Lane, RacerID, FinishTime, Completed'
-				.' from RaceChart order by ResultID');
-while (odbc_fetch_row($rs)) {
+foreach ($db->query('SELECT resultid, classid, roundid, heat, lane, racerid, finishtime, completed'
+					.' FROM RaceChart ORDER BY resultid') as $rs) {
 	echo '<tr>'
-	.'<td>'.odbc_result($rs, 'ResultID').'</td>'
-	.'<td>'.odbc_result($rs, 'ClassID').'</td>'
-	.'<td>'.odbc_result($rs, 'RoundID').'</td>'
-	.'<td>'.odbc_result($rs, 'Heat').'</td>'
-	.'<td>'.odbc_result($rs, 'Lane').'</td>'
-	.'<td>'.odbc_result($rs, 'RacerID').'</td>'
-	.'<td>'.odbc_result($rs, 'FinishTime').'</td>'
-	.'<td>'.odbc_result($rs, 'Completed').'</td>'
+	.'<td>'.$rs['resultid'].'</td>'
+	.'<td>'.$rs['classid'].'</td>'
+	.'<td>'.$rs['roundid'].'</td>'
+	.'<td>'.$rs['heat'].'</td>'
+	.'<td>'.$rs['lane'].'</td>'
+	.'<td>'.$rs['racerid'].'</td>'
+	.'<td>'.$rs['finishtime'].'</td>'
+	.'<td>'.$rs['completed'].'</td>'
 	.'</tr>'."\n";
 }
 ?>
 </table>
 
 </body>
-<?php
-odbc_close($conn);
-?>
 </html>

@@ -64,11 +64,11 @@ $use_master_sched = use_master_sched();
 header('Content-Type: text/xml');
 ?>
 <update_summary>
-<current_heat classid="<?php echo $now_running['classid']; ?>"
-              roundid="<?php echo $now_running['roundid']; ?>"
-              round="<?php echo $now_running['round']; ?>"
-              group="<?php echo $use_master_sched ? $now_running['round'] : $now_running['roundid']; ?>"
-              heat="<?php echo $now_running['heat']; ?>"><?php if (!$use_master_sched) { echo $now_running['class']; } ?></current_heat>
+<current_heat classid="<?php echo @$now_running['classid']; ?>"
+              roundid="<?php echo @$now_running['roundid']; ?>"
+              round="<?php echo @$now_running['round']; ?>"
+              group="<?php echo $use_master_sched ? @$now_running['round'] : @$now_running['roundid']; ?>"
+              heat="<?php echo @$now_running['heat']; ?>"><?php if (!$use_master_sched) { echo @$now_running['class']; } ?></current_heat>
 
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
@@ -76,28 +76,30 @@ header('Content-Type: text/xml');
            use-master-sched="<?php echo use_master_sched(); ?>"/>
   <?php
 
+  # TODO: CDate is Access-specific			  
   $sql = 'SELECT'
-    .' Lane, ResultID, FinishTime, Completed'
-    .' FROM rounds'
-    .' INNER JOIN racechart'
-    .' ON racechart.RoundID = rounds.RoundID'
-    .' WHERE FinishTime IS NOT NULL'
-    .($since ? " AND Completed > CDate('".$since."')" : "")
-    .' ORDER BY Completed, ResultID, Lane';
-  $rs = odbc_exec($conn, $sql);
+    .' lane, resultid, finishtime, completed'
+    .' FROM Rounds'
+    .' INNER JOIN RaceChart'
+    .' ON RaceChart.roundid = Rounds.roundid'
+    .' WHERE finishtime IS NOT NULL'
+    .($since ? " AND completed > CDate('".$since."')" : "")
+    .' ORDER BY completed, resultid, lane';
+  $stmt = $db->query($sql);
 
-  if ($rs === FALSE) {
-    echo '<error msg="'.odbc_errormsg($conn).'" query="'.$sql.'"/>'."\n";
+  if ($stmt === FALSE) {
+	$info = $db->errorInfo();
+    echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
   }
 
   // <update> elements for heats recorded since the ['since']
   $max_time = $since;
-  while (odbc_fetch_row($rs)) {
-    echo "<update resultid='".odbc_result($rs, 'ResultID')."'"
-      ." time='".odbc_result($rs, 'FinishTime')
+  foreach ($stmt as $rs) {
+    echo "<update resultid='".$rs['resultid']."'"
+      ." time='".$rs['finishtime']
       ."'/>\n";
-    if (odbc_result($rs, 'Completed') > $max_time)
-      $max_time = odbc_result($rs, 'Completed');
+    if ($rs['completed'] > $max_time)
+      $max_time = $rs['completed'];
   }
 
   // <has_new_schedule> elements for rounds affected by newly-entered racechart rows
@@ -108,14 +110,15 @@ header('Content-Type: text/xml');
     .' ON racechart.roundid = rounds.roundid'
     .' WHERE resultid > '.$hwresultid
     .' ORDER BY rounds.roundid';
-  $rs = odbc_exec($conn, $sql);
-  if ($rs === FALSE) {
-    echo '<error msg="'.odbc_errormsg($conn).'" query="'.$sql.'"/>'."\n";
+  $stmt = $db->query($sql);
+  if ($stmt === FALSE) {
+	$info = $db->errorInfo();
+    echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
   }
-    
-  while (odbc_fetch_row($rs)) {
-    echo '<has_new_schedule roundid="'.odbc_result($rs, 'roundid')
-      .'" groupid="'.odbc_result($rs, $use_master_sched ? 'round' : 'roundid').'"/>'."\n";
+
+  foreach ($stmt as $rs) {
+    echo '<has_new_schedule roundid="'.$rs['roundid']
+      .'" groupid="'.$rs[$use_master_sched ? 'round' : 'roundid'].'"/>'."\n";
   }
 
   $high_water_rounds = high_water_rounds();
@@ -126,6 +129,3 @@ header('Content-Type: text/xml');
               completed="<?php echo $max_time; ?>" />
 
 </update_summary>
-<?php
-  odbc_close($conn);
-?>
