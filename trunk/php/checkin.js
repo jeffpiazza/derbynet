@@ -44,10 +44,7 @@ function readystate_handler() {
 		   location.reload(true);
        } else if (passed && passed.length > 0) {
 		 var racerid = passed[0].getAttribute("racer");
-		 if (passed[0].firstChild) {
-		   var checked = passed[0].firstChild.data;
-		   $("#passed-" + racerid).prop('checked', checked != 0);
-		 }
+		 $("#passed-" + racerid).prop('checked', true);
 	   }
    }
 }
