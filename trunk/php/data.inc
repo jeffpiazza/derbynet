@@ -1,14 +1,16 @@
 <?php
-$db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
-//$db = new PDO('sqlite:/opt/databases/mydb.sq3', null, null);
-//$db = new PDO('mysql:host=localhost;dbname=trial3', 'trial3', '');
+@include("local/config.inc");
+if (!isset($db)) {
+	header('Location: setup.php');
+	exit();
+}
+
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 //echo '<pre>'; print_r(PDO::getAvailableDrivers()); echo '</pre>';
 // On Mac, produces array('mysql', 'sqlite')
 // On Windows, produces array('mysql', 'odbc', 'sqlite')
 
-// if  $db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql'
 $dbtype = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 if ($dbtype == 'odbc') {
 	$dbtype = 'access';
