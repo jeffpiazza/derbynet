@@ -9,11 +9,6 @@ require_permission(REGISTER_NEW_RACER_PERMISSION);
 if ($_POST) {
   if ($_POST['firstname'] and $_POST['lastname'] and $_POST['carno'] and $_POST['den']) {
 	// TODO: PDO constructor shouldn't be here; just an interim solution
-	try {
-	  //	$db = new PDO('mysql:dbname=pack140-2013;host=127.0.0.1', 'root', 'myrootsql');
-	  $db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
-	  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 	  $stmt = $db->prepare('INSERT INTO RegistrationInfo (CarNumber, LastName, FirstName, RankID, ClassID, Exclude)'
 						   .' VALUES(:carno, :lastname, :firstname, '
 						   .$_POST['den'] // $_POST['den'] is <rankid>,<classid>
@@ -35,9 +30,6 @@ if ($_POST) {
 				.' WHERE Roster.RoundID = Rounds.RoundID'
 				.' AND Roster.ClassID = RegistrationInfo.ClassID'
 				.' AND Roster.RacerID = RegistrationInfo.RacerID)');
-	} catch (Exception $e) {
-	  echo 'Exception: '.$e;
-	}
 
     header('Location: checkin.php');
     exit();

@@ -54,9 +54,11 @@ require_once('data.inc');
 
 // date/time string of last update time (high-water completed)
 // Format: '2013-11-14 14:57:14'
-$since = $_GET['since'];
-$hwresultid = $_GET['high_water_resultid'];
-if (!$hwresultid) $hwresultid = 0;
+$since = @$_GET['since'];
+$hwresultid = @$_GET['high_water_resultid'];
+if (!$hwresultid) {
+	$hwresultid = 0;
+}
 
 $now_running = get_running_round();
 $use_master_sched = use_master_sched();
@@ -68,24 +70,31 @@ header('Content-Type: text/xml');
               roundid="<?php echo @$now_running['roundid']; ?>"
               round="<?php echo @$now_running['round']; ?>"
               group="<?php echo $use_master_sched ? @$now_running['round'] : @$now_running['roundid']; ?>"
-              heat="<?php echo @$now_running['heat']; ?>"><?php if (!$use_master_sched) { echo @$now_running['class']; } ?></current_heat>
+              heat="<?php echo @$now_running['heat']; ?>"><?php
+                if (!$use_master_sched) { echo @$now_running['class']; }
+?></current_heat>
 
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
            kiosk-page="<?php echo kiosk_page(); ?>"
            use-master-sched="<?php echo use_master_sched(); ?>"/>
-  <?php
+<?php
 
-  # TODO: CDate is Access-specific			  
   $sql = 'SELECT'
     .' lane, resultid, finishtime, completed'
     .' FROM Rounds'
     .' INNER JOIN RaceChart'
     .' ON RaceChart.roundid = Rounds.roundid'
     .' WHERE finishtime IS NOT NULL'
-    .($since ? " AND completed > CDate('".$since."')" : "")
+    .($since
+	    ? ' AND completed > '
+	      .($dbtype == 'access'
+			  ? 'CDate(:since)' 
+			  : 'TIMESTAMP(:since)')
+	    : "") 
     .' ORDER BY completed, resultid, lane';
-  $stmt = $db->query($sql);
+  $stmt = $db->prepare($sql);
+  $stmt->execute(array(':since' => $since));
 
   if ($stmt === FALSE) {
 	$info = $db->errorInfo();

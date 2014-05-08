@@ -34,8 +34,7 @@ function top_finishers_overall($n_trophies) {
   $results = array();
 
   if ($n_trophies > 0) {
-	// TODO: "SELECT TOP" isn't universally supported
-	$stmt = $db->query('SELECT TOP '.$n_trophies.' RaceChart.racerid'
+	$stmt = $db->query('SELECT RaceChart.racerid'
 					   .' FROM (RegistrationInfo'
 					   .' INNER JOIN RaceChart'
 					   .' ON RaceChart.RacerID = RegistrationInfo.RacerID)'
@@ -47,6 +46,10 @@ function top_finishers_overall($n_trophies) {
 
 	foreach ($stmt as $row) {
 	  $results[] = $row['racerid'];
+	  if (count($results) >= $n_trophies) {
+		  $stmt->closeCursor();
+		  break;
+	  }
 	}
   }
 
