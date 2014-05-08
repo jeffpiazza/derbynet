@@ -1,6 +1,18 @@
 <?php
 $db = new PDO('odbc:DSN=gprm;Exclusive=NO','','');
+//$db = new PDO('sqlite:/opt/databases/mydb.sq3', null, null);
+//$db = new PDO('mysql:host=localhost;dbname=trial3', 'trial3', '');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+//echo '<pre>'; print_r(PDO::getAvailableDrivers()); echo '</pre>';
+// On Mac, produces array('mysql', 'sqlite')
+// On Windows, produces array('mysql', 'odbc', 'sqlite')
+
+// if  $db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql'
+$dbtype = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
+if ($dbtype == 'odbc') {
+	$dbtype = 'access';
+}
 
 function read_single_value($sql, $def = false) {
   global $db;
@@ -151,9 +163,9 @@ function get_running_round() {
 function running_round_header($now_running, $groups_use_roundid = FALSE) {
   if (isset($now_running['class']) && $now_running['class']) {
     echo '<h2 class="now_running">Now racing: '
-      .'<a href="#group_'.$now_running[$groups_use_roundid ? 'roundid' : 'groupid'].'">'
+      .'<a href="#group_'.@$now_running[$groups_use_roundid ? 'roundid' : 'groupid'].'">'
       .($now_running['use_master_sched'] ? '' : $now_running['class'].', ')
-      .'Round '.$now_running['round']
+      .'Round '.@$now_running['round']
       .'</a>'
       .'</h2>'."\n";
   } else {
