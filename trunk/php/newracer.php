@@ -52,10 +52,10 @@ if ($_POST) {
 <select name="den">
 <?php
 
-$max_rank = read_single_value('SELECT max(Class & \'/\' & Rank) AS maxrank'
+$max_rank = read_single_value('SELECT MAX(class & \'/\' & rank) AS maxrank'
 							  .' FROM Ranks'
 							  .' INNER JOIN Classes'
-							  .' ON Ranks.classid = Classes.classid');
+							  .' ON Ranks.classid = Classes.classid', array());
 $stmt = $db->query('SELECT rankid, Ranks.classid, rank, class'
 				   .' FROM Ranks'
 				   .' INNER JOIN Classes'

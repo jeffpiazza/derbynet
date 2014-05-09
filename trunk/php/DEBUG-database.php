@@ -187,10 +187,13 @@ foreach ($rounds as $round) {
 	.'<td>'.$round['class'].'</td>'
 	.'<td>'.$round['charttype'].'</td>'
 	.'<td>'.$round['phase'].'</td>';
-	echo '<td>'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = '.$round['roundid']).'</td>';
-	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = '.$round['roundid']).'</td>';
-	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = '.$round['roundid']
-								  .' AND completed IS NOT NULL').'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
+								  array(':roundid' => $round['roundid'])).'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid',
+								  array(':roundid' => $round['roundid'])).'</td>';
+	echo '<td>'.read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid',
+								  .' AND completed IS NOT NULL',
+								  array(':roundid' => $round['roundid'])).'</td>';
 	echo '</tr>'."\n";
 }
 ?>

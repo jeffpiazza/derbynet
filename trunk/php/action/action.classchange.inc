@@ -2,15 +2,18 @@
 if (have_permission(CHANGE_RACER_RANK_PERMISSION)) {
 	$racerid = $_POST['racer'];
 	$rankid = $_POST['value'];
-	$classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = '.$rankid);
+	$classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
+								 array(':rankid' => $rankid));
 	if (!$classid) {
 	  echo '<checkin><failure>['.$fetch.']</failure></checkin>';
 	  exit();
 	}
-	$new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = '.$classid);
-	$old_classid = read_single_value('SELECT classid FROM RegistrationInfo WHERE racerid = '.$racerid);
-	$old_roundid = read_single_value('SELECT roundid FROM Rounds Where round = 1'
-									 .' AND classid = '.$old_classid);
+	$new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
+									 array(':classid' => $classid));
+	$old_classid = read_single_value('SELECT classid FROM RegistrationInfo WHERE racerid = :racerid',
+									 array(':racerid' => $racerid));
+	$old_roundid = read_single_value('SELECT roundid FROM Rounds Where round = 1 AND classid = :classid',
+									 array(':classid' => $old_classid));
 	if (take_action_silently('UPDATE RegistrationInfo SET rankid = :rankid'
 							 .', classid = :classid'
 							 .' WHERE racerid = :racerid'

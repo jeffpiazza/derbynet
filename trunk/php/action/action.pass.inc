@@ -2,7 +2,8 @@
 $ok_to_change = true;
 
 // Protect against changes to a racer who already has schedule data.
-if (0 + read_single_value('SELECT COUNT(*) FROM RaceChart WHERE RacerID = '.$_POST['racer'], 0))
+if (0 + read_single_value('SELECT COUNT(*) FROM RaceChart WHERE RacerID = :racerid',
+						  array(':racerid' => $_POST['racer']), 0))
 	$ok_to_change = false;
 
 if ($ok_to_change) {
