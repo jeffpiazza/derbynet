@@ -19,8 +19,9 @@ require('banner.inc');
 
 require_once('speed_trophies.inc');
 
-$awardTypeOther = read_single_value('SELECT AwardTypeID FROM AwardTypes'
-									.' WHERE AwardType = \'Other\'', 3);
+// TODO: Magical '3' for 'other' awards...
+$awardTypeOther = read_single_value('SELECT awardtypeid FROM AwardTypes WHERE awardtype = \'Other\'',
+									array(), 3);
 $awards = Array(Array('Most', 'Aerodynamic'),
 				Array('Most', 'Amazing'),
 				Array('Best', 'Animal Theme'),

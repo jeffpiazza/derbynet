@@ -16,9 +16,10 @@ if ($dbtype == 'odbc') {
 	$dbtype = 'access';
 }
 
-function read_single_value($sql, $def = false) {
+function read_single_value($sql, $params, $def = false) {
   global $db;
-  $rs = $db->query($sql);
+  $rs = $db->prepare($sql);
+  $rs->execute($params);
   $row = $rs->fetch(PDO::FETCH_NUM);
   $value = $row[0];
   $rs->closeCursor();
@@ -33,7 +34,8 @@ function read_single_value($sql, $def = false) {
 // configuration settings from GPRM.  As long as there aren't any name conflicts, we can add a 
 // few configuration settings of our own.
 function read_raceinfo($key, $def = false) {
-  return read_single_value('select ItemValue from RaceInfo where ItemKey = \''.$key.'\'', $def);
+  return read_single_value('SELECT itemvalue FROM RaceInfo WHERE itemkey = :key',
+						   array(':key' => $key), $def);
 }
 
 function read_raceinfo_boolean($key) {
@@ -112,7 +114,7 @@ function get_lane_count() {
 // schedule is undetected, but we don't really care until/unless
 // there's a new schedule to replace it.
 function high_water_resultid() {
-  return read_single_value('SELECT MAX(resultid) FROM RaceChart', 0);
+  return read_single_value('SELECT MAX(resultid) FROM RaceChart', array(), 0);
 }
 
 // Returns the highest RoundID from the Rounds table.

@@ -1,8 +1,9 @@
 <?php
 
-$passed_inspection = read_single_value('SELECT PassedInspection OR CarNumber = 99999'
+$passed_inspection = read_single_value('SELECT passedinspection OR carnumber = 99999'
 									   .' FROM RegistrationInfo'
-									   .' WHERE RacerID = '.$_POST['racer']);
+									   .' WHERE racerid = :racerid',
+									   .array(':racerid' => $_POST['racer']));
 
 take_action_if_permitted('UPDATE RegistrationInfo'
 						 .' SET PassedInspection = PassedInspection OR CarNumber = 99999,'
