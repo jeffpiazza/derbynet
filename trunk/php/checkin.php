@@ -17,7 +17,7 @@ require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // Here on the server side, a GET request sends HTML for the whole
 // page.  POST requests to make changes to the database are sent to
-// checkin-action.php, and produce just a small XML document.
+// action.php, and produce just a small XML document.
 
 // TODO- subgroups explanation
 

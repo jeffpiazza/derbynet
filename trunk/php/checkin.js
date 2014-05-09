@@ -1,7 +1,7 @@
 // Handlers for the UI controls in the check-in page.
 // TODO: Handle permission problems reported for the action.
 
-g_checkin_action_url = "checkin-action.php";
+g_checkin_action_url = "action.php";
 
 var pending_ajax_requests = 0;
 
