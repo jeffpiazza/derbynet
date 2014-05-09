@@ -20,11 +20,12 @@ function read_single_value($sql, $def = false) {
   global $db;
   $rs = $db->query($sql);
   $row = $rs->fetch(PDO::FETCH_NUM);
+  $value = $row[0];
   $rs->closeCursor();
-  if ($row === false) {
+  if ($row === false || $row[0] === null) {
 	return $def;
   }
-  return $row[0];
+  return $value;
 }
 
 
@@ -41,14 +42,12 @@ function read_raceinfo_boolean($key) {
 
 function write_raceinfo($key, $val) {
   global $db;
-  //$db->exec('update RaceInfo set ItemValue = \''.$val.'\' where ItemKey = \''.$key.'\'');
-
-  $stmt = $db->prepare('select count(*) from RaceInfo where ItemKey = :key');
+  $stmt = $db->prepare('SELECT COUNT(*) FROM RaceInfo WHERE itemkey = :key');
   $stmt->execute(array(':key' => $key));
   if ($stmt->fetchColumn() == 0) {
-	$stmt = $db->prepare('insert into RaceInfo(ItemKey, ItemValue) values(:key, :value)');
+	$stmt = $db->prepare('INSERT INTO RaceInfo(itemkey, itemvalue) VALUES(:key, :value)');
   } else {
-	$stmt = $db->prepare('update RaceInfo set ItemValue = :value where ItemKey = :key');
+	$stmt = $db->prepare('UPDATE RaceInfo SET itemvalue = :value WHERE itemkey = :key');
   }
   $stmt->execute(array(':key' => $key,
 					   ':value' => $val));
@@ -113,7 +112,7 @@ function get_lane_count() {
 // schedule is undetected, but we don't really care until/unless
 // there's a new schedule to replace it.
 function high_water_resultid() {
-  return read_single_value('select max(ResultID) from RaceChart', 0);
+  return read_single_value('SELECT MAX(resultid) FROM RaceChart', 0);
 }
 
 // Returns the highest RoundID from the Rounds table.

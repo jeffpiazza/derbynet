@@ -53,11 +53,11 @@ $sql_script = array(
 ."  PRIMARY KEY (`ClassID`)"
 .")",
 
-"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (1, '3 - Bear')",
-"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (2, '5 - Friends')",
-"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (3, '1 - Tiger')",
-"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (4, '2 - Wolf')",
-"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (5, '4 - Webelos')",
+"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (1, '1 - Tiger')",
+"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (2, '2 - Wolf')",
+"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (3, '3 - Bear')",
+"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (4, '4 - Webelos')",
+"INSERT INTO `Classes` (`ClassID`, `Class`) VALUES (5, '5 - Friends')",
 
 "DROP TABLE IF EXISTS `RaceChart`",
 
