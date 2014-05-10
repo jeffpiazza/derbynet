@@ -388,13 +388,8 @@ function write_chart($roundid, &$heats) {
 
 function results_exist($roundid) {
 	global $db;
-	// TODO: read_single_value needs to accept parameters
-	$stmt = $db->prepare('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid AND finishtime IS NOT NULL');
-	$stmt->execute(array(':roundid' => $roundid));
-	$row = $stmt->fetch(PDO::FETCH_NUM);
-	$value = $row[0] > 0;
-	$stmt->closeCursor();
-	return $value;
+	return read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid AND finishtime IS NOT NULL',
+							 array(':roundid' => $roundid));
 }
 
 function schedule_one_round($roundid, $nlanes, $nrounds = 1) {

@@ -105,7 +105,8 @@ header('Content-Type: text/xml');
   $max_time = $since;
   foreach ($stmt as $rs) {
     echo "<update resultid='".$rs['resultid']."'"
-      ." time='".$rs['finishtime']
+      // TODO: Adjustable number of decimals?
+	  ." time='".number_format($rs['finishtime'], 3)
       ."'/>\n";
     if ($rs['completed'] > $max_time)
       $max_time = $rs['completed'];
