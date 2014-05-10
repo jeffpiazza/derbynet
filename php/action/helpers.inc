@@ -17,7 +17,7 @@ function start_response() {
 }
 
 function end_response() {
-	echo '</action-response>';
+	echo '</action-response>'."\n";
 }
 
 function take_action_silently($sql, $params) {

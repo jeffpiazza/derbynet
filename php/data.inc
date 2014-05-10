@@ -131,7 +131,9 @@ function high_water_rounds() {
 // describing the currently-running round and heat.
 function get_running_round() {
   global $db;
-  $config = array('use_master_sched' => 0);  // May be overwritten
+  $config = array('use_master_sched' => 0,
+				  'class' => '',
+				  'roundid' => -1);  // May be overwritten
 
   foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $rs) {
     $key = $rs['itemkey'];
@@ -146,14 +148,17 @@ function get_running_round() {
       $config['use_master_sched'] = $val ? 1 : 0;
   }
 
-  $stmt = $db->query('SELECT round, class'
+  $stmt = $db->prepare('SELECT round, class'
 					 .' FROM Rounds'
 					 .' INNER JOIN Classes'
 					 .' ON Rounds.classid = Classes.classid'
-					 .' WHERE roundid = '.$config['roundid']
-					 .' AND Rounds.classid = '.$config['classid']);
+					 .' WHERE roundid = :roundid'
+					 .' AND Rounds.classid = :classid');
+  $stmt->execute(array(':roundid' => @$config['roundid'],
+					   ':classid' => @$config['classid']));
   $rs = $stmt->fetch(PDO::FETCH_ASSOC);
-  if ($rs) {
+//  if ($rs)
+ {
     $config['class'] = $rs['class'];
     $config['round'] = $rs['round'];
   }
@@ -164,7 +169,7 @@ function get_running_round() {
 // This HTML text will also get dynamically updated via update.js,
 // so make sure any changes get made in both places!
 function running_round_header($now_running, $groups_use_roundid = FALSE) {
-  if (isset($now_running['class']) && $now_running['class']) {
+  if (@$now_running['class']) {
     echo '<h2 class="now_running">Now racing: '
       .'<a href="#group_'.@$now_running[$groups_use_roundid ? 'roundid' : 'groupid'].'">'
       .($now_running['use_master_sched'] ? '' : $now_running['class'].', ')
