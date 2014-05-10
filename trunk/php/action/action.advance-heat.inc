@@ -33,6 +33,7 @@ $ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
 							  ':heat' => $heat)) > 0;
 
 // TODO: Ensure not already-completed race results?
+// TODO: This runs rounds in order of roundid, which may well not be the order for racing
 if (!$ok && $auto) {
 	$r2 = read_single_value('SELECT MIN(roundid) FROM RaceChart'
 							.' WHERE roundid > :roundid',
@@ -53,6 +54,10 @@ if (!$ok) {
 } else {
 	write_raceinfo('RoundID', $roundid);
 	write_raceinfo('Heat', $heat);
+	if ($roundid != @$current['roundid']) {
+		write_raceinfo('ClassID', read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
+													array(':roundid' => $roundid)));
+	}
 	echo '<success/>';
 }
 

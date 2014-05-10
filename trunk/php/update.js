@@ -44,6 +44,11 @@ function process_response_from_current(summary) {
   var high_water = summary.getElementsByTagName("high_water")[0];
 
   // Move curgroup class and add "Now Racing" text.
+
+  // g_cur_group is initialized to -1, and current.php should keep
+  // report group=-1 before racing starts.  While racing is actually
+  // underway, group should be > 0.  When concluded, group should
+  // report an empty string.
   if (cgroup != g_cur_group) {
 	// Remove class and text from previous group, if any
 	$(".curgroup").removeClass("curgroup");
@@ -59,7 +64,8 @@ function process_response_from_current(summary) {
 							 + (cclass ? cclass + ", " : "")
 							 + "Round " + cround + "</a>");
 	} else {
-	  $(".now_running").html("Racing has concluded.");
+	  $(".now_running").html("Racing has concluded (cgroup " + typeof cgroup + " " + cgroup 
+							 + ", g_cur_group " + typeof g_cur_group + " " + g_cur_group + ".");
 	}
 	g_cur_heat = -2;
 	g_cur_group = cgroup;
