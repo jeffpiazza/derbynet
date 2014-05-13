@@ -50,9 +50,13 @@ function take_action($sql, $params, $body_xml = '') {
 	end_response();
 }
 
+function not_authorized_body() {
+	echo '<failure code="notauthorized">Not authorized -- please see race coordinator</failure>';
+}
+
 function not_authorized() {
 	start_response();
-	echo '<failure code="notauthorized">Not authorized -- please see race coordinator</failure>';
+	not_authorized_body();
 	end_response();
 }
 

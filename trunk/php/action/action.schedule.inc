@@ -339,6 +339,7 @@ function make_ordered_schedule($nlanes, $ncars, $nrounds) {
 	return $ordered;
 }
 
+// roster[sequence] = racerid
 function read_roster($roundid) {
 	global $db;
 	$roster = array();
@@ -371,7 +372,8 @@ function write_chart($roundid, &$heats) {
 	global $db;
 	$db->exec('DELETE FROM RaceChart WHERE roundid = '.$roundid);
 	// TODO: ClassID?
-	$stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid) VALUES(:roundid, :heat, :lane, :racerid)');
+	$stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
+						 .' VALUES(:roundid, :heat, :lane, :racerid)');
 	$heat_index = 0;
 	foreach ($heats as $heat) {
 		++$heat_index;
@@ -394,6 +396,12 @@ function results_exist($roundid) {
 
 function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
 	$roster = read_roster($roundid);
+	if (count($roster) < 2) {
+		return;
+	}
+	while (count($roster) < $nlanes) {
+		$roster[] = null;
+	}
 	$sched = make_ordered_schedule($nlanes, count($roster), $nrounds);
 	write_chart($roundid, form_chart($sched, $roster));
 }

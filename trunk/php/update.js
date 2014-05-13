@@ -167,6 +167,10 @@ function updatecurrent_handler() {
 	var update_period = 2500;  // 2.5 sec
 	if (this.status == 200) {
 	  $('#ajax_failure').addClass('hidden');
+	  if (this.responseXML == null) {
+		console.log("XmlHttpResponse:");
+		console.log(this);
+	  }
 	  update_period = process_response_from_current(this.responseXML.documentElement);
 	} else {
 	  $('#ajax_status').html(this.status + " (" + 

@@ -19,13 +19,14 @@ DEFINE('CHECK_IN_RACERS_PERMISSION', 4);
 DEFINE('REVERT_CHECK_IN_PERMISSION', 8);
 DEFINE('RENUMBER_CAR_PERMISSION', 16);
 DEFINE('REGISTER_NEW_RACER_PERMISSION', 32);
-// Allow changing a class (den) or rank (subgroup)
+// Allow changing a racer's class (den) or rank (subgroup)
 DEFINE('CHANGE_RACER_RANK_PERMISSION', 64);
 // Allow changing a rank (subgroup)
 DEFINE('ASSIGN_RACER_IMAGE_PERMISSION', 128);
 // Assign ad-hoc awards, design awards, Scouts Favorite award
 DEFINE('JUDGING_PERMISSION', 256);
-// 512
+// Record heat results, advance heat
+DEFINE('CONTROL_RACE_PERMISSION', 512);
 // 1024
 // 2048
 // 4096

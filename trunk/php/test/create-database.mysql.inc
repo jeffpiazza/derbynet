@@ -128,11 +128,11 @@ $sql_script = array(
 ."  INDEX (`Rank`)"
 .")",
 
-"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (1, '3 - Bear', 1)",
-"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (2, '5 - Friends', 2)",
-"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (3, '1 - Tiger', 3)",
-"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (4, '2 - Wolf', 4)",
-"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (5, '4 - Webelos', 5)",
+"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (1, '1 - Tiger', 1)",
+"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (2, '2 - Wolf', 2)",
+"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (3, '3 - Bear', 3)",
+"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (4, '4 - Webelos', 4)",
+"INSERT INTO `Ranks` (`RankID`, `Rank`, `ClassID`) VALUES (5, '5 - Friends', 5)",
 
 "DROP TABLE IF EXISTS `RegistrationInfo`",
 
