@@ -2,14 +2,11 @@
 // Action to schedule heats for a round.
 // $_POST: roundid, nrounds(=1)
 
-// TODO:
-// Check permission (for this, and other actions)
-// Create BYEs for too-few racers
+// TODO: Permission
+
 // Add tests for no (checked-in) racers, one, two, ..., nlanes-1
-//
+
 // Action to set number of lanes (by interrogating timer)
-// Add number of lanes to the settings page (in case the timer doesn't say)
-// 
 
 
 require_once('data.inc');
@@ -267,6 +264,8 @@ define('RACE_COUNT_WEIGHT', 10);
 define('CONSECUTIVE_WEIGHT', 1000);
 define('REPEAT_WEIGHT', 1000);
 
+// $appearances[], indexed by racer (0 .. $ncars - 1), counts the
+// number of heats that include that racer.
 function rate_race_counts(&$next_heat, $n_prev_heats, &$appearances) {
 	$new_appearances = $appearances;  // Copies $appearances
 	foreach ($next_heat as $car) {
@@ -380,10 +379,12 @@ function write_chart($roundid, &$heats) {
 		$lane_index = 0;
 		foreach ($heat as $racerid) {
 			++$lane_index;
-			$stmt->execute(array(':roundid' => $roundid,
-								 ':heat' => $heat_index,
-								 ':lane' => $lane_index,
-								 ':racerid' => $racerid));
+			if ($racerid) {
+				$stmt->execute(array(':roundid' => $roundid,
+									 ':heat' => $heat_index,
+									 ':lane' => $lane_index,
+									 ':racerid' => $racerid));
+			}
 		}
 	}
 }
