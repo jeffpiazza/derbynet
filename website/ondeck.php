@@ -1,8 +1,8 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
 <?php 
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 
     $nlanes = get_lane_count();
@@ -13,8 +13,8 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 ?>
 <html>
 <head>
-<script type="text/javascript" src="jquery.js"></script>
-<?php require('kiosk-page.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
     var g_last_update_time = ""; // First refresh is for everything
     var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
@@ -22,16 +22,16 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
     var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
     var g_using_groupid = true;
 </script>
-<script type="text/javascript" src="update.js"></script>
+<script type="text/javascript" src="js/update.js"></script>
 <title>Race Schedule</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <?php
-$banner_title = 'Racing Heats'; require('banner.inc');
+$banner_title = 'Racing Heats'; require('inc/banner.inc');
 running_round_header($now_running);
 
-require_once('rounds.inc');
+require_once('inc/rounds.inc');
 $groups = all_racing_groups();
 
 $sql = 'SELECT'

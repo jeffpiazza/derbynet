@@ -1,7 +1,7 @@
 <?php
-require_once('data.inc');
-require_once('permissions.inc');
-require_once('roles.inc');
+require_once('inc/data.inc');
+require_once('inc/permissions.inc');
+require_once('inc/roles.inc');
 
 if (!isset($_SESSION['role'])) {
   $_SESSION['role'] = '';

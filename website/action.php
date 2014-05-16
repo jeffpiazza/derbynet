@@ -4,9 +4,9 @@
 // Receive POSTs from the checkin page to perform check-in actions,
 // return XML responses
 
-require_once('data.inc');
-require_once('permissions.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/permissions.inc');
+require_once('inc/authorize.inc');
 
 
 header('Content-Type: text/xml');

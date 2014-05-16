@@ -1,5 +1,5 @@
 <?php
-require_once('data.inc');
+require_once('inc/data.inc');
 
 $photoOriginalsDirectory = photo_directory();
 $photoThumbsDirectory = $photoOriginalsDirectory.'\\thumbs';

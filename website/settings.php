@@ -1,7 +1,7 @@
 <?php session_start(); ?>
 <?php
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);
 
 if ($_POST) {
@@ -22,12 +22,12 @@ if ($_POST) {
 <html>
 <head>
 <title>Pinewood Derby Race Settings</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <?php
 $banner_title = 'Settings';
-require('banner.inc');
+require('inc/banner.inc');
 
 $nlanes = get_lane_count();
 $use_subgroups = read_raceinfo_boolean('use-subgroups');

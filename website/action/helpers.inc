@@ -1,7 +1,7 @@
 <?php
-require_once('data.inc');
-require_once('permissions.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/permissions.inc');
+require_once('inc/authorize.inc');
 
 
 function xml_for_reload() {

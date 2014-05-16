@@ -1,7 +1,7 @@
 <?php @session_start(); ?>
 <?php
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // This is the racer check-in page.  It appears as a table of all the
@@ -56,10 +56,10 @@ if (!$order)
 <html>
 <head>
 <title>Check-In</title>
-<link rel="stylesheet" type="text/css" href="jquery-mobile/jquery.mobile-1.4.2.css"/>
-<?php require('stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
 <meta http-equiv="refresh" content="300"/>
-<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript">
 // We're using jQuery Mobile for its nice mobile/tablet-friendly UI
 // elements.  By default, jQM also wants to hijack page loading
@@ -72,13 +72,13 @@ $(document).bind("mobileinit", function() {
 					 });
 				 });
 </script>
-<script type="text/javascript" src="jquery-mobile/jquery.mobile-1.4.2.js"></script>
-<script type="text/javascript" src="checkin.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
 <?php
 $banner_title = 'Racer Check-In';
-require('banner.inc');
+require('inc/banner.inc');
 
 // This is a hidden form for renumbering a racer's car number.
 ?>
