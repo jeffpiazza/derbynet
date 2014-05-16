@@ -2,6 +2,11 @@
 
 BASE_URL=$1
 
+if [ "$BASE_URL" = "" ]; then
+	echo Base URL required!
+	exit
+fi
+
 # TODO: Exercise update.php
 # TODO: Exercise checkin-action.php
 # TODO: Verify sort options for checkin.php
@@ -10,82 +15,19 @@ BASE_URL=$1
 # <form method="link" action="...">
 # <a href="...">
 
-cat >anonymous.index.tmp <<EOF
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >coordinator.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="photo-thumbs.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="settings.php">
-        <form method="link" action="utilities.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >racecrew.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="login.php">
-EOF
+source common.sh
 
 rm cookies.curl
 rm output.curl
-CURL="curl -L -s -b cookies.curl -c cookies.curl"
 
-# TODO: Consider --trace or --trace-ascii
-
-function curl_get() {
-	echo '     ' $1 >&2
-	echo    >> output.curl
-	echo $1 >> output.curl
-	echo    >> output.curl
-	curl --location -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| xmllint --format - | tee -a output.curl
-}
-
-function curl_get_amper() {
-	echo '     ' $1 >&2
-	echo    >> output.curl
-	echo $1 >> output.curl
-	echo    >> output.curl
-	curl --location -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| grep -v '&' | xmllint --format - | tee -a output.curl
-}
-
-function curl_post() {
-	echo '     post ' $1 $2 >&2
-	echo    >> output.curl
-	echo post $1 $2 >> output.curl
-	echo    >> output.curl
-	curl --location -d $2 -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| xmllint --format - | tee -a output.curl
-}
-
-function user_login() {
-	# $1 = user name
-	# $2 = password
-	[ "`curl_post login-action.php "name=$1&password=$2" | sed -ne 's!.*<success>\(.*\)</success>!\1!p'`" = "$1" ] \
-		|| login_as $1 failed!
-}
-
-function user_logout() {
-	[ "`curl_get login-action.php | sed -ne 's!.*<success>\(.*\)</success>!\1!p'`" = "" ] \
-        || user_logout failed
-}
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
+
 [ "`curl_get test/create-database.php | grep 'Database script completed!'`" ] || echo Database creation failed
 
 user_login RaceCoordinator doyourbest
 
-echo '     Populate database'
+echo ' ' ' ' ' ' 'Populate database'
 ./populate-database.sh $BASE_URL
 [ `curl_get checkin.php | grep -c '<td>Owen</td>'` -eq 1 ] || echo Owen O\'Connor!
 
@@ -113,7 +55,15 @@ user_login RaceCoordinator doyourbest
 curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 
 [ `curl_get checkin.php | grep -c '<tr '` -eq 50 ] || echo Checkin!
-# POST                      : action=xbs&racer=<racerid>&value=<1/0>
+
+curl_post action.php "action=schedule&roundid=1" | check_success
+curl_post action.php "action=pass&racer=8&value=1" | check_success
+curl_post action.php "action=schedule&roundid=1" | check_success
+curl_post action.php "action=pass&racer=8&value=0" | check_success
+
+# TODO: delete-results only wipes out the times, not the fact that a schedule exists.
+#curl_post action.php "action=schedule&roundid=1" | check_success
+
 # POST action=renumber&racer=<racerid>&value=<carnumber>
 # POST action=classchange&racer=<racerid>&value=<rankid>
 # POST action=photo&racer=<racerid>&photo=<filepath> and maybe &previous=<old-racerid>
@@ -130,6 +80,54 @@ curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 [ `curl_get awards.php | grep -c '<tr'` -eq 26 ] || echo Awards! `curl_get awards.php | grep -c '<tr'`
 
 #        <form method="link" action="photo-thumbs.php">
+
+curl_post action.php "action=schedule&roundid=2" | check_success "scheduling round 2"
+curl_post action.php "action=schedule&roundid=3" | check_success "scheduling round 3"
+curl_post action.php "action=schedule&roundid=4" | check_success "scheduling round 4"
+curl_post action.php "action=schedule&roundid=5" | check_success "scheduling round 5"
+
+sleep 2
+
+curl_post action.php "action=advance-heat&roundid=1&heat=1" | check_success "setting initial heat"
+# TODO: Heats with BYEs
+curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=heat-results&lane1=3.100&lane2=3.001&lane3=3.110&lane4=3.200" | check_success heat
+curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+sleep 1
+curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=heat-results&lane4=2.999&lane2=3.001&lane3=3.010&lane1=9.999" | check_success heat
+sleep 1
+curl_post action.php "action=heat-results&lane4=2.999&lane2=3.001&lane3=3.010&lane1=9.999" | check_success heat
+
+curl_post action.php "action=delete-results&roundid=2" | check_success
+
+# Un-check-in a bunch of Wolves, to leave BYEs in the schedule
+curl_post action.php "action=pass&racer=5&value=0" | check_success
+curl_post action.php "action=pass&racer=11&value=0" | check_success
+curl_post action.php "action=pass&racer=17&value=0" | check_success
+curl_post action.php "action=pass&racer=23&value=0" | check_success
+curl_post action.php "action=pass&racer=31&value=0" | check_success
+
+# Re-generate the schedule.  TODO: This should be more-or-less automatic
+curl_post action.php "action=schedule&roundid=2" | check_success
+
+# There seems to be a timing hazard if the first heat results come too quickly
+sleep 2
+curl_post action.php "action=heat-results&lane4=3.123&lane1=3.210" | check_success
+curl_post action.php "action=heat-results&lane1=3.123&lane2=3.210" | check_success
+curl_post action.php "action=heat-results&lane2=3.123&lane3=3.210" | check_success
+curl_post action.php "action=heat-results&lane3=3.123&lane4=3.210" | check_success
+
+# TODO: Testing some rescheduling
+curl_post action.php "action=pass&racer=4&value=1" | check_success check-in
+curl_post action.php "action=schedule&roundid=3" | check_success schedule
+curl_post action.php "action=heat-results&lane1=3.100&lane2=3.001&lane3=3.110&lane4=3.200" | check_success heat
+sleep 1
+curl_post action.php "action=pass&racer=40&value=1" | check_success check-in
+sleep 1
+curl_post action.php "action=reschedule&roundid=3" | check_success reschedule
 
 user_logout
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
