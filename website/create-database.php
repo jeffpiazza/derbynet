@@ -7,6 +7,7 @@
 <body>
 <?php
 
+ // TODO: Protect via permissions!!
 
 require_once('inc/data.inc');
 
