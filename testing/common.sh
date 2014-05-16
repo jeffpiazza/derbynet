@@ -13,7 +13,6 @@ cat >coordinator.index.tmp <<EOF
         <form method="link" action="racer-results.php">
         <form method="link" action="awards.php">
         <form method="link" action="settings.php">
-        <form method="link" action="utilities.php">
         <form method="link" action="login.php">
 EOF
 
