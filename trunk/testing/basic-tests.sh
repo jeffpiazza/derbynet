@@ -23,7 +23,7 @@ rm output.curl
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
 
-[ "`curl_get test/create-database.php | grep 'Database script completed!'`" ] || echo Database creation failed
+[ "`curl_get create-database.php | grep 'Database script completed!'`" ] || echo Database creation failed
 
 user_login RaceCoordinator doyourbest
 
@@ -73,7 +73,7 @@ curl_post action.php "action=pass&racer=8&value=0" | check_success
 [ `curl_get settings.php | grep -c '<input'` -eq 15 ] || echo Settings!
 # TODO: Verify settings behavior
 
-[ `curl_get utilities.php | grep -c '<input'` -eq 3 ] || echo Utilities!
+# [ `curl_get utilities.php | grep -c '<input'` -eq 3 ] || echo Utilities!
 # TODO: Verify utilities behavior
 
 # Because there have been no races, there are no entries on the awards page...
