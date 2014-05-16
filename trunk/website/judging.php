@@ -1,23 +1,23 @@
 <?php @session_start(); ?>
 <?php
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(JUDGING_PERMISSION);
 ?>
 <html>
 <head>
 <title>Award Judging</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 <meta http-equiv="refresh" content="300"/>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="checkin.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
 <?php
 $banner_title = 'Judging';
-require('banner.inc');
+require('inc/banner.inc');
 
-require_once('speed_trophies.inc');
+require_once('inc/speed_trophies.inc');
 
 // TODO: Magical '3' for 'other' awards...
 $awardTypeOther = read_single_value('SELECT awardtypeid FROM AwardTypes WHERE awardtype = \'Other\'',

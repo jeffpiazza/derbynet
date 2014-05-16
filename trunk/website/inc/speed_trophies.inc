@@ -1,5 +1,5 @@
 <?php
-require_once('data.inc');
+require_once('inc/data.inc');
 
 // Collect the top N racer IDs in each class
 function top_finishers_by_class($n_per_class) {

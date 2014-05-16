@@ -2,8 +2,8 @@
 
 // TODO: This page definitely needs some cosmetic help...
 
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(REGISTER_NEW_RACER_PERMISSION);
 
 if ($_POST) {
@@ -39,7 +39,7 @@ if ($_POST) {
 <html>
 <head>
 <title>New Racer</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <div class="block_buttons">

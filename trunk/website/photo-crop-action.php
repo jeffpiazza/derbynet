@@ -1,5 +1,5 @@
 <?php
-require_once('photo-config.inc');
+require_once('inc/photo-config.inc');
 
 // For rotations, we re-write the original image in place, and generate a new working image.
 //

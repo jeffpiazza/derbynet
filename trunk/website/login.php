@@ -1,14 +1,14 @@
 <?php @session_start(); ?>
 <?php
-require_once('data.inc');
-require_once('permissions.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/permissions.inc');
+require_once('inc/authorize.inc');
 ?>
 <html>
 <head>
 <title>Please Log In</title>
-<?php require('stylesheet.inc'); ?>
-<script type="text/javascript" src="jquery.js"></script>
+<?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript">
 
 function readystate_handler() {
@@ -76,7 +76,7 @@ function handle_password_submission(form) {
 </form>
 </div>
 <?php
-require('banner.inc');
+require('inc/banner.inc');
 
 echo '<div class="index_background">'."\n";
 echo '<div class="block_buttons">'."\n";

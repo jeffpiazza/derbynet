@@ -10,8 +10,8 @@
     - Who get to see (and do) what.
  */
 
-require_once('data.inc');
-require_once('permissions.inc');
+require_once('inc/data.inc');
+require_once('inc/permissions.inc');
 
   // Define your roles and permissions here, and assign passwords.
   // Consider these just to be examples.  Upon first connection, a

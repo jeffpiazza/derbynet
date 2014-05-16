@@ -9,7 +9,7 @@
 // Action to set number of lanes (by interrogating timer)
 
 
-require_once('data.inc');
+require_once('inc/data.inc');
 
 // Each generator is a simple array of ints.
 // $generators[/* number of lanes */] gives an array of entries; each

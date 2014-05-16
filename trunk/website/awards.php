@@ -1,19 +1,19 @@
 <?php @session_start();
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(VIEW_AWARDS_PERMISSION);
 ?><html>
 <head>
 <title>Awards and Standings</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <?php
 $banner_title = 'Awards Summary';
-require('banner.inc');
+require('inc/banner.inc');
 
-require_once('data.inc');
-require_once('speed_trophies.inc');
+require_once('inc/data.inc');
+require_once('inc/speed_trophies.inc');
 
 $nlanes = get_lane_count();
 $use_subgroups = read_raceinfo_boolean('use-subgroups');

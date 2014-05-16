@@ -1,15 +1,15 @@
 <?php
 @session_start();
 $imagename = $_GET['name'];
-require_once('photo-config.inc');
+require_once('inc/photo-config.inc');
 ?>
 <html>
 <head>
 <title>Edit Photo</title>
-<?php require('stylesheet.inc'); ?>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="Jcrop/jquery.Jcrop.min.js"></script>
-<link rel="stylesheet" type="text/css" href="Jcrop/jquery.Jcrop.min.css"/>
+<?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery.Jcrop.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 </head>
 <body>
 <?php

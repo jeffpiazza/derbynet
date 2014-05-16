@@ -1,7 +1,7 @@
 <?php
 session_start(); 
 
-require_once('photo-config.inc');
+require_once('inc/photo-config.inc');
 
 // Path name is e.g. photo-fetch.php/thumb/mygreatphoto.jpg
 

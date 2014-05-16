@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>Please Check In</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-page.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript">
+function fire_reload() {
+  location.reload(true);
+}
+
+function queue_reload() {
+  setTimeout(fire_reload, 5000);
+}
+  
+$(document).ready(queue_reload);
+</script>
+</head>
+<body>
+<?php
+require_once('inc/data.inc');
+$sql = 'SELECT Class, LastName, FirstName'
+	.' FROM RegistrationInfo'
+	.' INNER JOIN Classes'
+	.' ON RegistrationInfo.ClassID = Classes.ClassID'
+	.' WHERE NOT PassedInspection'
+	.' ORDER BY Class, LastName, FirstName';
+$stmt = $db->query($sql);
+
+$prev_class = '';
+foreach ($stmt as $rs) {
+  $classname = $rs['class'];
+  $name = $rs['lastname'].', '.$rs['firstname'];
+  if ($classname <> $prev_class) {
+	if ($prev_class)
+	  echo '</div>'."\n";
+	else {
+	  echo '<p class="kiosk_title">Please Check In</p>'."\n";
+	  echo '<div class="wanted_container">'."\n";
+	  echo '<p>The following participants have NOT yet checked in:</p>'."\n";
+    }
+	echo '<div class="kiosk_wanted">'."\n";
+	echo '<p class="kiosk_heading">'.$classname.'</p>'."\n";
+	$prev_class = $classname;
+    echo '<ul>'."\n";
+  }
+  echo '<li>'.$name.'</li>'."\n";
+}
+if ($prev_class) {
+  echo '</div>'."\n";
+  echo '</div>'."\n";
+} else {
+  echo '<p class="kiosk_title">All Participants Have Checked In</p>'."\n";
+  echo '<div class="full_page_center">'."\n";
+  echo '<img src="Cub_Scout_emblem_800.png"/>'."\n";
+  echo '</div>'."\n";
+}
+?>
+
+
+<div id="ajax_failure" class="hidden">
+  Ajax request failed with <span id="ajax_status">0</span>.
+</div>
+</body>
+</html>

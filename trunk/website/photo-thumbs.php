@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once('data.inc');
-require_once('authorize.inc');
+require_once('inc/data.inc');
+require_once('inc/authorize.inc');
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
-require_once('photo-config.inc');
+require_once('inc/photo-config.inc');
 
 function scan_directory($directory, $pattern) {
   $files = array();
@@ -39,12 +39,12 @@ $allfiles = scan_directory($photoOriginalsDirectory,
 <head>
 <title>Assign Racer Photos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="jquery-mobile/jquery.mobile-1.4.2.css"/>
-<?php require('stylesheet.inc'); ?>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="jquery-ui-1.10.4/ui/jquery-ui.js"></script>
-<script type="text/javascript" src="jquery.ui.touch-punch.min.js"></script>
-<script type="text/javascript" src="checkin.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.10.4.js"></script>
+<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="js/checkin.js"></script>
 <script type="text/javascript">
   // target is a jquery for list items that should be made assignable,
   // i.e., can receive new photo assignments.
@@ -183,7 +183,7 @@ img { z-index: 30; }
 </style>
 </head>
 <body>
-<?php $banner_title = 'Racer Photos'; require('banner.inc'); ?>
+<?php $banner_title = 'Racer Photos'; require('inc/banner.inc'); ?>
 
 <div class="block_buttons">
 <form method="link">
@@ -196,7 +196,7 @@ img { z-index: 30; }
 <div class="thumblist">
 <ul data-role="listview" class="ui-listview">
 <?php
-require_once('data.inc');
+require_once('inc/data.inc');
 $racers_by_photo = array();
 $stmt = $db->query('SELECT racerid, lastname, firstname, imagefile, carnumber, class'
 				   .' FROM RegistrationInfo'

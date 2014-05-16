@@ -2,13 +2,13 @@
 <html>
 <head>
 <title>Pinewood Derby Race Information</title>
-<?php require('stylesheet.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <?php
  $no_back_button = true;
- require('banner.inc');
- require_once('authorize.inc');
+ require('inc/banner.inc');
+ require_once('inc/authorize.inc');
 ?>
 <div class="index_background">
 <div class="block_buttons">
@@ -51,6 +51,8 @@
   <input type="submit" value="Settings"/>
 </form>
 <br/>
+ <?php } ?>
+ <?php if (false) { ?>
 <form method="link" action="utilities.php">
   <input type="submit" value="Utilities"/>
 </form>

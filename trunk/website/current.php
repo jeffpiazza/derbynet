@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <?php
-require_once('data.inc');
+require_once('inc/data.inc');
 
 // This script produces XML in response to a request from a page that wants to 
 // update itself as the race progresses.  In particular, it supports ondeck.php (showing 
