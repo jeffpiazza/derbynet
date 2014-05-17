@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>Identify</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-page.inc'); ?>
+<script type="text/javascript" src="js/kiosk-update.js"></script>
+<?php require('inc/stylesheet.inc'); ?>
+</head>
+<body>
+<p class="kiosk_title"><?php echo $_SERVER['REMOTE_ADDR']; ?></p>
+<div class="full_page_center">
+<pre>
+<?php print_r($_SERVER); ?>
+</pre>
+</div>
+<p class="kiosk_title">Welcome</p>
+<div id="ajax_failure" class="hidden">
+  Ajax request failed with <span id="ajax_status">0</span>.
+</div>
+</body>
+</html>
