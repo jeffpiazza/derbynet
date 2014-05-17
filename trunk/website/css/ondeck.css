@@ -17,10 +17,6 @@ tr.d0 td {
   background-color: #fcf6cf;
 }
 
-tr.d1 td {
- /* background-color: #fefef2; */
-}
-
 .group_spacer {
    height: 30px;
 }
@@ -31,25 +27,24 @@ tr.d1 td {
 
 .curgroup {  }
 .group_title {  }
-.curgroup .group_title {
-  background-color: #ff8080;
-  border: 2px solid;
-  /* padding-top: 10px; */
-}
+
+.curgroup .group_title,
 .curgroup .pre_group_title {
-  background-color: #ff8080;
-  border: 2px solid;
+	/* Cub Scout blue & gold, respectively. */
+  border: 5px solid #023882;
+  background-color: #F7D117;
 }
 
 th {
   padding-right: 10px;
 }
-.curheat th {
-  background-color: #ff8080;
+.curheat {
+  border: 10px solid black;
 }
-
-tr.curheat td {
-  background-color: #ffdddd;
+.curgroup .d0 th,
+.curgroup .d1 th {
+  background-color: #023882;
+  color: #ffffff;
 }
 
 td .car {
@@ -74,7 +69,7 @@ div.banner {
   position: relative;
   width: 100%;
   height: 60px;
-  background-color: #003882;
+  background-color: #023882;
 
   display: table;
 }
