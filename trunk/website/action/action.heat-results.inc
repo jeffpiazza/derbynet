@@ -30,7 +30,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 			$time = $_POST['lane'.$lane];  // TODO: Missing?
 			take_action_silently('UPDATE RaceChart'
 								 .' SET finishtime = :time, completed = '
-								 .($dbtype == 'access' ? 'NOW()' : 'CURRENT_TIMESTAMP')
+								 .db_timestamp_expr()
 								 .' WHERE resultid = :resultid',
 								 array(':time' => $time,
 									   ':resultid' => $resultid));

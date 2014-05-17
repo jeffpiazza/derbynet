@@ -192,5 +192,13 @@ $sql_script = array(
 "INSERT INTO `Rounds` (`RoundID`, `Round`, `ClassID`, `ChartType`, `Phase`) VALUES (3, 1, 3, 0, 0)",
 "INSERT INTO `Rounds` (`RoundID`, `Round`, `ClassID`, `ChartType`, `Phase`) VALUES (4, 1, 4, 0, 0)",
 "INSERT INTO `Rounds` (`RoundID`, `Round`, `ClassID`, `ChartType`, `Phase`) VALUES (5, 1, 5, 0, 0)",
+
+"DROP TABLE IF EXISTS Kiosks",
+"CREATE TABLE Kiosks ("
+." address VARCHAR(50),"
+." name VARCHAR(200),"
+." page VARCHAR(200),"
+." last_contact TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+
 );
 ?>

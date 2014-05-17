@@ -22,7 +22,7 @@ function kiosk_poll_ready() {
 
 function kiosk_poll_fire() {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", "kiosk-poll.php", /*async*/true);
+  xmlhttp.open("GET", "action.php?query=kiosk-poll", /*async*/true);
   xmlhttp.onreadystatechange = kiosk_poll_ready;
   xmlhttp.send("");
 }

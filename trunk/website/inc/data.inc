@@ -16,6 +16,13 @@ if ($dbtype == 'odbc') {
 	$dbtype = 'access';
 }
 
+function db_timestamp_expr() {
+  global $dbtype;
+  return $dbtype == 'access' 
+      ? 'NOW()'
+      : 'CURRENT_TIMESTAMP';
+}
+
 function read_single_value($sql, $params, $def = false) {
   global $db;
   $rs = $db->prepare($sql);
@@ -86,7 +93,26 @@ function update_period() {
   return read_raceinfo('update-period', 2500);
 }
 function kiosk_page() {
-  return read_raceinfo('kiosk-page', 'welcome.kiosk');
+  global $db;
+  try {
+      $stmt = $db->prepare('SELECT page FROM Kiosks WHERE address = :address');
+      $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
+      $row = $stmt->fetch(PDO::FETCH_NUM);
+      $stmt->closeCursor();
+      if ($row) {
+          if (@$row[0]) {
+              return $row[0];
+          }
+          // else row exists, but no page set
+      } else {
+          // No row exists
+          $stmt = $db->prepare('INSERT INTO Kiosks(address, last_contact)'
+                               .' VALUES(:address, '.db_timestamp_expr().')');
+          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
+      }
+  } catch (PDOException $p) {
+  }
+  return read_raceinfo('kiosk-page', 'identify.kiosk');
 }
 
 function photo_directory() {
