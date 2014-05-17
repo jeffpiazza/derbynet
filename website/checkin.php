@@ -90,8 +90,8 @@ require('inc/banner.inc');
   <input id="renumber_racer" type="hidden" name="racer" value=""/>
   <input id="renumber_carno" type="text" name="value" value=""/>
   <br/>
-  <input type="submit"/>
-  <input type="button" value="Cancel"
+  <input type="submit" data-enhanced="true"/>
+  <input type="button" data-enhanced="true" value="Cancel"
     onclick='$("#renumberform").addClass("hidden");'/>
 </form>
 </div>
@@ -119,8 +119,8 @@ require('inc/banner.inc');
   ?>
   </select>
   <br/>
-  <input type="submit"/>
-  <input type="button" value="Cancel"
+  <input type="submit" data-enhanced="true"/>
+  <input type="button" value="Cancel" data-enhanced="true"
     onclick='$("#rankchangeform").addClass("hidden");'/>
 </form>
 </div>
