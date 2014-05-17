@@ -19,12 +19,12 @@ $(document).ready(queue_reload);
 <body>
 <?php
 require_once('inc/data.inc');
-$sql = 'SELECT Class, LastName, FirstName'
+$sql = 'SELECT class, lastname, firstname'
 	.' FROM RegistrationInfo'
 	.' INNER JOIN Classes'
-	.' ON RegistrationInfo.ClassID = Classes.ClassID'
-	.' WHERE NOT PassedInspection'
-	.' ORDER BY Class, LastName, FirstName';
+	.' ON RegistrationInfo.classid = Classes.classid'
+	.' WHERE NOT passedinspection'
+	.' ORDER BY class, lastname, firstname';
 $stmt = $db->query($sql);
 
 $prev_class = '';
