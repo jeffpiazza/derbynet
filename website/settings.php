@@ -95,15 +95,20 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
     <select name="kiosk-page">
       <optgroup>
       <?php
-        $kiosk_page = read_raceinfo('kiosk-page', 'welcome.kiosk');
-        $dh = opendir(dirname(__FILE__).DIRECTORY_SEPARATOR.'kiosks');
-        while (($entry = readdir($dh)) !== FALSE) {
-            if (substr($entry, -6) == ".kiosk") {
-                echo '<option '.($entry == $kiosk_page ? 'selected="1" ' : '')
-                     .'value="'.$entry.'">'.$entry.'</option>'."\n";
+        function scan_kiosks($prefix, $kiosk_page) {
+            $dh = opendir(dirname(__FILE__).DIRECTORY_SEPARATOR.$prefix);
+            while (($entry = readdir($dh)) !== FALSE) {
+                if (substr($entry, -6) == ".kiosk") {
+                    echo '<option '.($entry == $kiosk_page ? 'selected="1" ' : '')
+                        .'value="'.$prefix.DIRECTORY_SEPARATOR.$entry.'">'.$entry.'</option>'."\n";
+                }
             }
+            closedir($dh);
         }
-        closedir($dh);
+
+        $kiosk_page = read_raceinfo('kiosk-page', 'welcome.kiosk');
+        scan_kiosks('kiosks', $kiosk_page);
+        scan_kiosks('local'.DIRECTORY_SEPARATOR.'kiosks', $kiosk_page);
       ?>
     </optgroup>
     </select>
