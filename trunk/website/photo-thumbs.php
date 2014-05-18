@@ -8,13 +8,16 @@ require_once('inc/photo-config.inc');
 
 function scan_directory($directory, $pattern) {
   $files = array();
-  $dh  = opendir($directory);
-  while (($filename = readdir($dh)) !== false) {
-	if (preg_match($pattern, $filename) && is_file($directory.'\\'.$filename)) {
-	  $files[] = $filename;
-	}
+
+  $dh  = @opendir($directory);
+  if ($dh !== false) {
+      while (($filename = readdir($dh)) !== false) {
+          if (preg_match($pattern, $filename) && is_file($directory.'\\'.$filename)) {
+              $files[] = $filename;
+          }
+      }
+      closedir($dh);
   }
-  closedir($dh);
 
   return $files;
 }
@@ -248,7 +251,8 @@ foreach ($stmt as $rs) {
 foreach ($allfiles as $imagefile) {
   echo '<div class="thumbnail'.(isset($racers_by_photo[$imagefile]) ? ' hidden' : '').'">';
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
-  echo '<img class="unassigned-photo" data-image-filename="'.htmlspecialchars($imagefile).'" src="photo-fetch.php/thumb/';
+  echo '<img class="unassigned-photo" data-image-filename="'
+             .htmlspecialchars($imagefile).'" src="photo-fetch.php/thumb/';
   $thumbfile = $photoThumbsDirectory.'\\'.$imagefile;
   if (file_exists($thumbfile)) {
 	echo @filemtime($thumbfile).'/';
@@ -258,6 +262,10 @@ foreach ($allfiles as $imagefile) {
   echo '</a>';
   // echo $imagefile;
   echo '</div>'."\n";
+}
+
+if (empty($allfiles)) {
+    echo '<h2>There are no photos in the photo directory yet.</h2>';
 }
 ?>
 </div>
