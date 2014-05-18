@@ -92,6 +92,12 @@ function use_master_sched() {
 function update_period() {
   return read_raceinfo('update-period', 2500);
 }
+
+// Searches the Kiosks table, if there is one, for an entry for the
+// current client's IP address.  If there's a page assigned for this
+// client, returns that.  Otherwise, returns a RaceInfo entry for the
+// default kiosk page, if there is one; otherwise, returns the
+// identify kiosk page.
 function kiosk_page() {
   global $db;
   try {
@@ -112,10 +118,11 @@ function kiosk_page() {
       }
   } catch (PDOException $p) {
   }
-  return read_raceinfo('kiosk-page', 'identify.kiosk');
+  return read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk');
 }
 
 function photo_directory() {
+  // PHP_OS == 'Darwin'
   return read_raceinfo('photo-directory', 'C:\\racer_photos');
 }
 
