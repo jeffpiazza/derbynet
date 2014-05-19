@@ -313,7 +313,7 @@ if ($ncommitted == 0) {
 							                   .' WHERE racerid = Roster.racerid'
                 							   .' AND passedinspection = 1)'
 	    						   .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
-		    					               .' WHERE roundid = :roundid'
+		    					               .' WHERE roundid = Roster.roundid'
                 							   .' AND RaceChart.racerid = Roster.racerid)',
 				    			   array(':roundid' => $roundid));
 
