@@ -7,7 +7,7 @@ if [ "$BASE_URL" = "" ]; then
 	exit
 fi
 
-# TODO: Exercise update.php
+# TODO: Exercise update.js
 # TODO: Exercise checkin-action.php
 # TODO: Verify sort options for checkin.php
 
@@ -17,8 +17,9 @@ fi
 
 source common.sh
 
-rm cookies.curl
-rm output.curl
+[ -e cookies.curl ] && rm cookies.curl
+[ -e output.curl ] && rm output.curl
+# debug.curl gets overwritten
 
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
@@ -137,6 +138,8 @@ curl_get index.php | grep '<form' | diff - racecrew.index.tmp
 user_logout
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
+
+rm *.index.tmp
 
 # Catch any "undefined" messages
 grep -i Undefined output.curl
