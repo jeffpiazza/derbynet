@@ -132,7 +132,7 @@ function photo_size() {
 
 function get_lane_count() {
   global $db;
-  $rs = $db->query('select max(lane), count(*) from racechart');
+  $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
   $row = $rs->fetch(PDO::FETCH_NUM);
   if (!$row) {
 	return -1;

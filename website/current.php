@@ -114,12 +114,12 @@ header('Content-Type: text/xml');
 
   // <has_new_schedule> elements for rounds affected by newly-entered racechart rows
 
-  $sql = 'SELECT DISTINCT rounds.roundid, round '
-    .' FROM racechart'
-    .' INNER JOIN rounds'
-    .' ON racechart.roundid = rounds.roundid'
+  $sql = 'SELECT DISTINCT Rounds.roundid, round '
+    .' FROM RaceChart'
+    .' INNER JOIN Rounds'
+    .' ON RaceChart.roundid = Rounds.roundid'
     .' WHERE resultid > '.$hwresultid
-    .' ORDER BY rounds.roundid';
+    .' ORDER BY Rounds.roundid';
   $stmt = $db->query($sql);
   if ($stmt === FALSE) {
 	$info = $db->errorInfo();
