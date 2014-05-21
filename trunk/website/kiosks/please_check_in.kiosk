@@ -32,9 +32,10 @@ foreach ($stmt as $rs) {
   $classname = $rs['class'];
   $name = $rs['lastname'].', '.$rs['firstname'];
   if ($classname <> $prev_class) {
-	if ($prev_class)
+	if ($prev_class) {
+      echo '</ul>'."\n";
 	  echo '</div>'."\n";
-	else {
+	} else {
 	  echo '<p class="kiosk_title">Please Check In</p>'."\n";
 	  echo '<div class="wanted_container">'."\n";
 	  echo '<p>The following participants have NOT yet checked in:</p>'."\n";
@@ -47,6 +48,7 @@ foreach ($stmt as $rs) {
   echo '<li>'.$name.'</li>'."\n";
 }
 if ($prev_class) {
+  echo '</ul>'."\n";
   echo '</div>'."\n";
   echo '</div>'."\n";
 } else {
