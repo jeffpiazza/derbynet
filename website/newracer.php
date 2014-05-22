@@ -8,31 +8,12 @@ require_permission(REGISTER_NEW_RACER_PERMISSION);
 
 if ($_POST) {
   if ($_POST['firstname'] and $_POST['lastname'] and $_POST['carno'] and $_POST['den']) {
-	// TODO: PDO constructor shouldn't be here; just an interim solution
-	  $stmt = $db->prepare('INSERT INTO RegistrationInfo (CarNumber, LastName, FirstName, RankID, ClassID, Exclude)'
-						   .' VALUES(:carno, :lastname, :firstname, '
-						   .$_POST['den'] // $_POST['den'] is <rankid>,<classid>
-						   .', '.($_POST['exclude'] ? 1 : 0).')');
-	  $stmt->execute(array(':carno' => $_POST['carno'],
-						   ':firstname' => $_POST['firstname'],
-						   ':lastname' => $_POST['lastname']));
+      require_once('inc/newracer.inc');
+      insert_new_racer($_POST['firstname'], $_POST['lastname'], $_POST['carno'],
+                       $_POST['den'], @$_POST['exclude']);
 
-	  // The new racer won't be recognized without a Roster record to go with it.
-	  // Rounds has ChartType and Phase fields whose meaning isn't obvious.  This just enrolls
-	  // everyone into Round 1 for their Class.
-	  $db->exec('INSERT INTO Roster(RoundID, ClassID, RacerID)'
-				.' SELECT RoundID, RegistrationInfo.ClassID, RacerID'
-				.' FROM Rounds'
-				.' INNER JOIN RegistrationInfo'
-				.' ON Rounds.ClassID = RegistrationInfo.ClassID'
-				.' WHERE Round = 1'
-				.' AND NOT EXISTS(SELECT 1 FROM Roster'
-				.' WHERE Roster.RoundID = Rounds.RoundID'
-				.' AND Roster.ClassID = RegistrationInfo.ClassID'
-				.' AND Roster.RacerID = RegistrationInfo.RacerID)');
-
-    header('Location: checkin.php');
-    exit();
+      header('Location: checkin.php');
+      exit();
   }
 }
 ?>
