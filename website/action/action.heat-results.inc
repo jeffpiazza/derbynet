@@ -28,9 +28,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 		$stmt->closeCursor();
 		foreach ($results as $lane => $resultid) {
 			$time = $_POST['lane'.$lane];  // TODO: Missing?
+            // TODO: Capture place information, if present.
 			take_action_silently('UPDATE RaceChart'
-								 .' SET finishtime = :time, completed = '
-								 .db_timestamp_expr()
+								 .' SET finishtime = :time,'
+                                 .' completed = '.db_timestamp_expr()
 								 .' WHERE resultid = :resultid',
 								 array(':time' => $time,
 									   ':resultid' => $resultid));
