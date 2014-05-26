@@ -33,7 +33,9 @@
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
     <jar jarfile="${dist}/lib/timer-${DSTAMP}.jar">
-        <fileset  dir="${build}"/>
+        <fileset  dir="${build}">
+            <exclude name="**/*Test.*"/>
+        </fileset>
         <manifest>
             <attribute name="Main-Class" value="org.jeffpiazza.derby.DerbyCommonTimer"/>
         </manifest>
