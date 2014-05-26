@@ -100,7 +100,8 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
         } else {
             SerialPortWrapper.Detector detector = new SerialPortWrapper.Detector() {
                     public boolean test(String line) {
-                        String[] results = TimerDeviceUtils.parseCommonRaceResult(line, MAX_LANES);
+                        Message.LaneResult[] results =
+                            TimerDeviceUtils.parseCommonRaceResult(line, MAX_LANES);
                         if (results != null) {
                             raceFinishedCallback.raceFinished(results);
                             return true;

@@ -42,8 +42,8 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
 
     public boolean probe() throws SerialPortException {
         if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8,
-					  SerialPort.STOPBITS_1, SerialPort.PARITY_NONE,
-					  /* rts */ false, /* dtr */ false)) {
+                                          SerialPort.STOPBITS_1, SerialPort.PARITY_NONE,
+                                          /* rts */ false, /* dtr */ false)) {
             return false;
         }
 
@@ -58,7 +58,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
             // eTekGadget SmartLine Timer v20.06 (B0007)
             if (s.indexOf("eTekGadget SmartLine Timer") >= 0) {
 
-		portWrapper.writeAndWaitForResponse(RESET, 250);  // TODO: Is there a response?
+                portWrapper.write(RESET);
 
                 String nl = portWrapper.writeAndWaitForResponse(READ_LANE_COUNT, 500);
                 if ('0' < nl.charAt(0) && nl.charAt(0) <= '9') {
@@ -67,24 +67,24 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
 
                 // TODO: Does this just need to be configured to
                 // eliminate having to do manually?
-		System.out.println("AUTO_RESET = " +  // TODO
-				   portWrapper.writeAndWaitForResponse(READ_AUTO_RESET, 500)
-				   ); 
-		System.out.println("LANE_CHARACTER = " +
-				   portWrapper.writeAndWaitForResponse(READ_LANE_CHARACTER, 500)
-				   );
-		System.out.println("DECIMAL_PLACES = " +
-				   portWrapper.writeAndWaitForResponse(READ_DECIMAL_PLACES, 500)
-				   );
-		System.out.println("PLACE_CHARACTER = " +
-				   portWrapper.writeAndWaitForResponse(READ_PLACE_CHARACTER, 500)
-				   );
-		System.out.println("START_SWITCH = " +
-				   portWrapper.writeAndWaitForResponse(READ_START_SWITCH, 500)
-				   );
+                System.out.println("AUTO_RESET = " +  // TODO
+                                   portWrapper.writeAndWaitForResponse(READ_AUTO_RESET, 500)
+                                   ); 
+                System.out.println("LANE_CHARACTER = " +
+                                   portWrapper.writeAndWaitForResponse(READ_LANE_CHARACTER, 500)
+                                   );
+                System.out.println("DECIMAL_PLACES = " +
+                                   portWrapper.writeAndWaitForResponse(READ_DECIMAL_PLACES, 500)
+                                   );
+                System.out.println("PLACE_CHARACTER = " +
+                                   portWrapper.writeAndWaitForResponse(READ_PLACE_CHARACTER, 500)
+                                   );
+                System.out.println("START_SWITCH = " +
+                                   portWrapper.writeAndWaitForResponse(READ_START_SWITCH, 500)
+                                   );
 
-		portWrapper.writeAndWaitForResponse(SET_LANE_CHARACTER_A, 500);
-		portWrapper.writeAndWaitForResponse(SET_PLACE_CHARACTER_BANG, 500);
+                portWrapper.writeAndWaitForResponse(SET_LANE_CHARACTER_A, 500);
+                portWrapper.writeAndWaitForResponse(SET_PLACE_CHARACTER_BANG, 500);
 
                 return true;
             }
@@ -109,11 +109,12 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
         } else {
             SerialPortWrapper.Detector detector = new SerialPortWrapper.Detector() {
                     public boolean test(String line) {
-                        String[] results = TimerDeviceUtils.parseCommonRaceResult(line, getSafeNumberOfLanes());
+                        Message.LaneResult[] results =
+                            TimerDeviceUtils.parseCommonRaceResult(line, getSafeNumberOfLanes());
                         if (results != null) {
                             synchronized (ChampDevice.this) {
                                 ChampDevice.this.racePending = false;
-				ChampDevice.this.raceFinishedDeadline = 0;
+                                ChampDevice.this.raceFinishedDeadline = 0;
                             }
                             raceFinishedCallback.raceFinished(results);
                             return true;
@@ -136,7 +137,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
     protected synchronized boolean lastGateIsClosed() { return gateIsClosed; }
 
     public void prepareHeat(int lanemask) throws SerialPortException {
-	// These don't give responses, so no need to wait for any.
+        // These don't give responses, so no need to wait for any.
         portWrapper.write(RESET_LANE_MASK);
 
         for (int lane = 0; lane < getSafeNumberOfLanes(); ++lane) {
@@ -145,7 +146,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
             }
         }
 
-	// TODO: 
+        // TODO: 
         synchronized (this) {
             // When expecting results, once the gate opens, we'll
             // force race results after a certain amount of time.
@@ -164,50 +165,50 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
     private boolean waitingForGateToOpen = false;
     
     public void poll() throws SerialPortException {
-	boolean rp = false;
-	long deadline = 0;
-	synchronized (this) {
-	    rp = this.racePending;
-	    deadline = this.raceFinishedDeadline;
-	}
+        boolean rp = false;
+        long deadline = 0;
+        synchronized (this) {
+            rp = this.racePending;
+            deadline = this.raceFinishedDeadline;
+        }
 
-	if (deadline != 0) {  // Waiting for results
-	    if (System.currentTimeMillis() >= deadline) {
-		System.out.println("Forcing end of race");  // TODO
-		setRaceFinishedDeadline(0);
-		portWrapper.write(FORCE_END_OF_RACE);
-	    }
-	} else {
-	    if (lastGateIsClosed() != interrogateStartingGateClosed()) {
-		StartingGateCallback callback = null;
-		boolean closed = false;
-		synchronized (this) {
-		    closed = !this.gateIsClosed;
-		    this.gateIsClosed = closed;
-		    callback = getStartingGateCallback();
-		}
+        if (deadline != 0) {  // Waiting for results
+            if (System.currentTimeMillis() >= deadline) {
+                System.out.println("Forcing end of race");  // TODO
+                setRaceFinishedDeadline(0);
+                portWrapper.write(FORCE_END_OF_RACE);
+            }
+        } else {
+            if (lastGateIsClosed() != interrogateStartingGateClosed()) {
+                StartingGateCallback callback = null;
+                boolean closed = false;
+                synchronized (this) {
+                    closed = !this.gateIsClosed;
+                    this.gateIsClosed = closed;
+                    callback = getStartingGateCallback();
+                }
 
-		if (waitingForGateToOpen) {
-		    if (!closed) {
-			portWrapper.write(READY_TIMER);
-			synchronized (this) {
-			    this.raceFinishedDeadline = System.currentTimeMillis() + 10000;
-			    System.out.println("Gate opened; Race deadline set at " + raceFinishedDeadline);  // TODO
-			    waitingForGateToOpen = false;
-			}
-		    }
-		} else if (rp) {
-		    if (closed) {
-			System.out.println("Gate closed; waiting for race to start");  // TODO
-			this.waitingForGateToOpen = true;
-		    }
-		}
+                if (waitingForGateToOpen) {
+                    if (!closed) {
+                        portWrapper.write(READY_TIMER);
+                        synchronized (this) {
+                            this.raceFinishedDeadline = System.currentTimeMillis() + 10000;
+                            System.out.println("Gate opened; Race deadline set at " + raceFinishedDeadline);  // TODO
+                            waitingForGateToOpen = false;
+                        }
+                    }
+                } else if (rp) {
+                    if (closed) {
+                        System.out.println("Gate closed; waiting for race to start");  // TODO
+                        this.waitingForGateToOpen = true;
+                    }
+                }
 
-		if (callback != null) {
-		    callback.startGateChange(!lastGateIsClosed());
-		}
+                if (callback != null) {
+                    callback.startGateChange(!lastGateIsClosed());
+                }
 
-	    }
+            }
         }
     }
 
