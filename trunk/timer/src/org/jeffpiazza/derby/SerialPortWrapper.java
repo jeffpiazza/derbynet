@@ -24,6 +24,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
     private SerialPort port;
     private String leftover;
     private ArrayList<String> queue;
+    private PrintWriter logwriter;
 
     public interface Detector {
         // Return true if line has been handled, and therefore should
@@ -32,10 +33,12 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
     private ArrayList<Detector> detectors;
 
-    public SerialPortWrapper(SerialPort port) throws SerialPortException {
+    public SerialPortWrapper(SerialPort port, PrintWriter logwriter) throws SerialPortException {
         this.port = port;
         this.leftover = "";
         this.queue = new ArrayList<String>();
+	this.detectors = new ArrayList<Detector>();
+	this.logwriter = logwriter;
 
         if (!port.purgePort(SerialPort.PURGE_RXCLEAR | SerialPort.PURGE_TXCLEAR)) {
             System.out.println("purgePort failed.");  // TODO
@@ -44,6 +47,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
         log(INTERNAL, "SerialPortWrapper attached");
         port.addEventListener(this, SerialPort.MASK_RXCHAR);
+    }
+
+    public SerialPortWrapper(SerialPort port) throws SerialPortException {
+	this(port, new PrintWriter(System.out));
     }
 
     public SerialPort port() { return port; }
@@ -65,8 +72,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
     public static final int INTERNAL = 2;
 
     public void log(int direction, String msg) {
-        // TODO: Don't log to stdout
-        System.out.println("\t\t" + System.currentTimeMillis() + " " +
+        logwriter.println("\t\t" + System.currentTimeMillis() + " " +
                            (direction == INCOMING ? "<-- " :
                             direction == OUTGOING ? "--> " :
                             "INT ") +
@@ -96,7 +102,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
                 String s = port.readString();
                 if (s == null || s.length() == 0)
                     break;
-
                 s = leftover + s;
                 int cr;
                 while ((cr = s.indexOf('\n')) >= 0) {
@@ -125,6 +130,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
             }
         } catch (Exception exc) {
             System.out.println("Exception while reading: " + exc);
+	    exc.printStackTrace();  // TODO
         }
     }
 
