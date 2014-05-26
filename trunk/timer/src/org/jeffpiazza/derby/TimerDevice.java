@@ -20,8 +20,7 @@ public interface TimerDevice {
     int getNumberOfLanes() throws SerialPortException;
 
     public interface RaceFinishedCallback {
-        // TODO: Need place information, not just times.
-        void raceFinished(String[] results);
+        void raceFinished(Message.LaneResult[] results);
     }
     void registerRaceFinishedCallback(RaceFinishedCallback cb);
 

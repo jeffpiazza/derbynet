@@ -76,11 +76,11 @@ public class TimerTest implements TimerDevice.RaceFinishedCallback, TimerDevice.
 
     private volatile boolean raceRunning = false;
 
-    public void raceFinished(String[] results) {
+    public void raceFinished(Message.LaneResult[] results) {
         raceRunning = false;
         System.out.print("*** Race Finished: ");
-        for (String r : results) {
-            System.out.print(" " + r);
+        for (Message.LaneResult r : results) {
+            System.out.print(" " + r.time + "(" + r.place + ")");
         }
         System.out.println();
     }

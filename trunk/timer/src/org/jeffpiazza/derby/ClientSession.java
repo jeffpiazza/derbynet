@@ -39,6 +39,10 @@ public class ClientSession {
 		writer.flush();
 		writer.close();
 
+        // This code (either the getResponseCode call itself, or maybe
+        // the writer.close(), above) will block until a response is
+        // actually received.  That should be OK as long as there's a
+        // thread dedicated to handling requests in this session.
 		int responseCode = connection.getResponseCode();
 
 		if (responseCode == 200) {
