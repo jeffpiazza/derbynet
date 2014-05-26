@@ -11,16 +11,15 @@ fi
 # TODO: Exercise checkin-action.php
 # TODO: Verify sort options for checkin.php
 
-# Search each page for all its links?
-# <form method="link" action="...">
+# Search each page for all its links, to make sure they all work?
 # <a href="...">
+# <form method="link" action="...">
 
 source common.sh
 
 [ -e cookies.curl ] && rm cookies.curl
 [ -e output.curl ] && rm output.curl
 # debug.curl gets overwritten
-
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
 
@@ -49,6 +48,10 @@ curl_get racer-results.php | \
 curl_get "racer-results.php?racerid=35" | \
 	sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v 'ondeck.php#heat' | grep -v ondeck.css | grep -v '#group_' | \
 	diff - /dev/null
+
+curl_get "kiosk.php?page=kiosks/welcome.kiosk" > /dev/null
+curl_get "kiosk.php?page=kiosks/identify.kiosk" > /dev/null
+curl_get "kiosk.php?page=kiosks/please_check_in.kiosk" > /dev/null
 
 curl_get_amper login.php | sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v ondeck.css | diff - /dev/null
 

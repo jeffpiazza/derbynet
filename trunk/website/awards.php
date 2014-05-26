@@ -12,7 +12,6 @@ require_permission(VIEW_AWARDS_PERMISSION);
 $banner_title = 'Awards Summary';
 require('inc/banner.inc');
 
-require_once('inc/data.inc');
 require_once('inc/speed_trophies.inc');
 
 $nlanes = get_lane_count();
