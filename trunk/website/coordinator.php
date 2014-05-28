@@ -3,6 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
+require_once('inc/timer-state.inc');
 ?>
 <html>
 <head>
@@ -39,7 +40,6 @@ function scan_kiosks($prefix, $kiosk_page) {
     closedir($dh);
 }
 
-$nlanes = get_lane_count();
 ?>
 <div class="control_column">
 
@@ -79,7 +79,21 @@ try {
 <div class="control_group timer_control_group">
   <!-- TODO: Show timer status -->
   <h3>Timer Status</h3>
-  <p>The track has <?php echo $nlanes; ?> lane(s).</p>
+  <p><b><?php
+    $tstate = get_timer_state();
+    if ($tstate == TIMER_NOT_CONNECTED) {
+        echo 'NOT CONNECTED';
+    } else if ($tstate == TIMER_CONNECTED) {
+        echo 'CONNECTED ('.(time() - read_raceinfo('timer_last_contact')).' sec.)';
+    } else if ($tstate == TIMER_PREPARED) {
+        echo 'Prepared';
+    } else if ($tstate == TIMER_RUNNING) {
+        echo 'Race running';
+    } else {
+        echo 'Unknown ('.$tstate.')';
+    }
+?></b></p>
+  <p>The track has <?php echo get_lane_count(); ?> lane(s).</p>
   <!-- TODO: Timer events:
   Timer to database:
       Hello/identity (type of timer, number of lanes)

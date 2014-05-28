@@ -23,7 +23,7 @@ import java.util.regex.*;
 public class SerialPortWrapper implements SerialPortEventListener {
     private SerialPort port;
     private String leftover;
-    private ArrayList<String> queue;
+    private ArrayList<String> queue;  // Messages received from timer
     private PrintWriter logwriter;
 
     public interface Detector {
@@ -130,7 +130,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
             }
         } catch (Exception exc) {
             System.out.println("Exception while reading: " + exc);
-	    exc.printStackTrace();  // TODO
+            exc.printStackTrace();  // TODO
         }
     }
 
@@ -148,23 +148,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
     public String writeAndWaitForResponse(String cmd, int timeout) throws SerialPortException {
         write(cmd);
-
-        long deadline = System.currentTimeMillis() + timeout;
-        while (System.currentTimeMillis() < deadline) {
-            if (hasAvailable()) {
-                String s = next();
-                // TODO: Break out predicate for asynchronous/unsolicited messages, including start-up herald
-                if (!s.startsWith("A=")) {  // TODO: Race results get queued somewhere else, produce timer events.
-                    return s;
-                }
-            } else {
-                try {
-                    Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
-                } catch (Exception exc) {}
-            }
-        }
-
-        return null;
+        return next(System.currentTimeMillis() + timeout);
     }
 
     public boolean hasAvailable() {
@@ -194,7 +178,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
             }
         }
         if (s != null && s.length() > 0 && s.charAt(0) == '@') {
-            System.out.println("* Spurious '@' removed");
+            System.out.println("* Spurious '@' removed");  // TODO
             s = s.substring(1);
         }
         return s;
