@@ -9,6 +9,12 @@ public class ClientSession {
     private String base_url;
 
     public ClientSession(String base_url, String username, String password) throws IOException {
+        if (!base_url.startsWith("http://")) {
+            base_url = "http://" + base_url;
+        }
+        if (!base_url.endsWith("/")) {
+            base_url += "/";
+        }
         manager = new CookieManager();
         manager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(manager);
@@ -52,7 +58,7 @@ public class ClientSession {
 			StringBuffer response = new StringBuffer();
  
 			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
+				response.append(inputLine + "\n");
 			}
 			in.close();
 			return response.toString();
