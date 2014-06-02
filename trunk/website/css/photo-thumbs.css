@@ -1,0 +1,45 @@
+/* CSS adapted from
+http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
+*/
+
+body { margin: 0; }
+
+.body-wrapper { /* body row */
+ position: absolute;
+ top: 128px;
+ bottom: 0;
+ left: 0;
+ right: 0;
+ overflow: hidden;
+}
+
+.thumblist {
+ position: absolute;
+ top: 0;
+ bottom: 0;
+ left: 0;
+ width: 300px;
+ overflow-x: hidden;
+ overflow-y: auto;
+ z-index: 1;
+}
+
+.thumblist li { z-index: 2; }
+
+.photothumbs {
+ position: absolute;
+ top: 0;
+ bottom: 0;
+ left: 300px;
+ right: 0;
+   overflow-x: visible;
+ overflow-y: auto;
+ z-index: 1;
+}
+
+img { z-index: 30; }
+
+.droppableHover {
+  background-color: #ffffb4;
+}
+
