@@ -195,7 +195,7 @@ td.clickable div.inclickable {
     border-right-width: 1px;
     border-radius: 0.4em 0.4em 0.4em 0.4em;
 
-    cursor: hand; cursor: pointer;
+    cursor: pointer;
 }
 
 #ajax_working {

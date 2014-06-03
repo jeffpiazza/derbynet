@@ -31,6 +31,8 @@ echo ' ' ' ' ' ' 'Populate database'
 ./populate-database.sh $BASE_URL
 [ `curl_get checkin.php | grep -c '<td>Owen</td>'` -eq 1 ] || echo Owen O\'Connor!
 
+curl_post action.php "action=import&lastname=Whitehouse&firstname=Cole&classname=4-Webelos&carnumber=425" | check_success
+
 user_logout
 
 
