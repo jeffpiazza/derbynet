@@ -1,3 +1,14 @@
+// From http://stackoverflow.com/questions/1219860/html-encoding-in-javascript-jquery:
+function htmlEncode( html ) {
+    return document.createElement( 'a' ).appendChild( 
+        document.createTextNode( html ) ).parentNode.innerHTML;
+}
+
+function htmlDecode( html ) {
+    var a = document.createElement( 'a' ); a.innerHTML = html;
+    return a.textContent;
+}
+
 function printTable(file) {  // a File object
     var reader = new FileReader();
 
@@ -15,9 +26,9 @@ function printTable(file) {  // a File object
                 }
                 html += '</tr>\n';
             }
-            html += '<tr data-row="' + row + '"';
+            html += '<tr data-row="' + (1 + parseInt(row)) + '"';
             if (first) {
-                html += ' class="first_row"';
+                html += ' class="header_row"';
             }
             html += '>';
             if (first) {
@@ -26,7 +37,7 @@ function printTable(file) {  // a File object
                 html += '<th class="outcome"/>\n';
             }
             for (var item in data[row]) {
-                html += '<td class="dim column' + item + '">' + data[row][item] + '</td>\n';
+                html += '<td class="dim column' + item + '">' + htmlEncode(data[row][item]) + '</td>\n';
             }
             html += '</tr>\n';
             first = false;
@@ -70,10 +81,31 @@ function makeDroppableLabelTarget(jq) {
             // No longer droppable
             $(this).droppable("destroy");
             $(this).addClass('label_target_filled');
-            // TODO: Draggable back to unused.
             $('.column' + $(this).attr('data-column')).removeClass('dim');
+
+            // TODO: It's a start, but doesn't look very good.
+            if ($('.field.required').closest('[data-home]').length == 0) {
+                $('#ready_to_submit').text('Ready to submit!');
+            }
+
+            if ($(ui.draggable[0]).attr('data-field') == 'classname') {
+                collectClassNames($(this).attr('data-column'));
+            }
         }
     });
+}
+
+// TODO: Something similar for ranks/subgroups
+function collectClassNames(columnNumber) {
+    // TODO: Don't want to count header_row cells.
+    $('#new_ranks').text('');
+    var classnames = [];
+    $('td.column' + columnNumber).each(function(index, elt) {
+        classnames[$(elt).text()] = 1;
+    });
+    for (var cl in classnames) {
+        $('#new_ranks').append(htmlEncode(cl) + '<br/>')
+    }
 }
 
 function onFileSelect(event) {
@@ -98,6 +130,52 @@ function onFileSelect(event) {
     }, 100);
 }
 
+function handle_import_one_row(row) {
+    if ($('[data-row="' + row + '"]').length == 0) {
+        return;
+    }
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function() {
+        // TODO: Combine to share code with checkin.js'
+        // readystate_handler
+        if (this.readyState == this.DONE) {
+	        ajax_remove_request();
+	        var respXML = this.responseXML;
+	        if (!respXML) alert("No XML in response.  status = " + this.status
+						        + " (" + this.statusText + ")");
+
+	        var response = respXML.documentElement;
+	        var fail = response.getElementsByTagName("failure");
+
+	        if (fail && fail.length > 0) {
+		        alert("Action failed: " + fail[0].textContent);
+	        } else {
+                $('[data-row="' + row + '"] th').text('OK');
+                handle_import_one_row(row + 1);
+            }
+        }
+    };
+
+    var params = "action=import";
+    $('#csv_content').find('.label_target').each(function (index, label_target) {
+        // label_target.attr('data-column')
+        // label_target.find('.field').attr('data-field')
+
+        var field = $(label_target).find('.field');
+
+        if (field.length > 0) {
+            params += '&' + encodeURIComponent(field.attr('data-field')) + '='
+                + encodeURIComponent($('#csv_content [data-row="' + row + '"] .column' 
+                                       + $(label_target).attr('data-column')).text());
+        }
+    });
+        console.log(params);  // TODO
+    ajax_add_request();
+    xmlhttp.send(params);
+}
+
 $(function() {
     if (window.File && window.FileReader) {
         $('#csv_file').bind('change', onFileSelect);
@@ -107,6 +185,10 @@ $(function() {
                         + ' that this browser doesn\'t support.  Nearly all browsers support these'
                         + ' features in their most recent versions.</p>');
     }
+
+    $('#import_button').click(function() {
+        handle_import_one_row(2);
+    });
 
     $('.fields .target').droppable({
         hoverClass: 'fields_target_hover',
@@ -133,4 +215,11 @@ $(function() {
           opacity: 0.5,
           revert: 'invalid',
           });
+
+    $(".file_target input").on('dragenter', function() {
+        $(event.target).addClass("draghover");
+    });
+    $(".file_target input").on('dragleave', function() {
+        $(event.target).removeClass("draghover");
+    });
 });

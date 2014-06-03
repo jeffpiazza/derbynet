@@ -31,8 +31,12 @@ require('inc/banner.inc');
 
 <div id="controls">
 <div id="meta"></div>
-<input type="button" value="Start Over"/>
-<input type="button" value="Import Roster"/>
+<input type="button" id="start_over_button" value="Start Over"/>
+<input type="button" id="import_button" value="Import Roster"/>
+<div id="ready_to_submit"></div>
+</div>
+
+<div id="new_ranks">
 </div>
 
 <div class="fields hidden">
@@ -52,7 +56,6 @@ require('inc/banner.inc');
 </div>
 
 </div>
-
 
 <table id="csv_content">
 </table>
