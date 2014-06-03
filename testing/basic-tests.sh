@@ -31,7 +31,8 @@ echo ' ' ' ' ' ' 'Populate database'
 ./populate-database.sh $BASE_URL
 [ `curl_get checkin.php | grep -c '<td>Owen</td>'` -eq 1 ] || echo Owen O\'Connor!
 
-curl_post action.php "action=import&lastname=Whitehouse&firstname=Cole&classname=4-Webelos&carnumber=425" | check_success
+# TODO: There's a 15-character limit on class names and rank names.
+curl_post action.php "action=import&lastname=Flintstone&firstname=Fred&classname=6-Cartoons&carnumber=425" | check_success
 
 user_logout
 
@@ -55,12 +56,14 @@ curl_get "kiosk.php?page=kiosks/welcome.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/identify.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/please_check_in.kiosk" > /dev/null
 
+curl_get "action.php?query=classes" > /dev/null
+
 curl_get_amper login.php | sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v ondeck.css | diff - /dev/null
 
 user_login RaceCoordinator doyourbest
 curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 
-[ `curl_get checkin.php | grep -c '<tr '` -eq 50 ] || echo Checkin!
+[ `curl_get checkin.php | grep -c '<tr '` -eq 51 ] || echo Checkin!
 
 curl_post action.php "action=schedule&roundid=1" | check_success
 curl_post action.php "action=pass&racer=8&value=1" | check_success

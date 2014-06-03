@@ -83,9 +83,12 @@ function makeDroppableLabelTarget(jq) {
             $(this).addClass('label_target_filled');
             $('.column' + $(this).attr('data-column')).removeClass('dim');
 
-            // TODO: It's a start, but doesn't look very good.
             if ($('.field.required').closest('[data-home]').length == 0) {
-                $('#ready_to_submit').text('Ready to submit!');
+                $('#import_button').removeClass('hidden');
+                $('#submit_message').addClass('hidden');
+            } else {
+                $('#import_button').addClass('hidden');
+                $('#submit_message').removeClass('hidden');
             }
 
             if ($(ui.draggable[0]).attr('data-field') == 'classname') {
@@ -96,12 +99,15 @@ function makeDroppableLabelTarget(jq) {
 }
 
 // TODO: Something similar for ranks/subgroups
+// TODO: action.php?query=classes, and compare existing classes
 function collectClassNames(columnNumber) {
-    // TODO: Don't want to count header_row cells.
     $('#new_ranks').text('');
     var classnames = [];
     $('td.column' + columnNumber).each(function(index, elt) {
-        classnames[$(elt).text()] = 1;
+        // Don't count a header_row value
+        if ($(elt).closest('.header_row').length == 0) {
+            classnames[$(elt).text()] = 1;
+        }
     });
     for (var cl in classnames) {
         $('#new_ranks').append(htmlEncode(cl) + '<br/>')
@@ -120,6 +126,7 @@ function onFileSelect(event) {
 
     $(".fields").removeClass("hidden");
     $(".file_target").addClass("hidden");
+    $('#submit_message').text('File import will be enabled when required fields are assigned.');
 
     // TODO: The .label_target elements are only created by
     // printTable(), above, and don't appear immediately within the
@@ -171,7 +178,7 @@ function handle_import_one_row(row) {
                                        + $(label_target).attr('data-column')).text());
         }
     });
-        console.log(params);  // TODO
+
     ajax_add_request();
     xmlhttp.send(params);
 }
@@ -205,6 +212,14 @@ $(function() {
 
             $(this).find('[data-home="' + $(ui.draggable[0]).attr('data-field') + '"]')
                 .append(ui.draggable[0]);
+
+            if ($('.field.required').closest('[data-home]').length == 0) {
+                $('#import_button').removeClass('hidden');
+                $('#submit_message').addClass('hidden');
+            } else {
+                $('#import_button').addClass('hidden');
+                $('#submit_message').removeClass('hidden');
+            }
         }
     });
 

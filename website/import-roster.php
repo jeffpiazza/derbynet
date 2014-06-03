@@ -22,18 +22,31 @@ require_permission(SET_UP_PERMISSION);  // TODO: choose the right permission
 <?php
 $banner_title = 'Import Roster';
 require('inc/banner.inc');
+
+// TODO:
+//
+// <div controls> at top
+//    Replace Import button with message
+// <div file_target>
+// <div meta>
+// <div classes/ranks> -- maybe show the new classes/ranks, and require accepting each one before import
+// <div target>
+//   add a little space above table
+// <table>
 ?>
 <div class="import_roster">
 
-<div class="file_target">
-<input type="file" id="csv_file" name="csv_file"/>
+<div id="controls">
+  <div id="meta"></div>
+  <input type="button" id="start_over_button" value="Start Over"/>
+  <div id="import_button_div">
+    <input class="hidden" type="button" id="import_button" value="Import Roster"/>
+    <div id="submit_message">Please select or drag a file to import.</div>
+  </div>
 </div>
 
-<div id="controls">
-<div id="meta"></div>
-<input type="button" id="start_over_button" value="Start Over"/>
-<input type="button" id="import_button" value="Import Roster"/>
-<div id="ready_to_submit"></div>
+<div class="file_target">
+<input type="file" id="csv_file" name="csv_file"/>
 </div>
 
 <div id="new_ranks">
