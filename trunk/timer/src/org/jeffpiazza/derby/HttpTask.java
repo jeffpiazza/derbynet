@@ -66,7 +66,7 @@ public class HttpTask implements Runnable {
 
             // Cheesy string matching suffices for now, but should be
             // made more XML-aware if we're going to send richer XML.
-            if (response.indexOf("<success") < 0) {
+            if (response.indexOf("<success") < 0 || response.indexOf("<failure") >= 0) {
                 System.out.println("Message resulted in failure");
                 System.out.println("=======================");
                 System.out.println(response);

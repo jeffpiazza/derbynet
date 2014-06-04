@@ -4,18 +4,21 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
 
-public class HttpTest implements HttpTask.HeatReadyCallback, HttpTask.AbortHeatCallback {
+// TODO: Accept base_url from command line
+// TODO: Announce first failed attempt to contact server; announce first HELLO.
+
+public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.AbortHeatCallback {
     private HttpTask task;
 
     public static void main(String[] args) {
         try {
-            (new HttpTest(new HttpTask("http://localhost/xsite", "RaceCoordinator", "doyourbest"))).runTest();
+            (new FakeTimerMain(new HttpTask("http://localhost/xsite", "RaceCoordinator", "doyourbest"))).runTest();
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    private HttpTest(HttpTask task) {
+    private FakeTimerMain(HttpTask task) {
         this.task = task;
     }
 
