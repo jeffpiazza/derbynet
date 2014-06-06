@@ -1,6 +1,4 @@
-<?php session_start(); ?>
 <?php
-require_once('inc/data.inc');
 
 // This script produces XML in response to a request from a page that wants to 
 // update itself as the race progresses.  In particular, it supports ondeck.php (showing 
@@ -21,8 +19,8 @@ require_once('inc/data.inc');
 //
 // This script returns an XML document that looks like:
 //
-// <update_summary>
-//   <current_heat classid="{classid}"
+// <update-summary>
+//   <current-heat classid="{classid}"
 //                 roundid="{roundid}"
 //                 round="{round}"
 //                 group="{}"
@@ -39,7 +37,7 @@ require_once('inc/data.inc');
 //   ...
 //
 //   <high_water roundid= resultid= completed= />
-// </update_summary>
+// </update-summary>
 //
 // The class, round, and heat elements identify the "current" heat.
 //
@@ -60,24 +58,16 @@ if (!$hwresultid) {
 	$hwresultid = 0;
 }
 
-$now_running = get_running_round();
 $use_master_sched = use_master_sched();
-
-header('Content-Type: text/xml');
 ?>
-<update_summary>
-<current_heat classid="<?php echo @$now_running['classid']; ?>"
-              roundid="<?php echo @$now_running['roundid']; ?>"
-              round="<?php echo @$now_running['round']; ?>"
-              group="<?php echo $use_master_sched ? @$now_running['round'] : @$now_running['roundid']; ?>"
-              heat="<?php echo @$now_running['heat']; ?>"><?php
-                if (!$use_master_sched) { echo @$now_running['class']; }
-?></current_heat>
-
+<update-summary>
+<hello/>
+<?php require('action/current-heat.inc'); ?>
+<after_heat/>
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
            kiosk-page="<?php echo kiosk_page(); ?>"
-           use-master-sched="<?php echo use_master_sched(); ?>"/>
+           use-master-sched="<?php echo $use_master_sched; ?>"/>
 <?php
 
   $sql = 'SELECT'
@@ -138,4 +128,4 @@ header('Content-Type: text/xml');
               resultid="<?php echo high_water_resultid(); ?>"
               completed="<?php echo $max_time; ?>" />
 
-</update_summary>
+</update-summary>
