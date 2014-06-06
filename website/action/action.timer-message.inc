@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/timer-state.inc');
+require_once('action/write-heat-results.inc');
 require_once('action/autoadvance.inc');
 
 // Timer-controller-to-web-service messages:
@@ -52,49 +53,13 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
         set_timer_state(TIMER_RUNNING);
         echo '<success/>'."\n";
     } else if ($message == 'FINISHED') {
-        $current = get_running_round();
-        $roundid = @$current['roundid'];
-        if (!$roundid || $roundid < 0) {
-            echo '<failure code="nocurrentround">No currently-racing round is available!</failure>';
-        } else {
-            // ResultID, ClassID, RoundID, Heat, Lane, RacerID, ChartNumber,
-            // FinishTime, FinishPlace, Points, Completed, IgnoreTime, MasterHeat
-            // TODO: Beware of overwriting results!!!
-            // TODO: Results from masked-out lanes are a bad sign
-
-            // General strategy should be: reject results, but log
-            // them somewhere that can be presented on coordinator
-            // dashboard.
-            $results = array();
-            $stmt = $db->prepare('SELECT resultid, lane FROM RaceChart'
-                                 .' WHERE roundid = :roundid AND heat = :heat'
-                                 .' ORDER BY lane');
-            $stmt->execute(array(':roundid' => $roundid,
-                                 ':heat' => $current['heat']));
-            foreach ($stmt as $row) {
-                $results[$row['lane']] = $row['resultid'];
-            }
-            $stmt->closeCursor();
-
-            foreach ($results as $lane => $resultid) {
-                $time = @$_POST['lane'.$lane];  // TODO: Missing?
-                $place = @$_POST['place'.$lane];
-                take_action_silently('UPDATE RaceChart'
-                                     .' SET finishtime = :time,'
-                                     .' finishplace = :place,'
-                                     .' completed = '.db_timestamp_expr()
-                                     .' WHERE resultid = :resultid',
-                                     array(':time' => $time,
-                                           ':place' => $place,
-                                           ':resultid' => $resultid));
-            }
-
+        if (write_heat_results()) {
             $current = get_running_round();
             if (advance_heat($current, @$current['roundid'], 'auto', true)) {
                 echo '<success/>';
             }
+            set_timer_state(TIMER_CONNECTED);
         }
-        set_timer_state(TIMER_CONNECTED);
     } else if ($message == 'HEARTBEAT') {
         echo '<success/>'."\n";
         // TODO: Capture other state information
@@ -111,16 +76,22 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
     if (get_timer_state() == TIMER_CONNECTED) {  // i.e., not prepared or running
         $current = get_running_round();
-        $stmt = $db->prepare('SELECT lane FROM RaceChart'
+        $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
                              .' WHERE roundid = :roundid AND heat = :heat'
                              .' ORDER BY lane');
         $stmt->execute(array(':roundid' => $current['roundid'],
                              ':heat' => $current['heat']));
+        $pending = true;
         $mask = 0;
         foreach ($stmt as $row) {
+            if ($row['finishtime']) {
+                $pending = false;
+            }
             $mask |= (1 << ($row['lane'] - 1));
         }
-        echo '<heat-ready lane-mask="'.$mask.'"/>'."\n";
+        if ($pending) {
+            echo '<heat-ready lane-mask="'.$mask.'"/>'."\n";
+        }
         set_timer_state(TIMER_PREPARED);
         // TODO: Broadcast an event for instant replay
     }
