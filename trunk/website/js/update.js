@@ -63,7 +63,7 @@ function process_new_schedules(newly_scheduled, index, completed) {
 
 // Move curgroup class and add "Now Racing" text.
 function notice_change_current_group(cgroup, cround, cclass) {
-  // g_cur_group is initialized to -1, and current.php should keep
+  // g_cur_group is initialized to -1, and query update-summary should keep
   // report group=-1 before racing starts.  While racing is actually
   // underway, group should be > 0.  When concluded, group should
   // report an empty string.
@@ -120,7 +120,7 @@ function notice_change_current_heat(croundid, heat) {
 }
 
 function process_response_from_current(summary) {
-  var current = summary.getElementsByTagName("current_heat")[0];
+  var current = summary.getElementsByTagName("current-heat")[0];
   var croundid = current.getAttribute("roundid");
   var cround = current.getAttribute("round");
   var cgroup = g_using_groupid ? current.getAttribute("group") : croundid;
@@ -198,13 +198,13 @@ function scroll_to_current(el) {
 
 function updatecurrent_fire() {
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", "current.php?since=" + encodeURIComponent(g_last_update_time)
+  xmlhttp.open("GET", "action.php?query=update-summary&since=" + encodeURIComponent(g_last_update_time)
 	             + "&high_water_resultid=" + g_high_water_resultid, /*async*/true);
   xmlhttp.onreadystatechange = updatecurrent_handler;
   xmlhttp.send("");
 }
 
-// This handler function processes the arriving XML document from current.php.
+// This handler function processes the arriving XML document from update-summary
 function updatecurrent_handler() {
   if (this.readyState == this.DONE) {
 	if (this.status == 200) {
@@ -212,7 +212,7 @@ function updatecurrent_handler() {
 	    $('#ajax_failure').addClass('hidden');
 	    process_response_from_current(this.responseXML.documentElement);
 	  } else {
-        // If the text returned from current.php isn't parsable, e.g.,
+        // If the text returned from update-summary isn't parsable, e.g.,
         // because there's some kind of error on the php side, then
         // responseXML can come back null.  Rather than completely
         // freak out, let's try again in a moment.
