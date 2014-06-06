@@ -1,0 +1,59 @@
+<?php @session_start();
+require_once('inc/data.inc');
+
+// TODO: Poll continuously, watching the current race.
+// When a new heat is up, update the table with the new racers.
+// When heat results are up, animate!
+
+$nlanes = get_lane_count();
+// TODO: If $nlanes not yet set, then this page isn't ready for display
+?>
+<html>
+<head>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-page.inc'); ?>
+<title>Derby Racing Main Board</title>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
+<script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="js/now-racing.js"></script>
+</head>
+<body>
+<?php
+$banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc');
+?>
+
+<table>
+<tr><th>Lane</th>
+    <th>Racer</th>
+    <th>Time</th>
+    <th>Speed</th>
+    <th>Place</th>
+</tr>
+
+<?php
+  for ($i = 1; $i <= $nlanes; ++$i) {
+      echo '<tr data-lane="'.$i.'"><td class="lane">'.$i.'</td>'
+          .'<td class="name"></td>'
+          .'<td class="time"></td>'
+          .'<td class="speed"></td>'
+          .'<td class="place"><span class="sp"/></td>'
+          .'</tr>'."\n";
+  }
+?>
+
+</table>
+
+<div id="ajax_failure" class="hidden">
+  Ajax request failed with <span id="ajax_status">0</span>.
+</div>
+
+
+<?php
+  for ($i = 1; $i <= $nlanes; ++$i) {
+      echo '<div id="place'.$i.'" class="flying"><span>'.$i.'</span></div>'."\n";
+  }
+?>
+
+</body>
+</html>

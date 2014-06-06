@@ -41,7 +41,7 @@ curl_get ondeck.php | \
 	sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v racer-results.php | grep -v ondeck.css | grep -v '#group_' | \
 	diff - /dev/null
 
-[ `curl_get "current.php?since=2013-11-14%2014:57:14" | grep -c 'completed="2013-11-14 14:57:14"'` -eq 1 ] || echo current.php fails!
+[ `curl_get "action.php?query=update-summary&since=2013-11-14%2014:57:14" | grep -c 'completed="2013-11-14 14:57:14"'` -eq 1 ] || echo update_summary fails!
 
 
 curl_get racer-results.php | \
@@ -55,6 +55,7 @@ curl_get "racer-results.php?racerid=35" | \
 curl_get "kiosk.php?page=kiosks/welcome.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/identify.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/please_check_in.kiosk" > /dev/null
+curl_get "kiosk.php?page=kiosks/now-racing.kiosk" > /dev/null
 
 curl_get "action.php?query=classes" > /dev/null
 
