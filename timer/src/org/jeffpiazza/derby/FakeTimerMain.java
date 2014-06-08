@@ -4,15 +4,69 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
 
-// TODO: Accept base_url from command line
 // TODO: Announce first failed attempt to contact server; announce first HELLO.
+// TODO: Generate some ties
 
 public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.AbortHeatCallback {
     private HttpTask task;
 
+    public static void usage() {
+        System.err.println("Usage: [-u <user>] [-p <password>] [-l <nlanes>] [-t] [-th] [-r] <base-url>");
+        System.err.println("   -u, -p: Specify username and password for authenticating to web server");
+        System.err.println("   -l: Specify number of lanes to report to web server");
+        System.err.println("   -t: Trace non-heartbeat messages sent");
+        System.err.println("   -th: Trace heartbeat messages sent");
+        System.err.println("   -r: Show responses to traced messages");
+    }
+
     public static void main(String[] args) {
+        String username = "RaceCoordinator";
+        String password = "doyourbest";
+        int nlanes = 3;
+        boolean traceMessages = false;
+        boolean traceHeartbeats = false;
+        boolean traceResponses = false;
+
+        int consumed_args = 0;
+        while (consumed_args + 1 < args.length) {
+            if (args[consumed_args].equals("-u") && consumed_args + 2 < args.length) {
+                username = args[consumed_args + 1];
+                consumed_args += 2;
+            } else if (args[consumed_args].equals("-p") && consumed_args + 2 < args.length) {
+                password = args[consumed_args + 1];
+                consumed_args += 2;
+            } else if (args[consumed_args].equals("-l") && consumed_args + 2 < args.length) {
+                try {
+                    nlanes = Integer.parseInt(args[consumed_args + 1]);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            } else if (args[consumed_args].equals("-t")) {
+                traceMessages = true;
+                ++consumed_args;
+            } else if (args[consumed_args].equals("-th")) {
+                traceHeartbeats = true;
+                ++consumed_args;
+            } else if (args[consumed_args].equals("-r")) {
+                traceResponses = true;
+                ++consumed_args;
+            } else {
+                usage();
+                System.exit(1);
+            }
+        }
+
+        if (consumed_args + 1 != args.length) {
+            usage();
+            System.exit(1);
+        }
+
+        String base_url = args[consumed_args];
+
         try {
-            (new FakeTimerMain(new HttpTask("http://localhost/xsite", "RaceCoordinator", "doyourbest"))).runTest();
+            (new FakeTimerMain(new HttpTask(base_url, username, password,
+                                            traceMessages, traceHeartbeats, traceResponses)))
+                .runTest(nlanes);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -69,11 +123,12 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         }
     }
 
-    public void runTest() {
+    public void runTest(int nlanes) {
         task.registerHeatReadyCallback(this);
         task.registerAbortHeatCallback(this);
 
-        task.send(new Message.Hello(3));
+        System.out.println("Attempting HELLO message with " + nlanes + " lanes");
+        task.send(new Message.Hello(nlanes));
         (new Thread(task)).start();
 
         // After the initial Hello, task will only send a heartbeat every 30 seconds.

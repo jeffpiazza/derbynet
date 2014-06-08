@@ -17,6 +17,7 @@ public interface Message {
         }
 
         public String asParameters() {
+            System.out.println("   Sending HELLO");
             return "message=HELLO&nlanes=" + nlanes;
         }
     }
