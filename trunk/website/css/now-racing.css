@@ -28,6 +28,10 @@ th {
     height: 60px;
 }
 
+th .aside {
+    font-size: x-large;
+}
+
 table, td {
     /* This is a plausible guess, but really needs to adjust with the
        window size. */

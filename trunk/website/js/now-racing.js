@@ -106,10 +106,16 @@ function process_watching(watching) {
             var place = hr.getAttribute('place');
             flyers[parseInt(place)] = lane;
 
-            $('[data-lane="' + lane + '"] .time').text(hr.getAttribute('time').substring(0,5));
+            $('[data-lane="' + lane + '"] .time')
+                .css({opacity: 100})
+                .text(hr.getAttribute('time').substring(0,5));
             $('[data-lane="' + lane + '"] .place').css({opacity: 0});
             $('[data-lane="' + lane + '"] .place span').text(place);
-            $('[data-lane="' + lane + '"] .speed').text(hr.getAttribute('speed'));
+            if (hr.getAttribute('speed') != '') {
+                $('[data-lane="' + lane + '"] .speed')
+                    .css({opacity: 100})
+                    .text(hr.getAttribute('speed'));
+            }
         }
 
         animate_flyers(1, flyers);
@@ -132,9 +138,10 @@ function process_new_heat(watching) {
     var racers = watching.getElementsByTagName("racer");
     if (racers.length > 0) {
         // Clear old results
-        $('[data-lane] td .name').text('');
-        $('[data-lane] td .time').text('');
-        $('[data-lane] td .speed').text('');
+        $('[data-lane] .name').text('');
+        $('[data-lane] .time').css({opacity: 0}).text('0.000');
+        $('[data-lane] .speed').css({opacity: 0}).text('200.0');
+        $('[data-lane] .place span').text('');
         for (var i = 0; i < racers.length; ++i) {
             var r = racers[i];
             var lane = r.getAttribute('lane');

@@ -27,7 +27,7 @@ $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc');
 <tr><th>Lane</th>
     <th>Racer</th>
     <th>Time</th>
-    <th>Speed</th>
+    <th>Speed <span class="aside">(scale MPH)</span></th>
     <th>Place</th>
 </tr>
 
