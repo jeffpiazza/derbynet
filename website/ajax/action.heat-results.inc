@@ -4,8 +4,8 @@
 
 // TODO: Relay completion events?
 
-require_once('action/write-heat-results.inc');
-require_once('action/autoadvance.inc');
+require_once('inc/write-heat-results.inc');
+require_once('inc/autoadvance.inc');
 
 start_response();
 

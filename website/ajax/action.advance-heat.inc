@@ -2,7 +2,7 @@
 // $_POST['roundid'] (defaults to current one)
 // $_POST['heat'] (values may be numeric, 'auto', 'next', or 'prev', defaults to 'auto')
 
-require_once('action/autoadvance.inc');
+require_once('inc/autoadvance.inc');
 
 start_response();
 

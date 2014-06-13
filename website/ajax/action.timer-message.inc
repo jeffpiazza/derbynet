@@ -1,8 +1,8 @@
 <?php
 
 require_once('inc/timer-state.inc');
-require_once('action/write-heat-results.inc');
-require_once('action/autoadvance.inc');
+require_once('inc/write-heat-results.inc');
+require_once('inc/autoadvance.inc');
 
 // Timer-controller-to-web-service messages:
 //

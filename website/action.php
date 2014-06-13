@@ -10,18 +10,18 @@ require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 
 
-require_once('action/helpers.inc');
+require_once('inc/action-helpers.inc');
 
 if (!empty($_POST)) {
     header('Content-Type: text/xml');
-    if (!@include 'action/action.'.$_POST['action'].'.inc') {
+    if (!@include 'ajax/action.'.$_POST['action'].'.inc') {
         start_response();
         echo '<failure code="unrecognized">Unrecognized action: '.@$_POST['action'].'</failure>';
         end_response();
     }
 } else if (!empty($_GET)) {
     header('Content-Type: text/xml');
-    if (!@include 'action/query.'.$_GET['query'].'.inc') {
+    if (!@include 'ajax/query.'.$_GET['query'].'.inc') {
         start_response();
         echo '<failure code="unrecognized">Unrecognized query: '.@$_GET['query'].'</failure>';
         end_response();

@@ -30,7 +30,7 @@ $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
     }
 ?>
   <?php
-require('action/current-heat.inc');
+require_once('inc/current-heat.inc');
 
 if ($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) {
     $stmt = $db->prepare('SELECT lane, lastname, firstname, carnumber, carname, imagefile'
