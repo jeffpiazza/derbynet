@@ -9,21 +9,24 @@ public class HttpTask implements Runnable {
     private ArrayList<Message> queue;  // Messages waiting to be sent to web server
     private HeatReadyCallback heatReadyCallback;
     private AbortHeatCallback abortHeatCallback;
-    private boolean traceQueued;  // Print queued Messages when actually sent.
-    private boolean traceHeartbeat;  // Print heartbeat Messages when actually sent.
-    private boolean traceResponses;  // Print responses to traced messages
+    private MessageTracer traceQueued;  // Print queued Messages when actually sent.
+    private MessageTracer traceHeartbeat;  // Print heartbeat Messages when actually sent.
+
+    public interface MessageTracer {
+        void onMessageSend(Message m, String params);
+        void onMessageResponse(Message m, String response);
+    }
 
     public HttpTask(String base_url, String username, String password,
-                    boolean traceQueued, boolean traceHeartbeat, boolean traceResponses) throws IOException {
+                    MessageTracer traceQueued, MessageTracer traceHeartbeat) throws IOException {
         this.session = new ClientSession(base_url, username, password);
         this.queue = new ArrayList<Message>();
         this.traceQueued = traceQueued;
         this.traceHeartbeat = traceHeartbeat;
-        this.traceResponses = traceResponses;
     }
 
     public HttpTask(String base_url, String username, String password) throws IOException {
-        this(base_url, username, password, false, false, false);
+        this(base_url, username, password, null, null);
     }
 
     public void send(Message message) {
@@ -58,14 +61,14 @@ public class HttpTask implements Runnable {
     public void run() {
         while (true) {
             String response = "";
-            boolean traceMessage = false;
+            MessageTracer traceMessage = null;
+            Message nextMessage;
             synchronized (queue) {
                 if (queue.size() == 0) {
                     try {
                         queue.wait(30000);  // ms.
                     } catch (InterruptedException e) {}
                 }
-                Message nextMessage;
                 if (queue.size() > 0) {
                     nextMessage = queue.remove(0);
                     traceMessage = this.traceQueued;
@@ -78,8 +81,8 @@ public class HttpTask implements Runnable {
                 while (!succeeded) {
                     try {
                         String params = nextMessage.asParameters();
-                        if (traceMessage) {
-                            System.out.println("    sending " + params);
+                        if (traceMessage != null) {
+                            traceMessage.onMessageSend(nextMessage, params);
                         }
                         response = session.sendTimerMessage(params);
                         succeeded = true;
@@ -96,9 +99,8 @@ public class HttpTask implements Runnable {
                 System.out.println("=======================");
                 System.out.println(response);
                 System.out.println("=======================");
-            }
-            else if (traceMessage && this.traceResponses) {
-                System.out.println("    response: {{ " + response + "}}");
+            } else if (traceMessage != null) {
+                traceMessage.onMessageResponse(nextMessage, response);
             }
 
             Matcher hrMatcher = heatReadyPattern.matcher(response);
