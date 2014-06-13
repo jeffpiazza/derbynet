@@ -23,8 +23,8 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         String username = "RaceCoordinator";
         String password = "doyourbest";
         int nlanes = 3;
-        boolean traceMessages = false;
-        boolean traceHeartbeats = false;
+        StdoutMessageTrace traceMessages = null;
+        StdoutMessageTrace traceHeartbeats = null;
         boolean traceResponses = false;
 
         int consumed_args = 0;
@@ -42,10 +42,10 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
                     t.printStackTrace();
                 }
             } else if (args[consumed_args].equals("-t")) {
-                traceMessages = true;
+                traceMessages = new StdoutMessageTrace();
                 ++consumed_args;
             } else if (args[consumed_args].equals("-th")) {
-                traceHeartbeats = true;
+                traceHeartbeats = new StdoutMessageTrace();
                 ++consumed_args;
             } else if (args[consumed_args].equals("-r")) {
                 traceResponses = true;
@@ -61,11 +61,18 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
             System.exit(1);
         }
 
+        if (traceMessages != null) {
+            traceMessages.traceResponses = traceResponses;
+        }
+        if (traceHeartbeats != null) {
+            traceHeartbeats.traceResponses = traceResponses;
+        }
+
         String base_url = args[consumed_args];
 
         try {
             (new FakeTimerMain(new HttpTask(base_url, username, password,
-                                            traceMessages, traceHeartbeats, traceResponses)))
+                                            traceMessages, traceHeartbeats)))
                 .runTest(nlanes);
         } catch (Throwable t) {
             t.printStackTrace();
