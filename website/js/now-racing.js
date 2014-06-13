@@ -47,13 +47,14 @@ function watching_handler() {
   }
 }
 
-function animate_flyers(place, flyers) {
-    if (place >= flyers.length) {
+function animate_flyers(place, place_to_lane) {
+    if (place >= place_to_lane.length) {
         $('.place').css({opacity: 100});
         $('.flying').animate({opacity: 0}, 1000);
     } else {
+        console.log('typeof place_to_lane[' + place + '] = ' + typeof place_to_lane[place]);
         var flyer = $('#place' + place);
-        var target = $('[data-lane="' + flyers[place] + '"] .place');
+        var target = $('[data-lane="' + place_to_lane[place] + '"] .place');
         console.log('target.outerWidth=' + target.outerWidth() + ', target.outerHeight=' + target.outerHeight()
                     + ', target.width=' + target.width() + ', target.height=' + target.height()
                     + ', border=' + parseInt(target.css('border-top'))
@@ -66,7 +67,7 @@ function animate_flyers(place, flyers) {
         console.log('target position: {top:' + target.position().top + ', left:' + target.position().left + '}');
         console.log('target offset: {top:' + target.offset().top + ', left:' + target.offset().left + '}');
         console.log('target font-size: ' + parseInt(target.css('font-size')));
-        var span =  $('[data-lane="' + flyers[place] + '"] .place span');
+        var span =  $('[data-lane="' + place_to_lane[place] + '"] .place span');
         console.log('target span height: ' + span.height());
         console.log('target span position top:' + span.position().top);
         console.log('target span line-height: ' + span.css('line-height'));
@@ -84,7 +85,7 @@ function animate_flyers(place, flyers) {
         flyer.animate({left: target.offset().left - border},
                       300,
                       function() {
-                          animate_flyers(place + 1, flyers);
+                          animate_flyers(place + 1, place_to_lane);
                       });
     }
 }
@@ -99,12 +100,12 @@ function animate_flyers(place, flyers) {
 function process_watching(watching) {
     var heat_results = watching.getElementsByTagName("heat-result");
     if (heat_results.length > 0) {
-        var flyers = new Array();  // place => lane
+        var place_to_lane = new Array();  // place => lane
         for (var i = 0; i < heat_results.length; ++i) {
             var hr = heat_results[i];
             var lane = hr.getAttribute('lane');
             var place = hr.getAttribute('place');
-            flyers[parseInt(place)] = lane;
+            place_to_lane[parseInt(place)] = lane;
 
             $('[data-lane="' + lane + '"] .time')
                 .css({opacity: 100})
@@ -118,7 +119,7 @@ function process_watching(watching) {
             }
         }
 
-        animate_flyers(1, flyers);
+        animate_flyers(1, place_to_lane);
         setTimeout(function() {
             process_new_heat(watching);
         }, 4000);
