@@ -74,8 +74,9 @@ curl_post action.php "action=pass&racer=8&value=0" | check_success
 # TODO: delete-results only wipes out the times, not the fact that a schedule exists.
 #curl_post action.php "action=schedule&roundid=1" | check_success
 
-# POST action=renumber&racer=<racerid>&value=<carnumber>
-# POST action=classchange&racer=<racerid>&value=<rankid>
+curl_post action.php "action=renumber&racer=2&value=5011" | check_success
+curl_post action.php "action=classchange&racer=2&value=3" | check_success
+
 # POST action=photo&racer=<racerid>&photo=<filepath> and maybe &previous=<old-racerid>
 # POST action=initaudit
 # POST action=initnumbers

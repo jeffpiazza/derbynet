@@ -111,7 +111,10 @@ require('inc/banner.inc');
            .' ORDER BY class, rank';
     $stmt = $db->query($sql);
     foreach ($stmt as $rs) {
-      echo "\n".'<option value="'.$rs['rankid'].'">'
+      echo "\n".'<option value="'.$rs['rankid'].'"'
+            .' data-class="'.htmlspecialchars($rs['class']).'"'
+            .' data-rank="'.htmlspecialchars($rs['rank']).'"'
+           .'>'
 		.htmlspecialchars($rs['class'])
 		.' / '.htmlspecialchars($rs['rank'])
 	   .'</option>';
@@ -168,7 +171,7 @@ foreach ($stmt as $rs) {
   
   echo '<tr class="d'.($n & 1).($dsched ? ' dsched' : '').'">';
 
-  echo '<td';
+  echo '<td id="class-'.$racer_id.'"';
   if (have_permission(CHANGE_RACER_RANK_PERMISSION)) {
     echo ' class="clickable"'
       .' onclick=\'show_rank_change_form("'.$first_name.' '.$last_name.'", '
@@ -177,7 +180,7 @@ foreach ($stmt as $rs) {
   echo '>'.$rs['class'].'</td>';
 
   if ($use_subgroups)
-    echo '<td>'.$rs['rank'].'</td>';
+    echo '<td id="rank-'.$racer_id.'">'.$rs['rank'].'</td>';
 
   echo '<td id="renumber'.$racer_id.'"';
   if (have_permission(RENUMBER_CAR_PERMISSION)) {
