@@ -16,7 +16,7 @@ if (have_permission(CHANGE_RACER_RANK_PERMISSION)) {
 									 array(':classid' => $old_classid));
 	if (take_action_silently('UPDATE RegistrationInfo SET rankid = :rankid'
 							 .', classid = :classid'
-							 .' WHERE racerid = :racerid'
+							 .' WHERE racerid = :racerid',
 							 array(':rankid' => $rankid,
 								   ':classid' => $classid,
 								   ':racerid' => $racerid))) {
@@ -25,8 +25,7 @@ if (have_permission(CHANGE_RACER_RANK_PERMISSION)) {
 					.' AND roundid = :old_roundid',
 					array(':new_roundid' => $new_roundid,
 						  ':racerid' => $racerid,
-						  ':old_roundid' => $old_roundid),
-				xml_for_reload());
+						  ':old_roundid' => $old_roundid));
     }
   } else {
 	not_authorized();

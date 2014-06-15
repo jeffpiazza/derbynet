@@ -9,7 +9,6 @@ require_once('inc/data.inc');
 require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 
-
 require_once('inc/action-helpers.inc');
 
 if (!empty($_POST)) {

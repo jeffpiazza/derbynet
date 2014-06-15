@@ -18,67 +18,74 @@ function ajax_remove_request() {
 	$('#ajax_working').addClass('hidden');
 }
 
-function readystate_handler() {
-    // "this" = XMLHttpRequest
-    // attribute DOMString responseText
-    // attribute Document responseXML
-    // attribute unsigned short status
-    // attribute DOMString statusText
+$(document).ajaxSend(function(event, xhr, options) {
+    ajax_add_request();
+});
 
-   if (this.readyState == this.DONE) {
-	   ajax_remove_request();
-	   var respXML = this.responseXML;
-	   if (!respXML) alert("No XML in response.  status = " + this.status
-						   + " (" + this.statusText + ")");
+$(document).ajaxComplete(function(event, xhr, options) {
+    ajax_remove_request();
+});
 
-	   var response = respXML.documentElement;
-	   var fail = response.getElementsByTagName("failure");
-	   var reload = response.getElementsByTagName("reload");
-	   var passed = response.getElementsByTagName("passed");
+$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+	var fail = xmldoc.documentElement.getElementsByTagName("failure");
 
-	   if (fail && fail.length > 0) {
-		 alert("Action failed: " + fail[0].textContent);
-	   }
+	if (fail && fail.length > 0) {
+		alert("Action failed: " + fail[0].textContent);
+	}
+});
 
-	   if (reload && reload.length > 0) {
-		   location.reload(true);
-       } else if (passed && passed.length > 0) {
-		 var racerid = passed[0].getAttribute("racer");
-		 $("#passed-" + racerid).prop('checked', true);
-	   }
-   }
-}
+$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+	var reload = xmldoc.documentElement.getElementsByTagName("reload");
+	if (reload && reload.length > 0) {
+        console.log('ajaxSuccess event: reloading page');
+		location.reload(true);
+	}
+});
+
+$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+	var passed = xmldoc.documentElement.getElementsByTagName("passed");
+    if (passed && passed.length > 0) {
+		var racerid = passed[0].getAttribute("racer");
+		$("#passed-" + racerid).prop('checked', true);
+	}
+});
 
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
-  // cb is the checkbox element, with name "pased-" plus the racer id, e.g., passed-1234
-   if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
-	   cb.checked = true;
-	   return;
-   }
+    // cb is the checkbox element, with name "pased-" plus the racer id, e.g., passed-1234
+    if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
+	    cb.checked = true;
+	    return;
+    }
+    // 7 = length of "passed-" prefix
+    var racer = cb.name.substring(7);
+    var value = cb.checked ? 1 : 0;
 
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
-   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-   xmlhttp.onreadystatechange = readystate_handler;
-   // 7 = length of "passed-" prefix
-   ajax_add_request();
-   xmlhttp.send("action=pass&racer=" + cb.name.substring(7) + "&value=" + (cb.checked ? 1 : 0));
+    $.ajax(g_checkin_action_url,
+           {type: 'POST',
+            data: {action: 'pass',
+                   racer: racer,
+                   value: value},
+           });
 }
 
 // This executes when a checkbox for "Exclusively by Scout" is clicked.
 function handlechange_xbs(cb) {
-  // cb is the checkbox element, with name "xbs-" plus the racer id, e.g., passed-1234
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
-   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-   xmlhttp.onreadystatechange = readystate_handler;
-   // 4 = length of "xbs-" prefix
-   xmlhttp.send("action=xbs&racer=" + cb.name.substring(4) + "&value=" + (cb.checked ? 1 : 0));
-   ajax_add_request();
+    // cb is the checkbox element, with name "xbs-" plus the racer id, e.g., xbs-1234
+    // 4 = length of "xbs-" prefix
+    var racer = cb.name.substring(4);
+    var value = cb.checked ? 1 : 0;
+
+    $.ajax(g_checkin_action_url,
+           {type: 'POST',
+            data: {action: 'xbs',
+                   racer: racer,
+                   value: value},
+           });
 }
 
-// This executes when a car's number cell is clicked; we present an overlaid form to renumber the car.
+// This executes when a car's number cell is clicked; we present an
+// overlaid form to renumber the car.
 function show_renumber_form(racer_name, racerid, td) {
   $("#renumber_racerprompt").html(racer_name);
   $("#renumber_racer").val(racerid);
@@ -87,40 +94,57 @@ function show_renumber_form(racer_name, racerid, td) {
   $("#renumber_carno").focus();
 }
 
-// This runs if the submit button for the car-renumbering form is clicked.
+// This runs when the submit button for the car-renumbering form is
+// clicked.
 function handle_renumber() {
-   var racerid = $("#renumber_racer").val();
-   var new_carno = $("#renumber_carno").val();
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
-   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-   xmlhttp.onreadystatechange = readystate_handler;
-   xmlhttp.send("action=renumber&racer=" + racerid
-		+ "&value=" + new_carno);
-   ajax_add_request();
-
-   $("#renumber" + racerid).html(new_carno);
+    var racerid = $("#renumber_racer").val();
+    var new_carno = $("#renumber_carno").val();
+    $.ajax(g_checkin_action_url,
+           {type: 'POST',
+             data: {action: 'renumber',
+                   racer: racerid,
+                   value: new_carno},
+            success: function(data) {
+                $("#renumber" + racerid).html(new_carno);
+            },
+           });
    $("#renumberform").addClass("hidden");
 }
 
+
 function show_rank_change_form(racer_name, racerid, rankid, td) {
-  $("#rank_racerprompt").html(racer_name);
-  $("#rank_racer").val(racerid);
+    var rank_picker = $("#rank_picker");
 
-  $("option", "#rank_picker").removeAttr("selected");
-  $("[value=" + rankid + "]", "#rank_picker").attr("selected", "1");
+    $("#rank_racerprompt").html(racer_name);
+    $("#rank_racer").val(racerid);
 
-  $("#rankchangeform").removeClass("hidden");
-  $("#rank_picker").focus();
+    // $("option", rank_picker).removeProp("selected");
+    // $("[value=" + rankid + "]", rank_picker).prop("selected", true);
+    rank_picker.val(rankid);
+    rank_picker.change();
+
+    $("#rankchangeform").removeClass("hidden");
+    rank_picker.focus();
 }
 
 function handle_rank_change() {
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
-   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-   xmlhttp.onreadystatechange = readystate_handler;
-   xmlhttp.send("action=classchange&racer=" + $("#rank_racer").val()
-		+ "&value=" + $("#rank_picker").val());
-   ajax_add_request();
+    var racerid = $("#rank_racer").val();
+    var rank_picker = $("#rank_picker");
+    var value = rank_picker.val();
+    var option = $('[value="' + value + '"]', rank_picker);
+    var classname = option.attr('data-class');
+    var rankname = option.attr('rank-class');
+
+    $.ajax(g_checkin_action_url,
+           {type: 'POST',
+             data: {action: 'classchange',
+                   racer: racerid,
+                   value: value},
+            success: function(data) {
+                $('#class-' + racerid).text(classname);
+                $('#rank-' + racerid).text(rankname);
+            },
+           });
+
    $("#rankchangeform").addClass("hidden");
 }

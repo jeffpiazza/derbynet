@@ -3,12 +3,12 @@
 $passed_inspection = read_single_value('SELECT passedinspection OR carnumber = 99999'
 									   .' FROM RegistrationInfo'
 									   .' WHERE racerid = :racerid',
-									   .array(':racerid' => $_POST['racer']));
+									   array(':racerid' => $_POST['racer']));
 
 take_action_if_permitted('UPDATE RegistrationInfo'
-						 .' SET PassedInspection = PassedInspection OR CarNumber = 99999,'
-						 .' CarNumber = :carnumber'
-						 .' WHERE RacerID = :racerid',
+						 .' SET passedinspection = passedinspection OR carnumber = 99999,'
+						 .' carnumber = :carnumber'
+						 .' WHERE racerid = :racerid',
 						 array(':carnumber' => $_POST['value'],
 							   ':racerid' => $_POST['racer']),
 						 RENUMBER_CAR_PERMISSION,
