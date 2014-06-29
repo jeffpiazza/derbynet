@@ -20,7 +20,7 @@ public class ClientSession {
         CookieHandler.setDefault(manager);
         this.base_url = base_url;
 
-        doPost("login-action.php", "name=" + username + "&password=" + password);
+        doPost("action.php", "action=login&name=" + username + "&password=" + password);
     }
 
     public String sendTimerMessage(String messageAndParams) throws IOException {

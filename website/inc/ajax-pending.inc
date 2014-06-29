@@ -1,5 +1,5 @@
 <script type="text/javascript">
-// Mix-in script for managing the "<n> request(s) pending" box on a
+// Mix-in script for managing the "((n)) request(s) pending" box on a
 // page that supports actions.
 //
 // NOTE: Doesn't handle reporting failed actions.

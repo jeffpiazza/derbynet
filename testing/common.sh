@@ -54,11 +54,11 @@ function curl_post() {
 function user_login() {
 	# $1 = user name
 	# $2 = password
-	curl_post login-action.php "name=$1&password=$2" | check_success "login"
+	curl_post action.php "action=login&name=$1&password=$2" | check_success "login"
 }
 
 function user_logout() {
-	curl_get login-action.php | check_success logout
+	curl_post action.php "action=login" | check_success logout
 }
 
 function check_success() {
