@@ -14,35 +14,39 @@ function printTable(file) {  // a File object
 
     reader.onload = function(event) {
         var csv = event.target.result;
-        var data = $.csv.toArrays(csv);
-        var html = '';
-        var first = true;
-        for (var row in data) {
-            if (first) {
-                // Add an extra row on top, to which we drag labels
-                html += '<tr><th/>\n';
+        try {
+            var data = $.csv.toArrays(csv);
+            var html = '';
+            var first = true;
+            for (var row in data) {
+                if (first) {
+                    // Add an extra row on top, to which we drag labels
+                    html += '<tr><th/>\n';
+                    for (var item in data[row]) {
+                        html += '<th class="label_target" data-column="' + item + '">(Drag Label Here)</th>';
+                    }
+                    html += '</tr>\n';
+                }
+                html += '<tr data-row="' + (1 + parseInt(row)) + '"';
+                if (first) {
+                    html += ' class="header_row"';
+                }
+                html += '>';
+                if (first) {
+                    html += '<th class="outcome">Label?</th>\n';
+                } else {
+                    html += '<th class="outcome"/>\n';
+                }
                 for (var item in data[row]) {
-                    html += '<th class="label_target" data-column="' + item + '">(Drag Label Here)</th>';
+                    html += '<td class="dim column' + item + '">' + htmlEncode(data[row][item]) + '</td>\n';
                 }
                 html += '</tr>\n';
+                first = false;
             }
-            html += '<tr data-row="' + (1 + parseInt(row)) + '"';
-            if (first) {
-                html += ' class="header_row"';
-            }
-            html += '>';
-            if (first) {
-                html += '<th class="outcome">Label?</th>\n';
-            } else {
-                html += '<th class="outcome"/>\n';
-            }
-            for (var item in data[row]) {
-                html += '<td class="dim column' + item + '">' + htmlEncode(data[row][item]) + '</td>\n';
-            }
-            html += '</tr>\n';
-            first = false;
+            $('#csv_content').html(html);
+        } catch(err) {
+            alert('Failure: ' + err);
         }
-        $('#csv_content').html(html);
     };
 
     reader.onerror = function() {
@@ -141,31 +145,9 @@ function handle_import_one_row(row) {
     if ($('[data-row="' + row + '"]').length == 0) {
         return;
     }
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlhttp.onreadystatechange = function() {
-        // TODO: Combine to share code with checkin.js'
-        // readystate_handler
-        if (this.readyState == this.DONE) {
-	        ajax_remove_request();
-	        var respXML = this.responseXML;
-	        if (!respXML) alert("No XML in response.  status = " + this.status
-						        + " (" + this.statusText + ")");
 
-	        var response = respXML.documentElement;
-	        var fail = response.getElementsByTagName("failure");
-
-	        if (fail && fail.length > 0) {
-		        alert("Action failed: " + fail[0].textContent);
-	        } else {
-                $('[data-row="' + row + '"] th').text('OK');
-                handle_import_one_row(row + 1);
-            }
-        }
-    };
-
-    var params = "action=import";
+    // Construct param array from what's in the table row
+    var params = {action: 'import'};
     $('#csv_content').find('.label_target').each(function (index, label_target) {
         // label_target.attr('data-column')
         // label_target.find('.field').attr('data-field')
@@ -173,14 +155,21 @@ function handle_import_one_row(row) {
         var field = $(label_target).find('.field');
 
         if (field.length > 0) {
-            params += '&' + encodeURIComponent(field.attr('data-field')) + '='
-                + encodeURIComponent($('#csv_content [data-row="' + row + '"] .column' 
-                                       + $(label_target).attr('data-column')).text());
+            params[field.attr('data-field')] =
+                $('#csv_content [data-row="' + row + '"]' +
+                  ' .column' + $(label_target).attr('data-column'))
+                .text();
         }
     });
 
-    ajax_add_request();
-    xmlhttp.send(params);
+    $.ajax(g_checkin_action_url,
+           {type: 'POST',
+            data: params,
+            success: function() {
+                $('[data-row="' + row + '"] th').text('OK');
+                handle_import_one_row(row + 1);
+            },
+           });
 }
 
 $(function() {

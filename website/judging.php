@@ -1,5 +1,13 @@
-<?php @session_start(); ?>
-<?php
+<?php @session_start();
+
+// EXPERIMENTAL
+// Lists common non-specific awards (e.g., "Most Aerodynamic"), along
+// with a drop-down selection element of potential recipients for
+// each.
+// TODO: Assigning an award presently has no effect!!
+// TODO: Drag-and-drop, a la photo-thumbs
+// TODO: Write-in field for true ad hoc awards
+
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(JUDGING_PERMISSION);
@@ -83,6 +91,12 @@ $awards = Array(Array('Most', 'Aerodynamic'),
 				Array('', 'Strangest Shape'),
 				Array('Most', 'Unusual'),
 				Array('Best', 'Use of Color'),
+				Array('Best', 'Use of the Color Blue'),
+				Array('Best', 'Use of the Color Green'),
+				Array('Best', 'Use of the Color Orange'),
+				Array('Best', 'Use of the Color Purple'),
+				Array('Best', 'Use of the Color Red'),
+				Array('Best', 'Use of the Color Yellow'),
 				Array('Best', 'Use of the Color _____'),
 				Array('Best', 'Vehicle Not a Car'),
 				Array('Best', 'Wedge Shape'),
@@ -186,5 +200,3 @@ foreach ($awards as $award) {
 
 </body>
 </html>
-
-  
