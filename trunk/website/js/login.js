@@ -1,8 +1,9 @@
 
 function handle_login(role, pwd) {
-    $.ajax('login-action.php',  // TODO
+    $.ajax('action.php',
            {type: 'POST',
-            data: {name: role,
+            data: {action: 'login',
+                   name: role,
                    password: pwd},
             success: function(/*PlainObject*/ response, /*String*/ textStatus, /*jqXHR*/ jqXHR) {
                 response = $(response);

@@ -1,24 +1,14 @@
-<?php @session_start(); ?>
 <?php
-require_once('inc/data.inc');
-require_once('inc/permissions.inc');
-require_once('inc/roles.inc');
+
+start_response();
 
 if (isset($_POST['name'])) {
   $name = $_POST['name'];
   $password = $_POST['password'];
- } else if (isset($_GET['name'])) {
-  $name = $_GET['name'];
-  $password = $_GET['password'];
  } else {
   $name = '';
   $password = '';
 }
-
-
-header('Content-Type: text/xml');
-
-echo '<login-action>'."\n";
 
 $role = $roles[$name];
 
@@ -40,5 +30,6 @@ if ($role) {
 } else {
   echo '<failure role="'.$name.'">No such role: '.$name.'</failure>'."\n";
 }
-echo '</login-action>'."\n";
+
+end_response();
 ?>
