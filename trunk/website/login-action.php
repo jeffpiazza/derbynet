@@ -29,6 +29,8 @@ if ($role) {
       $_SESSION['role'] = $name;
 	  echo '<success>'.$_SESSION['role'].'</success>'."\n";
 	} else {
+      // Despite the unset, it appears $_SESSION['role'] will appear
+      // as an empty string in subsequent accesses.
       unset($_SESSION['role']);
 	  echo '<success/>'."\n";
 	}

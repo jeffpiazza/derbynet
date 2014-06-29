@@ -233,8 +233,6 @@ foreach ($stmt as $rs) {
 	 <input data-enhanced="true" type="button" value="New Racer" onclick="window.location = 'newracer.php';"/>
 	</div>
 <?php } ?>
-<div id="ajax_working" class="hidden">
-  <span id="ajax_num_requests">0</span> request(s) pending.
-</div>
+<?php require_once('inc/ajax-pending.inc'); ?>
 </body>
 </html>

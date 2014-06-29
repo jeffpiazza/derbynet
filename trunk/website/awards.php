@@ -1,4 +1,5 @@
 <?php @session_start();
+// Summarizes all the awards (top speed awards, judged awards), by racer; makes it easier to present the awards
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(VIEW_AWARDS_PERMISSION);

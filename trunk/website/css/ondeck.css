@@ -305,3 +305,10 @@ td.clickable div.inclickable {
 }
 
 .fade-in {  display: none;  }
+
+#pw_for_password {
+    display: block;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -3,29 +3,6 @@
 
 g_checkin_action_url = "action.php";
 
-var pending_ajax_requests = 0;
-
-function ajax_add_request() {
-  pending_ajax_requests += 1;
-  $('#ajax_num_requests').html(pending_ajax_requests);
-  $('#ajax_working').removeClass('hidden');
-}
-
-function ajax_remove_request() {
-  pending_ajax_requests -= 1;
-  $('#ajax_num_requests').html(pending_ajax_requests);
-  if (pending_ajax_requests == 0)
-	$('#ajax_working').addClass('hidden');
-}
-
-$(document).ajaxSend(function(event, xhr, options) {
-    ajax_add_request();
-});
-
-$(document).ajaxComplete(function(event, xhr, options) {
-    ajax_remove_request();
-});
-
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	var fail = xmldoc.documentElement.getElementsByTagName("failure");
 
@@ -121,6 +98,9 @@ function show_rank_change_form(racer_name, racerid, rankid, td) {
     // $("option", rank_picker).removeProp("selected");
     // $("[value=" + rankid + "]", rank_picker).prop("selected", true);
     rank_picker.val(rankid);
+    // I think it's a bug in jquery-mobile that an explicit change
+    // event is required; setting the val above should be sufficient
+    // to cause an update.
     rank_picker.change();
 
     $("#rankchangeform").removeClass("hidden");

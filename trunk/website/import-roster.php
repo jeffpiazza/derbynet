@@ -38,6 +38,7 @@ require('inc/banner.inc');
 
 <div id="controls">
   <div id="meta"></div>
+<!-- TODO: wire up start_over_button -->
   <input type="button" id="start_over_button" value="Start Over"/>
   <div id="import_button_div">
     <input class="hidden" type="button" id="import_button" value="Import Roster"/>
@@ -75,5 +76,6 @@ require('inc/banner.inc');
 
 </div>
 
+<?php require_once('inc/ajax-pending.inc'); ?>
 </body>
 </html>
