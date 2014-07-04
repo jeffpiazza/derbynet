@@ -1,0 +1,15 @@
+
+.editform {
+   position: fixed;
+   /* height: 100px; */
+   width:  400px;
+   /* center in viewport: */
+   top: 25%;
+   left: 50%;
+   /* margin-top: -50px; */
+   margin-left: -200px;
+   border: 2px solid black;
+   background-color: white;
+   /* visibility: hidden; */
+   /* visibility: visible; */
+}
