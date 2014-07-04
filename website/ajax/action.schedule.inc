@@ -10,6 +10,7 @@
 
 
 require_once('inc/data.inc');
+require_once('inc/masterheat.inc');
 
 // Each generator is a simple array of ints.
 // $generators[/* number of lanes */] gives an array of entries; each
@@ -458,5 +459,9 @@ if ($nlanes < 0) {
 	schedule_one_round($_POST['roundid'], $nlanes, $nrounds);
 	echo '<success/>';
 }
+
+assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
+                                      array(':roundid' => $_POST['roundid'])));
+
 end_response();
 ?>
