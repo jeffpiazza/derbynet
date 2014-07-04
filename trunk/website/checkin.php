@@ -4,8 +4,6 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
-// TODO: EDIT_RACERS_PERMISSION
-
 // This is the racer check-in page.  It appears as a table of all the
 // registered racers, with a checkbox (actually, a "flipswitch",
 // thanks to transformations peformed by jquery mobile) for each
@@ -42,18 +40,18 @@ if (isset($_GET['order']))
 if (!$order)
     $order = 'name';
 
-  // The table of racers can be presented in order by name, car, or
-  // den (and then by name within the den).  Each sortable column has
-  // a header which is a link to change the ordering, with the
-  // exception that the header for the column for ordering currently
-  // in use is NOT a link (because it wouldn't do anything).
-  function column_header($text, $o) {
+// The table of racers can be presented in order by name, car, or
+// den (and then by name within the den).  Each sortable column has
+// a header which is a link to change the ordering, with the
+// exception that the header for the column for ordering currently
+// in use is NOT a link (because it wouldn't do anything).
+function column_header($text, $o) {
     global $order;
 
     if ($o == $order)
-      return '<b>'.$text.'</b>';
+        return '<b>'.$text.'</b>';
     return '<a href="?order='.$o.'">'.$text.'</a>';
-  }
+}
 ?>
 <html>
 <head>
@@ -84,7 +82,16 @@ g_order = '<?php echo $order; ?>';
 <?php
 $banner_title = 'Racer Check-In';
 require('inc/banner.inc');
+
+require_once('inc/checkin-table.inc');
 ?>
+
+<?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
+    <div class="block_buttons">
+      <input type="button" value="New Racer" data-enhanced="true"
+        onclick='show_new_racer_form();'/>
+	</div>
+<?php } ?>
 
 <table class="main_table">
 <thead>
@@ -129,56 +136,15 @@ $n = 1;
 foreach ($stmt as $rs) {
   $racer_id = $rs['racerid'];
   $passed = $rs['passedinspection'];
-  $dsched = $rs['denscheduled'];
+  $den_scheduled = $rs['denscheduled'];
   // TODO: Use of htmlspecialchars should be universal...
   $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES);
   $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES);
-  
-  echo '<tr class="d'.($n & 1).($dsched ? ' dsched' : '').'">';
 
-  echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('
-      .$racer_id.');\'/></td>';
-
-  echo '<td id="class-'.$racer_id.'" class="sort-class" data-rankid="'.$rs['rankid'].'">'.$rs['class'].'</td>';
-
-  if ($use_subgroups)
-    echo '<td id="rank-'.$racer_id.'">'.$rs['rank'].'</td>';
-
-  echo '<td class="sort-car-number" id="car-number-'.$racer_id.'">'.$rs['carnumber'].'</td>';
-
-  echo '<td class="sort-lastname" id="lastname-'.$racer_id.'">'.$last_name.'</td>'
-      .'<td class="sort-firstname" id="firstname-'.$racer_id.'">'.$first_name.'</td>';
-    // If a race schedule exists for this racer, don't offer the option to un-pass through this interface.
-    // Instead, have go through the native GPRM interface, which may require regenerating schedules, etc.
-
-  if ($rs['scheduled']) {
-    echo '<td>'.($passed ? 'Racing' : 'Scheduled but not passed').'</td>';
-  } else {
-      echo '<td>'
-		//.'<div data-role="fieldcontain">'
-		.'<label for="passed-'.$racer_id.'">Checked In?</label>'
-	      .'<input type="checkbox" data-role="flipswitch" name="passed-'.$racer_id.'" id="passed-'.$racer_id.'"'
-	          .($passed ? ' checked="checked"' : '')
-	          .(($passed && !have_permission(REVERT_CHECK_IN_PERMISSION))
-		    ? ' disabled="disabled"' : '')
-		.' data-on-text="Yes" data-off-text="No"'
-	          .' onchange=\'handlechange_passed(this, "'.$first_name.' '.$last_name.'");\'/>'
-	       .($dsched ? ' Late!' : '')
-		//.'</div>'
-		.'</td>';
-  }
-    // Racers are normally excluded ahead of time, not as part of the check-in process.
-    //.'<td>'.$rs['exclude'].'</td>'
-    if ($xbs) {
-        echo '<td>'
-		  .'<label for="xbs-'.$racer_id.'">Exclusively By Scout?</label>'
-		  .'<input type="checkbox" data-role="flipswitch" name="xbs-'.$racer_id.'" '
-                      .($rs['xbs'] ? ' checked="checked"' : '')
-		              .' data-on-text="Yes" data-off-text="No"'
-                      .' onchange="handlechange_xbs(this);"/>'
-	    .'</td>';
-	}
-    echo '</tr>'."\n";
+  checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],
+                    htmlspecialchars($rs['class']), htmlspecialchars($rs['rank']),
+                    $passed, $rs['xbs'], $rs['scheduled'],
+                    $den_scheduled, $xbs, $use_subgroups, $n);
   ++$n;
 }
 ?>
@@ -186,7 +152,8 @@ foreach ($stmt as $rs) {
 </table>
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
     <div class="block_buttons">
-	 <input data-enhanced="true" type="button" value="New Racer" onclick="window.location = 'newracer.php';"/>
+      <input type="button" value="New Racer" data-enhanced="true"
+        onclick='show_new_racer_form();'/>
 	</div>
 <?php } ?>
 
@@ -201,7 +168,7 @@ foreach ($stmt as $rs) {
 
   <label for="edit_firstname">First name:</label>
   <input id="edit_firstname" type="text" name="edit_firstname" value=""/>
-  <label for="edit_lastname">First name:</label>
+  <label for="edit_lastname">Last name:</label>
   <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
 
   <label for="edit_carno">Change car number:</label>

@@ -50,8 +50,8 @@ if ($ok) {
     $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;  // TODO
     // TODO: carname
 
-    insert_new_racer($_POST['firstname'], $_POST['lastname'], $carnumber,
-                     $rankid.','.$classid);
+    insert_new_racer_rankid_and_classid($_POST['firstname'], $_POST['lastname'], $carnumber,
+                                        $rankid, $classid);
 
     echo '<success/>';
 }

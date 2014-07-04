@@ -76,5 +76,18 @@ function expect_count {
 	# Expecting stdin
 	if [ "`grep -c $1`" -ne $2 ]; then
 		echo FAILURE expecting $2 occurrences of $1
+		echo BEGIN RESPONSE
+		cat debug.curl
+		echo END RESPONSE
 	fi
 }
+
+function expect_one {
+	if [ "`grep -c $1`" -ne 1 ]; then
+		echo FAILURE expecting an occurrence of $1
+		echo BEGIN RESPONSE
+		cat debug.curl
+		echo END RESPONSE
+	fi
+}
+    
