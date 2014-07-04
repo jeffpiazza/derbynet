@@ -14,7 +14,6 @@ function ajax_add_request() {
   pending_ajax_requests += 1;
   $('#ajax_num_requests').html(pending_ajax_requests);
   $('#ajax_working').removeClass('hidden');
-  console.log('ajax_add_request');
 }
 
 function ajax_remove_request() {
@@ -23,7 +22,6 @@ function ajax_remove_request() {
   if (pending_ajax_requests == 0) {
 	$('#ajax_working').addClass('hidden');
   }
-  console.log('ajax_remove_request');
 }
 
 $(document).ajaxSend(function(event, xhr, options) {

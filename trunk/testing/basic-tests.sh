@@ -66,6 +66,9 @@ curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 [ `curl_get checkin.php | grep -c '<tr '` -eq 51 ] || echo Checkin!
 
 curl_post action.php "action=schedule&roundid=1" | check_success
+curl_post action.php "action=schedule&roundid=2" | check_success
+curl_post action.php "action=schedule&roundid=3" | check_success
+
 curl_post action.php "action=pass&racer=8&value=1" | check_success
 curl_post action.php "action=schedule&roundid=1" | check_success
 curl_post action.php "action=pass&racer=8&value=0" | check_success
