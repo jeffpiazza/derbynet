@@ -29,8 +29,7 @@ user_login RaceCoordinator doyourbest
 
 echo ' ' ' ' ' ' 'Populate database'
 ./populate-database.sh $BASE_URL
-[ `curl_get checkin.php | grep -c '<td>Owen</td>'` -eq 1 ] || echo Owen O\'Connor!
-
+[ `curl_get checkin.php | grep -c '>Owen</td>'` -eq 1 ] || echo Owen O\'Connor!
 # TODO: There's a 15-character limit on class names and rank names.
 curl_post action.php "action=import&lastname=Flintstone&firstname=Fred&classname=6-Cartoons&carnumber=425" | check_success
 
@@ -74,8 +73,10 @@ curl_post action.php "action=pass&racer=8&value=0" | check_success
 # TODO: delete-results only wipes out the times, not the fact that a schedule exists.
 #curl_post action.php "action=schedule&roundid=1" | check_success
 
-curl_post action.php "action=renumber&racer=2&value=5011" | check_success
-curl_post action.php "action=classchange&racer=2&value=3" | check_success
+curl_post action.php "action=edit-racer&racer=2&firstname=Tom&lastname=Adrogue&carno=5011&rankid=3" | check_success
+[ `curl_get checkin.php | grep firstname-2 | grep -c '>Tom</td>'` -eq 1 ] || echo Firstname change
+[ `curl_get checkin.php | grep '"class-2"' | grep -c '>3 - Bear</td>'` -eq 1 ] || echo Car rank change
+[ `curl_get checkin.php | grep -c '>5011</td>'` -eq 1 ] || echo Car number change
 
 # POST action=photo&racer=<racerid>&photo=<filepath> and maybe &previous=<old-racerid>
 # POST action=initaudit
