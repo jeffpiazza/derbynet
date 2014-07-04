@@ -86,6 +86,21 @@ function show_edit_racer_form(racerid) {
   edit_rank.change();
 }
 
+function show_new_racer_form() {
+  $("#editracerform").removeClass("hidden");
+
+  $("#edit_racer").val(-1);
+
+  $("#edit_firstname").val("");
+  $("#edit_firstname").focus();
+
+  $("#edit_lastname").val("");
+
+  $("#edit_carno").val(9999);
+
+  var edit_rank = $("#edit_rank");
+}
+
 function handle_edit_racer() {
   var racerid = $("#edit_racer").val();
 
@@ -102,22 +117,34 @@ function handle_edit_racer() {
 
   $.ajax(g_checkin_action_url,
          {type: 'POST',
-          data: {action: 'edit-racer',
+          data: {action: racerid >= 0 ? 'edit-racer' : 'new-racer',
                  racer: racerid,
                  firstname: new_firstname,
                  lastname: new_lastname,
                  carno: new_carno,
                  rankid: new_rankid},
             success: function(data) {
-                console.log("handle_edit_racer success()!");
-                console.log(new_firstname);
-                $("#firstname-" + racerid).text(new_firstname);
-                $("#lastname-" + racerid).text(new_lastname);
-                $("#car-number-" + racerid).text(new_carno);
+                var new_row_elements = data.getElementsByTagName('new-row');
+                if (new_row_elements.length > 0) {
+	                tb = $(".main_table tbody");
+                    for (var j = 0; j < new_row_elements.length; ++j) {
+                        var tr_elements = new_row_elements[j].getElementsByTagName('tr');
+                        for (var jj = 0; jj < tr_elements.length; ++jj) {
+                            var new_tr = document.createElement('tr');
+	                        tb.get(0).appendChild(new_tr);
+                            new_tr.outerHTML = (new XMLSerializer()).serializeToString(tr_elements[jj]);
+                            tb.trigger('create');
+                        }
+                    }
+                } else {
+                    $("#firstname-" + racerid).text(new_firstname);
+                    $("#lastname-" + racerid).text(new_lastname);
+                    $("#car-number-" + racerid).text(new_carno);
 
-                $('#class-' + racerid).attr('data-rankid', new_rankid);
-                $('#class-' + racerid).text(new_classname);
-                $('#rank-' + racerid).text(new_rankname);
+                    $('#class-' + racerid).attr('data-rankid', new_rankid);
+                    $('#class-' + racerid).text(new_classname);
+                    $('#rank-' + racerid).text(new_rankname);
+                }
 
                 sort_checkin_table();
             },
@@ -158,8 +185,6 @@ function sort_checkin_table() {
 	row_array = [];
     rows = $(".main_table tbody").get(0).getElementsByTagName('tr');
 
-    console.log("rows"); console.log(rows);
-
 	for (var j = 0; j < rows.length; ++j) {
 	    row_array[row_array.length] = [sorting_key(rows[j]), rows[j]];
 	}
@@ -168,12 +193,9 @@ function sort_checkin_table() {
 
 	tb = $(".main_table tbody").get(0);
 
-    console.log("tb"); console.log(tb);
-
 	for (var j = 0; j < row_array.length; ++j) {
         row_array[j][1].classList.remove('d' + (j & 1));
         row_array[j][1].classList.add('d' + ((j + 1) & 1));
-        console.log(row_array[j][1].classList);
 	    tb.appendChild(row_array[j][1]);
 	}
 
