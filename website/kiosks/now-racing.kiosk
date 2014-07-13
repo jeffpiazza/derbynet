@@ -1,10 +1,6 @@
 <?php @session_start();
 require_once('inc/data.inc');
 
-// TODO: Poll continuously, watching the current race.
-// When a new heat is up, update the table with the new racers.
-// When heat results are up, animate!
-
 $nlanes = get_lane_count();
 // TODO: If $nlanes not yet set, then this page isn't ready for display
 ?>
@@ -44,16 +40,12 @@ $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc');
 
 </table>
 
-<div id="ajax_failure" class="hidden">
-  Ajax request failed with <span id="ajax_status">0</span>.
-</div>
-
-
 <?php
   for ($i = 1; $i <= $nlanes; ++$i) {
       echo '<div id="place'.$i.'" class="flying"><span>'.$i.'</span></div>'."\n";
   }
 ?>
 
+<?php require_once('inc/ajax-kiosk-failure.inc'); ?>
 </body>
 </html>

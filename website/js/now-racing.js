@@ -3,48 +3,27 @@
 // TODO: Animation should only occur once, even if current heat doesn't advance.
 // So: should detect when there's a complete result, animate it once, and then wait for a new heat.
 
-// TODO: CSS beautification
 // TODO: Window resizing should adjust the font size in some meaningful way.
+// TODO: Test display in 640x480 with the longest names we can find.
 
 // TODO: HttpTest stops on received failure, but doesn't resume...
-// TODO: Rename this kiosk and associated files before check-in!
-// TODO: Who's supposed to format the times?
 
 var g_roundid = 1;
 var g_heat = 1;
 
-function watching_fire() {
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", "action.php?query=watching&roundid=" + g_roundid + "&heat=" + g_heat, /*async*/true);
-  xmlhttp.onreadystatechange = watching_handler;
-  xmlhttp.send("");
-}
-
-function watching_handler() {
-  if (this.readyState == this.DONE) {
-	if (this.status == 200) {
-	  if (this.responseXML != null) {
-	    $('#ajax_failure').addClass('hidden');
-	    process_watching(this.responseXML.documentElement);
-	  } else {
-        // If the text returned from update-summary isn't parsable, e.g.,
-        // because there's some kind of error on the php side, then
-        // responseXML can come back null.  Rather than completely
-        // freak out, let's try again in a moment.
-		console.log("XmlHttpResponse:");
-		console.log(this);
-	    $('#ajax_status').html("Response from server doesn't parse as XML.");
-	    $('#ajax_failure').removeClass('hidden');
-        setTimeout(watching_fire, 200);  // 0.2 sec
-      }
-	} else {
-	  $('#ajax_status').html(this.status + " (" + 
-							 (this.status == 0 ? "likely timeout" : this.statusText)
-							 + ")");
-	  $('#ajax_failure').removeClass('hidden');
-      setTimeout(watching_fire, 200);  // 0.2 sec
- 	}
-  }
+function poll_for_update() {
+    $.ajax('action.php',
+           {type: 'GET',
+            data: {query: 'watching',
+                   roundid: g_roundid,
+                   heat: g_heat},
+            success: function(data) {
+                process_watching(data);
+            },
+            error: function() {
+                setTimeout(poll_for_update, 200);
+            }
+           });
 }
 
 function animate_flyers(place, place_to_lane) {
@@ -90,12 +69,7 @@ function animate_flyers(place, place_to_lane) {
     }
 }
 
-//   <watching roundid= heat= >
-//     <heat-result lane="1" time="" place="" speed=""/>... if results are available
-//     <current-heat> 
-//     -- if current-heat differs from what the caller passed in, then provide
-//     --    <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
-//   </watching>
+// See ajax/query.watching.inc for XML format
 
 function process_watching(watching) {
     var heat_results = watching.getElementsByTagName("heat-result");
@@ -122,7 +96,7 @@ function process_watching(watching) {
         animate_flyers(1, place_to_lane);
         setTimeout(function() {
             process_new_heat(watching);
-        }, 4000);
+        }, 4000);  // Wait 4 seconds after animation
     } else {
         process_new_heat(watching);
     }
@@ -153,7 +127,8 @@ function process_new_heat(watching) {
         }
     }
 
-    setTimeout(watching_fire, 200);  // 0.2 sec
+    // Queue the next 
+    setTimeout(poll_for_update, 200);  // 0.2 sec
 }
 
 function resize_table() {
@@ -182,5 +157,5 @@ function resize_table() {
 $(function () {
     resize_table();
     $(window).resize(function() { resize_table(); });
-    watching_fire();
+    poll_for_update();
 });
