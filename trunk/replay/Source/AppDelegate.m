@@ -5,6 +5,7 @@
 //  Copyright (c) 2014 ___FULLUSERNAME___. All rights reserved.
 //
 // TODO: Show connection status (green/red)
+// TODO: Allow changing connection, especially if connection fails.  Verify there's no leak.
 // TODO: Instead of polling, listen on port for commands!!
 // TODO: Configuration:
 //    Slow-motion replay -- disable sound?
@@ -99,90 +100,35 @@
     }
     
     //TODO
-    [self showUrlSheet: [self window]];
+    [self showUrlSheet];
+    //[[NSRunLoop currentRunLoop] performSelector: @selector(showUrlSheet) withObject:self ];
 }
 
-- (void)showUrlSheet: (NSWindow *)window
+- (void)showUrlSheet
 {
-    if (!_urlSheet)
+    if (!_urlSheet) {
+        NSLog(@"Loading UrlDialog nib");
         [NSBundle loadNibNamed:@"UrlDialog" owner: self];
+    }
     
     [NSApp beginSheet: _urlSheet
-       modalForWindow: window
+       modalForWindow: [self window]
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
           contextInfo: nil];
+
+    // These both appear to be necessary, but it's not really clear why.
+    [_urlSheet makeKeyWindow];
+    [_urlField becomeFirstResponder];
 }
 
 - (IBAction) tryNewUrl: (id) sender
 {
     NSLog(@"tryNewUrl");
-    NSURL *baseURL = [NSURL URLWithString:[_urlField stringValue]];
+    self.poller = [[Poller alloc] init];
+    [self.poller setUrlAndPoll: [_urlField stringValue]];
 
     [NSApp endSheet:_urlSheet];
-    
-    // TODO: fix up baseURL, adding http:// on the front and /action.php?query=replay-poll on the end.  Maybe remove /index.php from the end, if present.
-    NSURLRequest *request = [NSURLRequest requestWithURL:baseURL];
-
-    // The connection delegate could sensibly be another object
-    responseData = [NSMutableData data];
-    connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-}
-
-// These four are for connection delegate behavior
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    [responseData setLength:0];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    [responseData appendData:data];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    [[NSAlert alertWithError:error] runModal];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
-    NSLog(@"%@",strData);
-    
-    // Once this method is invoked, "responseData" contains the complete result
-    NSError *error;
-    NSXMLDocument *document =
-    [[NSXMLDocument alloc] initWithData:responseData options:NSXMLDocumentTidyHTML error:&error];
-    
-    // Deliberately ignore the error: with most HTML it will be filled with
-    // numerous "tidy" warnings.
-    
-    /*
-    NSXMLElement *rootNode = [document rootElement];
-    
-    NSString *xpathQueryString =
-    @"//div[@id='newtothestore']/div[@class='modulecontent']/div[@id='new-to-store']/div[@class='list_content']/ul/li/a";
-    NSArray *newItemsNodes = [rootNode nodesForXPath:xpathQueryString error:&error];
-    if (error)
-    {
-        [[NSAlert alertWithError:error] runModal];
-        return;
-    }
-     */
-    if (!document) {
-        NSLog(@"Document failed to parse");
-        // [[NSAlert alertWithMessageText:@"Document failed to parse" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
-    } else {
-        NSLog(@"PARSED OK!");
-        // [[NSAlert alertWithMessageText:@"PARSED OK!" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
-    }
-    
-    // Delay execution of my block for 10 seconds.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        NSLog(@"dispatch_after");
-            // self tryNewUrl:
-    });
 }
 
 - (IBAction) closeUrlSheet: (id) sender

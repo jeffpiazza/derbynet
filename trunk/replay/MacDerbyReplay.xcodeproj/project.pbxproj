@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E0826E81972CC9A003B322F /* Poller.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E0826E71972CC9A003B322F /* Poller.m */; };
 		2E160A621908348C00C8691E /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A611908348C00C8691E /* AVKit.framework */; };
 		2E160A641909AE6400C8691E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A631909AE6400C8691E /* CoreMedia.framework */; };
 		2EAB7DD81905948E003926A0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7DD71905948E003926A0 /* Cocoa.framework */; };
@@ -35,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2E0826E61972CC9A003B322F /* Poller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poller.h; sourceTree = "<group>"; };
+		2E0826E71972CC9A003B322F /* Poller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Poller.m; sourceTree = "<group>"; };
 		2E160A611908348C00C8691E /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		2E160A631909AE6400C8691E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		2EAB7DD41905948E003926A0 /* MacDerbyReplay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacDerbyReplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,6 +138,8 @@
 				2EF716FF196C02DC005C5C43 /* UrlDialog.xib */,
 				2EAB7DEF1905948E003926A0 /* Images.xcassets */,
 				2EAB7DDE1905948E003926A0 /* Supporting Files */,
+				2E0826E61972CC9A003B322F /* Poller.h */,
+				2E0826E71972CC9A003B322F /* Poller.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -270,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EAB7DEB1905948E003926A0 /* AppDelegate.m in Sources */,
+				2E0826E81972CC9A003B322F /* Poller.m in Sources */,
 				2EAB7DE41905948E003926A0 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

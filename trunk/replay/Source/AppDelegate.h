@@ -6,6 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "Poller.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 {
@@ -27,6 +28,7 @@
 
 @property (assign) IBOutlet NSWindow* urlSheet;
 @property (weak) IBOutlet NSTextField* urlField;
+@property (retain) Poller* poller;
 
 // Playback:
 @property (weak) IBOutlet AVPlayerView *playerView;
