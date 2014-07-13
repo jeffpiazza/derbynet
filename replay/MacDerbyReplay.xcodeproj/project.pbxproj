@@ -1,0 +1,501 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2E160A621908348C00C8691E /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A611908348C00C8691E /* AVKit.framework */; };
+		2E160A641909AE6400C8691E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A631909AE6400C8691E /* CoreMedia.framework */; };
+		2EAB7DD81905948E003926A0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7DD71905948E003926A0 /* Cocoa.framework */; };
+		2EAB7DE21905948E003926A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DE01905948E003926A0 /* InfoPlist.strings */; };
+		2EAB7DE41905948E003926A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB7DE31905948E003926A0 /* main.m */; };
+		2EAB7DE81905948E003926A0 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DE61905948E003926A0 /* Credits.rtf */; };
+		2EAB7DEB1905948E003926A0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB7DEA1905948E003926A0 /* AppDelegate.m */; };
+		2EAB7DEE1905948E003926A0 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DEC1905948E003926A0 /* MainMenu.xib */; };
+		2EAB7DF01905948E003926A0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DEF1905948E003926A0 /* Images.xcassets */; };
+		2EAB7DF71905948E003926A0 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7DF61905948E003926A0 /* XCTest.framework */; };
+		2EAB7DF81905948E003926A0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7DD71905948E003926A0 /* Cocoa.framework */; };
+		2EAB7E001905948E003926A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DFE1905948E003926A0 /* InfoPlist.strings */; };
+		2EAB7E021905948E003926A0 /* MacDerbyReplayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB7E011905948E003926A0 /* MacDerbyReplayTests.m */; };
+		2EAB7E0C19059F08003926A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7E0B19059F08003926A0 /* AVFoundation.framework */; };
+		2EF71700196C02DC005C5C43 /* UrlDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2EF716FF196C02DC005C5C43 /* UrlDialog.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2EAB7DF91905948E003926A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2EAB7DCC1905948E003926A0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EAB7DD31905948E003926A0;
+			remoteInfo = RecorderTrials;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2E160A611908348C00C8691E /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		2E160A631909AE6400C8691E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		2EAB7DD41905948E003926A0 /* MacDerbyReplay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacDerbyReplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EAB7DD71905948E003926A0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		2EAB7DDA1905948E003926A0 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		2EAB7DDB1905948E003926A0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2EAB7DDC1905948E003926A0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		2EAB7DDF1905948E003926A0 /* MacDerbyReplay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MacDerbyReplay-Info.plist"; sourceTree = "<group>"; };
+		2EAB7DE11905948E003926A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2EAB7DE31905948E003926A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2EAB7DE51905948E003926A0 /* MacDerbyReplay-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MacDerbyReplay-Prefix.pch"; sourceTree = "<group>"; };
+		2EAB7DE71905948E003926A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		2EAB7DE91905948E003926A0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		2EAB7DEA1905948E003926A0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		2EAB7DED1905948E003926A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		2EAB7DEF1905948E003926A0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		2EAB7DF51905948E003926A0 /* MacDerbyReplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacDerbyReplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EAB7DF61905948E003926A0 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		2EAB7DFD1905948E003926A0 /* MacDerbyReplayTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = "MacDerbyReplayTests-Info.plist"; path = "Tests/MacDerbyReplayTests-Info.plist"; sourceTree = "<group>"; };
+		2EAB7DFF1905948E003926A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		2EAB7E011905948E003926A0 /* MacDerbyReplayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MacDerbyReplayTests.m; path = Tests/MacDerbyReplayTests.m; sourceTree = "<group>"; };
+		2EAB7E0B19059F08003926A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		2EF716FF196C02DC005C5C43 /* UrlDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UrlDialog.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2EAB7DD11905948E003926A0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E160A641909AE6400C8691E /* CoreMedia.framework in Frameworks */,
+				2EAB7E0C19059F08003926A0 /* AVFoundation.framework in Frameworks */,
+				2EAB7DD81905948E003926A0 /* Cocoa.framework in Frameworks */,
+				2E160A621908348C00C8691E /* AVKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EAB7DF21905948E003926A0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EAB7DF81905948E003926A0 /* Cocoa.framework in Frameworks */,
+				2EAB7DF71905948E003926A0 /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2EAB7DCB1905948E003926A0 = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DDD1905948E003926A0 /* Source */,
+				2EAB7DFB1905948E003926A0 /* Tests */,
+				2EAB7DD61905948E003926A0 /* Frameworks */,
+				2EAB7DD51905948E003926A0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2EAB7DD51905948E003926A0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DD41905948E003926A0 /* MacDerbyReplay.app */,
+				2EAB7DF51905948E003926A0 /* MacDerbyReplayTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2EAB7DD61905948E003926A0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2E160A611908348C00C8691E /* AVKit.framework */,
+				2EAB7E0B19059F08003926A0 /* AVFoundation.framework */,
+				2EAB7DD71905948E003926A0 /* Cocoa.framework */,
+				2E160A631909AE6400C8691E /* CoreMedia.framework */,
+				2EAB7DF61905948E003926A0 /* XCTest.framework */,
+				2EAB7DD91905948E003926A0 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2EAB7DD91905948E003926A0 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DDA1905948E003926A0 /* AppKit.framework */,
+				2EAB7DDB1905948E003926A0 /* CoreData.framework */,
+				2EAB7DDC1905948E003926A0 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		2EAB7DDD1905948E003926A0 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DE91905948E003926A0 /* AppDelegate.h */,
+				2EAB7DEA1905948E003926A0 /* AppDelegate.m */,
+				2EAB7DEC1905948E003926A0 /* MainMenu.xib */,
+				2EF716FF196C02DC005C5C43 /* UrlDialog.xib */,
+				2EAB7DEF1905948E003926A0 /* Images.xcassets */,
+				2EAB7DDE1905948E003926A0 /* Supporting Files */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		2EAB7DDE1905948E003926A0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DDF1905948E003926A0 /* MacDerbyReplay-Info.plist */,
+				2EAB7DE01905948E003926A0 /* InfoPlist.strings */,
+				2EAB7DE31905948E003926A0 /* main.m */,
+				2EAB7DE51905948E003926A0 /* MacDerbyReplay-Prefix.pch */,
+				2EAB7DE61905948E003926A0 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2EAB7DFB1905948E003926A0 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7E011905948E003926A0 /* MacDerbyReplayTests.m */,
+				2EAB7DFC1905948E003926A0 /* Supporting Files */,
+			);
+			name = Tests;
+			path = RecorderTrialsTests;
+			sourceTree = "<group>";
+		};
+		2EAB7DFC1905948E003926A0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				2EAB7DFD1905948E003926A0 /* MacDerbyReplayTests-Info.plist */,
+				2EAB7DFE1905948E003926A0 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2EAB7DD31905948E003926A0 /* MacDerbyReplay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EAB7E051905948F003926A0 /* Build configuration list for PBXNativeTarget "MacDerbyReplay" */;
+			buildPhases = (
+				2EAB7DD01905948E003926A0 /* Sources */,
+				2EAB7DD11905948E003926A0 /* Frameworks */,
+				2EAB7DD21905948E003926A0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MacDerbyReplay;
+			productName = RecorderTrials;
+			productReference = 2EAB7DD41905948E003926A0 /* MacDerbyReplay.app */;
+			productType = "com.apple.product-type.application";
+		};
+		2EAB7DF41905948E003926A0 /* MacDerbyReplayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EAB7E081905948F003926A0 /* Build configuration list for PBXNativeTarget "MacDerbyReplayTests" */;
+			buildPhases = (
+				2EAB7DF11905948E003926A0 /* Sources */,
+				2EAB7DF21905948E003926A0 /* Frameworks */,
+				2EAB7DF31905948E003926A0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2EAB7DFA1905948E003926A0 /* PBXTargetDependency */,
+			);
+			name = MacDerbyReplayTests;
+			productName = RecorderTrialsTests;
+			productReference = 2EAB7DF51905948E003926A0 /* MacDerbyReplayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2EAB7DCC1905948E003926A0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "___FULLUSERNAME___";
+				TargetAttributes = {
+					2EAB7DF41905948E003926A0 = {
+						TestTargetID = 2EAB7DD31905948E003926A0;
+					};
+				};
+			};
+			buildConfigurationList = 2EAB7DCF1905948E003926A0 /* Build configuration list for PBXProject "MacDerbyReplay" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2EAB7DCB1905948E003926A0;
+			productRefGroup = 2EAB7DD51905948E003926A0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2EAB7DD31905948E003926A0 /* MacDerbyReplay */,
+				2EAB7DF41905948E003926A0 /* MacDerbyReplayTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2EAB7DD21905948E003926A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EAB7DE21905948E003926A0 /* InfoPlist.strings in Resources */,
+				2EF71700196C02DC005C5C43 /* UrlDialog.xib in Resources */,
+				2EAB7DF01905948E003926A0 /* Images.xcassets in Resources */,
+				2EAB7DE81905948E003926A0 /* Credits.rtf in Resources */,
+				2EAB7DEE1905948E003926A0 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EAB7DF31905948E003926A0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EAB7E001905948E003926A0 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2EAB7DD01905948E003926A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EAB7DEB1905948E003926A0 /* AppDelegate.m in Sources */,
+				2EAB7DE41905948E003926A0 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EAB7DF11905948E003926A0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EAB7E021905948E003926A0 /* MacDerbyReplayTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2EAB7DFA1905948E003926A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2EAB7DD31905948E003926A0 /* MacDerbyReplay */;
+			targetProxy = 2EAB7DF91905948E003926A0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		2EAB7DE01905948E003926A0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2EAB7DE11905948E003926A0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		2EAB7DE61905948E003926A0 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2EAB7DE71905948E003926A0 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		2EAB7DEC1905948E003926A0 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2EAB7DED1905948E003926A0 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		2EAB7DFE1905948E003926A0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				2EAB7DFF1905948E003926A0 /* en */,
+			);
+			name = InfoPlist.strings;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2EAB7E031905948F003926A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2EAB7E041905948F003926A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2EAB7E061905948F003926A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Source/MacDerbyReplay-Prefix.pch";
+				INFOPLIST_FILE = "Source/MacDerbyReplay-Info.plist";
+				PRODUCT_NAME = MacDerbyReplay;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		2EAB7E071905948F003926A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Source/MacDerbyReplay-Prefix.pch";
+				INFOPLIST_FILE = "Source/MacDerbyReplay-Info.plist";
+				PRODUCT_NAME = MacDerbyReplay;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		2EAB7E091905948F003926A0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RecorderTrials.app/Contents/MacOS/RecorderTrials";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RecorderTrials/RecorderTrials-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "RecorderTrialsTests/MacDerbyReplayTests-Info.plist";
+				PRODUCT_NAME = MacDerbyReplayTests;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		2EAB7E0A1905948F003926A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RecorderTrials.app/Contents/MacOS/RecorderTrials";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RecorderTrials/RecorderTrials-Prefix.pch";
+				INFOPLIST_FILE = "RecorderTrialsTests/MacDerbyReplayTests-Info.plist";
+				PRODUCT_NAME = MacDerbyReplayTests;
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2EAB7DCF1905948E003926A0 /* Build configuration list for PBXProject "MacDerbyReplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EAB7E031905948F003926A0 /* Debug */,
+				2EAB7E041905948F003926A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2EAB7E051905948F003926A0 /* Build configuration list for PBXNativeTarget "MacDerbyReplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EAB7E061905948F003926A0 /* Debug */,
+				2EAB7E071905948F003926A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2EAB7E081905948F003926A0 /* Build configuration list for PBXNativeTarget "MacDerbyReplayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EAB7E091905948F003926A0 /* Debug */,
+				2EAB7E0A1905948F003926A0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2EAB7DCC1905948E003926A0 /* Project object */;
+}
