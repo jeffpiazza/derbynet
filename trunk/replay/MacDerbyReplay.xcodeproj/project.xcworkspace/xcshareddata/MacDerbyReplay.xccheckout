@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>73E98A87-B744-469D-BC0D-2D5D542E8335</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MacDerbyReplay</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B77D66B3-A62F-482C-8F4C-81D12199EAFA</key>
+		<string>http://jeffpiazza.svn.cloudforge.com/webracemanager/trunk</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>replay/MacDerbyReplay.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B77D66B3-A62F-482C-8F4C-81D12199EAFA</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>B77D66B3-A62F-482C-8F4C-81D12199EAFA</key>
+		<string>http://jeffpiazza.svn.cloudforge.com/webracemanager</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>http://jeffpiazza.svn.cloudforge.com/webracemanager/trunk/replay/MacDerbyReplay.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B77D66B3-A62F-482C-8F4C-81D12199EAFA</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryBranchesRelativeLocationKey</key>
+			<string>branches</string>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlRepositoryTagsRelativeLocationKey</key>
+			<string>tags</string>
+			<key>IDESourceControlRepositoryTrunkRelativeLocationKey</key>
+			<string>trunk</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B77D66B3-A62F-482C-8F4C-81D12199EAFA</string>
+			<key>IDESourceControlWCCName</key>
+			<string>repo</string>
+		</dict>
+	</array>
+</dict>
+</plist>
