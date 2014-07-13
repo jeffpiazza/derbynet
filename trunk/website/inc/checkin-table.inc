@@ -16,6 +16,7 @@ function checkin_table_row($racer_id, $first_name, $last_name, $car_no,
                            $scheduled, $den_scheduled, $pack_xbs, $use_subgroups, $n = 0) {
     echo '<tr class="d'.($n & 1).($den_scheduled ? ' den_scheduled' : '').'">';
 
+    // TODO: Button formatting; data-enhanced="true"
     echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$racer_id.');\'/></td>';
 
     echo '<td id="class-'.$racer_id.'" class="sort-class" data-rankid="'.$rankid.'">'.$classname.'</td>';
