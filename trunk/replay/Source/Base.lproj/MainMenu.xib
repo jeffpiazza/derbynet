@@ -348,21 +348,6 @@
                 </constraints>
             </view>
         </window>
-        <popUpButton verticalHuggingPriority="750" id="dAG-Fr-aBN">
-            <rect key="frame" x="0.0" y="0.0" width="100" height="26"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="cLK-gg-G16" id="WtK-XJ-wk4">
-                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                <font key="font" metaFont="menu"/>
-                <menu key="menu" title="OtherViews" id="HmY-RH-Omq">
-                    <items>
-                        <menuItem title="Item 1" state="on" id="cLK-gg-G16"/>
-                        <menuItem title="Item 2" id="zjH-3C-f5w"/>
-                        <menuItem title="Item 3" id="8Mq-2p-pna"/>
-                    </items>
-                </menu>
-            </popUpButtonCell>
-        </popUpButton>
         <userDefaultsController representsSharedInstance="YES" id="dNJ-wK-5OT"/>
     </objects>
 </document>

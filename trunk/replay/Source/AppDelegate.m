@@ -294,20 +294,19 @@
     return NO;
 }
 
-- (void) playerItemDidReachEnd: (id) sender
+// replayRecording is what gets invoked by the Replay button
+- (void) replayRecording
 {
-    [[self playerView] setHidden:YES];
-    [[NSApplication sharedApplication] hide: self];
+    [self doPlayback];
 }
-
-//- (void) doPlaybackOnce: (void (^)(void)) completion
 
 - (void) doPlayback
 {
-    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-    
-    [[self playerView] setHidden: NO];
-    
+    [self doPlaybackFor: 3 repeating: 2 atRate: 0.5];
+}
+
+- (void) doPlaybackFor: (int) num_secs repeating: (int) num_times atRate: (float) rate
+{
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[self movieFile] options:nil];
     NSString *tracksKey = @"tracks";
     [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:
@@ -317,47 +316,53 @@
                             NSError *error;
                             AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error: &error];
                             if (status == AVKeyValueStatusLoaded) {
-                                // TODO: Rewind to T-3.0 seconds
-                                AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:asset];
-                                // TODO: The observer should be a separate object that keeps a count of number of replays still to perform
-                                [[NSNotificationCenter defaultCenter]
-                                 addObserver:self
-                                 selector:@selector(playerItemDidReachEnd:)
-                                 name:AVPlayerItemDidPlayToEndTimeNotification
-                                 object: playerItem];
+                                NSMutableArray *items = [NSMutableArray arrayWithCapacity: num_times];
+                                for (int k = 0; k < num_times; ++k) {
+                                    AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:asset];
                                 
-                                // Render the playerView hidden when playback stops.
-                                AVPlayer* player = [AVPlayer playerWithPlayerItem:playerItem];
-                                CMTime duration = [asset duration];
-                                CMTime skip_back = CMTimeMake(3, 1);
-                                if (CMTimeCompare(duration, skip_back) > 0) {
-                                    [player seekToTime:CMTimeSubtract(duration, skip_back)];
+                                    if (k == num_times - 1) {
+                                        [[NSNotificationCenter defaultCenter]
+                                         addObserver:self
+                                         selector:@selector(playerItemDidReachEnd:)
+                                         name:AVPlayerItemDidPlayToEndTimeNotification
+                                         object: playerItem];
+                                    }
+                                    
+                                    CMTime duration = [asset duration];
+                                    CMTime skip_back = CMTimeMake(num_secs, 1);
+                                    if (CMTimeCompare(duration, skip_back) > 0) {
+                                        [playerItem seekToTime:CMTimeSubtract(duration, skip_back)];
+                                    } else {
+                                        [playerItem seekToTime: kCMTimeZero];
+                                    }
+
+                                    if (![playerItem canPlaySlowForward]) {
+                                        // http://stackoverflow.com/questions/6630356/avplayer-rate-property-does-not-work
+                                        // Maybe slo-mo requires no sound track?
+
+                                        NSLog(@"Can't play slow forward!");
+                                    }
+                                    
+                                    [items addObject: playerItem];
                                 }
-                                // http://stackoverflow.com/questions/6630356/avplayer-rate-property-does-not-work
-                                // Maybe slo-mo requires no sound track?
-                                [player setRate: 0.5];
-                                if ([playerItem canPlaySlowForward]) {
-                                    NSLog(@"Player's rate is %1.2f", [player rate]);
-                                } else {
-                                    NSLog(@"Can't play slow forward!");
-                                }
+                                
+                                AVQueuePlayer* player = [[AVQueuePlayer alloc] initWithItems:items];
+                                [player setRate: rate];
                                 [[self playerView] setPlayer: player];
+
+                                [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+                                // This unhides the playerview, which covers all the other views in the window.
+                                [[self playerView] setHidden: NO];
                                 [player play];
                             }
                         });
      }];
 }
 
-- (void) replayRecording
+- (void) playerItemDidReachEnd: (id) sender
 {
-    // [[self window] toggleFullScreen:nil];
-    if (![self isPlaying]) {  // We weren't playing before, but we're about to start
-        [self setIsPlaying:YES];
-        [self performSelector: @selector(doPlayback) withObject: nil afterDelay: 5.0];
-    } else {
-        [[self playerView] setHidden: YES];
-        [self setIsPlaying:NO];
-    }
+    [[self playerView] setHidden:YES];
+    [[NSApplication sharedApplication] hide: self];
 }
 
 @synthesize url = _url;
