@@ -335,25 +335,19 @@
                                     } else {
                                         [playerItem seekToTime: kCMTimeZero];
                                     }
-
-                                    if (![playerItem canPlaySlowForward]) {
-                                        // http://stackoverflow.com/questions/6630356/avplayer-rate-property-does-not-work
-                                        // Maybe slo-mo requires no sound track?
-
-                                        NSLog(@"Can't play slow forward!");
-                                    }
                                     
                                     [items addObject: playerItem];
                                 }
                                 
                                 AVQueuePlayer* player = [[AVQueuePlayer alloc] initWithItems:items];
-                                [player setRate: rate];
                                 [[self playerView] setPlayer: player];
 
                                 [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
                                 // This unhides the playerview, which covers all the other views in the window.
                                 [[self playerView] setHidden: NO];
-                                [player play];
+                                //[player play];
+                                // Amazing!  [player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
+                                [player setRate: rate];
                             }
                         });
      }];
