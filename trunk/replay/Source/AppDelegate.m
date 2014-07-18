@@ -15,6 +15,7 @@
 //
 
 #import "AppDelegate.h"
+#import "CommandListener.h"
 
 @interface AppDelegate () <AVCaptureFileOutputDelegate, AVCaptureFileOutputRecordingDelegate>
 {
@@ -30,6 +31,8 @@
 @property (retain) AVCaptureMovieFileOutput *movieFileOutput;
 @property (retain) AVCaptureVideoPreviewLayer *previewLayer;
 
+@property (retain) CommandListener* listener;
+
 // Playback-related stuff
 
 - (void) refreshDevices;
@@ -41,6 +44,8 @@
 {
 	self = [super init];
 	if (self) {
+        _listener = [[CommandListener alloc] initWithDelegate: self];
+        
 		// Create a capture session
 		_session = [[AVCaptureSession alloc] init];
         
@@ -80,6 +85,8 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    [[self listener] startOnPort:0];
+
     // Insert code here to initialize your application
     [self refreshDevices];
 
@@ -99,9 +106,9 @@
         [[self window] toggleFullScreen: nil];
     }
     
-    //TODO
-    [self showUrlSheet];
-    //[[NSRunLoop currentRunLoop] performSelector: @selector(showUrlSheet) withObject:self ];
+    // TODO: If we want the Replay process to register itself with the web server, this would be the way to go.
+    // For now, just tell the operator what port we're listening on, and let them type it in to the web server.
+    // [self showUrlSheet];
 }
 
 - (void)showUrlSheet
@@ -111,15 +118,20 @@
         [NSBundle loadNibNamed:@"UrlDialog" owner: self];
     }
     
+    [_urlSheet setPreventsApplicationTerminationWhenModal:NO];
+    
     [NSApp beginSheet: _urlSheet
        modalForWindow: [self window]
         modalDelegate: self
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
           contextInfo: nil];
 
+    NSLog(@"urlSheet says %d", [_urlSheet canBecomeKeyWindow]);
     // These both appear to be necessary, but it's not really clear why.
+    NSLog(@"Making URL sheet key window");
     [_urlSheet makeKeyWindow];
     [_urlField becomeFirstResponder];
+    NSLog(@"showUrlSheet exits");
 }
 
 - (IBAction) tryNewUrl: (id) sender
@@ -167,11 +179,13 @@
 
 - (AVCaptureDevice *)selectedVideoDevice
 {
+    NSLog(@"selectedVideoDevice");
 	return [_videoDeviceInput device];
 }
 
 - (void)setSelectedVideoDevice:(AVCaptureDevice *)selectedVideoDevice
 {
+    NSLog(@"setSelectedVideoDevice");
 	[[self session] beginConfiguration];
 	
 	if ([self videoDeviceInput]) {
@@ -217,6 +231,7 @@
 
 - (void)setSelectedAudioDevice:(AVCaptureDevice *)selectedAudioDevice
 {
+    NSLog(@"setSelectedAudioDevice");
 	[[self session] beginConfiguration];
 	
 	if ([self audioDeviceInput]) {
@@ -250,14 +265,20 @@
 {
     NSArray* paths = NSSearchPathForDirectoriesInDomains(NSMoviesDirectory, NSUserDomainMask, YES);
     NSURL* movies_dir = [NSURL fileURLWithPath:[paths objectAtIndex: 0]];
-    NSURL* subdir = [movies_dir URLByAppendingPathComponent:@"Derby"];
+
+    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+    NSString* dateString = [dateFormatter stringFromDate:[NSDate date]];
+
+    NSURL* subdir = [[movies_dir URLByAppendingPathComponent:@"Derby"] URLByAppendingPathComponent: dateString];
     BOOL isdir = NO;
     if (![[NSFileManager defaultManager] fileExistsAtPath: [subdir path] isDirectory:&isdir] || !isdir) {
         NSError* error;
         // TODO: Real attributes
         // TODO: name exists but as a file
         if (![[NSFileManager defaultManager] createDirectoryAtURL: subdir
-                                      withIntermediateDirectories: NO
+                                      withIntermediateDirectories: YES
                                                        attributes: nil
                                                             error: &error]) {
             [[NSApplication sharedApplication] presentError:error];
@@ -268,6 +289,7 @@
 
 - (NSURL*) movieFile
 {
+    // TODO: Movie file name from property
     return [[self moviesDirectory] URLByAppendingPathComponent:@"SampleRecording.mov"];
 }
 
@@ -292,6 +314,15 @@
 {
     // Sucks up a lot of CPU to say "YES", but there's maybe a half-second delay to say "NO".
     return NO;
+}
+
+- (void) setPortMessage:(NSString *)msg
+{
+    [[self portView] setStringValue:msg];
+}
+- (void) setStatus:(NSString *)msg
+{
+    [[self statusView] setStringValue:msg];
 }
 
 // replayRecording is what gets invoked by the Replay button
@@ -343,6 +374,7 @@
                                 [[self playerView] setPlayer: player];
 
                                 [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+                                [NSCursor hide];
                                 // This unhides the playerview, which covers all the other views in the window.
                                 [[self playerView] setHidden: NO];
                                 //[player play];
@@ -356,6 +388,8 @@
 - (void) playerItemDidReachEnd: (id) sender
 {
     [[self playerView] setHidden:YES];
+    [NSCursor unhide];
+    [NSCursor setHiddenUntilMouseMoves:YES];
     [[NSApplication sharedApplication] hide: self];
 }
 

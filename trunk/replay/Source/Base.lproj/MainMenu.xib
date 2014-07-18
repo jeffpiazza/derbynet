@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.AVKitIBPlugin" version="5056"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -15,7 +15,9 @@
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
             <connections>
                 <outlet property="playerView" destination="8P5-Cl-yWD" id="6aN-9a-Cog"/>
+                <outlet property="portView" destination="ujy-QB-XRt" id="X15-Xj-NZo"/>
                 <outlet property="previewView" destination="8CN-7V-kKy" id="Kll-C9-PIV"/>
+                <outlet property="statusView" destination="laU-xm-YXC" id="xXs-nU-BaA"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -244,6 +246,7 @@
                             <binding destination="Voe-Tx-rLC" name="selectedObject" keyPath="selectedVideoDevice" previousBinding="oS8-dS-CXJ" id="RMA-L2-qTn"/>
                             <binding destination="Voe-Tx-rLC" name="content" keyPath="videoDevices" id="BLe-yd-Y7V"/>
                             <binding destination="Voe-Tx-rLC" name="contentValues" keyPath="videoDevices.localizedName" previousBinding="BLe-yd-Y7V" id="oS8-dS-CXJ"/>
+                            <outlet property="nextKeyView" destination="ipt-MH-116" id="eKn-Av-eUj"/>
                         </connections>
                     </popUpButton>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ipt-MH-116">
@@ -268,6 +271,7 @@
                             <binding destination="Voe-Tx-rLC" name="content" keyPath="audioDevices" id="xgU-J9-0RN"/>
                             <binding destination="Voe-Tx-rLC" name="contentValues" keyPath="audioDevices.localizedName" previousBinding="xgU-J9-0RN" id="Bfe-0l-Dj7"/>
                             <binding destination="Voe-Tx-rLC" name="selectedObject" keyPath="selectedAudioDevice" previousBinding="Bfe-0l-Dj7" id="Rdh-eP-suA"/>
+                            <outlet property="nextKeyView" destination="ttN-SC-6p8" id="ACw-jk-lVH"/>
                         </connections>
                     </popUpButton>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ttN-SC-6p8">
@@ -286,6 +290,7 @@
                                     <string key="NSSelectorName">startRecording</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="nextKeyView" destination="v0j-GN-oM0" id="N7i-0r-Wyv"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="v0j-GN-oM0">
@@ -304,6 +309,7 @@
                                     <string key="NSSelectorName">stopRecording</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="nextKeyView" destination="Jbq-dF-0Z7" id="Dlo-gO-XAC"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jbq-dF-0Z7">
@@ -319,12 +325,31 @@
                                     <string key="NSSelectorName">replayRecording</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="nextKeyView" destination="baa-Jc-lEr" id="1om-xj-Qir"/>
                         </connections>
                     </button>
                     <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8CN-7V-kKy">
                         <rect key="frame" x="0.0" y="55" width="480" height="262"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="laU-xm-YXC">
+                        <rect key="frame" x="243" y="332" width="219" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="No Status" id="C76-Pj-yHg">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ujy-QB-XRt">
+                        <rect key="frame" x="243" y="361" width="219" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="PortIdentifier" id="ckc-r4-fQU">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="8P5-Cl-yWD" secondAttribute="bottom" id="3X5-b7-TMP"/>
@@ -334,17 +359,21 @@
                     <constraint firstAttribute="bottom" secondItem="8CN-7V-kKy" secondAttribute="bottom" constant="55" id="DXU-FZ-iYi"/>
                     <constraint firstItem="Jbq-dF-0Z7" firstAttribute="top" secondItem="8CN-7V-kKy" secondAttribute="bottom" constant="14" id="Hh8-6P-DzL"/>
                     <constraint firstItem="8P5-Cl-yWD" firstAttribute="trailing" secondItem="8CN-7V-kKy" secondAttribute="trailing" id="KlV-WN-CuP"/>
+                    <constraint firstAttribute="trailing" secondItem="laU-xm-YXC" secondAttribute="trailing" constant="20" id="L8T-Ht-NGF"/>
                     <constraint firstItem="baa-Jc-lEr" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="SFT-8d-4sx"/>
                     <constraint firstItem="v0j-GN-oM0" firstAttribute="leading" secondItem="ttN-SC-6p8" secondAttribute="trailing" constant="12" symbolic="YES" id="TTW-nP-2hX"/>
                     <constraint firstItem="Jbq-dF-0Z7" firstAttribute="leading" secondItem="v0j-GN-oM0" secondAttribute="trailing" constant="12" symbolic="YES" id="TcK-uK-GuU"/>
                     <constraint firstItem="ttN-SC-6p8" firstAttribute="leading" secondItem="baa-Jc-lEr" secondAttribute="leading" id="UAV-0d-wvv"/>
                     <constraint firstItem="8CN-7V-kKy" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="b3T-n7-Tc8"/>
                     <constraint firstItem="8P5-Cl-yWD" firstAttribute="leading" secondItem="8CN-7V-kKy" secondAttribute="leading" id="bkM-5A-Nyr"/>
+                    <constraint firstItem="ujy-QB-XRt" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="24" id="d7A-Hg-Fbk"/>
+                    <constraint firstAttribute="trailing" secondItem="ujy-QB-XRt" secondAttribute="trailing" constant="20" id="gwf-sB-65q"/>
                     <constraint firstAttribute="trailing" secondItem="8CN-7V-kKy" secondAttribute="trailing" id="j12-WP-RTg"/>
                     <constraint firstItem="ipt-MH-116" firstAttribute="top" secondItem="baa-Jc-lEr" secondAttribute="bottom" constant="10" id="o0s-oG-qdB"/>
                     <constraint firstItem="ttN-SC-6p8" firstAttribute="baseline" secondItem="v0j-GN-oM0" secondAttribute="baseline" id="pXm-zS-1ss"/>
                     <constraint firstItem="8P5-Cl-yWD" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="uDd-sw-CvS"/>
                     <constraint firstItem="8CN-7V-kKy" firstAttribute="top" secondItem="ipt-MH-116" secondAttribute="bottom" constant="13" id="xEP-jB-H9F"/>
+                    <constraint firstItem="laU-xm-YXC" firstAttribute="top" secondItem="ujy-QB-XRt" secondAttribute="bottom" constant="12" id="yrH-Wq-cP2"/>
                 </constraints>
             </view>
         </window>

@@ -10,6 +10,8 @@
 		2E0826E81972CC9A003B322F /* Poller.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E0826E71972CC9A003B322F /* Poller.m */; };
 		2E160A621908348C00C8691E /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A611908348C00C8691E /* AVKit.framework */; };
 		2E160A641909AE6400C8691E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E160A631909AE6400C8691E /* CoreMedia.framework */; };
+		2E38E2FD197763FD00EB717D /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E38E2FC197763FD00EB717D /* GCDAsyncSocket.m */; };
+		2E38E3001977DDAD00EB717D /* CommandListener.m in Sources */ = {isa = PBXBuildFile; fileRef = 2E38E2FF1977DDAD00EB717D /* CommandListener.m */; };
 		2EAB7DD81905948E003926A0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7DD71905948E003926A0 /* Cocoa.framework */; };
 		2EAB7DE21905948E003926A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DE01905948E003926A0 /* InfoPlist.strings */; };
 		2EAB7DE41905948E003926A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB7DE31905948E003926A0 /* main.m */; };
@@ -40,6 +42,10 @@
 		2E0826E71972CC9A003B322F /* Poller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Poller.m; sourceTree = "<group>"; };
 		2E160A611908348C00C8691E /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		2E160A631909AE6400C8691E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		2E38E2FB197763FD00EB717D /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
+		2E38E2FC197763FD00EB717D /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
+		2E38E2FE1977DDAD00EB717D /* CommandListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandListener.h; sourceTree = "<group>"; };
+		2E38E2FF1977DDAD00EB717D /* CommandListener.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommandListener.m; sourceTree = "<group>"; };
 		2EAB7DD41905948E003926A0 /* MacDerbyReplay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacDerbyReplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EAB7DD71905948E003926A0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		2EAB7DDA1905948E003926A0 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -87,9 +93,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2E38E2FA197763FD00EB717D /* CocoaAsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				2E38E2FB197763FD00EB717D /* GCDAsyncSocket.h */,
+				2E38E2FC197763FD00EB717D /* GCDAsyncSocket.m */,
+			);
+			path = CocoaAsyncSocket;
+			sourceTree = "<group>";
+		};
 		2EAB7DCB1905948E003926A0 = {
 			isa = PBXGroup;
 			children = (
+				2E38E2FA197763FD00EB717D /* CocoaAsyncSocket */,
 				2EAB7DDD1905948E003926A0 /* Source */,
 				2EAB7DFB1905948E003926A0 /* Tests */,
 				2EAB7DD61905948E003926A0 /* Frameworks */,
@@ -134,12 +150,14 @@
 			children = (
 				2EAB7DE91905948E003926A0 /* AppDelegate.h */,
 				2EAB7DEA1905948E003926A0 /* AppDelegate.m */,
+				2E38E2FE1977DDAD00EB717D /* CommandListener.h */,
+				2E38E2FF1977DDAD00EB717D /* CommandListener.m */,
+				2E0826E61972CC9A003B322F /* Poller.h */,
+				2E0826E71972CC9A003B322F /* Poller.m */,
 				2EAB7DEC1905948E003926A0 /* MainMenu.xib */,
 				2EF716FF196C02DC005C5C43 /* UrlDialog.xib */,
 				2EAB7DEF1905948E003926A0 /* Images.xcassets */,
 				2EAB7DDE1905948E003926A0 /* Supporting Files */,
-				2E0826E61972CC9A003B322F /* Poller.h */,
-				2E0826E71972CC9A003B322F /* Poller.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -274,8 +292,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E38E2FD197763FD00EB717D /* GCDAsyncSocket.m in Sources */,
 				2EAB7DEB1905948E003926A0 /* AppDelegate.m in Sources */,
 				2E0826E81972CC9A003B322F /* Poller.m in Sources */,
+				2E38E3001977DDAD00EB717D /* CommandListener.m in Sources */,
 				2EAB7DE41905948E003926A0 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
