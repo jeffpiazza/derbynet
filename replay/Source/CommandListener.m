@@ -116,7 +116,7 @@
 		}
 	});
 	
-    // TODO?
+    // TODO - Opening herald?
     if (false) {
         NSString *welcomeMsg = @"Welcome to the AsyncSocket Echo Server\r\n";
         NSData *welcomeData = [welcomeMsg dataUsingEncoding:NSUTF8StringEncoding];
@@ -140,32 +140,53 @@
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag
 {
 	// This method is executed on the socketQueue (not the main thread)
-	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		@autoreleasepool {
-            
-			NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 2)];
-			NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
-			if (msg)
-			{
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    @autoreleasepool {
-                        // TODO: Respond to the message, duh!
-                        NSLog(@"Read %lu characters: [[%@]]", (unsigned long)[msg length], msg);
-                        [[self appDelegate] replayRecording];
+    
+    NSData *strData = [data subdataWithRange:NSMakeRange(0, [data length] - 2)];
+    NSString *msg = [[NSString alloc] initWithData:strData encoding:NSUTF8StringEncoding];
+
+    if (msg) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            @autoreleasepool {
+                NSScanner* scanner = [NSScanner scannerWithString: msg];
+                NSString* cmd;
+                __block BOOL succeeded = (msg != NULL);
+                if (succeeded) {
+                    succeeded = [scanner scanCharactersFromSet:[NSCharacterSet alphanumericCharacterSet]
+                                                    intoString:&cmd];
+                }
+                if (succeeded) {
+                    NSString* selector =
+                        [@"docommand_" stringByAppendingString:[[cmd lowercaseString] stringByAppendingString:@":"]];
+                    NSLog(@"Read %lu characters: [[%@]]", (unsigned long)[msg length], msg);
+                    @try {
+                        #pragma clang diagnostic push
+                        #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                        succeeded = [[self performSelector:NSSelectorFromString(selector)
+                                                withObject:scanner] boolValue];
+                        #pragma clang diagnostic pop
                     }
-                });
-			}
-			else
-			{
-                NSLog(@"Error converting received data into UTF-8 String");
-			}
-            
-		}
-	});
-	
-	// Echo message back to client
-	[sock writeData:[@"OK\r\n" dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:ECHO_MSG];
+                    @catch (NSException * e) {
+                        succeeded = NO;
+                        NSLog(@"Exception: %@", e);
+                    }
+                }
+
+                if (succeeded) {
+                    [sock writeData:[@"OK\r\n" dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:ECHO_MSG];
+                } else {
+                    NSLog(@"Error converting received data into UTF-8 String");
+                    [sock writeData:[@"Available commands:\r\n"
+                                     "HELP  -- this message\r\n"
+                                     "TEST skipback showings rate  -- playback test video\r\n"
+                                     "START video_name_root  -- start recording video\r\n"
+                                     "STOP  -- stop recording\r\n"
+                                     "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
+                                     dataUsingEncoding:NSUTF8StringEncoding]
+                        withTimeout:-1 tag:ECHO_MSG];
+                }
+            }
+        });
+    }
 }
 
 // TODO: What if this just isn't provided?
@@ -192,5 +213,55 @@
 			[connectedSockets removeObject:sock];
 		}
 	}
+}
+
+// test <skipback_seconds> <repeat> <rate>
+- (BOOL) docommand_test: (NSScanner*) scanner
+{
+    int num_secs;
+    if (![scanner scanInt: &num_secs]) return NO;
+    int num_times;
+    if (![scanner scanInt: &num_times]) return NO;
+    float rate;
+    if (![scanner scanFloat:&rate]) return NO;
+    // doPlaybackOf opens the asset file and does the rest asynchronously
+    [[self appDelegate] doPlaybackOf: [[NSBundle mainBundle] URLForResource:@"FilmLeader" withExtension:@"mp4"]
+                            skipback: num_secs duration: num_secs showings: num_times rate: rate];
+    return YES;
+}
+
+// "START video_name_root  -- start recording video\r\n"
+- (BOOL) docommand_start: (NSScanner*) scanner
+{
+    // We want to consume all of the rest of the line as the filename root.  There's no "empty" character set, but this is close enough.
+    [scanner setCharactersToBeSkipped:[NSCharacterSet illegalCharacterSet]];
+    NSString* filename = NULL;
+    if (![scanner scanUpToCharactersFromSet:[NSCharacterSet illegalCharacterSet] intoString:&filename]) return NO;
+    [[self appDelegate] setMovieFileName:[filename stringByTrimmingCharactersInSet:
+                                          [NSCharacterSet whitespaceCharacterSet]]];
+    [[self appDelegate] startRecording];
+    return YES;
+}
+
+// "STOP  -- stop recording\r\n"
+- (BOOL) docommand_stop: (NSScanner*) scanner
+{
+    [[self appDelegate] stopRecording];
+    return YES;
+}
+
+// "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
+- (BOOL) docommand_replay: (NSScanner*) scanner
+{
+    int num_secs;
+    if (![scanner scanInt: &num_secs]) return NO;
+    int num_times;
+    if (![scanner scanInt: &num_times]) return NO;
+    float rate;
+    if (![scanner scanFloat:&rate]) return NO;
+    [[self appDelegate] stopRecording];
+    [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
+                            skipback: num_secs duration: num_secs showings: num_times rate: rate];
+    return YES;
 }
 @end

@@ -16,8 +16,12 @@
 - (void) stopRecording;
 - (void) replayRecording;
 
+- (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate;
+
 - (void) setPortMessage: (NSString*) msg;
 - (void) setStatus: (NSString*) msg;
+
+- (void) setMovieFileName: (NSString*) name;
 
 @property BOOL isPlaying;
 
@@ -33,6 +37,9 @@
 
 @property (assign) IBOutlet NSWindow* urlSheet;
 @property (weak) IBOutlet NSTextField* urlField;
+
+// Full path to the current movie file
+@property (retain) NSURL* moviePath;
 
 @property (retain) Poller* poller;
 

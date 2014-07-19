@@ -287,15 +287,29 @@
     return subdir;
 }
 
-- (NSURL*) movieFile
+- (void) setMovieFileName:(NSString *)root
 {
-    // TODO: Movie file name from property
-    return [[self moviesDirectory] URLByAppendingPathComponent:@"SampleRecording.mov"];
+    NSURL* directory = [self moviesDirectory];
+    
+    int i = 0;
+    while (true) {
+        NSString* name;
+        if (i == 0) {
+            name = [NSString stringWithFormat:@"%@.mov", root];
+        } else {
+            name = [NSString stringWithFormat:@"%@-%d.mov", root, i];
+        }
+        NSURL* filepath = [directory URLByAppendingPathComponent:name];
+        if (![[NSFileManager defaultManager] fileExistsAtPath: [filepath path] isDirectory:NULL]) {
+            [self setMoviePath:filepath];
+            break;
+        }
+    }
 }
 
 - (void) startRecording
 {
-    [[self movieFileOutput] startRecordingToOutputFileURL:[self movieFile] recordingDelegate: self];
+    [[self movieFileOutput] startRecordingToOutputFileURL:[self moviePath] recordingDelegate: self];
 }
 
 - (void) stopRecording
@@ -328,17 +342,12 @@
 // replayRecording is what gets invoked by the Replay button
 - (void) replayRecording
 {
-    [self doPlayback];
+    [self doPlaybackOf: [self moviePath] skipback: 3 duration: 3 showings: 2 rate: 0.5];
 }
 
-- (void) doPlayback
+- (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate
 {
-    [self doPlaybackFor: 3 repeating: 2 atRate: 0.5];
-}
-
-- (void) doPlaybackFor: (int) num_secs repeating: (int) num_times atRate: (float) rate
-{
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[self movieFile] options:nil];
+    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
     NSString *tracksKey = @"tracks";
     [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:
      ^{
@@ -347,11 +356,11 @@
                             NSError *error;
                             AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error: &error];
                             if (status == AVKeyValueStatusLoaded) {
-                                NSMutableArray *items = [NSMutableArray arrayWithCapacity: num_times];
-                                for (int k = 0; k < num_times; ++k) {
+                                NSMutableArray *items = [NSMutableArray arrayWithCapacity: showings];
+                                for (int k = 0; k < showings; ++k) {
                                     AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:asset];
                                 
-                                    if (k == num_times - 1) {
+                                    if (k == showings - 1) {
                                         [[NSNotificationCenter defaultCenter]
                                          addObserver:self
                                          selector:@selector(playerItemDidReachEnd:)

@@ -24,6 +24,7 @@
 		2EAB7E001905948E003926A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2EAB7DFE1905948E003926A0 /* InfoPlist.strings */; };
 		2EAB7E021905948E003926A0 /* MacDerbyReplayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2EAB7E011905948E003926A0 /* MacDerbyReplayTests.m */; };
 		2EAB7E0C19059F08003926A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EAB7E0B19059F08003926A0 /* AVFoundation.framework */; };
+		2EDC5C2A1979510D009FD238 /* FilmLeader.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 2EDC5C291979510D009FD238 /* FilmLeader.mp4 */; };
 		2EF71700196C02DC005C5C43 /* UrlDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2EF716FF196C02DC005C5C43 /* UrlDialog.xib */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +67,7 @@
 		2EAB7DFF1905948E003926A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2EAB7E011905948E003926A0 /* MacDerbyReplayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MacDerbyReplayTests.m; path = Tests/MacDerbyReplayTests.m; sourceTree = "<group>"; };
 		2EAB7E0B19059F08003926A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		2EDC5C291979510D009FD238 /* FilmLeader.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = FilmLeader.mp4; sourceTree = "<group>"; };
 		2EF716FF196C02DC005C5C43 /* UrlDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UrlDialog.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,8 +107,9 @@
 		2EAB7DCB1905948E003926A0 = {
 			isa = PBXGroup;
 			children = (
-				2E38E2FA197763FD00EB717D /* CocoaAsyncSocket */,
 				2EAB7DDD1905948E003926A0 /* Source */,
+				2E38E2FA197763FD00EB717D /* CocoaAsyncSocket */,
+				2EDC5C281979510D009FD238 /* Resources */,
 				2EAB7DFB1905948E003926A0 /* Tests */,
 				2EAB7DD61905948E003926A0 /* Frameworks */,
 				2EAB7DD51905948E003926A0 /* Products */,
@@ -193,6 +196,14 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		2EDC5C281979510D009FD238 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2EDC5C291979510D009FD238 /* FilmLeader.mp4 */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -273,6 +284,7 @@
 				2EF71700196C02DC005C5C43 /* UrlDialog.xib in Resources */,
 				2EAB7DF01905948E003926A0 /* Images.xcassets in Resources */,
 				2EAB7DE81905948E003926A0 /* Credits.rtf in Resources */,
+				2EDC5C2A1979510D009FD238 /* FilmLeader.mp4 in Resources */,
 				2EAB7DEE1905948E003926A0 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
