@@ -299,14 +299,17 @@
                         <constraints>
                             <constraint firstAttribute="width" constant="70" id="Utg-l3-mKK"/>
                         </constraints>
-                        <buttonCell key="cell" type="push" title="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oXO-ar-a2d">
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oXO-ar-a2d">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
                         </buttonCell>
                         <connections>
-                            <binding destination="Voe-Tx-rLC" name="target" keyPath="self" id="0p6-44-2Mm">
+                            <binding destination="Voe-Tx-rLC" name="target" keyPath="self" id="fKh-1Q-QQV">
                                 <dictionary key="options">
-                                    <string key="NSSelectorName">stopRecording</string>
+                                    <string key="NSSelectorName">cancelRecording</string>
                                 </dictionary>
                             </binding>
                             <outlet property="nextKeyView" destination="Jbq-dF-0Z7" id="Dlo-gO-XAC"/>

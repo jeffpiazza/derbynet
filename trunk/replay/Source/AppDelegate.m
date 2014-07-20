@@ -72,6 +72,8 @@
                                     }];
 
         [self setIsPlaying: NO];
+        
+        [self setMovieFileName:@"Unspecified Movie"];
     }
     return self;
 }
@@ -312,12 +314,21 @@
     [[self movieFileOutput] startRecordingToOutputFileURL:[self moviePath] recordingDelegate: self];
 }
 
-- (void) stopRecording
+- (void) cancelRecording
 {
     [[self movieFileOutput] stopRecording];
+    
+    [[NSFileManager defaultManager] removeItemAtPath: [[self moviePath] path] error:NULL];
 }
 
-- (void) captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
+// replayRecording is what gets invoked by the Replay button
+- (void) replayRecording
+{
+    [self doPlaybackOf: [self moviePath] skipback: 3 duration: 3 showings: 2 rate: 0.5];
+}
+
+- (void) captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)
+         outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
     if (error != nil && [error code] != noErr) {
         [[NSApplication sharedApplication] presentError:error];
@@ -339,14 +350,10 @@
     [[self statusView] setStringValue:msg];
 }
 
-// replayRecording is what gets invoked by the Replay button
-- (void) replayRecording
-{
-    [self doPlaybackOf: [self moviePath] skipback: 3 duration: 3 showings: 2 rate: 0.5];
-}
-
 - (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate
 {
+    [[self movieFileOutput] stopRecording];
+
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
     NSString *tracksKey = @"tracks";
     [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:

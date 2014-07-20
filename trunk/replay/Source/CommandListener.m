@@ -179,7 +179,7 @@
                                      "HELP  -- this message\r\n"
                                      "TEST skipback showings rate  -- playback test video\r\n"
                                      "START video_name_root  -- start recording video\r\n"
-                                     "STOP  -- stop recording\r\n"
+                                     "CANCEL  -- cancel recording\r\n"
                                      "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
                                      "Please send a command:\r\n"
                                      dataUsingEncoding:NSUTF8StringEncoding]
@@ -244,10 +244,10 @@
     return YES;
 }
 
-// "STOP  -- stop recording\r\n"
-- (BOOL) docommand_stop: (NSScanner*) scanner
+// "CANCEL  -- cancel recording\r\n"
+- (BOOL) docommand_cancel: (NSScanner*) scanner
 {
-    [[self appDelegate] stopRecording];
+    [[self appDelegate] cancelRecording];
     return YES;
 }
 
@@ -260,7 +260,7 @@
     if (![scanner scanInt: &num_times]) return NO;
     float rate;
     if (![scanner scanFloat:&rate]) return NO;
-    [[self appDelegate] stopRecording];
+
     [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
     return YES;

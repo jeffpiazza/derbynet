@@ -13,7 +13,7 @@
 }
 
 - (void) startRecording;
-- (void) stopRecording;
+- (void) cancelRecording;
 - (void) replayRecording;
 
 - (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate;
