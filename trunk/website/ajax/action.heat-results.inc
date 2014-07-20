@@ -1,8 +1,9 @@
 <?php
-// $_POST['lane1'], $_POST['lane2'], etc. for times
-// TODO: Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
+// NOTE: Timer results are handled in action.timer-message.inc.  This
+// script is for manually-entered results and test purposes.
 
-// TODO: Relay completion events?
+// $_POST['lane1'], $_POST['lane2'], etc. for times
+// Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
 
 require_once('inc/write-heat-results.inc');
 require_once('inc/autoadvance.inc');

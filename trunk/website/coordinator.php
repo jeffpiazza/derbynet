@@ -1,31 +1,19 @@
 <?php session_start(); ?>
 <?php
+// TODO: Needs a bunch of javascript hooked up so actions can work.
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 require_once('inc/timer-state.inc');
+require_once('inc/replay.inc');
 ?>
 <html>
 <head>
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
-<style type="text/css">
-.control_column {
-  display: inline-block;
-  vertical-align: top;
-  width: 500px;
-}
-
-.control_group {
-  border: 3px solid #023882;
-  margin: 10px;
-  padding: 10px;
- }
-
-.current {
-    background-color: #F7D117;
- }
-</style>
+<link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
 <?php
@@ -97,6 +85,10 @@ function scan_kiosks($prefix, $kiosk_page) {
 <div class="control_group replay_control_group">
   <!-- TODO: Show instant-replay status -->
   <h3>Instant Replay Status</h3>
+  <p>Remote replay at <?= read_replay_host_and_port() ?></p>
+  <div class="block_buttons">
+    <input type="button" value="Test Replay" onclick="handle_test_replay();"/>
+  </div>
 </div>
 
 

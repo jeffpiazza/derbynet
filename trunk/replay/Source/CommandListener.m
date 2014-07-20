@@ -181,6 +181,7 @@
                                      "START video_name_root  -- start recording video\r\n"
                                      "STOP  -- stop recording\r\n"
                                      "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
+                                     "Please send a command:\r\n"
                                      dataUsingEncoding:NSUTF8StringEncoding]
                         withTimeout:-1 tag:ECHO_MSG];
                 }
