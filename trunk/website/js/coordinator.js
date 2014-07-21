@@ -26,3 +26,30 @@ function handle_test_replay() {
             data: {action: 'replay-test'}
            });
 }
+
+function handle_skip_heat() {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'advance-heat',
+                   heat: 'next'},
+           });
+}
+
+function handle_previous_heat() {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'advance-heat',
+                   heat: 'prev'},
+           });
+}
+
+// sel is the <select data-kiosk-address> input element
+function handle_kiosk_page_change(sel) {
+    console.log('handle_kiosk_page_change');
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'assign-kiosk',
+                   address: sel.getAttribute('data-kiosk-address'),
+                   page: sel.value},
+           });
+}

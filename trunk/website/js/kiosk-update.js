@@ -29,4 +29,7 @@ function kiosk_poll_fire() {
 
 if (g_kiosk_poll) {
   $(document).ready(kiosk_poll_fire);
+} else {
+  console.log("No g_kiosk_poll");
 }
+

@@ -6,6 +6,7 @@ require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 require_once('inc/timer-state.inc');
 require_once('inc/replay.inc');
+require_once('inc/kiosks.inc');
 ?>
 <html>
 <head>
@@ -19,34 +20,24 @@ require_once('inc/replay.inc');
 <?php
 $banner_title = 'Race Coordinator Page';
 require('inc/banner.inc');
-
-// TODO: Cut-and-pasted; remove from settings.php
-function scan_kiosks($prefix, $kiosk_page) {
-    $dh = opendir(dirname(__FILE__).DIRECTORY_SEPARATOR.$prefix);
-    while (($entry = readdir($dh)) !== FALSE) {
-        if (substr($entry, -6) == ".kiosk") {
-            echo '<option '.($entry == $kiosk_page ? 'selected="1" ' : '')
-            .'value="'.$prefix.DIRECTORY_SEPARATOR.$entry.'">'.$entry.'</option>'."\n";
-        }
-    }
-    closedir($dh);
-}
-
 ?>
 <div class="control_column">
 
 
 <div class="control_group heat_control_group">
-  <!-- TODO: Next heat/previous heat, manual heat results -->
-  <h3>Heat Control</h3>
+  <h3>Sequence Control</h3>
 
-<div class="block_buttons">
+  <!-- TODO: Display current heat (round and heat); update -->
+  <!-- TODO: Select racing round explicitly -->
 
-<input type="button" value="Skip Heat"/><br/>
-<input type="button" value="Previous Heat"/><br/>
-<input type="button" value="Manual Heat Results"/><br/>
+  <!-- TODO: Start/stop racing: explicit am-racing state. -->
 
-</div>
+  <div class="block_buttons">
+    <input type="button" value="Skip Heat" onclick="handle_skip_heat()"/><br/>
+    <input type="button" value="Previous Heat" onclick="handle_previous_heat()"/><br/>
+    <!-- TODO: manual heat results -->
+    <input type="button" value="Manual Results"/><br/>
+  </div>
 
 </div>
 
@@ -97,21 +88,24 @@ function scan_kiosks($prefix, $kiosk_page) {
 <div class="block_buttons">
 <?php
 try {
+    drop_old_kiosks();
     $stmt = $db->query('SELECT address, name, page, last_contact FROM Kiosks ORDER BY name, last_contact');
     foreach ($stmt as $row) {
         echo '<div class="control_group kiosk_control">'."\n";
         echo   '<p>Kiosk ';
         echo   '<span class="kiosk_control_name">'.htmlspecialchars($row['name']).'</span> ';
         echo   '<span class="kiosk_control_address">'.htmlspecialchars($row['address']).'</span> ';
-        // TODO: last_contact
         echo   '</p>';
+        echo '<p class="last_contact">Last contact: '.$row['last_contact'].'</p>'."\n";
 
         echo   '<label for="kiosk-page">Display:</label>'; // TODO: Fire action when selection changes.
-        echo   '<select name="kiosk-page" data-kiosk-address="'.htmlspecialchars($row['address']).'">'."\n";
+        echo   '<select name="kiosk-page" data-kiosk-address="'.htmlspecialchars($row['address']).'"'
+               .' onchange="handle_kiosk_page_change(this)"'
+               .'>'."\n";
         echo   '<optgroup>'."\n";
 
-        scan_kiosks('kiosks', $row['page']);
-        scan_kiosks('local'.DIRECTORY_SEPARATOR.'kiosks', $row['page']);
+        scan_kiosk_pages('kiosks', $row['page']);
+        scan_kiosk_pages('local'.DIRECTORY_SEPARATOR.'kiosks', $row['page']);
 
         echo   '</optgroup>'."\n";
         echo   '</select>'."\n";
@@ -174,7 +168,7 @@ foreach ($rounds as $round) {
     echo '<p>'.htmlspecialchars($round['class']).', round '.$round['round'].'</p>'."\n";
 
     if ($unscheduled) {
-        echo '<p>'.$unscheduled.' unscheduled roster members</p>';
+        echo '<p>'.$unscheduled.' unscheduled roster member'.($unscheduled == 1 ? '' : 's').'</p>';
         if ($already_run) {
             echo '<input type="button" value="Reschedule"/>'."\n";
         } else {
