@@ -39,6 +39,13 @@
 <br/>
  <?php } ?>
 
+ <?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
+<form method="link" action="coordinator.php">
+  <input type="submit" value="Race Dashboard"/>
+</form>
+<br/>
+ <?php } ?>
+
  <?php if (have_permission(VIEW_AWARDS_PERMISSION)) { ?>
 <form method="link" action="awards.php">
   <input type="submit" value="Awards"/>

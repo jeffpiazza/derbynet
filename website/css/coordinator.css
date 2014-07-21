@@ -13,3 +13,7 @@
 .current {
     background-color: #F7D117;
  }
+
+p.last_contact {
+    font-size: 18px;
+}

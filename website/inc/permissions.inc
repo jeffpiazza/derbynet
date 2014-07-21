@@ -17,7 +17,7 @@ DEFINE('VIEW_AWARDS_PERMISSION', 2);
 // For checking in racers, normally for the race crew only:
 DEFINE('CHECK_IN_RACERS_PERMISSION', 4);
 DEFINE('REVERT_CHECK_IN_PERMISSION', 8);
-// 16
+DEFINE('COORDINATOR_PAGE_PERMISSION', 16); // 16
 DEFINE('REGISTER_NEW_RACER_PERMISSION', 32);
 // Allow changing a racer's class (den) or rank (subgroup)
 DEFINE('EDIT_RACER_PERMISSION', 64);

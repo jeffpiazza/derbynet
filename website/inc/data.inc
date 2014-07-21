@@ -106,6 +106,8 @@ function kiosk_page() {
       $row = $stmt->fetch(PDO::FETCH_NUM);
       $stmt->closeCursor();
       if ($row) {
+          $stmt = $db->prepare('UPDATE Kiosks SET last_contact = NOW() WHERE address = :address');
+          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
           if (@$row[0]) {
               return $row[0];
           }
