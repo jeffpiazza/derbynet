@@ -312,3 +312,7 @@ td.clickable div.inclickable {
     margin-left: auto;
     margin-right: auto;
 }
+
+.index_spacer {
+  height: 50px;
+}

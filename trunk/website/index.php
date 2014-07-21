@@ -9,23 +9,32 @@
  $no_back_button = true;
  require('inc/banner.inc');
  require_once('inc/authorize.inc');
+
+ $need_spacer = false;
 ?>
 <div class="index_background">
 <div class="block_buttons">
 
- <?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { ?>
+<?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="checkin.php">
   <input type="submit" value="Race Check-In"/>
 </form>
 <br/>
- <?php } ?>
+<?php } ?>
 
- <?php if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) { ?>
+<?php if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="photo-thumbs.php">
   <input type="submit" value="Edit Racer Photos"/>
 </form>
 <br/>
- <?php } ?>
+<?php } ?>
+
+<?php
+if ($need_spacer) {
+  $need_spacer = false;
+  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+}
+?>
 
 <form method="link" action="ondeck.php">
   <input type="submit" value="Racers On Deck"/>
@@ -46,25 +55,34 @@
 <br/>
  <?php } ?>
 
- <?php if (have_permission(VIEW_AWARDS_PERMISSION)) { ?>
+<div class="index_spacer">&nbsp;</div>
+
+<?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="awards.php">
   <input type="submit" value="Awards"/>
 </form>
 <br/>
- <?php } ?>
+<?php } ?>
 
- <?php if (have_permission(SET_UP_PERMISSION)) { ?>
+<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="settings.php">
   <input type="submit" value="Settings"/>
 </form>
 <br/>
- <?php } ?>
- <?php if (false) { ?>
+<?php } ?>
+<?php if (false) { $need_spacer = true; ?>
 <form method="link" action="utilities.php">
   <input type="submit" value="Utilities"/>
 </form>
 <br/>
- <?php } ?>
+<?php } ?>
+
+<?php
+if ($need_spacer) {
+  $need_spacer = false;
+  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+}
+?>
 
 <form method="link" action="login.php">
  <?php if ($_SESSION['role']) { ?>
