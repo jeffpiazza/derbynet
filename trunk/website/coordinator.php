@@ -1,6 +1,5 @@
 <?php session_start(); ?>
 <?php
-// TODO: Needs a bunch of javascript hooked up so actions can work.
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
@@ -12,8 +11,22 @@ require_once('inc/kiosks.inc');
 <head>
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+// We're using jQuery Mobile for its nice mobile/tablet-friendly UI
+// elements.  By default, jQM also wants to hijack page loading
+// functionality, and perform page loads via ajax, a "service" we
+// don't really want.  Fortunately, it's possible to turn that stuff
+// off.
+$(document).bind("mobileinit", function() {
+				   $.extend($.mobile, {
+					 ajaxEnabled: false
+					 });
+				 });
+</script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
@@ -32,11 +45,20 @@ require('inc/banner.inc');
 
   <!-- TODO: Start/stop racing: explicit am-racing state. -->
 
+  <div class="centered_flipswitch">
+  <!-- label for="is-currently-racing">Now Racing</label -->
+  <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
+    checked="checked"
+    data-on-text="Racing" data-off-text="Not Racing"/>
+<!-- onchange= -->
+  </div>
+
+
   <div class="block_buttons">
-    <input type="button" value="Skip Heat" onclick="handle_skip_heat()"/><br/>
-    <input type="button" value="Previous Heat" onclick="handle_previous_heat()"/><br/>
+    <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat()"/><br/>
+    <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat()"/><br/>
     <!-- TODO: manual heat results -->
-    <input type="button" value="Manual Results"/><br/>
+    <input type="button" data-enhanced="true" value="Manual Results"/><br/>
   </div>
 
 </div>
@@ -78,7 +100,7 @@ require('inc/banner.inc');
   <h3>Instant Replay Status</h3>
   <p>Remote replay at <?= read_replay_host_and_port() ?></p>
   <div class="block_buttons">
-    <input type="button" value="Test Replay" onclick="handle_test_replay();"/>
+    <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
   </div>
 </div>
 
@@ -170,9 +192,9 @@ foreach ($rounds as $round) {
     if ($unscheduled) {
         echo '<p>'.$unscheduled.' unscheduled roster member'.($unscheduled == 1 ? '' : 's').'</p>';
         if ($already_run) {
-            echo '<input type="button" value="Reschedule"/>'."\n";
+            echo '<input type="button" data-enhanced="true" value="Reschedule"/>'."\n";
         } else {
-            echo '<input type="button" value="Schedule"/>'."\n";
+            echo '<input type="button" data-enhanced="true" value="Schedule"/>'."\n";
         }
     }
     // TODO: Actions for these buttons
@@ -189,12 +211,12 @@ foreach ($rounds as $round) {
                                                    .' AND finishtime IS NULL',
                                                    array(':roundid' => $roundid));
         if ($scheduled_but_not_run) {
-            echo '<input type="button" value="Race"/>'."\n";
+            echo '<input type="button" data-enhanced="true" value="Race"/>'."\n";
         }
     }
 
     if ($already_run) {
-        echo '<input type="button" value="Discard Results"/>'."\n";
+        echo '<input type="button" data-enhanced="true" value="Discard Results"/>'."\n";
     }
     echo '</div>'."\n";
 }
