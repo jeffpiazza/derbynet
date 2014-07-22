@@ -17,3 +17,51 @@
 p.last_contact {
     font-size: 18px;
 }
+
+
+.heat_control_group .ui-flipswitch {
+    width: 200px;
+    /* center */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+}
+
+.centered_flipswitch {
+    width: 225px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    font-size: x-large;
+}
+
+.centered_flipswitch .ui-btn {
+    font-size: x-large;
+}
+
+/* Custom indentations are needed because the length of custom labels differs from
+   the length of the standard labels */
+
+.heat_control_group .ui-flipswitch .ui-btn.ui-flipswitch-on {
+    text-indent: -5.9em;
+}
+.heat_control_group .ui-flipswitch .ui-flipswitch-off {
+    text-indent: 0.5em;
+}
+/* Custom widths are needed because the length of custom labels differs from
+   the length of the standard labels */
+
+.heat_control_group .ui-flipswitch {
+    width: 8.875em;
+}
+.heat_control_group .ui-flipswitch.ui-flipswitch-active {
+    padding-left: 7em;
+    width: 1.875em;
+}
+/* TODO: custom_size_flipswitch is from the example code */
+@media (min-width: 28em) {
+    /*Repeated from rule .ui-flipswitch above*/
+    .ui-field-contain > label + .custom-size-flipswitch.ui-flipswitch {
+        width: 1.875em;
+    }
+}
