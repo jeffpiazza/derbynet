@@ -24,7 +24,7 @@ p.last_contact {
     /* center */
     margin-left: auto;
     margin-right: auto;
-    padding: 10px;
+    padding: 5px;
 }
 
 .centered_flipswitch {
@@ -44,6 +44,7 @@ p.last_contact {
 
 .heat_control_group .ui-flipswitch .ui-btn.ui-flipswitch-on {
     text-indent: -5.9em;
+    /* changes the small switch:  background-color: #005599;  */
 }
 .heat_control_group .ui-flipswitch .ui-flipswitch-off {
     text-indent: 0.5em;
@@ -53,10 +54,13 @@ p.last_contact {
 
 .heat_control_group .ui-flipswitch {
     width: 8.875em;
+    /* Controls flipswitch background for both "on" and "off", not suitable with "off" */
+    /* background-color: #005599; */
 }
 .heat_control_group .ui-flipswitch.ui-flipswitch-active {
     padding-left: 7em;
     width: 1.875em;
+    background-color: #023882; /* JEP */
 }
 /* TODO: custom_size_flipswitch is from the example code */
 @media (min-width: 28em) {
