@@ -399,13 +399,14 @@ function results_exist($roundid) {
 function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
 	$roster = read_roster($roundid);
 	if (count($roster) < 2) {
-		return;
+		return false;
 	}
 	while (count($roster) < $nlanes) {
 		$roster[] = null;
 	}
 	$sched = make_ordered_schedule($nlanes, count($roster), $nrounds);
 	write_chart($roundid, form_chart($sched, $roster));
+    return true;
 }
 
 // TODO: Remove this (for debugging only)
@@ -456,8 +457,11 @@ if ($nlanes < 0) {
 	echo '<failure code="results-exist">Race results already exist</failure>';
 } else {
 	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
-	schedule_one_round($_POST['roundid'], $nlanes, $nrounds);
-	echo '<success/>';
+	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
+      echo '<success/>';
+    } else {
+      echo '<failure code="too-few-racers">Need at least two racers checked in to generate a schedule.</failure>';
+    }
 }
 
 assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',

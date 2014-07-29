@@ -6,57 +6,83 @@
 
 // TODO: 'next' stops at roundid boundaries; 'auto' continues to next round.  No equivalent with 'prev'.
 
-// TODO: using master schedule!!
+// TODO: Need a test for use_master_sched case
 
+// NOTE: There may not yet be a current heat/roundid/classid assigned,
+// so these fields may be empty in $current.
 function advance_heat(&$current, $roundid, $heat, $echo_failure) {
-	$auto = $heat == 'auto';
-	if ($heat == 'next' || $auto) {
-		$prev_heat = isset($current['heat']) ? $current['heat'] : 1;
-		$heat = $prev_heat + 1;
-	} else if ($heat == 'prev') {
-		$prev_heat = isset($current['heat']) ? $current['heat'] : 1;
-		$heat = $prev_heat - 1;
-	}
+  global $db;
+  $auto = $heat == 'auto';
+  if ($current['use_master_sched'] && ($heat == 'next' || $heat == 'prev' || $auto)) {
+    if (isset($current['roundid']) && isset($current['heat'])) {
+      $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
+                           .' WHERE masterheat = '
+                           .'   (SELECT masterheat FROM RaceChart'
+                           .'           WHERE roundid = :roundid'
+                           .'            AND  heat = :heat)'
+                           .'  + :delta');
+      $stmt->execute(array(':roundid' => $current['roundid'],
+                           ':heat' => $current['heat'],
+                           ':delta' => ($heat == 'prev' ? -1 : 1)));
+    } else {
+      $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
+                           .' WHERE masterheat = 1');
+      $stmt->execute(array());
+    }
+    $rs = $stmt->fetch(PDO::FETCH_ASSOC);
+    $roundid = $rs['roundid'];
+    $heat = $rs['heat'];
+    $rs->closeCursor();
+  } else {
+    if ($heat == 'next' || $auto) {
+      $prev_heat = isset($current['heat']) ? $current['heat'] : 1;
+      $heat = $prev_heat + 1;
+    } else if ($heat == 'prev') {
+      $prev_heat = isset($current['heat']) ? $current['heat'] : 1;
+      $heat = $prev_heat - 1;
+    }
+  }
 
-	$ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
-							.' WHERE roundid = :roundid AND heat = :heat',
-							array(':roundid' => $roundid,
-								  ':heat' => $heat)) > 0;
+  // Check that the heat we're trying to set as current actually exists
+  $ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
+                          .' WHERE roundid = :roundid AND heat = :heat',
+                          array(':roundid' => $roundid,
+                                ':heat' => $heat)) > 0;
 
-    // TODO: Ensure not already-completed race results?
-    // TODO: This runs rounds in order of roundid, which may well not be the order for racing
-	if (!$ok && $auto) {
-		$r2 = read_single_value('SELECT MIN(roundid) FROM RaceChart'
-								.' WHERE roundid > :roundid',
-								array(':roundid' => $roundid));
-		if ($r2) {
-			$roundid = $r2;
-			$heat = 1;
-			$ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
-									.' WHERE roundid = :roundid AND heat = :heat',
-									array(':roundid' => $roundid,
-										  ':heat' => $heat)) > 0;
-		}
-	}
+  // TODO: Ensure not already-completed race results?
+  // TODO: This runs rounds in order of roundid, which may well not be the order for racing
+  if (!$ok && $auto) {
+    $r2 = read_single_value('SELECT MIN(roundid) FROM RaceChart'
+                            .' WHERE roundid > :roundid',
+                            array(':roundid' => $roundid));
+    if ($r2) {
+      $roundid = $r2;
+      $heat = 1;
+      $ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
+                              .' WHERE roundid = :roundid AND heat = :heat',
+                              array(':roundid' => $roundid,
+                                    ':heat' => $heat)) > 0;
+    }
+  }
 
 
-    // TODO: Either CANCEL or REPLAY command to replay here.
-    // TODO: What about the very last heat?
-	if (!$ok) {
-		if ($echo_failure) {
-			echo '<failure code="nosuchheat">No heat '.$heat.' scheduled for roundid '.$roundid.'</failure>';
-		}
-	} else {
-        // TODO: START command to replay
-		write_raceinfo('RoundID', $roundid);
-		write_raceinfo('Heat', $heat);
-		if ($roundid != @$current['roundid']) {
-			write_raceinfo('ClassID', read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
-														array(':roundid' => $roundid)));
-		}
-	}
+  // TODO: Either CANCEL or REPLAY command to replay here.
+  // TODO: What about the very last heat?
+  if (!$ok) {
+    if ($echo_failure) {
+      echo '<failure code="nosuchheat">No heat '.$heat.' scheduled for roundid '.$roundid.'</failure>';
+    }
+  } else {
+    // TODO: START command to replay
+    write_raceinfo('RoundID', $roundid);
+    write_raceinfo('Heat', $heat);
+    if ($roundid != @$current['roundid']) {
+      write_raceinfo('ClassID', read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
+                                                  array(':roundid' => $roundid)));
+    }
+  }
 
-	return $ok;
+  return $ok;
 }
 
 ?>

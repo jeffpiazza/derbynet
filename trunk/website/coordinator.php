@@ -147,82 +147,10 @@ try {
 
 <div class="control_column">
 
-<div class="scheduling_control_group">
-<div class="block_buttons">
-<?php
-
-$curr_round = get_running_round();
-// TODO: Control of ordering of rounds
-
-// TODO: Create 2nd round, grand finals round, including roster
-
-$stmt = $db->query('SELECT roundid, Classes.class, round FROM Rounds'
-                   .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
-                   .' ORDER BY round, Classes.class');
-$rounds = array();
-foreach ($stmt as $round) {
-    $rounds[] = $round;
-}
-
-foreach ($rounds as $round) {
-    $roundid = $round['roundid'];
-
-    // Schedule/reschedule: if exist roster members not in schedule.
-    // Race if a schedule exists and not presently racing.
-    // Discard if there are results.
-    $unscheduled = read_single_value('SELECT COUNT(*)'
-                                     .' FROM Roster'
-                                     .' INNER JOIN RegistrationInfo'
-                                     .' ON Roster.racerid = RegistrationInfo.racerid'
-                                     .' WHERE Roster.roundid = :roundid'
-                                     .' AND RegistrationInfo.passedinspection <> 0'
-                                     .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
-                                     .'  WHERE RaceChart.roundid = Roster.roundid'
-                                     .'  AND RaceChart.racerid = Roster.racerid)',
-                                     array(':roundid' => $roundid));
-    $already_run = read_single_value('SELECT COUNT(*) FROM RaceChart'
-                                     .' WHERE roundid = :roundid'
-                                     .' AND finishtime IS NOT NULL',
-                                     array(':roundid' => $roundid));
-    echo '<div class="control_group scheduling_control'
-    .(@$curr_round['roundid'] == $round['roundid'] ? ' current' : '')
-    .'">'."\n";
-    echo '<p>'.htmlspecialchars($round['class']).', round '.$round['round'].'</p>'."\n";
-
-    if ($unscheduled) {
-        echo '<p>'.$unscheduled.' unscheduled roster member'.($unscheduled == 1 ? '' : 's').'</p>';
-        if ($already_run) {
-            echo '<input type="button" data-enhanced="true" value="Reschedule"/>'."\n";
-        } else {
-            echo '<input type="button" data-enhanced="true" value="Schedule"/>'."\n";
-        }
-    }
-    // TODO: Actions for these buttons
-    // TODO: Buttons enable/disable according to state of the round.
-    // TODO: States for a round: Not scheduled; scheduled but not raced; partial results; completed
-    // TODO: Count racers in a round/roster, count passed racers in a round
-    if (@$curr_round['roundid'] == $round['roundid']) {
-        // TODO: Master schedule?
-        echo '<p>(Currently racing)</p>';
-    } else {
-        $scheduled_but_not_run = read_single_value('SELECT COUNT(*)'
-                                                   .' FROM RaceChart'
-                                                   .' WHERE roundid = :roundid'
-                                                   .' AND finishtime IS NULL',
-                                                   array(':roundid' => $roundid));
-        if ($scheduled_but_not_run) {
-            echo '<input type="button" data-enhanced="true" value="Race"/>'."\n";
-        }
-    }
-
-    if ($already_run) {
-        echo '<input type="button" data-enhanced="true" value="Discard Results"/>'."\n";
-    }
-    echo '</div>'."\n";
-}
-?>
+<div id="scheduling-control-group" class="scheduling_control_group">
+  <p>Waiting for coordinator-poll query...</p>
 </div>
-</div>
+
 </div>
 
 </body>

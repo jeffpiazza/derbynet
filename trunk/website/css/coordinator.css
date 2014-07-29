@@ -1,12 +1,12 @@
 .control_column {
   display: inline-block;
   vertical-align: top;
-  width: 500px;
+  width: 485px;
 }
 
 .control_group {
   border: 3px solid #023882;
-  margin: 10px;
+  margin:5px;
   padding: 10px;
  }
 
