@@ -3,7 +3,6 @@
 <title>Identify</title>
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-page.inc'); ?>
-<script type="text/javascript" src="js/kiosk-update.js"></script>
 <?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
