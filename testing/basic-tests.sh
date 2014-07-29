@@ -104,7 +104,7 @@ curl_post action.php "action=schedule&roundid=5" | check_success "scheduling rou
 sleep 2
 
 curl_post action.php "action=advance-heat&roundid=1&heat=1" | check_success "setting initial heat"
-# TODO: Heats with BYEs
+
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
@@ -125,11 +125,12 @@ curl_post action.php "action=pass&racer=17&value=0" | check_success
 curl_post action.php "action=pass&racer=23&value=0" | check_success
 curl_post action.php "action=pass&racer=31&value=0" | check_success
 
-# Re-generate the schedule.  TODO: This should be more-or-less automatic
+# Re-generate the schedule.
 curl_post action.php "action=schedule&roundid=2" | check_success
 
-# There seems to be a timing hazard if the first heat results come too quickly
+# TODO There seems to be a timing hazard if the first heat results come too quickly
 sleep 2
+# Testing heat-results with BYEs
 curl_post action.php "action=heat-results&lane4=3.123&lane1=3.210" | check_success
 curl_post action.php "action=heat-results&lane1=3.123&lane2=3.210" | check_success
 curl_post action.php "action=heat-results&lane2=3.123&lane3=3.210" | check_success
