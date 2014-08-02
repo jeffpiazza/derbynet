@@ -14,7 +14,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <html>
 <head>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php require('inc/kiosk-page.inc'); ?>
+<?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
     var g_last_update_time = ""; // First refresh is for everything
     var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
