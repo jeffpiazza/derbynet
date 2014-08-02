@@ -140,13 +140,6 @@ function process_response_from_current(summary) {
 	return;
   }
 
-  if (typeof g_kiosk_page != 'undefined' && g_kiosk_page != "" && g_kiosk_page != options.getAttribute("kiosk-page")) {
-	console.log("Reload triggered by: g_kiosk_page = " + g_kiosk_page +
-				"; kiosk-page option = " + options.getAttribute("kiosk-page"));
-	location.reload(true);
-	return;
-  }
-
   var high_water = summary.getElementsByTagName("high_water")[0];
 
   // Number of lanes may not have been known when the page was generated, but has since

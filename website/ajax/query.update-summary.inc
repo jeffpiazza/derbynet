@@ -66,7 +66,6 @@ $use_master_sched = use_master_sched();
 <after_heat/>
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
-           kiosk-page="<?php echo kiosk_page(); ?>"
            use-master-sched="<?php echo $use_master_sched; ?>"/>
 <?php
 
