@@ -31,7 +31,7 @@ function curl_get() {
 	echo $1 >> output.curl
 	echo    >> output.curl
 	curl --location -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| xmllint --format - | tee -a output.curl
+		| sed -e 's/&nbsp;/ /g' | xmllint --format - | tee -a output.curl
 }
 
 function curl_get_amper() {
