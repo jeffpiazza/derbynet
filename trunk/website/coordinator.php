@@ -50,7 +50,7 @@ $(document).bind("mobileinit", function() {
   <div class="block_buttons">
     <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat()"/><br/>
     <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat()"/><br/>
-    <input type="button" data-enhanced="true" value="Manual Results" onclick="handle_manual_results()"/><br/>
+    <input type="button" data-enhanced="true" value="Manual Results" onclick="show_manual_results_modal()"/><br/>
     <!-- TODO: discard results (one or all heats) -->
   </div>
 
@@ -89,7 +89,7 @@ $(document).bind("mobileinit", function() {
 
 <div id='modal_background'></div>
 
-<div id='kiosk_modal' class="hidden block_buttons">
+<div id='kiosk_modal' class="modal_dialog hidden block_buttons">
   <form>
     <label for="kiosk_name_field">Name for kiosk:</label>
     <input type="text" id="kiosk_name_field"/>
@@ -99,7 +99,7 @@ $(document).bind("mobileinit", function() {
   </form>
 </div>
 
-<div id='schedule_modal' class="hidden block_buttons">
+<div id='schedule_modal' class="modal_dialog hidden block_buttons">
   <form>
     <p>How many times should each racer appear in each lane?</p>
     <select id="schedule_num_rounds">
@@ -113,6 +113,16 @@ $(document).bind("mobileinit", function() {
     <input type="submit" data-enhanced="true" value="Schedule"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_schedule_modal();'/>
+  </form>
+</div>
+
+<div id='manual_results_modal' class="modal_dialog hidden block_buttons">
+  <form>
+    <input type="hidden" name="action" value="heat-results"/>
+    <table></table>
+    <input type="submit" data-enhanced="true" value="Change"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_manual_results_modal();'/>
   </form>
 </div>
 
