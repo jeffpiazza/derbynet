@@ -108,8 +108,7 @@ p.last_contact {
     display: none;
 }
 
-
-#schedule_modal {
+.modal_dialog {
   display: none;
   width: 300px;
   padding: 15px 20px;
@@ -122,15 +121,10 @@ p.last_contact {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
-#kiosk_modal {
-  display: none;
-  width: 300px;
-  padding: 15px 20px;
-  background: #f3f6fa;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+#manual_results_modal {
+  width: 500px;
+}
+
+#manual_results_modal table {
+  width: 100%;
 }

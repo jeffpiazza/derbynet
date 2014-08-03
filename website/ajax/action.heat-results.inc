@@ -16,6 +16,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 		advance_heat($current, @$current['roundid'], 'auto', false);
 
 		echo '<success/>';
+        require('ajax/query.coordinator-poll.inc');
 	}
 } else {
 	not_authorized_body();

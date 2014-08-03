@@ -22,6 +22,8 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 
 // End of preamble
 
+g_current_heat_racers = new Array();
+
 // Controls for current racing group:
 
 function handle_isracing_change() {
@@ -124,6 +126,44 @@ function close_kiosk_modal() {
     $("#kiosk_modal").css({'display': 'none'});
 }
 
+
+function show_manual_results_modal() {
+    // g_current_heat_racers: lane, name, carnumber, finishtime
+    var racer_table = $("#manual_results_modal table");
+    racer_table.empty();
+    racer_table.append("<tr><th>Lane</th><th>Racer</th><th>Car</th><th>Time</th></tr>");
+    for (var i = 0; i < g_current_heat_racers.length; ++i) {
+        var racer = g_current_heat_racers[i];
+        racer_table.append("<tr><td>" + racer.lane + "</td>"
+                           + "<td>" + racer.name + "</td>"
+                           + "<td>" + racer.carnumber + "</td>"
+                           + "<td><input type='text' size='8'"
+                               + " name='lane" + racer.lane + "'" 
+                               + " value='" + racer.finishtime + "'/>"
+                           + "</td>"
+                           + "</tr>");
+    }
+    show_modal("#manual_results_modal", function(event) {
+        // TODO handle_name_kiosk(address, $("#kiosk_name_field").val());
+        handle_manual_results();
+        return false;
+    });
+}
+
+function handle_manual_results( ) {
+    close_manual_results_modal();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $("#manual_results_modal form").serialize(),
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+}
+
+function close_manual_results_modal() {
+    $("#modal_background").fadeOut(200);
+    $("#manual_results_modal").addClass("hidden");
+    $("#manual_results_modal").css({'display': 'none'});
+}
 
 // Controls for racing rounds
 
@@ -332,16 +372,26 @@ function process_coordinator_poll_response(data) {
             pages);
     }
 
-    var racers = data.getElementsByTagName("racer");
-
-    $("#now-racing-group").prepend("<table class='heat-lineup'><tr><th>Lane</th><th>Racer</th><th>Car</th><th>Time</th></tr></table>");
+    var racer_elements = data.getElementsByTagName("racer");
+    g_current_heat_racers = new Array(racer_elements.length);
+    $("#now-racing-group").prepend("<table class='heat-lineup'>" 
+                                   + "<tr>" 
+                                   + "<th>Lane</th>"
+                                   + "<th>Racer</th>"
+                                   + "<th>Car</th>"
+                                   + "<th>Time</th>" 
+                                   + "</tr>"
+                                   + "</table>");
     var racers_table = $("#now-racing-group table");
-    for (var i = 0; i < racers.length; ++i) {
-        /*  <racer lane="1" name="Ryan Colone" carname="" carnumber="102" photo=""/> */
-        racers_table.append('<tr><td>' + racers[i].getAttribute("lane") + '</td>'
-                            + '<td>' + racers[i].getAttribute("name") + '</td>'
-                            + '<td>' + racers[i].getAttribute("carnumber") + '</td>'
-                            + '<td>' + racers[i].getAttribute("finishtime") + '</td>'
+    for (var i = 0; i < racer_elements.length; ++i) {
+        g_current_heat_racers[i] = {lane: racer_elements[i].getAttribute("lane"),
+                                    name: racer_elements[i].getAttribute("name"),
+                                    carnumber: racer_elements[i].getAttribute("carnumber"),
+                                    finishtime: racer_elements[i].getAttribute("finishtime")};
+        racers_table.append('<tr><td>' + racer_elements[i].getAttribute("lane") + '</td>'
+                            + '<td>' + racer_elements[i].getAttribute("name") + '</td>'
+                            + '<td>' + racer_elements[i].getAttribute("carnumber") + '</td>'
+                            + '<td>' + racer_elements[i].getAttribute("finishtime") + '</td>'
                             + '</tr>');
     }
 
