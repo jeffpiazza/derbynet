@@ -101,26 +101,27 @@ function update_period() {
 function kiosk_page() {
   global $db;
   try {
-      $stmt = $db->prepare('SELECT page FROM Kiosks WHERE address = :address');
+      $stmt = $db->prepare('SELECT page, name FROM Kiosks WHERE address = :address');
       $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
-      $row = $stmt->fetch(PDO::FETCH_NUM);
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $stmt->closeCursor();
       if ($row) {
           $stmt = $db->prepare('UPDATE Kiosks SET last_contact = NOW() WHERE address = :address');
           $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
-          if (@$row[0]) {
-              return $row[0];
+          if (@$row['page']) {
+              return $row;
           }
           // else row exists, but no page set
       } else {
           // No row exists
-          $stmt = $db->prepare('INSERT INTO Kiosks(address, last_contact)'
-                               .' VALUES(:address, '.db_timestamp_expr().')');
-          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
+          $stmt = $db->prepare('INSERT INTO Kiosks(address, page, last_contact)'
+                               .' VALUES(:address, :page, '.db_timestamp_expr().')');
+          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR'],
+                               ':page' => 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
       }
   } catch (PDOException $p) {
   }
-  return read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk');
+  return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
 }
 
 function photo_directory() {
@@ -167,6 +168,7 @@ function high_water_rounds() {
 function get_running_round() {
   global $db;
   $config = array('use_master_sched' => 0,
+                  'now_racing' => 1,
 				  'class' => '',
 				  'roundid' => -1);  // May be overwritten
 
@@ -179,8 +181,13 @@ function get_running_round() {
       $config['roundid'] = $val;
     else if ($key == 'Heat')
       $config['heat'] = $val;
+    // GPRM doesn't record use-master-sched in the database; it has to
+    // be set explicitly from the settings page.
+    // TODO: use-master-sched key => UseMasterSched
     else if ($key == 'use-master-sched')
       $config['use_master_sched'] = $val ? 1 : 0;
+    else if ($key == 'NowRacingState')
+      $config['now_racing'] = $val ? 1 : 0;
   }
 
   $stmt = $db->prepare('SELECT round, class'

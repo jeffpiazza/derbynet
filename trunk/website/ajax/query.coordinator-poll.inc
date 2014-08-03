@@ -1,11 +1,57 @@
 <coordinator_poll>
-<?php require('inc/current-heat.inc'); ?>
-<?php
+<?php /* Current heat */
+require('inc/current-heat.inc');
+require('inc/current-racers.inc');
+?>
+<?php /* Timer */ 
+require_once('inc/timer-state.inc');
+$tstate = get_timer_state();
+echo '<timer-state lanes="'.get_lane_count().'" last_contact="'.read_raceinfo('timer_last_contact').'">';
+    if ($tstate == TIMER_NOT_CONNECTED) {
+        echo 'NOT CONNECTED';
+    } else if ($tstate == TIMER_CONNECTED) {
+        echo 'CONNECTED ('.(time() - read_raceinfo('timer_last_contact')).' sec.)a';
+    } else if ($tstate == TIMER_PREPARED) {
+        echo 'Prepared';
+    } else if ($tstate == TIMER_RUNNING) {
+        echo 'Race running';
+    } else {
+        echo 'Unknown ('.$tstate.')';
+    }
+echo '</timer-state>'."\n";
+?>
+<?php /* Replay */
+require_once('inc/replay.inc');
+echo '<replay-state host-and-port="'.read_replay_host_and_port().'"/>'."\n";
+?>
+<?php // Kiosks
+require_once('inc/kiosks.inc');
+try {
+  drop_old_kiosks();
+  $stmt = $db->query('SELECT address, name, page, last_contact FROM Kiosks ORDER BY name, address, last_contact');
+  foreach ($stmt as $row) {
+    echo '<kiosk>'."\n";
+    echo '  <name>'.htmlspecialchars($row['name']).'</name>'."\n";
+    echo '  <address>'.htmlspecialchars($row['address']).'</address>'."\n";
+    echo '  <last_contact>'.$row['last_contact'].'</last_contact>'."\n";
+    echo '  <assigned_page>'.$row['page'].'</assigned_page>'."\n";
+    echo '</kiosk>'."\n";
+    }
+} catch (PDOException $p) {
+    // TODO: No Kiosks table
+    echo '<h2>No Kiosks table defined.</h2>';  // TODO: Or other problem...
+    // TODO: What if not throwing exceptions?
+    // TODO: Create kiosk table on demand
+    // TODO: Allow assigning name to kiosk
+}
 
-$curr_round = get_running_round();
-// TODO: Control of ordering of rounds
+xml_for_kiosk_pages('kiosks');
+xml_for_kiosk_pages('local'.DIRECTORY_SEPARATOR.'kiosks');
 
-// TODO: Create 2nd round, grand finals round, including roster
+?>
+<?php // Rounds
+
+$curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
 $stmt = $db->query('SELECT roundid, Classes.class, round FROM Rounds'
                    .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
@@ -16,15 +62,8 @@ foreach ($stmt as $round) {
 }
 
 
-
 foreach ($rounds as $round) {
     $roundid = $round['roundid'];
-
-/* roster size,
-   n_passed,
-   n_unscheduled // Number of passed racers not in schedule
-   n_heats_scheduled
-   n_heats_run */
 
     // TODO: htmlspecialchars for class
     echo '<round roundid="'.$roundid.'" class="'.$round['class'].'" round="'.$round['round'].'"';

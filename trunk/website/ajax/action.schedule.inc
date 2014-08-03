@@ -409,7 +409,7 @@ function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
     return true;
 }
 
-// TODO: Remove this (for debugging only)
+// For debugging only:
 function print_chart(&$heats) {
 	echo '<table>';
 	$first = true;
@@ -459,6 +459,7 @@ if ($nlanes < 0) {
 	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
 	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
       echo '<success/>';
+      require('ajax/query.coordinator-poll.inc');
     } else {
       echo '<failure code="too-few-racers">Need at least two racers checked in to generate a schedule.</failure>';
     }

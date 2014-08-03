@@ -4,6 +4,16 @@
   width: 485px;
 }
 
+.double_control_column {
+  width: 975px;
+}
+
+.heat-lineup {
+  width: 485px;
+  margin-right: 5px;
+  float: right;
+}
+
 .control_group {
   border: 3px solid #023882;
   margin:5px;
@@ -11,8 +21,17 @@
  }
 
 .current {
-    background-color: #F7D117;
- }
+  background-color: #F7D117;
+}
+
+.current.control_group h3 {
+  margin-top: 0px;
+  font-size: x-large;
+}
+
+h3 {
+    margin-top: 0px;
+}
 
 p.last_contact {
     font-size: 18px;
@@ -68,4 +87,45 @@ p.last_contact {
     .ui-field-contain > label + .custom-size-flipswitch.ui-flipswitch {
         width: 1.875em;
     }
+}
+
+
+
+/** modal window styles **/
+#modal_background {
+    position: fixed;
+    z-index:100;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #000;
+    display: none;
+}
+
+
+#schedule_modal {
+  display: none;
+  width: 300px;
+  padding: 15px 20px;
+  background: #f3f6fa;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+#kiosk_modal {
+  display: none;
+  width: 300px;
+  padding: 15px 20px;
+  background: #f3f6fa;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }

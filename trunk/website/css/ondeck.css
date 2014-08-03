@@ -249,7 +249,8 @@ td.clickable div.inclickable {
 .kiosk_title {
   font-size: 100px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 0px;
+  margin-top: 0px;
   font-weight: bold;
 }
 
