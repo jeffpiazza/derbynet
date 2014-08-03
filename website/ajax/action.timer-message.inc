@@ -55,7 +55,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     } else if ($message == 'FINISHED') {
         if (write_heat_results()) {
             $current = get_running_round();
-            if (advance_heat($current, @$current['roundid'], 'auto', true)) {
+            if (advance_heat($current, @$current['roundid'], 'next', true)) {
                 echo '<success/>';
             }
             set_timer_state(TIMER_CONNECTED);

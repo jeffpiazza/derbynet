@@ -1,19 +1,11 @@
 <?php
 
-// TODO ./website/ajax/action.advance-heat.inc:	if (advance_heat($current, $roundid, $heat, true)) {
-// TODO ./website/ajax/action.heat-results.inc: advance_heat($current, @$current['roundid'], 'auto', false);
-// TODO ./website/ajax/action.timer-message.inc: if (advance_heat($current, @$current['roundid'], 'auto', true)) {
-
-// TODO: 'next' stops at roundid boundaries; 'auto' continues to next round.  No equivalent with 'prev'.
-
-// TODO: Need a test for use_master_sched case
-
 // NOTE: There may not yet be a current heat/roundid/classid assigned,
-// so these fields may be empty in $current.
-function advance_heat(&$current, $roundid, $heat, $echo_failure) {
+// so some of these fields may be empty in $current.
+function advance_heat(&$current, $roundid, $requested_heat, $echo_failure) {
   global $db;
-  $auto = $heat == 'auto';
-  if ($current['use_master_sched'] && ($heat == 'next' || $heat == 'prev' || $auto)) {
+  if ($current['use_master_sched'] && ($requested_heat == 'next' ||
+                                       $requested_heat == 'prev')) {
     if (isset($current['roundid']) && isset($current['heat'])) {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = '
@@ -23,7 +15,7 @@ function advance_heat(&$current, $roundid, $heat, $echo_failure) {
                            .'  + :delta');
       $stmt->execute(array(':roundid' => $current['roundid'],
                            ':heat' => $current['heat'],
-                           ':delta' => ($heat == 'prev' ? -1 : 1)));
+                           ':delta' => ($requested_heat == 'prev' ? -1 : 1)));
     } else {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = 1');
@@ -34,12 +26,14 @@ function advance_heat(&$current, $roundid, $heat, $echo_failure) {
     $heat = $rs['heat'];
     $rs->closeCursor();
   } else {
-    if ($heat == 'next' || $auto) {
-      $prev_heat = isset($current['heat']) ? $current['heat'] : 1;
-      $heat = $prev_heat + 1;
-    } else if ($heat == 'prev') {
-      $prev_heat = isset($current['heat']) ? $current['heat'] : 1;
-      $heat = $prev_heat - 1;
+    if (!isset($current['heat']) || $current['heat'] < 0) {
+      $heat = 1;
+    } else if ($requested_heat == 'next') {
+      $heat = $current['heat'] + 1;
+    } else if ($requested_heat == 'prev') {
+      $heat = $current['heat'] - 1;
+    } else {
+      $heat = $requested_heat;
     }
   }
 
@@ -49,26 +43,11 @@ function advance_heat(&$current, $roundid, $heat, $echo_failure) {
                           array(':roundid' => $roundid,
                                 ':heat' => $heat)) > 0;
 
-  // TODO: Ensure not already-completed race results?
-  // TODO: This runs rounds in order of roundid, which may well not be the order for racing
-  if (!$ok && $auto) {
-    $r2 = read_single_value('SELECT MIN(roundid) FROM RaceChart'
-                            .' WHERE roundid > :roundid',
-                            array(':roundid' => $roundid));
-    if ($r2) {
-      $roundid = $r2;
-      $heat = 1;
-      $ok = read_single_value('SELECT COUNT(*) FROM RaceChart'
-                              .' WHERE roundid = :roundid AND heat = :heat',
-                              array(':roundid' => $roundid,
-                                    ':heat' => $heat)) > 0;
-    }
-  }
-
-
   // TODO: Either CANCEL or REPLAY command to replay here.
-  // TODO: What about the very last heat?
   if (!$ok) {
+    if ($requested_heat == 'next' || $requested_heat == 'prev') {
+      write_raceinfo('NowRacingState', 0);
+    }
     if ($echo_failure) {
       echo '<failure code="nosuchheat">No heat '.$heat.' scheduled for roundid '.$roundid.'</failure>';
     }
