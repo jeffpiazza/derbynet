@@ -10,8 +10,13 @@
 
 .heat-lineup {
   width: 485px;
-  margin-right: 5px;
+  margin-right: 10px;
   float: right;
+}
+
+.heat-lineup td {
+  margin: 0px;
+  padding: 0px;
 }
 
 .control_group {

@@ -4,7 +4,7 @@
 
 require_once('inc/data.inc');
   
-$stmt = $db->prepare('SELECT lane, lastname, firstname, carnumber, carname, imagefile'
+$stmt = $db->prepare('SELECT lane, lastname, firstname, carnumber, carname, imagefile, finishtime'
                      .' FROM RaceChart'
                      .' INNER JOIN RegistrationInfo'
                      .' ON RaceChart.racerid = RegistrationInfo.racerid'
@@ -20,6 +20,8 @@ foreach ($stmt as $row) {
        .' name="'.$row['firstname'].' '.$row['lastname'].'"'
        .' carname="'.$row['carname'].'"'
        .' carnumber="'.$row['carnumber'].'"'
-       .' photo="'.$row['imagefile'].'"/>'."\n";
+       .' photo="'.$row['imagefile'].'"'
+       .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
+       .'/>'."\n";
 }
 ?>

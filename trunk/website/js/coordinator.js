@@ -333,13 +333,16 @@ function process_coordinator_poll_response(data) {
     }
 
     var racers = data.getElementsByTagName("racer");
-    $("#now-racing-group").prepend("<div class='heat-lineup'><ul/></div>");
-    var racers_div = $("#now-racing-group .heat-lineup ul");
+
+    $("#now-racing-group").prepend("<table class='heat-lineup'><tr><th>Lane</th><th>Racer</th><th>Car</th><th>Time</th></tr></table>");
+    var racers_table = $("#now-racing-group table");
     for (var i = 0; i < racers.length; ++i) {
         /*  <racer lane="1" name="Ryan Colone" carname="" carnumber="102" photo=""/> */
-        racers_div.append("<li>Lane " + racers[i].getAttribute("lane")
-                          + ": " + racers[i].getAttribute("name")
-                          + "</li>");
+        racers_table.append('<tr><td>' + racers[i].getAttribute("lane") + '</td>'
+                            + '<td>' + racers[i].getAttribute("name") + '</td>'
+                            + '<td>' + racers[i].getAttribute("carnumber") + '</td>'
+                            + '<td>' + racers[i].getAttribute("finishtime") + '</td>'
+                            + '</tr>');
     }
 
     $("#kiosk_control_group").trigger("create");
