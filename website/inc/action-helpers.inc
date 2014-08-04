@@ -11,7 +11,7 @@ function xml_for_reload() {
 function start_response() {
 	echo '<action-response';
 	foreach ($_POST as $attr => $val) {
-		echo ' '.$attr.'="'.$val.'"';
+      echo ' '.$attr.'="'.htmlspecialchars($val, ENT_QUOTES).'"';
 	}
 	echo '>';
 }

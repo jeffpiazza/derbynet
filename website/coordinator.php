@@ -108,6 +108,7 @@ $(document).bind("mobileinit", function() {
         <option>3</option>
         <option>4</option>
         <option>5</option>
+        <option>6</option>
     </select>
 
     <input type="submit" data-enhanced="true" value="Schedule"/>

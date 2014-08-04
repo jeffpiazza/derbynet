@@ -16,6 +16,9 @@ if ($dbtype == 'odbc') {
 	$dbtype = 'access';
 }
 
+define('CLASS_COLUMN_WIDTH', 15);
+define('RANK_COLUMN_WIDTH', 15);
+
 function db_timestamp_expr() {
   global $dbtype;
   return $dbtype == 'access' 
