@@ -35,6 +35,16 @@ if ($ok) {
         $stmt->execute(array(':classname' => $classname));
         $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
                                      array(':classname' => $classname));
+
+        // Creating a class usually requires creating a corresponding 1st racing round
+        $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
+                             .' SELECT 1, classid'
+                             .' FROM Classes'
+                             .' WHERE classid = :classid'
+                             .' AND NOT EXISTS(SELECT 1 FROM Rounds'
+                             .'  WHERE Rounds.classid = Classes.classid'
+                             .'    AND Rounds.round = 1)');
+        $stmt->execute(array(':classid' => $classid));
     }
 
     $rankname = isset($_POST['subgroup']) ? $_POST['subgroup'] : $classname;

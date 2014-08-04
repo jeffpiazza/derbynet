@@ -99,7 +99,8 @@ curl_post action.php "action=edit-racer&racer=2&firstname=Tom&lastname=Adrogue&c
 curl_post action.php "action=schedule&roundid=2" | check_success "scheduling round 2"
 curl_post action.php "action=schedule&roundid=3" | check_success "scheduling round 3"
 curl_post action.php "action=schedule&roundid=4" | check_success "scheduling round 4"
-curl_post action.php "action=schedule&roundid=5" | check_success "scheduling round 5"
+# The 5th round won't schedule, because there's only one racer.
+curl_post action.php "action=schedule&roundid=5" | check_failure "scheduling round 5"
 
 sleep 2
 
@@ -139,6 +140,7 @@ curl_post action.php "action=heat-results&lane3=3.123&lane4=3.210" | check_succe
 # TODO: Testing some rescheduling
 curl_post action.php "action=pass&racer=4&value=1" | check_success check-in
 curl_post action.php "action=schedule&roundid=3" | check_success schedule
+curl_post action.php 'action=advance-heat&roundid=3' | check_success select_round
 curl_post action.php "action=heat-results&lane1=3.100&lane2=3.001&lane3=3.110&lane4=3.200" | check_success heat
 sleep 1
 curl_post action.php "action=pass&racer=40&value=1" | check_success check-in
@@ -156,5 +158,11 @@ curl_get index.php | grep '<form' | diff - anonymous.index.tmp
 
 rm *.index.tmp
 
+tput setaf 2
+echo Tests complete
+
+tput setaf 1
 # Catch any "undefined" messages
 grep -i Undefined output.curl
+tput setaf 0
+

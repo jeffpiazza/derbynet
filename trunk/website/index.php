@@ -69,6 +69,10 @@ if ($need_spacer) {
   <input type="submit" value="Settings"/>
 </form>
 <br/>
+<form method="link" action="import-roster.php">
+  <input type="submit" value="Import Roster"/>
+</form>
+<br/>
 <?php } ?>
 <?php if (false) { $need_spacer = true; ?>
 <form method="link" action="utilities.php">

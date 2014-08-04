@@ -98,11 +98,6 @@ $sql_script = array(
 ."  PRIMARY KEY (`RaceInfoID`)"
 .")",
 
-"INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (1, 'H1', 'Pack 140')",
-"INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (2, 'H2', '2010 Pinewood Derby')",
-//"INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (4, 'ClassID', '2')",
-//"INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (5, 'RoundID', '2')",
-//"INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (6, 'Heat', '7')",
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (12, 'StepDataFile', 'Complete')",
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (13, 'StepSWSetup', 'Complete')",
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (14, 'StepReportsSetup', 'Complete')",
@@ -113,8 +108,6 @@ $sql_script = array(
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (19, 'StepRacing', 'Incomplete')",
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (20, 'StepAwardsCeremony', 'Incomplete')",
 "INSERT INTO `RaceInfo` (`RaceInfoID`, `ItemKey`, `ItemValue`) VALUES (21, 'StepOrgSetup', 'Complete')",
-
-"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (25, 'xbs-award', 'Exclusively By Scout')",
 
 "DROP TABLE IF EXISTS `Ranks`",
 

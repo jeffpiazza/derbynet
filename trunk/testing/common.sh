@@ -14,6 +14,7 @@ cat >coordinator.index.tmp <<EOF
         <form method="link" action="coordinator.php">
         <form method="link" action="awards.php">
         <form method="link" action="settings.php">
+        <form method="link" action="import-roster.php">
         <form method="link" action="login.php">
 EOF
 
@@ -66,29 +67,51 @@ function check_success() {
 	# Expecting stdin
 	grep -c "<success[ />]" > /dev/null
 	if [ $? -ne 0 ]; then
+        tput setaf 1
 		echo FAILURE
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
+        tput setaf 0
+	fi
+}
+
+# Some actions are expected to fail, i.e., produce a 
+# <failure ...>...</failure>
+# response.  The test fails if that's not the case.
+function check_failure() {
+	# Expecting stdin
+	grep -c "<failure[ />]" > /dev/null
+	if [ $? -ne 0 ]; then
+        tput setaf 1
+		echo TEST FAILURE: EXPECTING ACTION TO FAIL
+		echo BEGIN RESPONSE
+		cat debug.curl
+		echo END RESPONSE
+        tput setaf 0
 	fi
 }
 
 function expect_count {
 	# Expecting stdin
 	if [ "`grep -c $1`" -ne $2 ]; then
+        tput setaf 1
 		echo FAILURE expecting $2 occurrences of $1
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
+        tput setaf 0
 	fi
 }
 
 function expect_one {
 	if [ "`grep -c $1`" -ne 1 ]; then
+        tput setaf 1
 		echo FAILURE expecting an occurrence of $1
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
+        tput setaf 0
 	fi
 }
     
