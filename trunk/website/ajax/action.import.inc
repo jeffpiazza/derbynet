@@ -25,16 +25,19 @@ foreach ($fields as $fieldname => $required) {
     
 if ($ok) {
 
+  $classname = substr($_POST['classname'], 0, CLASS_COLUMN_WIDTH);
+  // We're failing to find the existing record, but trying to write a
+  // new one gives a uniqueness violation against the truncated name.
     $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
-                                 array(':classname' => $_POST['classname']));
+                                 array(':classname' => $classname));
     if ($classid === false) {
         $stmt = $db->prepare('INSERT INTO Classes(class) VALUES(:classname)');
-        $stmt->execute(array(':classname' => $_POST['classname']));
+        $stmt->execute(array(':classname' => $classname));
         $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
-                                     array(':classname' => $_POST['classname']));
+                                     array(':classname' => $classname));
     }
 
-    $rankname = isset($_POST['subgroup']) ? $_POST['subgroup'] : $_POST['classname'];
+    $rankname = isset($_POST['subgroup']) ? $_POST['subgroup'] : $classname;
     $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname AND classid = :classid',
                                 array(':rankname' => $rankname,
                                       ':classid' => $classid));

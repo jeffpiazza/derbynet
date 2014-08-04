@@ -169,6 +169,9 @@ function handle_import_one_row(row) {
                 $('[data-row="' + row + '"] th').text('OK');
                 handle_import_one_row(row + 1);
             },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("Error: " + textStatus + " / " + errorThrown);
+            }
            });
 }
 
