@@ -144,7 +144,6 @@ function show_manual_results_modal() {
                            + "</tr>");
     }
     show_modal("#manual_results_modal", function(event) {
-        // TODO handle_name_kiosk(address, $("#kiosk_name_field").val());
         handle_manual_results();
         return false;
     });
@@ -221,6 +220,8 @@ function update_for_current_round(current_heat) {
     var is_racing = (current_heat.getAttribute('now-racing') == '1');
 
     if (isracing_checkbox.prop('checked') != is_racing) {
+        console.log('update_for_current_round: checkbox is ' + isracing_checkbox.prop('checked'));
+        console.log('                          new value is ' + is_racing);
         isracing_checkbox.prop('checked', is_racing);
         isracing_checkbox.change();
     }
