@@ -65,8 +65,9 @@ foreach ($stmt as $round) {
 foreach ($rounds as $round) {
     $roundid = $round['roundid'];
 
-    // TODO: htmlspecialchars for class
-    echo '<round roundid="'.$roundid.'" class="'.$round['class'].'" round="'.$round['round'].'"';
+    echo '<round roundid="'.$roundid.'"'
+              .' class="'.htmlspecialchars($round['class'], ENT_QUOTES).'"'
+              .' round="'.$round['round'].'"';
 
     // Number of racers in the roster for the round
     echo ' roster_size="'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
