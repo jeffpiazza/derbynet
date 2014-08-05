@@ -29,6 +29,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
     if (isset($_POST['roundid'])) {
       $roundid = $_POST['roundid'];
+      $heat = 1;
     }
     if (isset($_POST['heat'])) {
       $heat = $_POST['heat'];

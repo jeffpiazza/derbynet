@@ -69,6 +69,7 @@ function check_success() {
 	if [ $? -ne 0 ]; then
         tput setaf 1
 		echo FAILURE
+        caller
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
@@ -85,6 +86,7 @@ function check_failure() {
 	if [ $? -ne 0 ]; then
         tput setaf 1
 		echo TEST FAILURE: EXPECTING ACTION TO FAIL
+        caller
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
@@ -97,6 +99,7 @@ function expect_count {
 	if [ "`grep -c $1`" -ne $2 ]; then
         tput setaf 1
 		echo FAILURE expecting $2 occurrences of $1
+        caller
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE
@@ -108,6 +111,7 @@ function expect_one {
 	if [ "`grep -c $1`" -ne 1 ]; then
         tput setaf 1
 		echo FAILURE expecting an occurrence of $1
+        caller
 		echo BEGIN RESPONSE
 		cat debug.curl
 		echo END RESPONSE

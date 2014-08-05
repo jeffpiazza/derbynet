@@ -102,20 +102,33 @@ curl_post action.php "action=schedule&roundid=4" | check_success "scheduling rou
 # The 5th round won't schedule, because there's only one racer.
 curl_post action.php "action=schedule&roundid=5" | check_failure "scheduling round 5"
 
+echo sleep 2
 sleep 2
 
+## 8 Tiger heats
 curl_post action.php "action=select-heat&roundid=1&heat=1" | check_success "setting initial heat"
 
+## TODO: action=heat-results tests behavior of manual heat results; timer-message would be more interesting
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane1=3.100&lane2=3.001&lane3=3.110&lane4=3.200" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
+echo sleep 1
 sleep 1
 curl_post action.php "action=heat-results&lane1=3.000&lane2=3.001&lane3=3.010&lane4=3.100" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane4=2.999&lane2=3.001&lane3=3.010&lane1=9.999" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
+echo sleep 1
 sleep 1
 curl_post action.php "action=heat-results&lane4=2.999&lane2=3.001&lane3=3.010&lane1=9.999" | check_success heat
+# That's all for this round, folks!
 
 curl_post action.php "action=delete-results&roundid=2" | check_success
 
@@ -128,22 +141,31 @@ curl_post action.php "action=pass&racer=31&value=0" | check_success
 
 # Re-generate the schedule.
 curl_post action.php "action=schedule&roundid=2" | check_success
+curl_post action.php "action=select-heat&roundid=2&heat=1" | check_success
 
 # TODO There seems to be a timing hazard if the first heat results come too quickly
+echo sleep 2
 sleep 2
-# Testing heat-results with BYEs
+# Testing heat-results with BYEs: 2 racers in Wolves (roundid=2)
 curl_post action.php "action=heat-results&lane4=3.123&lane1=3.210" | check_success
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane1=3.123&lane2=3.210" | check_success
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane2=3.123&lane3=3.210" | check_success
+curl_post action.php "action=select-heat&heat=next" | check_success advance
 curl_post action.php "action=heat-results&lane3=3.123&lane4=3.210" | check_success
+# End of roundid=2
 
 # TODO: Testing some rescheduling
 curl_post action.php "action=pass&racer=4&value=1" | check_success check-in
 curl_post action.php "action=schedule&roundid=3" | check_success schedule
 curl_post action.php 'action=select-heat&roundid=3' | check_success select_round
 curl_post action.php "action=heat-results&lane1=3.100&lane2=3.001&lane3=3.110&lane4=3.200" | check_success heat
+curl_post action.php "action=select-heat&heat=next" | check_success advance
+echo sleep 1
 sleep 1
 curl_post action.php "action=pass&racer=40&value=1" | check_success check-in
+echo sleep 1
 sleep 1
 curl_post action.php "action=reschedule&roundid=3" | check_success reschedule
 
