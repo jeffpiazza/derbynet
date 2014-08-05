@@ -14,8 +14,11 @@
     NSURL* url;
     NSMutableData* responseData;
     NSURLConnection* connection;
+    
+    int _port;
 }
 
+- (void) setPort: (int) port;
 - (void) setUrlAndPoll: (NSString*) urlString;
 
 @end

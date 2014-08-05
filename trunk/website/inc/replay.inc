@@ -13,9 +13,13 @@ require_once('inc/data.inc');
 
 function write_replay_host_and_port($host_and_port) {
   write_raceinfo('replay_host_and_port', $host_and_port);
+  write_raceinfo('replay_last_contact', time());
 }
 
 function read_replay_host_and_port() {
+  if (read_raceinfo('replay_last_contact', 0) + 3600 /* seconds */ < time()) {
+    return '';
+  }
   return read_raceinfo('replay_host_and_port', '');
 }
 
