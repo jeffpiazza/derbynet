@@ -26,6 +26,7 @@
 @property (weak) AppDelegate* appDelegate;
 
 - (id)initWithDelegate: (AppDelegate*) theAppDelegate;
+- (int) port;
 - (void) startOnPort: (int) port;
 - (void) stop;
 

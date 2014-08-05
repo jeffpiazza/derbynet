@@ -72,6 +72,11 @@
     isRunning = YES;
 }
 
+- (int) port
+{
+    return [listenSocket localPort];
+}
+
 - (void) stop
 {
     // Stop accepting connections

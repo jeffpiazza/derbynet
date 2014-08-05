@@ -7,10 +7,6 @@
 // TODO: Show connection status (green/red)
 // TODO: Allow changing connection, especially if connection fails.  Verify there's no leak.
 // TODO: Instead of polling, listen on port for commands!!
-// TODO: Configuration:
-//    Slow-motion replay -- disable sound?
-//    Selectable number of replays
-//    Selectable playback length.
 // TODO: Preview on/off
 //
 
@@ -110,7 +106,7 @@
     
     // TODO: If we want the Replay process to register itself with the web server, this would be the way to go.
     // For now, just tell the operator what port we're listening on, and let them type it in to the web server.
-    // [self showUrlSheet];
+    [self showUrlSheet];
 }
 
 - (void)showUrlSheet
@@ -140,6 +136,7 @@
 {
     NSLog(@"tryNewUrl");
     self.poller = [[Poller alloc] init];
+    [self.poller setPort: [[self listener] port]];
     [self.poller setUrlAndPoll: [_urlField stringValue]];
 
     [NSApp endSheet:_urlSheet];
