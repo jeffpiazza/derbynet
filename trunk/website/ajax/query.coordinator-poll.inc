@@ -6,11 +6,12 @@ require('inc/current-racers.inc');
 <?php /* Timer */ 
 require_once('inc/timer-state.inc');
 $tstate = get_timer_state();
-echo '<timer-state lanes="'.get_lane_count().'" last_contact="'.read_raceinfo('timer_last_contact').'">';
+$tcontact = read_raceinfo('timer_last_contact');
+echo '<timer-state lanes="'.get_lane_count().'" last_contact="'.$tcontact.'">';
     if ($tstate == TIMER_NOT_CONNECTED) {
         echo 'NOT CONNECTED';
     } else if ($tstate == TIMER_CONNECTED) {
-        echo 'CONNECTED ('.(time() - read_raceinfo('timer_last_contact')).' sec.)a';
+        echo 'CONNECTED ('.(time() - $tcontact).' sec.)';
     } else if ($tstate == TIMER_PREPARED) {
         echo 'Prepared';
     } else if ($tstate == TIMER_RUNNING) {
@@ -22,7 +23,15 @@ echo '</timer-state>'."\n";
 ?>
 <?php /* Replay */
 require_once('inc/replay.inc');
-echo '<replay-state host-and-port="'.read_replay_host_and_port().'"/>'."\n";
+$replay = read_replay_host_and_port();
+$rcontact = read_raceinfo('replay_last_contact');
+echo '<replay-state host-and-port="'.$replay.'" last_contact="'.$rcontact.'">';
+if ($replay == '') {
+  echo 'NOT CONNECTED';
+} else {
+  echo 'CONNECTED at '.$replay.' ('.(time() - $rcontact).' sec.)';
+}
+echo "</replay-state>\n";
 ?>
 <?php // Kiosks
 require_once('inc/kiosks.inc');

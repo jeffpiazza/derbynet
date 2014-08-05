@@ -27,8 +27,6 @@ g_current_heat_racers = new Array();
 // Controls for current racing group:
 
 function handle_isracing_change() {
-    console.log("change");
-    console.log($("#is-currently-racing").prop('checked'));
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'select-heat',
@@ -220,15 +218,12 @@ function update_for_current_round(current_heat) {
     var is_racing = (current_heat.getAttribute('now-racing') == '1');
 
     if (isracing_checkbox.prop('checked') != is_racing) {
-        console.log('update_for_current_round: checkbox is ' + isracing_checkbox.prop('checked'));
-        console.log('                          new value is ' + is_racing);
         isracing_checkbox.prop('checked', is_racing);
         isracing_checkbox.change();
     }
 }
 
 function generate_timer_state_group(tstate) {
-    console.log(tstate.getAttribute('last_contact'));  // TODO - What form is this in?
     $("#timer_status_text").text(tstate.textContent);
     var lanes = tstate.getAttribute('lanes');
     if (lanes != '') {
@@ -236,12 +231,11 @@ function generate_timer_state_group(tstate) {
     }
 }
 
-function generate_replay_state_group(host_and_port) {
-    if (host_and_port == '') {
-        $("#replay_status").text("NOT CONNECTED");
+function generate_replay_state_group(replay_state) {
+    $("#replay_status").text(replay_state.textContent);
+    if (replay_state.getAttribute('host-and-port') == '') {
         $("#test_replay").addClass("hidden");
     } else {
-        $("#replay_status").text("Remote replay at " + host_and_port);
         $("#test_replay").removeClass("hidden");
     }
 }
@@ -351,7 +345,7 @@ function process_coordinator_poll_response(data) {
     generate_timer_state_group(timer_state);
 
     var replay_state = data.getElementsByTagName("replay-state")[0];
-    generate_replay_state_group(replay_state.getAttribute("host-and-port"));
+    generate_replay_state_group(replay_state);
 
     var kiosk_pages = data.getElementsByTagName("kiosk-page");
     var pages = new Array(kiosk_pages.length);
