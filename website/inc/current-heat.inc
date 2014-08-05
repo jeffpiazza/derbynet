@@ -8,5 +8,5 @@ $use_master_sched = use_master_sched();
               round="<?php echo @$now_running['round']; ?>"
               group="<?php echo $use_master_sched ? @$now_running['round'] : @$now_running['roundid']; ?>"
               heat="<?php echo @$now_running['heat']; ?>"><?php
-                if (!$use_master_sched) { echo @$now_running['class']; }
+                if (!$use_master_sched) { echo htmlspecialchars(@$now_running['class'], ENT_QUOTES); }
 ?></current-heat>
