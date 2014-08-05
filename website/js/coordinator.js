@@ -31,7 +31,7 @@ function handle_isracing_change() {
     console.log($("#is-currently-racing").prop('checked'));
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'advance-heat',
+            data: {action: 'select-heat',
                    now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
             success: function(data) { process_coordinator_poll_response(data); }
            });
@@ -40,7 +40,7 @@ function handle_isracing_change() {
 function handle_skip_heat() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'advance-heat',
+            data: {action: 'select-heat',
                    heat: 'next'},
             success: function(data) { process_coordinator_poll_response(data); }
            });
@@ -49,7 +49,7 @@ function handle_skip_heat() {
 function handle_previous_heat() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'advance-heat',
+            data: {action: 'select-heat',
                    heat: 'prev'},
             success: function(data) { process_coordinator_poll_response(data); }
            });
@@ -201,7 +201,7 @@ function handle_reschedule(roundid) {
 function handle_race(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'advance-heat',
+            data: {action: 'select-heat',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 1},

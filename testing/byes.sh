@@ -15,4 +15,4 @@ curl_post action.php "action=pass&racer=33" | check_success
 curl_post action.php "action=pass&racer=34" | check_success
 
 curl_post action.php "action=schedule&roundid=5" | check_success
-curl_post action.php "action=advance-heat&roundid=5&heat=1" | check_success
+curl_post action.php "action=select-heat&roundid=5&heat=1" | check_success
