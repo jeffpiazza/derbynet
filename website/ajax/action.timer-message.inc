@@ -1,8 +1,10 @@
 <?php
 
+require_once('inc/racing-state.inc');
 require_once('inc/timer-state.inc');
 require_once('inc/write-heat-results.inc');
 require_once('inc/autoadvance.inc');
+require_once('inc/replay.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -27,6 +29,8 @@ require_once('inc/autoadvance.inc');
 
 $message = $_POST['message'];
 
+$racing_state = get_racing_state();
+
 start_response();
 
 // Pinning our hopes on the 
@@ -47,13 +51,18 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   } else if ($message == 'FINISHED') {
     // TODO: A FINISHED message when when we're not actively racing
     // should be discarded
-    if (write_heat_results()) {
+    if (!$racing_state) {
+      echo "<failure code='notracing'>Not racing now.</failure>\n";
+    } else if (write_heat_results()) {
+      send_replay_REPLAY();
       $current = get_running_round();
       if (advance_heat($current, @$current['roundid'], 'next', true)) {
         echo '<success/>';
       }
-      set_timer_state(TIMER_CONNECTED);
     }
+    // If another heat is teed up, we'll immediately change state to
+    // TIMER_PREPARED, below.
+    set_timer_state(TIMER_CONNECTED);
   } else if ($message == 'HEARTBEAT') {
     echo '<success/>'."\n";
     // TODO: Capture other state information
@@ -66,9 +75,13 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     // define what this means/does.
     set_timer_state(TIMER_CONNECTED);
   } else {
+    echo "<failure code='notunderstood'>Message "
+        .htmlspecialchars($message, ENT_QUOTES)
+        ." not recognized.</failure>\n";
   }
 
-  if (get_timer_state() == TIMER_CONNECTED) {  // i.e., not prepared or running
+  $tstate = get_timer_state();
+  if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not prepared or running
     $current = get_running_round();
     $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
                          .' WHERE roundid = :roundid AND heat = :heat'
@@ -85,11 +98,12 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     }
     if ($pending) {
       echo '<heat-ready lane-mask="'.$mask.'"/>'."\n";
+      set_timer_state(TIMER_PREPARED);
+      send_replay_START($current);
     }
-    set_timer_state(TIMER_PREPARED);
-    // TODO: Broadcast an event for instant replay
   }
-  if (false) {  // TODO
+
+  if (!$racing_state && ($tstate == TIMER_PREPARED || $tstate == TIMER_RUNNING)) {
     echo '<abort/>'."\n";
     set_timer_state(TIMER_CONNECTED);
   }

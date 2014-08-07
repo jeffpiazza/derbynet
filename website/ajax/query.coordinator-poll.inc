@@ -23,14 +23,9 @@ echo '</timer-state>'."\n";
 ?>
 <?php /* Replay */
 require_once('inc/replay.inc');
-$replay = read_replay_host_and_port();
-$rcontact = read_raceinfo('replay_last_contact');
-echo '<replay-state host-and-port="'.$replay.'" last_contact="'.$rcontact.'">';
-if ($replay == '') {
-  echo 'NOT CONNECTED';
-} else {
-  echo 'CONNECTED at '.$replay.' ('.(time() - $rcontact).' sec.)';
-}
+$replay = get_replay_state();
+echo '<replay-state host-and-port="'.$replay['host_and_port'].'" last_contact="'.$replay['last_contact'].'">';
+echo $replay['state'];
 echo "</replay-state>\n";
 ?>
 <?php // Kiosks
