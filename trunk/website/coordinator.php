@@ -43,13 +43,12 @@ $(document).bind("mobileinit", function() {
   <div class="centered_flipswitch">
     <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
       checked="checked"
-      onchange="handle_isracing_change();"
       data-on-text="Racing" data-off-text="Not Racing"/>
   </div>
 
   <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat()"/><br/>
-    <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat()"/><br/>
+    <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat_button()"/><br/>
+    <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat_button()"/><br/>
     <input type="button" data-enhanced="true" value="Manual Results" onclick="show_manual_results_modal()"/><br/>
     <!-- TODO: discard results (one or all heats) -->
   </div>
@@ -121,6 +120,10 @@ $(document).bind("mobileinit", function() {
   <form>
     <input type="hidden" name="action" value="heat-results"/>
     <table></table>
+    <input type="button" data-enhanced="true"
+           id="discard-results"
+           onclick='handle_discard_results_button();'
+           value="Discard Results"/>
     <input type="submit" data-enhanced="true" value="Change"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_manual_results_modal();'/>

@@ -25,6 +25,8 @@
 // NowRacingState is included as the ['now_racing'] element in the
 // array returned by get_running_round().
 
+require_once('inc/replay.inc');
+
 
 function racing_state_allowed(&$current) {
   if (!isset($current['roundid']) || !isset($current['heat'])) {
@@ -52,22 +54,28 @@ function racing_state_allowed(&$current) {
   return true;
 }
 
-// Returns FALSE if an attempt to turn on NowRacingState is refused.
+function get_racing_state() {
+  return read_raceinfo('NowRacingState', 0) != 0;
+}
 
+// Returns FALSE if an attempt to turn on NowRacingState is refused.
+// Turning off NowRacingState always succeeds.
 function set_racing_state($state) {
   $state = ($state ? 1 : 0);
 
+  $current = get_running_round();
   if ($state) {
-    $current = get_running_round();
     if (!racing_state_allowed($current)) {
       return false;
     }
 
     if (!$current['now_racing']) {
-      // TODO: START replay
+      send_replay_START($current);
     }
   } else {
-    // TODO: CANCEL replay
+    if ($current['now_racing']) {
+      send_replay_CANCEL();
+    }
   }
 
   write_raceinfo('NowRacingState', $state);

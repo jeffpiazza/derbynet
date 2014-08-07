@@ -26,16 +26,23 @@ g_current_heat_racers = new Array();
 
 // Controls for current racing group:
 
-function handle_isracing_change() {
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'select-heat',
-                   now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
-            success: function(data) { process_coordinator_poll_response(data); }
-           });
+function handle_isracing_change(event, scripted) {
+    console.log('handle_isracing_change: ' + ($("#is-currently-racing").prop('checked') ? 1 : 0)
+                + ', scripted=' + scripted);  // TODO
+    if (!scripted) {
+        $.ajax(g_action_url,
+               {type: 'POST',
+                data: {action: 'select-heat',
+                       now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
+                success: function(data) { process_coordinator_poll_response(data); }
+               });
+    } else {
+        console.log("Ignoring scripted isracing change");
+    }
 }
+$(function() { $("#is-currently-racing").on("change", handle_isracing_change); });
 
-function handle_skip_heat() {
+function handle_skip_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'select-heat',
@@ -44,16 +51,13 @@ function handle_skip_heat() {
            });
 }
 
-function handle_previous_heat() {
+function handle_previous_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'select-heat',
                    heat: 'prev'},
             success: function(data) { process_coordinator_poll_response(data); }
            });
-}
-
-function handle_manual_results() {
 }
 
 // Controls for Replay
@@ -66,7 +70,7 @@ function handle_test_replay() {
 
 // Controls for kiosks
 // sel is the <select data-kiosk-address> input element
-function handle_kiosk_page_change(sel) {
+function handle_assign_kiosk_page_change(sel) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'assign-kiosk',
@@ -130,6 +134,7 @@ function show_manual_results_modal() {
     var racer_table = $("#manual_results_modal table");
     racer_table.empty();
     racer_table.append("<tr><th>Lane</th><th>Racer</th><th>Car</th><th>Time</th></tr>");
+    var any_results = false;
     for (var i = 0; i < g_current_heat_racers.length; ++i) {
         var racer = g_current_heat_racers[i];
         racer_table.append("<tr><td>" + racer.lane + "</td>"
@@ -140,18 +145,47 @@ function show_manual_results_modal() {
                                + " value='" + racer.finishtime + "'/>"
                            + "</td>"
                            + "</tr>");
+        console.log('finishtime: <<' + racer.finishtime + '>> ' + (racer.finishtime ? 'true' : 'false'));
+        if (racer.finishtime) {
+            any_results = true;
+        }
     }
+
+    if (any_results) {
+        $("#discard-results").removeClass("hidden");
+    } else {
+        $("#discard-results").addClass("hidden");
+    }
+
     show_modal("#manual_results_modal", function(event) {
-        handle_manual_results();
+        handle_manual_results_submit();
         return false;
     });
 }
 
-function handle_manual_results( ) {
+function handle_manual_results_submit( ) {
     close_manual_results_modal();
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#manual_results_modal form").serialize(),
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+}
+
+function handle_discard_results_button() {
+    console.log('handle_discard_results_button');
+    close_manual_results_modal();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            // TODO: There's a risk that the coordinator form gets
+            // grossly out of sync with the database, such that the
+            // identification of 'current' heat is different from what
+            // the user chose.  If current-heat changes while
+            // manual-results dialog is open, maybe close the dialog
+            // and start over?
+            data: {action: 'delete-results',
+                   roundid: 'current',
+                   heat: 'current'},
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -166,12 +200,12 @@ function close_manual_results_modal() {
 
 function show_schedule_modal(roundid) {
     show_modal("#schedule_modal", function(event) {
-        handle_schedule(roundid, $("#schedule_num_rounds").val());
+        handle_schedule_submit(roundid, $("#schedule_num_rounds").val());
         return false;
     });
 }
 
-function handle_schedule(roundid, rounds) {
+function handle_schedule_submit(roundid, rounds) {
     close_schedule_modal();
     $.ajax(g_action_url,
            {type: 'POST',
@@ -188,7 +222,7 @@ function close_schedule_modal() {
     $("#schedule_modal").css({'display': 'none'});
 }
 
-function handle_reschedule(roundid) {
+function handle_reschedule_button(roundid) {
     // TODO: On success
     $.ajax(g_action_url,
            {type: 'POST',
@@ -196,13 +230,24 @@ function handle_reschedule(roundid) {
                    roundid: roundid}});
 }
 
-function handle_race(roundid) {
+function handle_race_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'select-heat',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 1},
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+}
+
+function handle_make_changes_button(roundid) {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'select-heat',
+                   roundid: roundid,
+                   heat: 1,
+                   now_racing: 0},
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -218,8 +263,11 @@ function update_for_current_round(current_heat) {
     var is_racing = (current_heat.getAttribute('now-racing') == '1');
 
     if (isracing_checkbox.prop('checked') != is_racing) {
+        console.log('update_for_current_round: isracing_checkbox.prop(\'checked\')=' + isracing_checkbox.prop('checked')
++ '; is_racing=' + is_racing); // TODO
         isracing_checkbox.prop('checked', is_racing);
-        isracing_checkbox.change();
+        // isracing_checkbox.change(); TODO
+        isracing_checkbox.trigger("change", true);
     }
 }
 
@@ -251,7 +299,7 @@ function generate_kiosk_control_group(index, name, address, last_contact, assign
     elt.append("<label for=\"kiosk-page-" + index + "\">Display:</label>");
     var sel = $("<select name=\"kiosk-page-" + index + "\"" 
                 + " data-kiosk-address=\"" + address + "\"" 
-                + " onchange=\"handle_kiosk_page_change(this)\""
+                + " onchange=\"handle_assign_kiosk_page_change(this)\""
                 + "/>");
     for (var i = 0; i < pages.length; ++i) {
         opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
@@ -281,7 +329,7 @@ function generate_scheduling_control_group(roundid, round_class, round, roster_s
                + (roundid == current.roundid ? '; heat ' + current.heat + ' of ' + n_heats_scheduled : '')
                + '</h3>');
     elt.append('<p>' + roster_size + ' racer(s), ' + n_passed + ' passed, ' 
-               + (n_passed - n_unscheduled) + ' scheduled.</p>');
+               + (n_passed - n_unscheduled) + ' in schedule.</p>');
     elt.append('<p>' + n_heats_scheduled + ' heats scheduled, ' + n_heats_run + ' run.</p>');
 
     var buttons = $("<div class=\"block_buttons\"/>");
@@ -294,22 +342,21 @@ function generate_scheduling_control_group(roundid, round_class, round, roster_s
                            + ' value="Schedule"/>');
         } else {
             buttons.append('<input type="button" data-enhanced="true"' 
-                           + ' onclick="handle_reschedule(' + roundid + ')"'
+                           + ' onclick="handle_reschedule_button(' + roundid + ')"'
                            + ' value="Reschedule"/>');
         }
     }
 
     if (roundid != current.roundid) {
         // TODO: Don't offer 'race' choice for single roundid under master scheduling
-        if (n_heats_scheduled > 0 && n_heats_run < n_heats_scheduled) {
-            buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="handle_race(' + roundid + ')"'
-                           + ' value="Race"/>');
-        }
-
         if (n_heats_run > 0) {
-            // TODO: "make changes" onclick
-            buttons.append('<input type="button" data-enhanced="true" value="Make Changes"/>');
+            buttons.append('<input type="button" data-enhanced="true"'
+                           + ' onclick="handle_make_changes_button(' + roundid + ')"'
+                           + ' value="Make Changes"/>');
+        } else if (n_heats_scheduled > 0 && n_heats_run < n_heats_scheduled) {
+            buttons.append('<input type="button" data-enhanced="true"'
+                           + ' onclick="handle_race_button(' + roundid + ')"'
+                           + ' value="Race"/>');
         }
     }
     
