@@ -56,9 +56,8 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     } else if (write_heat_results()) {
       send_replay_REPLAY();
       $current = get_running_round();
-      if (advance_heat($current, @$current['roundid'], 'next', true)) {
-        echo '<success/>';
-      }
+      advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
+      echo '<success/>';
     }
     // If another heat is teed up, we'll immediately change state to
     // TIMER_PREPARED, below.
@@ -66,8 +65,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   } else if ($message == 'HEARTBEAT') {
     echo '<success/>'."\n";
     // TODO: Capture other state information
-    if (get_timer_state() == TIMER_DISCONNECTED) {
+    if (get_timer_state() == TIMER_NOT_CONNECTED) {
       set_timer_state(TIMER_CONNECTED);
+    } else {
+      renew_timer_contact();
     }
   } else if ($message == 'MALFUNCTION') {
     echo '<success/>'."\n";

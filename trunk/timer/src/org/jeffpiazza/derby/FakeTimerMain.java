@@ -41,6 +41,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
+                consumed_args += 2;
             } else if (args[consumed_args].equals("-t")) {
                 traceMessages = new StdoutMessageTrace();
                 ++consumed_args;
@@ -69,6 +70,8 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         }
 
         String base_url = args[consumed_args];
+
+        System.out.println("FakeTimerMain starts; base_url = " + base_url);
 
         try {
             (new FakeTimerMain(new HttpTask(base_url, username, password,
