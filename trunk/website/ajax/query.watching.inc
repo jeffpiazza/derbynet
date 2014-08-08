@@ -39,7 +39,7 @@ foreach ($stmt as $row) {
 
 require_once('inc/current-heat.inc');
 
-if ($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) {
+if (($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) && $now_running['now_racing'] != 0) {
   require('inc/current-racers.inc');
 }
 

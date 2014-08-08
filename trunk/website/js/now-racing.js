@@ -6,10 +6,18 @@
 // TODO: Window resizing should adjust the font size in some meaningful way.
 // TODO: Test display in 640x480 with the longest names we can find.
 
-// TODO: HttpTest stops on received failure, but doesn't resume...
+var g_roundid = 0;
+var g_heat = 0;
 
-var g_roundid = 1;
-var g_heat = 1;
+// Compare number of racers we're talking about with number of
+// heat-results received to determine if we got a complete update.
+// Incomplete race results (which occur when the entries for some but
+// not all lanes in the heat are ready when we poll for results)
+// happen more frequently than you might think.
+var g_num_racers = 0;
+
+// Tells whether we've run the place animation for the current heat.
+var g_animated = true;
 
 function poll_for_update() {
     $.ajax('action.php',
@@ -26,50 +34,68 @@ function poll_for_update() {
            });
 }
 
-function animate_flyers(place, place_to_lane) {
+// Javascript passes arrays (like place_to_lane) by reference, so no
+// worries about doing a lot of copying in this recursion.
+//
+// This is implemented recursively because we use the completion
+// callback for animate to advance to the next flyer.
+
+function animate_flyers(place, place_to_lane, completed) {
     if (place >= place_to_lane.length) {
         $('.place').css({opacity: 100});
         $('.flying').animate({opacity: 0}, 1000);
+        completed();
     } else {
-        console.log('typeof place_to_lane[' + place + '] = ' + typeof place_to_lane[place]);
         var flyer = $('#place' + place);
         var target = $('[data-lane="' + place_to_lane[place] + '"] .place');
-        console.log('target.outerWidth=' + target.outerWidth() + ', target.outerHeight=' + target.outerHeight()
-                    + ', target.width=' + target.width() + ', target.height=' + target.height()
-                    + ', border=' + parseInt(target.css('border-top'))
-                    + ', padding=' + parseInt(target.css('padding-top')));
-        var border = parseInt(target.css('border-top'));
-        var padding = parseInt(target.css('padding-top'));
-        console.log('target vertical-align=' + target.css('vertical-align'));
-        console.log('target line-height=' + target.css('line-height'));
-        console.log('target has ' + target.children().length + ' child(ren)');
-        console.log('target position: {top:' + target.position().top + ', left:' + target.position().left + '}');
-        console.log('target offset: {top:' + target.offset().top + ', left:' + target.offset().left + '}');
-        console.log('target font-size: ' + parseInt(target.css('font-size')));
-        var span =  $('[data-lane="' + place_to_lane[place] + '"] .place span');
-        console.log('target span height: ' + span.height());
-        console.log('target span position top:' + span.position().top);
-        console.log('target span line-height: ' + span.css('line-height'));
-        console.log('target span height: ' + span.height() + ', outerHeight: ' + span.outerHeight());
-        var font_size = span.css('font-size');
-        flyer.css({left: -target.outerWidth(),
-                   width: target.outerWidth(),
-                   top: target.offset().top - border,
-                   height: target.outerHeight(),
+        if (target.length > 0) {
+            var border = parseInt(target.css('border-top'));
+            var padding = parseInt(target.css('padding-top'));
+            var span =  $('[data-lane="' + place_to_lane[place] + '"] .place span');
+            var font_size = span.css('font-size');
+            flyer.css({left: -target.outerWidth(),
+                       width: target.outerWidth(),
+                       top: target.offset().top - border,
+                       height: target.outerHeight(),
 
-                   fontSize: font_size, // as a string, e.g., 85px
-                   // verticalAlign: 'middle',
-                   padding: 0,
-                   opacity: 100});
-        flyer.animate({left: target.offset().left - border},
-                      300,
-                      function() {
-                          animate_flyers(place + 1, place_to_lane);
-                      });
+                       fontSize: font_size, // as a string, e.g., 85px
+                       // verticalAlign: 'middle',
+                       padding: 0,
+                       opacity: 100});
+            flyer.animate({left: target.offset().left - border},
+                          300,
+                          function() {
+                              animate_flyers(place + 1, place_to_lane, completed);
+                          });
+        } else {
+            console.log("Couldn't find an entry for " + place + "-th place.");
+            animate_flyers(place + 1, place_to_lane, completed);
+        }
     }
 }
 
 // See ajax/query.watching.inc for XML format
+
+// Processes the top-level <watching> element.
+//
+// Walks through each of the <heat-result lane= time= place= speed=>
+// elements, in order, building a mapping the reported place to the
+// matching lane.
+//
+// If we get an incomplete update (that is, some but not all heat
+// results from the current heat were written to the database at the
+// moment the <heat-result> elements got generated), then we be
+// missing some of the possible places: we might have 1st and 3rd
+// place, but not 2nd and 4th.
+//
+// It's the holes in the place_to_lane mapping that screws us: we only
+// attempt to stop the animation when we go beyond
+// place_to_lane.length; otherwise, we assume we can find a
+// place_to_lane entry for 2nd place if place_to_lane is big enough to
+// account for 3rd place.
+//
+// The test for a complete set of heat-results is that we have as many
+// heat-results as lanes.
 
 function process_watching(watching) {
     var heat_results = watching.getElementsByTagName("heat-result");
@@ -84,7 +110,9 @@ function process_watching(watching) {
             $('[data-lane="' + lane + '"] .time')
                 .css({opacity: 100})
                 .text(hr.getAttribute('time').substring(0,5));
-            $('[data-lane="' + lane + '"] .place').css({opacity: 0});
+            if (!g_animated) {
+                $('[data-lane="' + lane + '"] .place').css({opacity: 0});
+            }
             $('[data-lane="' + lane + '"] .place span').text(place);
             if (hr.getAttribute('speed') != '') {
                 $('[data-lane="' + lane + '"] .speed')
@@ -93,37 +121,52 @@ function process_watching(watching) {
             }
         }
 
-        animate_flyers(1, place_to_lane);
-        setTimeout(function() {
+        if (!g_animated && heat_results.length >= g_num_racers) {
+            g_animated = true;
+            animate_flyers(1, place_to_lane, function () {
+                setTimeout(function() {
+                    process_new_heat(watching);
+                }, 10000);  // Wait 10 seconds after animation
+            });
+        } else {
             process_new_heat(watching);
-        }, 4000);  // Wait 4 seconds after animation
+        }
     } else {
         process_new_heat(watching);
     }
 }
 
+// When the current heat differs from what we're presently displaying,
+// we get a <current-heat/> element, plus some number of <racer>
+// elements identifying the new heat's contestants.
+
 function process_new_heat(watching) {
     var current = watching.getElementsByTagName("current-heat")[0];
-    g_roundid = current.getAttribute("roundid");
-    g_heat = current.getAttribute("heat");
-    if (current.firstChild) {
-        $('.banner_title').text(current.firstChild.data + ', Heat ' + g_heat);
-    }
+    if (current.getAttribute("now-racing") != "0") {
+        g_roundid = current.getAttribute("roundid");
+        g_heat = current.getAttribute("heat");
+        if (current.firstChild) {  // The body of the <current-heat>
+                                   // element names the class
+            $('.banner_title').text(current.firstChild.data + ', Heat ' + g_heat);
+        }
 
-    var racers = watching.getElementsByTagName("racer");
-    if (racers.length > 0) {
-        // Clear old results
-        $('[data-lane] .name').text('');
-        $('[data-lane] .time').css({opacity: 0}).text('0.000');
-        $('[data-lane] .speed').css({opacity: 0}).text('200.0');
-        $('[data-lane] .place span').text('');
-        for (var i = 0; i < racers.length; ++i) {
-            var r = racers[i];
-            var lane = r.getAttribute('lane');
-            $('[data-lane="' + lane + '"] .lane').text(lane);
-            $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
-            // $('[data-lane="' + lane + '"] .carname').text(r.getAttribute('carname'));
-            // $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
+        var racers = watching.getElementsByTagName("racer");
+        if (racers.length > 0) {
+            g_animated = false;
+            g_num_racers = racers.length;
+            // Clear old results
+            $('[data-lane] .name').text('');
+            $('[data-lane] .time').css({opacity: 0}).text('0.000');
+            $('[data-lane] .speed').css({opacity: 0}).text('200.0');
+            $('[data-lane] .place span').text('');
+            for (var i = 0; i < racers.length; ++i) {
+                var r = racers[i];
+                var lane = r.getAttribute('lane');
+                $('[data-lane="' + lane + '"] .lane').text(lane);
+                $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
+                // $('[data-lane="' + lane + '"] .carname').text(r.getAttribute('carname'));
+                // $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
+            }
         }
     }
 
