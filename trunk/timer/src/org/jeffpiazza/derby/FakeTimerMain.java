@@ -93,12 +93,12 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         }
 
         public void run() {
-            pause(6);
-            System.out.println("Starting a new race");
-            task.send(new Message.Started());
-            pause(4);
-            System.out.println("Sending heat results");
-            makeHeatResults(lanemask);
+          pause(10);  // 10 seconds to simulate (quick!) staging
+          System.out.println("Starting a new race");
+          task.send(new Message.Started());
+          pause(4);  // 4 seconds for a pretty slow race
+          System.out.println("Sending heat results");
+          makeHeatResults(lanemask);
         }
     }
 
