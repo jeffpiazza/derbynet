@@ -12,6 +12,8 @@ public class HttpTask implements Runnable {
     private MessageTracer traceQueued;  // Print queued Messages when actually sent.
     private MessageTracer traceHeartbeat;  // Print heartbeat Messages when actually sent.
 
+    public static final long heartbeatPace = 10000;  // ms.
+
     public interface MessageTracer {
         void onMessageSend(Message m, String params);
         void onMessageResponse(Message m, String response);
@@ -66,7 +68,7 @@ public class HttpTask implements Runnable {
             synchronized (queue) {
                 if (queue.size() == 0) {
                     try {
-                        queue.wait(30000);  // ms.
+                        queue.wait(heartbeatPace);  // ms.
                     } catch (InterruptedException e) {}
                 }
                 if (queue.size() > 0) {
