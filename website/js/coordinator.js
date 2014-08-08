@@ -24,20 +24,28 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 
 g_current_heat_racers = new Array();
 
+// Processing a response from coordinator_poll can force the isracing
+// flipswitch to change state.  We don't want that change to trigger
+// an ajax request to update the database: if we get a bit out of sync
+// with the database, we'll get into a feedback cycle that never ends.
+//
+// Use this boolean to mark changes induced programmatically, as
+// opposed to user input.
+g_updating_current_round = false;
+
 // Controls for current racing group:
 
 function handle_isracing_change(event, scripted) {
-    console.log('handle_isracing_change: ' + ($("#is-currently-racing").prop('checked') ? 1 : 0)
-                + ', scripted=' + scripted);  // TODO
-    if (!scripted) {
+    console.log('handle_isracing_change: checked=' + $("#is-currently-racing").prop('checked')
+                + ', scripted=' + scripted
+                + ', g_updating=' + g_updating_current_round);  // TODO
+    if (!g_updating_current_round) {
         $.ajax(g_action_url,
                {type: 'POST',
                 data: {action: 'select-heat',
                        now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
                 success: function(data) { process_coordinator_poll_response(data); }
                });
-    } else {
-        console.log("Ignoring scripted isracing change");
     }
 }
 $(function() { $("#is-currently-racing").on("change", handle_isracing_change); });
@@ -145,7 +153,6 @@ function show_manual_results_modal() {
                                + " value='" + racer.finishtime + "'/>"
                            + "</td>"
                            + "</tr>");
-        console.log('finishtime: <<' + racer.finishtime + '>> ' + (racer.finishtime ? 'true' : 'false'));
         if (racer.finishtime) {
             any_results = true;
         }
@@ -173,7 +180,6 @@ function handle_manual_results_submit( ) {
 }
 
 function handle_discard_results_button() {
-    console.log('handle_discard_results_button');
     close_manual_results_modal();
     $.ajax(g_action_url,
            {type: 'POST',
@@ -267,7 +273,14 @@ function update_for_current_round(current_heat) {
 + '; is_racing=' + is_racing); // TODO
         isracing_checkbox.prop('checked', is_racing);
         // isracing_checkbox.change(); TODO
-        isracing_checkbox.trigger("change", true);
+        g_updating_current_round = true;
+        try {
+            console.log('update_for_current_round: triggering scripted change event');
+            isracing_checkbox.trigger("change", true);
+            // Are the events handled asynchronously?
+        } finally {
+            g_updating_current_round = false;
+        }
     }
 }
 
