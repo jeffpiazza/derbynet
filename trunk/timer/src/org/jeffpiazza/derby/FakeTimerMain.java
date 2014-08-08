@@ -117,7 +117,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         for (int lane = 0; lanemask != 0; ++lane) {
             if ((lanemask & (1 << lane)) != 0) {
                 results[lane] = new Message.LaneResult();
-                results[lane].time = (Math.random() * 4.0) + "";
+                results[lane].time = 2.0 + (Math.random() * 2.0) + "";
                 lanemask ^= (1 << lane);
             }
         }
@@ -140,8 +140,5 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         System.out.println("Attempting HELLO message with " + nlanes + " lanes");
         task.send(new Message.Hello(nlanes));
         (new Thread(task)).start();
-
-        // After the initial Hello, task will only send a heartbeat every 30 seconds.
-        pause(60);
     }
 }
