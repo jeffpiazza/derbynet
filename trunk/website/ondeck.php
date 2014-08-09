@@ -18,7 +18,8 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <script type="text/javascript">
     var g_last_update_time = ""; // First refresh is for everything
     var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
-    var g_high_water_group = <?php echo $high_water_rounds[$use_master_sched ? 'round' : 'roundid']; ?>;
+    var g_high_water_group = <?php
+        echo $high_water_rounds[$use_master_sched ? 'round' : 'roundid']; ?>;
     var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
     var g_using_groupid = true;
 </script>

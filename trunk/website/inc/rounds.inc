@@ -18,6 +18,7 @@ Master schedules:
 
 function all_rounds() {
   global $db;
+  $rounds = array();
   foreach ($db->query('SELECT roundid, round, Classes.classid, class'
 					  .' FROM Rounds INNER JOIN Classes'
 					  .' ON Rounds.classid = Classes.classid'

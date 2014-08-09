@@ -162,6 +162,9 @@ function high_water_rounds() {
   global $db;
   $stmt = $db->query('SELECT MAX(roundid), MAX(round) FROM Rounds');
   $rs = $stmt->fetch(PDO::FETCH_NUM);
+  if ($rs === false || is_null($rs[0]) || is_null($rs[1])) {
+    $rs = array(0 => 0, 1 => 0);
+  } 
   return array('roundid' => $rs[0],
 			   'round' => $rs[1]);
 }

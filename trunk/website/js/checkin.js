@@ -19,6 +19,10 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	}
 });
 
+$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
+    console.log("ajaxError: " + thrownError);
+});
+
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	var passed = xmldoc.documentElement.getElementsByTagName("passed");
     if (passed && passed.length > 0) {

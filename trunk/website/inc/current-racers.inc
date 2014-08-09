@@ -16,11 +16,10 @@ $stmt->execute(array(':roundid' => $now_running['roundid'],
 foreach ($stmt as $row) {
   echo '  <racer lane="'.$row['lane'].'"'
           // TODO: Offer different formats for name
-          // TODO: escape as XML text
-       .' name="'.$row['firstname'].' '.$row['lastname'].'"'
-       .' carname="'.$row['carname'].'"'
+        .' name="'.htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES).'"'
+        .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES).'"'
        .' carnumber="'.$row['carnumber'].'"'
-       .' photo="'.$row['imagefile'].'"'
+       .' photo="'.htmlspecialchars($row['imagefile'], ENT_QUOTES).'"'
        .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
        .'/>'."\n";
 }
