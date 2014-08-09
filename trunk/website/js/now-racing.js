@@ -147,7 +147,9 @@ function process_new_heat(watching) {
         g_heat = current.getAttribute("heat");
         if (current.firstChild) {  // The body of the <current-heat>
                                    // element names the class
-            $('.banner_title').text(current.firstChild.data + ', Heat ' + g_heat);
+            $('.banner_title').text(current.firstChild.data 
+                                    + ', Heat ' + g_heat
+                                    + ' of ' + current.getAttribute('number-of-heats'));
         }
 
         var racers = watching.getElementsByTagName("racer");
