@@ -5,6 +5,10 @@ if [ "$BASE_URL" = "" ]; then
 	exit
 fi
 
+function stacktrace() {
+    while caller $((n++)); do :; done;
+}
+
 function curl_get() {
 	echo ' ' ' ' ' ' $1 >&2
 	echo    >> output.curl
@@ -42,17 +46,21 @@ function user_logout() {
 	curl_post action.php "action=login" | check_success logout
 }
 
+function test_fails() {
+    tput setaf 1
+	echo TEST FAILURE: $*
+    stacktrace
+	echo BEGIN RESPONSE
+	cat debug.curl
+	echo END RESPONSE
+    tput setaf 0
+}
+
 function check_success() {
 	# Expecting stdin
 	grep -c "<success[ />]" > /dev/null
 	if [ $? -ne 0 ]; then
-        tput setaf 1
-		echo FAILURE
-        caller
-		echo BEGIN RESPONSE
-		cat debug.curl
-		echo END RESPONSE
-        tput setaf 0
+        test_fails
 	fi
 }
 
@@ -63,13 +71,7 @@ function check_failure() {
 	# Expecting stdin
 	grep -c "<failure[ />]" > /dev/null
 	if [ $? -ne 0 ]; then
-        tput setaf 1
-		echo TEST FAILURE: EXPECTING ACTION TO FAIL
-        caller
-		echo BEGIN RESPONSE
-		cat debug.curl
-		echo END RESPONSE
-        tput setaf 0
+        test_fails EXPECTING ACTION TO FAIL
 	fi
 }
 
@@ -77,38 +79,20 @@ function check_heat_ready() {
 	# Expecting stdin
 	grep -c "<heat-ready[ />]" debug.curl > /dev/null
 	if [ $? -ne 0 ]; then
-        tput setaf 1
-		echo FAILURE: EXPECTING HEAT-READY
-        caller
-		echo BEGIN RESPONSE
-		cat debug.curl
-		echo END RESPONSE
-        tput setaf 0
+        test_fails EXPECTING HEAT-READY
 	fi
 }
 
 function expect_count {
 	# Expecting stdin
 	if [ "`grep -c $1`" -ne $2 ]; then
-        tput setaf 1
-		echo FAILURE expecting $2 occurrences of $1
-        caller
-		echo BEGIN RESPONSE
-		cat debug.curl
-		echo END RESPONSE
-        tput setaf 0
+        test_fails expecting $2 occurrences of $1
 	fi
 }
 
 function expect_one {
 	if [ "`grep -c $1`" -ne 1 ]; then
-        tput setaf 1
-		echo FAILURE expecting an occurrence of $1
-        caller
-		echo BEGIN RESPONSE
-		cat debug.curl
-		echo END RESPONSE
-        tput setaf 0
+        test_fails expecting an occurrence of $1
 	fi
 }
     

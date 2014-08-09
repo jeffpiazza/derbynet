@@ -5,6 +5,6 @@ source common.sh
 
 ./login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=run-sql&script=schema"
+curl_post action.php "action=run-sql&script=schema" | check_success
 
 ./import-roster.sh $BASE_URL
