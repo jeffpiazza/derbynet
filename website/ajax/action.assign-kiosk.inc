@@ -5,19 +5,23 @@
 
 start_response();
 
-if (isset($_POST['page'])) {
-  $stmt = $db->prepare('UPDATE Kiosks SET page = :page WHERE address = :address');
-  $stmt->execute(array(':page' => $_POST['page'],
-                       ':address' => $_POST['address']));
-}
+if (have_permission(CONTROL_RACE_PERMISSION)) {
+  if (isset($_POST['page'])) {
+    $stmt = $db->prepare('UPDATE Kiosks SET page = :page WHERE address = :address');
+    $stmt->execute(array(':page' => $_POST['page'],
+                         ':address' => $_POST['address']));
+  }
 
-if (isset($_POST['name'])) {
-  $stmt = $db->prepare('UPDATE Kiosks SET name = :name WHERE address = :address');
-  $stmt->execute(array(':name' => $_POST['name'],
-                       ':address' => $_POST['address']));
-}
+  if (isset($_POST['name'])) {
+    $stmt = $db->prepare('UPDATE Kiosks SET name = :name WHERE address = :address');
+    $stmt->execute(array(':name' => $_POST['name'],
+                         ':address' => $_POST['address']));
+  }
 
-echo "<success/>\n";
+  echo "<success/>\n";
+} else {
+  not_authorized_body();
+}
 
 end_response();
 ?>

@@ -1,11 +1,7 @@
 #! /bin/sh
 
 BASE_URL=$1
-
-if [ "$BASE_URL" = "" ]; then
-	echo Base URL required!
-	exit
-fi
+source common.sh
 
 # TODO: Exercise update.js
 # TODO: Exercise checkin-action.php
@@ -15,7 +11,32 @@ fi
 # <a href="...">
 # <form method="link" action="...">
 
-source common.sh
+
+cat >anonymous.index.tmp <<EOF
+        <form method="link" action="ondeck.php">
+        <form method="link" action="racer-results.php">
+        <form method="link" action="login.php">
+EOF
+
+cat >coordinator.index.tmp <<EOF
+        <form method="link" action="checkin.php">
+        <form method="link" action="photo-thumbs.php">
+        <form method="link" action="ondeck.php">
+        <form method="link" action="racer-results.php">
+        <form method="link" action="coordinator.php">
+        <form method="link" action="awards.php">
+        <form method="link" action="settings.php">
+        <form method="link" action="import-roster.php">
+        <form method="link" action="login.php">
+EOF
+
+cat >racecrew.index.tmp <<EOF
+        <form method="link" action="checkin.php">
+        <form method="link" action="ondeck.php">
+        <form method="link" action="racer-results.php">
+        <form method="link" action="awards.php">
+        <form method="link" action="login.php">
+EOF
 
 [ -e cookies.curl ] && rm cookies.curl
 [ -e output.curl ] && rm output.curl

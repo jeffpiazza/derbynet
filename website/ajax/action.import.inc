@@ -4,23 +4,27 @@ require_once('inc/newracer.inc');
 
 start_response();
 
-// TODO: Permissions
+if (have_permission(SET_UP_PERMISSION)) {
 
-$fields = array('lastname' => true,  
-                'firstname' => true,
-                'classname' => true,
-                'carnumber' => false,
-                'carname' => false,
-                'subgroup' => false);
+  $fields = array('lastname' => true,  
+                  'firstname' => true,
+                  'classname' => true,
+                  'carnumber' => false,
+                  'carname' => false,
+                  'subgroup' => false);
 
-$ok = true;
+  $ok = true;
 
-foreach ($fields as $fieldname => $required) {
+  foreach ($fields as $fieldname => $required) {
     if ($required && !isset($_POST[$fieldname])) {
-        echo '<failure code="missingrequired">Missing required field '.$fieldname.'</failure>';
-        $ok = false;
-        break;
+      echo '<failure code="missingrequired">Missing required field '.$fieldname.'</failure>';
+      $ok = false;
+      break;
     }
+  }
+} else {
+  not_authorized_body();
+  $ok = false;
 }
     
 if ($ok) {
