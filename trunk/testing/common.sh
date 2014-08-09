@@ -73,6 +73,20 @@ function check_failure() {
 	fi
 }
 
+function check_heat_ready() {
+	# Expecting stdin
+	grep -c "<heat-ready[ />]" debug.curl > /dev/null
+	if [ $? -ne 0 ]; then
+        tput setaf 1
+		echo FAILURE: EXPECTING HEAT-READY
+        caller
+		echo BEGIN RESPONSE
+		cat debug.curl
+		echo END RESPONSE
+        tput setaf 0
+	fi
+}
+
 function expect_count {
 	# Expecting stdin
 	if [ "`grep -c $1`" -ne $2 ]; then
