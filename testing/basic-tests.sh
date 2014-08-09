@@ -12,38 +12,12 @@ source common.sh
 # <form method="link" action="...">
 
 
-cat >anonymous.index.tmp <<EOF
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >coordinator.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="photo-thumbs.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="coordinator.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="settings.php">
-        <form method="link" action="import-roster.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >racecrew.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="login.php">
-EOF
-
 [ -e cookies.curl ] && rm cookies.curl
 [ -e output.curl ] && rm output.curl
 # debug.curl gets overwritten
 
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
-
+### Initialize new database
+# TODO: Permissions!!
 [ "`curl_get create-database.php | grep 'Database script completed!'`" ] || echo Database creation failed
 
 user_login RaceCoordinator doyourbest
@@ -56,7 +30,7 @@ curl_post action.php "action=import&lastname=Flintstone&firstname=Fred&classname
 
 user_logout
 
-
+### Check anonymous user pages
 curl_get ondeck.php | \
 	sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v racer-results.php | grep -v ondeck.css | grep -v '#group_' | \
 	diff - /dev/null
@@ -72,17 +46,18 @@ curl_get "racer-results.php?racerid=35" | \
 	sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v 'ondeck.php#heat' | grep -v ondeck.css | grep -v '#group_' | \
 	diff - /dev/null
 
+### Check kiosk pages
 curl_get "kiosk.php?page=kiosks/welcome.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/identify.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/please_check_in.kiosk" > /dev/null
 curl_get "kiosk.php?page=kiosks/now-racing.kiosk" > /dev/null
 
+### What's going on here?
 curl_get "action.php?query=classes" > /dev/null
-
 curl_get_amper login.php | sed -ne 's/.*href="\([^"]*\)".*/\1/p' | grep -v ondeck.css | diff - /dev/null
 
+### Scheduling, pass another racer, schedule again
 user_login RaceCoordinator doyourbest
-curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 
 [ `curl_get checkin.php | grep -c '<tr '` -eq 51 ] || echo Checkin!
 
@@ -97,6 +72,7 @@ curl_post action.php "action=pass&racer=8&value=0" | check_success
 # TODO: delete-results only wipes out the times, not the fact that a schedule exists.
 #curl_post action.php "action=schedule&roundid=1" | check_success
 
+### Editing racers
 curl_post action.php "action=edit-racer&racer=2&firstname=Tom&lastname=Adrogue&carno=5011&rankid=3" | check_success
 [ `curl_get checkin.php | grep firstname-2 | grep -c '>Tom</td>'` -eq 1 ] || echo Firstname change
 [ `curl_get checkin.php | grep '"class-2"' | grep -c '>3 - Bear</td>'` -eq 1 ] || echo Car rank change
@@ -191,15 +167,6 @@ sleep 1
 curl_post action.php "action=reschedule&roundid=3" | check_success reschedule
 
 user_logout
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
-
-user_login RaceCrew murphy
-curl_get index.php | grep '<form' | diff - racecrew.index.tmp
-user_logout
-
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
-
-rm *.index.tmp
 
 tput setaf 2
 echo Tests complete
