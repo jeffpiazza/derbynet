@@ -20,6 +20,10 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	}
 });
 
+$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
+    console.log("ajaxError: " + thrownError);
+});
+
 // End of preamble
 
 g_current_heat_racers = new Array();
