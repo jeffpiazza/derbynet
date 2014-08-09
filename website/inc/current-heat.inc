@@ -7,6 +7,10 @@ $use_master_sched = use_master_sched();
               roundid="<?php echo @$now_running['roundid']; ?>"
               round="<?php echo @$now_running['round']; ?>"
               group="<?php echo $use_master_sched ? @$now_running['round'] : @$now_running['roundid']; ?>"
-              heat="<?php echo @$now_running['heat']; ?>"><?php
+              heat="<?php echo @$now_running['heat']; ?>"
+              number-of-heats="<?php echo read_single_value('SELECT MAX(heat) FROM RaceChart'
+                                                            .' WHERE roundid = :roundid',
+                                                            array(':roundid' => @$now_running['roundid']));
+?>"><?php
                 if (!$use_master_sched) { echo htmlspecialchars(@$now_running['class'], ENT_QUOTES); }
 ?></current-heat>
