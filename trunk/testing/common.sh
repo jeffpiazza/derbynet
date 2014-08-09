@@ -1,30 +1,9 @@
 #! /bin/sh
 
-cat >anonymous.index.tmp <<EOF
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >coordinator.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="photo-thumbs.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="coordinator.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="settings.php">
-        <form method="link" action="import-roster.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >racecrew.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="login.php">
-EOF
+if [ "$BASE_URL" = "" ]; then
+	echo Base URL required!
+	exit
+fi
 
 function curl_get() {
 	echo ' ' ' ' ' ' $1 >&2
@@ -49,7 +28,7 @@ function curl_post() {
 	echo    >> output.curl
 	echo post $1 $2 >> output.curl
 	echo    >> output.curl
-	curl --location -d $2 -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
+	curl --location -d "$2" -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
 		| xmllint --format - | tee -a output.curl
 }
 

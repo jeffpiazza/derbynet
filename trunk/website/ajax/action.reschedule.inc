@@ -285,24 +285,25 @@ function rewrite_chart($roundid, $ncommitted, &$heats) {
 
 start_response();
 
-$roundid = $_POST['roundid'];
+if (have_permission(CONTROL_RACE_PERMISSION)) {
+  $roundid = $_POST['roundid'];
 
-$chart = read_race_chart($roundid);
+  $chart = read_race_chart($roundid);
 
-$inv_roster = construct_inverted_roster($chart);
-$ncars = count($inv_roster);
+  $inv_roster = construct_inverted_roster($chart);
+  $ncars = count($inv_roster);
 
-$heats = form_chart($chart, $inv_roster);
+  $heats = form_chart($chart, $inv_roster);
 
-$ncommitted = read_single_value('SELECT MAX(heat) FROM RaceChart'
-								.' WHERE roundid = :roundid'
-								.' AND finishtime IS NOT NULL',
-								array(':roundid' => $roundid),
-								0);
+  $ncommitted = read_single_value('SELECT MAX(heat) FROM RaceChart'
+                                  .' WHERE roundid = :roundid'
+                                  .' AND finishtime IS NOT NULL',
+                                  array(':roundid' => $roundid),
+                                  0);
 
-if ($ncommitted == 0) {
+  if ($ncommitted == 0) {
 	echo '<failure code="notapplicable">No race results exist for this round; generate normal schedule.</failure>';
-} else {
+  } else {
 
     // Seems like the existence of the roster record probably implies that
     // the racer passed inspection, but it should be harmless to verify
@@ -310,31 +311,33 @@ if ($ncommitted == 0) {
 	$new_racer = read_single_value('SELECT MIN(racerid) FROM Roster'
 								   .' WHERE roundid = :roundid'
 								   .' AND EXISTS(SELECT 1 FROM RegistrationInfo'
-							                   .' WHERE racerid = Roster.racerid'
-                							   .' AND passedinspection = 1)'
+                                   .' WHERE racerid = Roster.racerid'
+                                   .' AND passedinspection = 1)'
 	    						   .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
-		    					               .' WHERE roundid = Roster.roundid'
-                							   .' AND RaceChart.racerid = Roster.racerid)',
+                                   .' WHERE roundid = Roster.roundid'
+                                   .' AND RaceChart.racerid = Roster.racerid)',
 				    			   array(':roundid' => $roundid));
 
 	if (!$new_racer) {
-		echo '<failure code="noracer">No new racer appears in the roster that\'s not also in the schedule.</failure>';
+      echo '<failure code="noracer">No new racer appears in the roster that\'s not also in the schedule.</failure>';
 	} else {
-		$new_heats = exhaustive_late_checkin($heats, $ncars, $ncommitted);
-		//print_chart($new_heats);
-		//print_heat_score($new_heats);
+      $new_heats = exhaustive_late_checkin($heats, $ncars, $ncommitted);
+      //print_chart($new_heats);
+      //print_heat_score($new_heats);
 
-		if (!$new_heats) {
-			echo '<failure code="unable">Unsuccessful reschedule attempt.</failure>';
-		} else {
-			$roster = invert_roster($inv_roster);
-			$roster[] = $new_racer;
-			$chart = form_chart($new_heats, $roster);
-			rewrite_chart($roundid, $ncommitted, $chart);
-			echo '<success/>';
-		}
+      if (!$new_heats) {
+        echo '<failure code="unable">Unsuccessful reschedule attempt.</failure>';
+      } else {
+        $roster = invert_roster($inv_roster);
+        $roster[] = $new_racer;
+        $chart = form_chart($new_heats, $roster);
+        rewrite_chart($roundid, $ncommitted, $chart);
+        echo '<success/>';
+      }
 	}
+  }
+} else {
+  not_authorized_body();
 }
-
 end_response();
 ?>

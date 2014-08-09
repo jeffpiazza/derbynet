@@ -11,11 +11,10 @@ foreach ($stmt as $row) {
         if ($prev_class != '') {
             echo '</class>'."\n";
         }
-        // TODO: XML escape these
-        echo '<class name="'.$row['class'].'">'."\n";
+        echo '<class name="'.htmlspecialchars($row['class'], ENT_QUOTES).'">'."\n";
         $prev_class = $row['class'];
     }
-    echo '  <rank name="'.$row['rank'].'"/>'."\n";
+    echo '  <rank name="'.htmlspecialchars($row['rank'], ENT_QUOTES).'"/>'."\n";
 }
 
 if ($prev_class != '') {

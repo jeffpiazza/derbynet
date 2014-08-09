@@ -3,6 +3,8 @@
 require_once('inc/newracer.inc');
 require_once('inc/checkin-table.inc');
 
+start_response();
+
 if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
   $firstname = $_POST['firstname'];
   $lastname = $_POST['lastname'];
@@ -11,8 +13,6 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
   $exclude = @$_POST['exclude'] ? true : false;
 
   insert_new_racer_rankid($firstname, $lastname, $carno, $rankid, $exclude);
-
-  start_response();
 
   echo "<success/>\n";
 
@@ -41,7 +41,9 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
                     read_raceinfo_boolean('xbs-award'),
                     read_raceinfo_boolean('use-subgroups'));
   echo "\n</new-row>\n";
+} else {
+  not_authorized_body();
+}
 
   end_response();
-}
 ?>

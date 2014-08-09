@@ -450,12 +450,14 @@ function read_race_chart($roundid) {
 
 
 start_response();
-$nlanes = read_raceinfo('nlanes', /*TODO: -1*/ 4);
-if ($nlanes < 0) {
+
+if (have_permission(CONTROL_RACE_PERMISSION)) {
+  $nlanes = read_raceinfo('nlanes', /*TODO: -1*/ 4);
+  if ($nlanes < 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
-} else if (results_exist($_POST['roundid'])) {
+  } else if (results_exist($_POST['roundid'])) {
 	echo '<failure code="results-exist">Race results already exist</failure>';
-} else {
+  } else {
 	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
 	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
       echo '<success/>';
@@ -463,10 +465,13 @@ if ($nlanes < 0) {
     } else {
       echo '<failure code="too-few-racers">Need at least two racers checked in to generate a schedule.</failure>';
     }
-}
+  }
 
-assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
-                                      array(':roundid' => $_POST['roundid'])));
+  assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
+                                        array(':roundid' => $_POST['roundid'])));
+} else {
+  not_authorized_body();
+}
 
 end_response();
 ?>

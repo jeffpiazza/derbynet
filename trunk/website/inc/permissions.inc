@@ -24,7 +24,7 @@ DEFINE('EDIT_RACER_PERMISSION', 64);
 DEFINE('ASSIGN_RACER_IMAGE_PERMISSION', 128);
 // Assign ad-hoc awards, design awards, Scouts Favorite award
 DEFINE('JUDGING_PERMISSION', 256);
-// Record heat results, advance heat
+// Record heat results, advance heat, assign kiosks
 DEFINE('CONTROL_RACE_PERMISSION', 512);
 // 1024
 // 2048

@@ -5,6 +5,6 @@
   // boy.  For this kind of race, the 99999 value gets noticed in the
   // renumber action, above, as a signal that renumberig should also
   // pass the inspection.
-take_action('UPDATE RegistrationInfo SET carnumber = 99999 WHERE PassedInspection = 0',
-			array());
+take_action_if_permitted('UPDATE RegistrationInfo SET carnumber = 99999 WHERE PassedInspection = 0',
+                         array(), SET_UP_PERMISSION);
 ?>
