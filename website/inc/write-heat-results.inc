@@ -1,5 +1,11 @@
 <?php
 
+
+function compare_by_finishtime(&$lhs, &$rhs) {
+  if ($lhs['finishtime'] == $rhs['finishtime']) return 0;
+  return ($lhs['finishtime'] < $rhs['finishtime']) ? -1 : 1;
+}
+
 // $_POST['lane1'], $_POST['lane2'], etc. for times
 // Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
 
@@ -21,35 +27,36 @@ function write_heat_results() {
         // General strategy should be: reject results, but log
         // them somewhere that can be presented on coordinator
         // dashboard.
-        $resultids = array();  // lane => resultid
         $all_times = array();  // after sorting, place (0-based) => finishtime
-        $stmt = $db->prepare('SELECT resultid, lane FROM RaceChart'
+        $stmt = $db->prepare('SELECT resultid, lane, finishtime FROM RaceChart'
                              .' WHERE roundid = :roundid AND heat = :heat'
                              .' ORDER BY lane');
         $stmt->execute(array(':roundid' => $roundid,
                              ':heat' => $current['heat']));
         foreach ($stmt as $row) {
-            $resultids[$row['lane']] = $row['resultid'];
-            $all_times[] = @$_POST['lane'.$row['lane']];
+          $lane = $row['lane'];
+          $all_times[] = array('resultid' => $row['resultid'],
+                               'lane' => $row['lane'],
+                               'finishtime' => $row['finishtime']);
+          if (isset($_POST['lane'.$lane])) {
+            $all_times[count($all_times) - 1]['finishtime'] = $_POST['lane'.$lane];
+          } else {
+            echo "<missing-data lane=\"".$lane."\"/>\n";
+          }
         }
         $stmt->closeCursor();
 
-        sort($all_times);
+        usort($all_times, 'compare_by_finishtime');  // Now index gives finish place - 1
 
-        foreach ($resultids as $lane => $resultid) {
-            $time = @$_POST['lane'.$lane];  // TODO: Missing?
-            $place = @$_POST['place'.$lane];
-            if ($place === null) {
-                $place = 1 + array_search($time, $all_times);
-            }
-            take_action_silently('UPDATE RaceChart'
-                                 .' SET finishtime = :time,'
-                                 .' finishplace = :place,'
-                                 .' completed = '.db_timestamp_expr()
-                                 .' WHERE resultid = :resultid',
-                                 array(':time' => $time,
-                                       ':place' => $place,
-                                       ':resultid' => $resultid));
+        foreach ($all_times as $place => $content) {
+          take_action_silently('UPDATE RaceChart'
+                               .' SET finishtime = :time,'
+                               .' finishplace = :place,'
+                               .' completed = '.db_timestamp_expr()
+                               .' WHERE resultid = :resultid',
+                               array(':time' => $content['finishtime'],
+                                     ':place' => 1 + $place,
+                                     ':resultid' => $content['resultid']));
         }
 
         return true;
