@@ -1,3 +1,36 @@
+#new_ranks {
+    float: right;
+    width: 300px;
+}
+
+#encoding {
+   margin-top: 20px;
+   margin-bottom: 20px;
+}
+
+#encoding_message {
+    font-size: large;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px;
+}
+
+#encoding input {
+    margin-bottom: 15px;
+}
+
+#encoding-guidance {
+    float: right;
+    width: 500px;
+}
+
+#submit_message {
+    clear: right;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+}
 
 .file_target input {
   width: 100%;
@@ -55,7 +88,7 @@
     display: inline-block;
 }
 
-input[type='button'] {
+input[type='button'], input[type='submit'] {
     color:#ffffff;
 	width: 240px;
 	/* margin-left: auto;
