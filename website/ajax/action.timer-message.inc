@@ -77,7 +77,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     set_timer_state(TIMER_CONNECTED);
   } else {
     echo "<failure code='notunderstood'>Message "
-        .htmlspecialchars($message, ENT_QUOTES)
+        .htmlspecialchars($message, ENT_QUOTES, 'UTF-8')
         ." not recognized.</failure>\n";
   }
 

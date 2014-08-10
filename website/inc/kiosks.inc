@@ -17,8 +17,8 @@ function xml_for_kiosk_pages($prefix) {
   while (($entry = readdir($dh)) !== FALSE) {
     if (substr($entry, -6) == ".kiosk") {
       $value = $prefix.DIRECTORY_SEPARATOR.$entry;
-      echo '<kiosk-page brief="'.htmlspecialchars(substr($entry, 0, -6)).'">'
-           .htmlspecialchars($value).'</kiosk-page>'."\n";
+      echo '<kiosk-page brief="'.htmlspecialchars(substr($entry, 0, -6), ENT_QUOTES, 'UTF-8').'">'
+            .htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</kiosk-page>'."\n";
     }
   }
   closedir($dh);

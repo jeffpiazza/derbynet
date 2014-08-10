@@ -33,8 +33,8 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
                                       ':lastname' => $lastname,
                                       ':rankid' => $rankid));
   checkin_table_row($racer_id, 
-                    htmlspecialchars($firstname, ENT_QUOTES),
-                    htmlspecialchars($lastname, ENT_QUOTES),
+                    htmlspecialchars($firstname, ENT_QUOTES, 'UTF-8'),
+                    htmlspecialchars($lastname, ENT_QUOTES, 'UTF-8'),
                     $carno, $rankid, $classname, $rankname, 
                     /* passed */false, /* racer_xbs */false,
                     /*scheduled*/false, /*den_scheduled TODO don't know!*/false,

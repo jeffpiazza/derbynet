@@ -140,10 +140,10 @@ foreach ($stmt as $rs) {
   $den_scheduled = $rs['denscheduled'];
   // TODO: Use of htmlspecialchars should be universal...
   $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES, 'UTF-8');
-  $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES);
+  $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES, 'UTF-8');
 
   checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],
-                    htmlspecialchars($rs['class']), htmlspecialchars($rs['rank']),
+                    htmlspecialchars($rs['class']), htmlspecialchars($rs['rank'], 'UTF-8'),
                     $passed, $rs['xbs'], $rs['scheduled'],
                     $den_scheduled, $xbs, $use_subgroups, $n);
   ++$n;
@@ -185,11 +185,11 @@ foreach ($stmt as $rs) {
     $stmt = $db->query($sql);
     foreach ($stmt as $rs) {
       echo "\n".'<option value="'.$rs['rankid'].'"'
-            .' data-class="'.htmlspecialchars($rs['class']).'"'
-            .' data-rank="'.htmlspecialchars($rs['rank']).'"'
+            .' data-class="'.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'"'
+           .' data-rank="'.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8').'"'
            .'>'
-		.htmlspecialchars($rs['class'])
-		.' / '.htmlspecialchars($rs['rank'])
+           .htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8')
+      .' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
 	   .'</option>';
     }
   ?>

@@ -12,5 +12,5 @@ $use_master_sched = use_master_sched();
                                                             .' WHERE roundid = :roundid',
                                                             array(':roundid' => @$now_running['roundid']));
 ?>"><?php
-                if (!$use_master_sched) { echo htmlspecialchars(@$now_running['class'], ENT_QUOTES); }
+if (!$use_master_sched) { echo htmlspecialchars(@$now_running['class'], ENT_QUOTES, 'UTF-8'); }
 ?></current-heat>

@@ -58,8 +58,8 @@ foreach ($db->query('SELECT awardname, racerid'
 
 echo '<tr>'
   .'<th>Car Number</th>'
-  .'<th>'.htmlspecialchars(group_label(), ENT_QUOTES).'</th>'
-  .($use_subgroups ? '<th>'.htmlspecialchars(subgroup_label(), ENT_QUOTES).'</th>' : '')
+  .'<th>'.htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8').'</th>'
+  .($use_subgroups ? '<th>'.htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8').'</th>' : '')
   .'<th>Last Name</th>'
   .'<th>First Name</th>'
   .'<th>Award(s)</th>'
@@ -75,12 +75,12 @@ foreach ($db->query('SELECT class, rank, carnumber, lastname, firstname, racerid
 					.' ORDER BY carnumber') as $row) {
   $racerid = $row['racerid'];
   echo '<tr>'
-    .'<td>'.htmlspecialchars($row['carnumber'], ENT_QUOTES).'</td>'
-    .'<td>'.htmlspecialchars($row['class'], ENT_QUOTES).'</td>'
-    .($use_subgroups ? '<td>'.htmlspecialchars($row['rank'], ENT_QUOTES).'</td>' : '')
-    .'<td>'.htmlspecialchars($row['lastname'], ENT_QUOTES).'</td>'
-    .'<td>'.htmlspecialchars($row['firstname'], ENT_QUOTES).'</td>'
-    .'<td>'.htmlspecialchars(@$awards[$racerid], ENT_QUOTES).'</td>'
+    .'<td>'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'</td>'
+    .'<td>'.htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>'
+    .($use_subgroups ? '<td>'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'</td>' : '')
+    .'<td>'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'</td>'
+    .'<td>'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'</td>'
+    .'<td>'.htmlspecialchars(@$awards[$racerid], ENT_QUOTES, 'UTF-8').'</td>'
     .'</tr>';
 }
 ?>

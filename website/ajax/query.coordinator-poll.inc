@@ -35,8 +35,8 @@ try {
   $stmt = $db->query('SELECT address, name, page, last_contact FROM Kiosks ORDER BY name, address, last_contact');
   foreach ($stmt as $row) {
     echo '<kiosk>'."\n";
-    echo '  <name>'.htmlspecialchars($row['name']).'</name>'."\n";
-    echo '  <address>'.htmlspecialchars($row['address']).'</address>'."\n";
+    echo '  <name>'.htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8').'</name>'."\n";
+    echo '  <address>'.htmlspecialchars($row['address'], ENT_QUOTES, 'UTF-8').'</address>'."\n";
     echo '  <last_contact>'.$row['last_contact'].'</last_contact>'."\n";
     echo '  <assigned_page>'.$row['page'].'</assigned_page>'."\n";
     echo '</kiosk>'."\n";
@@ -70,8 +70,8 @@ foreach ($rounds as $round) {
     $roundid = $round['roundid'];
 
     echo '<round roundid="'.$roundid.'"'
-              .' class="'.htmlspecialchars($round['class'], ENT_QUOTES).'"'
-              .' round="'.$round['round'].'"';
+            .' class="'.htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').'"'
+            .' round="'.$round['round'].'"';
 
     // Number of racers in the roster for the round
     echo ' roster_size="'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',

@@ -113,7 +113,7 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
   <div class="settings_group">
     <label for="photo_dir">Directory for racer photos:</label>
 	<input id="photo_dir" name="photo_dir" type="text"
-		  value="<?php echo htmlspecialchars(photo_directory()); ?>"/>
+		  value="<?php echo htmlspecialchars(photo_directory(), ENT_QUOTES, 'UTF-8'); ?>"/>
     <br/>
     <?php $photosize = explode('x', photo_size()); ?>
 	<label for="photo_width">Racer photo size:</label>
