@@ -19,7 +19,8 @@ curl_post action.php "action=import&firstname=Carroll&lastname=Cybulski&classnam
 curl_post action.php "action=import&firstname=Christoper&lastname=Chauncey&classname=White's Wolves&carnumber=212" | check_success
 curl_post action.php "action=import&firstname=Clark&lastname=Chesnutt&classname=Bears&carnumber=313" | check_success
 curl_post action.php "action=import&firstname=Cletus&lastname=Creager&classname=Webelos (\"Webes\")&carnumber=514" | check_success
-curl_post action.php "action=import&firstname=Ca%C2%96%C3%B1umil&lastname=Calero&classname=Arrows %3C%3C--%3C%3C&carnumber=415" | check_success
+# 
+curl_post action.php "action=import&firstname=Ca%C3%B1umil&lastname=Calero&classname=Arrows %3C%3C--%3C%3C&carnumber=415" | check_success
 curl_post action.php "action=import&firstname=Danial&lastname=Depaolo&classname=Lions %26 Tigers&carnumber=116" | check_success
 curl_post action.php "action=import&firstname=Darrell %26 Darrell&lastname=Delaughter&classname=White's Wolves&carnumber=217" | check_success
 curl_post action.php "action=import&firstname=Darrin&lastname=Denny&classname=Bears&carnumber=318" | check_success

@@ -14,6 +14,7 @@ require_permission(JUDGING_PERMISSION);
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Award Judging</title>
 <?php require('inc/stylesheet.inc'); ?>
 <meta http-equiv="refresh" content="300"/>

@@ -6,6 +6,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>

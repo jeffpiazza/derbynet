@@ -30,6 +30,8 @@ EOF
 
 ## Every page, and every action
 
+user_logout
+
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
 
 curl_post action.php "action=assign-kiosk" | check_failure

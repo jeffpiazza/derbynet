@@ -5,6 +5,7 @@ require_once('inc/authorize.inc');
 require_permission(VIEW_AWARDS_PERMISSION);
 ?><html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Awards and Standings</title>
 <?php require('inc/stylesheet.inc'); ?>
 </head>
@@ -57,8 +58,8 @@ foreach ($db->query('SELECT awardname, racerid'
 
 echo '<tr>'
   .'<th>Car Number</th>'
-  .'<th>'.group_label().'</th>'
-  .($use_subgroups ? '<th>'.subgroup_label().'</th>' : '')
+  .'<th>'.htmlspecialchars(group_label(), ENT_QUOTES).'</th>'
+  .($use_subgroups ? '<th>'.htmlspecialchars(subgroup_label(), ENT_QUOTES).'</th>' : '')
   .'<th>Last Name</th>'
   .'<th>First Name</th>'
   .'<th>Award(s)</th>'
@@ -74,12 +75,12 @@ foreach ($db->query('SELECT class, rank, carnumber, lastname, firstname, racerid
 					.' ORDER BY carnumber') as $row) {
   $racerid = $row['racerid'];
   echo '<tr>'
-    .'<td>'.$row['carnumber'].'</td>'
-    .'<td>'.$row['class'].'</td>'
-    .($use_subgroups ? '<td>'.$row['rank'].'</td>' : '')
-    .'<td>'.$row['lastname'].'</td>'
-    .'<td>'.$row['firstname'].'</td>'
-    .'<td>'.@$awards[$racerid].'</td>'
+    .'<td>'.htmlspecialchars($row['carnumber'], ENT_QUOTES).'</td>'
+    .'<td>'.htmlspecialchars($row['class'], ENT_QUOTES).'</td>'
+    .($use_subgroups ? '<td>'.htmlspecialchars($row['rank'], ENT_QUOTES).'</td>' : '')
+    .'<td>'.htmlspecialchars($row['lastname'], ENT_QUOTES).'</td>'
+    .'<td>'.htmlspecialchars($row['firstname'], ENT_QUOTES).'</td>'
+    .'<td>'.htmlspecialchars(@$awards[$racerid], ENT_QUOTES).'</td>'
     .'</tr>';
 }
 ?>

@@ -1,3 +1,4 @@
+<watching>
 <?php
 // action.php?query=watching&roundid= &heat= 
 // Returns:
@@ -14,8 +15,6 @@ $track_length = read_raceinfo('track_length', 50);  // in feet
 
 // TODO: Refine scale_mph_factor
 $scale_mph_factor = 12.0;  // Kinda-sorta converts fps into scale MPH
-
-echo "<watching>\n";
 
 $stmt = $db->prepare('SELECT lane, finishtime, finishplace, completed'
                      .' FROM RaceChart'
@@ -42,6 +41,5 @@ require_once('inc/current-heat.inc');
 if (($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) && $now_running['now_racing'] != 0) {
   require('inc/current-racers.inc');
 }
-
-echo "</watching>\n";
 ?>
+</watching>
