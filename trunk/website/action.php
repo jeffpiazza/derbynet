@@ -12,14 +12,16 @@ require_once('inc/authorize.inc');
 require_once('inc/action-helpers.inc');
 
 if (!empty($_POST)) {
-    header('Content-Type: text/xml');
+    header('Content-Type: text/xml; charset=utf-8');
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     if (!@include 'ajax/action.'.$_POST['action'].'.inc') {
         start_response();
         echo '<failure code="unrecognized">Unrecognized action: '.@$_POST['action'].'</failure>';
         end_response();
     }
 } else if (!empty($_GET)) {
-    header('Content-Type: text/xml');
+    header('Content-Type: text/xml; charset=utf-8');
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     if (!@include 'ajax/query.'.$_GET['query'].'.inc') {
         start_response();
         echo '<failure code="unrecognized">Unrecognized query: '.@$_GET['query'].'</failure>';

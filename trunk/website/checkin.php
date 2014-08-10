@@ -55,11 +55,12 @@ function column_header($text, $o) {
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <?php require('inc/stylesheet.inc'); ?>
-<meta http-equiv="refresh" content="300"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript">
 // We're using jQuery Mobile for its nice mobile/tablet-friendly UI
@@ -138,7 +139,7 @@ foreach ($stmt as $rs) {
   $passed = $rs['passedinspection'];
   $den_scheduled = $rs['denscheduled'];
   // TODO: Use of htmlspecialchars should be universal...
-  $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES);
+  $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES, 'UTF-8');
   $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES);
 
   checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],

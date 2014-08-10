@@ -7,6 +7,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: choose the right permission
 // TODO if ($_POST) {} : 
 ?><html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Import Roster</title>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <?php require('inc/stylesheet.inc'); ?>

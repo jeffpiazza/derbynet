@@ -53,7 +53,7 @@ function printTable(file) {  // a File object
         alert('Unable to read ' + file.fileName);
     };
 
-    reader.readAsText(file);
+    reader.readAsText(file,  'UTF-8' /* TODO: 'macintosh', 'cp1252', 'cp437' */);
 }
 
 function dragOutOfLabelTarget(jq) {

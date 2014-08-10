@@ -26,6 +26,7 @@ if ($_POST) {
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Pinewood Derby Race Settings</title>
 <?php require('inc/stylesheet.inc'); ?>
 </head>

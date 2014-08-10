@@ -7,6 +7,7 @@
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript">
     var g_last_update_time = ""; // First refresh is for everything
@@ -108,7 +109,7 @@ foreach ($rounds as $round) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-            .$round['class'].', Round '.$round['round'].'</th>'
+          .htmlspecialchars($round['class'], ENT_QUOTES).', Round '.$round['round'].'</th>'
       .'</tr>'."\n";
 
   echo '<tr>';
@@ -127,7 +128,7 @@ foreach ($rounds as $round) {
       }
       $racerid = $rs['racerid'];
       $racer_label = '<span class="racer">'
-		.$rs['lastname'].', '.$rs['firstname'].'</span>'
+        .htmlspecialchars($rs['lastname'].', '.$rs['firstname'], ENT_QUOTES).'</span>'
 		.' (<span class="car">'.$rs['carnumber'].'</span>)';
       $racer_cells = array();
       for ($i = 1; $i <= $nlanes; ++$i) {

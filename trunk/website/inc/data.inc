@@ -220,7 +220,7 @@ function running_round_header($now_running, $groups_use_roundid = FALSE) {
   if (@$now_running['class']) {
     echo '<h2 class="now_running">Now racing: '
       .'<a href="#group_'.@$now_running[$groups_use_roundid ? 'roundid' : 'groupid'].'">'
-      .($now_running['use_master_sched'] ? '' : $now_running['class'].', ')
+      .($now_running['use_master_sched'] ? '' : htmlspecialchars($now_running['class'].', ', ENT_QUOTES))
       .'Round '.@$now_running['round']
       .'</a>'
       .'</h2>'."\n";

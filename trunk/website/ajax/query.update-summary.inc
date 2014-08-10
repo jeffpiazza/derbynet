@@ -1,3 +1,4 @@
+<update-summary>
 <?php
 
 // This script produces XML in response to a request from a page that wants to 
@@ -60,8 +61,6 @@ if (!$hwresultid) {
 
 $use_master_sched = use_master_sched();
 ?>
-<update-summary>
-<hello/>
 <?php require('inc/current-heat.inc'); ?>
 <after_heat/>
   <lanes n="<?php echo get_lane_count(); ?>"/>

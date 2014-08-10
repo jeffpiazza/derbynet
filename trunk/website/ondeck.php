@@ -13,6 +13,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 ?>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
@@ -81,8 +82,8 @@ function write_heat_row($entry, $heat_row, $lane) {
     $seq = $entry['Seq'];
     echo '<tr id="'.$heat_label.'" class="d'.($seq & 1).' '.$heat_label.'">'
       .'<th>'
-      .($use_master_sched ? $entry['Class'].' ' : '')
-      .'Heat '.$heat.'</th>'
+      .htmlspecialchars(($use_master_sched ? $entry['Class'].' ' : '')
+                        .'Heat '.$heat, ENT_QUOTES).'</th>'
       .$heat_row.'</tr>'."\n";
   }
 }
@@ -96,7 +97,8 @@ foreach ($groups as $group) {
   echo '<tbody id="group_'.$groupid.'" class="group_'.$groupid.'">'."\n";
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
-      .'<th class="group_title wide" colspan="'.$nlanes.'">'.$group['groupname'].'</th>'
+      .'<th class="group_title wide" colspan="'.$nlanes.'">'
+          .htmlspecialchars($group['groupname'], ENT_QUOTES).'</th>'
       .'</tr>'."\n";
 
   // Draw a new set of lane headers.
@@ -137,8 +139,8 @@ foreach ($groups as $group) {
       // $ft = $rs['finishtime'];
       $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">'
 		.'<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
-		.'<span class="car">'.$rs['carnumber'].'</span><br/>'."\n"
-		.'<span class="racer">('.$rs['firstname'].' '.$rs['lastname'].')</span><br/>'."\n"
+        .'<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES).'</span><br/>'."\n"
+        .'<span class="racer">('.htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES).')</span><br/>'."\n"
 		.'<span class="time"></span>' // Javascript will fill in the times, later
 		.'</a>'
 		.'</td>';

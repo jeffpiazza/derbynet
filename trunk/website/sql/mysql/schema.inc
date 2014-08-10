@@ -1,5 +1,7 @@
 <?php
 $sql_script = array(
+"ALTER DATABASE CHARACTER SET utf8",
+
 "DROP TABLE IF EXISTS `Awards`",
 
 "CREATE TABLE `Awards` ("
