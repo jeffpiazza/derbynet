@@ -40,7 +40,7 @@
             <exclude name="**/Fake*"/>
         </fileset>
         <manifest>
-            <attribute name="Main-Class" value="org.jeffpiazza.derby.DerbyCommonTimer"/>
+            <attribute name="Main-Class" value="org.jeffpiazza.derby.TimerMain"/>
         </manifest>
         <!--zipgroupfileset dir="lib" includes="*.jar" /--> 
         <zipgroupfileset dir="${lib}" includes="jssc.jar"/>
