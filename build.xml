@@ -1,0 +1,119 @@
+<project name="Web Race Manager" default="dist" basedir=".">
+  <description>
+    Web-based software for managing pinewood derby races
+  </description>
+
+  <property name="replay-dir" location="replay"/>
+  <property name="replay-app.name" value="MacDerbyReplay"/>
+  <property name="replay-app-dir" location="${replay-dir}/Resources"/>
+  <property name="timer-dir" location="timer"/>
+  <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
+
+  <target name="timer-jar">
+      <ant dir="${timer-dir}"/>
+  </target>
+
+<!-- From http://www.rkuntz.org/pmwiki.php?n=Code.AntDiskImage -->
+<!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
+<target name="replay-dmg"
+        description="Create a DMG package for MacOSX (only works on MacOSX)">
+
+    <!-- Set this property value to your application name -->
+
+    <!-- Set this property value to a directory where you can 
+         mount temporarily your images, for example /tmp -->
+    <property name="mountdir"
+              value="/tmp"/>
+
+    <!-- Delete previously created DMG -->
+    <delete file="${replay-app.name}.dmg"
+            quiet="yes" failonerror="false"/>
+
+    <!-- Create a temporary Disk Image -->
+    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+      <arg value="create"/>
+      <arg value="-srcfolder"/>
+      <arg value="${replay-app-dir}/${replay-app.name}.app"/>
+      <arg value="-volname"/>
+      <arg value="${replay-app.name}"/>
+      <arg value="-ov"/>
+      <arg value="${replay-app.name}-tmp.dmg"/>
+      <arg value="-format"/>
+      <arg value="UDRW"/>
+    </exec>
+
+    <!-- Attach the temporary image -->
+    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+      <arg value="attach"/>
+      <arg value="${replay-app.name}-tmp.dmg"/>
+      <arg value="-mountroot"/>
+      <arg value="${mountdir}/"/>
+    </exec>
+
+    <!-- Copy the background, the volume icon and DS_Store files -->
+<!--
+    <mkdir dir="${mountdir}/${replay-app.name}/.background"/>
+    <copy file="background.png"
+          tofile="${mountdir}/${replay-app.name}/.background/background.png"
+          overwrite="true"/>
+    <copy file="VolumeIcon.icns"
+          tofile="${mountdir}/${replay-app.name}/.VolumeIcon.icns"
+          overwrite="true"/>
+    <copy file="DS_Store"
+          tofile="${mountdir}/${replay-app.name}/.DS_Store"
+          overwrite="true"/>
+-->
+
+    <!-- Indicate that we want a custom icon -->
+<!--
+    <exec executable="/Developer/Tools/SetFile" os="Mac OS X">
+      <arg value="-a"/>
+      <arg value="C"/>
+      <arg value="${mountdir}/${replay-app.name}"/>
+    </exec>
+-->
+
+    <!-- Add a symbolic link to the Applications directory -->
+    <symlink link="${mountdir}/${replay-app.name}" resource="/Applications"/>
+
+    <!-- Detach the temporary image -->
+    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+      <arg value="detach"/>
+      <arg value="${mountdir}/${replay-app.name}"/>
+    </exec>
+
+    <!-- Compress it to a new image -->
+    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
+      <arg value="convert"/>
+      <arg value="${replay-app.name}-tmp.dmg"/>
+      <arg value="-format"/>
+      <arg value="UDZO"/>
+      <arg value="-o"/>
+      <arg value="${replay-app.name}.dmg"/>
+    </exec>
+
+    <!-- Delete the temporary image -->
+    <delete file="${replay-app.name}-tmp.dmg"
+            quiet="yes" failonerror="false"/>
+</target>
+
+
+
+  <target name="dist" depends="replay-dmg, timer-jar">
+      <zip destfile="../WebRaceManager.zip">
+          <fileset dir=".">
+              <include name="website/**/*"/>
+          </fileset>
+          <fileset dir=".">
+              <include name="*.dmg"/>
+          </fileset>
+          <fileset dir="timer/dist/lib">
+              <include name="*.jar"/>
+          </fileset>
+      </zip>
+
+      <delete file="${replay-app.name}.dmg"
+              quiet="yes" failonerror="false"/>
+  </target>
+
+</project>
