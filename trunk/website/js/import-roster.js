@@ -9,7 +9,7 @@ function htmlDecode( html ) {
     return a.textContent;
 }
 
-function printTable(file) {  // a File object
+function printTable(file, encoding) {
     var reader = new FileReader();
 
     reader.onload = function(event) {
@@ -53,7 +53,7 @@ function printTable(file) {  // a File object
         alert('Unable to read ' + file.fileName);
     };
 
-    reader.readAsText(file,  'UTF-8' /* TODO: 'macintosh', 'cp1252', 'cp437' */);
+    reader.readAsText(file, encoding);
 }
 
 function dragOutOfLabelTarget(jq) {
@@ -105,7 +105,8 @@ function makeDroppableLabelTarget(jq) {
 // TODO: Something similar for ranks/subgroups
 // TODO: action.php?query=classes, and compare existing classes
 function collectClassNames(columnNumber) {
-    $('#new_ranks').text('');
+    $('#new_ranks').empty();
+    $('#new_ranks').append('<h4>' + $('#den-name').text() + 's</h4>');
     var classnames = [];
     $('td.column' + columnNumber).each(function(index, elt) {
         // Don't count a header_row value
@@ -125,11 +126,14 @@ function onFileSelect(event) {
                     'Size: ' + file.size + ' bytes<br/>\n' +
                     'Last Modified: ' + (file.lastModifiedDate
                                          ? file.lastModifiedDate.toLocaleDateString()
-                                         : '(not available)'));
-    printTable(file);
+                                         : '(not available)') + '<br/>\n' +
+                    'Encoding chosen: ' + $('input:radio[name="encoding-select"]:checked').val());
+    printTable(file, $('input:radio[name="encoding-select"]:checked').val());
 
+    $('#start_over_button').removeClass('hidden');
     $(".fields").removeClass("hidden");
     $(".file_target").addClass("hidden");
+    $("#encoding").addClass("hidden");
     $('#submit_message').text('File import will be enabled when required fields are assigned.');
 
     // TODO: The .label_target elements are only created by
