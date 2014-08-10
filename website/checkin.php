@@ -143,7 +143,8 @@ foreach ($stmt as $rs) {
   $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES, 'UTF-8');
 
   checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],
-                    htmlspecialchars($rs['class']), htmlspecialchars($rs['rank'], 'UTF-8'),
+                    htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8'),
+                    htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8'),
                     $passed, $rs['xbs'], $rs['scheduled'],
                     $den_scheduled, $xbs, $use_subgroups, $n);
   ++$n;
