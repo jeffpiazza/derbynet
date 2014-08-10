@@ -109,7 +109,7 @@ foreach ($rounds as $round) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-          .htmlspecialchars($round['class'], ENT_QUOTES).', Round '.$round['round'].'</th>'
+          .htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').', Round '.$round['round'].'</th>'
       .'</tr>'."\n";
 
   echo '<tr>';
@@ -128,7 +128,7 @@ foreach ($rounds as $round) {
       }
       $racerid = $rs['racerid'];
       $racer_label = '<span class="racer">'
-        .htmlspecialchars($rs['lastname'].', '.$rs['firstname'], ENT_QUOTES).'</span>'
+        .htmlspecialchars($rs['lastname'].', '.$rs['firstname'], ENT_QUOTES, 'UTF-8').'</span>'
 		.' (<span class="car">'.$rs['carnumber'].'</span>)';
       $racer_cells = array();
       for ($i = 1; $i <= $nlanes; ++$i) {

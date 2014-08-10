@@ -11,10 +11,10 @@ foreach ($stmt as $row) {
         if ($prev_class != '') {
             echo '</class>'."\n";
         }
-        echo '<class name="'.htmlspecialchars($row['class'], ENT_QUOTES).'">'."\n";
+        echo '<class name="'.htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'">'."\n";
         $prev_class = $row['class'];
     }
-    echo '  <rank name="'.htmlspecialchars($row['rank'], ENT_QUOTES).'"/>'."\n";
+    echo '  <rank name="'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'"/>'."\n";
 }
 
 if ($prev_class != '') {

@@ -32,7 +32,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   $stmt->execute($params);
 
   echo "\n<success/>\n";
-  echo "<sql>".htmlspecialchars($sql, ENT_QUOTES)."</sql>\n";
+  echo "<sql>".htmlspecialchars($sql, ENT_QUOTES, 'UTF-8')."</sql>\n";
 
   require('ajax/query.coordinator-poll.inc');
 

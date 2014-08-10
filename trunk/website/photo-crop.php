@@ -43,7 +43,7 @@ function updateForm(c) {
 <div class="block_buttons">
 <form method="post" action="photo-crop-action.php">
   <input type="hidden" id="image_name" name="image_name"
-         value="<?php echo htmlspecialchars($imagename); ?>"/>
+         value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" id="original_height" name="original_height" value=""/>
   <input type="hidden" id="original_width" name="original_width" value=""/>
   <input type="hidden" id="top" name="top" value=""/>
@@ -54,13 +54,13 @@ function updateForm(c) {
 </form>
 <form method="post" action="photo-crop-action.php">
   <input type="hidden" id="image_name" name="image_name"
-         value="<?php echo htmlspecialchars($imagename); ?>"/>
+         value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" name="rotation" value="90"/>
   <input type="submit" value="Rotate Right"/>
 </form>
 <form method="post" action="photo-crop-action.php">
   <input type="hidden" id="image_name" name="image_name"
-         value="<?php echo htmlspecialchars($imagename); ?>"/>
+         value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" name="rotation" value="-90"/>
   <input type="submit" value="Rotate Left"/>
 </form>

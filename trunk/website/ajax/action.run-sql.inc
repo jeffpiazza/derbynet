@@ -9,7 +9,7 @@ if (have_permission(SET_UP_PERMISSION)) {
       foreach ($sql_script as $sql_stmt) {
         $sql_result = $db->exec($sql_stmt);
         echo '<executed result="'.($sql_result === false ? 'FALSE' : $sql_result).'">'
-        .htmlspecialchars($sql_stmt, ENT_QUOTES)."</executed>\n";
+        .htmlspecialchars($sql_stmt, ENT_QUOTES, 'UTF-8')."</executed>\n";
         if ($sql_result === false) {
           echo '<failure code="sqlfailure">SQL statment execution failed.</failure>';
           $ok = false;

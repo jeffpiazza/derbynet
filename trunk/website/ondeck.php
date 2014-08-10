@@ -83,7 +83,7 @@ function write_heat_row($entry, $heat_row, $lane) {
     echo '<tr id="'.$heat_label.'" class="d'.($seq & 1).' '.$heat_label.'">'
       .'<th>'
       .htmlspecialchars(($use_master_sched ? $entry['Class'].' ' : '')
-                        .'Heat '.$heat, ENT_QUOTES).'</th>'
+                        .'Heat '.$heat, ENT_QUOTES, 'UTF-8').'</th>'
       .$heat_row.'</tr>'."\n";
   }
 }
@@ -98,7 +98,7 @@ foreach ($groups as $group) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-          .htmlspecialchars($group['groupname'], ENT_QUOTES).'</th>'
+      .htmlspecialchars($group['groupname'], ENT_QUOTES, 'UTF-8').'</th>'
       .'</tr>'."\n";
 
   // Draw a new set of lane headers.
@@ -139,8 +139,9 @@ foreach ($groups as $group) {
       // $ft = $rs['finishtime'];
       $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">'
 		.'<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
-        .'<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES).'</span><br/>'."\n"
-        .'<span class="racer">('.htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES).')</span><br/>'."\n"
+        .'<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES, 'UTF-8').'</span><br/>'."\n"
+        .'<span class="racer">('
+            .htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8').')</span><br/>'."\n"
 		.'<span class="time"></span>' // Javascript will fill in the times, later
 		.'</a>'
 		.'</td>';
