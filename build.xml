@@ -9,6 +9,50 @@
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
+  <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
+      <zip destfile="../WebRaceManager.zip">
+          <fileset dir=".">
+              <include name="website/**/*"/>
+          </fileset>
+          <fileset dir=".">
+              <include name="*.dmg"/>
+          </fileset>
+          <fileset dir="timer/dist/lib">
+              <include name="*.jar"/>
+          </fileset>
+      </zip>
+
+      <delete file="${replay-app.name}.dmg"
+              quiet="yes" failonerror="false"/>
+  </target>
+
+  <target name="generated-version.inc">
+      <exec executable="svn" outputproperty="svn-info-output">
+          <arg value="info"/>
+      </exec>
+
+      <concat destfile="website/inc/generated-version.inc">
+          <propertyresource name="svn-info-output"/>
+          <filterchain>
+              <linecontains>
+                  <contains value="Revision:"/>
+              </linecontains>
+
+              <tokenfilter delimoutput="">
+                  <replacestring from="Revision: " to=""/>
+              </tokenfilter>
+
+          </filterchain>
+      </concat>
+  </target>
+
+  <target name="generated-build-date.inc">
+      <tstamp/>
+      <concat destfile="website/inc/generated-build-date.inc">
+          <propertyresource name="TODAY"/>
+      </concat>
+  </target>
+
   <target name="timer-jar">
       <ant dir="${timer-dir}"/>
   </target>
@@ -96,24 +140,5 @@
     <delete file="${replay-app.name}-tmp.dmg"
             quiet="yes" failonerror="false"/>
 </target>
-
-
-
-  <target name="dist" depends="replay-dmg, timer-jar">
-      <zip destfile="../WebRaceManager.zip">
-          <fileset dir=".">
-              <include name="website/**/*"/>
-          </fileset>
-          <fileset dir=".">
-              <include name="*.dmg"/>
-          </fileset>
-          <fileset dir="timer/dist/lib">
-              <include name="*.jar"/>
-          </fileset>
-      </zip>
-
-      <delete file="${replay-app.name}.dmg"
-              quiet="yes" failonerror="false"/>
-  </target>
 
 </project>

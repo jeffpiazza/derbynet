@@ -16,4 +16,4 @@
 ?>
   <img src="img/cubscout_emblem.png"/>
 </div>
-<div class="banner_version">Version 0.5</div>
+<div class="banner_version">Version 1.0</div>

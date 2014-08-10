@@ -81,6 +81,10 @@ if ($need_spacer) {
 </form>
 <br/>
 <?php } ?>
+<form method="link" action="about.php">
+  <input type="submit" value="About"/>
+</form>
+<br/>
 
 <?php
 if ($need_spacer) {
