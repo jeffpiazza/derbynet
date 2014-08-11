@@ -2,12 +2,10 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
-require_once('inc/kiosks.inc');
 
 require_permission(SET_UP_PERMISSION);
 
 // TODO: settings POST should be an action
-// TODO: block_buttons style throughout the site?
 
 if ($_POST) {
   write_raceinfo('use-subgroups', @$_POST['do-use-subgroups'] ? '1' : '0');
@@ -19,7 +17,6 @@ if ($_POST) {
   write_raceinfo('supergroup-label', $_POST['supergroup-label']);
   write_raceinfo('use-master-sched', @$_POST['use-master-sched'] ? '1' : '0');
   write_raceinfo('update-period', $_POST['update-period']);
-  write_raceinfo('kiosk-page', $_POST['kiosk-page']);
   write_raceinfo('photo-directory', $_POST['photo_dir']);
   write_raceinfo('photo-size', $_POST['photo_width'].'x'.$_POST['photo_height']);
 }
@@ -93,20 +90,6 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
            value="<?php echo update_period(); ?>"/>
     <label for="update-period">Page refresh period: ms. between updates.  Increase this value if necessary 
                                to reduce load on server.</label>
-  </div>
-  <br/>
-
-  <div class="settings_group">
-    <label for="kiosk-page">Kiosk display page:</label>
-    <select name="kiosk-page">
-      <optgroup>
-      <?php
-        $kiosk_page = read_raceinfo('kiosk-page', 'welcome.kiosk');
-        scan_kiosk_pages('kiosks', $kiosk_page);
-        scan_kiosk_pages('local'.DIRECTORY_SEPARATOR.'kiosks', $kiosk_page);
-      ?>
-    </optgroup>
-    </select>
   </div>
   <br/>
 
