@@ -13,7 +13,7 @@ function advance_heat(&$current, $roundid, $requested_heat, $echo_failure) {
     if (isset($current['roundid']) && isset($current['heat'])) {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = '
-                           .'   (SELECT masterheat FROM RaceChart'
+                           .'   (SELECT DISTINCT masterheat FROM RaceChart'
                            .'           WHERE roundid = :roundid'
                            .'            AND  heat = :heat)'
                            .'  + :delta');
@@ -26,10 +26,10 @@ function advance_heat(&$current, $roundid, $requested_heat, $echo_failure) {
       $stmt->execute(array());
     }
     $rs = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($rs) {
+    if ($rs !== false) {
       $roundid = $rs['roundid'];
       $heat = $rs['heat'];
-      $rs->closeCursor();
+      $stmt->closeCursor();
     } else {
       $ok = false;
     }
