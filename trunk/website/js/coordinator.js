@@ -290,6 +290,7 @@ function update_for_current_round(current_heat) {
 
 function generate_timer_state_group(tstate) {
     $("#timer_status_text").text(tstate.textContent);
+    $("#timer_status_icon").attr('src', tstate.getAttribute('icon'));
     var lanes = tstate.getAttribute('lanes');
     if (lanes != '') {
         $("#lane_count").text(lanes);
@@ -298,6 +299,7 @@ function generate_timer_state_group(tstate) {
 
 function generate_replay_state_group(replay_state) {
     $("#replay_status").text(replay_state.textContent);
+    $("#replay_status_icon").attr('src', replay_state.getAttribute('icon'));
     if (replay_state.getAttribute('host-and-port') == '') {
         $("#test_replay").addClass("hidden");
     } else {
