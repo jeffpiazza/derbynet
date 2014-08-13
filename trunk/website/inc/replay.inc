@@ -1,45 +1,61 @@
 <?php
 
-// replay host and port has format 'host:port'.  
+// replay_host_and_port has format 'host:port'.  
+// replay_last_contact
+
+// replay_state:
+define('REPLAY_NOT_CONNECTED', 1);
+define('REPLAY_CONNECTED', 2);  // See replay_last_contact.
+define('REPLAY_TROUBLE', 3);   // See replay_trouble value
+
+// Registration request is ignored if REPLAY_CONNECTED and the host
+// and port match.  Otherwise, a registration request causes a HELLO
+// message to be sent, and the state becomes either CONNECTED or
+// TROUBLE depending on the outcome.
+
+// replay_last_contact gets updated with succesful message sent.
+// replay_trouble gets set to the error message for an unsuccessful
+// message send.
+
+// REPLAY_CONNECTED or REPLAY_TROUBLE become REPLAY_NOT_CONNECTED if
+// REPLAY_TIMEOUT_LIMIT passes since replay_last_contact.
+//
+// REPLAY_TROUBLE causes message sends to be ignored (except
+// re-registration attempts).  Re-registration attempt also sets
+// replay_last_contact.
+
 
 require_once('inc/data.inc');
 
 define('REPLAY_TIMEOUT_LIMIT', 3600);  // 3600 seconds = 1 hour
 
-function write_replay_host_and_port($host_and_port) {
-  write_raceinfo('replay_host_and_port', $host_and_port);
-  write_raceinfo('replay_last_contact', time());
-}
-
-function read_replay_host_and_port() {
-  if (read_raceinfo('replay_last_contact', 0) + REPLAY_TIMEOUT_LIMIT < time()) {
-    return '';
+function get_replay() {
+  $host_and_port = read_raceinfo('replay_host_and_port', '');
+  $state = read_raceinfo('replay_state', REPLAY_NOT_CONNECTED);
+  $last_contact = read_raceinfo('replay_last_contact', 0);
+  if ($host_and_port == '' || $last_contact + REPLAY_TIMEOUT_LIMIT < time()) {
+    $state = REPLAY_NOT_CONNECTED;
   }
-  return read_raceinfo('replay_host_and_port', '');
-}
+  $trouble = read_raceinfo('replay_trouble');
 
-function get_replay_state() {
-  $last_contact = read_raceinfo('replay_last_contact');
-  return array('host_and_port' => read_raceinfo('replay_host_and_port'),
+  return array('state' => $state,
+               'host_and_port' => $host_and_port,
                'last_contact' => $last_contact,
-               'state' => ($last_contact < 0) ? 'TROUBLE' :
-               ($last_contact + REPLAY_TIMEOUT_LIMIT < time() ? 'NOT CONNECTED' : 'CONNECTED'));
+               'trouble' => $trouble);
 }
 
-function send_replay_message($cmd) {
-  $host_and_port = read_replay_host_and_port();
-  if ($host_and_port == '')
-    return;
-  list($host, $port) = explode(':', $host_and_port);
 
+
+function send_replay_message_to_address($host, $port, $cmd) {
   // Limiting connection timeout to 3 seconds in a half-hearted
   // attempt to avoid problems of long blocking while trying to
   // connect to a stale replay address.
   $fp = @fsockopen($host, $port, $errno, $errstr, 3);
   if (!$fp) {
-    // TODO
-    // echo "Failed: $errstr ($errno)<br />\n";
-    return;
+    write_raceinfo('replay_state', REPLAY_TROUBLE);
+    write_raceinfo('replay_trouble', $errstr);
+    write_raceinfo('replay_last_contact', time());
+    return false;
   } else {
     stream_set_timeout($fp, 3);
     fwrite($fp, $cmd."\r\n");
@@ -50,7 +66,9 @@ function send_replay_message($cmd) {
       for ($i = 0; $i < count($lines) - 1; ++$i) {
         if ($lines[$i] == "OK") {
           fclose($fp);
-          return;
+          write_raceinfo('replay_state', REPLAY_CONNECTED);
+          write_raceinfo('replay_last_contact', time());
+          return true;
         }
       }
       $text = $lines[count($lines) - 1];
@@ -58,10 +76,25 @@ function send_replay_message($cmd) {
 
     // Control reaching here means we timed out waiting for an "OK"
     // from the replay application.  Assume there's trouble.
-    fwrite($fp, "Goodbye.\r\n");  // TODO
-    write_raceinfo('replay_last_contact', -time());
-
     fclose($fp);
+
+    write_raceinfo('replay_state', REPLAY_TROUBLE);
+    write_raceinfo('replay_trouble', 'Timed out');
+    write_raceinfo('replay_last_contact', time());
+
+    return false;
+  }
+}
+
+
+
+function send_replay_message($cmd) {
+  $replay = get_replay();
+  if ($replay['state'] == REPLAY_CONNECTED) {
+    list($host, $port) = explode('$', $replay['host_and_port']);
+    return send_replay_message_to_address($host, $port, $cmd);
+  } else {
+    return false;
   }
 }
 
@@ -72,7 +105,9 @@ function send_replay_TEST() {
 
 // "START video_name_root  -- start recording video\r\n"
 function send_replay_START(&$current) {
-  send_replay_message("START ".@$current['class'].'-Round'.@$current['round'].'-Heat'.sprintf("%02d", @$current['heat']));
+  send_replay_message("START ".@$current['class']
+                      .'_Round'.@$current['round']
+                      .'_Heat'.sprintf("%02d", @$current['heat']));
 }
 
 // "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"

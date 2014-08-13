@@ -177,6 +177,7 @@
                 }
 
                 if (succeeded) {
+                    NSLog(@"Answering OK");
                     [sock writeData:[@"OK\r\n" dataUsingEncoding:NSUTF8StringEncoding] withTimeout:-1 tag:ECHO_MSG];
                 } else {
                     NSLog(@"Error converting received data into UTF-8 String");
@@ -221,6 +222,11 @@
 	}
 }
 
+- (BOOL) docommand_hello: (NSScanner*) scanner
+{
+    return YES;
+}
+
 // test <skipback_seconds> <repeat> <rate>
 - (BOOL) docommand_test: (NSScanner*) scanner
 {
@@ -243,9 +249,12 @@
     [scanner setCharactersToBeSkipped:[NSCharacterSet illegalCharacterSet]];
     NSString* filename = NULL;
     if (![scanner scanUpToCharactersFromSet:[NSCharacterSet illegalCharacterSet] intoString:&filename]) return NO;
+
     [[self appDelegate] setMovieFileName:[filename stringByTrimmingCharactersInSet:
                                           [NSCharacterSet whitespaceCharacterSet]]];
+
     [[self appDelegate] startRecording];
+
     return YES;
 }
 
@@ -266,6 +275,8 @@
     float rate;
     if (![scanner scanFloat:&rate]) return NO;
 
+    [[self appDelegate] cancelRecording];
+    
     [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
     return YES;

@@ -25,7 +25,7 @@
         urlString = [urlString stringByAppendingString: @"action.php"];
     }
     url = [NSURL URLWithString:urlString];
-    
+    NSLog(@"Registration polling starts to %@", urlString);
     [self poll];
 }
 
@@ -83,18 +83,16 @@
     // numerous "tidy" warnings.
     
     if (!document) {
-        NSLog(@"Document failed to parse");
+        NSLog(@"Poller response document failed to parse");
         // [[NSAlert alertWithMessageText:@"Document failed to parse" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
     } else {
-        NSLog(@"PARSED OK!");
         // [[NSAlert alertWithMessageText:@"PARSED OK!" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
-        NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
-        NSLog(@"%@",strData);
+        // NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
+        // NSLog(@"%@",strData);
     }
     
     // Delay execution of my block for 10 seconds.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        NSLog(@"dispatch_after");
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [self poll];
     });
 }

@@ -14,7 +14,7 @@ source common.sh
 
 # Send a register-replay action for port 50000 to the server
 user_login RaceCoordinator doyourbest
-sleep 1 && ( curl_post action.php "action=register-replay&port=50000" | check_success ) &
+sleep 1 && ( curl_post action.php "action=register-replay&port=50000" ) &
 
 echo Respond to replay messages with an \"OK\"
 nc -c -k -l 50000

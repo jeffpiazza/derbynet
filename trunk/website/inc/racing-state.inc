@@ -70,6 +70,8 @@ function set_racing_state($state) {
     }
 
     if (!$current['now_racing']) {
+      // This starts the video when the "Now Racing" switch turns
+      // on.
       send_replay_START($current);
     }
   } else {

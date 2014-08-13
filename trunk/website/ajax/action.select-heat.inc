@@ -28,7 +28,8 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   if (isset($_POST['roundid']) || isset($_POST['heat'])) {
     // Turn off NowRacing, although it may get turned back on before
-    // this action completes.
+    // this action completes.  set_racing_state(0) will take care of
+    // sending a replay CANCEL.
     set_racing_state(0);
 
     // Note: roundid may be < 0 if not previously set
@@ -50,7 +51,14 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   if ($ok && isset($_POST['now_racing'])) {
     if (!set_racing_state($_POST['now_racing'])) {
-      if (!isset($_POST['roundid'])) {
+      // This 'if' test is to control the wording of the failure
+      // message from clicking the 'race' button for a heat whose
+      // first heat already has data.
+      if (isset($_POST['roundid'])) {
+        echo "<failure code='cant_race'>"
+            ."The first heat in this group has already been run.  Please choose a heat without results."
+            ."</failure>\n";
+      } else {
         echo "<failure code='cant_race'>"
             ."To start racing mode, there must be a valid current heat without results."
             ."</failure>\n";

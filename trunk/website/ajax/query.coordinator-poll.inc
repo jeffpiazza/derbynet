@@ -23,9 +23,18 @@ echo '</timer-state>'."\n";
 ?>
 <?php /* Replay */
 require_once('inc/replay.inc');
-$replay = get_replay_state();
-echo '<replay-state host-and-port="'.$replay['host_and_port'].'" last_contact="'.$replay['last_contact'].'">';
-echo $replay['state'];
+$replay = get_replay();
+echo '<replay-state host-and-port="'.$replay['host_and_port'].'"'
+    .' last_contact="'.$replay['last_contact'].'"'
+    .' state="'.$replay['state'].'"'
+    .'>';
+if ($replay['state'] == REPLAY_NOT_CONNECTED) {
+  echo 'NOT CONNECTED';
+} else if ($replay['state'] == REPLAY_CONNECTED) {
+  echo 'CONNECTED ('.(time() - $replay['last_contact']).' sec.)';
+} else {
+  echo 'TROUBLE: '.$replay['trouble'];
+}
 echo "</replay-state>\n";
 ?>
 <?php // Kiosks
