@@ -288,7 +288,9 @@
 
 - (void) setMovieFileName:(NSString *)root
 {
+    NSLog(@"setMovieFileName: %@", root);
     NSURL* directory = [self moviesDirectory];
+    NSLog(@"setMovieFileName: directory = %@", directory);
     
     int i = 0;
     while (true) {
@@ -301,7 +303,10 @@
         NSURL* filepath = [directory URLByAppendingPathComponent:name];
         if (![[NSFileManager defaultManager] fileExistsAtPath: [filepath path] isDirectory:NULL]) {
             [self setMoviePath:filepath];
-            break;
+            return;
+        } else {
+            NSLog(@"File exists: %@", [filepath path]);
+            ++i;
         }
     }
 }
@@ -315,7 +320,7 @@
 {
     [[self movieFileOutput] stopRecording];
     
-    [[NSFileManager defaultManager] removeItemAtPath: [[self moviePath] path] error:NULL];
+    //[[NSFileManager defaultManager] removeItemAtPath: [[self moviePath] path] error:NULL];
 }
 
 // replayRecording is what gets invoked by the Replay button

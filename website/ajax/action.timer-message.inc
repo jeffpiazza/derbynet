@@ -49,8 +49,6 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     set_timer_state(TIMER_RUNNING);
     echo '<success/>'."\n";
   } else if ($message == 'FINISHED') {
-    // TODO: A FINISHED message when when we're not actively racing
-    // should be discarded
     if (!$racing_state) {
       echo "<failure code='notracing'>Not racing now.</failure>\n";
     } else if (write_heat_results()) {
@@ -100,7 +98,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     if ($pending) {
       echo '<heat-ready lane-mask="'.$mask.'"/>'."\n";
       set_timer_state(TIMER_PREPARED);
-      send_replay_START($current);
+      // send_replay_START($current);
     }
   }
 
