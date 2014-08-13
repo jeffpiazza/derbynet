@@ -34,6 +34,10 @@
   font-size: x-large;
 }
 
+.status_icon {
+   float: right;
+}
+
 h3 {
     margin-top: 0px;
 }

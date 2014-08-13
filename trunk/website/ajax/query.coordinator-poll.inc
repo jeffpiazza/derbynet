@@ -7,34 +7,49 @@ require('inc/current-racers.inc');
 require_once('inc/timer-state.inc');
 $tstate = get_timer_state();
 $tcontact = read_raceinfo('timer_last_contact');
-echo '<timer-state lanes="'.get_lane_count().'" last_contact="'.$tcontact.'">';
-    if ($tstate == TIMER_NOT_CONNECTED) {
-        echo 'NOT CONNECTED';
-    } else if ($tstate == TIMER_CONNECTED) {
-        echo 'CONNECTED ('.(time() - $tcontact).' sec.)';
-    } else if ($tstate == TIMER_PREPARED) {
-        echo 'Prepared';
-    } else if ($tstate == TIMER_RUNNING) {
-        echo 'Race running';
-    } else {
-        echo 'Unknown ('.$tstate.')';
-    }
+if ($tstate == TIMER_NOT_CONNECTED) {
+  $msg = 'NOT CONNECTED';
+  $icon = 'img/status_not_connected.png';
+} else if ($tstate == TIMER_CONNECTED) {
+  $msg ='CONNECTED ('.(time() - $tcontact).' sec.)';
+  $icon = 'img/status_ok.png';
+} else if ($tstate == TIMER_PREPARED) {
+  $msg = 'Prepared';
+  $icon = 'img/status_ok.png';
+} else if ($tstate == TIMER_RUNNING) {
+  $msg = 'Race running';
+  $icon = 'img/status_ok.png';
+} else {
+  $msg = 'Unknown ('.$tstate.')';
+  $icon = 'img/status_trouble.png';
+}
+echo '<timer-state lanes="'.get_lane_count().'"'
+    .' last_contact="'.$tcontact.'"'
+    .' state="'.$tstate.'"'
+    .' icon="'.$icon.'"'
+    .'>';
+echo $msg;
 echo '</timer-state>'."\n";
 ?>
 <?php /* Replay */
 require_once('inc/replay.inc');
 $replay = get_replay();
+if ($replay['state'] == REPLAY_NOT_CONNECTED) {
+  $msg = 'NOT CONNECTED';
+  $icon = 'img/status_not_connected.png';
+} else if ($replay['state'] == REPLAY_CONNECTED) {
+  $msg = 'CONNECTED ('.(time() - $replay['last_contact']).' sec.)';
+  $icon = 'img/status_ok.png';
+} else {
+  $msg = 'TROUBLE: '.$replay['trouble'];
+  $icon = 'img/status_trouble.png';
+}
 echo '<replay-state host-and-port="'.$replay['host_and_port'].'"'
     .' last_contact="'.$replay['last_contact'].'"'
     .' state="'.$replay['state'].'"'
+    .' icon="'.$icon.'"'
     .'>';
-if ($replay['state'] == REPLAY_NOT_CONNECTED) {
-  echo 'NOT CONNECTED';
-} else if ($replay['state'] == REPLAY_CONNECTED) {
-  echo 'CONNECTED ('.(time() - $replay['last_contact']).' sec.)';
-} else {
-  echo 'TROUBLE: '.$replay['trouble'];
-}
+echo $msg;
 echo "</replay-state>\n";
 ?>
 <?php // Kiosks
