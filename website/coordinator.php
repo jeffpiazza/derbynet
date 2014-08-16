@@ -9,22 +9,16 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/flipswitch.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript">
-// We're using jQuery Mobile for its nice mobile/tablet-friendly UI
-// elements.  By default, jQM also wants to hijack page loading
-// functionality, and perform page loads via ajax, a "service" we
-// don't really want.  Fortunately, it's possible to turn that stuff
-// off.
-$(document).bind("mobileinit", function() {
-				   $.extend($.mobile, {
-					 ajaxEnabled: false
-					 });
-				 });
-</script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+
+<script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="js/flipswitch.js"></script>
+
+<!-- 
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.js"></script>
+-->
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
