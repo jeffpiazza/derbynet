@@ -300,10 +300,10 @@ function generate_timer_state_group(tstate) {
 function generate_replay_state_group(replay_state) {
     $("#replay_status").text(replay_state.textContent);
     $("#replay_status_icon").attr('src', replay_state.getAttribute('icon'));
-    if (replay_state.getAttribute('host-and-port') == '') {
-        $("#test_replay").addClass("hidden");
-    } else {
+    if (replay_state.getAttribute('connected')) {
         $("#test_replay").removeClass("hidden");
+    } else {
+        $("#test_replay").addClass("hidden");
     }
 }
 
