@@ -123,16 +123,18 @@ foreach ($rounds as $round) {
                                             .'  AND RaceChart.racerid = Roster.racerid)',
                                             array(':roundid' => $roundid)).'"';
 
-    echo ' heats_scheduled="'.read_single_value('SELECT COUNT(distinct heat)'
-                                                .' FROM RaceChart'
-                                                .' WHERE roundid = :roundid',
+    echo ' heats_scheduled="'.read_single_value('SELECT COUNT(*) FROM'
+												.' (SELECT DISTINCT heat'
+                                                .'   FROM RaceChart'
+                                                .'   WHERE roundid = :roundid)',
                                                 array(':roundid' => $roundid)).'"';
 
-    echo ' heats_run="'.read_single_value('SELECT COUNT(distinct heat)'
-                                   .' FROM RaceChart'
-                                   .' WHERE roundid = :roundid'
-                                   .' AND finishtime IS NOT NULL',
-                                   array(':roundid' => $roundid)).'"';
+    echo ' heats_run="'.read_single_value('SELECT COUNT(*) FROM'
+										  .' (SELECT DISTINCT heat'
+										  .'   FROM RaceChart'
+										  .'   WHERE roundid = :roundid'
+										  .'   AND finishtime IS NOT NULL)',
+										  array(':roundid' => $roundid)).'"';
     echo '/>'."\n";
 }
 ?>
