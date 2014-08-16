@@ -11,7 +11,7 @@ if ($_POST) {
   write_raceinfo('use-subgroups', @$_POST['do-use-subgroups'] ? '1' : '0');
   write_raceinfo('n-den-trophies', $_POST['n-den-trophies']);
   write_raceinfo('n-pack-trophies', $_POST['n-pack-trophies']);
-  write_raceinfo('xbs-award', $_POST['use-xbs'] ? $_POST['xbs-award'] : '');
+  write_raceinfo('xbs-award', @$_POST['use-xbs'] ? $_POST['xbs-award'] : '');
   write_raceinfo('group-label', $_POST['group-label']);
   write_raceinfo('subgroup-label', $_POST['subgroup-label']);
   write_raceinfo('supergroup-label', $_POST['supergroup-label']);
