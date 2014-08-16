@@ -27,6 +27,6 @@ $roles = array('' =>
 		     'permissions' => -1)
 	       );
 
-@require_once('local/config-roles.inc');
+@include_once('local/config-roles.inc');
 
 ?>
