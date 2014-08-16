@@ -40,7 +40,7 @@
 			ui.draggable.closest(".thumbnail").addClass("hidden");
 			$(this).prepend('<img class="assigned"' +
 							' data-image-filename="' + photo_base_name + '"' +
-							' src="photo-fetch.php/tiny/' +
+							' src="photo.php/tiny/' +
 							encodeURIComponent(photo_base_name) + '"/>');
 
 			make_discardable($(this).find(".assigned"));

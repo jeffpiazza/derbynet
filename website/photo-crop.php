@@ -14,7 +14,7 @@ require_once('inc/photo-config.inc');
 </head>
 <body>
 <?php
-echo '<img src="photo-fetch.php/work/';
+echo '<img src="photo.php/work/';
 $work_image = $photoWorkDirectory.DIRECTORY_SEPARATOR.$imagename;
 if (file_exists($work_image)) {
   echo @filemtime($work_image).'/';
