@@ -100,7 +100,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-	  .' src="photo-fetch.php/tiny/'.urlencode($image_filename).'"'
+	  .' src="photo.php/tiny/'.urlencode($image_filename).'"'
 	  .'/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
@@ -119,7 +119,7 @@ foreach ($allfiles as $imagefile) {
   echo '<div class="thumbnail'.(isset($racers_by_photo[$imagefile]) ? ' hidden' : '').'">';
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo" data-image-filename="'
-          .htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'" src="photo-fetch.php/thumb/';
+          .htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'" src="photo.php/thumb/';
   $thumbfile = $photoThumbsDirectory.DIRECTORY_SEPARATOR.$imagefile;
   if (file_exists($thumbfile)) {
 	echo @filemtime($thumbfile).'/';

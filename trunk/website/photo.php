@@ -3,8 +3,8 @@ session_start();
 
 require_once('inc/photo-config.inc');
 
-// Path name is e.g. photo-fetch.php/thumb/mygreatphoto.jpg
-//  or photo-fetch.php/<cache-breaker>/thumb/mygreatphoto.jpg
+// Path name is e.g. photo.php/thumb/mygreatphoto.jpg
+//  or photo.php/thumb/<cache-breaker>/mygreatphoto.jpg
 
 $trailing = explode('/', $_SERVER['PATH_INFO']);
 $photo_render = $trailing[1];
