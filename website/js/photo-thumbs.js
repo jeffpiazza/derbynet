@@ -117,11 +117,11 @@ function changeRacerPhotoAjax(previous, racer, photo) {
    var xmlhttp = new XMLHttpRequest();
    xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-   xmlhttp.onreadystatechange = readystate_handler;
+// TODO   xmlhttp.onreadystatechange = readystate_handler;
    xmlhttp.send("action=photo&racer=" + racer
 				+ "&previous=" + previous
-				+ "&photo=" + encodeURIComponent("<?php echo addcslashes($photoThumbsDirectory.'\\', '\\\"'); ?>" + photo));
-   ajax_add_request();
+				+ "&photo=" + photo);
+// TODO   ajax_add_request();
 }
 
 function removeRacerPhoto(previous) {
