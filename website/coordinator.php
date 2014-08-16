@@ -12,13 +12,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <link rel="stylesheet" type="text/css" href="css/flipswitch.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/flipswitch.js"></script>
-
-<!-- 
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.js"></script>
--->
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
