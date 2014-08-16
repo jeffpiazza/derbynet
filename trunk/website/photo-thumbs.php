@@ -12,7 +12,7 @@ function scan_directory($directory, $pattern) {
   $dh  = @opendir($directory);
   if ($dh !== false) {
       while (($filename = readdir($dh)) !== false) {
-          if (preg_match($pattern, $filename) && is_file($directory.'\\'.$filename)) {
+          if (preg_match($pattern, $filename) && is_file($directory.DIRECTORY_SEPARATOR.$filename)) {
               $files[] = $filename;
           }
       }
@@ -83,11 +83,11 @@ foreach ($stmt as $rs) {
 
 
   $css_classes = 'ui-li-static ui-li-has-thumb';
-  if ($raw_imagefile !== "") {  // If there's an associated photo...
+  if ($raw_imagefile !== null && $raw_imagefile !== "") {  // If there's an associated photo...
 	$image_filename = basename($raw_imagefile);
 	$racers_by_photo[$image_filename] = $racer;
 	if (array_search($image_filename, $allfiles) === false) {
-	  $css_classes .= ' lost_photo';
+	  $css_classes .= ' without-photo lost_photo';
 	}
   } else {
 	$css_classes .= ' without-photo';
@@ -103,8 +103,8 @@ foreach ($stmt as $rs) {
 	  .' src="photo-fetch.php/tiny/'.urlencode($image_filename).'"'
 	  .'/>';
   }
-  echo $rs['firstname'].' '.$rs['lastname'];
-  echo '<p><strong>'.$rs['carnumber'].':</strong> '.$rs['class'].'</p>';
+  echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
+  echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
   echo '</li>'."\n";
 }
 
@@ -120,7 +120,7 @@ foreach ($allfiles as $imagefile) {
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo" data-image-filename="'
           .htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'" src="photo-fetch.php/thumb/';
-  $thumbfile = $photoThumbsDirectory.'\\'.$imagefile;
+  $thumbfile = $photoThumbsDirectory.DIRECTORY_SEPARATOR.$imagefile;
   if (file_exists($thumbfile)) {
 	echo @filemtime($thumbfile).'/';
   }
