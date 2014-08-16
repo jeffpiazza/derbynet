@@ -48,6 +48,7 @@ echo '<replay-state host-and-port="'.$replay['host_and_port'].'"'
     .' last_contact="'.$replay['last_contact'].'"'
     .' state="'.$replay['state'].'"'
     .' icon="'.$icon.'"'
+    .' connected="'.($replay['state'] != REPLAY_NOT_CONNECTED).'"'
     .'>';
 echo $msg;
 echo "</replay-state>\n";
