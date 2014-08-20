@@ -99,32 +99,6 @@ p.last_contact {
 }
 
 
-
-/** modal window styles **/
-#modal_background {
-    position: fixed;
-    z-index:100;
-    top: 0px;
-    left: 0px;
-    height:100%;
-    width:100%;
-    background: #000;
-    display: none;
-}
-
-.modal_dialog {
-  display: none;
-  width: 300px;
-  padding: 15px 20px;
-  background: #f3f6fa;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-}
-
 #manual_results_modal {
   width: 500px;
 }

@@ -30,7 +30,7 @@ require_once('inc/authorize.inc');
       echo "<h4>Database Connection</h4>\n";
 
       echo "<pre>\n";
-      echo htmlspecialchars(file_get_contents('local/config.inc',
+      echo htmlspecialchars(file_get_contents('local/config-database.inc',
                                               /* use_include_path */ true),
                             ENT_QUOTES, 'UTF-8');
       echo "</pre>\n";
