@@ -1,5 +1,5 @@
 <?php
-@include("local/config.inc");
+@include("local/config-database.inc");
 if (!isset($db)) {
 	header('Location: setup.php');
 	exit();
@@ -26,17 +26,22 @@ function db_timestamp_expr() {
       : 'CURRENT_TIMESTAMP';
 }
 
-function read_single_value($sql, $params, $def = false) {
+function read_single_row($sql, $params) {
   global $db;
   $rs = $db->prepare($sql);
   $rs->execute($params);
   $row = $rs->fetch(PDO::FETCH_NUM);
-  $value = $row[0];
   $rs->closeCursor();
+  return $row;
+}
+
+function read_single_value($sql, $params, $def = false) {
+  $row = read_single_row($sql, $params);
   if ($row === false || $row[0] === null) {
 	return $def;
   }
-  return $value;
+
+  return $row[0];
 }
 
 
