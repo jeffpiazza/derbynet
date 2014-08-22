@@ -98,7 +98,6 @@ function show_modal(modal_selector, submit_handler) {
     modal_background.fadeTo(200, 0.5);
 
     var modal_div = $(modal_selector);
-    modal_div.find("#kiosk_name_field").val(name);
     var form = modal_div.find("form");
     form.off("submit");
     form.on("submit", submit_handler);
@@ -117,7 +116,14 @@ function show_modal(modal_selector, submit_handler) {
     modal_div.fadeTo(200, 1);
 }
 
+function close_modal(modal_selector) {
+    $("#modal_background").fadeOut(200);
+    $(modal_selector).addClass("hidden");
+    $(modal_selector).css({'display': 'none'});
+}
+
 function show_kiosk_naming_modal(address, name) {
+    $("#kiosk_name_field").val(name);
     show_modal("#kiosk_modal", function(event) {
         handle_name_kiosk(address, $("#kiosk_name_field").val());
         return false;
@@ -125,19 +131,13 @@ function show_kiosk_naming_modal(address, name) {
 }
 
 function handle_name_kiosk(address, name) {
-    close_kiosk_modal();
+    close_modal("#kiosk_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'assign-kiosk',
                    address: address,
                    name: name},
            });
-}
-
-function close_kiosk_modal() {
-    $("#modal_background").fadeOut(200);
-    $("#kiosk_modal").addClass("hidden");
-    $("#kiosk_modal").css({'display': 'none'});
 }
 
 
@@ -175,7 +175,7 @@ function show_manual_results_modal() {
 }
 
 function handle_manual_results_submit( ) {
-    close_manual_results_modal();
+    close_modal("#manual_results_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#manual_results_modal form").serialize(),
@@ -184,7 +184,7 @@ function handle_manual_results_submit( ) {
 }
 
 function handle_discard_results_button() {
-    close_manual_results_modal();
+    close_modal("#manual_results_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             // TODO: There's a risk that the coordinator form gets
@@ -200,12 +200,6 @@ function handle_discard_results_button() {
            });
 }
 
-function close_manual_results_modal() {
-    $("#modal_background").fadeOut(200);
-    $("#manual_results_modal").addClass("hidden");
-    $("#manual_results_modal").css({'display': 'none'});
-}
-
 // Controls for racing rounds
 
 function show_schedule_modal(roundid) {
@@ -216,7 +210,7 @@ function show_schedule_modal(roundid) {
 }
 
 function handle_schedule_submit(roundid, rounds) {
-    close_schedule_modal();
+    close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'schedule',
@@ -224,12 +218,6 @@ function handle_schedule_submit(roundid, rounds) {
                    nrounds: rounds},
             success: function(data) { process_coordinator_poll_response(data); }
            });
-}
-
-function close_schedule_modal() {
-    $("#modal_background").fadeOut(200);
-    $("#schedule_modal").addClass("hidden");
-    $("#schedule_modal").css({'display': 'none'});
 }
 
 function handle_reschedule_button(roundid) {
@@ -258,6 +246,39 @@ function handle_make_changes_button(roundid) {
                    roundid: roundid,
                    heat: 1,
                    now_racing: 0},
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+}
+
+function show_new_round_modal(roundid) {
+    $("#new_round_modal #new_round_roundid").val(roundid);
+    show_modal("#new_round_modal", function(event) {
+        handle_new_round_submit();
+        return false;
+    });
+}
+
+function handle_new_round_submit(roundid) {
+    close_modal("#new_round_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $("#new_round_modal form").serialize(),
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+}
+
+function show_replay_settings_modal() {
+    show_modal("#replay_settings_modal", function(event) {
+        handle_replay_settings_submit();
+        return false;
+    });
+}
+
+function handle_replay_settings_submit() {
+    close_modal("#replay_settings_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $("#replay_settings_modal form").serialize(),
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -378,6 +399,16 @@ function generate_scheduling_control_group(roundid, round_class, round, roster_s
                            + ' value="Race"/>');
         }
     }
+
+    // TODO: AND there isn't already a next round or grand finals with
+    // finishtimes...
+    // TODO: Un-generate a round?  GPRM allows deleting rounds, but
+    // apparently not the first round.
+    if (n_heats_scheduled > 0 && n_heats_run == n_heats_scheduled) {
+        buttons.append('<input type="button" data-enhanced="true"'
+                       + ' onclick="show_new_round_modal(' + roundid + ')"'
+                       + ' value="New Round"/>');
+    }
     
     elt.appendTo(roundid == current.roundid ? "#now-racing-group"
                  : n_heats_run < n_heats_scheduled ? "#ready-to-race-group"
@@ -388,6 +419,9 @@ function generate_scheduling_control_group(roundid, round_class, round, roster_s
 function process_coordinator_poll_response(data) {
     $(".scheduling_control_group").empty();
     var current_heat = data.getElementsByTagName("current-heat")[0];
+    if (!current_heat) {
+        return;
+    }
     var current = {roundid: current_heat.getAttribute('roundid'),
                    heat: current_heat.getAttribute('heat')};
     var rounds = data.getElementsByTagName("round");
@@ -435,25 +469,27 @@ function process_coordinator_poll_response(data) {
 
     var racer_elements = data.getElementsByTagName("racer");
     g_current_heat_racers = new Array(racer_elements.length);
-    $("#now-racing-group").prepend("<table class='heat-lineup'>" 
-                                   + "<tr>" 
-                                   + "<th>Lane</th>"
-                                   + "<th>Racer</th>"
-                                   + "<th>Car</th>"
-                                   + "<th>Time</th>" 
-                                   + "</tr>"
-                                   + "</table>");
-    var racers_table = $("#now-racing-group table");
-    for (var i = 0; i < racer_elements.length; ++i) {
-        g_current_heat_racers[i] = {lane: racer_elements[i].getAttribute("lane"),
-                                    name: racer_elements[i].getAttribute("name"),
-                                    carnumber: racer_elements[i].getAttribute("carnumber"),
-                                    finishtime: racer_elements[i].getAttribute("finishtime")};
-        racers_table.append('<tr><td>' + racer_elements[i].getAttribute("lane") + '</td>'
-                            + '<td>' + racer_elements[i].getAttribute("name") + '</td>'
-                            + '<td>' + racer_elements[i].getAttribute("carnumber") + '</td>'
-                            + '<td>' + racer_elements[i].getAttribute("finishtime") + '</td>'
-                            + '</tr>');
+    if (racer_elements.length > 0) {
+        $("#now-racing-group").prepend("<table class='heat-lineup'>" 
+                                       + "<tr>" 
+                                       + "<th>Lane</th>"
+                                       + "<th>Racer</th>"
+                                       + "<th>Car</th>"
+                                       + "<th>Time</th>" 
+                                       + "</tr>"
+                                       + "</table>");
+        var racers_table = $("#now-racing-group table");
+        for (var i = 0; i < racer_elements.length; ++i) {
+            g_current_heat_racers[i] = {lane: racer_elements[i].getAttribute("lane"),
+                                        name: racer_elements[i].getAttribute("name"),
+                                        carnumber: racer_elements[i].getAttribute("carnumber"),
+                                        finishtime: racer_elements[i].getAttribute("finishtime")};
+            racers_table.append('<tr><td>' + racer_elements[i].getAttribute("lane") + '</td>'
+                                + '<td>' + racer_elements[i].getAttribute("name") + '</td>'
+                                + '<td>' + racer_elements[i].getAttribute("carnumber") + '</td>'
+                                + '<td>' + racer_elements[i].getAttribute("finishtime") + '</td>'
+                                + '</tr>');
+        }
     }
 
     $("#kiosk_control_group").trigger("create");
