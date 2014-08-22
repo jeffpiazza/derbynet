@@ -10,9 +10,13 @@
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
   <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
+      <delete file="../WebRaceManager.zip " quiet="yes" failonerror="false"/>
+
+      <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
       <zip destfile="../WebRaceManager.zip">
           <fileset dir=".">
               <include name="website/**/*"/>
+              <exclude name="website/local/**"/>
           </fileset>
           <fileset dir=".">
               <include name="*.dmg"/>
@@ -22,8 +26,7 @@
           </fileset>
       </zip>
 
-      <delete file="${replay-app.name}.dmg"
-              quiet="yes" failonerror="false"/>
+      <delete file="${replay-app.name}.dmg" quiet="yes" failonerror="false"/>
   </target>
 
   <target name="generated-version.inc">

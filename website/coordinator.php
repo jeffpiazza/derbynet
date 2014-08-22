@@ -9,16 +9,29 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/flipswitch.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
-<script type="text/javascript" src="js/flipswitch.js"></script>
+<script type="text/javascript">
+// We're using jQuery Mobile for its nice mobile/tablet-friendly UI
+// elements.  By default, jQM also wants to hijack page loading
+// functionality, and perform page loads via ajax, a "service" we
+// don't really want.  Fortunately, it's possible to turn that stuff
+// off.
+$(document).bind("mobileinit", function() {
+                                   $.extend($.mobile, {
+                                         ajaxEnabled: false
+                                         });
+                                 });
+</script>
+<!-- For flipswitch and select elements: -->
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
 <?php $banner_title = 'Race Dashboard'; require('inc/banner.inc'); ?>
-
+<?php require_once('inc/ajax-failure.inc'); ?>
 <div class="double_control_column">
 
 <div id="now-racing-group" class="scheduling_control_group">
@@ -64,6 +77,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <div id="test_replay" class="block_buttons">
     <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
   </div>
+  <div class="block_buttons">
+    <input type="button" data-enhanced="true" value="Settings" onclick="show_replay_settings_modal();"/>
+  </div>
 </div>
 
 <div id="kiosk_control_group" class="kiosk_control_group">
@@ -90,7 +106,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <input type="text" id="kiosk_name_field"/>
     <input type="submit" data-enhanced="true" value="Assign"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_kiosk_modal();'/>
+      onclick='close_modal("#kiosk_modal");'/>
   </form>
 </div>
 
@@ -108,7 +124,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
     <input type="submit" data-enhanced="true" value="Schedule"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_schedule_modal();'/>
+      onclick='close_modal("#schedule_modal");'/>
   </form>
 </div>
 
@@ -122,7 +138,77 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
            value="Discard Results"/>
     <input type="submit" data-enhanced="true" value="Change"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_manual_results_modal();'/>
+      onclick='close_modal("#manual_results_modal");'/>
+  </form>
+</div>
+
+<div id='replay_settings_modal' class="modal_dialog hidden block_buttons">
+  <form>
+    <input type="hidden" name="action" value="change-replay"/>
+
+    <label for="replay_duration">Duration of replay, in seconds:</label>
+    <!-- Could be any decimal value... -->
+    <select id="replay_duration" name="replay_duration">
+        <option>2.0</option>
+        <option>2.5</option>
+        <option>3.0</option>
+        <option>3.5</option>
+        <option>4.0</option>
+        <option>4.5</option>
+        <option>5.0</option>
+        <option>5.5</option>
+        <option>6.0</option>
+        <option>6.5</option>
+    </select>
+
+    <label for="replay_num_showings">Number of times to show replay:</label>
+    <!-- Could be any positive integer -->
+    <select id="replay_num_showings" name="replay_num_showings">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+    </select>
+
+    <label for="replay_rate">Replay playback speed:</label>
+    <!-- Could be any decimal value -->
+    <select id="replay_rate" name="replay_rate">
+        <option>0.1x</option>
+        <option>0.25x</option>
+        <option>0.5x</option>
+        <option>0.75x</option>
+        <option>1x</option>
+    </select>
+    <input type="submit" data-enhanced="true" value="Submit"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#replay_settings_modal");'/>
+  </form>
+</div>
+
+<div id='new_round_modal' class="modal_dialog hidden block_buttons">
+  <form>
+    <input type="hidden" name="action" value="make-roster"/>
+    <input type="hidden" name="roundid" id="new_round_roundid"/>
+
+    <label for="now_round_top">Choose top</label>
+    <select id="new_round_top" name="top">
+        <option>2</option>
+        <option selected="selected">3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+    </select>
+<!--
+    <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+      data-on-text="Each Den" data-off-text="Overall"/>
+-->
+
+    <input type="submit" data-enhanced="true" value="Submit"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#new_round_modal");'/>
   </form>
 </div>
 
