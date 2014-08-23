@@ -7,7 +7,7 @@
 <?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
-<p class="kiosk_title"><?php echo $_SERVER['REMOTE_ADDR']; ?></p>
+<p class="kiosk_title"><?php echo $_SERVER['REMOTE_ADDR']; ?>+<?php echo $_SERVER['REMOTE_PORT']; ?></p>
 <p id="kiosk_name" class="kiosk_title"></p>
 <div class="full_page_center">
 <pre>

@@ -1,5 +1,6 @@
 <?php
-require('inc/data.inc');
+require_once('inc/data.inc');
+require_once('inc/kiosks.inc');
 
 // 'page' query argument to support testing
 if (isset($_GET['page'])) {

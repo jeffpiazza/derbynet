@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/newracer.inc');
+require_once(sql_file_path('column-widths'));
 
 start_response();
 
