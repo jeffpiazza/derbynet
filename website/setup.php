@@ -63,7 +63,6 @@ if (file_exists($local_config_inc)) {
 
 <div id="choose_database_modal" class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="setup"/>
     <label for="connection_string">Database connection string:</label>
     <input type="text" name="connection_string" id="connection_string_field"/>
     <label for="dbuser">Database user name:</label>
