@@ -74,8 +74,24 @@ function handle_choose_database() {
                 console.log(data);
 	            var success = data.documentElement.getElementsByTagName("success");
                 if (success && success.length > 0) {
-                    alert("Configuration successful!  Click 'Back' button in upper left corner.");
+                    alert("Configuration successful!");
+                    location.reload(true);
                 }
             }
+           });
+}
+
+function handle_initialize_schema() {
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'run-sql',
+                   script: 'schema'},
+            success: function(data) {
+	            var success = data.documentElement.getElementsByTagName("success");
+                if (success && success.length > 0) {
+                    alert("Schema definition successful!");
+                    location.reload(true);
+                }
+            },
            });
 }
