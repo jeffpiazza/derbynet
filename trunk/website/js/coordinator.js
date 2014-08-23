@@ -26,7 +26,19 @@ $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
 
 // End of preamble
 
+// g_current_heat_racers remembers who the racers in the current heat
+// are, so the modal for manual heat results can be populated when
+// displayed.
 g_current_heat_racers = new Array();
+
+// The polling rate for the page is relatively fast, and each time
+// causes a rewrite of everything for all the kiosks.  If the user has
+// opened the <select> element for choosing a page to present on a
+// kiosk, rewriting the control will cause the user's action to be
+// ignored.  To combat this, we only update the kiosk groups when
+// there's a detectable change, and for that, we keep a hash of what
+// the last state of the kiosk data was.
+g_kiosk_hash = 0;
 
 // Processing a response from coordinator_poll can force the isracing
 // flipswitch to change state.  We don't want that change to trigger
@@ -36,6 +48,17 @@ g_current_heat_racers = new Array();
 // Use this boolean to mark changes induced programmatically, as
 // opposed to user input.
 g_updating_current_round = false;
+
+
+
+function hash_string(hash, str) {
+	for (i = 0; i < str.length; i++) {
+		var ch = str.charCodeAt(i);
+		hash = ((hash<<5)-hash)+ch;
+		hash = hash & hash; // Convert to 32bit integer
+	}
+	return hash;
+}
 
 // Controls for current racing group:
 
@@ -331,7 +354,7 @@ function generate_replay_state_group(replay_state) {
 function generate_kiosk_control_group(index, name, address, last_contact, assigned_page, pages) {
     var div = $("<div class=\"block_buttons\"/>");
     var elt = $("<div class=\"control_group kiosk_control\"/>");
-    // TODO: Allow naming of the kiosks; otherwise it's just IP addresses
+
     elt.append("<p>Kiosk <span class=\"kiosk_control_name\">" + name + "</span>"
                + " <span class=\"kiosk_control_address\">" + address + "</span>"
                + "</p>");
@@ -454,17 +477,32 @@ function process_coordinator_poll_response(data) {
                     path: kiosk_pages[i].textContent};
     }
 
-    $("#kiosk_control_group").empty();
     var kiosks = data.getElementsByTagName("kiosk");
+    var hash = 0;
     for (var i = 0; i < kiosks.length; ++i) {
         var kiosk = kiosks[i];
-        generate_kiosk_control_group(
-            i,
-            kiosk.getElementsByTagName("name")[0].textContent,
-            kiosk.getElementsByTagName("address")[0].textContent,
-            kiosk.getElementsByTagName("last_contact")[0].textContent,
-            kiosk.getElementsByTagName("assigned_page")[0].textContent,
-            pages);
+        hash = hash_string(hash,
+                           kiosk.getElementsByTagName("name")[0].textContent);
+        hash = hash_string(hash,
+                           kiosk.getElementsByTagName("address")[0].textContent);
+        hash = hash_string(hash,
+                           kiosk.getElementsByTagName("last_contact")[0].textContent);
+        hash = hash_string(hash,
+                           kiosk.getElementsByTagName("assigned_page")[0].textContent);
+    }
+    if (hash != g_kiosk_hash) {
+        $("#kiosk_control_group").empty();
+        for (var i = 0; i < kiosks.length; ++i) {
+            var kiosk = kiosks[i];
+            generate_kiosk_control_group(
+                i,
+                kiosk.getElementsByTagName("name")[0].textContent,
+                kiosk.getElementsByTagName("address")[0].textContent,
+                kiosk.getElementsByTagName("last_contact")[0].textContent,
+                kiosk.getElementsByTagName("assigned_page")[0].textContent,
+                pages);
+        }
+        g_kiosk_hash = hash;
     }
 
     var racer_elements = data.getElementsByTagName("racer");
