@@ -1,5 +1,4 @@
 <?php
-require_once('inc/data.inc');
 require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 

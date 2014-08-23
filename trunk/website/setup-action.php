@@ -1,12 +1,21 @@
 <?php
 
-// $_POST['connection_string'], e.g., 'mysql:host=localhost;dbname=trial3'
+// Formerly action.setup.inc, but this can't be an ajax action run
+// through action.php, because inc/data.inc will force a redirect if
+// there's no configured database.
 
+// $_POST['connection_string'], e.g., 'mysql:host=localhost;dbname=trial3'
 // $_POST['dbuser']
 // $_POST['dbpass']
 
+require_once('inc/permissions.inc');
+require_once('inc/authorize.inc');
+
+require_once('inc/action-helpers.inc');
+
+
 function local_file_name($filename) {
-  return 'local/'.$filename;
+  return 'local'.DIRECTORY_SEPARATOR.$filename;
 }
 
 
@@ -28,6 +37,8 @@ function write_config_file($filename, $content) {
 }
 
 
+header('Content-Type: text/xml; charset=utf-8');
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 start_response();
 
 if (have_permission(SET_UP_PERMISSION)) {

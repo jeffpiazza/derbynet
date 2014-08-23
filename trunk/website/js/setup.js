@@ -66,7 +66,7 @@ function show_choose_database_modal() {
 
 function handle_choose_database() {
     close_modal("#choose_database_modal");
-    $.ajax('action.php',
+    $.ajax('setup-action.php',
            {type: 'POST',
             data: $("#choose_database_modal form").serialize(),
             success: function(data) {
