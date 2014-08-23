@@ -8,6 +8,16 @@ function create_kiosk_table() {
   }
 }
 
+function address_for_current_kiosk() {
+  if (isset($_SESSION['address'])) {
+    $addr = $_SESSION['address'];
+  } else {
+    $addr = $_SERVER['REMOTE_ADDR'].'+'.$_SERVER['REMOTE_PORT'];
+    $_SESSION['address'] = $addr;
+  }
+  return $addr;
+}
+
 // Searches the Kiosks table, if there is one, for an entry for the
 // current client's IP address plus port.  If there's a page assigned for this
 // client, returns that.  Otherwise, returns a RaceInfo entry for the
@@ -15,7 +25,9 @@ function create_kiosk_table() {
 // identify kiosk page.
 function kiosk_page() {
   global $db;
-  $addr = $_SERVER['REMOTE_ADDR'].'+'.$_SERVER['REMOTE_PORT'];
+
+  $addr = address_for_current_kiosk();
+
   do {  // Retry loop to allow for having to create the table
     $retry = false;
     try {

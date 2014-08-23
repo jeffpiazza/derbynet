@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <?php
 require_once('inc/data.inc');
 require_once('inc/kiosks.inc');

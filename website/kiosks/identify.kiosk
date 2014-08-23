@@ -7,14 +7,14 @@
 <?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
-<p class="kiosk_title"><?php echo $_SERVER['REMOTE_ADDR']; ?>+<?php echo $_SERVER['REMOTE_PORT']; ?></p>
+ <p class="kiosk_title">Kiosk identifier:</p>
+ <p class="kiosk_title"><?php echo address_for_current_kiosk(); ?></p>
 <p id="kiosk_name" class="kiosk_title"></p>
 <div class="full_page_center">
 <pre>
 <?php print_r($_SERVER); ?>
 </pre>
 </div>
-<p class="kiosk_title">Welcome</p>
 <div id="ajax_failure" class="hidden">
   Ajax request failed with <span id="ajax_status">0</span>.
 </div>
