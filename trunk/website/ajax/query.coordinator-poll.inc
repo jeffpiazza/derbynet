@@ -55,6 +55,7 @@ echo "</replay-state>\n";
 ?>
 <?php // Kiosks
 require_once('inc/kiosks.inc');
+
 try {
   drop_old_kiosks();
   $stmt = $db->query('SELECT address, name, page, last_contact FROM Kiosks ORDER BY name, address, last_contact');
@@ -62,16 +63,13 @@ try {
     echo '<kiosk>'."\n";
     echo '  <name>'.htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8').'</name>'."\n";
     echo '  <address>'.htmlspecialchars($row['address'], ENT_QUOTES, 'UTF-8').'</address>'."\n";
-    echo '  <last_contact>'.$row['last_contact'].'</last_contact>'."\n";
+    echo '  <last_contact>'.floor((time() - $row['last_contact'])/60).' minute(s) ago</last_contact>'."\n";
     echo '  <assigned_page>'.$row['page'].'</assigned_page>'."\n";
     echo '</kiosk>'."\n";
     }
 } catch (PDOException $p) {
-    // TODO: No Kiosks table
-    echo '<h2>No Kiosks table defined.</h2>';  // TODO: Or other problem...
-    // TODO: What if not throwing exceptions?
-    // TODO: Create kiosk table on demand
-    // TODO: Allow assigning name to kiosk
+  // Most likely: no kiosks table.
+  // One will be created if a kiosk actually connects.
 }
 
 xml_for_kiosk_pages('kiosks');

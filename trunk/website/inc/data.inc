@@ -16,14 +16,9 @@ if ($dbtype == 'odbc') {
 	$dbtype = 'access';
 }
 
-define('CLASS_COLUMN_WIDTH', 15);
-define('RANK_COLUMN_WIDTH', 15);
-
-function db_timestamp_expr() {
+function sql_file_path($stem) {
   global $dbtype;
-  return $dbtype == 'access' 
-      ? 'NOW()'
-      : 'CURRENT_TIMESTAMP';
+  return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
 }
 
 function read_single_row($sql, $params) {
@@ -99,37 +94,6 @@ function use_master_sched() {
 }
 function update_period() {
   return read_raceinfo('update-period', 2500);
-}
-
-// Searches the Kiosks table, if there is one, for an entry for the
-// current client's IP address.  If there's a page assigned for this
-// client, returns that.  Otherwise, returns a RaceInfo entry for the
-// default kiosk page, if there is one; otherwise, returns the
-// identify kiosk page.
-function kiosk_page() {
-  global $db;
-  try {
-      $stmt = $db->prepare('SELECT page, name FROM Kiosks WHERE address = :address');
-      $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
-      $row = $stmt->fetch(PDO::FETCH_ASSOC);
-      $stmt->closeCursor();
-      if ($row) {
-          $stmt = $db->prepare('UPDATE Kiosks SET last_contact = NOW() WHERE address = :address');
-          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR']));
-          if (@$row['page']) {
-              return $row;
-          }
-          // else row exists, but no page set
-      } else {
-          // No row exists
-          $stmt = $db->prepare('INSERT INTO Kiosks(address, page, last_contact)'
-                               .' VALUES(:address, :page, '.db_timestamp_expr().')');
-          $stmt->execute(array(':address' => $_SERVER['REMOTE_ADDR'],
-                               ':page' => 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
-      }
-  } catch (PDOException $p) {
-  }
-  return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
 }
 
 function photo_directory() {
