@@ -40,7 +40,7 @@ echo 'php_uname("s") = '; var_dump(php_uname('s'));
 <h3>Current Configuration File</h3>
 <?php
 
-$local_config_inc = 'local/config-database.inc';
+$local_config_inc = 'local'.DIRECTORY_SEPARATOR.'config-database.inc';
 
 if (file_exists($local_config_inc)) {
   echo "<pre>\n";
@@ -48,6 +48,11 @@ if (file_exists($local_config_inc)) {
                                           /* use_include_path */ true),
                         ENT_QUOTES, 'UTF-8');
   echo "</pre>\n";
+  try {
+    @include($local_config_inc);
+  } catch (PDOException $p) {
+    echo '<p>Configuration file fails to load correctly.</p>';
+  }
 } else {
   echo "<p>You do not yet have a local configuration file.</p>\n";
   if (!is_dir('local')) {
@@ -60,6 +65,27 @@ if (file_exists($local_config_inc)) {
 <div class="block_buttons">
     <input type="button" data-enhanced="true" value="Configure" onclick="show_choose_database_modal()"/><br/>
 </div>
+
+<?php
+if ($db) {
+  try {
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $db->prepare('SELECT COUNT(*) from RegistrationInfo');
+    $stmt->execute(array());
+    $row = $stmt->fetch(PDO::FETCH_NUM);
+    $stmt->closeCursor();
+    echo '<p>There are '.$row[0].' row(s) in the RegistrationInfo table.</p>';
+  } catch (PDOException $p) {
+    echo '<p>Unable to query RegistrationInfo table.</p>';
+  }
+?>
+<div class="block_buttons">
+    <input type="button" data-enhanced="true" value="Initialize Schema" onclick="handle_initialize_schema()"/><br/>
+</div>
+<?php
+}
+
+?>
 
 <div id="choose_database_modal" class="modal_dialog hidden block_buttons">
   <form>
