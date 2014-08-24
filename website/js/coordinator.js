@@ -521,15 +521,17 @@ function inject_into_scheduling_control_group(round, current) {
 
 function generate_scheduling_control_group(round, current) {
     var elt = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
+    var collapsible = " collapsible";
     if (round.roundid == current.roundid) {
         elt.addClass('current');
+        collapsible = "";
     }
 
     elt.append('<div class="roundno">' + round.round + '</div>');
     elt.append('<h3>' + (round.roundid == current.roundid ? '' : '<img data-name="triangle" src="img/triangle_east.png"/>')
                       + round.classname + '</h3>');
 
-    elt.append('<div class="collapsible">'
+    elt.append('<div class="' + collapsible + '">'
                + '<p><span data-name="roster_size"></span> racer(s), '
                + '<span data-name="n_passed"></span> passed, ' 
                + '<span data-name="scheduled"></span> in schedule.<br/>'
@@ -547,15 +549,23 @@ function generate_scheduling_control_group(round, current) {
 
     // Which buttons appear depends on a bunch of the parameters.
     // It should be OK for inject to just rewrite the buttons every time.
-    var buttons = $("<div data-name=\"buttons\" class=\"collapsible block_buttons\"/>");
+    var buttons = $("<div data-name=\"buttons\" class=\"block_buttons" + collapsible + "\"/>");
     buttons.appendTo(elt);
 
     if (round.roundid != current.roundid) {
         elt.find(".collapsible").hide();
         elt.click(function() {
-            elt.find("img[data-name=triangle]")
-                .attr('src', elt.find(".collapsible").css("display") == "none" ? 'img/triangle_south.png' : 'img/triangle_east.png');
-            elt.find(".collapsible").slideToggle(200); });
+            var closed = elt.find(".collapsible").css("display") == "none";
+            // Don't want the current round to collapse like this...
+
+            $("img[data-name=triangle]").attr('src', 'img/triangle_east.png');
+            $(".collapsible").slideUp(200);
+
+            if (closed) {
+                elt.find("img[data-name=triangle]").attr('src', 'img/triangle_south.png');
+                elt.find(".collapsible").slideDown(200); 
+            }
+        });
     }
 
     // By this rule, changes to n_heats_run and n_heats_scheduled and
