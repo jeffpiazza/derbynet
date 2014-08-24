@@ -14,6 +14,15 @@
   float: right;
 }
 
+.heat-lineup table {
+  width: 100%;
+}
+
+.heat-lineup h3 {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
 .heat-lineup td {
   margin: 0px;
   padding: 0px;
@@ -105,4 +114,37 @@ p.last_contact {
 
 #manual_results_modal table {
   width: 100%;
+}
+
+.roundno {
+  width: 30px;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.progress {
+    width: 450px;
+    height: 15px;
+    border: 1px solid black;
+    overflow: hidden;
+    background: rgba(255,255,255,0.5);
+}
+
+.progress .bar1 {
+    width: 0%;
+    height: 100%;
+    float: left;
+    border-right: 1px solid #000000;
+    background: #023882;
+}
+
+.progress .bar2 {
+    width: 0%;
+    height: 100%;
+    float: left;
+    border-right: 1px solid #000000;
+    background: #F7D117;
 }

@@ -31,6 +31,14 @@ $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
 // displayed.
 g_current_heat_racers = new Array();
 
+// To avoid rewriting (as opposed to updating) round controls constantly,
+// keep this signature that gives the roundids in each category, in order.
+// We only need to rewrite the round controls when this signature changes.
+g_rounds_layout = {'now-racing': [],
+                   'ready-to-race': [],
+                   'done-racing': [],
+                   'not-yet-scheduled': []};
+
 // The polling rate for the page is relatively fast, and each time
 // causes a rewrite of everything for all the kiosks.  If the user has
 // opened the <select> element for choosing a page to present on a
@@ -50,7 +58,6 @@ g_kiosk_hash = 0;
 g_updating_current_round = false;
 
 
-
 function hash_string(hash, str) {
 	for (i = 0; i < str.length; i++) {
 		var ch = str.charCodeAt(i);
@@ -63,9 +70,6 @@ function hash_string(hash, str) {
 // Controls for current racing group:
 
 function handle_isracing_change(event, scripted) {
-    console.log('handle_isracing_change: checked=' + $("#is-currently-racing").prop('checked')
-                + ', scripted=' + scripted
-                + ', g_updating=' + g_updating_current_round);  // TODO
     if (!g_updating_current_round) {
         $.ajax(g_action_url,
                {type: 'POST',
@@ -307,25 +311,105 @@ function handle_replay_settings_submit() {
 }
 
 
+// Parsing for coordinator-poll output
+
+/* <current-heat now-racing= use-master-sched= classid= roundid= round=
+                 group= heat= /> */
+function parse_current_heat(data) {
+    var current_xml = data.getElementsByTagName("current-heat")[0];
+    if (!current_xml) {
+        return {};
+    }
+    // NOTE: heats_scheduled gets written in process_coordinator_poll_response
+    return {roundid: current_xml.getAttribute('roundid'),
+            heat: current_xml.getAttribute('heat'),
+            is_racing: current_xml.getAttribute('now-racing') == '1'};
+}
+
+function parse_rounds(data) {
+    var rounds_xml = data.getElementsByTagName("round");
+    var rounds = new Array(rounds_xml.length);
+    for (var i = 0; i < rounds_xml.length; ++i) {
+        var round_xml = rounds_xml[i];
+        rounds[i] = {roundid: round_xml.getAttribute('roundid'),
+                     classname: round_xml.getAttribute('class'),
+                     round: round_xml.getAttribute('round'),
+                     roster_size: round_xml.getAttribute('roster_size'),
+                     racers_passed: round_xml.getAttribute('passed'),
+                     racers_unscheduled: round_xml.getAttribute('unscheduled'),
+                     racers_scheduled: round_xml.getAttribute('passed') - round_xml.getAttribute('unscheduled'),
+                     heats_scheduled: round_xml.getAttribute('heats_scheduled'),
+                     heats_run: round_xml.getAttribute('heats_run'),
+                     category: 'unassigned'};
+        rounds[i].category = 
+          // May get changed to now-racing for the current round
+          rounds[i].heats_scheduled > rounds[i].heats_run ? 'ready-to-race' :
+          rounds[i].heats_run > 0 ? 'done-racing' : 'not-yet-scheduled';
+    }
+    return rounds;
+}
+
+function parse_timer_state(data) {
+    var tstate_xml = data.getElementsByTagName("timer-state")[0];
+    return {status: tstate_xml.textContent,
+            icon: tstate_xml.getAttribute('icon'),
+            lanes: tstate_xml.getAttribute('lanes')};
+}
+
+function parse_replay_state(data) {
+    var replay_state_xml = data.getElementsByTagName("replay-state")[0];
+    return {status: replay_state_xml.textContent,
+            icon: replay_state_xml.getAttribute('icon'),
+            connected: replay_state_xml.getAttribute('connected')};
+}
+
+function parse_kiosk_pages(data) {
+    var kiosk_pages_xml = data.getElementsByTagName("kiosk-page");
+    var kiosk_pages = new Array(kiosk_pages_xml.length);
+    for (var i = 0; i < kiosk_pages_xml.length; ++i) {
+        kiosk_pages[i] = {brief: kiosk_pages_xml[i].getAttribute('brief'),
+                          path: kiosk_pages_xml[i].textContent};
+    }
+    return kiosk_pages;
+}
+
+function parse_kiosks(data) {
+    var kiosks_xml = data.getElementsByTagName("kiosk");
+    var kiosks = new Array(kiosks_xml.length);
+    for (var i = 0; i < kiosks_xml.length; ++i) {
+        var kiosk_xml = kiosks_xml[i];
+        kiosks[i] = {name: kiosk_xml.getElementsByTagName("name")[0].textContent,
+                     address: kiosk_xml.getElementsByTagName("address")[0].textContent,
+                     last_contact: kiosk_xml.getElementsByTagName("last_contact")[0].textContent,
+                     assigned_page: kiosk_xml.getElementsByTagName("assigned_page")[0].textContent};
+    }
+    return kiosks;
+}
+
+function parse_racers(data) {
+    var racers_xml = data.getElementsByTagName("racer");
+    var racers = new Array(racers_xml.length);
+    for (var i = 0; i < racers_xml.length; ++i) {
+        racers[i] = {lane: racers_xml[i].getAttribute("lane"),
+                     name: racers_xml[i].getAttribute("name"),
+                     carnumber: racers_xml[i].getAttribute("carnumber"),
+                     finishtime: racers_xml[i].getAttribute("finishtime")};
+    }
+    return racers;
+}
+
 // Generate page contents in response to coordinator-poll output
 
 /* <current-heat now-racing= use-master-sched= classid= roundid= round=
                  group= heat= /> */
 
-function update_for_current_round(current_heat) {
+function update_for_current_round(current) {
     var isracing_checkbox = $("#is-currently-racing");
-    var is_racing = (current_heat.getAttribute('now-racing') == '1');
-
-    if (isracing_checkbox.prop('checked') != is_racing) {
-        console.log('update_for_current_round: isracing_checkbox.prop(\'checked\')=' + isracing_checkbox.prop('checked')
-+ '; is_racing=' + is_racing); // TODO
-        isracing_checkbox.prop('checked', is_racing);
-        // isracing_checkbox.change(); TODO
+    if (isracing_checkbox.prop('checked') != current.is_racing) {
+        isracing_checkbox.prop('checked', current.is_racing);
         g_updating_current_round = true;
         try {
-            console.log('update_for_current_round: triggering scripted change event');
             isracing_checkbox.trigger("change", true);
-            // Are the events handled asynchronously?
         } finally {
             g_updating_current_round = false;
         }
@@ -333,40 +417,39 @@ function update_for_current_round(current_heat) {
 }
 
 function generate_timer_state_group(tstate) {
-    $("#timer_status_text").text(tstate.textContent);
-    $("#timer_status_icon").attr('src', tstate.getAttribute('icon'));
-    var lanes = tstate.getAttribute('lanes');
-    if (lanes != '') {
-        $("#lane_count").text(lanes);
+    $("#timer_status_text").text(tstate.status);
+    $("#timer_status_icon").attr('src', tstate.icon);
+    if (tstate.lanes != '') {
+        $("#lane_count").text(tstate.lanes);
     }
 }
 
 function generate_replay_state_group(replay_state) {
-    $("#replay_status").text(replay_state.textContent);
-    $("#replay_status_icon").attr('src', replay_state.getAttribute('icon'));
-    if (replay_state.getAttribute('connected')) {
+    $("#replay_status").text(replay_state.status);
+    $("#replay_status_icon").attr('src', replay_state.icon);
+    if (replay_state.connected) {
         $("#test_replay").removeClass("hidden");
     } else {
         $("#test_replay").addClass("hidden");
     }
 }
 
-function generate_kiosk_control_group(index, name, address, last_contact, assigned_page, pages) {
+function generate_kiosk_control_group(index, kiosk, pages) {
     var div = $("<div class=\"block_buttons\"/>");
     var elt = $("<div class=\"control_group kiosk_control\"/>");
 
-    elt.append("<p>Kiosk <span class=\"kiosk_control_name\">" + name + "</span>"
-               + " <span class=\"kiosk_control_address\">" + address + "</span>"
+    elt.append("<p>Kiosk <span class=\"kiosk_control_name\">" + kiosk.name + "</span>"
+               + " <span class=\"kiosk_control_address\">" + kiosk.address + "</span>"
                + "</p>");
-    elt.append("<p class=\"last_contact\">Last contact: " + last_contact + "</p>");
+    elt.append("<p class=\"last_contact\">Last contact: " + kiosk.last_contact + "</p>");
     elt.append("<label for=\"kiosk-page-" + index + "\">Display:</label>");
     var sel = $("<select name=\"kiosk-page-" + index + "\"" 
-                + " data-kiosk-address=\"" + address + "\"" 
+                + " data-kiosk-address=\"" + kiosk.address + "\"" 
                 + " onchange=\"handle_assign_kiosk_page_change(this)\""
                 + "/>");
     for (var i = 0; i < pages.length; ++i) {
         opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
-        if (assigned_page == pages[i].path) {
+        if (kiosk.assigned_page == pages[i].path) {
             opt.prop("selected", true);
         }
         sel.append(opt);
@@ -374,51 +457,52 @@ function generate_kiosk_control_group(index, name, address, last_contact, assign
 
     sel.appendTo(elt);
     elt.append('<input type="button" data-enhanced="true"'
-               + ' onclick="show_kiosk_naming_modal(\'' + address + '\', \'' + name + '\')"'
+               + ' onclick="show_kiosk_naming_modal(\'' + kiosk.address + '\', \'' + kiosk.name + '\')"'
                + ' value="Assign Name"/>');
 
     elt.appendTo(div);
     div.appendTo("#kiosk_control_group");
 }
 
-function generate_scheduling_control_group(roundid, round_class, round, roster_size, n_passed, n_unscheduled, 
-                                           n_heats_scheduled, n_heats_run, current) {
-    var elt = $("<div class=\"control_group scheduling_control\"/>");
-    if (roundid == current.roundid) {
-        elt.addClass('current');
+function inject_into_scheduling_control_group(round, current) {
+    var group = $("[data-roundid=" + round.roundid + "]");
+    group.find("[data-name=roster_size]").text(round.roster_size);
+    group.find("[data-name=n_passed]").text(round.racers_passed);
+    group.find("[data-name=scheduled]").text(round.racers_scheduled);
+    group.find("[data-name=n_heats_scheduled]").text(round.heats_scheduled);
+    group.find("[data-name=n_heats_run]").text(round.heats_run);
+    if (round.roster_size > 0) {
+        group.find(".racers .bar1").width( Math.floor(100 * round.racers_passed / round.roster_size) + '%');
+        group.find(".racers .bar2").width( Math.floor(100 * round.racers_unscheduled / round.roster_size) + '%');
+    }
+    if (round.heats_scheduled > 0) {
+        group.find(".heats .bar1").width( Math.floor(round.heats_run / round.heats_scheduled * 100) + '%');
     }
 
-    elt.append('<h3>' + round_class + ', round ' + round
-               + (roundid == current.roundid ? '; heat ' + current.heat + ' of ' + n_heats_scheduled : '')
-               + '</h3>');
-    elt.append('<p>' + roster_size + ' racer(s), ' + n_passed + ' passed, ' 
-               + (n_passed - n_unscheduled) + ' in schedule.</p>');
-    elt.append('<p>' + n_heats_scheduled + ' heats scheduled, ' + n_heats_run + ' run.</p>');
+    var buttons = group.find("[data-name=buttons]");
+    buttons.empty();
 
-    var buttons = $("<div class=\"block_buttons\"/>");
-    buttons.appendTo(elt);
-
-    if (n_unscheduled > 0) {
-        if (n_heats_run == 0) {
+    if (round.racers_unscheduled > 0) {
+        if (round.heats_run == 0) {
             buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="show_schedule_modal(' + roundid + ')"'
+                           + ' onclick="show_schedule_modal(' + round.roundid + ')"'
                            + ' value="Schedule"/>');
         } else {
             buttons.append('<input type="button" data-enhanced="true"' 
-                           + ' onclick="handle_reschedule_button(' + roundid + ')"'
+                           + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
                            + ' value="Reschedule"/>');
         }
     }
 
-    if (roundid != current.roundid) {
+    if (round.roundid != current.roundid) {
         // TODO: Don't offer 'race' choice for single roundid under master scheduling
-        if (n_heats_run > 0) {
+        if (round.heats_run > 0) {
             buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="handle_make_changes_button(' + roundid + ')"'
+                           + ' onclick="handle_make_changes_button(' + round.roundid + ')"'
                            + ' value="Make Changes"/>');
-        } else if (n_heats_scheduled > 0 && n_heats_run < n_heats_scheduled) {
+        } else if (round.heats_scheduled > 0 && round.heats_run < round.heats_scheduled) {
             buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="handle_race_button(' + roundid + ')"'
+                           + ' onclick="handle_race_button(' + round.roundid + ')"'
                            + ' value="Race"/>');
         }
     }
@@ -427,120 +511,166 @@ function generate_scheduling_control_group(roundid, round_class, round, roster_s
     // finishtimes...
     // TODO: Un-generate a round?  GPRM allows deleting rounds, but
     // apparently not the first round.
-    if (n_heats_scheduled > 0 && n_heats_run == n_heats_scheduled) {
+    if (round.heats_scheduled > 0 && round.heats_run == round.heats_scheduled) {
         buttons.append('<input type="button" data-enhanced="true"'
-                       + ' onclick="show_new_round_modal(' + roundid + ')"'
+                       + ' onclick="show_new_round_modal(' + round.roundid + ')"'
                        + ' value="New Round"/>');
     }
-    
-    elt.appendTo(roundid == current.roundid ? "#now-racing-group"
-                 : n_heats_run < n_heats_scheduled ? "#ready-to-race-group"
-                 : n_heats_run > 0 ? "#done-racing-group"
-                 : "#not-yet-scheduled-group");
+
 }
 
-function process_coordinator_poll_response(data) {
-    $(".scheduling_control_group").empty();
-    var current_heat = data.getElementsByTagName("current-heat")[0];
-    if (!current_heat) {
-        return;
-    }
-    var current = {roundid: current_heat.getAttribute('roundid'),
-                   heat: current_heat.getAttribute('heat')};
-    var rounds = data.getElementsByTagName("round");
-
-    update_for_current_round(current_heat);
-    for (var i = 0; i < rounds.length; ++i) {
-        var round = rounds[i];
-        generate_scheduling_control_group(
-            round.getAttribute('roundid'),
-            round.getAttribute('class'),
-            round.getAttribute('round'),
-            round.getAttribute('roster_size'),
-            round.getAttribute('passed'),
-            round.getAttribute('unscheduled'),
-            round.getAttribute('heats_scheduled'),
-            round.getAttribute('heats_run'),
-            current);
+function generate_scheduling_control_group(round, current) {
+    var elt = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
+    if (round.roundid == current.roundid) {
+        elt.addClass('current');
     }
 
-    var timer_state = data.getElementsByTagName("timer-state")[0];
-    generate_timer_state_group(timer_state);
+    elt.append('<div class="roundno">' + round.round + '</div>');
+    elt.append('<h3>' + (round.roundid == current.roundid ? '' : '<img data-name="triangle" src="img/triangle_east.png"/>')
+                      + round.classname + '</h3>');
 
-    var replay_state = data.getElementsByTagName("replay-state")[0];
-    generate_replay_state_group(replay_state);
+    elt.append('<div class="collapsible">'
+               + '<p><span data-name="roster_size"></span> racer(s), '
+               + '<span data-name="n_passed"></span> passed, ' 
+               + '<span data-name="scheduled"></span> in schedule.<br/>'
+               + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
+               + '<span data-name="n_heats_run"></span> run.</p>'
+               + '</div>');
 
-    var kiosk_pages = data.getElementsByTagName("kiosk-page");
-    var pages = new Array(kiosk_pages.length);
-    for (var i = 0; i < kiosk_pages.length; ++i) {
-        pages[i] = {brief: kiosk_pages[i].getAttribute('brief'),
-                    path: kiosk_pages[i].textContent};
+    elt.append("<div class='racers progress'>"
+               + "<div class='bar1'></div>"
+               + "<div class='bar2'></div>"
+               + "</div>");
+    elt.append("<div class='heats progress'>"
+               + "<div class='bar1'></div>"
+               + "</div>");
+
+    // Which buttons appear depends on a bunch of the parameters.
+    // It should be OK for inject to just rewrite the buttons every time.
+    var buttons = $("<div data-name=\"buttons\" class=\"collapsible block_buttons\"/>");
+    buttons.appendTo(elt);
+
+    if (round.roundid != current.roundid) {
+        elt.find(".collapsible").hide();
+        elt.click(function() {
+            elt.find("img[data-name=triangle]")
+                .attr('src', elt.find(".collapsible").css("display") == "none" ? 'img/triangle_south.png' : 'img/triangle_east.png');
+            elt.find(".collapsible").slideToggle(200); });
     }
 
-    var kiosks = data.getElementsByTagName("kiosk");
+    // By this rule, changes to n_heats_run and n_heats_scheduled and
+    // current.roundid would change the order for the rounds.
+    elt.appendTo("#" + round.category + "-group");
+
+    inject_into_scheduling_control_group(round, current);
+}
+
+function generate_kiosk_controls(pages, kiosks) {
+
     var hash = 0;
     for (var i = 0; i < kiosks.length; ++i) {
         var kiosk = kiosks[i];
-        hash = hash_string(hash,
-                           kiosk.getElementsByTagName("name")[0].textContent);
-        hash = hash_string(hash,
-                           kiosk.getElementsByTagName("address")[0].textContent);
-        hash = hash_string(hash,
-                           kiosk.getElementsByTagName("last_contact")[0].textContent);
-        hash = hash_string(hash,
-                           kiosk.getElementsByTagName("assigned_page")[0].textContent);
+        hash = hash_string(hash, kiosk.name);
+        hash = hash_string(hash, kiosk.address);
+        hash = hash_string(hash, kiosk.last_contact);
+        hash = hash_string(hash, kiosk.assigned_page);
     }
     if (hash != g_kiosk_hash) {
         $("#kiosk_control_group").empty();
         for (var i = 0; i < kiosks.length; ++i) {
-            var kiosk = kiosks[i];
-            generate_kiosk_control_group(
-                i,
-                kiosk.getElementsByTagName("name")[0].textContent,
-                kiosk.getElementsByTagName("address")[0].textContent,
-                kiosk.getElementsByTagName("last_contact")[0].textContent,
-                kiosk.getElementsByTagName("assigned_page")[0].textContent,
-                pages);
+            generate_kiosk_control_group(i, kiosks[i], pages);
         }
         g_kiosk_hash = hash;
     }
+}
 
-    var racer_elements = data.getElementsByTagName("racer");
-    g_current_heat_racers = new Array(racer_elements.length);
-    if (racer_elements.length > 0) {
-        $("#now-racing-group").prepend("<table class='heat-lineup'>" 
+function generate_current_heat_racers(racers, current) {
+    g_current_heat_racers = racers;
+    // TODO: Assumes now-racing-group empty?
+    if (racers.length > 0) {
+        $("#now-racing-group").prepend("<div class='heat-lineup'><table>" 
                                        + "<tr>" 
                                        + "<th>Lane</th>"
                                        + "<th>Racer</th>"
                                        + "<th>Car</th>"
                                        + "<th>Time</th>" 
                                        + "</tr>"
-                                       + "</table>");
+                                       + "</table>"
+                                       + "<h3>Heat " + current.heat + " of "
+                                           + current.heats_scheduled + "</h3>"
+                                       + "</div>");
+
         var racers_table = $("#now-racing-group table");
-        for (var i = 0; i < racer_elements.length; ++i) {
-            g_current_heat_racers[i] = {lane: racer_elements[i].getAttribute("lane"),
-                                        name: racer_elements[i].getAttribute("name"),
-                                        carnumber: racer_elements[i].getAttribute("carnumber"),
-                                        finishtime: racer_elements[i].getAttribute("finishtime")};
-            racers_table.append('<tr><td>' + racer_elements[i].getAttribute("lane") + '</td>'
-                                + '<td>' + racer_elements[i].getAttribute("name") + '</td>'
-                                + '<td>' + racer_elements[i].getAttribute("carnumber") + '</td>'
-                                + '<td>' + racer_elements[i].getAttribute("finishtime") + '</td>'
+        for (var i = 0; i < racers.length; ++i) {
+            racers_table.append('<tr><td>' + racers[i].lane + '</td>'
+                                + '<td>' + racers[i].name + '</td>'
+                                + '<td>' + racers[i].carnumber + '</td>'
+                                + '<td>' + racers[i].finishtime + '</td>'
                                 + '</tr>');
         }
     }
+}
+
+function process_coordinator_poll_response(data) {
+    var current = parse_current_heat(data);
+    if (!current) {
+        return;
+    }
+    update_for_current_round(current);
+
+    var rounds = parse_rounds(data);
+    var layout = {'now-racing': [],
+                  'ready-to-race': [],
+                  'done-racing': [],
+                  'not-yet-scheduled': []};
+    $.each(rounds, function (index, round) {
+        if (round.roundid == current.roundid) {
+            current.heats_scheduled = round.heats_scheduled;
+            round.category = 'now-racing';
+        }
+        layout[round.category].push(round.roundid);
+    });
+
+    var matched = true;
+    for (var key in layout) {
+        if (layout[key].toString() != g_rounds_layout[key].toString()) {
+            matched = false;
+        }
+    }
+
+    if (matched) {
+        $("#now-racing-group .heat-lineup").remove();
+        $.each(rounds, function (index, round) {
+            inject_into_scheduling_control_group(round, current);
+        });
+    } else {
+        g_rounds_layout = layout;
+        $(".scheduling_control_group").empty();
+        $.each(rounds, function (index, round) {
+            generate_scheduling_control_group(round, current);
+        });
+    }
+
+    generate_timer_state_group(parse_timer_state(data));
+
+    generate_replay_state_group(parse_replay_state(data));
+
+    generate_kiosk_controls(parse_kiosk_pages(data), parse_kiosks(data));
+
+    generate_current_heat_racers(parse_racers(data), current);
 
     $("#kiosk_control_group").trigger("create");
 }
 
 function coordinator_poll() {
-    console.log("coordinator_poll");
     $.ajax(g_action_url,
            {type: 'GET',
             data: {query: 'coordinator-poll'},
             success: function(data) {
-                setTimeout(coordinator_poll, 2000);
+                setTimeout(coordinator_poll, /* TODO: 2000 */ 6000);
                 process_coordinator_poll_response(data);
+                //$(".collapsible").slideUp();
+                //setTimeout(function() { $(".collapsible").slideDown(); }, 2000);
             },
             error: function() {
                 setTimeout(coordinator_poll, 2000);

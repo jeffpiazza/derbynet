@@ -82,7 +82,7 @@ $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
 $stmt = $db->query('SELECT roundid, Classes.class, round FROM Rounds'
                    .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
-                   .' ORDER BY round, Classes.class');
+                   .' ORDER BY round DESC, Classes.class');
 $rounds = array();
 foreach ($stmt as $round) {
     $rounds[] = $round;
