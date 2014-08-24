@@ -27,12 +27,14 @@ function write_heat_results() {
         // General strategy should be: reject results, but log
         // them somewhere that can be presented on coordinator
         // dashboard.
+
         $all_times = array();  // after sorting, place (0-based) => finishtime
         $stmt = $db->prepare('SELECT resultid, lane, finishtime FROM RaceChart'
                              .' WHERE roundid = :roundid AND heat = :heat'
                              .' ORDER BY lane');
         $stmt->execute(array(':roundid' => $roundid,
                              ':heat' => $current['heat']));
+
         foreach ($stmt as $row) {
           $lane = $row['lane'];
           $all_times[] = array('resultid' => $row['resultid'],
@@ -52,7 +54,7 @@ function write_heat_results() {
           take_action_silently('UPDATE RaceChart'
                                .' SET finishtime = :time,'
                                .' finishplace = :place,'
-                               .' completed = '.db_timestamp_expr()
+                               .' completed = NOW()'
                                .' WHERE resultid = :resultid',
                                array(':time' => $content['finishtime'],
                                      ':place' => 1 + $place,
