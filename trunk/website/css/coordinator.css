@@ -34,6 +34,10 @@
   padding: 10px;
  }
 
+.control_column .scheduling_control {
+    cursor: pointer;
+}
+
 .current {
   background-color: #F7D117;
 }
@@ -41,6 +45,12 @@
 .current.control_group h3 {
   margin-top: 0px;
   font-size: x-large;
+  margin-bottom: 0px;
+}
+
+.current.control_group p {
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .status_icon {
