@@ -2,7 +2,6 @@
 require_once('inc/data.inc');
 
 $nlanes = get_lane_count();
-// TODO: If $nlanes not yet set, then this page isn't ready for display
 ?>
 <html>
 <head>
@@ -14,12 +13,23 @@ $nlanes = get_lane_count();
 <link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/now-racing.js"></script>
+<?php // If $nlanes not yet set, then this page isn't ready for display.
+    if (!$nlanes) {
+?><script type="text/javascript">
+$(function () {
+    setTimeout(function() {
+        console.log("Reloading because nlanes not set yet.");
+        location.reload(true);
+      },
+      5000);
+  });
+</script>
+<?php }  // if (!$nlanes)
+?>
 </head>
 <body>
-<?php
-$banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc');
-?>
-
+<?php $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc'); ?>
+<?php if ($nlanes) { ?>
 <table>
 <tr><th>Lane</th>
     <th>Racer</th>
@@ -40,13 +50,14 @@ $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc');
 ?>
 
 </table>
-
 <?php
   for ($i = 1; $i <= $nlanes; ++$i) {
       echo '<div id="place'.$i.'" class="flying"><span>'.$i.'</span></div>'."\n";
   }
 ?>
-
+<?php } else { ?>
+<h2>Number of lanes not yet recorded...</h2>
+<?php } ?>
 <?php require_once('inc/ajax-kiosk-failure.inc'); ?>
 </body>
 </html>
