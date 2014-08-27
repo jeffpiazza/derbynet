@@ -109,7 +109,7 @@ function get_lane_count() {
   global $db;
   $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
   $row = $rs->fetch(PDO::FETCH_NUM);
-  if (!$row) {
+  if (!$row || !isset($row[0]) || !$row[0]) {
     return read_raceinfo('lane_count', -1);
   } else {
 	return $row[0];

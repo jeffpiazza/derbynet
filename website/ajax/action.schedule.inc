@@ -452,7 +452,7 @@ function read_race_chart($roundid) {
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-  $nlanes = read_raceinfo('nlanes', -1);
+  $nlanes = read_raceinfo('lane_count', -1);
   if ($nlanes < 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
   } else if (results_exist($_POST['roundid'])) {
