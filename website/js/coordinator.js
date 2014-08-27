@@ -472,8 +472,14 @@ function inject_into_scheduling_control_group(round, current) {
     group.find("[data-name=n_heats_scheduled]").text(round.heats_scheduled);
     group.find("[data-name=n_heats_run]").text(round.heats_run);
     if (round.roster_size > 0) {
-        group.find(".racers .bar1").width( Math.floor(100 * round.racers_passed / round.roster_size) + '%');
-        group.find(".racers .bar2").width( Math.floor(100 * round.racers_unscheduled / round.roster_size) + '%');
+        // bar2 (yellow) = passed
+        // bar1 (blue) = scheduled
+        // Trouble here will be scheduled-but-no-longer-passed, i.e., scheduled > passed
+        var passed = Math.max(round.racers_passed, round.racers_scheduled);
+        group.find(".racers .bar2").width( /*Math.floor*/(100 * passed / round.roster_size) + '%');
+        if (passed > 0) {
+            group.find(".racers .bar1").width( /*Math.floor*/(100 * round.racers_scheduled / passed) + '%');
+        }
     }
     if (round.heats_scheduled > 0) {
         group.find(".heats .bar1").width( Math.floor(round.heats_run / round.heats_scheduled * 100) + '%');
@@ -540,8 +546,9 @@ function generate_scheduling_control_group(round, current) {
                + '</div>');
 
     elt.append("<div class='racers progress'>"
+               + "<div class='bar2'>"
                + "<div class='bar1'></div>"
-               + "<div class='bar2'></div>"
+               + "</div>"
                + "</div>");
     elt.append("<div class='heats progress'>"
                + "<div class='bar1'></div>"
