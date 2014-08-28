@@ -4,28 +4,38 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 
 require_permission(SET_UP_PERMISSION);
-
-// TODO: settings POST should be an action
-
-if ($_POST) {
-  write_raceinfo('use-subgroups', @$_POST['do-use-subgroups'] ? '1' : '0');
-  write_raceinfo('n-den-trophies', $_POST['n-den-trophies']);
-  write_raceinfo('n-pack-trophies', $_POST['n-pack-trophies']);
-  write_raceinfo('xbs-award', @$_POST['use-xbs'] ? $_POST['xbs-award'] : '');
-  write_raceinfo('group-label', $_POST['group-label']);
-  write_raceinfo('subgroup-label', $_POST['subgroup-label']);
-  write_raceinfo('supergroup-label', $_POST['supergroup-label']);
-  write_raceinfo('use-master-sched', @$_POST['use-master-sched'] ? '1' : '0');
-  write_raceinfo('update-period', $_POST['update-period']);
-  write_raceinfo('photo-directory', $_POST['photo_dir']);
-  write_raceinfo('photo-size', $_POST['photo_width'].'x'.$_POST['photo_height']);
-}
 ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Pinewood Derby Race Settings</title>
 <?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+function on_form_submission() {
+  console.log('submitted!');
+  console.log($("#settings_form").serialize());
+    $.ajax('action.php',
+           {type: 'POST',
+            data: $("#settings_form").serialize(),
+            success: function(data) {
+               var fail = data.documentElement.getElementsByTagName("failure");
+               if (fail && fail.length > 0) {
+                 console.log(data);
+                 alert("Action failed: " + fail[0].textContent);
+               } else {
+                 window.location.href = "index.php";
+               }
+             },
+             error: function(jqXHR, ajaxSettings, thrownError) {
+               alert('Ajax error: ' + thrownError);
+             }
+           });
+  return false;
+};
+
+$(function() { $("#settings_form").on("submit", on_form_submission); });
+</script>
 </head>
 <body>
 <?php
@@ -42,11 +52,13 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
 ?>
 <p>The track has <?php echo $nlanes; ?> lane(s).</p>
 <div class="block_buttons">
-<form method="POST">
+<form id="settings_form">
+  <input type="hidden" name="action" value="write-settings"/>
   <div class="settings_group">
     <input id="group-label" name="group-label" type="text" value="<?php echo group_label(); ?>"/>
     <label for="group-label">Group Label</label>
     <br/>
+    <input type="hidden" name="do-use-subgroups-checkbox" value="yes"/>
     <input id="use-subgroups" name="do-use-subgroups" type="checkbox"<?php if ($use_subgroups) echo ' checked="checked"';?>/>
     <label for="use-subgroups">Use subgroups?</label>
     <br/>
@@ -70,6 +82,7 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
   <br/>
 
   <div class="settings_group">
+    <input type="hidden" name="use-xbs-checkbox" value="yes"/>
     <input id="use-xbs" name="use-xbs" type="checkbox"<?php if ($use_xbs) echo ' checked="checked"';?>/>
     <label for="use-xbs">Offer "Exclusively By Scout" award?</label>
     <br/>
@@ -80,6 +93,7 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
   <br/>
 
   <div class="settings_group">
+    <input type="hidden" name="use-master-sched-checkbox" value="yes"/>
     <input id="use-master-sched" name="use-master-sched" type="checkbox"<?php if ($use_master_sched) echo ' checked="checked"';?>/>
     <label for="use-master-sched">Use master schedules</label>
   </div>
@@ -112,14 +126,5 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
 </form>
 </div>
 
-<table>
-<?php
-    if (FALSE) {
-	  foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $row) {
-		echo '<tr><td>'.$row['itemkey'].'</td><td>'.$row['itemvalue'].'</td></tr>'."\n";
-      }
-    }
-?>
-</table>
 </body>
 </html>
