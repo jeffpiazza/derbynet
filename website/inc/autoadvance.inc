@@ -14,8 +14,14 @@ function advance_heat(&$current, $roundid, $requested_heat, $echo_failure) {
   $ok = true;
 
   if ($current['use_master_sched'] && 
-      ($requested_heat == 'next' || $requested_heat == 'prev')) {
-    if (isset($current['roundid']) && isset($current['heat'])) {
+      ($requested_heat == 'first' || $requested_heat == 'next' || $requested_heat == 'prev')) {
+    if ($requested_heat == 'first') {
+      $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
+                           .' WHERE masterheat = (SELECT MIN(masterheat)'
+                                                  .' FROM RaceChart'
+                                                  .' WHERE finishtime IS NULL)');
+      $stmt->execute(array());
+    } else if (isset($current['roundid']) && isset($current['heat'])) {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = '
                            .'   (SELECT DISTINCT masterheat FROM RaceChart'
