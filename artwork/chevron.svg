@@ -14,10 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/triangle_east.png"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/triangle_south.png"
    inkscape:export-xdpi="13.9"
    inkscape:export-ydpi="13.9"
-   sodipodi:docname="triangle.svg">
+   sodipodi:docname="New document 1">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,17 +28,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="6"
-     inkscape:cx="26.185766"
+     inkscape:cx="46.352433"
      inkscape:cy="53.919067"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      fit-margin-top="5"
      fit-margin-left="25"
      fit-margin-right="25"
      fit-margin-bottom="5"
      inkscape:window-width="1316"
-     inkscape:window-height="1156"
+     inkscape:window-height="1162"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0" />
@@ -59,25 +59,22 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0.75,-6.96875)"
-     style="display:inline">
+     style="display:none">
     <path
        style="fill:#023882;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       d="m 17,5 0,81.3125 8,0 8,0 L 73.65625,45.65625 33,5 25,5 z"
+       d="M 17,5 17,13 49.65625,45.65625 17,78.3125 l 0,8 8,0 8,0 L 73.65625,45.65625 33,5 25,5 17,5 z"
        transform="translate(-0.75,6.96875)"
        id="path2990"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccc" />
+       inkscape:connector-curvature="0" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="South"
-     style="display:none">
+     inkscape:label="South">
     <path
        id="path3783"
-       d="m 85.984375,17.328125 -81.3125,0 0,8 0,8 40.65625,40.65625 40.65625,-40.65625 0,-8 z"
+       d="m 85.984375,17.328125 -8,0 -32.65625,32.65625 -32.65625,-32.65625 -8,0 0,8 0,8 40.65625,40.65625 40.65625,-40.65625 0,-8 0,-8 z"
        style="fill:#023882;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccc" />
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
