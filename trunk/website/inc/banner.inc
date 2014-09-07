@@ -11,7 +11,7 @@
 	 echo '<div class="banner_title">'.$banner_title.'</div>'."\n";
    }
    if (isset($_SESSION['role']) && $_SESSION['role']) {
-	 echo '<div class="role">In '.$_SESSION['role'].' role.  <a href="login.php?logout">Log out</a></div>'."\n";
+	 echo '<div class="role">In '.$_SESSION['role'].' role.<br/><a href="login.php?logout">Log out</a></div>'."\n";
    }
 ?>
   <img src="img/cubscout_emblem.png"/>
