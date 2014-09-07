@@ -74,13 +74,13 @@ if ($db) {
     $stmt->execute(array());
     $row = $stmt->fetch(PDO::FETCH_NUM);
     $stmt->closeCursor();
-    echo '<p>There are '.$row[0].' row(s) in the RegistrationInfo table.</p>';
+    echo '<p>There are '.$row[0].' racer(s) registered.</p>';
   } catch (PDOException $p) {
     echo '<p>Unable to query RegistrationInfo table.</p>';
   }
 ?>
 <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Initialize Schema" onclick="handle_initialize_schema()"/><br/>
+    <input type="button" data-enhanced="true" value="Initialize Schema" onclick="show_initialize_schema_modal()"/><br/>
 </div>
 <?php
 }
@@ -99,6 +99,18 @@ if ($db) {
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#choose_database_modal");'/>
+  </form>
+</div>
+
+<div id="initialize_schema_modal" class="modal_dialog hidden block_buttons">
+  <form>
+
+    <p>Initializing the schema will wipe out any existing data in the 
+    database, and cannot be undone.  Are you sure that's what you want to do?</p>
+
+    <input type="submit" data-enhanced="true" value="Initialize"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#initialize_schema_modal");'/>
   </form>
 </div>
 

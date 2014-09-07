@@ -81,7 +81,15 @@ function handle_choose_database() {
            });
 }
 
+function show_initialize_schema_modal() {
+  show_modal("#initialize_schema_modal", function(event) {
+      handle_initialize_schema();
+      return false;
+  });
+}
+
 function handle_initialize_schema() {
+    close_modal("#initialize_schema_modal");
     $.ajax('action.php',
            {type: 'POST',
             data: {action: 'run-sql',
