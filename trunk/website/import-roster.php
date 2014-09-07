@@ -22,6 +22,13 @@ require_permission(SET_UP_PERMISSION);
 <?php
 $banner_title = 'Import Roster';
 require('inc/banner.inc');
+
+try {
+  $racers = read_single_value("SELECT COUNT(*) FROM RegistrationInfo", array());
+} catch (PDOException $p) {
+  $racers = -1;
+}
+
 ?><div class="import_roster">
 
 <div id="top_matter">
@@ -31,6 +38,17 @@ require('inc/banner.inc');
 
 <div id="controls">
   <div id="meta"></div>
+
+  <?php if ($racers > 0) { ?>
+    <p>There are already <?php echo $racers; ?> racer(s) registered.
+    Re-initialize the database schema if you're trying to start fresh.</p>
+  <?php } else if ($racers < 0) { ?>
+    <p>The RegistrationInfo table could not be read: you should probably finish setting up the database.</p>
+  <?php } ?>
+
+  <form method="link" action="setup.php">
+    <input type="submit" value="Set Up Database"/>
+  </form>
 
   <form method="link">
     <input type="submit" id="start_over_button" class="hidden" value="Start Over"/>
