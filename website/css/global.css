@@ -28,7 +28,8 @@ div.banner div.role {
   margin-top: auto;
   margin-bottom: auto;
   top: 0; bottom: 0;
- height: 18px;
+  text-align: center;
+ height: 40px;
 }
 
 div.banner img {
