@@ -22,14 +22,20 @@ div.banner div {
 
 div.banner div.role {
   position: absolute;
-   right: 60px;
-  background-color: #F7D117;
-  /* To achieve vertical centering (http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/) */
+  right: 60px;
+  /* To achieve vertical centering
+   (http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/)
+  */
   margin-top: auto;
   margin-bottom: auto;
   top: 0; bottom: 0;
   text-align: center;
  height: 40px;
+}
+
+div.banner div.role,
+div.banner div.role a {
+  color: #F7D117;
 }
 
 div.banner img {
