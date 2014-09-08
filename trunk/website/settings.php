@@ -42,7 +42,6 @@ $(function() { $("#settings_form").on("submit", on_form_submission); });
 $banner_title = 'Settings';
 require('inc/banner.inc');
 
-$nlanes = get_lane_count();
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $use_xbs = read_raceinfo_boolean('xbs-award');
 $xbs_award = read_raceinfo('xbs-award');
@@ -50,10 +49,17 @@ if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 
 ?>
-<p>The track has <?php echo $nlanes; ?> lane(s).</p>
+
 <div class="block_buttons">
 <form id="settings_form">
   <input type="hidden" name="action" value="write-settings"/>
+
+  <div class="settings_group">
+    <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
+           value="<?php echo get_lane_count(); ?>"/>
+    <label for="n-lanes">Number of lanes on the track.</label>
+  </div>
+
   <div class="settings_group">
     <input id="group-label" name="group-label" type="text" value="<?php echo group_label(); ?>"/>
     <label for="group-label">Group Label</label>

@@ -110,7 +110,7 @@ function get_lane_count() {
   $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
   $row = $rs->fetch(PDO::FETCH_NUM);
   if (!$row || !isset($row[0]) || !$row[0]) {
-    return read_raceinfo('lane_count', -1);
+    return read_raceinfo('lane_count', 0);
   } else {
 	return $row[0];
   }
@@ -143,7 +143,7 @@ function high_water_rounds() {
 function get_running_round() {
   global $db;
   $config = array('use_master_sched' => 0,
-                  'now_racing' => 1,
+                  'now_racing' => 0,
 				  'class' => '',
 				  'roundid' => -1);  // May be overwritten
 
