@@ -18,7 +18,8 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }
 
-  foreach(array('n-den-trophies' => 'n-den-trophies',
+  foreach(array('n-lanes' => 'lane_count',
+                'n-den-trophies' => 'n-den-trophies',
                 'n-pack-trophies' => 'n-pack-trophies',
                 'xbs-award' => 'xbs-award',  // @$_POST['use-xbs'] ? $_POST['xbs-award'] : ''
                 'group-label' => 'group-label',

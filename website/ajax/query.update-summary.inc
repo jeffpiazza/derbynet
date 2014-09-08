@@ -62,7 +62,7 @@ if (!$hwresultid) {
 $use_master_sched = use_master_sched();
 ?>
 <?php require('inc/current-heat.inc'); ?>
-<after_heat/>
+
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
            use-master-sched="<?php echo $use_master_sched; ?>"/>

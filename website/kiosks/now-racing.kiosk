@@ -14,7 +14,7 @@ $nlanes = get_lane_count();
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/now-racing.js"></script>
 <?php // If $nlanes not yet set, then this page isn't ready for display.
-    if (!$nlanes) {
+    if ($nlanes <= 0) {
 ?><script type="text/javascript">
 $(function () {
     setTimeout(function() {
@@ -24,12 +24,12 @@ $(function () {
       5000);
   });
 </script>
-<?php }  // if (!$nlanes)
+<?php }  // if ($nlanes <= 0)
 ?>
 </head>
 <body>
 <?php $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc'); ?>
-<?php if ($nlanes) { ?>
+<?php if ($nlanes > 0) { ?>
 <table>
 <tr><th>Lane</th>
     <th>Racer</th>

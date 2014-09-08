@@ -16,7 +16,6 @@ require('inc/banner.inc');
 
 require_once('inc/speed_trophies.inc');
 
-$nlanes = get_lane_count();
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
