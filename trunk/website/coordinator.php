@@ -32,70 +32,76 @@ $(document).bind("mobileinit", function() {
 <body>
 <?php $banner_title = 'Race Dashboard'; require('inc/banner.inc'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
+
+<div class="double_control_column">
+  <div id="now-racing-group" class="scheduling_control_group">
+    <p>Waiting for coordinator-poll query...</p>
+  </div>
+</div>
+
+<div class="control_column">
+
+  <div class="control_group heat_control_group">
+    <div class="centered_flipswitch">
+      <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
+        checked="checked"
+        data-on-text="Racing" data-off-text="Not Racing"/>
+    </div>
+
+    <div class="block_buttons">
+      <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat_button()"/><br/>
+      <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat_button()"/><br/>
+      <input type="button" data-enhanced="true" value="Manual Results" onclick="show_manual_results_modal()"/>
+    </div>
+  </div>
+
+  <div id="add_new_rounds_group" class="control_group new_round_control hidden">
+    <div class="block_buttons">
+      <input type="button" data-enhanced="true" value="Add New Rounds"
+             onclick="show_choose_new_round_modal()"/>
+    </div>
+  </div>
+
+  <div class="control_group timer_control_group">
+    <div class="status_icon">
+      <img id="timer_status_icon" src="img/status_unknown.png"/>
+    </div>
+    <h3>Timer Status</h3>
+    <p><b id="timer_status_text">Timer status not yet updated</b></p>
+    <p>The track has <span id="lane_count">an unknown number of</span> lane(s).</p>
+  </div>
+
+  <div class="control_group replay_control_group">
+    <div class="status_icon">
+      <img id="replay_status_icon" src="img/status_unknown.png"/>
+    </div>
+    <h3>Replay Status</h3>
+    <p><b id="replay_status">Remote replay status not yet updated</b></p>
+    <div id="test_replay" class="block_buttons">
+      <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
+    </div>
+    <div class="block_buttons">
+      <input type="button" data-enhanced="true" value="Settings" onclick="show_replay_settings_modal();"/>
+    </div>
+  </div>
+
+  <div id="kiosk_control_group" class="kiosk_control_group">
+  </div>
+
+</div>
+
+<div class="control_column">
+
+  <div id="master-schedule-group" class="master_schedule_group"></div>
+  <div id="ready-to-race-group" class="scheduling_control_group"></div>
+  <div id="not-yet-scheduled-group" class="scheduling_control_group"></div>
+  <div id="done-racing-group" class="scheduling_control_group"></div>
+
+</div>
+
 <div class="double_control_column">
 
-<div id="now-racing-group" class="scheduling_control_group">
-  <p>Waiting for coordinator-poll query...</p>
-</div>
 
-</div>
-
-<div class="control_column">
-
-<div class="control_group heat_control_group">
-  <div class="centered_flipswitch">
-    <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
-      checked="checked"
-      data-on-text="Racing" data-off-text="Not Racing"/>
-  </div>
-
-  <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat_button()"/><br/>
-    <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat_button()"/><br/>
-    <input type="button" data-enhanced="true" value="Manual Results" onclick="show_manual_results_modal()"/><br/>
-    <!-- TODO: discard results (one or all heats) -->
-  </div>
-
-</div>
-
-
-<div class="control_group timer_control_group">
-  <div class="status_icon">
-    <img id="timer_status_icon" src="img/status_unknown.png"/>
-  </div>
-  <h3>Timer Status</h3>
-  <p><b id="timer_status_text">Timer status not yet updated</b></p>
-  <p>The track has <span id="lane_count">an unknown number of</span> lane(s).</p>
-</div>
-
-<div class="control_group replay_control_group">
-  <div class="status_icon">
-    <img id="replay_status_icon" src="img/status_unknown.png"/>
-  </div>
-  <h3>Replay Status</h3>
-  <p><b id="replay_status">Remote replay status not yet updated</b></p>
-  <div id="test_replay" class="block_buttons">
-    <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
-  </div>
-  <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Settings" onclick="show_replay_settings_modal();"/>
-  </div>
-</div>
-
-<div id="kiosk_control_group" class="kiosk_control_group">
-</div>
-
-</div>
-
-<div class="control_column">
-
-<div id="ready-to-race-group" class="scheduling_control_group"></div>
-<div id="not-yet-scheduled-group" class="scheduling_control_group"></div>
-<div id="done-racing-group" class="scheduling_control_group"></div>
-
-<?php
-// TODO: Controls for creating 2nd round, grand finals round, including roster
-?>
 </div>
 
 <div id='modal_background'></div>
@@ -184,31 +190,64 @@ $(document).bind("mobileinit", function() {
   </form>
 </div>
 
-<div id='new_round_modal' class="modal_dialog hidden block_buttons">
+<div id='choose_new_round_modal' class="modal_dialog block_buttons hidden">
+  <!-- Populated by script: see offer_new_rounds() -->
+</div>
+
+<div id='new_round_modal' class="modal_dialog block_buttons hidden">
   <form>
     <input type="hidden" name="action" value="make-roster"/>
     <input type="hidden" name="roundid" id="new_round_roundid"/>
 
-    <label for="now_round_top">Choose top</label>
-    <select id="new_round_top" name="top">
-        <option>2</option>
-        <option selected="selected">3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>10</option>
-    </select>
-<!--
-    <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
-      data-on-text="Each Den" data-off-text="Overall"/>
--->
+    <div id="multi_flipswitches" class="multi_den_only">
+    </div>
+
+    <p>Choose top</p>
+    <input type="number" name="top" id="now_round_rop" value="3"/>
+
+    <div class="single_den_only">
+    <?php if (read_raceinfo('use-subgroups')) { ?>
+      <p>racers from</p>
+      <div class="centered_flipswitch">
+        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+               data-on-text="Each <?php echo subgroup_label(); ?>" data-off-text="Overall"/>
+      </div>
+    <?php } else { ?>
+      <p>racers</p>
+    <?php } ?>
+    </div>
+
+    <div class="multi_den_only">
+      <p>racers from</p>
+      <div class="centered_flipswitch">
+        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+               data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
+      </div>
+    </div>
 
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#new_round_modal");'/>
+  </form>
+</div>
+
+<div id='new_grand_final_modal' class="modal_dialog block_buttons hidden">
+  <form>
+    <input type="hidden" name="action" value="make-roster"/>
+    <input type="hidden" name="roundid" id="new_round_roundid"/>
+
+    <p>Choose top</p>
+    <input type="number" name="top" id="now_round_rop" value="3"/>
+
+      <p>racers from</p>
+      <div class="centered_flipswitch">
+        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+               data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
+      </div>
+
+    <input type="submit" data-enhanced="true" value="Submit"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#new_grand_final_modal");'/>
   </form>
 </div>
 

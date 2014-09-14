@@ -36,6 +36,7 @@ div.banner div.role {
 div.banner div.role,
 div.banner div.role a {
   color: #F7D117;
+  text-shadow: none;
 }
 
 div.banner img {
