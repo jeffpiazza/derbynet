@@ -257,6 +257,7 @@ function make_rough_schedule($nlanes, $ncars, $nrounds) {
 			$heats[] = $heat;
 		}
 	}
+    // echo "<rough-schedule>\n"; var_dump($heats); echo "</rough-schedule>\n";
 
 	return $heats;
 }
@@ -371,7 +372,6 @@ function form_chart(&$schedule, &$roster) {
 function write_chart($roundid, &$heats) {
 	global $db;
 	$db->exec('DELETE FROM RaceChart WHERE roundid = '.$roundid);
-	// TODO: ClassID?
 	$stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
 						 .' VALUES(:roundid, :heat, :lane, :racerid)');
 	$heat_index = 0;
@@ -452,8 +452,8 @@ function read_race_chart($roundid) {
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-  $nlanes = read_raceinfo('lane_count', -1);
-  if ($nlanes < 0) {
+  $nlanes = read_raceinfo('lane_count', 0);
+  if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
   } else if (results_exist($_POST['roundid'])) {
 	echo '<failure code="results-exist">Race results already exist</failure>';
