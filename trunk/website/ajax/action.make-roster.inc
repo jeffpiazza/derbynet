@@ -14,6 +14,7 @@ if (isset($_POST['roundid'])) {
   $roundid = $_POST['roundid'];
   list($classid, $old_round) = read_single_row('SELECT classid, round FROM Rounds WHERE roundid = :roundid',
                                          array(':roundid' => $roundid));
+  // TODO: Handle not-found case
   $new_round = 1 + $old_round;
 } else {
   $grand_finals = true;
@@ -122,6 +123,8 @@ foreach ($buckets as $bucket) {
 
 echo "<new-round roundid=\"".$new_roundid."\"/>\n";
 echo "<success/>\n";
+
+require('ajax/query.coordinator-poll.inc');
 
 end_response();
 
