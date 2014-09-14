@@ -80,7 +80,7 @@ xml_for_kiosk_pages('local'.DIRECTORY_SEPARATOR.'kiosks');
 
 $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
-$stmt = $db->query('SELECT roundid, Classes.class, round FROM Rounds'
+$stmt = $db->query('SELECT roundid, Rounds.classid, Classes.class, round FROM Rounds'
                    .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
                    .' ORDER BY round DESC, Classes.class');
 $rounds = array();
@@ -93,6 +93,7 @@ foreach ($rounds as $round) {
     $roundid = $round['roundid'];
 
     echo '<round roundid="'.$roundid.'"'
+            .' classid="'.$round['classid'].'"'
             .' class="'.htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').'"'
             .' round="'.$round['round'].'"';
 
