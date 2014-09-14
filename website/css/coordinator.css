@@ -53,6 +53,10 @@
   margin-bottom: 10px;
 }
 
+.new_round_control h3 {
+  margin-bottom: 0px;
+}
+
 .status_icon {
    float: right;
 }
@@ -66,7 +70,9 @@ p.last_contact {
 }
 
 
-.heat_control_group .ui-flipswitch {
+.heat_control_group .ui-flipswitch,
+#new_round_modal .ui-flipswitch,
+#new_grand_final_modal .ui-flipswitch {
     width: 200px;
     /* center */
     margin-left: auto;
@@ -99,12 +105,16 @@ p.last_contact {
 /* Custom widths are needed because the length of custom labels differs from
    the length of the standard labels */
 
-.heat_control_group .ui-flipswitch {
+.heat_control_group .ui-flipswitch,
+#new_round_modal .ui-flipswitch,
+#new_grand_final_modal .ui-flipswitch {
     width: 8.875em;
     /* Controls flipswitch background for both "on" and "off", not suitable with "off" */
     /* background-color: #005599; */
 }
-.heat_control_group .ui-flipswitch.ui-flipswitch-active {
+.heat_control_group .ui-flipswitch.ui-flipswitch-active,
+#new_round_modal .ui-flipswitch.ui-flipswitch-active,
+#new_grand_final_modal .ui-flipswitch.ui-flipswitch-active {
     padding-left: 7em;
     width: 1.875em;
     background-color: #023882; /* JEP */
@@ -117,8 +127,23 @@ p.last_contact {
     }
 }
 
+#new_round_modal .ui-flipswitch .ui-btn.ui-flipswitch-on {
+    text-indent: -6.5em;
+}
+#new_grand_final_modal .ui-flipswitch .ui-btn.ui-flipswitch-on {
+    text-indent: -6.5em;
+}
 
-#manual_results_modal {
+#new_round_modal .ui-flipswitch .ui-flipswitch-off {
+    text-indent: 0.5em;
+}
+#new_grand_final_modal .ui-flipswitch .ui-flipswitch-off {
+    text-indent: 0.5em;
+}
+
+
+#manual_results_modal,
+.wide_modal {
   width: 500px;
 }
 
@@ -157,4 +182,17 @@ p.last_contact {
     float: left;
     border-right: 1px solid #000000;
     background: #F7D117;
+}
+
+.new_rounds_control_group .block_buttons {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+.new_rounds_control_group .block_buttons input {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.master_schedule_group .block_buttons input {
+    margin-top: 13px;
 }
