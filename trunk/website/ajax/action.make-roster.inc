@@ -18,11 +18,20 @@ if (isset($_POST['roundid'])) {
   $new_round = 1 + $old_round;
 } else {
   $grand_finals = true;
+  $all_roundids = '0';
+  foreach ($_POST as $key => $value) {
+    if (substr($key, 0, strlen('roundid_')) == 'roundid_') {
+      $all_roundids .= ', '.substr($key, strlen('roundid_'));
+    }
+  }
+  // TODO: Handle 0 or 1 roundid's provided
+
   $old_round = read_single_value('SELECT MAX(round)'
                                  .' FROM RaceChart'
                                  .' INNER JOIN Rounds'
                                  .' ON RaceChart.roundid = Rounds.roundid'
-                                 .' WHERE finishtime IS NOT NULL',
+                                 .' WHERE finishtime IS NOT NULL'
+                                 .' AND Rounds.roundid IN ('.$all_roundids.')',
                                  array());
   $new_round = $old_round;
   $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
@@ -37,6 +46,10 @@ if (isset($_POST['roundid'])) {
 // With $new_round and $classid settled, make the new round (unless it
 // already exists)
 
+// TODO: This won't work in general if there's just one "Grand Finals"
+// class and potentially multiple desired rounds at a particular round
+// level.  Probably need to keep incrementing new round numbers until
+// we get one that hasn't already been used.
 $new_roundid = read_single_value('SELECT roundid FROM Rounds'
                                  .' WHERE round = :round'
                                  .'  AND classid = :classid',
@@ -67,17 +80,19 @@ $buckets = array();  // bucketno => array of racerids
 // If bucketed, bucketno is rankid (for a den) or classid (for grand finals).
 $bucketno_expr = '1';
 
-if (!$grand_finals) {
+if ($grand_finals) {
+  $and_roundid_ok = ' AND RaceChart.roundid IN ('.$all_roundids.')';
+  $keyfield = $old_round;
+  $key = $old_round;
+  if ($bucketed) {
+    $bucketno_expr = 'RegistrationInfo.rankid';
+  }
+} else {
+  $and_roundid_ok = '';
   $keyfield = 'RaceChart.roundid';
   $key = $roundid;
   if ($bucketed) {
     $bucketno_expr = 'Rounds.classid';
-  }
-} else {
-  $keyfield = 'round';
-  $key = $old_round;
-  if ($bucketed) {
-    $bucketno_expr = 'RegistrationInfo.rankid';
   }
 }
 
@@ -92,6 +107,7 @@ $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, tot
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
                      .'       WHERE '.$keyfield.' = :key'
+                     .$and_roundid_ok
                      .'       GROUP BY racerid) AS Result'
                      .' INNER JOIN RegistrationInfo'
                      .'  ON Result.racerid = RegistrationInfo.racerid'
