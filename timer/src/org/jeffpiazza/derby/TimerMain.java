@@ -28,164 +28,165 @@ import java.util.ArrayList;
 // On 10-second elapsed, force race finish, send FINISHED 
 
 public class TimerMain {
-    private HttpTask task;
+  private HttpTask task;
 
-    private TimerMain(HttpTask task) {
-        this.task = task;
+  private TimerMain(HttpTask task) {
+    this.task = task;
+  }
+
+  public static void usage() {
+    System.err.println("Usage: [options] <base-url>");
+    System.err.println("   -u <user>: Specify username for authenticating to web server");
+    System.err.println("   -p <password>: Specify password for authenticating to web server");
+    System.err.println("   -t: Trace non-heartbeat messages sent");
+    System.err.println("   -th: Trace heartbeat messages sent");
+    System.err.println("   -r: Show responses to traced messages");
+    System.err.println("   -n <port name>: Use specified port name instead of searching");
+    System.err.println("   -d <device name>: Use specified device instead of trying to identify");
+  }
+
+  private static Class[] knownTimerDeviceClasses = { FastTrackDevice.class, ChampDevice.class };
+
+  public static void main(String[] args) {
+    String username = "RaceCoordinator";
+    String password = "doyourbest";
+    String portname = null;
+    String devicename = null;
+    StdoutMessageTrace traceMessages = null;
+    StdoutMessageTrace traceHeartbeats = null;
+    boolean traceResponses = false;
+
+    int consumed_args = 0;
+    while (consumed_args + 1 < args.length) {
+      if (args[consumed_args].equals("-u") && consumed_args + 2 < args.length) {
+        username = args[consumed_args + 1];
+        consumed_args += 2;
+      } else if (args[consumed_args].equals("-p") && consumed_args + 2 < args.length) {
+        password = args[consumed_args + 1];
+        consumed_args += 2;
+      } else if (args[consumed_args].equals("-n") && consumed_args + 2 < args.length) {
+        portname = args[consumed_args + 1];
+        consumed_args += 2;
+      } else if (args[consumed_args].equals("-d") && consumed_args + 2 < args.length) {
+        devicename = args[consumed_args + 1];
+        consumed_args += 2;
+      } else if (args[consumed_args].equals("-t")) {
+        traceMessages = new StdoutMessageTrace();
+        ++consumed_args;
+      } else if (args[consumed_args].equals("-th")) {
+        traceHeartbeats = new StdoutMessageTrace();
+        ++consumed_args;
+      } else if (args[consumed_args].equals("-r")) {
+        traceResponses = true;
+        ++consumed_args;
+      } else {
+        usage();
+        System.exit(1);
+      }
     }
 
-    public static void usage() {
-        System.err.println("Usage: [-u <user>] [-p <password>] [-l <nlanes>] [-t] [-th] [-r] <base-url>");
-        System.err.println("   -u, -p: Specify username and password for authenticating to web server");
-        System.err.println("   -l: Specify number of lanes to report to web server");
-        System.err.println("   -t: Trace non-heartbeat messages sent");
-        System.err.println("   -th: Trace heartbeat messages sent");
-        System.err.println("   -r: Show responses to traced messages");
+    if (consumed_args + 1 != args.length) {
+      usage();
+      System.exit(1);
     }
 
-    private static Class[] knownTimerDeviceClasses = { FastTrackDevice.class, ChampDevice.class };
+    if (traceMessages != null) {
+      traceMessages.traceResponses = traceResponses;
+    }
+    if (traceHeartbeats != null) {
+      traceHeartbeats.traceResponses = traceResponses;
+    }
 
-    public static void main(String[] args) {
-        String username = "RaceCoordinator";
-        String password = "doyourbest";
-        int nlanes = 3;
-        StdoutMessageTrace traceMessages = null;
-        StdoutMessageTrace traceHeartbeats = null;
-        boolean traceResponses = false;
+    String base_url = args[consumed_args];
 
-        int consumed_args = 0;
-        while (consumed_args + 1 < args.length) {
-            if (args[consumed_args].equals("-u") && consumed_args + 2 < args.length) {
-                username = args[consumed_args + 1];
-                consumed_args += 2;
-            } else if (args[consumed_args].equals("-p") && consumed_args + 2 < args.length) {
-                password = args[consumed_args + 1];
-                consumed_args += 2;
-            } else if (args[consumed_args].equals("-l") && consumed_args + 2 < args.length) {
-                try {
-                    nlanes = Integer.parseInt(args[consumed_args + 1]);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            } else if (args[consumed_args].equals("-t")) {
-                traceMessages = new StdoutMessageTrace();
-                ++consumed_args;
-            } else if (args[consumed_args].equals("-th")) {
-                traceHeartbeats = new StdoutMessageTrace();
-                ++consumed_args;
-            } else if (args[consumed_args].equals("-r")) {
-                traceResponses = true;
-                ++consumed_args;
+    try {
+      experiment2(base_url, username, password, identifyTimerDevice(portname, devicename));
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
+  }
+
+  public static TimerDevice identifyTimerDevice(String portname, String devicename)
+      throws SerialPortException, IOException {
+    final DeviceFinder deviceFinder =
+        devicename == null ? new DeviceFinder() : new DeviceFinder(devicename);
+
+    while (true) {
+      PortIterator ports = portname == null ? new PortIterator() : new PortIterator(portname);
+      while (ports.hasNext()) {
+        SerialPort port = ports.next();
+        System.out.println(port.getPortName());  // TODO: Better logging
+        TimerDevice device = deviceFinder.findDevice(port);
+        if (device != null) {
+          return device;
+        }
+      }
+      try {
+        Thread.sleep(10000);  // Wait 10 seconds before trying again
+      } catch (Throwable t) {}
+    }
+  }
+
+  public static void experiment2(String base_url, String username, String password,
+                                 final TimerDevice device) throws Exception {
+
+    final HttpTask httpTask = new HttpTask(base_url, username, password);
+
+    wireTogether(httpTask, device);
+
+    int nlanes = device.getNumberOfLanes();
+
+    boolean sentHello = false;
+    while (!sentHello) {
+      try {
+        httpTask.send(new Message.Hello(nlanes));
+        sentHello = true;
+      } catch (Throwable t) {
+        t.printStackTrace();
+      }
+    }
+
+    httpTask.run();
+  }
+
+  public static void wireTogether(final HttpTask httpTask, final TimerDevice device) {
+    httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
+        public void heatReady(int laneMask) {
+          try {
+            device.prepareHeat(laneMask);
+          } catch (Throwable t) {
+            // TODO: details
+            try {
+              httpTask.send(new Message.Malfunction("Can't ready timer."));
+            } catch (Throwable tt) {
+            }
+          }
+        }
+      });
+
+    device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
+        public void raceFinished(Message.LaneResult[] results) {
+          // Rely on recipient to ignore if not expecting any results
+          try {
+            httpTask.send(new Message.Finished(results));
+          } catch (Throwable t) {
+          }
+        }
+      });
+
+    device.registerStartingGateCallback(new TimerDevice.StartingGateCallback() {
+        public void startGateChange(boolean isOpen) {
+          try {
+            if (isOpen /* && timer armed? */) {
+              httpTask.send(new Message.Started());
             } else {
-                usage();
-                System.exit(1);
+              httpTask.send(new Message.Heartbeat());
             }
+          } catch (Throwable t) {
+          }
         }
+      });
 
-        if (consumed_args + 1 != args.length) {
-            usage();
-            System.exit(1);
-        }
-
-        if (traceMessages != null) {
-            traceMessages.traceResponses = traceResponses;
-        }
-        if (traceHeartbeats != null) {
-            traceHeartbeats.traceResponses = traceResponses;
-        }
-
-        String base_url = args[consumed_args];
-
-        try {
-            //            (new TimerMain(new HttpTask(base_url, username, password,
-            //                                        traceMessages, traceHeartbeats)))
-            //            .runTest(nlanes);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    private static TimerDevice identifyDevice(SerialPortWrapper wrapper) throws SerialPortException {
-        while (true) {
-            for (Class deviceClass : knownTimerDeviceClasses) {
-                try {
-                    System.out.println("Trying " + deviceClass.getName());
-                    TimerDevice device = 
-                        (TimerDevice) deviceClass.getConstructor(SerialPortWrapper.class).newInstance(wrapper);
-                    if (device.probe()) {
-                        return device;
-                    }
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-            try {
-                Thread.sleep(10000);  // Wait 10 seconds before trying again
-            } catch (Throwable t) {}
-        }
-    }
-
-    public static void experiment(String base_url, String username, String password,
-                                  SerialPort port) throws Exception {
-        SerialPortWrapper wrapper = new SerialPortWrapper(port);
-
-        final TimerDevice device = identifyDevice(wrapper);
-        int nlanes = device.getNumberOfLanes();
-
-        final TimerDeviceTask deviceTask = new TimerDeviceTask(device);
-        final HttpTask httpTask = new HttpTask(base_url, username, password);
-
-        (new Thread(deviceTask)).start();
-        // (new Thread(httpTask)).start();
-
-        httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
-                public void heatReady(int laneMask) {
-                    try {
-                        device.prepareHeat(laneMask);
-                    } catch (Throwable t) {
-                        // TODO: details
-                        try {
-                            httpTask.send(new Message.Malfunction("Can't ready timer."));
-                        } catch (Throwable tt) {
-                        }
-                    }
-                }
-            });
-
-        device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
-                public void raceFinished(Message.LaneResult[] results) {
-                    // Rely on recipient to ignore if not expecting any results
-                    try {
-                        httpTask.send(new Message.Finished(results));
-                    } catch (Throwable t) {
-                    }
-                }
-            });
-        device.registerStartingGateCallback(new TimerDevice.StartingGateCallback() {
-                public void startGateChange(boolean isOpen) {
-                    try {
-                        if (isOpen /* && timer armed? */) {
-                            httpTask.send(new Message.Started());
-                        } else {
-                            httpTask.send(new Message.Heartbeat());
-                        }
-                    } catch (Throwable t) {
-                    }
-                }
-            });
-
-        // TODO: handler for ABORT message: device.abortHeat();
-
-        boolean sentHello = false;
-        while (!sentHello) {
-            try {
-                httpTask.send(new Message.Hello(nlanes));
-                sentHello = true;
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
-
-        httpTask.run();
-    }
+    // TODO: handler for ABORT message: device.abortHeat();
+  }
 }
