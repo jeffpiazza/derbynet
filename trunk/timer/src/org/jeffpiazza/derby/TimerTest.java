@@ -1,3 +1,6 @@
+// Discovers connected timer, and then simulates responding to
+// commands from the web server, asking to start or abandon heats.
+
 package org.jeffpiazza.derby;
 
 import jssc.*;
@@ -5,137 +8,101 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
 
-public class TimerTest implements TimerDevice.RaceFinishedCallback, TimerDevice.StartingGateCallback {
-    public static TimerDevice identifyTimerDevice(SerialPort port) {
-        System.out.println("Trying " + port.getPortName());
-        try {
-	    File logfile = new File("timer.log");
-	    if (!logfile.exists()) {
-		logfile.createNewFile();
-	    }
-            SerialPortWrapper wrapper = new SerialPortWrapper(port, 
-							      new PrintWriter(new BufferedWriter(new FileWriter(logfile)),
-									      /*autoflush*/true));
+public class TimerTest implements TimerDevice.RaceStartedCallback,
+                                  TimerDevice.RaceFinishedCallback {
 
-            // TODO-----------
-            TimerDevice[] devices = { new ChampDevice(wrapper),
-                                      new FastTrackDevice(wrapper) };
+  public static TimerDevice identifyTimerDevice() throws SerialPortException, IOException {
+    final DeviceFinder deviceFinder = new DeviceFinder();
 
-            for (TimerDevice device : devices) {
-                try {
-                    if (device.probe()) {
-                        return device;
-                    }
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-
-        return null;
+    for (PortIterator ports = new PortIterator(); ports.hasNext(); ) {
+      SerialPort port = ports.next();
+      System.out.println(port.getPortName());  // TODO: Better logging
+      TimerDevice device = deviceFinder.findDevice(port);
+      if (device != null) {
+        return device;
+      }
     }
 
-    public static TimerDevice identifyTimerDevice() {
-	File[] files = new File("/dev").listFiles(new FilenameFilter() {
-		public boolean accept(File dir, String name) {
-		    return name.startsWith("tty") && !name.equals("tty") && 
-			(name.contains("usb") || name.contains("USB"));
-		}
-	    });
+    return null;
+  }
 
-	for (File f : files) {
-            SerialPort port = new SerialPort(f.getPath());
-            System.out.println("Opening " + f.getPath());
-            try {
-                if (!port.openPort()) {
-                    System.out.println("Can't open port");
-                    return null;
-                }
-            } catch (SerialPortException spe) {
-                System.out.println("Caught exception: " + spe);
-                continue;
-            }
+  private volatile boolean raceRunning = false;
+  private volatile long raceDeadline;
 
-            TimerDevice device = identifyTimerDevice(port);
-            if (device != null) {
-                return device;
-            }
+  public synchronized void raceStarted() {
+    System.out.println("*** Race started");
+    raceDeadline = System.currentTimeMillis() + 15000;
+  }
 
-	    try {
-		port.closePort();
-	    }
-	    catch (SerialPortException exc) {
-		System.out.println("Caught exception " + exc + " while closing");
-	    }
-        }
-
-        return null;
+  public void raceFinished(Message.LaneResult[] results) {
+    System.out.print("*** Race Finished: ");
+    raceRunning = false;
+    for (Message.LaneResult r : results) {
+      if (r != null) {
+        System.out.print(" " + r.time + "(" + r.place + ")");
+      } else {
+        System.out.println("--- null received ---");
+      }
     }
+    System.out.println();
+  }
 
-    private volatile boolean raceRunning = false;
-
-    public void raceFinished(Message.LaneResult[] results) {
-        raceRunning = false;
-        System.out.print("*** Race Finished: ");
-        for (Message.LaneResult r : results) {
-            System.out.print(" " + r.time + "(" + r.place + ")");
-        }
-        System.out.println();
-    }
-
-    public void startGateChange(boolean isOpen) {
-        System.out.println("*** Start gate is " + (isOpen ? "open" : "closed"));
-    }
-
-    public void runTestLoop(TimerDevice device) throws SerialPortException {
+  public void runTestLoop(TimerDevice device) throws SerialPortException {
 	int mask = 0;
-        while (true) {
-	    -- mask;
-	    if (mask <= 0) { mask = 7; } // TODO: Generalize
+    while (true) {
+      -- mask;
+      if (mask <= 0) { mask = 7; } // TODO: Generalize
 
-	    System.out.println("prepareHeat(" + mask + ")");  // TODO
-            device.prepareHeat(mask);
-            raceRunning = true;
-            
-            long heatDeadline = System.currentTimeMillis() + 30000;
-            while (raceRunning) { // TODO && System.currentTimeMillis() < heatDeadline) {
-                device.poll();
-                try {
-                    Thread.sleep(50);  // ms.
-                } catch (Exception exc) {}
-            }
-	    if (raceRunning) System.out.println("Abandoning heat (wrong choice!)");
+      device.prepareHeat(mask);
+      raceRunning = true;
+      // Semaphore value meaning there's no deadline
+      raceDeadline = -1;
 
-            try {
-		System.out.println("Pausing before starting a new heat.");
-                Thread.sleep(4000);  // 4-second pause between heats
-            } catch (Exception exc) {}
-        }
-    }
-
-    public void runTest() {
-        System.out.println("Hello");
-
-        TimerDevice device;
-        while ((device = identifyTimerDevice()) == null)
-            ;
-
+      while (raceRunning && (raceDeadline < 0 || System.currentTimeMillis() < raceDeadline)) {
+        device.poll();
         try {
-            System.out.println("*** Identified " + device.getClass().getName());
-            System.out.println("*** Device reports " + device.getNumberOfLanes() + " lane(s).");
+          Thread.sleep(50);  // ms.
+        } catch (Exception exc) {}
+      }
 
-            device.registerStartingGateCallback(this);
-            device.registerRaceFinishedCallback(this);
+      if (raceRunning) {
+        raceRunning = false;
+        System.out.println("Abandoning heat (wrong choice!)");
+      }
 
-            runTestLoop(device);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+      try {
+		System.out.println("Pausing before starting a new heat.");
+        Thread.sleep(4000);  // 4-second pause between heats
+      } catch (Exception exc) {}
     }
+  }
 
-    public static void main(String[] args) {
-        (new TimerTest()).runTest();
+  public void runTest() {
+    try {
+      System.out.println("Starting TimerTest");
+
+      TimerDevice device;
+      while ((device = identifyTimerDevice()) == null)
+        ;
+
+      System.out.println("*** Identified " + device.getClass().getName());
+      System.out.println("*** Device reports " + device.getNumberOfLanes() + " lane(s).");
+
+      device.registerRaceStartedCallback(this);
+      device.registerRaceFinishedCallback(this);
+
+      System.out.println();
+      System.out.println();
+      System.out.println();
+      System.out.println("Running test loop");
+      runTestLoop(device);
+      System.out.println("Quitting!");
+    } catch (Throwable t) {
+      t.printStackTrace();
     }
+  }
+
+  public static void main(String[] args) {
+    (new TimerTest()).runTest();
+  }
 }
