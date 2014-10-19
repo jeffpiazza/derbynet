@@ -4,35 +4,12 @@ import jssc.*;
 import java.io.*;
 import java.util.ArrayList;
 
-// TODO: UNFINISHED!!!!!!!!!!!!!!!!!!!!!
-
-// scan for timer.  If not found, repeat.
-
-// send HELLO; keep trying until successful
-
-// do forever:
-//   poll (HEARTBEAT) until a STARTED
-//   keep polling
-//   start timer
-//   poll timer until results in.
-//   send FINISHED
-
-// Two threads: one for timer, one for heartbeat
-
-// Meanwhile, timer thread takes a device plug-in, and polls timer continuously.
-// On HEAT-READY, arm the timer
-//  On gate open, send STARTED message, and (Champ) if timer armed, start internal timer to abort after 10 seconds.
-// (Maybe just send heartbeat with gate state if not racing?)
-// On gate close, send heartbeat
-// On timer result, if racing send FINISHED
-// On 10-second elapsed, force race finish, send FINISHED 
+// Two threads: timer polling loop runs on main thread, HttpTask runs on another
+// thread
 
 public class TimerMain {
-  private HttpTask task;
-
-  private TimerMain(HttpTask task) {
-    this.task = task;
-  }
+  public static long raceTimeoutMillis = 11000;
+  private static volatile long raceDeadline = -1;
 
   public static void usage() {
     System.err.println("Usage: [options] <base-url>");
@@ -44,8 +21,6 @@ public class TimerMain {
     System.err.println("   -n <port name>: Use specified port name instead of searching");
     System.err.println("   -d <device name>: Use specified device instead of trying to identify");
   }
-
-  private static Class[] knownTimerDeviceClasses = { FastTrackDevice.class, ChampDevice.class };
 
   public static void main(String[] args) {
     String username = "RaceCoordinator";
@@ -146,7 +121,10 @@ public class TimerMain {
       }
     }
 
-    httpTask.run();
+    System.out.println("Starting HTTP thread");
+    (new Thread(httpTask)).start();
+
+    runDevicePollingLoop(device);
   }
 
   public static void wireTogether(final HttpTask httpTask, final TimerDevice device) {
@@ -164,29 +142,58 @@ public class TimerMain {
         }
       });
 
+    httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
+        public void abortHeat() {
+          System.out.println("AbortHeat received");
+          raceDeadline = -1;
+          try {
+            device.abortHeat();
+          } catch (Throwable t) {
+            t.printStackTrace();
+          }
+        }
+      });
+
     device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
         public void raceFinished(Message.LaneResult[] results) {
           // Rely on recipient to ignore if not expecting any results
           try {
+            raceDeadline = -1;
+            System.out.println("Race finished");
             httpTask.send(new Message.Finished(results));
           } catch (Throwable t) {
           }
         }
       });
 
-    device.registerStartingGateCallback(new TimerDevice.StartingGateCallback() {
-        public void startGateChange(boolean isOpen) {
+    device.registerRaceStartedCallback(new TimerDevice.RaceStartedCallback() {
+        public void raceStarted() {
           try {
-            if (isOpen /* && timer armed? */) {
-              httpTask.send(new Message.Started());
-            } else {
-              httpTask.send(new Message.Heartbeat());
-            }
+            raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
+            System.out.println("Race started");
+            httpTask.send(new Message.Started());
           } catch (Throwable t) {
           }
         }
       });
 
-    // TODO: handler for ABORT message: device.abortHeat();
+  }
+
+  private static void runDevicePollingLoop(TimerDevice device) throws SerialPortException {
+    while (true) {
+      device.poll();
+      if (!(raceDeadline < 0 || System.currentTimeMillis() < raceDeadline)) {
+        // TODO: Race timed out, not sure what to do.
+        // Some choices:
+        // - Send empty results back to web server.
+        // - Repeat prepareHeat.
+        // - Nothing, as now.
+        System.err.println("****** Race timed out *******");
+        raceDeadline = -1;
+      }
+      try {
+        Thread.sleep(50);  // ms.
+      } catch (Exception exc) {}
+    }
   }
 }
