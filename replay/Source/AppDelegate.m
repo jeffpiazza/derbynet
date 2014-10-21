@@ -18,6 +18,7 @@
     // cf _urlSheet, _urlField that are expressed as properties
     NSMutableData* responseData;
     NSURLConnection* connection;
+    NSRunningApplication* frontmostApplication;
 }
 
 // Capture-related stuff
@@ -355,6 +356,8 @@
 - (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate
 {
     [[self movieFileOutput] stopRecording];
+    frontmostApplication = [[NSWorkspace sharedWorkspace] frontmostApplication];
+    NSLog(@"Frontmost application is %@", [frontmostApplication localizedName]);
 
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
     NSString *tracksKey = @"tracks";
@@ -398,6 +401,8 @@
                                 //[player play];
                                 // Amazing!  [player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
                                 [player setRate: rate];
+                            } else {
+                                NSLog(@"AVKeyValueStatus reports: %@", error);
                             }
                         });
      }];
@@ -409,6 +414,8 @@
     [NSCursor unhide];
     [NSCursor setHiddenUntilMouseMoves:YES];
     [[NSApplication sharedApplication] hide: self];
+    [frontmostApplication activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+    frontmostApplication = nil;
 }
 
 @synthesize url = _url;
