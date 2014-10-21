@@ -231,25 +231,5 @@ $(document).bind("mobileinit", function() {
   </form>
 </div>
 
-<div id='new_grand_final_modal' class="modal_dialog block_buttons hidden">
-  <form>
-    <input type="hidden" name="action" value="make-roster"/>
-    <input type="hidden" name="roundid" id="new_round_roundid"/>
-
-    <p>Choose top</p>
-    <input type="number" name="top" id="now_round_rop" value="3"/>
-
-      <p>racers from</p>
-      <div class="centered_flipswitch">
-        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
-               data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
-      </div>
-
-    <input type="submit" data-enhanced="true" value="Submit"/>
-    <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#new_grand_final_modal");'/>
-  </form>
-</div>
-
 </body>
 </html>
