@@ -227,7 +227,8 @@
     return YES;
 }
 
-// test <skipback_seconds> <repeat> <rate>
+// TEST <skipback_seconds> <repeat> <rate>
+// Plays the "film leader" clip built in to the app
 - (BOOL) docommand_test: (NSScanner*) scanner
 {
     int num_secs;
@@ -238,6 +239,25 @@
     if (![scanner scanFloat:&rate]) return NO;
     // doPlaybackOf opens the asset file and does the rest asynchronously
     [[self appDelegate] doPlaybackOf: [[NSBundle mainBundle] URLForResource:@"FilmLeader" withExtension:@"mp4"]
+                            skipback: num_secs duration: num_secs showings: num_times rate: rate];
+    return YES;
+}
+
+// DEMO <skipback_seconds> <repeat> <rate>
+// Plays DEMO.mov from the current recording folder.  This is for demonstrating the operation of the app.
+- (BOOL) docommand_demo: (NSScanner*) scanner
+{
+    int num_secs;
+    if (![scanner scanInt: &num_secs]) return NO;
+    int num_times;
+    if (![scanner scanInt: &num_times]) return NO;
+    float rate;
+    if (![scanner scanFloat:&rate]) return NO;
+
+    NSURL* directory = [[self appDelegate] moviesDirectory];
+    NSLog(@"Movies directory: %@", directory);
+    NSLog(@"Demo movie file: %@", [directory URLByAppendingPathComponent:@"Demo.m4v"]);
+    [[self appDelegate] doPlaybackOf: [directory URLByAppendingPathComponent:@"Demo.m4v"]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
     return YES;
 }

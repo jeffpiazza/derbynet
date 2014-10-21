@@ -22,6 +22,7 @@
 - (void) setStatus: (NSString*) msg;
 
 - (void) setMovieFileName: (NSString*) name;
+- (NSURL*) moviesDirectory;
 
 @property BOOL isPlaying;
 
