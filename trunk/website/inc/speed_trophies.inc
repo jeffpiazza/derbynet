@@ -6,15 +6,15 @@ function top_finishers_by_class($n_per_class) {
   global $db;
   $top_finishers = array();
   $stmt = $db->query('SELECT RegistrationInfo.racerid, RegistrationInfo.classid,'
-					 .' count(*) as base, sum(FinishTime)/count(*) as avg'
+					 .' COUNT(*) AS base, SUM(finishtime)/COUNT(*) AS avg'
 					 .' FROM (RegistrationInfo'
 					 .' INNER JOIN RaceChart'
-					 .' ON RaceChart.RacerID = RegistrationInfo.RacerID)'
-					 .' WHERE PassedInspection = 1 AND Exclude = 0'
-					 .' AND FinishTime IS NOT NULL'
-					 .' GROUP BY RegistrationInfo.RacerID, RegistrationInfo.ClassID'
-					 //  .' HAVING count(*) = '.$nlanes -- racers who finished all their heats
-					 .' ORDER BY RegistrationInfo.ClassID, sum(FinishTime)/count(*)');
+					 .' ON RaceChart.racerid = RegistrationInfo.racerid)'
+					 .' WHERE passedinspection = 1 AND exclude = 0'
+					 .' AND finishtime IS NOT NULL'
+					 .' GROUP BY RegistrationInfo.racerid, RegistrationInfo.classid'
+					 //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
+					 .' ORDER BY RegistrationInfo.classid, SUM(finishtime)/COUNT(*)');
   foreach ($stmt as $row) {
 	$classid = $row['classid'];
 	$racerid = $row['racerid'];
@@ -37,12 +37,12 @@ function top_finishers_overall($n_trophies) {
 	$stmt = $db->query('SELECT RaceChart.racerid'
 					   .' FROM (RegistrationInfo'
 					   .' INNER JOIN RaceChart'
-					   .' ON RaceChart.RacerID = RegistrationInfo.RacerID)'
-					   .' WHERE PassedInspection = 1 AND Exclude = 0'
-					   .' AND FinishTime IS NOT NULL'
-					   .' GROUP BY RaceChart.RacerID'
-					   //    .' HAVING count(*) = '.$nlanes
-					   .' ORDER BY sum(FinishTime)/count(*)');
+					   .' ON RaceChart.racerid = RegistrationInfo.racerid)'
+					   .' WHERE passedinspection = 1 AND exclude = 0'
+					   .' AND finishtime IS NOT NULL'
+					   .' GROUP BY RaceChart.racerid'
+					   //.' HAVING COUNT(*) = '.$nlanes
+					   .' ORDER BY SUM(finishtime)/COUNT(*)');
 
 	foreach ($stmt as $row) {
 	  $results[] = $row['racerid'];
