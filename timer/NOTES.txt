@@ -1,0 +1,74 @@
+-->> TODO: Some decent logging strategies/options.
+
+- RG probes where the responses don't change should be suppressed.  Probably any
+  repeated interrogation should be suppressed ("repeats <n> times").
+
+- Minimal logging for "working as expected:"  Log state changes, lane masks, heat results.
+
+-- abortHeat time-out (in TimerTest) should only occur when timer remains in
+   RUNNING state for too long, not based on time since prepareHeat was called.
+
+Yikes, what a mess.
+
+
+  // Some spurious "@" characters at front of result string, maybe?
+  // A response of "X" indicates command not understood
+  // E and F lanes get reported, regardless of masking
+  //
+  // GPRM test sequence is:
+  // RS
+  // 15985
+  // RLO
+  // *
+  // RE
+  // *
+  // N2
+  // X
+  // N1
+  // *
+
+  // Reset timer sends LR
+  // Test Race sends:
+  // MG
+  // ACLR
+  // *
+  // RG0  (indicates gate is open)
+
+Tripping the gate while timer is running doesn't seem to send a finish...
+	1413727774598 --> RG
+    1413727774608 <-- A=1.866" B=0.000  C=1.469! D=0.000  E=0.00RG0
+    1413727774625 <-- 0  F=0.000
+
+At least for the FastTrack timer, polling the starting gate while a race is
+underway means that the race results, sent asynchronously, may be mixed with the
+RG0 response in a way that's much more difficult (potentially impossible) to
+parse.
+
+Sending a FORCE_RESULTS command doesn't resend the results, which means you
+really only get one shot at capturing what the timer told you.
+
+So, EITHER:
+
+- Get more sophisticated at parsing, so that the problem effectively never arises; OR
+
+- Don't poll the timer while the race is believed to be underway.
+
+From the web server's perspective, we don't really care about the gate position;
+it's useful to know only as a check on the operation of the software and the
+timer.  So one obvious strategy would be to poll the gate position only until
+the race starts (gate opens after being detected closed).
+
+
+ALSO: timerNeedsReset is only cleared when gateIsClosed CHANGES.  If gate is
+already closed, probably there should be a RESET_LASER_GATE sent (not sure about
+this), and then timerNeedsReset cleared.  Maybe do that in prepareHeat.
+
+
+// From TimerMain:
+// Meanwhile, timer thread takes a device plug-in, and polls timer continuously.
+// On HEAT-READY, arm the timer
+//  On gate open, send STARTED message, and (Champ) if timer armed, start internal timer to abort after 10 seconds.
+// (Maybe just send heartbeat with gate state if not racing?)
+// On gate close, send heartbeat
+// On timer result, if racing send FINISHED
+// On 10-second elapsed, force race finish, send FINISHED 
