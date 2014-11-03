@@ -1,6 +1,7 @@
 <?php
 // Action to schedule heats for a round.
 // $_POST: roundid, nrounds(=1)
+// nrounds here is the number of times each racer should race in each lane.
 
 // TODO: Permission
 
@@ -396,6 +397,8 @@ function results_exist($roundid) {
 							 array(':roundid' => $roundid));
 }
 
+
+// The top-level scheduling function
 function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
 	$roster = read_roster($roundid);
 	if (count($roster) < 2) {
@@ -456,14 +459,15 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
   } else if (results_exist($_POST['roundid'])) {
-	echo '<failure code="results-exist">Race results already exist</failure>';
+	echo '<failure code="results-exist">Race results already exist for this round</failure>';
   } else {
 	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
 	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
       echo '<success/>';
       require('ajax/query.coordinator-poll.inc');
     } else {
-      echo '<failure code="too-few-racers">Need at least two racers checked in to generate a schedule.</failure>';
+      echo '<failure code="too-few-racers">There need to be at least two racers checked in'
+          .' to generate a schedule.</failure>';
     }
   }
 

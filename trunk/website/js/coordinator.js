@@ -65,6 +65,12 @@ g_updating_current_round = false;
 // modal open.
 g_new_round_modal_open = false;
 
+// Each time an polling result arrives, we update this array describing the
+// rounds that have completed.  If the user clicks on the "Add New Round"
+// button, this array is used to populate both the choose_new_round_modal and
+// the new_round_modal dialogs.
+g_completed_rounds = [];
+
 function hash_string(hash, str) {
 	for (i = 0; i < str.length; i++) {
 		var ch = str.charCodeAt(i);
@@ -285,6 +291,8 @@ function handle_make_changes_button(roundid) {
 }
 
 function show_choose_new_round_modal() {
+    populate_new_round_modals();
+
     // There's no submit, or even a form, in this modal; just a bunch
     // of buttons with their own actions
     show_modal("#choose_new_round_modal", function(event) {
@@ -300,7 +308,8 @@ function handle_new_round_chosen(roundid) {
 function show_new_round_modal(roundid) {
     $(".multi_den_only").addClass("hidden");
     $(".single_den_only").removeClass("hidden");
-    // TODO $("#new_round_modal").removeClass("wide_modal");
+    // TODO 
+    $("#new_round_modal").removeClass("wide_modal");
     $("#new_round_modal #new_round_roundid").val(roundid);
     show_modal("#new_round_modal", function(event) {
         handle_new_round_submit();
@@ -325,7 +334,8 @@ function handle_grand_final_chosen() {
 function show_grand_final_modal() {
     $(".multi_den_only").removeClass("hidden");
     $(".single_den_only").addClass("hidden");
-    // TODO $("#new_round_modal").addClass("wide_modal");
+    // TODO 
+    $("#new_round_modal").addClass("wide_modal");
     // Have to suspend updates to this dialog while it's open
     g_new_round_modal_open = true;
     show_modal("#new_round_modal", function(event) {
@@ -337,6 +347,14 @@ function show_grand_final_modal() {
 function handle_grand_final_submit() {
     g_new_round_modal_open = false;
     close_modal("#new_round_modal");
+
+    console.log($("#new_round_modal form").serialize());
+
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $("#new_round_modal form").serialize(),
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
 }
 
 function show_replay_settings_modal() {
@@ -712,7 +730,6 @@ function calculate_totals(rounds) {
     var total_heats_run = 0;
     for (var i = 0; i < rounds.length; ++i) {
         var round = rounds[i];
-        console.log(round);
         max_round = Math.max(max_round, round.round);
         total_roster_size += round.roster_size;
         total_racers_passed += round.racers_passed;
@@ -728,8 +745,70 @@ function calculate_totals(rounds) {
             heats_run: total_heats_run};
 }
 
+function populate_new_round_modals() {
+    var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
+
+    var add_grand_finals = completed_rounds.length > 1;
+    var modal = $("#choose_new_round_modal");
+    modal.empty();
+    var multi_flipswitches = $("#multi_flipswitches");
+    multi_flipswitches.empty();
+    while (completed_rounds.length > 0) {
+        var roundno = completed_rounds[0].round;
+        modal.append('<h3>Add Round ' + (roundno + 1) + '</h3>');
+        var i = 0;
+        while (i < completed_rounds.length) {
+            if (completed_rounds[i].round == roundno) {
+                var round = completed_rounds[i];
+                var button = $('<input type="button" data-enhanced="true"/>');
+                button.prop('value', round.classname);
+                button.on('click', function(event) { handle_new_round_chosen(round.roundid); });
+                modal.append(button);
+
+                var label = $('<label for="roundid_' + round.roundid + '"></label>');
+                label.text(round.classname);
+                multi_flipswitches.append(label);
+                // Writing just the checkbox and then triggering the "create"
+                // event seems to work the first time, but subsequent
+                // appearances of the modal don't show the jquery-mobile
+                // embellishments.
+                multi_flipswitches.append('<div class="ui-flipswitch ui-shadow-inset' 
+                                          + ' ui-bar-inherit ui-flipswitch-active ui-corner-all">'
+                                          + '<a href="#" class="ui-flipswitch-on ui-btn' 
+                                          + ' ui-shadow ui-btn-inherit">On</a>'
+                                          + '<span class="ui-flipswitch-off">Off</span>'
+                                          + '<input type="checkbox"'
+                                          + ' data-role="flipswitch"'
+                                          + ' id="roundid_' + round.roundid + '"' 
+                                          + ' name="roundid_' + round.roundid + '"' 
+                                          + ' data-enhanced="true"'
+                                          + ' class="ui-flipswitch-input"'
+                                          + ' checked="checked"/>'
+                                          + '</div>');
+                completed_rounds.splice(i, 1);
+            } else {
+                ++i;
+            }
+        }
+    }
+    if (add_grand_finals) {
+        modal.append('<h3>Grand Finals</h3>');
+        var button = $('<input type="button" data-enhanced="true" value="Grand Finals"/>');
+        button.on('click', function(event) { handle_grand_final_chosen(); });
+        modal.append(button);
+        // Even though we're doing the embellishment explicitly, the create
+        // trigger is still needed to make the flipswitches actually do
+        // anything.
+        multi_flipswitches.trigger("create");
+    }
+    modal.append('<h3>&nbsp;</h3>');
+    modal.append('<input type="button" data-enhanced="true" value="Cancel"'
+                 + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');
+}
+
 function offer_new_rounds(rounds) {
     if (g_new_round_modal_open) {
+        console.log("Skipping offer_new_rounds because g_new_round_modal_open is set");
         return;
     }
 
@@ -753,49 +832,9 @@ function offer_new_rounds(rounds) {
         }
     }
 
+    g_completed_rounds = completed_rounds;
+
     if (completed_rounds.length > 0) {
-        var add_grand_finals = completed_rounds.length > 1;
-        var modal = $("#choose_new_round_modal");
-        modal.empty();
-        var multi_flipswitches = $("#multi_flipswitches");
-        multi_flipswitches.empty();
-        while (completed_rounds.length > 0) {
-            var roundno = completed_rounds[0].round;
-            modal.append('<h3>Add Round ' + (roundno + 1) + '</h3>');
-            var i = 0;
-            while (i < completed_rounds.length) {
-                if (completed_rounds[i].round == roundno) {
-                    var round = completed_rounds[i];
-                    var button = $('<input type="button" data-enhanced="true"/>');
-                    button.prop('value', round.classname);
-                    button.on('click', function(event) { handle_new_round_chosen(round.roundid); });
-                    modal.append(button);
-
-                    var label = $('<label for="roundid_' + round.roundid + '"></label>');
-                    label.text(round.classname);
-                    multi_flipswitches.append(label);
-                    multi_flipswitches.append('<input type="checkbox"'
-                                              + ' data-role="flipswitch"'
-                                              + ' id="roundid_' + round.roundid + '"' 
-                                              + ' name="roundid_' + round.roundid + '"' 
-                                              + ' checked="checked"/>');
-
-                    completed_rounds.splice(i, 1);
-                } else {
-                    ++i;
-                }
-            }
-        }
-        if (add_grand_finals) {
-            modal.append('<h3>Grand Finals</h3>');
-            var button = $('<input type="button" data-enhanced="true" value="Grand Finals"/>');
-            button.on('click', function(event) { handle_grand_final_chosen(); });
-            modal.append(button);
-            multi_flipswitches.trigger("create");
-        }
-        modal.append('<h3>&nbsp;</h3>');
-        modal.append('<input type="button" data-enhanced="true" value="Cancel"'
-                     + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');
         // Show the block with the "Add New Rounds" button
         $("#add_new_rounds_group").removeClass("hidden");
     } else {
@@ -891,8 +930,6 @@ function coordinator_poll() {
             success: function(data) {
                 setTimeout(coordinator_poll, /* TODO: 2000 */ 6000);
                 process_coordinator_poll_response(data);
-                //$(".collapsible").slideUp();
-                //setTimeout(function() { $(".collapsible").slideDown(); }, 2000);
             },
             error: function() {
                 setTimeout(coordinator_poll, 2000);
