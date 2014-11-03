@@ -10,9 +10,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <title>Race Coordinator Page</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
-<link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <script type="text/javascript">
 // We're using jQuery Mobile for its nice mobile/tablet-friendly UI
 // elements.  By default, jQM also wants to hijack page loading

@@ -141,6 +141,13 @@ p.last_contact {
     text-indent: 0.5em;
 }
 
+#new_round_modal .grand-final-label {
+    display: inline-block;
+    width: 300px;
+    margin-right: 1em;
+    text-align: right;
+    font-weight: bold;
+}
 
 #manual_results_modal,
 .wide_modal {
