@@ -1,5 +1,28 @@
 <?php
-// $_POST roundid, top, bucketed
+// $_POST roundid, roundid_<nnn>, top, bucketed
+
+// Populates a new round by selecting top finishers from a previous round or rounds.
+
+// If $_POST['roundid'] is not empty, it identifies a completed round, and
+// implies that we're populating a new follow-on round for the same class, based
+// on the top finishers from the identified round.
+//
+// If roundid is empty, then we're generating a "Grand Finals" around, taking
+// top finishers across multiple previous rounds.  Those previous rounds are
+// identified by $_POST keys of the form roundid_<nnn>.
+//
+// "top" identifies the how many racers to select for the new round, but its interpretation also
+// depends on "bucketed".
+//
+// For a Grand Finals round, if "bucketed" is true, then "top" tells how many
+// racers to choose from each of the prior rounds feeding in to the new round.
+//
+// For a non-Grand Finals round, if "bucketed" is true, then "top" tells how
+// many racers to choose from each subgroup.
+
+// TODO [Log] action=make-roster&roundid=&roundid_1=on&roundid_2=on&roundid_3=on&roundid_4=on&roundid_5=on&top=3 (coordinator.js, line 351)
+// TODO       action=make-roster&roundid=&roundid_1=on&roundid_3=on&roundid_4=on&roundid_5=on&top=3 coordinator.js:26
+// So, detect grand final by empty roundid, and scan $_POST for roundid_X entries to identify source roundids.
 
 // TODO: Finalists are selected by average time, which may give the
 // wrong result if some racers didn't finish all their heats.
@@ -9,11 +32,12 @@ start_response();
 $bucket_limit = $_POST['top'];
 $bucketed = isset($_POST['bucketed']) && $_POST['bucketed'];
 
-if (isset($_POST['roundid'])) {
+if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   $grand_finals = false;
   $roundid = $_POST['roundid'];
-  list($classid, $old_round) = read_single_row('SELECT classid, round FROM Rounds WHERE roundid = :roundid',
-                                         array(':roundid' => $roundid));
+  list($classid, $old_round) = read_single_row('SELECT classid, round FROM Rounds'
+                                               .' WHERE roundid = :roundid',
+                                               array(':roundid' => $roundid));
   // TODO: Handle not-found case
   $new_round = 1 + $old_round;
 } else {
@@ -34,6 +58,8 @@ if (isset($_POST['roundid'])) {
                                  .' AND Rounds.roundid IN ('.$all_roundids.')',
                                  array());
   $new_round = $old_round;
+
+  // Get or insert a 'Grand Finals' class.
   $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
                                array(), 0);
   if (!$classid) {

@@ -227,7 +227,7 @@ $(document).bind("mobileinit", function() {
 
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#new_round_modal");'/>
+      onclick='g_new_round_modal_open = false; close_modal("#new_round_modal");'/>
   </form>
 </div>
 
