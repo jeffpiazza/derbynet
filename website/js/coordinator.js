@@ -765,15 +765,19 @@ function populate_new_round_modals() {
                 button.on('click', function(event) { handle_new_round_chosen(round.roundid); });
                 modal.append(button);
 
-                var label = $('<label for="roundid_' + round.roundid + '"></label>');
+                var flipswitch_div = $('<div class="flipswitch-div"></div>');
+                var label = $('<label for="roundid_' + round.roundid + '"' 
+                              + ' class="grand-final-label"'
+                              + '></label>');
                 label.text(round.classname);
-                multi_flipswitches.append(label);
+                flipswitch_div.append(label);
                 // Writing just the checkbox and then triggering the "create"
                 // event seems to work the first time, but subsequent
                 // appearances of the modal don't show the jquery-mobile
                 // embellishments.
-                multi_flipswitches.append('<div class="ui-flipswitch ui-shadow-inset' 
-                                          + ' ui-bar-inherit ui-flipswitch-active ui-corner-all">'
+                flipswitch_div.append('<div class="ui-flipswitch ui-shadow-inset' 
+                                          + ' ui-bar-inherit ui-flipswitch-active ui-corner-all' 
+                                          + ' grand-final-flipswitch">'
                                           + '<a href="#" class="ui-flipswitch-on ui-btn' 
                                           + ' ui-shadow ui-btn-inherit">On</a>'
                                           + '<span class="ui-flipswitch-off">Off</span>'
@@ -784,7 +788,8 @@ function populate_new_round_modals() {
                                           + ' data-enhanced="true"'
                                           + ' class="ui-flipswitch-input"'
                                           + ' checked="checked"/>'
-                                          + '</div>');
+                                      + '</div>');
+                multi_flipswitches.append(flipswitch_div);
                 completed_rounds.splice(i, 1);
             } else {
                 ++i;
