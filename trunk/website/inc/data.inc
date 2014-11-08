@@ -1,8 +1,9 @@
 <?php
 @include("local/config-database.inc");
 if (!isset($db)) {
-	header('Location: setup.php');
-	exit();
+  $_SESSION['setting_up'] = 1;
+  header('Location: setup.php');
+  exit();
 }
 
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

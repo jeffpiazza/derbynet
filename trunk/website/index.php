@@ -1,4 +1,6 @@
-<?php @session_start(); ?>
+<?php @session_start();
+// Redirects to setup page if the database hasn't yet been set up
+require_once('inc/data.inc'); ?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -94,7 +96,7 @@ if ($need_spacer) {
 ?>
 
 <form method="link" action="login.php">
- <?php if ($_SESSION['role']) { ?>
+ <?php if (@$_SESSION['role']) { ?>
   <input type="hidden" name="logout" value=""/>
  <?php } ?>
   <input type="submit" value="Log <?php echo $_SESSION['role'] ? 'out' : 'in'; ?>"/>

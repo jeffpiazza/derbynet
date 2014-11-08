@@ -1,5 +1,6 @@
 <?php @session_start();
 require_once('inc/authorize.inc');
+
 require_permission(SET_UP_PERMISSION);
 ?>
 <html>
@@ -29,18 +30,11 @@ $(document).bind("mobileinit", function() {
 </head>
 <body>
 <?php $banner_title = 'Set-Up'; require('inc/banner.inc'); ?>
-
-<h3>Operating Environment</h3>
-<pre><?php
-echo 'PHP_OP = ';var_dump(PHP_OS);
-echo 'php_uname() = '; var_dump(php_uname());
-echo 'php_uname("s") = '; var_dump(php_uname('s'));
-?>
-</pre>
 <h3>Current Configuration File</h3>
 <?php
 
 $local_config_inc = 'local'.DIRECTORY_SEPARATOR.'config-database.inc';
+$offer_config_button = true;
 
 if (file_exists($local_config_inc)) {
   echo "<pre>\n";
@@ -55,19 +49,27 @@ if (file_exists($local_config_inc)) {
   }
 } else {
   echo "<p>You do not yet have a local configuration file.</p>\n";
+
   if (!is_dir('local')) {
-    echo "<p>You need to create a 'local' directory, and make it writable.</p>\n";
+    $path = str_replace("setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+    echo "<p>You need to create a <b>'".$path."'</b> directory, and make it writable.</p>\n";
+    $offer_config_button = false;
   } else if (!is_writable('local')) {
-    echo "<p>The 'local' directory exists, but isn't writable.</p>\n";
+    $path = str_replace("setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+    echo "<p>The <b>'".$path."'</b> directory exists, but isn't writable.</p>\n";
+    $offer_config_button = false;
   }
 }
+
+if ($offer_config_button) {
 ?>
 <div class="block_buttons">
     <input type="button" data-enhanced="true" value="Configure" onclick="show_choose_database_modal()"/><br/>
 </div>
-
 <?php
-if ($db) {
+}
+
+if (isset($db) && $db) {
   try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $stmt = $db->prepare('SELECT COUNT(*) from RegistrationInfo');
