@@ -10,6 +10,10 @@ if (!isset($_SESSION['permissions'])) {
   $_SESSION['permissions'] = $roles['']['permissions'];
 }
 
+if (isset($_SESSION['setting_up'])) {
+  $_SESSION['permissions'] |= SET_UP_PERMISSION;
+}
+
 // This only works where a header can appear...
 function require_permission($perm) {
   if (($_SESSION['permissions'] & $perm) == 0) {
