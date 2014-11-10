@@ -1,4 +1,5 @@
 <?php
+@session_start();
 
 // Formerly action.setup.inc, but this can't be an ajax action run
 // through action.php, because inc/data.inc will force a redirect if
