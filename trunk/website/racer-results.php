@@ -37,7 +37,7 @@ $sql = 'SELECT RegistrationInfo.racerid,'
     .' Classes.class, round, heat, lane, finishtime, resultid,'
     .' carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
     .' Classes.classid, Rounds.roundid'
-    .' FROM '.inner_join('RaceChart', 'RegistrationInfo'
+    .' FROM '.inner_join('RaceChart', 'RegistrationInfo',
                          'RegistrationInfo.racerid = RaceChart.racerid',
                          'Roster', 'Roster.racerid = RegistrationInfo.racerid',
                          'Rounds', 'Rounds.roundid = Roster.roundid',
