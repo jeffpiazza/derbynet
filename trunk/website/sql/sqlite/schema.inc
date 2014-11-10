@@ -1,0 +1,158 @@
+<?php
+// SQLite
+
+function make_index($table, $column) {
+  return "CREATE INDEX IF NOT EXISTS ".$table."_".$column." ON ".$table."(".$column.")";
+}
+
+$sql_script = array(
+// "ALTER DATABASE CHARACTER SET utf8",
+
+"DROP TABLE IF EXISTS `Awards`",
+
+"CREATE TABLE `Awards` ("
+."  `awardid` INTEGER PRIMARY KEY, "
+."  `awardname` VARCHAR(50) NOT NULL, "
+."  `awardtypeid` INTEGER NOT NULL DEFAULT 1, "
+."  `classid` INTEGER, "
+."  `rankid` INTEGER, "
+."  `racerid` INTEGER DEFAULT 0, "
+."  `sort` INTEGER DEFAULT 0"
+.")",
+make_index("Awards", "awardtypeid"),
+make_index("Awards", "awardname"),
+make_index("Awards", "classid"),
+make_index("Awards", "rankid"),
+make_index("Awards", "sort"),
+
+"DROP TABLE IF EXISTS `AwardTypes`",
+
+"CREATE TABLE `AwardTypes` ("
+."  `awardtypeid` INTEGER PRIMARY KEY, "
+."  `awardtype` VARCHAR(15) NOT NULL"
+.")",
+
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (1, 'Design General')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (2, 'Speed General')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (4, 'Design Trophy')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
+
+"DROP TABLE IF EXISTS CheckinAudit",
+
+"CREATE TABLE CheckinAudit"
+."	("
+."	seq    INTEGER PRIMARY KEY,"
+."	stmt   VARCHAR (250),"
+."	tstamp DATETIME"
+."	)",
+
+"DROP TABLE IF EXISTS `Classes`",
+
+"CREATE TABLE `Classes` ("
+."  `classid` INTEGER PRIMARY KEY, "
+."  `class` VARCHAR(15) NOT NULL UNIQUE"
+.")",
+
+"DROP TABLE IF EXISTS `RaceChart`",
+
+"CREATE TABLE `RaceChart` ("
+."  `resultid` INTEGER PRIMARY KEY, "
+."  `classid` INTEGER, "
+."  `roundid` INTEGER NOT NULL, "
+."  `heat` INTEGER NOT NULL, "
+."  `lane` INTEGER NOT NULL, "
+."  `racerid` INTEGER, "
+."  `chartnumber` INTEGER, "
+."  `finishtime` DOUBLE NULL, "
+."  `finishplace` INTEGER, "
+."  `points` INTEGER, "
+."  `completed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+."  `ignoretime` TINYINT(1) DEFAULT 0, "
+."  `masterheat` INTEGER DEFAULT 0"
+.")",
+make_index("RaceChart", "chartnumber"),
+make_index("RaceChart", "classid"),
+make_index("RaceChart", "finishtime"),
+make_index("RaceChart", "heat"),
+make_index("RaceChart", "lane"),
+make_index("RaceChart", "masterheat"),
+make_index("RaceChart", "points"),
+make_index("RaceChart", "racerid"),
+make_index("RaceChart", "roundid"),
+
+"DROP TABLE IF EXISTS `RaceInfo`",
+
+"CREATE TABLE `RaceInfo` ("
+."  `raceinfoid` INTEGER PRIMARY KEY, "
+."  `itemkey` VARCHAR(20) NOT NULL, "
+."  `itemvalue` VARCHAR(50)"
+.")",
+make_index("RaceInfo", "itemkey"),
+
+"DROP TABLE IF EXISTS `Ranks`",
+
+"CREATE TABLE `Ranks` ("
+."  `rankid` INTEGER PRIMARY KEY, "
+."  `rank` VARCHAR(15) NOT NULL, "
+."  `classid` INTEGER NOT NULL"
+.")",
+make_index("Ranks", "classid"),
+make_index("Ranks", "rank"),
+
+"DROP TABLE IF EXISTS `RegistrationInfo`",
+
+"CREATE TABLE `RegistrationInfo` ("
+."  `racerid` INTEGER PRIMARY KEY, "
+."  `carnumber` INTEGER NOT NULL, "
+."  `carname` VARCHAR(20), "
+."  `lastname` VARCHAR(20) NOT NULL, "
+."  `firstname` VARCHAR(15) NOT NULL, "
+."  `classid` INTEGER NOT NULL, "
+."  `rankid` INTEGER NOT NULL, "
+."  `passedinspection` TINYINT(1) DEFAULT 0, "
+."  `imagefile` VARCHAR(255), "
+."  `exclude` TINYINT(1) DEFAULT 0"
+.")",
+make_index("RegistrationInfo", "carnumber"),  // Why??
+make_index("RegistrationInfo", "classid"),
+make_index("RegistrationInfo", "exclude"),
+make_index("RegistrationInfo", "lastname"),
+make_index("RegistrationInfo", "passedinspection"),
+make_index("RegistrationInfo", "rankid"),
+
+"DROP TABLE IF EXISTS `Roster`",
+
+"CREATE TABLE `Roster` ("
+."  `rosterid` INTEGER PRIMARY KEY, "
+."  `roundid` INTEGER NOT NULL, "
+."  `classid` INTEGER NOT NULL DEFAULT 0, "
+."  `racerid` INTEGER NOT NULL, "
+."  `finalist` TINYINT(1) DEFAULT 0, "
+."  `grandfinalist` TINYINT(1) DEFAULT 0"
+.")",
+make_index("Roster", "classid"),
+make_index("Roster", "racerid"),
+make_index("Roster", "roundid"),
+
+"DROP TABLE IF EXISTS `Rounds`",
+
+"CREATE TABLE `Rounds` ("
+."  `roundid` INTEGER PRIMARY KEY, "
+."  `round` INTEGER NOT NULL, "
+."  `classid` INTEGER NOT NULL, "
+."  `charttype` INTEGER, "
+."  `phase` INTEGER"
+.")",
+make_index("Rounds", "classid"),
+make_index("Rounds", "round"),
+
+"DROP TABLE IF EXISTS Kiosks",
+"CREATE TABLE Kiosks ("
+." address VARCHAR(50),"
+." name VARCHAR(200),"
+." page VARCHAR(200),"
+." last_contact INTEGER NOT NULL)",
+
+);
+?>

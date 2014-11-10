@@ -29,7 +29,7 @@ function take_action_silently($sql, $params) {
 	$log_sql = substr($log_sql, 1, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
   }
 
-  $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES(NOW(), :logsql)');
+  $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES('.dbnow_expr().', :logsql)');
   @$stmt->execute(array(':logsql' => $log_sql));
 
   $stmt = $db->prepare($sql);
@@ -50,7 +50,9 @@ function take_action($sql, $params, $body_xml = '') {
 }
 
 function not_authorized_body() {
-	echo '<failure code="notauthorized">Not authorized -- please see race coordinator</failure>';
+  echo '<failure code="notauthorized">Not authorized -- please see race coordinator';
+  echo "\n"; var_dump($_SESSION); echo "\n";
+  echo '</failure>';
 }
 
 function not_authorized() {

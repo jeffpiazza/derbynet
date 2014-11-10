@@ -34,22 +34,19 @@ require_once('inc/rounds.inc');
 $rounds = all_rounds();
 
 $sql = 'SELECT RegistrationInfo.racerid,'
-  .' Classes.class, round, heat, lane, finishtime, resultid,'
-  .' carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
-  .' Classes.classid, Rounds.roundid'
-  .' FROM Classes'
-  .' INNER JOIN (Rounds'
-  .' INNER JOIN (Roster'
-  .' INNER JOIN (RegistrationInfo'
-  .' INNER JOIN RaceChart'
-  .' ON RegistrationInfo.racerid = RaceChart.racerid)'
-  .' ON Roster.racerid = RegistrationInfo.racerid)'
-  .' ON Rounds.roundid = Roster.roundid)'
-  .' ON Rounds.classid = Classes.classid'
-  .' WHERE Rounds.roundid = RaceChart.roundid'
-  .(isset($_GET['racerid'])
-    ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
-  .' ORDER BY class, round, lastname, firstname, carnumber, resultid, lane';
+    .' Classes.class, round, heat, lane, finishtime, resultid,'
+    .' carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
+    .' Classes.classid, Rounds.roundid'
+    .' FROM '.inner_join('RaceChart', 'RegistrationInfo'
+                         'RegistrationInfo.racerid = RaceChart.racerid',
+                         'Roster', 'Roster.racerid = RegistrationInfo.racerid',
+                         'Rounds', 'Rounds.roundid = Roster.roundid',
+                         'Classes', 'Rounds.classid = Classes.classid')
+    .' WHERE Rounds.roundid = RaceChart.roundid'
+    .(isset($_GET['racerid'])
+          ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
+    .' ORDER BY class, round, lastname, firstname, carnumber, resultid, lane';
+
 $stmt = $db->query($sql);
 if ($stmt === FALSE) {
   $info = $db->errorInfo();

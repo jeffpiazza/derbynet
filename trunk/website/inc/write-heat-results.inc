@@ -54,7 +54,7 @@ function write_heat_results() {
           take_action_silently('UPDATE RaceChart'
                                .' SET finishtime = :time,'
                                .' finishplace = :place,'
-                               .' completed = NOW()'
+                               .' completed = '.dbnow_expr()
                                .' WHERE resultid = :resultid',
                                array(':time' => $content['finishtime'],
                                      ':place' => 1 + $place,

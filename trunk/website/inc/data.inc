@@ -17,6 +17,37 @@ if ($dbtype == 'odbc') {
 	$dbtype = 'access';
 }
 
+function dbnow_expr() {
+  global $dbtype;
+  if ($dbtype == 'sqlite') {
+    return "datetime('now')";
+  } else {
+    return "NOW()";
+  }
+}
+
+// inner_join('Classes', 'Rounds', on, 'Roster', on, ...)
+function inner_join() {
+  global $dbtype;
+  $args = func_get_args();
+  $expr = array_shift($args);  // Take off the first table name
+  $first = true;
+  while (count($args) > 0) {
+    $table2 = array_shift($args);
+    $on_condition = array_shift($args);
+    if ($dbtype != 'sqlite') { // TODO == 'access') {
+      if (!$first) {
+        $expr = '('.$expr.')';
+      }
+      $expr = $table2.' INNER JOIN '.$expr.' ON '.$on_condition;
+    } else {
+      $expr = $expr.' INNER JOIN '.$table2.' ON '.$on_condition;
+    }
+    $first = false;
+  }
+  return $expr;
+}
+
 function sql_file_path($stem) {
   global $dbtype;
   return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
