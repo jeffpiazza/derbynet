@@ -115,22 +115,21 @@ require_once('inc/checkin-table.inc');
 <tbody>
 <?php
 
-$sql = 'SELECT racerid, carnumber, lastname, firstname,'
-  .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
-  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
-  .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
-  .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
-  .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
-  .' FROM (Ranks'
-  .' INNER JOIN (Classes'
-  .' INNER JOIN RegistrationInfo'
-  .' ON RegistrationInfo.classid = Classes.classid)'
-  .' ON RegistrationInfo.rankid = Ranks.rankid'
-  .' AND RegistrationInfo.classid = Ranks.classid)'
-  .' ORDER BY '
-  .($order == 'car' ? 'carnumber, lastname, firstname' :
-    ($order == 'den'  ? 'class, lastname, firstname' :
-	 'lastname, firstname'));
+    $sql = 'SELECT racerid, carnumber, lastname, firstname,'
+      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
+      .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
+      .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
+      .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
+      .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
+    .' FROM '.inner_join('RegistrationInfo', 'Classes',
+                         'RegistrationInfo.classid = Classes.classid',
+                         'Ranks',
+                         'RegistrationInfo.rankid = Ranks.rankid')
+    .' ORDER BY '
+          .($order == 'car' ? 'carnumber, lastname, firstname' :
+            ($order == 'den'  ? 'class, lastname, firstname' :
+             'lastname, firstname'));
+
 $stmt = $db->query($sql);
 
 $n = 1;

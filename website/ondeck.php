@@ -37,22 +37,19 @@ require_once('inc/rounds.inc');
 $groups = all_racing_groups();
 
 $sql = 'SELECT'
-  .' Classes.class, round, heat, lane, finishtime, resultid, completed, '
-  .($use_master_sched ? 'round' : 'Rounds.roundid').' as racinggroup,'
-  .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
-  .' RegistrationInfo.carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
-  .' Classes.classid, Rounds.roundid, RaceChart.racerid'
-  .' FROM Classes'
-  .' INNER JOIN (Rounds'
-  .' INNER JOIN (Roster'
-  .' INNER JOIN (RegistrationInfo'
-  .' INNER JOIN RaceChart'
-  .' ON RegistrationInfo.racerid = RaceChart.racerid)'
-  .' ON Roster.racerid = RegistrationInfo.Racerid)'
-  .' ON Rounds.roundid = Roster.roundid)'
-  .' ON Rounds.classid = Classes.classid'
-  .' WHERE Rounds.roundid = RaceChart.roundid'
-  .' ORDER BY '.($use_master_sched ? 'round, masterheat, lane' : 'class, round, heat, lane');
+    .' Classes.class, round, heat, lane, finishtime, resultid, completed, '
+    .($use_master_sched ? 'round' : 'Rounds.roundid').' as racinggroup,'
+    .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
+    .' RegistrationInfo.carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
+    .' Classes.classid, Rounds.roundid, RaceChart.racerid'
+    .' FROM '.inner_join('RaceChart', 'RegistrationInfo', 
+                         'RegistrationInfo.racerid = RaceChart.racerid',
+                         'Roster', 'Roster.racerid = RegistrationInfo.Racerid',
+                         'Rounds', 'Rounds.roundid = Roster.roundid',
+                         'Classes', 'Rounds.classid = Classes.classid')
+    .' WHERE Rounds.roundid = RaceChart.roundid'
+    .' ORDER BY '.($use_master_sched ? 'round, masterheat, lane' : 'class, round, heat, lane');
+
 $stmt = $db->query($sql);
 if ($stmt === FALSE) {
   $info = $db->errorInfo();

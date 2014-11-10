@@ -62,14 +62,15 @@ echo '<tr>'
   .'<th>Award(s)</th>'
   .'</tr>';
 
-foreach ($db->query('SELECT class, rank, carnumber, lastname, firstname, racerid'
-					.' FROM Ranks'
-					.' INNER JOIN (Classes'
-					.' INNER JOIN RegistrationInfo'
-					.' ON RegistrationInfo.classid = Classes.classid)'
-					.' ON RegistrationInfo.rankid = Ranks.rankid'
-					.' WHERE passedinspection = 1 AND exclude = 0'
-					.' ORDER BY carnumber') as $row) {
+$sql = 'SELECT class, rank, carnumber, lastname, firstname, racerid'
+    .' FROM '.inner_join('RegistrationInfo', 'Classes',
+                         'RegistrationInfo.classid = Classes.classid',
+                         'Ranks',
+                         'RegistrationInfo.rankid = Ranks.rankid')
+      .' WHERE passedinspection = 1 AND exclude = 0'
+      .' ORDER BY carnumber';
+
+foreach ($db->query($sql) as $row) {
   $racerid = $row['racerid'];
   echo '<tr>'
     .'<td>'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'</td>'

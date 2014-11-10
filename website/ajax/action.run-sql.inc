@@ -2,6 +2,10 @@
 // $_POST['script']
 start_response();
 
+function schema_version() {
+  return read_raceinfo('schema', 1);
+}
+
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
   try {

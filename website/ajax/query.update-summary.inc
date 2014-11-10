@@ -78,11 +78,13 @@ $use_master_sched = use_master_sched();
 	    ? ' AND completed > '
 	      .($dbtype == 'access'
 			  ? 'CDate(:since)' 
-			  : 'TIMESTAMP(:since)')
+            : ($dbtype == 'sqlite'
+               ? 'datetime(:since)'
+               : 'TIMESTAMP(:since)'))
 	    : "") 
     .' ORDER BY completed, resultid, lane';
   $stmt = $db->prepare($sql);
-  $stmt->execute(array(':since' => $since));
+  $stmt->execute($since ? array(':since' => $since) : array());
 
   if ($stmt === FALSE) {
 	$info = $db->errorInfo();
