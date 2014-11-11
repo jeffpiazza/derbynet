@@ -1,4 +1,10 @@
-<?php session_start(); ?>
+<?php
+// When presented as a kiosk page, i.e., when this php file is included from
+// kiosks/ondeck.kiosk, the session_start() function will already have been
+// called.  The @ is necessary to suppress the error notice that may arise in
+// this case.
+@session_start();
+?>
 <!DOCTYPE html>
 <?php 
 require_once('inc/data.inc');
