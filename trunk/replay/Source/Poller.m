@@ -7,8 +7,21 @@
 //
 
 #import "Poller.h"
+#import "CommandListener.h"
 
 @implementation Poller
+
+@synthesize listener;
+
+- (id) initWithDelegate:(AppDelegate *)theAppDelegate andListener:(CommandListener *)theListener
+{
+    if ((self = [super init]))
+    {
+        _appDelegate = theAppDelegate;
+        listener = theListener;
+    }
+    return self;
+}
 
 - (void) setUrlAndPoll: (NSString*) urlString
 {
@@ -29,12 +42,6 @@
     [self poll];
 }
 
-- (void) setPort: (int) port
-{
-    _port = port;
-}
-
-
 - (void) poll
 {
     //  action=register-replay&port=<port>
@@ -44,7 +51,7 @@
     
     [request setHTTPMethod:@"POST"];
 
-    NSString* bodyData = [NSString stringWithFormat:@"action=register-replay&port=%i", _port];
+    NSString* bodyData = [NSString stringWithFormat:@"action=register-replay"];  // TODO
     [request setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
     
     
@@ -71,28 +78,33 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    // NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
-    // NSLog(@"%@",strData);
-    
     // Once this method is invoked, "responseData" contains the complete result
     NSError *error;
     NSXMLDocument *document =
     [[NSXMLDocument alloc] initWithData:responseData options:NSXMLDocumentTidyHTML error:&error];
     
-    // Deliberately ignore the error: with most HTML it will be filled with
+    // Deliberately ignoring the error variable: with most HTML it will be filled with
     // numerous "tidy" warnings.
     
-    if (!document) {
-        NSLog(@"Poller response document failed to parse");
-        // [[NSAlert alertWithMessageText:@"Document failed to parse" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
+    if (document) {
+        NSArray* elements = [[document rootElement] elementsForName:@"replay-message"];
+        // (NSArray *)nodesForXPath:(NSString *)xpath error:(NSError **)error;
+        for (NSXMLElement* elt in elements) {
+            NSString* msg = [elt stringValue];
+            if ([listener interpret_command: msg]) {
+            } else {
+                NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
+                NSLog(@"  PARSING FAILS: %@", strData);
+            }
+        }
     } else {
-        // [[NSAlert alertWithMessageText:@"PARSED OK!" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
-        // NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
-        // NSLog(@"%@",strData);
+        NSString *strData = [[NSString alloc]initWithData:responseData encoding:NSUTF8StringEncoding];
+        NSLog(@"Poller response document failed to parse: %@", strData);
+        // [[NSAlert alertWithMessageText:@"Document failed to parse" defaultButton:@"Dismiss" alternateButton:nil otherButton:nil informativeTextWithFormat:nil] runModal];
     }
     
-    // Delay execution of my block for 10 seconds.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 10 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+    // Delay execution of my block for 500 msec (1/2 second)
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 500 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
         [self poll];
     });
 }

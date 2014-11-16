@@ -44,7 +44,7 @@ if ($replay['state'] == REPLAY_NOT_CONNECTED) {
   $msg = 'TROUBLE: '.$replay['trouble'];
   $icon = 'img/status_trouble.png';
 }
-echo '<replay-state host-and-port="'.$replay['host_and_port'].'"'
+echo '<replay-state'
     .' last_contact="'.$replay['last_contact'].'"'
     .' state="'.$replay['state'].'"'
     .' icon="'.$icon.'"'

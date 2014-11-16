@@ -12,6 +12,7 @@
 
 #import "AppDelegate.h"
 #import "CommandListener.h"
+#import "Poller.h"
 
 @interface AppDelegate () <AVCaptureFileOutputDelegate, AVCaptureFileOutputRecordingDelegate>
 {
@@ -84,9 +85,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    [[self listener] startOnPort:0];
-
-    // Insert code here to initialize your application
     [self refreshDevices];
 
 	// Attach preview to session
@@ -105,15 +103,12 @@
         [[self window] toggleFullScreen: nil];
     }
     
-    // TODO: If we want the Replay process to register itself with the web server, this would be the way to go.
-    // For now, just tell the operator what port we're listening on, and let them type it in to the web server.
     [self showUrlSheet];
 }
 
 - (void)showUrlSheet
 {
     if (!_urlSheet) {
-        NSLog(@"Loading UrlDialog nib");
         [NSBundle loadNibNamed:@"UrlDialog" owner: self];
     }
     
@@ -125,19 +120,14 @@
        didEndSelector: @selector(didEndSheet:returnCode:contextInfo:)
           contextInfo: nil];
 
-    NSLog(@"urlSheet says %d", [_urlSheet canBecomeKeyWindow]);
     // These both appear to be necessary, but it's not really clear why.
-    NSLog(@"Making URL sheet key window");
     [_urlSheet makeKeyWindow];
     [_urlField becomeFirstResponder];
-    NSLog(@"showUrlSheet exits");
 }
 
 - (IBAction) tryNewUrl: (id) sender
 {
-    NSLog(@"tryNewUrl");
-    self.poller = [[Poller alloc] init];
-    [self.poller setPort: [[self listener] port]];
+    self.poller = [[Poller alloc] initWithDelegate:self andListener:[self listener]];
     [self.poller setUrlAndPoll: [_urlField stringValue]];
 
     [NSApp endSheet:_urlSheet];
@@ -398,6 +388,7 @@
                                 [NSCursor hide];
                                 // This unhides the playerview, which covers all the other views in the window.
                                 [[self playerView] setHidden: NO];
+                                [[self previewView] setHidden: YES];
                                 //[player play];
                                 // Amazing!  [player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
                                 [player setRate: rate];
@@ -411,6 +402,7 @@
 - (void) playerItemDidReachEnd: (id) sender
 {
     [[self playerView] setHidden:YES];
+    [[self previewView] setHidden:NO];
     [NSCursor unhide];
     [NSCursor setHiddenUntilMouseMoves:YES];
     [[NSApplication sharedApplication] hide: self];
