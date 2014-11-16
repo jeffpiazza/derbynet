@@ -15,7 +15,6 @@
 
 @interface CommandListener : NSObject
 {
-	BOOL isRunning;
 }
 
 @property (weak) AppDelegate* appDelegate;

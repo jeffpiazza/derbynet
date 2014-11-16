@@ -46,6 +46,7 @@
 @property (retain) Poller* poller;
 
 // Playback:
+@property (weak) IBOutlet NSView* controlContainerView;
 @property (weak) IBOutlet AVPlayerView *playerView;
 
 @property (retain) NSString* url;

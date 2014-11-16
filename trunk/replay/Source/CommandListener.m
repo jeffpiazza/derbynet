@@ -8,19 +8,14 @@
 
 #import "CommandListener.h"
 
-#define READ_TIMEOUT 90.0
-
-
 @implementation CommandListener
 
 @synthesize appDelegate;
 
 - (id)initWithDelegate: (AppDelegate*) theAppDelegate;
 {
-	if ((self = [super init]))
-	{
+	if ((self = [super init])) {
         appDelegate = theAppDelegate;
-		isRunning = NO;
 	}
 	return self;
 }
@@ -144,7 +139,6 @@
 
     [[self appDelegate] cancelRecording];
 
-    NSLog(@"REPLAY of %@", [[self appDelegate] moviePath]);  // TODO
     [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
     return YES;
