@@ -6,7 +6,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "Poller.h"
+
+@class Poller;
+@class CommandListener;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 {
@@ -41,7 +43,6 @@
 
 // Full path to the current movie file
 @property (retain) NSURL* moviePath;
-
 @property (retain) Poller* poller;
 
 // Playback:

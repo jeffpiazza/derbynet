@@ -15,19 +15,14 @@
 
 @interface CommandListener : NSObject
 {
-	dispatch_queue_t socketQueue;
-	
-	GCDAsyncSocket *listenSocket;
-	NSMutableArray *connectedSockets;
-	
 	BOOL isRunning;
 }
 
 @property (weak) AppDelegate* appDelegate;
 
 - (id)initWithDelegate: (AppDelegate*) theAppDelegate;
-- (int) port;
-- (void) startOnPort: (int) port;
-- (void) stop;
+
+// Parses and performs one command.  Returns true if parsing was successful.
+- (BOOL) interpret_command: (NSString*) msg;
 
 @end
