@@ -135,13 +135,11 @@
 
 - (IBAction) closeUrlSheet: (id) sender
 {
-    NSLog(@"closeUrlSheet");
     [NSApp endSheet:_urlSheet];
 }
 
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
 {
-    NSLog(@"didEndSheet!");
     [sheet orderOut:self];
 }
 
@@ -169,13 +167,11 @@
 
 - (AVCaptureDevice *)selectedVideoDevice
 {
-    NSLog(@"selectedVideoDevice");
 	return [_videoDeviceInput device];
 }
 
 - (void)setSelectedVideoDevice:(AVCaptureDevice *)selectedVideoDevice
 {
-    NSLog(@"setSelectedVideoDevice");
 	[[self session] beginConfiguration];
 	
 	if ([self videoDeviceInput]) {
@@ -221,7 +217,6 @@
 
 - (void)setSelectedAudioDevice:(AVCaptureDevice *)selectedAudioDevice
 {
-    NSLog(@"setSelectedAudioDevice");
 	[[self session] beginConfiguration];
 	
 	if ([self audioDeviceInput]) {
@@ -388,7 +383,7 @@
                                 [NSCursor hide];
                                 // This unhides the playerview, which covers all the other views in the window.
                                 [[self playerView] setHidden: NO];
-                                [[self previewView] setHidden: YES];
+                                [[self controlContainerView] setHidden: YES];
                                 //[player play];
                                 // Amazing!  [player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
                                 [player setRate: rate];
@@ -402,7 +397,7 @@
 - (void) playerItemDidReachEnd: (id) sender
 {
     [[self playerView] setHidden:YES];
-    [[self previewView] setHidden:NO];
+    [[self controlContainerView] setHidden:NO];
     [NSCursor unhide];
     [NSCursor setHiddenUntilMouseMoves:YES];
     [[NSApplication sharedApplication] hide: self];
@@ -420,7 +415,6 @@
 - (void) setUrl:(NSString *)url
 {
     _url = url;
-    NSLog(@"Set URL to %@", url);
 }
 
 @end

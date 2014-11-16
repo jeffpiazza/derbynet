@@ -25,8 +25,6 @@
 
 - (void) setUrlAndPoll: (NSString*) urlString
 {
-    NSLog(@"setUrlAndPoll %@", urlString);
-
     if (![urlString hasPrefix:@"http:"]) {
         urlString = [@"http://" stringByAppendingString: urlString];
     }
@@ -38,7 +36,6 @@
         urlString = [urlString stringByAppendingString: @"action.php"];
     }
     url = [NSURL URLWithString:urlString];
-    NSLog(@"Registration polling starts to %@", urlString);
     [self poll];
 }
 
