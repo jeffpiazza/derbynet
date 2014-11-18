@@ -31,13 +31,24 @@ define('REPLAY_TIMEOUT_LIMIT', 10);
 // TODO
 function get_replay() {
   $state = read_raceinfo('replay_state', REPLAY_NOT_CONNECTED);
+  $reported_status = read_raceinfo('replay_reported', 0);
   $last_contact = read_raceinfo('replay_last_contact', 0);
   if ($last_contact + REPLAY_TIMEOUT_LIMIT < time()) {
     $state = REPLAY_NOT_CONNECTED;
   }
   $trouble = read_raceinfo('replay_trouble');
 
+  $status_array = array(
+         0 => 'Ready',
+         1 => 'Recording',
+         2 => 'Playing',
+         -1 => 'Connecting...',
+         -2 => 'No video source chosen',
+         -3 => 'No audio source chosen',
+         -4 => 'Recording error');
+
   return array('state' => $state,
+               'reported_status' => $status_array[$reported_status],
                'last_contact' => $last_contact,
                'trouble' => $trouble);
 }
@@ -59,7 +70,7 @@ function send_replay_message($cmd) {
 
 function send_replay_TEST() {
   // test <skipback_seconds> <repeat> <rate>
-  send_replay_message("TEST 4 1 0.5");
+  send_replay_message("TEST 4 2 0.5");
 }
 
 // "START video_name_root  -- start recording video\r\n"

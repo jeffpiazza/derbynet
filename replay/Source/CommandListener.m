@@ -65,7 +65,7 @@
 
 - (BOOL) docommand_hello: (NSScanner*) scanner
 {
-    [[self appDelegate] setStatus:@"Poller connected"];
+    [[self appDelegate] setStatusMessage:@"Poller connected"];
     return YES;
 }
 
@@ -79,6 +79,9 @@
     if (![scanner scanInt: &num_times]) return NO;
     float rate;
     if (![scanner scanFloat:&rate]) return NO;
+    
+    NSLog(@"docommand_test num_secs=%i, num_times=%i, rate=%f", num_secs, num_times, rate);  // TODO
+    
     // doPlaybackOf opens the asset file and does the rest asynchronously
     [[self appDelegate] doPlaybackOf: [[NSBundle mainBundle] URLForResource:@"FilmLeader" withExtension:@"mp4"]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
@@ -95,6 +98,9 @@
     if (![scanner scanInt: &num_times]) return NO;
     float rate;
     if (![scanner scanFloat:&rate]) return NO;
+
+    NSLog(@"docommand_demo num_secs=%i, num_times=%i, rate=%f", num_secs, num_times, rate);  // TODO
+    
 
     NSURL* directory = [[self appDelegate] moviesDirectory];
     NSLog(@"Movies directory: %@", directory);
@@ -136,7 +142,7 @@
     if (![scanner scanInt: &num_times]) return NO;
     float rate;
     if (![scanner scanFloat:&rate]) return NO;
-
+    
     [[self appDelegate] cancelRecording];
 
     [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
