@@ -48,7 +48,8 @@
     
     [request setHTTPMethod:@"POST"];
 
-    NSString* bodyData = [NSString stringWithFormat:@"action=register-replay"];  // TODO
+    NSLog(@"Polling: status = %i", [[self appDelegate] status]);  //TODO
+    NSString* bodyData = [NSString stringWithFormat:@"action=replay-message&status=%i", [[self appDelegate] status]];
     [request setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
     
     
@@ -84,6 +85,9 @@
     // numerous "tidy" warnings.
     
     if (document) {
+        if ([[self appDelegate] status] == STATUS_NOT_CONNECTED) {
+            [[self appDelegate] setStatus: STATUS_READY];
+        }
         NSArray* elements = [[document rootElement] elementsForName:@"replay-message"];
         // (NSArray *)nodesForXPath:(NSString *)xpath error:(NSError **)error;
         for (NSXMLElement* elt in elements) {

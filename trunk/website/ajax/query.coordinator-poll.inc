@@ -38,7 +38,7 @@ if ($replay['state'] == REPLAY_NOT_CONNECTED) {
   $msg = 'NOT CONNECTED';
   $icon = 'img/status_not_connected.png';
 } else if ($replay['state'] == REPLAY_CONNECTED) {
-  $msg = 'CONNECTED ('.(time() - $replay['last_contact']).' sec.)';
+  $msg = $replay['reported_status'].' ('.(time() - $replay['last_contact']).' sec.)';
   $icon = 'img/status_ok.png';
 } else {
   $msg = 'TROUBLE: '.$replay['trouble'];
@@ -55,7 +55,6 @@ echo "</replay-state>\n";
 ?>
 <?php // Kiosks
 require_once('inc/kiosks.inc');
-
 try {
   drop_old_kiosks();
   $stmt = $db->query('SELECT address, name, page, last_contact FROM Kiosks ORDER BY name, address, last_contact');

@@ -42,6 +42,7 @@
 {
 	self = [super init];
 	if (self) {
+        _status = STATUS_NOT_CONNECTED;
         _listener = [[CommandListener alloc] initWithDelegate: self];
         
 		// Create a capture session
@@ -299,20 +300,18 @@
 
 - (void) startRecording
 {
+    [self setStatus: STATUS_RECORDING];
     [[self movieFileOutput] startRecordingToOutputFileURL:[self moviePath] recordingDelegate: self];
 }
 
 - (void) cancelRecording
 {
+    if ([self status] == STATUS_RECORDING) {
+        [self setStatus: STATUS_READY];
+    }
     [[self movieFileOutput] stopRecording];
     
     //[[NSFileManager defaultManager] removeItemAtPath: [[self moviePath] path] error:NULL];
-}
-
-// replayRecording is what gets invoked by the Replay button
-- (void) replayRecording
-{
-    [self doPlaybackOf: [self moviePath] skipback: 3 duration: 3 showings: 2 rate: 0.5];
 }
 
 - (void) captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)
@@ -333,16 +332,54 @@
 {
     [[self portView] setStringValue:msg];
 }
-- (void) setStatus:(NSString *)msg
+- (void) setStatusMessage:(NSString *)msg
 {
     [[self statusView] setStringValue:msg];
 }
 
+- (void) queuePlaybackItemsOfAsset: (AVURLAsset*) asset skipback: (int) num_secs showings: (int) showings rate: (float) rate
+{
+    NSMutableArray *items = [NSMutableArray arrayWithCapacity: showings];
+    for (int k = 0; k < showings; ++k) {
+        AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:asset];
+        if (k == showings - 1) {
+            [[NSNotificationCenter defaultCenter]
+             addObserver:self
+             selector:@selector(playerItemDidReachEnd:)
+             name:AVPlayerItemDidPlayToEndTimeNotification
+             object: playerItem];
+        }
+        
+        CMTime duration = [asset duration];
+        CMTime skip_back = CMTimeMake(num_secs, 1);
+        if (CMTimeCompare(duration, skip_back) > 0) {
+            [playerItem seekToTime:CMTimeSubtract(duration, skip_back)];
+        } else {
+            [playerItem seekToTime: kCMTimeZero];
+        }
+        
+        [items addObject: playerItem];
+    }
+    
+    AVQueuePlayer* player = [[AVQueuePlayer alloc] initWithItems:items];
+    [[self playerView] setPlayer: player];
+    
+    [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+    [NSCursor hide];
+    // This unhides the playerview, which covers all the other views in the window.
+    [[self playerView] setHidden: NO];
+    [[self controlContainerView] setHidden: YES];
+    //[player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
+    // TODO: It appears to be the case that this setRate affects playback only of the first player item; subsequent items play back at full speed.
+    [player setRate: rate];
+}
+
 - (void) doPlaybackOf: (NSURL*) url skipback: (int) num_secs duration: (int) duration showings: (int) showings rate: (float) rate
 {
+    [self setStatus:STATUS_PLAYING];
+
     [[self movieFileOutput] stopRecording];
     frontmostApplication = [[NSWorkspace sharedWorkspace] frontmostApplication];
-    NSLog(@"Frontmost application is %@", [frontmostApplication localizedName]);
 
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
     NSString *tracksKey = @"tracks";
@@ -353,40 +390,7 @@
                             NSError *error;
                             AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error: &error];
                             if (status == AVKeyValueStatusLoaded) {
-                                NSMutableArray *items = [NSMutableArray arrayWithCapacity: showings];
-                                for (int k = 0; k < showings; ++k) {
-                                    AVPlayerItem* playerItem = [AVPlayerItem playerItemWithAsset:asset];
-                                
-                                    if (k == showings - 1) {
-                                        [[NSNotificationCenter defaultCenter]
-                                         addObserver:self
-                                         selector:@selector(playerItemDidReachEnd:)
-                                         name:AVPlayerItemDidPlayToEndTimeNotification
-                                         object: playerItem];
-                                    }
-                                    
-                                    CMTime duration = [asset duration];
-                                    CMTime skip_back = CMTimeMake(num_secs, 1);
-                                    if (CMTimeCompare(duration, skip_back) > 0) {
-                                        [playerItem seekToTime:CMTimeSubtract(duration, skip_back)];
-                                    } else {
-                                        [playerItem seekToTime: kCMTimeZero];
-                                    }
-                                    
-                                    [items addObject: playerItem];
-                                }
-                                
-                                AVQueuePlayer* player = [[AVQueuePlayer alloc] initWithItems:items];
-                                [[self playerView] setPlayer: player];
-
-                                [[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
-                                [NSCursor hide];
-                                // This unhides the playerview, which covers all the other views in the window.
-                                [[self playerView] setHidden: NO];
-                                [[self controlContainerView] setHidden: YES];
-                                //[player play];
-                                // Amazing!  [player play] is effectively the same as [player setRate: 1.0].  Calling setRate instead gives the desired behavior.
-                                [player setRate: rate];
+                                [self queuePlaybackItemsOfAsset: asset skipback: num_secs showings: showings rate: rate];
                             } else {
                                 NSLog(@"AVKeyValueStatus reports: %@", error);
                             }
@@ -396,6 +400,8 @@
 
 - (void) playerItemDidReachEnd: (id) sender
 {
+    [self setStatus: STATUS_READY];
+    NSLog(@"Hiding player and showing controls");  // TODO
     [[self playerView] setHidden:YES];
     [[self controlContainerView] setHidden:NO];
     [NSCursor unhide];
