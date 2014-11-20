@@ -1,9 +1,9 @@
 #! /bin/sh
 
 BASE_URL=$1
-source common.sh
+source `dirname $0`/common.sh
 
-./login-coordinator.sh $BASE_URL
+`dirname $0`/login-coordinator.sh $BASE_URL
 
 ### Check in every other racer...
 curl_post action.php "action=pass&racer=1&value=1" | check_success

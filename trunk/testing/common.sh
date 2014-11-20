@@ -5,35 +5,39 @@ if [ "$BASE_URL" = "" ]; then
 	exit
 fi
 
+OUTPUT_CURL="`dirname $0`/output.curl"
+DEBUG_CURL="`dirname $0`/debug.curl"
+COOKIES_CURL="`dirname $0`/cookies.curl"
+
 function stacktrace() {
     while caller $((n++)); do :; done;
 }
 
 function curl_get() {
 	echo ' ' ' ' ' ' $1 >&2
-	echo    >> output.curl
-	echo $1 >> output.curl
-	echo    >> output.curl
-	curl --location -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| sed -e 's/&nbsp;/ /g' | xmllint --format - | tee -a output.curl
+	echo    >> $OUTPUT_CURL
+	echo $1 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+		| sed -e 's/&nbsp;/ /g' | xmllint --format - | tee -a $OUTPUT_CURL
 }
 
 function curl_get_amper() {
 	echo '     ' $1 >&2
-	echo    >> output.curl
-	echo $1 >> output.curl
-	echo    >> output.curl
-	curl --location -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| grep -v '&' | xmllint --format - | tee -a output.curl
+	echo    >> $OUTPUT_CURL
+	echo $1 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+		| grep -v '&' | xmllint --format - | tee -a $OUTPUT_CURL
 }
 
 function curl_post() {
 	echo ' ' ' ' ' ' post $1 $2 >&2
-	echo    >> output.curl
-	echo post $1 $2 >> output.curl
-	echo    >> output.curl
-	curl --location -d "$2" -s -b cookies.curl -c cookies.curl $BASE_URL/$1 | tee debug.curl \
-		| xmllint --format - | tee -a output.curl
+	echo    >> $OUTPUT_CURL
+	echo post $1 $2 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -d "$2" -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+		| xmllint --format - | tee -a $OUTPUT_CURL
 }
 
 function user_login() {
@@ -51,7 +55,7 @@ function test_fails() {
 	echo TEST FAILURE: $*
     stacktrace
 	echo BEGIN RESPONSE
-	cat debug.curl
+	cat $DEBUG_CURL
 	echo END RESPONSE
     tput setaf 0
 }
@@ -77,7 +81,7 @@ function check_failure() {
 
 function check_heat_ready() {
 	# Expecting stdin
-	grep -c "<heat-ready[ />]" debug.curl > /dev/null
+	grep -c "<heat-ready[ />]" $DEBUG_CURL > /dev/null
 	if [ $? -ne 0 ]; then
         test_fails EXPECTING HEAT-READY
 	fi

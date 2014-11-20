@@ -10,7 +10,7 @@ if [ "$BASE_URL" = "" ]; then
 	exit
 fi
 
-source common.sh
+source `dirname $0`/common.sh
 
 # Send a register-replay action for port 50000 to the server
 user_login RaceCoordinator doyourbest

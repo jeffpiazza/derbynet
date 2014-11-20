@@ -1,7 +1,7 @@
 #! /bin/sh
 
 BASE_URL=$1
-source common.sh
+source `dirname $0`/common.sh
 
 # Data produced by: http://listofrandomnames.com
 
