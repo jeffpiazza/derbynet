@@ -1,6 +1,6 @@
 #! /bin/sh
 BASE_URL=$1
-source common.sh
+source `dirname $0`/common.sh
 
 cat >anonymous.index.tmp <<EOF
         <form method="link" action="ondeck.php">

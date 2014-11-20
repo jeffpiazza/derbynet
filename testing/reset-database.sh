@@ -1,10 +1,10 @@
 #! /bin/sh
 
 BASE_URL=$1
-source common.sh
+source `dirname $0`/common.sh
 
-./login-coordinator.sh $BASE_URL
+`dirname $0`/login-coordinator.sh $BASE_URL
 
 curl_post action.php "action=run-sql&script=schema" | check_success
 
-./import-roster.sh $BASE_URL
+`dirname $0`/import-roster.sh $BASE_URL

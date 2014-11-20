@@ -7,6 +7,6 @@ if [ "$BASE_URL" = "" ]; then
 	exit
 fi
 
-source common.sh
+source `dirname $0`/common.sh
 
 user_login RaceCoordinator doyourbest

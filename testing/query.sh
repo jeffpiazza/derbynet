@@ -8,10 +8,10 @@ if [ "$BASE_URL" = "" ]; then
 fi
 
 if [ "$2" = "" ]; then
-    echo "Usage: <URL root> \"action=xyz&param1=...\""
+    echo "Usage: <URL root> \"query=xyz&param1=...\""
     exit
 fi
 
 source `dirname $0`/common.sh
 
-curl_post action.php "$2"
+curl_get "action.php?$2"
