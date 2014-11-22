@@ -3,6 +3,9 @@
 // Expects $now_running array with roundid and heat elements
 
 require_once('inc/data.inc');
+require_once('inc/photo-config.inc');
+
+$show_racer_photos = read_raceinfo_boolean('show-racer-photos');
   
 $stmt = $db->prepare('SELECT lane, lastname, firstname, carnumber, carname, imagefile, finishtime'
                      .' FROM RaceChart'
@@ -19,7 +22,7 @@ foreach ($stmt as $row) {
         .' name="'.htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8').'"'
        .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
        .' carnumber="'.$row['carnumber'].'"'
-       .' photo="'.htmlspecialchars($row['imagefile'], ENT_QUOTES, 'UTF-8').'"'
+       .' photo="'.($show_racer_photos ? thumb_url($row['imagefile']) : '').'"'
        .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
        .'/>'."\n";
 }

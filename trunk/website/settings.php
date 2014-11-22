@@ -23,7 +23,7 @@ $use_xbs = read_raceinfo_boolean('xbs-award');
 $xbs_award = read_raceinfo('xbs-award');
 if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
-
+$show_racer_photos = read_raceinfo_boolean('show-racer-photos');
 ?>
 
 <div class="block_buttons">
@@ -101,6 +101,11 @@ $use_master_sched = read_raceinfo_boolean('use-master-sched');
     <label for="photo_width">w x </label>
  	<input id="photo_height" name="photo_height" type="number" min="0" max="1000"
 		  value="<?php echo $photosize[1]; ?>"/>
+    <br/>
+    <input type="hidden" name="show-racer-photos-checkbox" value="yes"/>
+    <input id="show-racer-photos" name="show-racer-photos"
+           type="checkbox"<?php if ($show_racer_photos) echo ' checked="checked"';?>/>
+    <label for="show-racer-photos">Show racer photos on main racing board</label>
   </div>
   <br/>
 

@@ -78,21 +78,18 @@ function animate_flyers(place, place_to_lane, completed) {
 
 // Processes the top-level <watching> element.
 //
-// Walks through each of the <heat-result lane= time= place= speed=>
-// elements, in order, building a mapping the reported place to the
-// matching lane.
+// Walks through each of the <heat-result lane= time= place= speed=> elements,
+// in order, building a mapping from the reported place to the matching lane.
 //
-// If we get an incomplete update (that is, some but not all heat
-// results from the current heat were written to the database at the
-// moment the <heat-result> elements got generated), then we be
-// missing some of the possible places: we might have 1st and 3rd
-// place, but not 2nd and 4th.
+// If we get an incomplete update (that is, some but not all heat results from
+// the current heat were written to the database at the moment the <heat-result>
+// elements got generated), then we be missing some of the possible places: we
+// might have 1st and 3rd place, but not 2nd and 4th.
 //
-// It's the holes in the place_to_lane mapping that screws us: we only
-// attempt to stop the animation when we go beyond
-// place_to_lane.length; otherwise, we assume we can find a
-// place_to_lane entry for 2nd place if place_to_lane is big enough to
-// account for 3rd place.
+// It's the holes in the place_to_lane mapping that screws us: we only attempt
+// to stop the animation when we go beyond place_to_lane.length; otherwise, we
+// assume we can find a place_to_lane entry for 2nd place if place_to_lane is
+// big enough to account for 3rd place.
 //
 // The test for a complete set of heat-results is that we have as many
 // heat-results as lanes.
@@ -121,6 +118,10 @@ function process_watching(watching) {
             }
         }
 
+        // The g_num_racers test is to overcome the fact that sometimes it can
+        // happen that some but not all of the results for a heat have been
+        // recorded, in which case our determination of place order is
+        // incomplete at best and likely wrong.
         if (!g_animated && heat_results.length >= g_num_racers) {
             g_animated = true;
             animate_flyers(1, place_to_lane, function () {
@@ -166,6 +167,12 @@ function process_new_heat(watching) {
                 var lane = r.getAttribute('lane');
                 $('[data-lane="' + lane + '"] .lane').text(lane);
                 $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
+                if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
+                    $('[data-lane="' + lane + '"] .name_and_photo').prepend(
+                        '<img src="' + r.getAttribute('photo') + '"/>');
+                } else {
+                    $('[data-lane="' + lane + '"] img').remove();
+                }
                 // $('[data-lane="' + lane + '"] .carname').text(r.getAttribute('carname'));
                 // $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
             }

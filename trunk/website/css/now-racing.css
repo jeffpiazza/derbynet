@@ -37,3 +37,23 @@ table, td {
        window size. */
     font-size: 85px;
 }
+
+td {
+    vertical-align: middle;
+    position: relative;
+}
+
+img {
+    vertical-align: middle;
+    /* display: inline-block; */
+    float: left;
+}
+
+.name {
+    /* inline-block causes the paragraph to be vertically centered, but the bottom of the text aligns
+        with the bottom of the image, resulting in a table cell that's too tall.  What I can't figure
+        out how to accomplish is aligning the middle of the floated image with the middle of the text.
+        The rules for float require that the floated element be as high up as possible */
+    /* display: inline-block; */
+    vertical-align: middle
+}

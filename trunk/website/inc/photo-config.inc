@@ -90,7 +90,23 @@ function resize_to_target($image_name, $from_dir, $to_dir, $height, $width) {
   return $target_file_name;
 }
 
-function pseudo_mime_content_type($filename){
+function thumb_url($imagefile) {
+  global $photoThumbsDirectory;
+  if ($imagefile != '') {
+    $imagefile = basename($imagefile);
+    $thumbfile = $photoThumbsDirectory.DIRECTORY_SEPARATOR.$imagefile;
+    $url = 'photo.php/thumb/';
+    if (file_exists($thumbfile)) {
+      $url .= @filemtime($thumbfile).'/';
+    }
+    $url .= urlencode($imagefile);
+    return $url;
+  } else {
+    return '';
+  }
+}
+
+function pseudo_mime_content_type($filename) {
   $mime_types = array(
             'txt' => 'text/plain',
             'htm' => 'text/html',

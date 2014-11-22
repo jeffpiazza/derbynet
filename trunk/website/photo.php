@@ -31,7 +31,14 @@ if ($photo_render == 'thumb') {
   $target_file_name = "";
 }
 
-if (file_exists($target_file_name)) {
+if (isset($_GET['debug'])) {
+  header('Content-type: text/xml; charset=utf-8');
+  echo "<debug-photo>\n";
+  echo "<request>".$_SERVER['PATH_INFO']."</request>\n";
+  echo "<render>".$photo_render."</render>\n";
+  echo "<target-file-name>".htmlspecialchars($target_file_name, ENT_QUOTES, 'UTF-8')."</target-file-name>\n";
+  echo "</debug-photo>\n";
+} else if (file_exists($target_file_name)) {
   header('Pragma: public');
   header('Cache-Control: max-age=86400, public');
   header('Expires: '.gmdate('D, d M Y H:i:s', time() + 86400).' GMT');
