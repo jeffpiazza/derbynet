@@ -40,7 +40,9 @@ table, td {
 
 td {
     vertical-align: middle;
-    position: relative;
+    /* Setting postion: relative for the td MIGHT be what's causing an intermittent 
+       problem with drawing the borders around the cells. */
+    /* position: relative; */
 }
 
 img {
