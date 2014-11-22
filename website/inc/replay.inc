@@ -58,6 +58,8 @@ function send_replay_message($cmd) {
   global $db;
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
+    // TODO: The trouble here is that the RaceInfo table's ItemValue may not be long enough for what we need,
+    // including file names
     $db->beginTransaction();
     write_raceinfo('replay_queue', read_raceinfo('replay_queue', '').$cmd."\n");
     $db->commit();

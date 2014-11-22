@@ -48,7 +48,7 @@
     
     [request setHTTPMethod:@"POST"];
 
-    NSLog(@"Polling: status = %i", [[self appDelegate] status]);  //TODO
+    // NSLog(@"Polling: status = %i", [[self appDelegate] status]);
     NSString* bodyData = [NSString stringWithFormat:@"action=replay-message&status=%i", [[self appDelegate] status]];
     [request setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
     
