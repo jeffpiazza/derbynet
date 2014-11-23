@@ -5,7 +5,7 @@
 
   <property name="replay-dir" location="replay"/>
   <property name="replay-app.name" value="MacDerbyReplay"/>
-  <property name="replay-app-dir" location="${replay-dir}/Resources"/>
+  <property name="replay-app-dir" location="${replay-dir}/build/Release"/>
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
@@ -64,7 +64,7 @@
 
 <!-- From http://www.rkuntz.org/pmwiki.php?n=Code.AntDiskImage -->
 <!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
-<target name="replay-dmg"
+<target name="replay-dmg" depends="replay-build-release"
         description="Create a DMG package for MacOSX (only works on MacOSX)">
 
     <!-- Set this property value to your application name -->
@@ -145,5 +145,18 @@
     <delete file="${replay-app.name}-tmp.dmg"
             quiet="yes" failonerror="false"/>
 </target>
+
+<target name="replay-build-release"
+        description="(Mac only)">
+            <exec executable="/usr/bin/xcodebuild" os="Mac OS X">
+                <arg value="-project"/>
+                <arg value="replay/MacDerbyReplay.xcodeproj"/>
+                <arg value="-configuration"/>
+                <arg value="Release"/>
+                <arg value="build"/>
+            </exec>
+</target>
+
+
 
 </project>
