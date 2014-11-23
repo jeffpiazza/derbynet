@@ -458,6 +458,9 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   $nlanes = read_raceinfo('lane_count', 0);
   if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
+  } else if (!isset($all_generators[$nlanes])) {
+    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
+         .max(array_keys($all_generators)).' lanes.</failure>';
   } else if (results_exist($_POST['roundid'])) {
 	echo '<failure code="results-exist">Race results already exist for this round</failure>';
   } else {
