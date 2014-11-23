@@ -112,7 +112,8 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
     }
 
     public void makeHeatResults(int lanemask) {
-        Message.LaneResult[] results = new Message.LaneResult[4];
+        int nlanes = 32 - Integer.numberOfLeadingZeros(lanemask);
+        Message.LaneResult[] results = new Message.LaneResult[nlanes];
 
         for (int lane = 0; lanemask != 0; ++lane) {
             if ((lanemask & (1 << lane)) != 0) {
