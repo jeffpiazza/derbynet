@@ -1,5 +1,9 @@
 <?php
-@include("local/config-database.inc");
+try {
+    @include("local/config-database.inc");
+} catch (PDOException $p) {
+}
+
 if (!isset($db)) {
   $_SESSION['setting_up'] = 1;
   header('Location: setup.php');
