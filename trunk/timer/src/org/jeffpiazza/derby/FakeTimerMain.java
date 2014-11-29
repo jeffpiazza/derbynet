@@ -8,12 +8,14 @@ import java.util.regex.*;
 // TODO: Generate some ties
 
 public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.AbortHeatCallback {
+    private int staging_time;
     private HttpTask task;
 
     public static void usage() {
         System.err.println("Usage: [-u <user>] [-p <password>] [-l <nlanes>] [-t] [-th] [-r] <base-url>");
         System.err.println("   -u, -p: Specify username and password for authenticating to web server");
         System.err.println("   -l: Specify number of lanes to report to web server");
+        System.err.println("   -s: Staging time in seconds between heats");
         System.err.println("   -t: Trace non-heartbeat messages sent");
         System.err.println("   -th: Trace heartbeat messages sent");
         System.err.println("   -r: Show responses to traced messages");
@@ -23,6 +25,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         String username = "RaceCoordinator";
         String password = "doyourbest";
         int nlanes = 3;
+        int staging_time = 10;
         StdoutMessageTrace traceMessages = null;
         StdoutMessageTrace traceHeartbeats = null;
         boolean traceResponses = false;
@@ -42,6 +45,13 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
                     t.printStackTrace();
                 }
                 consumed_args += 2;
+            } else if (args[consumed_args].equals("-s")) {
+              try {
+                staging_time = Integer.parseInt(args[consumed_args + 1]);
+              } catch (Throwable t) {
+                t.printStackTrace();
+              }
+              consumed_args += 2;
             } else if (args[consumed_args].equals("-t")) {
                 traceMessages = new StdoutMessageTrace();
                 ++consumed_args;
@@ -75,25 +85,29 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
 
         try {
             (new FakeTimerMain(new HttpTask(base_url, username, password,
-                                            traceMessages, traceHeartbeats)))
+                                            traceMessages, traceHeartbeats),
+                               staging_time))
                 .runTest(nlanes);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
-    private FakeTimerMain(HttpTask task) {
+    private FakeTimerMain(HttpTask task, int staging_time) {
         this.task = task;
+        this.staging_time = staging_time;
     }
 
     public class HeatRunner implements Runnable {
+        private int staging_time;
         private int lanemask;
-        public HeatRunner(int lanemask) {
+        public HeatRunner(int staging_time, int lanemask) {
+            this.staging_time = staging_time;
             this.lanemask = lanemask;
         }
 
         public void run() {
-          pause(10);  // 10 seconds to simulate (quick!) staging
+          pause(staging_time);
           System.out.println("Starting a new race");
           task.send(new Message.Started());
           pause(4);  // 4 seconds for a pretty slow race
@@ -104,7 +118,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
 
     public void heatReady(int lanemask) {
         System.out.println("Received heat-ready message with lane mask " + lanemask);
-        (new Thread(new HeatRunner(lanemask))).start();
+        (new Thread(new HeatRunner(staging_time, lanemask))).start();
     }
 
     public void abortHeat() {
