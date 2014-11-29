@@ -41,7 +41,6 @@
 
 - (void) poll
 {
-    //  action=register-replay&port=<port>
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
@@ -49,7 +48,8 @@
     [request setHTTPMethod:@"POST"];
 
     // NSLog(@"Polling: status = %i", [[self appDelegate] status]);
-    NSString* bodyData = [NSString stringWithFormat:@"action=replay-message&status=%i", [[self appDelegate] status]];
+    NSString* bodyData = [NSString stringWithFormat:@"action=replay-message&status=%i&finished-replay=%i",
+                          [[self appDelegate] status], [[self appDelegate] didFinishReplay]];
     [request setHTTPBody:[NSData dataWithBytes:[bodyData UTF8String] length:strlen([bodyData UTF8String])]];
     
     

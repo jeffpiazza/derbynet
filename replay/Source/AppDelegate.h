@@ -10,6 +10,7 @@
 @class Poller;
 @class CommandListener;
 
+// Values for status property:
 #define STATUS_RECORDING_ERROR  (-4)
 #define STATUS_NO_AUDIO_CHOSEN  (-3)
 #define STATUS_NO_VIDEO_CHOSEN  (-2)
@@ -21,6 +22,8 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 {
+    // Set by a call to justFinshedReplay; cleared (and the old value returned) by a call to didFinishReplay.
+    BOOL recentlyFinishedReplay;
 }
 
 - (void) startRecording;
@@ -32,6 +35,9 @@
 
 - (void) setMovieFileName: (NSString*) name;
 - (NSURL*) moviesDirectory;
+
+- (void) justFinishedReplay;
+- (BOOL) didFinishReplay;
 
 @property BOOL isPlaying;
 

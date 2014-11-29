@@ -5,9 +5,13 @@
 //   <watching roundid= heat= >
 //     <heat-result lane="1" time="" place="" speed=""/>... if results are available
 //     <current-heat> 
-//     -- if current-heat differs from what the caller passed in, then provide
-//     --    <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
+//     - if current-heat differs from what the caller passed in, then provide:
+//     <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
+//     - if requesting a repeat of the finish-order animation:
+//      <repeat-animation/>
 //   </watching>
+
+require_once('inc/replay.inc');
 
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
@@ -40,6 +44,13 @@ require_once('inc/current-heat.inc');
 
 if (($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) && $now_running['now_racing'] != 0) {
   require('inc/current-racers.inc');
+}
+
+if (read_raceinfo('replay_just_finished')) {
+  write_raceinfo('replay_just_finished', 0);
+  echo "<repeat-animation/>\n";
+} else if (replay_playing()) {
+  echo "<hold-current-screen/>\n";
 }
 ?>
 </watching>
