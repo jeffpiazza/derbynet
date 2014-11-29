@@ -7,28 +7,26 @@ define('REPLAY_NOT_CONNECTED', 1);
 define('REPLAY_CONNECTED', 2);  // See replay_last_contact.
 define('REPLAY_TROUBLE', 3);   // See replay_trouble value
 
-// Registration request is ignored if REPLAY_CONNECTED and the host
-// and port match.  Otherwise, a registration request causes a HELLO
-// message to be sent, and the state becomes either CONNECTED or
-// TROUBLE depending on the outcome.
+// replay_reported - see $status_array, below.
+define('REPLAY_REPORTED_PLAYING', 2);
 
-// replay_last_contact gets updated with succesful message sent.
-// replay_trouble gets set to the error message for an unsuccessful
-// message send.
+// A registration request causes a HELLO message to be sent, and the state
+// becomes either CONNECTED or TROUBLE depending on the outcome.
+
+// replay_last_contact gets updated with succesful message sent.  replay_trouble
+// gets set to the error message for an unsuccessful message send.
 
 // REPLAY_CONNECTED or REPLAY_TROUBLE become REPLAY_NOT_CONNECTED if
 // REPLAY_TIMEOUT_LIMIT passes since replay_last_contact.
 //
-// REPLAY_TROUBLE causes message sends to be ignored (except
-// re-registration attempts).  Re-registration attempt also sets
-// replay_last_contact.
+// REPLAY_TROUBLE causes message sends to be ignored (except re-registration
+// attempts).  Re-registration attempt also sets replay_last_contact.
 
 
 require_once('inc/data.inc');
 
 define('REPLAY_TIMEOUT_LIMIT', 10);
 
-// TODO
 function get_replay() {
   $state = read_raceinfo('replay_state', REPLAY_NOT_CONNECTED);
   $reported_status = read_raceinfo('replay_reported', 0);
@@ -53,6 +51,12 @@ function get_replay() {
                'trouble' => $trouble);
 }
 
+// Tells whether the replay service has recently reported (within the last
+// second or two) that it's playing back video.
+function replay_playing() {
+  return read_raceinfo('replay_reported', 0) == REPLAY_REPORTED_PLAYING
+      && time() - read_raceinfo('replay_last_contact', 0) < 2;
+}
 
 function send_replay_message($cmd) {
   global $db;

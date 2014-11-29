@@ -43,6 +43,7 @@
 	self = [super init];
 	if (self) {
         _status = STATUS_NOT_CONNECTED;
+        recentlyFinishedReplay = NO;
         _listener = [[CommandListener alloc] initWithDelegate: self];
         
 		// Create a capture session
@@ -300,7 +301,10 @@
 
 - (void) startRecording
 {
-    [self setStatus: STATUS_RECORDING];
+    // It's common to start recording while playback of the previous heat is still going on.
+    // Clobbering the playback status with a recording status defeats the hold-display behavior on the main display.
+    // Longer-term solution is to provide a "both" status of some kind.
+    //[self setStatus: STATUS_RECORDING];
     [[self movieFileOutput] startRecordingToOutputFileURL:[self moviePath] recordingDelegate: self];
 }
 
@@ -401,7 +405,7 @@
 - (void) playerItemDidReachEnd: (id) sender
 {
     [self setStatus: STATUS_READY];
-    NSLog(@"Hiding player and showing controls");  // TODO
+    [self justFinishedReplay];
     [[self playerView] setHidden:YES];
     [[self controlContainerView] setHidden:NO];
     [NSCursor unhide];
@@ -409,6 +413,21 @@
     [[NSApplication sharedApplication] hide: self];
     [frontmostApplication activateWithOptions:NSApplicationActivateIgnoringOtherApps];
     frontmostApplication = nil;
+}
+
+- (void) justFinishedReplay
+{
+    @synchronized(self) {
+        recentlyFinishedReplay = YES;
+    }
+}
+
+- (BOOL) didFinishReplay {
+    @synchronized(self) {
+        BOOL oldValue = recentlyFinishedReplay;
+        recentlyFinishedReplay = NO;
+        return oldValue;
+    }
 }
 
 @synthesize url = _url;

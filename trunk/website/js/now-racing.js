@@ -18,6 +18,14 @@ var g_num_racers = 0;
 
 // Tells whether we've run the place animation for the current heat.
 var g_animated = true;
+// To prevent updating the display for a period of time after the race
+// completes, g_hold_display_until gives the time in milliseconds after which
+// it's OK to update.
+var g_hold_display_until = 0;
+
+function queue_next_poll_request() {
+    setTimeout(poll_for_update, 500);  // 0.5 sec
+}
 
 function poll_for_update() {
     $.ajax('action.php',
@@ -29,7 +37,7 @@ function poll_for_update() {
                 process_watching(data);
             },
             error: function() {
-                setTimeout(poll_for_update, 200);
+                queue_next_poll_request();
             }
            });
 }
@@ -97,6 +105,12 @@ function animate_flyers(place, place_to_lane, completed) {
 function process_watching(watching) {
     var heat_results = watching.getElementsByTagName("heat-result");
     if (heat_results.length > 0) {
+        // The presence of a <repeat-animation/> element is a request to re-run
+        // the finish place animation, which we do by clearing the flag that
+        // remembers we've already done it once.
+        if (watching.getElementsByTagName("repeat-animation").length > 0) {
+            g_animated = false;
+        }
         var place_to_lane = new Array();  // place => lane
         for (var i = 0; i < heat_results.length; ++i) {
             var hr = heat_results[i];
@@ -125,9 +139,10 @@ function process_watching(watching) {
         if (!g_animated && heat_results.length >= g_num_racers) {
             g_animated = true;
             animate_flyers(1, place_to_lane, function () {
-                setTimeout(function() {
-                    process_new_heat(watching);
-                }, 10000);  // Wait 10 seconds after animation
+                // Need to continue to poll for repeat-animation, just not
+                // accept new participants for 10 seconds.
+                g_hold_display_until = (new Date()).valueOf() + 10000;
+                queue_next_poll_request();
             });
         } else {
             process_new_heat(watching);
@@ -142,8 +157,16 @@ function process_watching(watching) {
 // elements identifying the new heat's contestants.
 
 function process_new_heat(watching) {
+    if (watching.getElementsByTagName("hold-current-screen").length > 0) {
+        // Each time a hold-current-screen element is sent, reset the
+        // hold-display deadline.  (Our display is presumed not to be visible,
+        // so the display-for-ten-seconds clock shouldn't start yet.)
+        g_hold_display_until = (new Date()).valueOf() + 10000;
+        console.log("Holding display until " + g_hold_display_until);  // TODO
+    }
     var current = watching.getElementsByTagName("current-heat")[0];
-    if (current.getAttribute("now-racing") != "0") {
+    if (current.getAttribute("now-racing") != "0" && (new Date()).valueOf() > g_hold_display_until) {
+        console.log("Advancing display at " + (new Date()).valueOf());  // TODO
         g_roundid = current.getAttribute("roundid");
         g_heat = current.getAttribute("heat");
         if (current.firstChild) {  // The body of the <current-heat>
@@ -179,8 +202,7 @@ function process_new_heat(watching) {
         }
     }
 
-    // Queue the next 
-    setTimeout(poll_for_update, 200);  // 0.2 sec
+    queue_next_poll_request();
 }
 
 function resize_table() {

@@ -1,5 +1,6 @@
 <?php
 // $_POST['status']
+// $_POST['finished-replay'] (0/1)
 // TODO: Permissions?  Presently accepting registration action without authentication.
 
 require_once('inc/replay.inc');
@@ -33,6 +34,8 @@ if ($replay['state'] == REPLAY_CONNECTED) {
 
 write_raceinfo('replay_reported', $_POST['status']);
 write_raceinfo('replay_last_contact', time());
+write_raceinfo('replay_just_finished', 
+               (isset($_POST['finished-replay']) && $_POST['finished-replay']) ? 1 : 0);
 echo "<success/>\n";
 drain_queue();
 
