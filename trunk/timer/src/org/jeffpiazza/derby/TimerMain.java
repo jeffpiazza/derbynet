@@ -75,7 +75,7 @@ public class TimerMain {
     String base_url = args[consumed_args];
 
     try {
-      experiment2(base_url, username, password, identifyTimerDevice(portname, devicename));
+      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename));
     } catch (Throwable t) {
       t.printStackTrace();
     }
@@ -102,9 +102,8 @@ public class TimerMain {
     }
   }
 
-  public static void experiment2(String base_url, String username, String password,
-                                 final TimerDevice device) throws Exception {
-
+  public static void sayHelloAndPoll(String base_url, String username, String password,
+                                     final TimerDevice device) throws Exception {
     final HttpTask httpTask = new HttpTask(base_url, username, password);
 
     wireTogether(httpTask, device);
@@ -144,7 +143,7 @@ public class TimerMain {
 
     httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
         public void abortHeat() {
-          System.out.println("AbortHeat received");
+          System.out.println(Timestamp.string() + ": AbortHeat received");
           raceDeadline = -1;
           try {
             device.abortHeat();
@@ -159,7 +158,7 @@ public class TimerMain {
           // Rely on recipient to ignore if not expecting any results
           try {
             raceDeadline = -1;
-            System.out.println("Race finished");
+            System.out.println(Timestamp.string() + ": Race finished");
             httpTask.send(new Message.Finished(results));
           } catch (Throwable t) {
           }
@@ -170,13 +169,12 @@ public class TimerMain {
         public void raceStarted() {
           try {
             raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
-            System.out.println("Race started");
+            System.out.println(Timestamp.string() + ": Race started");
             httpTask.send(new Message.Started());
           } catch (Throwable t) {
           }
         }
       });
-
   }
 
   private static void runDevicePollingLoop(TimerDevice device) throws SerialPortException {
@@ -188,7 +186,7 @@ public class TimerMain {
         // - Send empty results back to web server.
         // - Repeat prepareHeat.
         // - Nothing, as now.
-        System.err.println("****** Race timed out *******");
+        System.err.println(Timestamp.string() + ": ****** Race timed out *******");
         raceDeadline = -1;
       }
       try {

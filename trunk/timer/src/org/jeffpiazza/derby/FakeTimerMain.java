@@ -81,7 +81,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
 
         String base_url = args[consumed_args];
 
-        System.out.println("FakeTimerMain starts; base_url = " + base_url);
+        System.out.println(Timestamp.string() + ": FakeTimerMain starts; base_url = " + base_url);
 
         try {
             (new FakeTimerMain(new HttpTask(base_url, username, password,
@@ -108,21 +108,21 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
 
         public void run() {
           pause(staging_time);
-          System.out.println("Starting a new race");
+          System.out.println(Timestamp.string() + ": Starting a new race");
           task.send(new Message.Started());
           pause(4);  // 4 seconds for a pretty slow race
-          System.out.println("Sending heat results");
+          System.out.println(Timestamp.string() + ": Sending heat results");
           makeHeatResults(lanemask);
         }
     }
 
     public void heatReady(int lanemask) {
-        System.out.println("Received heat-ready message with lane mask " + lanemask);
+        System.out.println(Timestamp.string() + ": Received heat-ready message with lane mask " + lanemask);
         (new Thread(new HeatRunner(staging_time, lanemask))).start();
     }
 
     public void abortHeat() {
-        System.out.println("Received abort message.");
+      System.out.println(Timestamp.string() + ": Received abort message.");
     }
 
     public void makeHeatResults(int lanemask) {
@@ -152,7 +152,7 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
         task.registerHeatReadyCallback(this);
         task.registerAbortHeatCallback(this);
 
-        System.out.println("Attempting HELLO message with " + nlanes + " lanes");
+        System.out.println(Timestamp.string() + ": Attempting HELLO message with " + nlanes + " lanes");
         task.send(new Message.Hello(nlanes));
         (new Thread(task)).start();
     }

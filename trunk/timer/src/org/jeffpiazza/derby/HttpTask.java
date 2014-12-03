@@ -89,7 +89,8 @@ public class HttpTask implements Runnable {
                         response = session.sendTimerMessage(params);
                         succeeded = true;
                     } catch (Throwable t) {
-                        System.out.println("Unable to send timer message; retrying");
+                        System.out.println(Timestamp.string()
+                                           + ": Unable to send timer message; retrying");
                     }
                 }
             }
@@ -97,7 +98,7 @@ public class HttpTask implements Runnable {
             // Cheesy string matching suffices for now, but should be
             // made more XML-aware if we're going to send richer XML.
             if (response.indexOf("<success") < 0 || response.indexOf("<failure") >= 0) {
-                System.out.println("Message resulted in failure");
+                System.out.println(Timestamp.string() + ": Message resulted in failure");
                 System.out.println("=======================");
                 System.out.println(response);
                 System.out.println("=======================");
@@ -114,7 +115,8 @@ public class HttpTask implements Runnable {
                         cb.heatReady(lanemask);
                     }
                 } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
-                    System.out.println("Unexpected number format exception reading heat-ready response");
+                  System.out.println(Timestamp.string() 
+                                     + ": Unexpected number format exception reading heat-ready response");
                 }
             }
             if (response.indexOf("<abort/>") >= 0) {
