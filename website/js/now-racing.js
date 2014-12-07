@@ -205,27 +205,16 @@ function process_new_heat(watching) {
     queue_next_poll_request();
 }
 
+// Update the table height to fill the window below the title bar, then adjust
+// the margin on the "flyer" elements.  The flyer height and width will be set
+// when the animation actually runs.
 function resize_table() {
-    console.log("Resizing: window " + $(window).width() + 'w x ' + $(window).height());
     $("table").css({height: $(window).height() - 60});
 
     var place = $('[data-lane="1"] .place');
     var btop = parseInt(place.css('border-top'));
     var mtop = parseInt(place.css('margin-top'));
-    var ptop = parseInt(place.css('padding-top'));
-    console.log('padding-top=' + ptop + ', border-top=' + btop + ', margin-top=' + mtop);
-
-    var box = Math.min(place.height(), place.width());
-    console.log('height=' + place.height() + ' width=' + place.width() + ' box-size=' + box);
-
-    //place.css({fontSize: box - btop - mtop});
-    console.log('fontSize=' + (box - btop - mtop));
-    $('.flying').css({//fontSize: box - btop - mtop,
-        // verticalAlign: 'middle',
-                      margin: mtop + btop,
-        // padding: ptop
-    });
-    console.log('After, flying fontSize=' + $('.flying').css('font-size'));
+    $('.flying').css({margin: mtop + btop});
 }
 
 $(function () {

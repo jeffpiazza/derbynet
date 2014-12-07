@@ -59,3 +59,17 @@ img {
     /* display: inline-block; */
     vertical-align: middle
 }
+
+@media screen and (max-width: 1024px) {
+    td {
+        font-size: 60px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    td {
+        font-size: 40px;
+        border: 7px solid black;
+        padding: 7px;
+    }
+}
