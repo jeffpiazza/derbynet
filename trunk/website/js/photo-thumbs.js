@@ -41,6 +41,7 @@
 			$(this).prepend('<img class="assigned"' +
 							' data-image-filename="' + photo_base_name + '"' +
 							' src="photo.php/tiny/' +
+                            'q' + Date.now() + '/' +
 							encodeURIComponent(photo_base_name) + '"/>');
 
 			make_discardable($(this).find(".assigned"));

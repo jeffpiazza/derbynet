@@ -22,7 +22,7 @@ function scan_directory($directory, $pattern) {
   return $files;
 }
 
-$allfiles = scan_directory($photoOriginalsDirectory,
+$allfiles = scan_directory(PhotoRender::lookup('original')->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
@@ -32,10 +32,6 @@ $allfiles = scan_directory($photoOriginalsDirectory,
 // TODO: Separate requests to bind or remove photo.
 //
 // TODO: Allow for more than one kind of associated image.
-//
-// TODO (BUG): Drag an assigned picture back to the dock, re-crop, then drag to racer:
-//   tiny image doesn't get updated
-//
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -100,8 +96,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-	  .' src="photo.php/tiny/'.urlencode($image_filename).'"'
-	  .'/>';
+    .' src="'.PhotoRender::lookup('tiny')->url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
   echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
@@ -120,7 +115,7 @@ foreach ($allfiles as $imagefile) {
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
-      .' src="'.thumb_url($imagefile).'"/>';
+      .' src="'.PhotoRender::lookup('thumb')->url($imagefile).'"/>';
   echo '</a>';
   // echo $imagefile;
   echo '</div>'."\n";

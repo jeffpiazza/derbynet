@@ -15,9 +15,13 @@ require_once('inc/photo-config.inc');
 //   but alternatively:
 //         rotation
 
+// TODO
 $image_name = $_POST['image_name'];
-$from_dir = $photoOriginalsDirectory;
-$source_file_path = $from_dir.DIRECTORY_SEPARATOR.$image_name;
+
+$original = PhotoRender::lookup('original');
+$cropped = PhotoRender::lookup('cropped');
+
+$source_file_path = $original->file_path($image_name);
 
 list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
 
@@ -32,25 +36,14 @@ if (isset($_POST['rotation']) && $_POST['rotation']) {
   imagedestroy($im);
   imagedestroy($rot);
 
-  @unlink($photoThumbsDirectory.DIRECTORY_SEPARATOR.$image_name);
-  @unlink($photoTinyDirectory.DIRECTORY_SEPARATOR.$image_name);
-  @unlink($photoWorkDirectory.DIRECTORY_SEPARATOR.$image_name);
-  // Re-write working image.  This will give a new file date, so stale
-  // cache image won't be used.
-  resize_to_target($image_name, $photoOriginalsDirectory, $photoWorkDirectory,
-				   $workingHeight, $workingWidth);
+  PhotoRender::lookup('original')->delete_dependents($image_name);
+  // We're counting on work getting regenerated upon display
+
   header('Location: photo-crop.php?name='.urlencode($image_name));
   exit(0);
 }
 
-
-$to_dir = $photoCroppedDirectory;
-
-if (!file_exists($to_dir)) {
-  mkdir($to_dir);
-}
-
-$target_file_name = $to_dir.DIRECTORY_SEPARATOR.$image_name;
+$target_file_path = $cropped->target_file_path($image_name);
 
 $x = $_POST['left'] * $source_width / $_POST['original_width'];
 $y = $_POST['top'] * $source_height / $_POST['original_height'];
@@ -67,14 +60,11 @@ $crop = imagecrop($im, array('x' => $_POST['left'] * $source_width / $_POST['ori
                              'width' => ($_POST['right'] - $_POST['left']) 
                                  * $source_width / $_POST['original_width']));
                                  */
-write_image($crop, $target_file_name, $image_type);
+write_image($crop, $target_file_path, $image_type);
 imagedestroy($crop);
 imagedestroy($im);
 
-@unlink($photoThumbsDirectory.DIRECTORY_SEPARATOR.$image_name);
-@unlink($photoTinyDirectory.DIRECTORY_SEPARATOR.$image_name);
-resize_to_target($image_name, $to_dir, $photoThumbsDirectory, $thumbHeight, $thumbWidth);
-resize_to_target($image_name, $to_dir, $photoTinyDirectory, $tinyHeight, $tinyWidth);
+$cropped->delete_dependents($image_name);
 header('Location: photo-thumbs.php');
 exit(0);
 ?>

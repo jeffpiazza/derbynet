@@ -8,40 +8,23 @@ require_once('inc/photo-config.inc');
 
 $trailing = explode('/', $_SERVER['PATH_INFO']);
 $photo_render = $trailing[1];
+$breaker = count($trailing) > 2;
 $image_name = urldecode($trailing[count($trailing) - 1]);
 
-if ($photo_render == 'thumb') {
-  $target_file_name = resize_to_target($image_name, $photoOriginalsDirectory, $photoThumbsDirectory,
-									   $thumbHeight, $thumbWidth);
- } else if ($photo_render == 'work') {
-  $target_file_name = resize_to_target($image_name, $photoOriginalsDirectory, $photoWorkDirectory,
-									   $workingHeight, $workingWidth);
-} else if ($photo_render == 'original') {
-  $target_file_name = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.$image_name;
-} else if ($photo_render == 'tiny') {
-  $target_file_name = resize_to_target($image_name, $photoOriginalsDirectory, $photoTinyDirectory,
-									   $tinyHeight, $tinyWidth);
-} else if ($photo_render == 'cropped') {
-  $target_file_name = $photoCroppedDirectory.DIRECTORY_SEPARATOR.$image_name;
-  if (!file_exists($target_file_name)) {
-	  $target_file_name = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.$image_name;
-  }
+$rr = PhotoRender::lookup($photo_render);
+if ($rr) {
+  $target_file_path = $rr->find_or_make_image_file($image_name);
 } else {
   echo '<h1>Unrecognized render: '.$photo_render.'</h1>'."\n";
-  $target_file_name = "";
+  exit(0); // $target_file_path = "";
 }
 
-if (isset($_GET['debug'])) {
-  header('Content-type: text/xml; charset=utf-8');
-  echo "<debug-photo>\n";
-  echo "<request>".$_SERVER['PATH_INFO']."</request>\n";
-  echo "<render>".$photo_render."</render>\n";
-  echo "<target-file-name>".htmlspecialchars($target_file_name, ENT_QUOTES, 'UTF-8')."</target-file-name>\n";
-  echo "</debug-photo>\n";
-} else if (file_exists($target_file_name)) {
+if ($breaker) {
   header('Pragma: public');
   header('Cache-Control: max-age=86400, public');
   header('Expires: '.gmdate('D, d M Y H:i:s', time() + 86400).' GMT');
-  header('Content-type: '.pseudo_mime_content_type($target_file_name));
-  readfile($target_file_name);
 }
+
+header('Content-type: '.pseudo_mime_content_type($target_file_path));
+
+readfile($target_file_path);

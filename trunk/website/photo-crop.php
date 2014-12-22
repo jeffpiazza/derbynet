@@ -2,6 +2,10 @@
 @session_start();
 $imagename = $_GET['name'];
 require_once('inc/photo-config.inc');
+
+$displayWidth  = 0 + $photosize[0];
+$displayHeight = 0 + $photosize[1];
+
 ?>
 <html>
 <head>
@@ -13,18 +17,11 @@ require_once('inc/photo-config.inc');
 <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 </head>
 <body>
-<?php
-echo '<img src="photo.php/work/';
-$work_image = $photoWorkDirectory.DIRECTORY_SEPARATOR.$imagename;
-if (file_exists($work_image)) {
-  echo @filemtime($work_image).'/';
-}
-echo urlencode($imagename).'"/ id="target">';
-?>
+<img src="<?php echo PhotoRender::lookup('work')->url($imagename); ?>" id="target"/>
 <script type="text/javascript">
 jQuery(function($) {
   $('#target').Jcrop({
-	aspectRatio: <?php echo $thumbWidth; ?>/<?php echo $thumbHeight; ?>,
+	aspectRatio: <?php echo $displayWidth; ?>/<?php echo $displayHeight; ?>,
 	onSelect: updateForm,
 	onChange: updateForm
   });
@@ -55,13 +52,13 @@ function updateForm(c) {
 <form method="post" action="photo-crop-action.php">
   <input type="hidden" id="image_name" name="image_name"
          value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
-  <input type="hidden" name="rotation" value="90"/>
+  <input type="hidden" name="rotation" value="-90"/>
   <input type="submit" value="Rotate Right"/>
 </form>
 <form method="post" action="photo-crop-action.php">
   <input type="hidden" id="image_name" name="image_name"
          value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
-  <input type="hidden" name="rotation" value="-90"/>
+  <input type="hidden" name="rotation" value="90"/>
   <input type="submit" value="Rotate Left"/>
 </form>
 </div>
