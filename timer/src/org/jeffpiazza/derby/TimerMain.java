@@ -27,9 +27,17 @@ public class TimerMain {
     String password = "doyourbest";
     String portname = null;
     String devicename = null;
-    StdoutMessageTrace traceMessages = null;
-    StdoutMessageTrace traceHeartbeats = null;
+    HttpTask.MessageTracer traceMessages = null;
+    HttpTask.MessageTracer traceHeartbeats = null;
     boolean traceResponses = false;
+
+    LogWriter logwriter = null;
+    try {
+      logwriter = new LogWriter();
+    } catch (Throwable t) {
+      t.printStackTrace();
+      return;
+    }
 
     int consumed_args = 0;
     while (consumed_args + 1 < args.length) {
@@ -46,12 +54,16 @@ public class TimerMain {
         devicename = args[consumed_args + 1];
         consumed_args += 2;
       } else if (args[consumed_args].equals("-t")) {
-        traceMessages = new StdoutMessageTrace();
+        StdoutMessageTrace smt = new StdoutMessageTrace();
+        smt.traceResponses = traceResponses;
+        traceMessages = new CombinedMessageTracer(smt, logwriter);
         ++consumed_args;
       } else if (args[consumed_args].equals("-th")) {
-        traceHeartbeats = new StdoutMessageTrace();
+        StdoutMessageTrace smt = new StdoutMessageTrace();
+        smt.traceResponses = traceResponses;
+        traceHeartbeats = new CombinedMessageTracer(traceHeartbeats, logwriter);
         ++consumed_args;
-      } else if (args[consumed_args].equals("-r")) {
+      } else if (args[consumed_args].equals("-r")) { // Won't have effect unless it precedes -t, -th
         traceResponses = true;
         ++consumed_args;
       } else {
@@ -65,23 +77,16 @@ public class TimerMain {
       System.exit(1);
     }
 
-    if (traceMessages != null) {
-      traceMessages.traceResponses = traceResponses;
-    }
-    if (traceHeartbeats != null) {
-      traceHeartbeats.traceResponses = traceResponses;
-    }
-
     String base_url = args[consumed_args];
 
     try {
-      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename));
+      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename, logwriter));
     } catch (Throwable t) {
       t.printStackTrace();
     }
   }
 
-  public static TimerDevice identifyTimerDevice(String portname, String devicename)
+  public static TimerDevice identifyTimerDevice(String portname, String devicename, LogWriter logwriter)
       throws SerialPortException, IOException {
     final DeviceFinder deviceFinder =
         devicename == null ? new DeviceFinder() : new DeviceFinder(devicename);
@@ -91,7 +96,7 @@ public class TimerMain {
       while (ports.hasNext()) {
         SerialPort port = ports.next();
         System.out.println(port.getPortName());  // TODO: Better logging
-        TimerDevice device = deviceFinder.findDevice(port);
+        TimerDevice device = deviceFinder.findDevice(port, logwriter);
         if (device != null) {
           return device;
         }

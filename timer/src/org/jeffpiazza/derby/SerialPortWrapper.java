@@ -24,7 +24,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   private SerialPort port;
   private String leftover;
   private ArrayList<String> queue;  // Messages received from timer
-  private PrintWriter logwriter;
+  private LogWriter logwriter;
 
   public interface Detector {
     // Return true if line has been handled, and therefore should
@@ -33,7 +33,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
   private ArrayList<Detector> detectors;
 
-  public SerialPortWrapper(SerialPort port, PrintWriter logwriter) throws SerialPortException {
+  public SerialPortWrapper(SerialPort port, LogWriter logwriter) throws SerialPortException {
     this.port = port;
     this.leftover = "";
     this.queue = new ArrayList<String>();
@@ -45,12 +45,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
       // return false;
     }
 
-    log(INTERNAL, "SerialPortWrapper attached");
+    logwriter.serialPortLog(LogWriter.INTERNAL, "SerialPortWrapper attached");
     port.addEventListener(this, SerialPort.MASK_RXCHAR);
-  }
-
-  public SerialPortWrapper(SerialPort port) throws SerialPortException {
-	this(port, new PrintWriter(System.out));
   }
 
   public SerialPort port() { return port; }
@@ -65,18 +61,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
     synchronized (detectors) {
       detectors.remove(detector);
     }
-  }
-
-  public static final int INCOMING = 0;
-  public static final int OUTGOING = 1;
-  public static final int INTERNAL = 2;
-
-  public void log(int direction, String msg) {
-    logwriter.println("\t\t" + System.currentTimeMillis() + " " +
-                      (direction == INCOMING ? "<-- " :
-                       direction == OUTGOING ? "--> " :
-                       "INT ") +
-                      msg.replace("\r", "\\r"));
   }
 
   // SerialPortEventListener interface: invoked 
@@ -107,7 +91,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
         while ((cr = s.indexOf('\n')) >= 0) {
           String line = s.substring(0, cr).trim();
           if (line.length() > 0) {
-            log(INCOMING, line);
+            logwriter.serialPortLog(LogWriter.INCOMING, line);
             boolean handled = false;
             synchronized (detectors) {
               for (Detector detector : detectors) {
@@ -126,7 +110,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
           s = s.substring(cr + 1);
         }
         leftover = s;
-        // log(INTERNAL, "leftover = <<" + leftover + ">>");
+        // logwriter.serialPortLog(LogWriter.INTERNAL, "leftover = <<" + leftover + ">>");
       }
     } catch (Exception exc) {
       System.out.println("Exception while reading: " + exc);
@@ -135,7 +119,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   public void write(String s) throws SerialPortException {
-    log(OUTGOING, s);
+    logwriter.serialPortLog(LogWriter.OUTGOING, s);
     port.writeString(s);
   }
 

@@ -71,6 +71,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
         String nl = portWrapper.writeAndWaitForResponse(READ_LANE_COUNT, 500);
         if ('0' < nl.charAt(0) && nl.charAt(0) <= '9') {
           this.numberOfLanes = nl.charAt(0) - '0';
+          System.out.println(this.numberOfLanes + " lane(s) reported.");
         }
 
         // TODO: Does this just need to be configured to
@@ -204,7 +205,6 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
         if (callback != null) {
           callback.startGateChange(!lastGateIsClosed());
         }
-
       }
     }
   }
