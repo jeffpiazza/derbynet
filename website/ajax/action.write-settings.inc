@@ -39,7 +39,14 @@ if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['photo_width']) && isset($_POST['photo_height'])) {
     $num_picked += 2;
     echo "<wrote>".$_POST['photo_width'].'x'.$_POST['photo_height']."</wrote>\n";
-    write_raceinfo('photo-size', $_POST['photo_width'].'x'.$_POST['photo_height']);
+    $old_photo_size = read_raceinfo('photo-size');
+    $new_photo_size = $_POST['photo_width'].'x'.$_POST['photo_height'];
+    write_raceinfo('photo-size', $new_photo_size);
+    if ($old_photo_size != $new_photo_size) {
+      require_once('inc/photo-config.inc');
+      PhotoRender::lookup('display')->wipe_directory();
+      echo "<wiped-display-directory/>\n";
+    }
   }
 
   if (isset($_POST['use-xbs-checkbox'])) {

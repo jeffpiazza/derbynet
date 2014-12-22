@@ -1,27 +1,155 @@
 <?php
 require_once('inc/data.inc');
 
-$photoOriginalsDirectory = photo_directory();
-$photoThumbsDirectory = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.'thumbs';
-// "Working size" images, big enough to edit, but small enough to fit on screen
-$photoWorkDirectory = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.'work';
-$photoCroppedDirectory = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.'cropped';
-// "Tiny": no more than 80 pixels, because that's what jQuery Mobile
-// limits to in a listview.
-$photoTinyDirectory = $photoOriginalsDirectory.DIRECTORY_SEPARATOR.'tiny';
+class PhotoRender {
+  private static $all_renders = array();
 
-// GPRM Software Options allows for "Max Width" and "Max Height" values.
-// photo-size option should match.
+  public static function lookup($label) {
+    return self::$all_renders[$label];
+  }
+
+  public function __construct($label, $max_width, $max_height, $antecedent) {
+    $this->label = $label;
+    $this->directory = photo_directory();
+    if ($label != 'original') {
+      $this->directory .= DIRECTORY_SEPARATOR.$label;
+    }
+
+    $this->max_width = $max_width;
+    $this->max_height = $max_height;
+    $this->antecedent = $antecedent;
+
+    self::$all_renders[$label] = $this;
+  }
+
+  public function label() { return $this->label; }
+  public function directory() { return $this->directory; }
+  public function max_width() { return $this->max_width; }
+  public function max_height() { return $this->max_height; }
+  public function antecedent() { return $this->antecedent; }
+
+  public function file_path($imagename) {
+    return $this->directory.DIRECTORY_SEPARATOR.$imagename;
+  }
+
+  public function target_file_path($imagename) {
+    if (!file_exists($this->directory())) {
+      mkdir($this->directory());
+    }
+    return $this->file_path($imagename);
+  }
+
+  public function find_source_render($image_name) {
+    if ($this->antecedent) {
+      $source = self::lookup($this->antecedent);
+      if (file_exists($source->file_path($image_name))) {
+        return $source;
+      } else {
+        return $source->find_source_render($image_name);
+      }
+    } else {
+      return false;
+    }
+  }
+
+  public function delete_dependents($image_name) {
+    foreach (self::$all_renders as $render) {
+      if ($render->antecedent() == $this->label()) {
+        @unlink($render->file_path($image_name));
+        $render->delete_dependents($image_name);
+      }
+    }
+  }
+
+  public function wipe_directory() {
+    if (is_dir($this->directory())) {
+      foreach (glob($this->directory().DIRECTORY_SEPARATOR.'*.{jpg,jpeg,JPG,JPEG,gif,GIF,png,PNG}', GLOB_BRACE)
+               as $file) {
+        @unlink($file);
+      }
+    }
+  }
+
+  // Constructs a URL for the photo whose base name is $imagefile.
+  public function url($imagefile) {
+    if ($imagefile != '') {
+      $imagefile = basename($imagefile);
+      $targetpath = $this->file_path($imagefile);
+      $breaker = @filemtime($targetpath);
+      if (!$breaker) {
+        // If the file doesn't exist, use the current (request) time as a cache
+        // breaker, but negate it to make sure there's no collision with the
+        // filemtime when the file does get created.
+        $breaker = -time();
+      }
+      return 'photo.php/'.$this->label().'/'.$breaker.'/'.urlencode($imagefile);
+    } else {
+      return '';
+    }
+  }
+
+  public function find_or_make_image_file($image_name) {
+    $target_file_path = $this->target_file_path($image_name);
+    if (!file_exists($target_file_path)) {
+      $source = $this->find_source_render($image_name);
+      $source_file_path = $source->file_path($image_name);
+
+      if ($this->max_height() == 0) {
+        return $source_file_path;
+      } else {
+        list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
+        if ($source_height == 0) {
+          return FALSE;
+        }
+
+        $im = open_image($source_file_path, $image_type);
+
+        $aspect = $source_width / $source_height;
+
+        if ($aspect > $this->max_width() / $this->max_height()) {
+          // At any height, source image is too wide, so pick scaling to
+          // convert $source_width to $max_width.  The scale factor is then
+          // $max_width/$source_width.
+          $width = $this->max_width();
+          $height = (int) ($source_height * $this->max_width() / $source_width);
+        } else {
+          // Conversely, scale to max_height.
+          $width = (int) ($source_width * $this->max_height() / $source_height);
+          $height = $this->max_height();
+        }
+
+        $thumb = imagecreatetruecolor($width, $height);
+        imagecopyresampled($thumb, $im, 0,0,0,0, $width, $height, $source_width, $source_height);
+
+        write_image($thumb, $target_file_path, $image_type);
+
+        imagedestroy($im);
+        imagedestroy($thumb);
+      }
+    }
+    return $target_file_path;
+  }
+
+  private $label;
+  private $directory;
+  private $max_height;
+  private $max_width;
+  private $antecedent;
+}
 
 $photosize = explode('x', photo_size());
-$thumbWidth  =  0 + $photosize[0];
-$thumbHeight = 0 + $photosize[1];
 
-$workingWidth  = 950;
-$workingHeight = 950;
+new PhotoRender('original', 0, 0, '');
+new PhotoRender('cropped', 0, 0, 'original');
+// "Working size" images: big enough to edit, but small enough to fit on screen
+new PhotoRender('work', 950, 950, 'original');
+new PhotoRender('display', 0 + $photosize[0], 0 + $photosize[1], 'cropped');
+// "Thumbnail" images are what get displayed on the photo-thumbs page
+new PhotoRender('thumb', 150, 150, 'cropped');
+// "Tiny": no more than 80 pixels, because that's what jQuery Mobile
+// limits to in a listview.
+new PhotoRender('tiny', 80, 80, 'cropped');
 
-$tinyWidth = 80;
-$tinyHeight = 80;
 
 function open_image($filepath, $image_type) {
   switch ($image_type) {
@@ -46,64 +174,6 @@ function write_image($image, $filepath, $image_type) {
     return imagepng($image, $filepath, 0);
   }
   return FALSE;
-}
-
-// Our general strategy for resizing is always to leave the original
-// unchanged and write out a new, resized image to a different
-// directory using the same base filename.
-
-function resize_to_target($image_name, $from_dir, $to_dir, $height, $width) {
-  if (!file_exists($to_dir)) {
-	mkdir($to_dir);
-  }
-  $target_file_name = $to_dir.DIRECTORY_SEPARATOR.$image_name;
-  if (!file_exists($target_file_name)) {
-    $source_file_path = $from_dir.DIRECTORY_SEPARATOR.$image_name;
-
-    list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
-    if ($source_height == 0) {
-      return FALSE;
-    }
-
-    $im = open_image($source_file_path, $image_type);
-
-    $aspect = $source_width / $source_height;
-
-    if ($aspect > $width / $height) {
-      // At any height, source image is too wide, so pick scaling to
-      // convert $source_width to $width.  The scale factor is then
-      // $width/$source_width.
-      $height = (int) ($source_height * $width / $source_width);
-    } else {
-      // Conversely, scale to height.
-      $width = (int) ($source_width * $height / $source_height);
-    }
-
-    $thumb = imagecreatetruecolor($width, $height);
-    imagecopyresampled($thumb, $im, 0,0,0,0, $width, $height, $source_width, $source_height);
-
-    write_image($thumb, $target_file_name, $image_type);
-
-    imagedestroy($im);
-    imagedestroy($thumb);
-  }
-  return $target_file_name;
-}
-
-function thumb_url($imagefile) {
-  global $photoThumbsDirectory;
-  if ($imagefile != '') {
-    $imagefile = basename($imagefile);
-    $thumbfile = $photoThumbsDirectory.DIRECTORY_SEPARATOR.$imagefile;
-    $url = 'photo.php/thumb/';
-    if (file_exists($thumbfile)) {
-      $url .= @filemtime($thumbfile).'/';
-    }
-    $url .= urlencode($imagefile);
-    return $url;
-  } else {
-    return '';
-  }
 }
 
 function pseudo_mime_content_type($filename) {
