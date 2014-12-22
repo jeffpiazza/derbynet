@@ -18,7 +18,7 @@ public class DeviceFinder {
     this(deviceClassesMatching(s));
   }
 
-  public TimerDevice findDevice(SerialPort port) {
+  public TimerDevice findDevice(SerialPort port, LogWriter w) {
     try {
       if (!port.openPort()) {
         return null;
@@ -33,7 +33,7 @@ public class DeviceFinder {
 
     TimerDevice found = null;
     try {
-      found = findDeviceWithOpenPort(port);
+      found = findDeviceWithOpenPort(port, w);
       return found;
     } catch (Throwable t) {
       t.printStackTrace();
@@ -49,11 +49,9 @@ public class DeviceFinder {
 
     return null;
   }
-          
 
-  private TimerDevice findDeviceWithOpenPort(SerialPort port) throws Exception {
-    SerialPortWrapper portWrapper =
-      new SerialPortWrapper(port, LogFileFactory.makeLogFile());
+  private TimerDevice findDeviceWithOpenPort(SerialPort port, LogWriter w) throws Exception {
+    SerialPortWrapper portWrapper = new SerialPortWrapper(port, w);
     for (Class<? extends TimerDevice> deviceClass : deviceClasses) {
       System.out.println("    " + deviceClass.getName());  // TODO: Cleaner logging
       Constructor<? extends TimerDevice> constructor =
