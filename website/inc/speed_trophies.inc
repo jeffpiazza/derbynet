@@ -7,9 +7,21 @@ function top_finishers_by_class($n_per_class) {
   $top_finishers = array();
   $stmt = $db->query('SELECT RegistrationInfo.racerid, RegistrationInfo.classid,'
 					 .' COUNT(*) AS base, SUM(finishtime)/COUNT(*) AS avg'
-					 .' FROM (RegistrationInfo'
-					 .' INNER JOIN RaceChart'
-					 .' ON RaceChart.racerid = RegistrationInfo.racerid)'
+					 .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
+                                          'RaceChart.racerid = RegistrationInfo.racerid',
+                                          // Inclusion of Rounds here is to
+                                          // ensure that poor results in a Grand
+                                          // Finals round doesn't eliminate a
+                                          // racer from best-in-class.
+                                          'Rounds',
+                                          'RaceChart.roundid = Rounds.roundid'
+                                          .' AND Rounds.classid = RegistrationInfo.classid'
+                                          // This last condition ensures we only
+                                          // evaluate the highest round of
+                                          // competition for the racer's class.
+                                          .' AND Rounds.round = '
+                                          .'  (SELECT MAX(round) FROM Rounds'
+                                          .'   WHERE Rounds.classid = RegistrationInfo.classid)')
 					 .' WHERE passedinspection = 1 AND exclude = 0'
 					 .' AND finishtime IS NOT NULL'
 					 .' GROUP BY RegistrationInfo.racerid, RegistrationInfo.classid'
