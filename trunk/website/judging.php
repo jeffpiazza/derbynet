@@ -162,9 +162,10 @@ foreach ($stmt as $rs) {
 <ul>
 <?php
 foreach ($racers as $racer) {
-  echo '<li>'.$racer['carnumber'].' - '.$racer['lastname'].', '.$racer['firstname'];
+  echo '<li>'.htmlspecialchars($racer['carnumber'], ENT_QUOTES, 'UTF-8').' - '
+      .htmlspecialchars($racer['lastname'].', '.$racer['firstname'], ENT_QUOTES, 'UTF-8');
   foreach ($racer['awards'] as $award) {
-	echo '; '.$award;
+	echo '; '.htmlspecialchars($award, ENT_QUOTES, 'UTF-8');
   }
   echo '</li>'."\n";
 }
@@ -187,7 +188,8 @@ foreach ($awards as $award) {
   echo '<option value="0">&lt;None&gt;</option>';
   foreach ($racers as $racer) {
 	echo '<option value="'.$racer['racerid'].'">'
-	  .$racer['carnumber'].' - '.$racer['lastname'].', '.$racer['firstname']
+      .htmlspecialchars($racer['carnumber'], ENT_QUOTES, 'UTF-8').' - '
+      .htmlspecialchars($racer['lastname'].', '.$racer['firstname'], ENT_QUOTES, 'UTF-8')
 	  .'</option>'."\n";
   }
   echo '</select>';
