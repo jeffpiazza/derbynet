@@ -1,30 +1,5 @@
 
-// TODO: This preamble copied from checkin.js; refactor!
-
-g_action_url = "action.php";
-
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var fail = xmldoc.documentElement.getElementsByTagName("failure");
-
-	if (fail && fail.length > 0) {
-		alert("Action failed: " + fail[0].textContent);
-	}
-});
-
-// <reload/> element
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var reload = xmldoc.documentElement.getElementsByTagName("reload");
-	if (reload && reload.length > 0) {
-        console.log('ajaxSuccess event: reloading page');
-		location.reload(true);
-	}
-});
-
-$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-    console.log("ajaxError: " + thrownError);
-});
-
-// End of preamble
+// Requires dashboard-ajax.js
 
 function show_modal(modal_selector, submit_handler) {
     var modal_background = $("#modal_background");

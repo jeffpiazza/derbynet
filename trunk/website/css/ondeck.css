@@ -182,24 +182,6 @@ td.clickable div.inclickable {
   width: 80%;
 }
 
-.award-racer-photo { 
-  display: inline-block;
- }
-
-.award-racer-name { 
-  display: inline-block;
-  vertical-align: top;
-  text-align: center;
-  font-size: 80px;
-  color: white;
-}
-
-.award-background {
-  background-color: #003882;
-}
-
-.fade-in {  display: none;  }
-
 #pw_for_password {
     display: block;
     width: 300px;

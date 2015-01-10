@@ -77,6 +77,7 @@ $(document).bind("mobileinit", function() {
 g_order = '<?php echo $order; ?>';
 </script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>

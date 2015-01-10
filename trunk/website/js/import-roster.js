@@ -166,7 +166,7 @@ function handle_import_one_row(row) {
         }
     });
 
-    $.ajax(g_checkin_action_url,
+    $.ajax(g_action_url,
            {type: 'POST',
             data: params,
             success: function() {

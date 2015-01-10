@@ -13,29 +13,27 @@ require_permission(VIEW_AWARDS_PERMISSION);
 <?php $banner_title = 'Awards Summary'; require('inc/banner.inc');
 
 require_once('inc/speed_trophies.inc');
+require_once('inc/ordinals.inc');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
 $awards = array();  // RacerID -> award
-$ordinal = array(1 => '1st', 2 => '2nd', 3 => '3rd');
-for ($i = 4; $i < 20; ++$i) $ordinal[$i] = $i.'th';
-// Beware 21st, etc.
 
 // Collect the top N racer IDs in each class
 $speed_trophies = top_finishers_by_class($n_den_trophies);
 foreach ($speed_trophies as $classid => $racers) {
   for ($place = 0; $place < count($racers); ++$place) {
 	$racerid = $racers[$place];
-    $awards[$racerid] = $ordinal[1 + $place].' in '.group_label_lc();
+    $awards[$racerid] = ordinal(1 + $place).' in '.group_label_lc();
   }
 }
 
 $pack_trophies = top_finishers_overall($n_pack_trophies);
 for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racerid = $pack_trophies[$place];
-  $awards[$racerid] .= ', '.$ordinal[1 + $place].' in '.supergroup_label_lc();
+  $awards[$racerid] .= ', '.ordinal(1 + $place).' in '.supergroup_label_lc();
 }
 
 // TODO: Order by den, then by award "weight" within each den.

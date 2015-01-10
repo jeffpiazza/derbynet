@@ -1,27 +1,4 @@
-// Handlers for the UI controls in the check-in page.
-// TODO: Handle permission problems reported for the action.
-
-g_checkin_action_url = "action.php";
-
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var fail = xmldoc.documentElement.getElementsByTagName("failure");
-
-	if (fail && fail.length > 0) {
-		alert("Action failed: " + fail[0].textContent);
-	}
-});
-
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var reload = xmldoc.documentElement.getElementsByTagName("reload");
-	if (reload && reload.length > 0) {
-        console.log('ajaxSuccess event: reloading page');
-		location.reload(true);
-	}
-});
-
-$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-    console.log("ajaxError: " + thrownError);
-});
+// Requires dashboard-ajax.js
 
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	var passed = xmldoc.documentElement.getElementsByTagName("passed");
@@ -42,7 +19,7 @@ function handlechange_passed(cb, racer) {
     var racer = cb.name.substring(7);
     var value = cb.checked ? 1 : 0;
 
-    $.ajax(g_checkin_action_url,
+    $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'pass',
                    racer: racer,
@@ -57,7 +34,7 @@ function handlechange_xbs(cb) {
     var racer = cb.name.substring(4);
     var value = cb.checked ? 1 : 0;
 
-    $.ajax(g_checkin_action_url,
+    $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'xbs',
                    racer: racer,
@@ -119,7 +96,7 @@ function handle_edit_racer() {
   var new_classname = rank_option.attr('data-class');
   var new_rankname = rank_option.attr('data-rank');
 
-  $.ajax(g_checkin_action_url,
+  $.ajax(g_action_url,
          {type: 'POST',
           data: {action: racerid >= 0 ? 'edit-racer' : 'new-racer',
                  racer: racerid,

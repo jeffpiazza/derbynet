@@ -1,0 +1,32 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Award Presentation</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-page.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/award-presentations.css"/>
+<script type="text/javascript" src="js/award-presentations.js"></script>
+</head>
+<body>
+<?php /* $banner_title = 'Award Presentation'; $no_back_button = true; require('inc/banner.inc');  */ ?>
+
+<div class="award-background">
+  <div class="award-trophy" id="awardname"></div>
+
+  <p class="award-racer reveal"><span class="car-number" id="carnumber"></span></p>
+  <p class="award-racer reveal">
+    <span class="firstname reveal" id="firstname"></span>
+    <span class="lastname reveal" id="lastname"></span>
+  </p>
+
+  <div class="award-racer-photo reveal" id="headphoto">
+  </div>
+
+  <div class="award-car-photo reveal" id="carphoto">
+  </div>
+
+</div>
+
+</body>
+</html>
