@@ -2,7 +2,7 @@
 require_once('inc/data.inc');
 
 // Collect the top N racer IDs in each class
-function top_finishers_by_class($n_per_class) {
+function top_finishers_by_class($n_per_class, $classid = -1) {
   global $db;
   $top_finishers = array();
   $stmt = $db->query('SELECT RegistrationInfo.racerid, RegistrationInfo.classid,'
@@ -24,6 +24,7 @@ function top_finishers_by_class($n_per_class) {
                                           .'   WHERE Rounds.classid = RegistrationInfo.classid)')
 					 .' WHERE passedinspection = 1 AND exclude = 0'
 					 .' AND finishtime IS NOT NULL'
+                     .($classid >= 0 ? ' AND RegistrationInfo.classid = '.$classid : '')
 					 .' GROUP BY RegistrationInfo.racerid, RegistrationInfo.classid'
 					 //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
 					 .' ORDER BY RegistrationInfo.classid, SUM(finishtime)/COUNT(*)');
@@ -37,6 +38,8 @@ function top_finishers_by_class($n_per_class) {
 	  $top_finishers[$classid][] = $racerid;
 	}
   }
+
+  $stmt->closeCursor();
 
   return $top_finishers;
 }

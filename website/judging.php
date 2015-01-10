@@ -19,6 +19,7 @@ require_permission(JUDGING_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <meta http-equiv="refresh" content="300"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
@@ -124,21 +125,20 @@ $stmt->closeCursor();
 
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
-$ordinal = array(1 => '1st', 2 => '2nd', 3 => '3rd');
-for ($i = 4; $i < 20; ++$i) $ordinal[$i] = $i.'th';
+require_once('inc/ordinals.inc');
 
 $speed_trophies = top_finishers_by_class($n_den_trophies);
 foreach ($speed_trophies as $classid => $den_trophies) {
   for ($place = 0; $place < count($den_trophies); ++$place) {
 	$racerid = $den_trophies[$place];
-	$racers[$racerid]['awards'][] = $ordinal[1 + $place].' in '.group_label_lc();
+	$racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.group_label_lc();
   }
 }
 
 $pack_trophies = top_finishers_overall($n_pack_trophies);
 for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racerid = $pack_trophies[$place];
-  $racers[$racerid]['awards'][] = $ordinal[1 + $place].' in '.supergroup_label_lc();
+  $racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.supergroup_label_lc();
 }
 
 $sql = 'SELECT awardname, racerid'

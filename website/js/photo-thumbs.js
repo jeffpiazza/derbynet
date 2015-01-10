@@ -116,7 +116,7 @@ function changeRacerPhotoAjax(previous, racer, photo) {
 			  + ', new racer = ' + racer + ', photo = ' + photo);
 
    var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_checkin_action_url, /*async*/true);
+   xmlhttp.open("POST", g_action_url, /*async*/true);
    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 // TODO   xmlhttp.onreadystatechange = readystate_handler;
    xmlhttp.send("action=photo&racer=" + racer

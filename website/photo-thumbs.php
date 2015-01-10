@@ -45,6 +45,7 @@ $allfiles = scan_directory(PhotoRender::lookup('original')->directory(),
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>

@@ -1,0 +1,27 @@
+
+.award-racer-photo { 
+    float: left;
+}
+
+.award-racer-photo img {
+    margin-left: 100px;
+}
+
+.award-car-photo {
+    float: right;
+}
+
+.award-background {
+    color: #003882;
+    font-size: 80px;
+    text-align: center;
+    clear: both;
+}
+
+.award-trophy {
+    margin-top: 80px;
+    font-size: 120px;
+    font-weight: bold;
+}
+
+.fade-in {  display: none;  }

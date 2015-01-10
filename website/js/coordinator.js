@@ -1,32 +1,4 @@
-
-// TODO: This preamble copied from checkin.js; refactor!
-
-g_action_url = "action.php";
-
-// Note that this doesn't run if the $.ajax call has a success:
-// callback that generates an error.
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var fail = xmldoc.documentElement.getElementsByTagName("failure");
-
-	if (fail && fail.length > 0) {
-		alert("Action failed: " + fail[0].textContent);
-	}
-});
-
-// <reload/> element
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var reload = xmldoc.documentElement.getElementsByTagName("reload");
-	if (reload && reload.length > 0) {
-        console.log('ajaxSuccess event: reloading page');
-		location.reload(true);
-	}
-});
-
-$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-    console.log("ajaxError: " + thrownError);
-});
-
-// End of preamble
+// Requires dashboard-ajax.js
 
 // g_current_heat_racers remembers who the racers in the current heat
 // are, so the modal for manual heat results can be populated when
@@ -939,7 +911,7 @@ function coordinator_poll() {
             error: function() {
                 setTimeout(coordinator_poll, 2000);
             }
-});
+           });
 }
 
 
