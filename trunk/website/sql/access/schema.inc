@@ -200,7 +200,7 @@ $sql_script = array(
 .'	RankID           INTEGER,'
 .'	PassedInspection BIT,'
 .'	ImageFile        VARCHAR (255),'
-.(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),'
+.(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),')
 .'	Exclude          BIT'
 .'	)',
 
