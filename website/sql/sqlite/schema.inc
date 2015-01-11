@@ -1,5 +1,6 @@
 <?php
 // SQLite
+require_once('inc/schema_version.inc');
 
 function make_index($table, $column) {
   return "CREATE INDEX IF NOT EXISTS ".$table."_".$column." ON ".$table."(".$column.")";
@@ -32,12 +33,6 @@ make_index("Awards", "sort"),
 ."  `awardtype` VARCHAR(15) NOT NULL"
 .")",
 
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (1, 'Design General')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (2, 'Speed General')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (4, 'Design Trophy')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
-
 "DROP TABLE IF EXISTS CheckinAudit",
 
 "CREATE TABLE CheckinAudit"
@@ -52,6 +47,7 @@ make_index("Awards", "sort"),
 "CREATE TABLE `Classes` ("
 ."  `classid` INTEGER PRIMARY KEY, "
 ."  `class` VARCHAR(15) NOT NULL UNIQUE"
+.(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER")
 .")",
 
 "DROP TABLE IF EXISTS `RaceChart`",
@@ -86,7 +82,9 @@ make_index("RaceChart", "roundid"),
 "CREATE TABLE `RaceInfo` ("
 ."  `raceinfoid` INTEGER PRIMARY KEY, "
 ."  `itemkey` VARCHAR(20) NOT NULL, "
-."  `itemvalue` VARCHAR(50)"
+.(expected_schema_version() < 2
+  ? "  `itemvalue` VARCHAR(50)"
+  : "  `itemvalue` VARCHAR(200)")
 .")",
 make_index("RaceInfo", "itemkey"),
 
@@ -96,6 +94,7 @@ make_index("RaceInfo", "itemkey"),
 ."  `rankid` INTEGER PRIMARY KEY, "
 ."  `rank` VARCHAR(15) NOT NULL, "
 ."  `classid` INTEGER NOT NULL"
+.(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER ")
 .")",
 make_index("Ranks", "classid"),
 make_index("Ranks", "rank"),
@@ -112,6 +111,7 @@ make_index("Ranks", "rank"),
 ."  `rankid` INTEGER NOT NULL, "
 ."  `passedinspection` TINYINT(1) DEFAULT 0, "
 ."  `imagefile` VARCHAR(255), "
+.(expected_schema_version() < 2 ? "" : "  `carphoto` VARCHAR(255), ")
 ."  `exclude` TINYINT(1) DEFAULT 0"
 .")",
 make_index("RegistrationInfo", "carnumber"),  // Why??
@@ -153,6 +153,14 @@ make_index("Rounds", "round"),
 ." name VARCHAR(200),"
 ." page VARCHAR(200),"
 ." last_contact INTEGER NOT NULL)",
+
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (1, 'Design General')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (2, 'Speed General')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (4, 'Design Trophy')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
+
+"INSERT INTO RaceInfo (raceinfoid, itemkey, itemvalue) VALUES (10, 'schema', ".expected_schema_version().")",
 
 );
 ?>

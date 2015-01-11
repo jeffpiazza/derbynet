@@ -71,6 +71,9 @@ if ($offer_config_button) {
 }
 
 if (isset($db) && $db) {
+  require_once('inc/data.inc');
+  require_once('inc/schema_version.inc');
+
   try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $stmt = $db->prepare('SELECT COUNT(*) from RegistrationInfo');
@@ -83,7 +86,26 @@ if (isset($db) && $db) {
   }
 ?>
 <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Initialize Schema" onclick="show_initialize_schema_modal()"/><br/>
+    <input type="button" data-enhanced="true"
+           value="Initialize Schema" onclick="show_initialize_schema_modal()"/>
+    <br/>
+<?php
+
+    try {
+        echo '<p>Schema version '.schema_version().' (expecting version '.expected_schema_version().')</p>'."\n";
+        if (schema_version() < expected_schema_version()) {
+?>
+    <input type="button" data-enhanced="true"
+           value="Update Schema" onclick="show_update_schema_modal()"/>
+    <br/>
+<?php
+        }
+    } catch (PDOException $p) {
+        echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
+    }
+
+?>
+
 </div>
 <?php
 }
@@ -114,6 +136,18 @@ if (isset($db) && $db) {
     <input type="submit" data-enhanced="true" value="Initialize"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#initialize_schema_modal");'/>
+  </form>
+</div>
+
+<div id="update_schema_modal" class="modal_dialog hidden block_buttons">
+  <form>
+
+    <p>Updating the schema may affect any existing data in the 
+    database, and cannot be undone.  Are you sure that's what you want to do?</p>
+
+    <input type="submit" data-enhanced="true" value="Update Schema"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#update_schema_modal");'/>
   </form>
 </div>
 

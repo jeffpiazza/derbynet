@@ -1,4 +1,7 @@
 <?php
+// Access
+require_once('inc/schema_version.inc');
+
 $sql_script = array(
 'DROP TABLE Awards',
 
@@ -60,6 +63,7 @@ $sql_script = array(
 .'	('
 .'	ClassID COUNTER,'
 .'	Class   VARCHAR (15)'
+.(expected_schema_version() < 2 ? '' : ',	SortOrder INTEGER')
 .'	)',
 
 'CREATE UNIQUE INDEX Class'
@@ -139,7 +143,9 @@ $sql_script = array(
 .'	('
 .'	RaceInfoID COUNTER,'
 .'	ItemKey    VARCHAR (20),'
-.'	ItemValue  VARCHAR (50)'
+.(expected_schema_version() < 2
+  ? '	ItemValue  VARCHAR (50)'
+  : '   ItemValue  VARCHAR (200)')
 .'	)',
 
 'CREATE UNIQUE INDEX PrimaryKey'
@@ -160,6 +166,7 @@ $sql_script = array(
 .'	RankID  COUNTER,'
 .'	Rank    VARCHAR (15),'
 .'	ClassID INTEGER'
+.(expected_schema_version() < 2 ? '' : ',	SortOrder INTEGER')
 .'	)',
 
 'CREATE UNIQUE INDEX PrimaryKey'
@@ -193,6 +200,7 @@ $sql_script = array(
 .'	RankID           INTEGER,'
 .'	PassedInspection BIT,'
 .'	ImageFile        VARCHAR (255),'
+.(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),'
 .'	Exclude          BIT'
 .'	)',
 
@@ -312,5 +320,6 @@ $sql_script = array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (20, 'StepAwardsCeremony', 'Incomplete')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (21, 'StepOrgSetup', 'Complete')",
 
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
 );
 ?>

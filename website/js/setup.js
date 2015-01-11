@@ -78,3 +78,26 @@ function handle_initialize_schema() {
             },
            });
 }
+
+function show_update_schema_modal() {
+  show_modal("#update_schema_modal", function(event) {
+      handle_update_schema();
+      return false;
+  });
+}
+
+function handle_update_schema() {
+    close_modal("#update_schema_modal");
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'run-sql',
+                   script: 'update-schema'},
+            success: function(data) {
+	            var success = data.documentElement.getElementsByTagName("success");
+                if (success && success.length > 0) {
+                    alert("Schema update successful!");
+                    location.reload(true);
+                }
+            },
+           });
+}
