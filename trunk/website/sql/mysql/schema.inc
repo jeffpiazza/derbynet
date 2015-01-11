@@ -1,4 +1,7 @@
 <?php
+// MySQL
+require_once('inc/schema_version.inc');
+
 $sql_script = array(
 "ALTER DATABASE CHARACTER SET utf8",
 
@@ -29,12 +32,6 @@ $sql_script = array(
 ."  PRIMARY KEY (`AwardTypeID`)"
 .")",
 
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (1, 'Design General')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (2, 'Speed General')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (3, 'Other')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (4, 'Design Trophy')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
-
 "DROP TABLE IF EXISTS CheckinAudit",
 
 "CREATE TABLE CheckinAudit"
@@ -50,6 +47,7 @@ $sql_script = array(
 "CREATE TABLE `Classes` ("
 ."  `ClassID` INTEGER NOT NULL AUTO_INCREMENT, "
 ."  `Class` VARCHAR(15) NOT NULL, "
+.(expected_schema_version() < 2 ? "" : "  `SortOrder` INTEGER, ")
 ."  UNIQUE (`Class`), "
 ."  INDEX (`ClassID`), "
 ."  PRIMARY KEY (`ClassID`)"
@@ -88,7 +86,9 @@ $sql_script = array(
 "CREATE TABLE `RaceInfo` ("
 ."  `RaceInfoID` INTEGER NOT NULL AUTO_INCREMENT, "
 ."  `ItemKey` VARCHAR(20) NOT NULL, "
-."  `ItemValue` VARCHAR(50), "
+.(expected_schema_version() < 2
+  ? "  `ItemValue` VARCHAR(50), "
+  : "  `ItemValue` VARCHAR(200), ")
 ."  INDEX (`ItemKey`), "
 ."  INDEX (`RaceInfoID`), "
 ."  PRIMARY KEY (`RaceInfoID`)"
@@ -100,6 +100,7 @@ $sql_script = array(
 ."  `RankID` INTEGER NOT NULL AUTO_INCREMENT, "
 ."  `Rank` VARCHAR(15) NOT NULL, "
 ."  `ClassID` INTEGER NOT NULL, "
+.(expected_schema_version() < 2 ? "" : "  `SortOrder` INTEGER, ")
 ."  INDEX (`ClassID`), "
 ."  INDEX (`RankID`), "
 ."  PRIMARY KEY (`RankID`), "
@@ -118,6 +119,7 @@ $sql_script = array(
 ."  `RankID` INTEGER NOT NULL, "
 ."  `PassedInspection` TINYINT(1) DEFAULT 0, "
 ."  `ImageFile` VARCHAR(255), "
+.(expected_schema_version() < 2 ? "" : "  `CarPhoto` VARCHAR(255), ")
 ."  `Exclude` TINYINT(1) DEFAULT 0, "
 ."  INDEX (`CarNumber`), "
 ."  INDEX (`ClassID`), "
@@ -165,6 +167,14 @@ $sql_script = array(
 ." name VARCHAR(200),"
 ." page VARCHAR(200),"
 ." last_contact INTEGER NOT NULL)",
+
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (1, 'Design General')",
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (2, 'Speed General')",
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (3, 'Other')",
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (4, 'Design Trophy')",
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
+
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
 
 );
 ?>

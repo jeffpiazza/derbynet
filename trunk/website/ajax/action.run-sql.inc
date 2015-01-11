@@ -2,14 +2,11 @@
 // $_POST['script']
 start_response();
 
-function schema_version() {
-  return read_raceinfo('schema', 1);
-}
-
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
   try {
     if (@include_once(sql_file_path($_POST['script']))) {
+      echo "<included-file-ok/>\n";
       foreach ($sql_script as $sql_stmt) {
         $sql_result = $db->exec($sql_stmt);
         echo '<executed result="'.($sql_result === false ? 'FALSE' : $sql_result).'">'
