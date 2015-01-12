@@ -1,8 +1,9 @@
 #! /bin/sh
+#
+# Use this script to exercise the Access database, running on another (Windows) machine.
 
 BASE_URL=$1
 source `dirname $0`/common.sh
-
 source `dirname $0`/exercise-one-database.sh
 
 prepare_for_setup() {
@@ -14,9 +15,6 @@ prepare_for_setup() {
 }
 
 prepare_for_setup
-`dirname $0`/setup-mysql.sh "$BASE_URL"
-run_tests
-
-prepare_for_setup
-`dirname $0`/setup-sqlite.sh "$BASE_URL"
+`dirname $0`/setup-access.sh "$BASE_URL"
+TEST_PHOTO_ASSIGNMENTS=""
 run_tests
