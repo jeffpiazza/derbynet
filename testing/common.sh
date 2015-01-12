@@ -51,13 +51,13 @@ function user_logout() {
 }
 
 function test_fails() {
-    tput setaf 1
+    tput setaf 1  # red text
 	echo TEST FAILURE: $*
     stacktrace
 	echo BEGIN RESPONSE
 	cat $DEBUG_CURL
 	echo END RESPONSE
-    tput setaf 0
+    tput setaf 0  # black text
 }
 
 function check_success() {
