@@ -2,44 +2,56 @@
 require_once('inc/data.inc');
 
 // Collect the top N racer IDs in each class
-function top_finishers_by_class($n_per_class, $classid = -1) {
+function top_finishers_by_class($n_per_class, $required_classid = -1) {
   global $db;
-  $top_finishers = array();
-  $stmt = $db->query('SELECT RegistrationInfo.racerid, RegistrationInfo.classid,'
-					 .' COUNT(*) AS base, SUM(finishtime)/COUNT(*) AS avg'
-					 .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
-                                          'RaceChart.racerid = RegistrationInfo.racerid',
-                                          // Inclusion of Rounds here is to
-                                          // ensure that poor results in a Grand
-                                          // Finals round doesn't eliminate a
-                                          // racer from best-in-class.
-                                          'Rounds',
-                                          'RaceChart.roundid = Rounds.roundid'
-                                          .' AND Rounds.classid = RegistrationInfo.classid'
-                                          // This last condition ensures we only
-                                          // evaluate the highest round of
-                                          // competition for the racer's class.
-                                          .' AND Rounds.round = '
-                                          .'  (SELECT MAX(round) FROM Rounds'
-                                          .'   WHERE Rounds.classid = RegistrationInfo.classid)')
-					 .' WHERE passedinspection = 1 AND exclude = 0'
-					 .' AND finishtime IS NOT NULL'
-                     .($classid >= 0 ? ' AND RegistrationInfo.classid = '.$classid : '')
-					 .' GROUP BY RegistrationInfo.racerid, RegistrationInfo.classid'
-					 //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
-					 .' ORDER BY RegistrationInfo.classid, SUM(finishtime)/COUNT(*)');
+  // This could all be one query in mysql or sqlite, but not access.
+  $final_rounds = array();
+  $stmt = $db->query('SELECT classid, MAX(round) AS max_round'
+					 .' FROM Rounds'
+					 .' GROUP BY classid');
   foreach ($stmt as $row) {
-	$classid = $row['classid'];
-	$racerid = $row['racerid'];
-	$avg = $row['avg'];
-	if (!isset($top_finishers[$classid]))
-	  $top_finishers[$classid] = array();
-	if (count($top_finishers[$classid]) < $n_per_class) {
-	  $top_finishers[$classid][] = $racerid;
+	$final_rounds[$row['classid']] = $row['max_round'];
+  }
+  $stmt->closeCursor();
+
+  $top_finishers = array();
+  foreach ($final_rounds as $classid => $max_round) {
+	if ($required_classid < 0 || $required_classid == $classid) {
+	  $stmt = $db->prepare('SELECT RegistrationInfo.racerid,'
+						   .' COUNT(*) AS base, SUM(finishtime)/COUNT(*) AS avg'
+						   .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
+												'RaceChart.racerid = RegistrationInfo.racerid',
+												'Rounds',
+												'RaceChart.roundid = Rounds.roundid')
+						   .' WHERE RegistrationInfo.classid = :classid'
+						   // Inclusion of rounds' classid here is to eliminate
+						   // 'Grand Finals' rounds, which have a different classid.
+						   .' AND Rounds.classid = :classid2'
+						   // This last condition ensures we only
+						   // evaluate the highest round of
+						   // competition for the racer's class.
+						   .' AND Rounds.round = :max_round'
+						   .' AND passedinspection = 1 AND exclude = 0'
+						   .' AND finishtime IS NOT NULL'
+						   .' GROUP BY RegistrationInfo.racerid, RegistrationInfo.classid'
+						   //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
+						   .' ORDER BY RegistrationInfo.classid, SUM(finishtime)/COUNT(*)');
+	  $stmt->execute(array(':classid' => $classid,
+						   ':classid2' => $classid,
+						   ':max_round' => $max_round));
+	  foreach ($stmt as $row) {
+		$racerid = $row['racerid'];
+		$avg = $row['avg'];
+		if (!isset($top_finishers[$classid]))
+		  $top_finishers[$classid] = array();
+		if (count($top_finishers[$classid]) < $n_per_class) {
+		  $top_finishers[$classid][] = $racerid;
+		}
+	  }
+
+	  $stmt->closeCursor();
 	}
   }
-
-  $stmt->closeCursor();
 
   return $top_finishers;
 }
