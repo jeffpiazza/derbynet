@@ -5,6 +5,7 @@ require_once('inc/authorize.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Awards Presentation Dashboard</title><?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
