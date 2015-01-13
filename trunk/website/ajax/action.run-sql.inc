@@ -5,7 +5,8 @@ start_response();
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
   try {
-    if (@include_once(sql_file_path($_POST['script']))) {
+    $sql_script = @include_once(sql_file_path($_POST['script']));
+    if ($sql_script !== FALSE) {
       echo "<included-file-ok/>\n";
       foreach ($sql_script as $sql_stmt) {
         $sql_result = $db->exec($sql_stmt);

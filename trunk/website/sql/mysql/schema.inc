@@ -2,7 +2,8 @@
 // MySQL
 require_once('inc/schema_version.inc');
 
-$sql_script = array(
+return array_merge(
+array(
 "ALTER DATABASE CHARACTER SET utf8",
 
 "DROP TABLE IF EXISTS `Awards`",
@@ -160,14 +161,11 @@ $sql_script = array(
 ."  INDEX (`Round`), "
 ."  INDEX (`RoundID`)"
 .")",
+  ),
 
-"DROP TABLE IF EXISTS Kiosks",
-"CREATE TABLE Kiosks ("
-." address VARCHAR(50),"
-." name VARCHAR(200),"
-." page VARCHAR(200),"
-." last_contact INTEGER NOT NULL)",
+@include_once(sql_file_path('kiosk-table')),
 
+array(
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (1, 'Design General')",
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (2, 'Speed General')",
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (3, 'Other')",
@@ -175,6 +173,6 @@ $sql_script = array(
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
-
+  )
 );
 ?>

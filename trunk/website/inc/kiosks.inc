@@ -2,9 +2,11 @@
 
 function create_kiosk_table() {
   global $db;
-  @include_once(sql_file_path('kiosk-table'));
-  foreach ($sql_script as $sql_stmt) {
-    $sql_result = $db->exec($sql_stmt);
+  $sql_script = @include_once(sql_file_path('kiosk-table'));
+  if ($sql_script !== false) {
+    foreach ($sql_script as $sql_stmt) {
+      $sql_result = $db->exec($sql_stmt);
+    }   
   }
 }
 

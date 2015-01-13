@@ -1,5 +1,5 @@
 <?php
-$sql_script = array(
+return array(
 
 "DROP TABLE Kiosks",
 
@@ -7,8 +7,8 @@ $sql_script = array(
 ." address VARCHAR(50),"
 ." name VARCHAR(200),"
 ." page VARCHAR(200),"
+." reload BIT,"
 ." last_contact INTEGER)",
-
 
 );
 ?>
