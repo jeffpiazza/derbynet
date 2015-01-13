@@ -6,7 +6,8 @@ function make_index($table, $column) {
   return "CREATE INDEX IF NOT EXISTS ".$table."_".$column." ON ".$table."(".$column.")";
 }
 
-$sql_script = array(
+return array_merge(
+array(
 // "ALTER DATABASE CHARACTER SET utf8",
 
 "DROP TABLE IF EXISTS `Awards`",
@@ -146,14 +147,11 @@ make_index("Roster", "roundid"),
 .")",
 make_index("Rounds", "classid"),
 make_index("Rounds", "round"),
+  ),
 
-"DROP TABLE IF EXISTS Kiosks",
-"CREATE TABLE Kiosks ("
-." address VARCHAR(50),"
-." name VARCHAR(200),"
-." page VARCHAR(200),"
-." last_contact INTEGER NOT NULL)",
+@include_once(sql_file_path('kiosk-table')),
 
+array(
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (1, 'Design General')",
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (2, 'Speed General')",
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
@@ -161,6 +159,6 @@ make_index("Rounds", "round"),
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
 
 "INSERT INTO RaceInfo (raceinfoid, itemkey, itemvalue) VALUES (10, 'schema', ".expected_schema_version().")",
-
+  )
 );
 ?>

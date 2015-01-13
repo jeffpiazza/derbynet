@@ -1,5 +1,5 @@
 <?php
-$sql_script = array(
+return array(
 
 "DROP TABLE IF EXISTS Kiosks",
 "CREATE TABLE Kiosks ("

@@ -2,7 +2,8 @@
 // Access
 require_once('inc/schema_version.inc');
 
-$sql_script = array(
+return array_merge(
+  array(
 'DROP TABLE Awards',
 
 'CREATE TABLE Awards'
@@ -295,6 +296,11 @@ $sql_script = array(
 
 'CREATE INDEX RoundID'
 .'	ON Rounds (RoundID)',
+  ),
+
+@include_once(sql_file_path('kiosk-table')),
+
+array(
 
 // --- Populate basic data
 
@@ -321,5 +327,6 @@ $sql_script = array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (21, 'StepOrgSetup', 'Complete')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
+  )
 );
 ?>
