@@ -65,6 +65,9 @@ function show_edit_racer_form(racerid) {
   // event is required; setting the val above should be sufficient
   // to cause an update.
   edit_rank.change();
+
+  $("#eligible").prop("checked", $('#lastname-' + racerid).attr("data-exclude") == 0);
+  $("#eligible").trigger("change", true);
 }
 
 function show_new_racer_form() {
@@ -78,8 +81,8 @@ function show_new_racer_form() {
   $("#edit_lastname").val("");
 
   $("#edit_carno").val(9999);
-
-  var edit_rank = $("#edit_rank");
+  $("#eligible").val(true);
+  $("#eligible").trigger("change", true);
 }
 
 function handle_edit_racer() {
@@ -96,6 +99,8 @@ function handle_edit_racer() {
   var new_classname = rank_option.attr('data-class');
   var new_rankname = rank_option.attr('data-rank');
 
+  var exclude = $("#eligible").is(':checked') ? 0 : 1;
+
   $.ajax(g_action_url,
          {type: 'POST',
           data: {action: racerid >= 0 ? 'edit-racer' : 'new-racer',
@@ -103,7 +108,8 @@ function handle_edit_racer() {
                  firstname: new_firstname,
                  lastname: new_lastname,
                  carno: new_carno,
-                 rankid: new_rankid},
+                 rankid: new_rankid,
+                 exclude: exclude},
             success: function(data) {
                 var new_row_elements = data.getElementsByTagName('new-row');
                 if (new_row_elements.length > 0) {
@@ -119,7 +125,10 @@ function handle_edit_racer() {
                     }
                 } else {
                     $("#firstname-" + racerid).text(new_firstname);
-                    $("#lastname-" + racerid).text(new_lastname);
+                    var ln = $("#lastname-" + racerid);
+                    ln.text(new_lastname);
+                    ln.attr("data-exclude", exclude);
+                    ln.parents('tr').toggleClass('exclude-racer', exclude == 1);
                     $("#car-number-" + racerid).text(new_carno);
 
                     $('#class-' + racerid).attr('data-rankid', new_rankid);

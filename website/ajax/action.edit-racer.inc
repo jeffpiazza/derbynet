@@ -12,6 +12,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     echo '<checkin><failure>['.$fetch.']</failure></checkin>';
     exit();
   }
+  $exclude = $_POST['exclude'];
 
   $new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
                                    array(':classid' => $classid));
@@ -25,13 +26,15 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
                            .' lastname = :lastname,'
                            .' carnumber = :carnumber,'
                            .' rankid = :rankid,'
-                           .' classid = :classid'
+                           .' classid = :classid,'
+                           .' exclude = :exclude'
                            .' WHERE racerid = :racerid',
                            array(':firstname' => $firstname,
                                  ':lastname' => $lastname,
                                  ':carnumber' => $carno,
                                  ':rankid' => $rankid,
                                  ':classid' => $classid,
+                                 ':exclude' => $exclude,
                                  ':racerid' => $racerid))) {
     take_action('UPDATE Roster SET roundid = :new_roundid'
                 .' WHERE racerid = :racerid'
@@ -43,7 +46,5 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
 } else {
   not_authorized();
 }
-
-
 
 ?>

@@ -58,9 +58,9 @@ function column_header($text, $o) {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
+<?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
-<?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript">
 // We're using jQuery Mobile for its nice mobile/tablet-friendly UI
@@ -136,17 +136,14 @@ $stmt = $db->query($sql);
 $n = 1;
 foreach ($stmt as $rs) {
   $racer_id = $rs['racerid'];
-  $passed = $rs['passedinspection'];
-  $den_scheduled = $rs['denscheduled'];
-  // TODO: Use of htmlspecialchars should be universal...
   $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES, 'UTF-8');
   $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES, 'UTF-8');
 
   checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],
                     htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8'),
                     htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8'),
-                    $passed, $rs['xbs'], $rs['scheduled'],
-                    $den_scheduled, $xbs, $use_subgroups, $n);
+                    $rs['passedinspection'], $rs['exclude'], $rs['xbs'],
+                    $rs['scheduled'], $rs['denscheduled'], $xbs, $use_subgroups, $n);
   ++$n;
 }
 ?>
@@ -165,6 +162,8 @@ foreach ($stmt as $rs) {
 ?>
 <form id="editracerform" class="editform hidden" method="POST"
 	  onsubmit="handle_edit_racer(); return false;">
+
+ <div class="inset">
 
   <input id="edit_racer" type="hidden" name="racer" value=""/>
 
@@ -196,9 +195,16 @@ foreach ($stmt as $rs) {
   ?>
   </select>
   <br/>
+  <label for="eligible">Trophy eligibility:</label>
+    <input type="checkbox" data-role="flipswitch" name="eligible" id="eligible"
+            data-wrapper-class="trophy-eligible-flipswitch"
+            data-off-text="Excluded"
+            data-on-text="Eligible"/>
+  <br/>
   <input type="submit" data-enhanced="true"/>
   <input type="button" value="Cancel" data-enhanced="true"
     onclick='$("#editracerform").addClass("hidden");'/>
+ </div>
 </form>
 
 </div>
