@@ -14,9 +14,30 @@ require_once('inc/data.inc'); ?>
  require_once('inc/authorize.inc');
 
  $need_spacer = false;
+
+ // This is a heuristic more than a hard rule -- when are there so many buttons that we need a second column?
+ $two_columns = have_permission(SET_UP_PERMISSION);
 ?>
 <div class="index_background">
+
+<?php if ($two_columns) { ?>
+<div class="index_column">
+<?php } ?>
+
 <div class="block_buttons">
+
+ <?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
+<form method="link" action="coordinator.php">
+  <input type="submit" value="Race Dashboard"/>
+</form>
+<br/>
+
+<form method="link" action="awards-dashboard.php">
+  <input type="submit" value="Awards Dashboard"/>
+</form>
+<br/>
+
+ <?php } ?>
 
 <?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="checkin.php">
@@ -51,13 +72,6 @@ if ($need_spacer) {
 <br/>
  <?php } ?>
 
- <?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
-<form method="link" action="coordinator.php">
-  <input type="submit" value="Race Dashboard"/>
-</form>
-<br/>
- <?php } ?>
-
 <div class="index_spacer">&nbsp;</div>
 
 <?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
@@ -65,6 +79,21 @@ if ($need_spacer) {
   <input type="submit" value="Awards"/>
 </form>
 <br/>
+<?php } ?>
+
+ <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
+<form method="link" action="export.php">
+  <input type="submit" value="Exported Results"/>
+</form>
+<br/>
+ <?php } ?>
+
+<?php if ($two_columns) { ?>
+</div>
+</div>
+
+<div class="index_column">
+<div class="block_buttons">
 <?php } ?>
 
 <?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
@@ -103,6 +132,9 @@ if ($need_spacer) {
 </form>
 
 </div>
+<?php if (have_permission(SET_UP_PERMISSION)) { ?>
+</div>
+<?php } ?>
 </div>
 </body>
 </html>
