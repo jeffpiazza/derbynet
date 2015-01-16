@@ -1,4 +1,4 @@
-// Fixed text from here on down
+
 function kiosk_poll() {
   $.ajax('action.php',
          {type: 'GET',
@@ -10,7 +10,14 @@ function kiosk_poll() {
              if (g_kiosk_page != '') {
                var page = data.documentElement.getAttribute("page");
                if (page != g_kiosk_page) {
-                 console.log("Forcing a reload, because page (" + page + ") != g_kiosk_page (" + g_kiosk_page + ")");
+                 console.log("Forcing a reload, because page (" + page
+                             + ") != g_kiosk_page (" + g_kiosk_page + ")");
+                 location.reload(true);
+                 return;
+               }
+	           var reload = xmldoc.documentElement.getElementsByTagName("reload");
+               if (reload && reload.length > 0) {
+                 console.log("Forcing a reload because it was explicitly requested.");
                  location.reload(true);
                  return;
                }

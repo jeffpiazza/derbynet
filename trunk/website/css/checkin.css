@@ -3,8 +3,8 @@
    position: fixed;
    /* height: 100px; */
    width:  400px;
-   /* center in viewport: */
-   top: 25%;
+   /* roughly, center in viewport: */
+   top: 14%;
    left: 50%;
    /* margin-top: -50px; */
    margin-left: -200px;
@@ -12,4 +12,43 @@
    background-color: white;
    /* visibility: hidden; */
    /* visibility: visible; */
+}
+
+.inset {
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-top: 40px;
+}
+
+.trophy-eligible-flipswitch.ui-flipswitch {
+    width: 7.5em;
+    padding: 5px;
+}
+
+.trophy-eligible-flipswitch {
+    margin-left: 60px;
+    margin-bottom: 30px;
+    font-size: x-large;
+}
+
+.trophy-eligible-flipswitch .ui-btn {
+    /* This controls the size of the slider "square". */
+    font-size: x-large;
+}
+
+.trophy-eligible-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+	text-indent: -4.3em;
+}
+.trophy-eligible-flipswitch.ui-flipswitch .ui-flipswitch-off {
+    text-indent: 0.6em;
+}
+
+.trophy-eligible-flipswitch.ui-flipswitch.ui-flipswitch-active {
+  padding-left: 5.775em;
+  width: 1.875em;
+}
+
+tr.exclude-racer td.checkin-status {
+  background-image: url('../img/asterisk.png');
+  background-repeat: no-repeat;
 }
