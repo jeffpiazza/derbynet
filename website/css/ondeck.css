@@ -68,7 +68,12 @@ tbody tr:first-child th {
 /* Yuck.  These really don't do what I want. */
 div.index_background {
   width: 100%;
-  align: center;
+}
+
+div.index_column {
+  width: 50%;
+  display: inline-block;
+float: left;
 }
 
 /* These are for checkin page */
