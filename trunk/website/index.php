@@ -26,18 +26,19 @@ require_once('inc/data.inc'); ?>
 
 <div class="block_buttons">
 
- <?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
+<?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
 <form method="link" action="coordinator.php">
   <input type="submit" value="Race Dashboard"/>
 </form>
 <br/>
+<?php } ?>
 
+<?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { ?>
 <form method="link" action="awards-dashboard.php">
   <input type="submit" value="Awards Dashboard"/>
 </form>
 <br/>
-
- <?php } ?>
+<?php } ?>
 
 <?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="checkin.php">

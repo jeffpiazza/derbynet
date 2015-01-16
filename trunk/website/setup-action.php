@@ -88,6 +88,7 @@ END;
 		     'permissions' =>
 		     VIEW_RACE_RESULTS_PERMISSION | VIEW_AWARDS_PERMISSION
 		     | CHECK_IN_RACERS_PERMISSION | REVERT_CHECK_IN_PERMISSION
+             | ASSIGN_RACER_IMAGE_PERMISSION
              | EDIT_RACER_PERMISSION | REGISTER_NEW_RACER_PERMISSION),
 	       'RaceCoordinator' =>
 	       array('password' => 'doyourbest',
