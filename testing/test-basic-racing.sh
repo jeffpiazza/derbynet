@@ -8,6 +8,7 @@ source `dirname $0`/common.sh
 curl_post action.php "action=write-settings&n-lanes=4" | check_success
 
 ### Check in every other racer...
+
 curl_post action.php "action=pass&racer=1&value=1" | check_success
 curl_post action.php "action=pass&racer=3&value=1" | check_success
 curl_post action.php "action=pass&racer=5&value=1" | check_success
@@ -33,6 +34,9 @@ curl_post action.php "action=pass&racer=43&value=1" | check_success
 curl_post action.php "action=pass&racer=45&value=1" | check_success
 curl_post action.php "action=pass&racer=47&value=1" | check_success
 curl_post action.php "action=pass&racer=49&value=1" | check_success
+
+# Exclude car 111
+curl_post action.php "action=edit-racer&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&rankid=1&exclude=1" | check_success
 
 ### Schedule round 1 for 3 of the classes
 curl_post action.php "action=schedule&roundid=1" | check_success
@@ -141,3 +145,6 @@ check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" 
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.884104613683352&lane2=2.824318361529536&lane3=2.7381147675717172&lane4=3.9018944125092982" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.788677259690628&lane2=3.5121727633843625&lane3=3.897900103278687&lane4=2.0171570935608143" | check_success
+
+# Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
+curl_get "action.php?query=award-presentations&key=speed-2-1" | expect_one Asher
