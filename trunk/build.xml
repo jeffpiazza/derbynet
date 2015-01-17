@@ -11,9 +11,12 @@
 
   <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
       <delete file="../WebRaceManager.zip " quiet="yes" failonerror="false"/>
+      <loadresource property="svn">
+          <file file="website/inc/generated-version.inc"/>
+      </loadresource>
 
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
-      <zip destfile="../WebRaceManager.zip">
+      <zip destfile="../WebRaceManager-${DSTAMP}-${svn}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
               <include name="README.txt"/>
