@@ -190,11 +190,10 @@ function process_new_heat(watching) {
                 var lane = r.getAttribute('lane');
                 $('[data-lane="' + lane + '"] .lane').text(lane);
                 $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
+                $('[data-lane="' + lane + '"] img').remove();
                 if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
                     $('[data-lane="' + lane + '"] .name_and_photo').prepend(
                         '<img src="' + r.getAttribute('photo') + '"/>');
-                } else {
-                    $('[data-lane="' + lane + '"] img').remove();
                 }
                 // $('[data-lane="' + lane + '"] .carname').text(r.getAttribute('carname'));
                 // $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
