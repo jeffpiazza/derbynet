@@ -66,7 +66,7 @@ if (isset($stmt)) {
       .' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
-      .' headphoto="'.PhotoRender::lookup('display')->url($row['imagefile']).'"'
+      .' headphoto="'.$headshots->lookup('display')->url($row['imagefile']).'"'
       .' carphoto=""'
       .'/>'."\n";
   }

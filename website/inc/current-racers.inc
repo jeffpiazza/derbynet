@@ -22,7 +22,7 @@ foreach ($stmt as $row) {
         .' name="'.htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8').'"'
        .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
        .' carnumber="'.$row['carnumber'].'"'
-       .' photo="'.($show_racer_photos ? PhotoRender::lookup('display')->url($row['imagefile']) : '').'"'
+       .' photo="'.($show_racer_photos ? $headshots->lookup('display')->url($row['imagefile']) : '').'"'
        .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
        .'/>'."\n";
 }

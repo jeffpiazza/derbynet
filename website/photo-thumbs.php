@@ -22,7 +22,7 @@ function scan_directory($directory, $pattern) {
   return $files;
 }
 
-$allfiles = scan_directory(PhotoRender::lookup('original')->directory(),
+$allfiles = scan_directory($headshots->lookup('original')->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
@@ -97,7 +97,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-    .' src="'.PhotoRender::lookup('tiny')->url($image_filename).'"/>';
+    .' src="'.$headshots->lookup('tiny')->url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
   echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
@@ -116,7 +116,7 @@ foreach ($allfiles as $imagefile) {
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
-      .' src="'.PhotoRender::lookup('thumb')->url($imagefile).'"/>';
+      .' src="'.$headshots->lookup('thumb')->url($imagefile).'"/>';
   echo '</a>';
   // echo $imagefile;
   echo '</div>'."\n";

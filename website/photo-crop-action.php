@@ -18,8 +18,8 @@ require_once('inc/photo-config.inc');
 // TODO
 $image_name = $_POST['image_name'];
 
-$original = PhotoRender::lookup('original');
-$cropped = PhotoRender::lookup('cropped');
+$original = $headshots->lookup('original');
+$cropped = $headshots->lookup('cropped');
 
 $source_file_path = $original->file_path($image_name);
 
@@ -36,7 +36,7 @@ if (isset($_POST['rotation']) && $_POST['rotation']) {
   imagedestroy($im);
   imagedestroy($rot);
 
-  PhotoRender::lookup('original')->delete_dependents($image_name);
+  $headshots->lookup('original')->delete_dependents($image_name);
   // We're counting on work getting regenerated upon display
 
   header('Location: photo-crop.php?name='.urlencode($image_name));
