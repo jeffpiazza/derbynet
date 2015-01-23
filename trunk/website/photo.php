@@ -11,7 +11,7 @@ $photo_render = $trailing[1];
 $breaker = count($trailing) > 2;
 $image_name = urldecode($trailing[count($trailing) - 1]);
 
-$rr = PhotoRender::lookup($photo_render);
+$rr = $headshots->lookup($photo_render);
 if ($rr) {
   $target_file_path = $rr->find_or_make_image_file($image_name);
 } else {

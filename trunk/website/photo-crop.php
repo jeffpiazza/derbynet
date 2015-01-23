@@ -17,7 +17,7 @@ $displayHeight = 0 + $photosize[1];
 <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 </head>
 <body>
-<img src="<?php echo PhotoRender::lookup('work')->url($imagename); ?>" id="target"/>
+<img src="<?php echo $headshots->lookup('work')->url($imagename); ?>" id="target"/>
 <script type="text/javascript">
 jQuery(function($) {
   $('#target').Jcrop({

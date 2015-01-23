@@ -1,27 +1,57 @@
 <?php
 require_once('inc/data.inc');
 
-class PhotoRender {
-  private static $all_renders = array();
+// A photo repository refers to a directory on the server where we look for
+// original photos.  We keep separate PhotoRepository objects for racer and car
+// photos, but it's OK for them to refer to the same directory.
+class PhotoRepository {
+  private $directory;
+  private $all_renders = array();
 
-  public static function lookup($label) {
-    return self::$all_renders[$label];
+  public function __construct($dir) {
+    $this->directory = $dir;
   }
 
-  public function __construct($label, $max_width, $max_height, $antecedent) {
+  public function all_renders() {
+    return $this->all_renders;
+  }
+
+  public function lookup($label) {
+    return $this->all_renders[$label];
+  }
+
+  public function directory() {
+    return $this->directory;
+  }
+
+  public function make_render($label, $max_width, $max_height, $antecedent) {
+    return $this->all_renders[$label] = 
+        new PhotoRender($this, $label, $max_width, $max_height, $antecedent);
+  }
+}
+
+// A photo "render" here is a subdirectory of the photo repository, into which
+// are written cropped and/or scaled versions of the original photos.
+class PhotoRender {
+
+  public function __construct($repository, $label, $max_width, $max_height, $antecedent) {
+    $this->repository = $repository;
     $this->label = $label;
-    $this->directory = photo_directory();
+    $this->directory = $repository->directory();
     if ($label != 'original') {
-      $this->directory .= DIRECTORY_SEPARATOR.$label;
+      if ($max_width == 0 || $max_height == 0) {
+        $this->directory .= DIRECTORY_SEPARATOR.$label;
+      } else {
+        $this->directory .= DIRECTORY_SEPARATOR.$max_width.'x'.$max_height;
+      }
     }
 
     $this->max_width = $max_width;
     $this->max_height = $max_height;
     $this->antecedent = $antecedent;
-
-    self::$all_renders[$label] = $this;
   }
 
+  public function repository() { return $this->repository; }
   public function label() { return $this->label; }
   public function directory() { return $this->directory; }
   public function max_width() { return $this->max_width; }
@@ -41,7 +71,7 @@ class PhotoRender {
 
   public function find_source_render($image_name) {
     if ($this->antecedent) {
-      $source = self::lookup($this->antecedent);
+      $source = $this->repository->lookup($this->antecedent);
       if (file_exists($source->file_path($image_name))) {
         return $source;
       } else {
@@ -53,7 +83,7 @@ class PhotoRender {
   }
 
   public function delete_dependents($image_name) {
-    foreach (self::$all_renders as $render) {
+    foreach ($this->repository->all_renders() as $render) {
       if ($render->antecedent() == $this->label()) {
         @unlink($render->file_path($image_name));
         $render->delete_dependents($image_name);
@@ -130,6 +160,7 @@ class PhotoRender {
     return $target_file_path;
   }
 
+  private $repository;
   private $label;
   private $directory;
   private $max_height;
@@ -137,19 +168,20 @@ class PhotoRender {
   private $antecedent;
 }
 
+// TODO: This name is used globally
+$headshots = new PhotoRepository(photo_directory());
 $photosize = explode('x', photo_size());
 
-new PhotoRender('original', 0, 0, '');
-new PhotoRender('cropped', 0, 0, 'original');
+$headshots->make_render('original', 0, 0, '');
+$headshots->make_render('cropped', 0, 0, 'original');
 // "Working size" images: big enough to edit, but small enough to fit on screen
-new PhotoRender('work', 950, 950, 'original');
-new PhotoRender('display', 0 + $photosize[0], 0 + $photosize[1], 'cropped');
+$headshots->make_render('work', 950, 950, 'original');
+$headshots->make_render('display', 0 + $photosize[0], 0 + $photosize[1], 'cropped');
 // "Thumbnail" images are what get displayed on the photo-thumbs page
-new PhotoRender('thumb', 150, 150, 'cropped');
+$headshots->make_render('thumb', 150, 150, 'cropped');
 // "Tiny": no more than 80 pixels, because that's what jQuery Mobile
 // limits to in a listview.
-new PhotoRender('tiny', 80, 80, 'cropped');
-
+$headshots->make_render('tiny', 80, 80, 'cropped');
 
 function open_image($filepath, $image_type) {
   switch ($image_type) {
