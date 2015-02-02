@@ -29,6 +29,7 @@ function error_handler($errno, $errstr, $errfile, $errline)
 set_error_handler('error_handler');
 
 function write_config_file($filename, $content) {
+  global $g_errstr;
   if (@file_put_contents(local_file_name($filename), $content, FILE_USE_INCLUDE_PATH) === false) {
     echo "<failure code='cant_write_config'>Can't write config file: $g_errstr</failure>";
     return false;
@@ -94,6 +95,7 @@ END;
 	       array('password' => 'doyourbest',
 		     'permissions' => -1)
 	       );
+\$post_setup_role = 'RaceCoordinator';
 ?>
 
 END;
@@ -102,6 +104,23 @@ END;
 
   if ($ok) {
     echo "<success/>\n";
+    // Setup permissions were granted temporarily because there was no
+    // configuration present.  Now that there is, remove the special setting_up
+    // flag and log in (without password) as the race coordinator (or whatever
+    // other role the config file specifies).
+    unset($_SESSION['setting_up']);
+
+    @include_once(local_file_name($config_roles));
+    if (!isset($post_setup_role)) {
+      $post_setup_role = 'RaceCoordinator';
+    }
+    $_SESSION['role'] = $post_setup_role;
+    $role = $roles[$post_setup_role];
+    if ($role) {
+      $_SESSION['permissions'] = $role['permissions'];
+    } else {
+      $_SESSION['permissions'] = -1;
+    }
   }
 } else {
 	not_authorized_body();
