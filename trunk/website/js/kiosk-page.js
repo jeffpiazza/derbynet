@@ -1,11 +1,10 @@
-
+// Assumes ajax-failure.inc has already established a global ajax error handler
 function kiosk_poll() {
   $.ajax('action.php',
          {type: 'GET',
            data: {query: 'kiosk-poll'},
            success: function(data) {
-             setTimeout(kiosk_poll, 5000);
-             $('#ajax_failure').addClass('hidden');
+             cancel_ajax_failure();
              $("#kiosk_name").text(data.documentElement.getAttribute("name"));
              if (g_kiosk_page != '') {
                var page = data.documentElement.getAttribute("page");
@@ -22,20 +21,13 @@ function kiosk_poll() {
                  return;
                }
              }
-           },
-           error: function() {
-             setTimeout(kiosk_poll, 5000);
-             $('#ajax_status').html(this.status + " (" + 
-                                    (this.status == 0 ? "likely timeout" : this.statusText)
-                                    + ")");
-             $('#ajax_failure').removeClass('hidden');
            }
          });
 }
 
 
 if (g_kiosk_poll) {
-  $(document).ready(kiosk_poll);
+  $(document).ready(setInterval(kiosk_poll, 5000));
 } else {
-  console.log("No g_kiosk_poll");
+  console.log("No g_kiosk_poll, so not polling for new pages");
 }
