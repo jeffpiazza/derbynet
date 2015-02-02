@@ -4,11 +4,22 @@
     $('#ajax_status').html(jqxhr.status + " (" + thrownError + " / " +
         (jqxhr.status == 0 ? "likely timeout" : jqxhr.statusText)
         + ")");
-    $('#ajax_failure').removeClass('hidden');
-    setTimeout(function() { $('#ajax_failure').addClass('hidden'); }, 10000);
+    $('#ajax-failure').removeClass('hidden');
+    setTimeout(function() { $('#ajax-failure').addClass('hidden'); }, 10000);
 });
+
+function ajax_failure(status, statusText) {
+  $('#ajax_status').html(status + " ("
+                         + (status == 0 ? "likely timeout" : statusText)
+                         + ")");
+  $('#ajax-failure').removeClass('hidden');
+}
+
+function cancel_ajax_failure() {
+  $('#ajax-failure').addClass('hidden');
+}
 </script>
 
-<div id="ajax_failure" class="hidden">
+<div id="ajax-failure" class="hidden">
   Ajax request failed with <span id="ajax_status">0</span>.
 </div>

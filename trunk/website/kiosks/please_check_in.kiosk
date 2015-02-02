@@ -59,10 +59,5 @@ if ($prev_class) {
   echo '</div>'."\n";
 }
 ?>
-
-
-<div id="ajax_failure" class="hidden">
-  Ajax request failed with <span id="ajax_status">0</span>.
-</div>
 </body>
 </html>
