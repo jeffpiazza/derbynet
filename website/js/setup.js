@@ -32,6 +32,42 @@ function close_modal(modal_selector) {
     $(modal_selector).css({'display': 'none'});
 }
 
+// Pulled out as a separate function because it uses two fields
+function write_mysql_connection_string() {
+    $('#connection_string').val('mysql:' + 
+                                'host=' + $('#mysql_host').val() + ';' +
+                                'dbname=' + $('#mysql_dbname').val());
+}
+
+function hide_or_show_connection(jq, show) {
+    if (show) {
+        jq.slideDown();
+        jq.removeClass('hidden');
+    } else {
+        jq.addClass('hidden');
+        jq.slideUp();
+    }
+}
+
+$(function () {
+    $('input[name="connection_type"]').on('change', function() {
+        $val = $('input[name="connection_type"]:checked').val();
+        // $('#for_string_connection').toggleClass('hidden', $val != 'string');
+        $('#connection_string').prop('disabled', $val != 'string');
+        hide_or_show_connection($('#for_odbc_connection'), $val == 'odbc');
+        hide_or_show_connection($('#for_mysql_connection'), $val == 'mysql');
+        hide_or_show_connection($('#for_sqlite_connection'), $val == 'sqlite');
+    });
+    $('#odbc_dsn_name').on('keyup', function() {
+        $('#connection_string').val('odbc:DSN=' + $(this).val() + ';Exclusive=NO');
+    });
+    $('#mysql_host').on('keyup', write_mysql_connection_string);
+    $('#mysql_dbname').on('keyup', write_mysql_connection_string);
+    $('#sqlite_path').on('keyup', function() {
+        $('#connection_string').val('sqlite:' + $(this).val());
+    });
+});
+
 function show_choose_database_modal() {
   show_modal("#choose_database_modal", function(event) {
       handle_choose_database();

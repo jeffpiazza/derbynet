@@ -112,10 +112,43 @@ if (isset($db) && $db) {
 
 ?>
 
-<div id="choose_database_modal" class="modal_dialog hidden block_buttons">
+<div id="choose_database_modal" class="modal_dialog wide_modal hidden block_buttons">
   <form>
-    <label for="connection_string">Database connection string:</label>
-    <input type="text" name="connection_string" id="connection_string_field"/>
+    <input type="radio" name="connection_type" value="string" id="string_connection"
+           checked="checked" data-wrapper-class="string_connection_wrapper"/>
+    <label for="string_connection">Arbitrary connection string</label>
+    <input type="radio" name="connection_type" value="odbc" id="odbc_connection"
+           data-wrapper-class="odbc_connection_wrapper"/>
+    <label for="odbc_connection">ODBC data source</label>
+    <input type="radio" name="connection_type" value="mysql" id="mysql_connection"
+           data-wrapper-class="mysql_connection_wrapper"/>
+    <label for="mysql_connection">MySQL data source</label>
+    <input type="radio" name="connection_type" value="sqlite" id="sqlite_connection"
+           data-wrapper-class="sqlite_connection_wrapper"/>
+    <label for="sqlite_connection">SQLite data source</label>
+
+    <div id="for_odbc_connection" class="hidden odbc_connection_wrapper">
+        <label for="odbc_dsn_name">ODBC data source name (DSN):</label>
+        <input type="text" name="odbc_dsn_name" id="odbc_dsn_name"/>
+    </div>
+
+    <div id="for_mysql_connection" class="hidden mysql_connection_wrapper">
+        <label for="mysql_host">MySQL Host:</label>
+        <input type="text" name="mysql_host" id="mysql_host"/>
+        <label for="mysql_dbname">MySQL database name:</label>
+        <input type="text" name="mysql_dbname" id="mysql_dbname"/>
+    </div>
+
+    <div id="for_sqlite_connection" class="hidden sqlite_connection_wrapper">
+        <label for="sqlite_path">Path (on server) to SQLite data file:</label>
+        <input type="text" name="sqlite_path" id="sqlite_path"/>
+    </div>
+
+    <div id="for_string_connection" class="string_connection_wrapper">
+        <label for="connection_string">Database connection string:</label>
+        <input type="text" name="connection_string" id="connection_string"/>
+    </div>
+
     <label for="dbuser">Database user name:</label>
     <input type="text" name="dbuser" id="username_field"/>
     <label for="dbpass">Database password:</label>

@@ -149,8 +149,7 @@ p.last_contact {
     font-weight: bold;
 }
 
-#manual_results_modal,
-.wide_modal {
+#manual_results_modal {
   width: 500px;
 }
 
