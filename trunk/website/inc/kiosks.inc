@@ -1,13 +1,9 @@
 <?php
 
+require_once('inc/sql-script.inc');
+
 function create_kiosk_table() {
-  global $db;
-  $sql_script = @include_once(sql_file_path('kiosk-table'));
-  if ($sql_script !== false) {
-    foreach ($sql_script as $sql_stmt) {
-      $sql_result = $db->exec($sql_stmt);
-    }   
-  }
+  run_sql_script('kiosk-table');
 }
 
 function address_for_current_kiosk() {
@@ -91,12 +87,12 @@ function xml_for_kiosk_pages($prefix) {
   }
 }
 
-// "old" kiosks are those that haven't made contact in an hour --
+// "old" kiosks are those that haven't made contact in five minutes --
 // mainly this would be kiosks from testing that we don't want to
 // remain in the database on race day.
 function drop_old_kiosks() {
   global $db;
-  // 3600 seconds in an hour
-  $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 3600');
+  // 300 seconds in five minutes
+  $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 300');
 }
 ?>
