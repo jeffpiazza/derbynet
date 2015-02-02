@@ -46,8 +46,11 @@ return array_merge(
 .'	ON AwardTypes (AwardTypeID)',
 
 
+  ),
 
 @include_once(sql_file_path('audit-table')),
+
+array(
 
 
 'DROP TABLE Classes',

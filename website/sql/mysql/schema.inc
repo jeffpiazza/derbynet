@@ -32,9 +32,11 @@ array(
 ."  `AwardType` VARCHAR(15) NOT NULL, "
 ."  PRIMARY KEY (`AwardTypeID`)"
 .")",
+  ),
 
 @include_once(sql_file_path('audit-table')),
 
+array(
 "DROP TABLE IF EXISTS `Classes`",
 
 "CREATE TABLE `Classes` ("
