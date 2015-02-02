@@ -15,7 +15,7 @@ function kiosk_poll() {
                  location.reload(true);
                  return;
                }
-	           var reload = xmldoc.documentElement.getElementsByTagName("reload");
+	           var reload = data.documentElement.getElementsByTagName("reload");
                if (reload && reload.length > 0) {
                  console.log("Forcing a reload because it was explicitly requested.");
                  location.reload(true);
