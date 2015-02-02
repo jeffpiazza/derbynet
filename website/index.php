@@ -102,6 +102,10 @@ if ($need_spacer) {
   <input type="submit" value="Settings"/>
 </form>
 <br/>
+<form method="link" action="setup.php">
+  <input type="submit" value="Database"/>
+</form>
+<br/>
 <form method="link" action="import-roster.php">
   <input type="submit" value="Import Roster"/>
 </form>
