@@ -33,15 +33,7 @@ array(
 ."  PRIMARY KEY (`AwardTypeID`)"
 .")",
 
-"DROP TABLE IF EXISTS CheckinAudit",
-
-"CREATE TABLE CheckinAudit"
-."	("
-."	seq    INTEGER NOT NULL AUTO_INCREMENT,"
-."	stmt   VARCHAR (250),"
-."	tstamp DATETIME,"
-."  PRIMARY KEY (seq)"
-."	)",
+@include_once(sql_file_path('audit-table')),
 
 "DROP TABLE IF EXISTS `Classes`",
 
