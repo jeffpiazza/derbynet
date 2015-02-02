@@ -147,3 +147,6 @@ div.banner div.back_button {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
+.wide_modal {
+  width: 500px;
+}
