@@ -82,7 +82,7 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
     }
 
     // Don't know, assume unchanged
-    portWrapper.log(SerialPortWrapper.INTERNAL, "Unable to determine starting gate state");
+    // TODO portWrapper.log(LogWriter.INTERNAL, "Unable to determine starting gate state");
     System.err.println("Unable to read gate state");  // TODO
     return gateIsClosed;
   }

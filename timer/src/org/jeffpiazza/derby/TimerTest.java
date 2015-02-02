@@ -11,13 +11,13 @@ import java.util.regex.*;
 public class TimerTest implements TimerDevice.RaceStartedCallback,
                                   TimerDevice.RaceFinishedCallback {
 
-  public static TimerDevice identifyTimerDevice() throws SerialPortException, IOException {
+  public static TimerDevice identifyTimerDevice(LogWriter logwriter) throws SerialPortException, IOException {
     final DeviceFinder deviceFinder = new DeviceFinder();
 
     for (PortIterator ports = new PortIterator(); ports.hasNext(); ) {
       SerialPort port = ports.next();
       System.out.println(port.getPortName());  // TODO: Better logging
-      TimerDevice device = deviceFinder.findDevice(port);
+      TimerDevice device = deviceFinder.findDevice(port, logwriter);
       if (device != null) {
         return device;
       }
@@ -81,8 +81,10 @@ public class TimerTest implements TimerDevice.RaceStartedCallback,
     try {
       System.out.println("Starting TimerTest");
 
+      LogWriter logwriter = new LogWriter();
+
       TimerDevice device;
-      while ((device = identifyTimerDevice()) == null)
+      while ((device = identifyTimerDevice(logwriter)) == null)
         ;
 
       System.out.println("*** Identified " + device.getClass().getName());
