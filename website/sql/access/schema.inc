@@ -47,15 +47,7 @@ return array_merge(
 
 
 
-'DROP TABLE CheckinAudit',
-
-'CREATE TABLE CheckinAudit'
-.'	('
-.'	seq    COUNTER,'
-.'	stmt   VARCHAR (250),'
-.'	tstamp DATETIME'
-.'	)',
-
+@include_once(sql_file_path('audit-table')),
 
 
 'DROP TABLE Classes',
