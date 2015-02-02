@@ -33,8 +33,11 @@ make_index("Awards", "sort"),
 ."  `awardtypeid` INTEGER PRIMARY KEY, "
 ."  `awardtype` VARCHAR(15) NOT NULL"
 .")",
+  ),
 
 @include_once(sql_file_path('audit-table')),
+
+array(
 
 "DROP TABLE IF EXISTS `Classes`",
 
