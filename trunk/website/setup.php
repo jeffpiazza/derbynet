@@ -134,7 +134,7 @@ if (isset($db) && $db) {
 
     <div id="for_mysql_connection" class="hidden mysql_connection_wrapper">
         <label for="mysql_host">MySQL Host:</label>
-        <input type="text" name="mysql_host" id="mysql_host"/>
+        <input type="text" name="mysql_host" id="mysql_host" value="localhost"/>
         <label for="mysql_dbname">MySQL database name:</label>
         <input type="text" name="mysql_dbname" id="mysql_dbname"/>
     </div>
@@ -146,7 +146,8 @@ if (isset($db) && $db) {
 
     <div id="for_string_connection" class="string_connection_wrapper">
         <label for="connection_string">Database connection string:</label>
-        <input type="text" name="connection_string" id="connection_string"/>
+        <input type="text" name="connection_string" id="connection_string"
+               placeholder="Database connection string"/>
     </div>
 
     <label for="dbuser">Database user name:</label>
