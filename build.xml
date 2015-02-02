@@ -16,13 +16,20 @@
       </loadresource>
 
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
-      <zip destfile="../WebRaceManager-${DSTAMP}-${svn}.zip">
+      <zip destfile="../WebRaceManager-${svn}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
               <include name="README.txt"/>
-              <include name="website/**/*"/>
-              <exclude name="website/local/**"/>
           </fileset>
+
+          <mappedresources>
+              <fileset dir=".">
+                  <include name="website/**/*"/>
+                  <exclude name="website/local/**"/>
+              </fileset>
+              <globmapper from="website/*" to="racemgr/*"/>
+          </mappedresources>
+
           <fileset dir=".">
               <include name="*.dmg"/>
           </fileset>
