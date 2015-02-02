@@ -58,6 +58,5 @@ $(function () {
 <?php } else { ?>
 <h2>Number of lanes not yet recorded...</h2>
 <?php } ?>
-<?php require_once('inc/ajax-failure.inc'); ?>
 </body>
 </html>

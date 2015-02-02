@@ -11,8 +11,5 @@
 <img src="img/cubscout_emblem_800.png"/>
 </div>
 <p class="kiosk_title">Welcome</p>
-<div id="ajax_failure" class="hidden">
-  Ajax request failed with <span id="ajax_status">0</span>.
-</div>
 </body>
 </html>

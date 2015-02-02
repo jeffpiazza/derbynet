@@ -1,5 +1,7 @@
 // -*- mode: javascript; js-indent-level: 2; c-basic-offset: 2 -*-
 
+// Assumes ajax-failure.inc has already established a global ajax error handler
+
 // Updates the current page based on new data from the server.
 // Relies on high-water values for resultid, roundid, and the 
 // highest Completed timestamp for displayed heat times.
@@ -202,7 +204,7 @@ function updatecurrent_handler() {
   if (this.readyState == this.DONE) {
 	if (this.status == 200) {
 	  if (this.responseXML != null) {
-	    $('#ajax_failure').addClass('hidden');
+	    cancel_ajax_failure();
 	    process_response_from_current(this.responseXML.documentElement);
 	  } else {
         // If the text returned from update-summary isn't parsable, e.g.,
@@ -211,18 +213,15 @@ function updatecurrent_handler() {
         // freak out, let's try again in a moment.
 		console.log("XmlHttpResponse:");
 		console.log(this);
-	    $('#ajax_status').html("Response from server doesn't parse as XML.");
-	    $('#ajax_failure').removeClass('hidden');
+        ajax_failure(-1, "Response from server doesn't parse as XML.");
         setTimeout(updatecurrent_fire, 2500);  // 2.5 sec
       }
 	} else {
-	  $('#ajax_status').html(this.status + " (" + 
-							 (this.status == 0 ? "likely timeout" : this.statusText)
-							 + ")");
-	  $('#ajax_failure').removeClass('hidden');
+      ajax_failure(this.status, this.statusText);
       setTimeout(updatecurrent_fire, 2500);  // 2.5 sec
  	}
   }
 }
 
+// TODO: Convert this poll to setInterval
 $(document).ready(updatecurrent_fire);

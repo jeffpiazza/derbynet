@@ -111,7 +111,7 @@ div.banner div.back_button {
   text-align: center;
 }
 
-#ajax_failure {
+#ajax-failure {
   position: fixed;
   background-color: red;
   bottom: 0px;

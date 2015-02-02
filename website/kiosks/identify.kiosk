@@ -15,8 +15,5 @@
 <?php print_r($_SERVER); ?>
 </pre>
 </div>
-<div id="ajax_failure" class="hidden">
-  Ajax request failed with <span id="ajax_status">0</span>.
-</div>
 </body>
 </html>

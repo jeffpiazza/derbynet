@@ -1,3 +1,4 @@
+<?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript">
    // This script should get included by any page that's expected to operate
    // under kiosk.php.
