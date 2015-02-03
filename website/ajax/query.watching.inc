@@ -15,7 +15,13 @@ require_once('inc/replay.inc');
 
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
-$track_length = read_raceinfo('track_length', 50);  // in feet
+$track_length = read_raceinfo('track-length', 40);  // in feet
+
+// $track_length / $finishtime gives feet per second.
+//  * 3600 gives feet per hour
+//  / 5280 gives miles per hour
+//  * 25 gives scale miles per mile
+$fps_to_scale_mph = 3600 * 25 / 5280;
 
 // TODO: Refine scale_mph_factor
 $scale_mph_factor = 12.0;  // Kinda-sorta converts fps into scale MPH
