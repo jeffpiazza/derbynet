@@ -34,6 +34,9 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
     <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
            value="<?php echo get_lane_count(); ?>"/>
     <label for="n-lanes">Number of lanes on the track.</label>
+    <br/>
+    <input id="track-length" name="track-length" type="number" value="<?php echo read_raceinfo('track-length', 40); ?>"/>
+    <label for="track-length">Track length (in feet)</label>
   </div>
 
   <div class="settings_group">

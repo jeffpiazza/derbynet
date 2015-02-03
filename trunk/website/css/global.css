@@ -150,3 +150,7 @@ div.banner div.back_button {
 .wide_modal {
   width: 500px;
 }
+
+.settings_group {
+  margin-bottom: 20px;
+}
