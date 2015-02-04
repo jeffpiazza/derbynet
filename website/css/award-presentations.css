@@ -1,4 +1,13 @@
 
+p.award-racer {
+    line-height: 0.4;
+}
+
+.award-racer .firstname,
+.award-racer .lastname {
+    font-weight: bold;
+}
+
 .award-racer-photo { 
     float: left;
 }

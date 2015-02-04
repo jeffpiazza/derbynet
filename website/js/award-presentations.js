@@ -27,6 +27,7 @@ function parse_award(data) {
     return {key: award_xml.getAttribute('key'),
             awardname: award_xml.getAttribute('awardname'),
             carnumber: award_xml.getAttribute('carnumber'),
+            carname: award_xml.getAttribute('carname'),
             firstname: award_xml.getAttribute('firstname'),
             lastname: award_xml.getAttribute('lastname'),
             headphoto: award_xml.getAttribute('headphoto'),
@@ -48,6 +49,7 @@ function process_current_award(data) {
 
         $("#awardname").text(award.awardname);
         $("#carnumber").text(award.carnumber);
+        $("#carname").text(award.carname);
         $("#firstname").text(award.firstname);
         $("#lastname").text(award.lastname);
         $("#headphoto").empty();

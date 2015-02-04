@@ -20,12 +20,13 @@
     <span class="lastname reveal" id="lastname"></span>
   </p>
 
+  <p class="award-racer reveal"><span class="car-name" id="carname"></span></p>
+
   <div class="award-racer-photo reveal" id="headphoto">
   </div>
 
   <div class="award-car-photo reveal" id="carphoto">
   </div>
-
 </div>
 
 </body>

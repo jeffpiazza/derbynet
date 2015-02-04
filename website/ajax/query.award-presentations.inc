@@ -23,7 +23,8 @@ $keys = explode('-', $key);
 if (count($keys) >= 2) {
   if ($keys[0] == 'award') {
     $awardid = $keys[1];
-    $stmt = $db->prepare('SELECT awardname, carnumber, firstname, lastname, imagefile'
+    $stmt = $db->prepare('SELECT awardname, carnumber, carname,'
+                         .' firstname, lastname, imagefile, carphoto'
                          .' FROM '.inner_join('Awards', 'RegistrationInfo',
                                               'Awards.racerid = RegistrationInfo.racerid')
                          .' WHERE awardid = :awardid');
@@ -45,17 +46,18 @@ if (count($keys) >= 2) {
     }
 
     if ($racerid > 0) {
-      $stmt = $db->prepare('SELECT :awardname AS awardname, carnumber, firstname, lastname, imagefile'
+      $stmt = $db->prepare('SELECT :awardname AS awardname, carnumber, carname,'
+                           .' firstname, lastname, imagefile, carphoto'
                            .' FROM RegistrationInfo'
                            .' WHERE racerid = :racerid');
       $stmt->execute(array(':racerid' => $racerid,
                            ':awardname' => $awardname));
     }
   } else {
-    echo "<failure/>\n";
+    echo "<failure code=\"unrecognized-award-code\">Unrecognized award code</failure>\n";
   }
 } else {
-  echo "<failure/>\n";
+  echo "<no-current-award/>\n";
 }
 
 if (isset($stmt)) {
@@ -64,6 +66,7 @@ if (isset($stmt)) {
       .' awardname="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
       // TODO .' revealed="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
       .' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"'
+      .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
       .' headphoto="'.$headshots->lookup('display')->url($row['imagefile']).'"'
