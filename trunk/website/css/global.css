@@ -154,3 +154,14 @@ div.banner div.back_button {
 .settings_group {
   margin-bottom: 20px;
 }
+
+
+.login-kiosk {
+  position: fixed;
+  bottom: 20px;
+/*  left: 1em;
+  padding: 1em; */
+  width: 25em;
+  left: 50%;
+  margin-left: -12.5em;
+}

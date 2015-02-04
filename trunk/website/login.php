@@ -31,7 +31,14 @@ foreach ($roles as $name => $details) {
     echo '<input type="button" value="'.$name.'" onclick=\'show_password_form("'.$name.'");\'/>'."\n";
   }
 }
+?>
 
+<div class="login-kiosk">
+<form method="link" action="kiosk.php">
+<input type="submit" value="Be a Kiosk"/> 
+</form>
+</div>
+<?php
 if (@$_SESSION['role']) {
 ?>
 <br/>
