@@ -61,7 +61,7 @@ function take_action($sql, $params, $body_xml = '') {
 
 function not_authorized_body() {
   echo '<failure code="notauthorized">Not authorized -- please see race coordinator';
-  echo "\n"; var_dump($_SESSION); echo "\n";
+  echo "\nSESSION=\n"; var_dump($_SESSION); echo "\n";
   echo '</failure>';
 }
 

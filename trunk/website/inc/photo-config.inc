@@ -1,15 +1,55 @@
 <?php
 require_once('inc/data.inc');
 
+function photo_directory() {
+  // PHP_OS == 'Darwin'
+  return read_raceinfo('photo-directory', 'C:\\racer_photos');
+}
+
+function car_photo_directory() {
+  return read_raceinfo('car-photo-directory', 'C:\\car_photos');
+}
+
+function photo_size() {
+  return read_raceinfo('photo-size', '94x125');
+}
+
 // A photo repository refers to a directory on the server where we look for
 // original photos.  We keep separate PhotoRepository objects for racer and car
 // photos, but it's OK for them to refer to the same directory.
 class PhotoRepository {
+  private $repo_name;
   private $directory;
+  private $display_width;
+  private $display_height;
+  private $column_name;
   private $all_renders = array();
 
-  public function __construct($dir) {
+  // $widthxheight tells the "display" dimensions for pictures
+  public function __construct($name, $dir, $widthxheight, $columnname) {
+    $this->repo_name = $name;
     $this->directory = $dir;
+    $photosize = explode('x', $widthxheight);
+    $this->display_width = 0 + $photosize[0];
+    $this->display_height = 0 + $photosize[1];
+    $this->column_name = $columnname;
+  }
+
+  // TODO: This probably shouldn't insist on an exact match to the render
+  // directory, since that encodes the current photo-size setting that's likely
+  // to change.
+  public function recognized_path($imagefile) {
+    return realpath(pathinfo($imagefile, PATHINFO_DIRNAME)) == realpath($this->lookup('display')->directory());
+  }
+
+  public function url_for_racer(&$row, $render = 'display') {
+    $imagefile = $row[$this->column_name()];
+    if ($this->recognized_path($imagefile)) {
+      return $this->lookup($render)->render_url(basename($imagefile));
+    } else {
+      // A racer URL
+      return 'photo.php/'.$this->name().'/racer/'.$row['racerid'].'/'.time();
+    }
   }
 
   public function all_renders() {
@@ -20,8 +60,24 @@ class PhotoRepository {
     return $this->all_renders[$label];
   }
 
+  public function name() {
+    return $this->repo_name;
+  }
+
   public function directory() {
     return $this->directory;
+  }
+
+  public function display_width() {
+    return $this->display_width;
+  }
+
+  public function display_height() {
+    return $this->display_height;
+  }
+
+  public function column_name() {
+    return $this->column_name;
   }
 
   public function make_render($label, $max_width, $max_height, $antecedent) {
@@ -39,8 +95,8 @@ class PhotoRender {
     $this->label = $label;
     $this->directory = $repository->directory();
     if ($label != 'original') {
-      if ($max_width == 0 || $max_height == 0) {
-        $this->directory .= DIRECTORY_SEPARATOR.$label;
+      if ($antecedent != 'cropped') {
+        $this->directory .= DIRECTORY_SEPARATOR.'0-'.$label;
       } else {
         $this->directory .= DIRECTORY_SEPARATOR.$max_width.'x'.$max_height;
       }
@@ -101,7 +157,7 @@ class PhotoRender {
   }
 
   // Constructs a URL for the photo whose base name is $imagefile.
-  public function url($imagefile) {
+  public function render_url($imagefile) {
     if ($imagefile != '') {
       $imagefile = basename($imagefile);
       $targetpath = $this->file_path($imagefile);
@@ -112,7 +168,7 @@ class PhotoRender {
         // filemtime when the file does get created.
         $breaker = -time();
       }
-      return 'photo.php/'.$this->label().'/'.$breaker.'/'.urlencode($imagefile);
+      return 'photo.php/'.$this->repository->name().'/file/'.$this->label().'/'.urlencode($imagefile).'/'.$breaker;
     } else {
       return '';
     }
@@ -167,21 +223,6 @@ class PhotoRender {
   private $max_width;
   private $antecedent;
 }
-
-// TODO: This name is used globally
-$headshots = new PhotoRepository(photo_directory());
-$photosize = explode('x', photo_size());
-
-$headshots->make_render('original', 0, 0, '');
-$headshots->make_render('cropped', 0, 0, 'original');
-// "Working size" images: big enough to edit, but small enough to fit on screen
-$headshots->make_render('work', 950, 950, 'original');
-$headshots->make_render('display', 0 + $photosize[0], 0 + $photosize[1], 'cropped');
-// "Thumbnail" images are what get displayed on the photo-thumbs page
-$headshots->make_render('thumb', 150, 150, 'cropped');
-// "Tiny": no more than 80 pixels, because that's what jQuery Mobile
-// limits to in a listview.
-$headshots->make_render('tiny', 80, 80, 'cropped');
 
 function open_image($filepath, $image_type) {
   switch ($image_type) {
@@ -278,4 +319,61 @@ function pseudo_mime_content_type($filename) {
 	return 'application/octet-stream';
   }
 }
+
+function headshots() {
+  global $headshots;
+
+  if (!isset($headshots)) {
+    $headshots = new PhotoRepository('head', photo_directory(), photo_size(), 'imagefile');
+
+    $headshots->make_render('original', 0, 0, '');
+    $headshots->make_render('cropped', 0, 0, 'original');
+    // "Working size" images: big enough to edit, but small enough to fit on screen
+    $headshots->make_render('work', 950, 950, 'original');
+    $headshots->make_render('display', $headshots->display_width(), $headshots->display_height(), 'cropped');
+    // "Thumbnail" images are what get displayed on the photo-thumbs page
+    $headshots->make_render('thumb', 150, 150, 'cropped');
+    // "Tiny": no more than 80 pixels, because that's what jQuery Mobile
+    // limits to in a listview.
+    $headshots->make_render('tiny', 80, 80, 'cropped');
+  }
+
+  return $headshots;
+}
+
+// TODO: car photo repository should probably have its own display size,
+// different from photo_size used for head shots.
+function car_photo_repository() {
+  global $car_photo_repository;
+
+  if (!isset($car_photo_repository)) {
+    $car_photo_repository = new PhotoRepository('car', car_photo_directory(), photo_size(), 'carphoto');
+
+    $car_photo_repository->make_render('original', 0, 0, '');
+    $car_photo_repository->make_render('cropped', 0, 0, 'original');
+    // "Working size" images: big enough to edit, but small enough to fit on screen
+    $car_photo_repository->make_render('work', 950, 950, 'original');
+    $car_photo_repository->make_render('display', 
+                                       $car_photo_repository->display_width(),
+                                       $car_photo_repository->display_height(),
+                                       'cropped');
+    // "Thumbnail" images are what get displayed on the photo-thumbs page
+    $car_photo_repository->make_render('thumb', 150, 150, 'cropped');
+    // "Tiny": no more than 80 pixels, because that's what jQuery Mobile
+    // limits to in a listview.
+    $car_photo_repository->make_render('tiny', 80, 80, 'cropped');
+  }
+
+  return $car_photo_repository;
+}
+
+function photo_repository($name) {
+  if ($name == 'head') {
+    return headshots();
+  } else if ($name == 'car') {
+    return car_photo_repository();
+  // TODO } else {
+  }
+}
+
 ?>

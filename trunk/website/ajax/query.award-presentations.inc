@@ -57,7 +57,7 @@ if (count($keys) >= 2) {
     echo "<failure code=\"unrecognized-award-code\">Unrecognized award code</failure>\n";
   }
 } else {
-  echo "<no-current-award/>\n";
+  echo "<failure code=\"no-current-award\"/>\n";
 }
 
 if (isset($stmt)) {
@@ -69,8 +69,8 @@ if (isset($stmt)) {
       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
-      .' headphoto="'.$headshots->lookup('display')->url($row['imagefile']).'"'
-      .' carphoto=""'
+      .' headphoto="'.headshots()->url_for_racer($row).'"'
+      .' carphoto="'.car_photo_repository()->url_for_racer($row).'"'
       .'/>'."\n";
   }
 }

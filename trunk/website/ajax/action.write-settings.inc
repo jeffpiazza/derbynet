@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/photo-config.inc');
+
 start_response();
 
 $num_picked = 1;  // Account for the 'action' key
@@ -44,8 +46,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     $new_photo_size = $_POST['photo_width'].'x'.$_POST['photo_height'];
     write_raceinfo('photo-size', $new_photo_size);
     if ($old_photo_size != $new_photo_size) {
-      require_once('inc/photo-config.inc');
-      $headshots->lookup('display')->wipe_directory();
+      headshots()->lookup('display')->wipe_directory();
       echo "<wiped-display-directory/>\n";
     }
   }
