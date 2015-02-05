@@ -6,6 +6,8 @@ require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
 require_once('inc/photo-config.inc');
 
+$photo_repository = photo_repository(isset($_GET['repo']) ? $_GET['repo'] : 'head');
+
 function scan_directory($directory, $pattern) {
   $files = array();
 
@@ -22,7 +24,7 @@ function scan_directory($directory, $pattern) {
   return $files;
 }
 
-$allfiles = scan_directory($headshots->lookup('original')->directory(),
+$allfiles = scan_directory($photo_repository->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
@@ -30,8 +32,6 @@ $allfiles = scan_directory($headshots->lookup('original')->directory(),
 // *** height=100% could be at issue.
 //
 // TODO: Separate requests to bind or remove photo.
-//
-// TODO: Allow for more than one kind of associated image.
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -65,13 +65,13 @@ $allfiles = scan_directory($headshots->lookup('original')->directory(),
 <?php
 require_once('inc/data.inc');
 $racers_by_photo = array();
-$stmt = $db->query('SELECT racerid, lastname, firstname, imagefile, carnumber, class'
+$stmt = $db->query('SELECT racerid, lastname, firstname, imagefile, carphoto, carnumber, class'
 				   .' FROM RegistrationInfo'
 				   .' INNER JOIN Classes'
 				   .' ON RegistrationInfo.classid = Classes.classid'
 				   .' ORDER BY lastname, firstname');
 foreach ($stmt as $rs) {
-  $raw_imagefile = $rs['imagefile'];
+  $raw_imagefile = $rs[$photo_repository->column_name()];
   $racer = array('firstname' => $rs['firstname'],
 				 'lastname' => $rs['lastname'],
 				 'class' => $rs['class'],
@@ -97,7 +97,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-    .' src="'.$headshots->lookup('tiny')->url($image_filename).'"/>';
+    .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
   echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
@@ -116,9 +116,8 @@ foreach ($allfiles as $imagefile) {
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
-      .' src="'.$headshots->lookup('thumb')->url($imagefile).'"/>';
+      .' src="'.$photo_repository->lookup('thumb')->render_url($imagefile).'"/>';
   echo '</a>';
-  // echo $imagefile;
   echo '</div>'."\n";
 }
 

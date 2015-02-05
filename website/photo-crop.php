@@ -3,8 +3,9 @@
 $imagename = $_GET['name'];
 require_once('inc/photo-config.inc');
 
-$displayWidth  = 0 + $photosize[0];
-$displayHeight = 0 + $photosize[1];
+$photo_repository = photo_repository(isset($_GET['repo']) ? $_GET['repo'] : 'head');
+$display_width  = $photo_repository->display_width();
+$display_height = $photo_repository->display_height();
 
 ?>
 <html>
@@ -17,11 +18,11 @@ $displayHeight = 0 + $photosize[1];
 <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 </head>
 <body>
-<img src="<?php echo $headshots->lookup('work')->url($imagename); ?>" id="target"/>
+<img src="<?php echo $photo_repository->lookup('work')->render_url($imagename); ?>" id="target"/>
 <script type="text/javascript">
 jQuery(function($) {
   $('#target').Jcrop({
-	aspectRatio: <?php echo $displayWidth; ?>/<?php echo $displayHeight; ?>,
+	aspectRatio: <?php echo $display_width; ?>/<?php echo $display_height; ?>,
 	onSelect: updateForm,
 	onChange: updateForm
   });

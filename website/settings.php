@@ -2,6 +2,7 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/photo-config.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?>

@@ -13,8 +13,8 @@ start_response();
 // $_FILES['photo']['type']
 
 $photo = $_FILES['photo'];
-// TODO: Not just headshots
-$photo_dir = $headshots->directory();
+$photo_repository = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
+$photo_dir = $photo_repository->directory();
 
 if ($photo['error'] != UPLOAD_ERR_OK) {
   $msg = 'Upload failed.';

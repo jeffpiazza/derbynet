@@ -132,15 +132,6 @@ function update_period() {
   return read_raceinfo('update-period', 2500);
 }
 
-function photo_directory() {
-  // PHP_OS == 'Darwin'
-  return read_raceinfo('photo-directory', 'C:\\racer_photos');
-}
-
-function photo_size() {
-  return read_raceinfo('photo-size', '94x125');
-}
-
 function get_lane_count() {
   global $db;
   $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
