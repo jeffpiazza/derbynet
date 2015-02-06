@@ -17,6 +17,7 @@
     var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
     var g_using_groupid = false;
 </script>
+<?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript" src="js/update.js"></script>
 <title>Results By Racer <?php if (isset($_GET['racerid'])) echo ' for '.$_GET['racerid']; ?></title>
 <?php require('inc/stylesheet.inc'); ?>
