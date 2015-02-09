@@ -101,8 +101,6 @@ $(document).bind("mobileinit", function() {
 
 </div>
 
-<div id='modal_background'></div>
-
 <div id='kiosk_modal' class="modal_dialog hidden block_buttons">
   <form>
     <label for="kiosk_name_field">Name for kiosk:</label>

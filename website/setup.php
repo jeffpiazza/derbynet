@@ -186,7 +186,5 @@ if (isset($db) && $db) {
   </form>
 </div>
 
-<div id='modal_background'></div>
-
 </body>
 </html>

@@ -1,4 +1,6 @@
-// Assumes $("#modal_background") div exists.
+$(function() {
+    $("body").append('<div id="modal_background"></div>');
+});
 
 function show_modal(modal_selector, submit_handler) {
     var modal_background = $("#modal_background");
