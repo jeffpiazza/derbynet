@@ -27,6 +27,7 @@ $(document).bind("mobileinit", function() {
 <!-- For flipswitch and select elements: -->
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/setup.js"></script>
 </head>
 <body>
