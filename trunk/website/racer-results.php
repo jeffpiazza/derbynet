@@ -19,8 +19,16 @@
 </script>
 <?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript" src="js/update.js"></script>
+<?php if (isset($as_kiosk))
+    echo '<script type="text/javascript" src="js/results-by-racer-scrolling.js"></script>'."\n";
+?>
 <title>Results By Racer <?php if (isset($_GET['racerid'])) echo ' for '.$_GET['racerid']; ?></title>
 <?php require('inc/stylesheet.inc'); ?>
+<style>
+.scroll-bounding-rect {
+      overflow: hidden;
+}
+</style>
 </head>
 <body>
 <?php
@@ -55,6 +63,7 @@ if ($stmt === FALSE) {
   echo '<h2>Error: '.$info[2].'</h2>'."\n";
  }
 ?>
+<div class="scroll-bounding-rect">
 <table class="main_table">
 <?php
 
@@ -162,6 +171,7 @@ foreach ($rounds as $round) {
 $stmt->closeCursor();
 ?>
 </table>
+</div>
 <div class="block_buttons">
 <?php
   if (isset($_GET['racerid'])) {
