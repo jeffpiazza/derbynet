@@ -23,7 +23,7 @@ function process_update_elements(updates) {
 	var time_span = $(".resultid_" + upd.getAttribute("resultid")
 	                  + " .time");
     if (time_span.length == 0) {
-      console.log("Can't find time span for resultid " + upd.getAttribute("resultid"));
+      console.log("Can't find <span> element to receive time for resultid " + upd.getAttribute("resultid"));
     }
     time_span.html(upd.getAttribute("time"));
   }
@@ -38,8 +38,9 @@ function process_new_schedules(newly_scheduled, index, completed) {
     var nsched = newly_scheduled.item(index);
 	var groupid = nsched.getAttribute(g_using_groupid ? "groupid" : "roundid");
     console.log("Loading page section for group_" + groupid);
-	// The space in the load argument is significant!
-	// The URL part presumably can't contain a space.
+
+    console.log($("#group_" + groupid));  // TODO
+    console.log("#group_" + groupid + " now has " + $("#group_" + groupid).children().length + " child(ren).");
 
     // These assignments force curheat to get redone.
     // TODO: Visibility rule gets overridden
@@ -51,11 +52,17 @@ function process_new_schedules(newly_scheduled, index, completed) {
     // if we're reloading a group that's already started racing.
     g_last_update_time = '';
 
+	// The space in the load argument is significant!
+	// The URL part presumably can't contain a space.
+
+    // TODO: Selection by element id may not work after moving the element id --
+    // the "index" into the DOM may not get updated.
 	$("#group_" + groupid)
-        .load(location.pathname + " #group_" + groupid + " tr",
+        .load(location.href + " #group_" + groupid + " tr",
               /* data */'',
               function() {
                 console.log("Page load completed.");
+                console.log("#group_" + groupid + " now has " + $("#group_" + groupid).children().length + " child(ren).");
                 process_new_schedules(newly_scheduled, 1 + index, completed);
               });
   } else {
