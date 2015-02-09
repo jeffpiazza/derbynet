@@ -103,37 +103,6 @@ function handle_assign_kiosk_page_change(sel) {
            });
 }
 
-function show_modal(modal_selector, submit_handler) {
-    var modal_background = $("#modal_background");
-    modal_background.css({'display': 'block',
-                          'opacity': 0});
-    modal_background.fadeTo(200, 0.5);
-
-    var modal_div = $(modal_selector);
-    var form = modal_div.find("form");
-    form.off("submit");
-    form.on("submit", submit_handler);
-
-    var modal_width = modal_div.outerWidth();
-    modal_div.removeClass("hidden");
-    modal_div.css({ 
-        'display': 'block',
-        'position': 'fixed',
-        'opacity': 0,
-        'z-index': 11000,
-        'left' : 50 + '%',
-        'margin-left': -(modal_width/2) + "px",
-        'top': 100 + "px"
-    });
-    modal_div.fadeTo(200, 1);
-}
-
-function close_modal(modal_selector) {
-    $("#modal_background").fadeOut(200);
-    $(modal_selector).addClass("hidden");
-    $(modal_selector).css({'display': 'none'});
-}
-
 function show_kiosk_naming_modal(address, name) {
     $("#kiosk_name_field").val(name);
     show_modal("#kiosk_modal", function(event) {
@@ -151,7 +120,6 @@ function handle_name_kiosk(address, name) {
                    name: name},
            });
 }
-
 
 function show_manual_results_modal() {
     // g_current_heat_racers: lane, name, carnumber, finishtime

@@ -28,6 +28,7 @@ $(document).bind("mobileinit", function() {
 <!-- For flipswitch and select elements: -->
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
@@ -97,11 +98,6 @@ $(document).bind("mobileinit", function() {
   <div id="ready-to-race-group" class="scheduling_control_group"></div>
   <div id="not-yet-scheduled-group" class="scheduling_control_group"></div>
   <div id="done-racing-group" class="scheduling_control_group"></div>
-
-</div>
-
-<div class="double_control_column">
-
 
 </div>
 
