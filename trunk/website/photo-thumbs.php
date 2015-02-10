@@ -97,7 +97,8 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-    .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
+      .' onclick="window.location.href=\'photo-crop.php?name='.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'\'"'
+      .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
   echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
@@ -113,6 +114,7 @@ foreach ($stmt as $rs) {
 <?php
 foreach ($allfiles as $imagefile) {
   echo '<div class="thumbnail'.(isset($racers_by_photo[$imagefile]) ? ' hidden' : '').'">';
+  // TODO Pass repo information to photo-crop
   echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'

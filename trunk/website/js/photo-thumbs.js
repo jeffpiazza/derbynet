@@ -27,6 +27,9 @@
 
   // target is a jquery for list items that should be made assignable,
   // i.e., can receive new photo assignments.
+
+  // TODO: photo.php/head/file is wired in; won't work with car photos
+
   function make_assignable(target) {
 	  target.droppable({
 		scope: "assign",
@@ -40,10 +43,11 @@
 			ui.draggable.closest(".thumbnail").addClass("hidden");
 			$(this).prepend('<img class="assigned"' +
 							' data-image-filename="' + photo_base_name + '"' +
-							' src="photo.php/tiny/' +
-                            'q' + Date.now() + '/' +
-							encodeURIComponent(photo_base_name) + '"/>');
-
+                            ' onclick="window.location.href=\'photo-crop.php?name=' +
+                                encodeURIComponent(photo_base_name) + '\'"' +
+							' src="photo.php/head/file/tiny/' +
+							encodeURIComponent(photo_base_name) + '/' +
+                            'q' + Date.now() + '"/>'); 
 			make_discardable($(this).find(".assigned"));
 			// Once dropped, make no longer droppable!
 			$(this).droppable("destroy");
