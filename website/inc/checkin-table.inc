@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/photo-config.inc');
+
 // These functions construct each row of the main table on the check-in page.
 
 function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
@@ -11,49 +13,79 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
     echo ' onchange=\'handlechange_passed(this, "'.$first_name.' '.$last_name.'");\'/>';
 }
 
-function checkin_table_row($racer_id, $first_name, $last_name, $car_no,
-                           $rankid, $classname, $rankname, $passed, $exclude, $racer_xbs,
-                           $scheduled, $den_scheduled, $pack_xbs, $use_subgroups, $n = 0) {
+function checkin_table_row_for_id($racerid) {
+  $row = read_single_row(
+    'SELECT racerid, carnumber, lastname, firstname, imagefile,'
+    .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
+    .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
+    .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
+    .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
+    .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
+    .' FROM '.inner_join('RegistrationInfo', 'Classes',
+                         'RegistrationInfo.classid = Classes.classid',
+                         'Ranks',
+                         'RegistrationInfo.rankid = Ranks.rankid')
+    .' WHERE RegistrationInfo.racerid = :racerid',
+    array(':racerid' => $racerid));
+
+  checkin_table_row($row, read_raceinfo_boolean('xbs-award'), read_raceinfo_boolean('use-subgroups'));
+}
+
+// $row[]: racerid, firstname, lastname, carnumber, class, rank, rankid, passedinspection, imagefile, exclude
+//         xbs - whether this racer has an exclusively-by-scout award
+//         scheduled - whether this racer has any RaceChart entries
+//         denscheduled - whether any racer in this racer's class have any RaceChart entries
+// $pack_xbs: whether exclusively-by-scout awards are shown in this table
+// $use_subgroups: whether rank information is relevant
+function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     echo '<tr class="d'.($n & 1)
           .($den_scheduled ? ' den_scheduled' : '')
-          .($exclude ? ' exclude-racer' : '').'">';
+          .($row['exclude'] ? ' exclude-racer' : '').'">';
 
-    // TODO: Button formatting; data-enhanced="true"
-    echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$racer_id.');\'/></td>';
+    // TODO: Button formatting; data-enhanced="true", but that's pretty unattractive in this table
+    echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
 
-    echo '<td id="class-'.$racer_id.'" class="sort-class" data-rankid="'.$rankid.'">'.$classname.'</td>';
+    echo '<td id="class-'.$row['racerid'].'" class="sort-class" data-rankid="'.$row['rankid'].'">'
+        .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>';
 
     if ($use_subgroups)
-        echo '<td id="rank-'.$racer_id.'">'.$rankname.'</td>';
+      echo '<td id="rank-'.$row['racerid'].'">'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'</td>';
 
-    echo '<td class="sort-car-number" id="car-number-'.$racer_id.'">'.$car_no.'</td>';
+    echo '<td class="sort-car-number" id="car-number-'.$row['racerid'].'">'.$row['carnumber'].'</td>';
 
-    // TODO - Show racer photo instead of camera if photo is available
-    echo '<td><a href="javascript:show_racer_photo_modal('.$racer_id.')"><img src="img/camera.png"></a></td>';
+    echo '<td id="photo-'.$row['racerid'].'"><a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
+        .'<img src="'
+        .($row[headshots()->column_name()]
+          ? headshots()->url_for_racer($row, 'checkin')
+          : 'img/camera.png')
+        .'">'
+        .'</a></td>';
 
-    echo '<td class="sort-lastname" id="lastname-'.$racer_id.'" data-exclude="'.$exclude.'">'.$last_name.'</td>';
-    echo '<td class="sort-firstname" id="firstname-'.$racer_id.'">'.$first_name.'</td>';
+    echo '<td class="sort-lastname" id="lastname-'.$row['racerid'].'" data-exclude="'.$row['exclude'].'">'
+        .htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'</td>';
+    echo '<td class="sort-firstname" id="firstname-'.$row['racerid'].'">'
+        .htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'</td>';
 
     // If a race schedule exists for this racer, don't offer the option to un-pass through this interface.
     // Instead, have go through unscheduling (if that's possible) and then un-pass
     echo '<td class="checkin-status">';
-    if ($scheduled) {
-        if ($passed) {
+    if ($row['scheduled']) {
+        if ($row['passedinspection']) {
             echo 'Racing';
         } else {
             echo 'Scheduled but not passed';
         }
     } else {
-        checkin_flipswitch($racer_id, $first_name, $last_name, $passed);
-        if ($den_scheduled) echo ' Late!';
+        checkin_flipswitch($row['racerid'], $row['firstname'], $row['lastname'], $row['passedinspection']);
+        if ($row['denscheduled']) echo ' Late!';
     }
     echo '</td>';
 
     if ($pack_xbs) {
         echo '<td>';
-        echo '<label for="xbs-'.$racer_id.'">Exclusively By Scout?</label>';
-        echo '<input type="checkbox" data-role="flipswitch" name="xbs-'.$racer_id.'" ';
-        if ($racer_xbs) echo ' checked="checked"';
+        echo '<label for="xbs-'.$row['racerid'].'">Exclusively By Scout?</label>';
+        echo '<input type="checkbox" data-role="flipswitch" name="xbs-'.$row['racerid'].'" ';
+        if ($row['xbs']) echo ' checked="checked"';
         echo ' data-on-text="Yes" data-off-text="No"';
         echo ' onchange="handlechange_xbs(this);"/>';
         echo '</td>';

@@ -100,6 +100,7 @@ function handle_edit_racer() {
   var new_firstname = $("#edit_firstname").val();
   var new_lastname = $("#edit_lastname").val();
   var new_carno = $("#edit_carno").val();
+  var new_carname = $("#edit_carname").val();
 
   var rank_picker = $("#edit_rank");
   var new_rankid = rank_picker.val();
@@ -117,6 +118,7 @@ function handle_edit_racer() {
                  firstname: new_firstname,
                  lastname: new_lastname,
                  carno: new_carno,
+                 carname: new_carname,
                  rankid: new_rankid,
                  exclude: exclude},
             success: function(data) {
@@ -194,7 +196,13 @@ function take_snapshot(racerid) {
               cache: false,
               contentType: false,
               processData: false,
-             success: function(data) { console.log(data); }  // TODO
+              success: function(data) {
+                  var photo_url_element = data.getElementsByTagName('photo-url');
+                  if (photo_url_element.length > 0) {
+                      $("#photo-" + racerid + " img").attr(
+                          'src', photo_url_element[0].childNodes[0].nodeValue);
+                  }
+              }
  });
 
       close_modal("#racer_photo_modal");

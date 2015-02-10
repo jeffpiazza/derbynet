@@ -47,6 +47,7 @@ class PhotoRepository {
     return realpath(pathinfo($imagefile, PATHINFO_DIRNAME)) == realpath($this->lookup('display')->directory());
   }
 
+  // $row has to have racerid and the repository's column_name, at least
   public function url_for_racer(&$row, $render = 'display') {
     $imagefile = $row[$this->column_name()];
     if ($this->recognized_path($imagefile)) {
@@ -341,6 +342,7 @@ function headshots() {
     // "Tiny": no more than 80 pixels, because that's what jQuery Mobile
     // limits to in a listview.
     $headshots->make_render('tiny', 80, 80, 'cropped');
+    $headshots->make_render('checkin', 60, 60, 'cropped');
   }
 
   return $headshots;

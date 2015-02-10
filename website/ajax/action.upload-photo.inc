@@ -3,6 +3,7 @@
 //     <input name="photo" type="file" />
 //     <select name="repo">, options are 'head' or 'car'
 //     <input name="racerid">, optional
+
 require_once('inc/photo-config.inc');
 
 // TODO: Permissions!
@@ -60,11 +61,16 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
   if (move_uploaded_file($photo['tmp_name'], $photo_dir.DIRECTORY_SEPARATOR.$target_name)) {
     $success = true;
     if (isset($_POST['racerid'])) {
+      $column_name = $photo_repository->column_name();
+      $row = array('racerid' => $_POST['racerid'],
+                   $column_name => $photo_repository->lookup('display')->file_path($target_name));
       $success = take_action_silently('UPDATE RegistrationInfo'
-                                      .' SET '.$photo_repository->column_name().' = :photo'
+                                      .' SET '.$column_name.' = :photo'
                                       .' WHERE racerid = :racerid',
-                                      array(':photo' => $photo_repository->lookup('display')->file_path($target_name),
-                                            ':racerid' => $_POST['racerid']));
+                                      array(':photo' => $row[$column_name],
+                                            ':racerid' => $row['racerid']));
+      echo '<photo-url>'.$photo_repository->url_for_racer($row, 'checkin').'</photo-url>'."\n";
+
       if (!$success) {
         echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
       }
