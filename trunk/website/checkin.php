@@ -78,6 +78,8 @@ g_order = '<?php echo $order; ?>';
 </script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/webcam.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
@@ -104,6 +106,7 @@ require_once('inc/checkin-table.inc');
         echo '<th>'.subgroup_label().'</th>';
     } ?>
     <th><?php echo column_header('Car Number', 'car'); ?></th>
+    <th>Photo</th> <!-- TODO -->
     <th><?php echo column_header('Last Name', 'name'); ?></th>
     <th>First Name</th>
     <th>Passed?</th>
@@ -156,14 +159,9 @@ foreach ($stmt as $rs) {
 	</div>
 <?php } ?>
 
-<div class="block_buttons">
-<?php
-// This is a hidden form for editing information about a racer
-?>
-<form id="editracerform" class="editform hidden" method="POST"
-	  onsubmit="handle_edit_racer(); return false;">
 
- <div class="inset">
+<div id='edit_racer_modal' class="modal_dialog hidden block_buttons">
+<form id="editracerform">
 
   <input id="edit_racer" type="hidden" name="racer" value=""/>
 
@@ -172,11 +170,15 @@ foreach ($stmt as $rs) {
   <label for="edit_lastname">Last name:</label>
   <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
 
-  <label for="edit_carno">Change car number:</label>
+  <label for="edit_carno">Car number:</label>
   <input id="edit_carno" type="text" name="edit_carno" value=""/>
   <br/>
 
-  <label for="edit_rank">Change racing group:</label>
+  <label for="edit_carname">Car name:</label>
+  <input id="edit_carname" type="text" name="edit_carname" value=""/>
+  <br/>
+
+  <label for="edit_rank">Racing group:</label>
   <select id="edit_rank"><?php
     $sql = 'SELECT rankid, rank, Ranks.classid, class'
            .' FROM Ranks INNER JOIN Classes'
@@ -203,10 +205,24 @@ foreach ($stmt as $rs) {
   <br/>
   <input type="submit" data-enhanced="true"/>
   <input type="button" value="Cancel" data-enhanced="true"
-    onclick='$("#editracerform").addClass("hidden");'/>
- </div>
-</form>
+    onclick='close_modal("#edit_racer_modal");'/>
 
+</form>
+</div>
+
+<div id='racer_photo_modal' class="modal_dialog hidden block_buttons">
+  <form>
+    <h3>Capture photo for <span id="racer_photo_name"></span></h3>
+    <div id="preview">
+        <h2>Does your browser support webcams?</h2>
+    </div>
+
+    <div class="block_buttons">
+        <input type="submit" value="Take Snapshot" data-enhanced="true"/>
+        <input type="button" value="Cancel" data-enhanced="true"
+          onclick='close_racer_photo_modal();'/>
+    </div>
+  </form>
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>
