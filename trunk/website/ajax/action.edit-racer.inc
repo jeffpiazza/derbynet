@@ -5,6 +5,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   $firstname = $_POST['firstname'];
   $lastname = $_POST['lastname'];
   $carno = $_POST['carno'];
+  $carname = $_POST['carname'];
   $rankid = $_POST['rankid'];
   $classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
                                array(':rankid' => $rankid));
@@ -25,6 +26,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
                            .' SET firstname = :firstname,'
                            .' lastname = :lastname,'
                            .' carnumber = :carnumber,'
+                           .' carname = :carname,'
                            .' rankid = :rankid,'
                            .' classid = :classid,'
                            .' exclude = :exclude'
@@ -32,6 +34,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
                            array(':firstname' => $firstname,
                                  ':lastname' => $lastname,
                                  ':carnumber' => $carno,
+                                 ':carname' => $carname,
                                  ':rankid' => $rankid,
                                  ':classid' => $classid,
                                  ':exclude' => $exclude,

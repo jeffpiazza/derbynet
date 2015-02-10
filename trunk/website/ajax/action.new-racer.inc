@@ -24,7 +24,6 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
   $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                  array(':classid' => $classid));
 
-  echo "<new-row>\n";
   $racer_id = read_single_value('SELECT racerid FROM RegistrationInfo'
                                 .' WHERE firstname = :firstname'
                                 .' AND lastname = :lastname'
@@ -32,14 +31,8 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
                                 array(':firstname' => $firstname,
                                       ':lastname' => $lastname,
                                       ':rankid' => $rankid));
-  checkin_table_row($racer_id, 
-                    htmlspecialchars($firstname, ENT_QUOTES, 'UTF-8'),
-                    htmlspecialchars($lastname, ENT_QUOTES, 'UTF-8'),
-                    $carno, $rankid, $classname, $rankname, 
-                    /* passed */false, $exclude, /* racer_xbs */false,
-                    /*scheduled*/false, /*den_scheduled TODO don't know!*/false,
-                    read_raceinfo_boolean('xbs-award'),
-                    read_raceinfo_boolean('use-subgroups'));
+  echo "<new-row>\n";
+  checkin_table_row_for_id($racer_id);
   echo "\n</new-row>\n";
 } else {
   not_authorized_body();

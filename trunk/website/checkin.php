@@ -119,7 +119,7 @@ require_once('inc/checkin-table.inc');
 <tbody>
 <?php
 
-    $sql = 'SELECT racerid, carnumber, lastname, firstname,'
+    $sql = 'SELECT racerid, carnumber, lastname, firstname, imagefile,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -138,15 +138,7 @@ $stmt = $db->query($sql);
 
 $n = 1;
 foreach ($stmt as $rs) {
-  $racer_id = $rs['racerid'];
-  $first_name = htmlspecialchars($rs['firstname'], ENT_QUOTES, 'UTF-8');
-  $last_name = htmlspecialchars($rs['lastname'], ENT_QUOTES, 'UTF-8');
-
-  checkin_table_row($racer_id, $first_name, $last_name, $rs['carnumber'], $rs['rankid'],
-                    htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8'),
-                    htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8'),
-                    $rs['passedinspection'], $rs['exclude'], $rs['xbs'],
-                    $rs['scheduled'], $rs['denscheduled'], $xbs, $use_subgroups, $n);
+  checkin_table_row($rs, $xbs, $use_subgroups, $n);
   ++$n;
 }
 ?>
