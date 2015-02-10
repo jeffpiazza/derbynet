@@ -1,23 +1,25 @@
 
-.editform {
-   position: fixed;
-   /* height: 100px; */
-   width:  400px;
-   /* roughly, center in viewport: */
-   top: 14%;
-   left: 50%;
-   /* margin-top: -50px; */
-   margin-left: -200px;
-   border: 2px solid black;
-   background-color: white;
-   /* visibility: hidden; */
-   /* visibility: visible; */
+#edit_racer_modal {
+    width: 400px;
 }
 
-.inset {
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-top: 40px;
+#racer_photo_modal {
+    margin-top: 10px;
+    width: 720px;
+}
+
+#preview {
+    width:320px;
+    height:240px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#captured {
+    width:640px;
+    height:480px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .trophy-eligible-flipswitch.ui-flipswitch {
@@ -26,7 +28,7 @@
 }
 
 .trophy-eligible-flipswitch {
-    margin-left: 60px;
+    margin-left: 103px;
     margin-bottom: 30px;
     font-size: x-large;
 }

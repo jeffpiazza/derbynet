@@ -7,7 +7,12 @@ function photo_directory() {
 }
 
 function car_photo_directory() {
-  return read_raceinfo('car-photo-directory', 'C:\\car_photos');
+  $dir = read_raceinfo('car-photo-directory');
+  if ($dir === false) {
+    return read_raceinfo('photo-directory', 'C:\\car_photos');
+  } else {
+    return $dir;
+  }
 }
 
 function photo_size() {

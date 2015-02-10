@@ -28,6 +28,9 @@ function checkin_table_row($racer_id, $first_name, $last_name, $car_no,
 
     echo '<td class="sort-car-number" id="car-number-'.$racer_id.'">'.$car_no.'</td>';
 
+    // TODO - Show racer photo instead of camera if photo is available
+    echo '<td><a href="javascript:show_racer_photo_modal('.$racer_id.')"><img src="img/camera.png"></a></td>';
+
     echo '<td class="sort-lastname" id="lastname-'.$racer_id.'" data-exclude="'.$exclude.'">'.$last_name.'</td>';
     echo '<td class="sort-firstname" id="firstname-'.$racer_id.'">'.$first_name.'</td>';
 

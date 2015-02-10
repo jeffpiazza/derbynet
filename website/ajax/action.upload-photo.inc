@@ -64,7 +64,7 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
                                       .' SET '.$photo_repository->column_name().' = :photo'
                                       .' WHERE racerid = :racerid',
                                       array(':photo' => $photo_repository->lookup('display')->file_path($target_name),
-                                            ':racerid' => $_POST['racer']));
+                                            ':racerid' => $_POST['racerid']));
       if (!$success) {
         echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
       }

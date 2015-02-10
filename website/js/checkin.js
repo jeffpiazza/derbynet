@@ -1,4 +1,5 @@
 // Requires dashboard-ajax.js
+// Requires modal.js
 
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 	var passed = xmldoc.documentElement.getElementsByTagName("passed");
@@ -49,8 +50,6 @@ function show_edit_racer_form(racerid) {
 
   var rankid = $('#class-' + racerid).attr('data-rankid');
 
-  $("#editracerform").removeClass("hidden");
-
   $("#edit_racer").val(racerid);
 
   $("#edit_firstname").val(first_name);
@@ -68,11 +67,14 @@ function show_edit_racer_form(racerid) {
 
   $("#eligible").prop("checked", $('#lastname-' + racerid).attr("data-exclude") == 0);
   $("#eligible").trigger("change", true);
+
+  show_modal("#edit_racer_modal", function(event) {
+      handle_edit_racer();
+      return false;
+  });
 }
 
 function show_new_racer_form() {
-  $("#editracerform").removeClass("hidden");
-
   $("#edit_racer").val(-1);
 
   $("#edit_firstname").val("");
@@ -83,9 +85,16 @@ function show_new_racer_form() {
   $("#edit_carno").val(9999);
   $("#eligible").val(true);
   $("#eligible").trigger("change", true);
+
+  show_modal("#edit_racer_modal", function(event) {
+      handle_edit_racer();
+      return false;
+  });
 }
 
 function handle_edit_racer() {
+  close_modal("#edit_racer_modal");
+
   var racerid = $("#edit_racer").val();
 
   var new_firstname = $("#edit_firstname").val();
@@ -139,10 +148,62 @@ function handle_edit_racer() {
                 sort_checkin_table();
             },
            });
-
-   $("#editracerform").addClass("hidden");
 }
 
+function show_racer_photo_modal(racerid) {
+  $("#racer_photo_name").text($('#firstname-' + racerid).text() + ' ' + $('#lastname-' + racerid).text());
+  show_modal("#racer_photo_modal", function() {
+      take_snapshot(racerid);
+      return false;
+  });
+
+  Webcam.set({
+	  width: 320,
+	  height: 240,
+	  dest_width: 640,
+	  dest_height: 480});
+  Webcam.attach('#preview');
+}
+
+function take_snapshot(racerid) {
+    console.log("take_snapshot: racerid = " + racerid);  // TODO
+  Webcam.snap( function(data_uri) {
+	  // detect image format from within image_data_uri
+	  var image_fmt = '';
+	  if (data_uri.match(/^data\:image\/(\w+)/))
+		  image_fmt = RegExp.$1;
+	  else
+		  throw "Cannot locate image format in Data URI";
+		
+	  // extract raw base64 data from Data URI
+	  var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+		
+	  // create a blob and decode our base64 to binary
+	  var blob = new Blob( [ Webcam.base64DecToArr(raw_image_data) ], {type: 'image/'+image_fmt} );
+		
+	  // stuff into a form, so servers can easily receive it as a standard file upload
+	  var form_data = new FormData();
+	  form_data.append('action', 'upload-photo');
+      form_data.append('racerid', racerid);
+	  form_data.append('photo', blob, 'photo'+"."+image_fmt.replace(/e/, '') );
+
+      // Testing for <failure> elements occurs in dashboard-ajax.js
+      $.ajax(g_action_url,
+             {type: 'POST',
+              data: form_data,
+              cache: false,
+              contentType: false,
+              processData: false,
+             success: function(data) { console.log(data); }  // TODO
+ });
+
+      close_modal("#racer_photo_modal");
+  });
+}
+
+function close_racer_photo_modal() {
+    close_modal("#racer_photo_modal");
+}
 
 function compare_first(a, b) {
   if (a[0] == b[0])
