@@ -68,7 +68,7 @@ if ($need_spacer) {
 
  <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
 <form method="link" action="racer-results.php">
-  <input type="submit" value="Racer Results"/>
+  <input type="submit" value="Results By Racer"/>
 </form>
 <br/>
  <?php } ?>
