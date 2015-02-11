@@ -5,26 +5,26 @@ set -e -E -o pipefail
 source `dirname $0`/common.sh
 
 PATTERN='Notice\|Warning\|Fatal'
-curl_get about.php | test ! `grep $PATTERN`
-curl_get awards.php | test ! `grep $PATTERN`
-curl_get awards-dashboard.php | test ! `grep $PATTERN`
-curl_get checkin.php | test ! `grep $PATTERN`
-curl_get coordinator.php | test ! `grep $PATTERN`
-curl_get import-roster.php | test ! `grep $PATTERN`
-curl_get index.php | test ! `grep $PATTERN`
-curl_get judging.php | test ! `grep $PATTERN`
-curl_get login.php | test ! `grep $PATTERN`
-curl_get ondeck.php | test ! `grep $PATTERN`
-curl_get photo-thumbs.php | test ! `grep $PATTERN` || true
-# curl_get photo-crop.php | test ! `grep $PATTERN`
-curl_get racer-results.php | test ! `grep $PATTERN`
-curl_get settings.php | test ! `grep $PATTERN`
-curl_get setup.php | test ! `grep $PATTERN`
+curl_get about.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get awards.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get awards-dashboard.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get checkin.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get coordinator.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get import-roster.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get index.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get judging.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get login.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get ondeck.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get photo-thumbs.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+# curl_get photo-crop.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get racer-results.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get settings.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get setup.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 
-curl_get "kiosk.php?page=kiosks/award-presentations.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/identify.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/now-racing.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/ondeck.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/please-check-in.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/results-by-racer.kiosk" | test ! `grep $PATTERN`
-curl_get "kiosk.php?page=kiosks/welcome.kiosk" | test ! `grep $PATTERN`
+curl_get "kiosk.php?page=kiosks/award-presentations.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get "kiosk.php?page=kiosks/identify.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }" 
+curl_get "kiosk.php?page=kiosks/now-racing.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get "kiosk.php?page=kiosks/ondeck.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get "kiosk.php?page=kiosks/please-check-in.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get "kiosk.php?page=kiosks/results-by-racer.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get "kiosk.php?page=kiosks/welcome.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
