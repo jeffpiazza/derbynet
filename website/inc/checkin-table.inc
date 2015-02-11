@@ -10,7 +10,9 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
     if ($passed) echo ' checked="checked"';
     if ($passed && !have_permission(REVERT_CHECK_IN_PERMISSION)) echo ' disabled="disabled"';
     echo ' data-on-text="Yes" data-off-text="No"';
-    echo ' onchange=\'handlechange_passed(this, "'.$first_name.' '.$last_name.'");\'/>';
+    echo ' onchange=\'handlechange_passed(this, "'
+        .htmlspecialchars($first_name.' '.$last_name, ENT_QUOTES, 'UTF-8')
+        .'");\'/>';
 }
 
 function checkin_table_row_for_id($racerid) {
@@ -58,7 +60,7 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
         .($row[headshots()->column_name()]
           ? headshots()->url_for_racer($row, 'checkin')
           : 'img/camera.png')
-        .'">'
+        .'"/>'
         .'</a></td>';
 
     echo '<td class="sort-lastname" id="lastname-'.$row['racerid'].'" data-exclude="'.$row['exclude'].'">'

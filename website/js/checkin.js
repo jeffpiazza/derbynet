@@ -203,7 +203,7 @@ function take_snapshot(racerid) {
                           'src', photo_url_element[0].childNodes[0].nodeValue);
                   }
               }
- });
+             });
 
       close_modal("#racer_photo_modal");
   });
