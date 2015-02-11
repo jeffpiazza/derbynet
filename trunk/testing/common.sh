@@ -2,7 +2,7 @@
 
 if [ "$BASE_URL" = "" ]; then
 	echo Base URL required!
-	exit
+	exit 1
 fi
 
 OUTPUT_CURL="`dirname $0`/output.curl"
@@ -19,7 +19,8 @@ function curl_get() {
 	echo $1 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
 	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
-		| sed -e 's/&nbsp;/ /g' | xmllint --format - | tee -a $OUTPUT_CURL
+        | sed -e 's/&nbsp;/ /g' | xmllint --format - | tee -a $OUTPUT_CURL
+    #curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | sed -e 's/&nbsp;/ /g' | xmllint --format -
 }
 
 function curl_get_amper() {

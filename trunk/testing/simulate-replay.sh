@@ -4,12 +4,7 @@
 # participate in) the traffic between the server and the Replay app.
 
 BASE_URL=$1
-
-if [ "$BASE_URL" = "" ]; then
-	echo Base URL required!
-	exit
-fi
-
+set -e -E -o pipefail
 source `dirname $0`/common.sh
 
 # Send a register-replay action for port 50000 to the server

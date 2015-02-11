@@ -1,6 +1,7 @@
 #! /bin/sh
 
 BASE_URL=$1
+set -e -E -o pipefail
 
 if [ "$BASE_URL" = "" ]; then
 	echo Base URL required!

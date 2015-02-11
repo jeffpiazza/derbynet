@@ -1,6 +1,7 @@
 #! /bin/sh
 
 BASE_URL=$1
+set -e -E -o pipefail
 source `dirname $0`/common.sh
 
 `dirname $0`/login-coordinator.sh $BASE_URL
