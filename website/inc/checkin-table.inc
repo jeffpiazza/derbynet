@@ -41,7 +41,7 @@ function checkin_table_row_for_id($racerid) {
 // $use_subgroups: whether rank information is relevant
 function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     echo '<tr class="d'.($n & 1)
-          .($den_scheduled ? ' den_scheduled' : '')
+          .($row['denscheduled'] ? ' den_scheduled' : '')
           .($row['exclude'] ? ' exclude-racer' : '').'">';
 
     // TODO: Button formatting; data-enhanced="true", but that's pretty unattractive in this table
