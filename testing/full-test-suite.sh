@@ -1,8 +1,8 @@
 #! /bin/sh
 
 BASE_URL=$1
+set -e -E -o pipefail
 source `dirname $0`/common.sh
-
 source `dirname $0`/exercise-one-database.sh
 
 prepare_for_setup() {

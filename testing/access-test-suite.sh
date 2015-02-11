@@ -3,6 +3,7 @@
 # Use this script to exercise the Access database, running on another (Windows) machine.
 
 BASE_URL=$1
+set -e -E -o pipefail
 source `dirname $0`/common.sh
 source `dirname $0`/exercise-one-database.sh
 

@@ -1,6 +1,7 @@
 #! /bin/sh
 
 BASE_URL=$1
+set -e -E -o pipefail
 source `dirname $0`/common.sh
 
 curl_post action.php "action=pass&racer=1&value=1" | check_success
