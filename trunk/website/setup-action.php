@@ -50,9 +50,13 @@ if (have_permission(SET_UP_PERMISSION)) {
   $dbuser = $_POST['dbuser'];
   $dbpass = $_POST['dbpass'];
 
+  $options = array();
+  if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+    $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
+  }
+
   try {
-    $trial_db = new PDO($connection_string, $dbuser, $dbpass,
-                        array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+    $trial_db = new PDO($connection_string, $dbuser, $dbpass, $options);
   } catch (PDOException $p) {
     $ok = false;
     echo "<failure code='cant_connect'>";
@@ -62,11 +66,12 @@ if (have_permission(SET_UP_PERMISSION)) {
 
 
   if ($ok) {
-    // The MYSQL command is, of course, MySQL-specific, but ODBC/Access should just ignore it.
+    // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but ODBC/Access should just ignore it.
+    $options_dump = var_export($options, /* return */ true);
     $content = <<<END
 <?php
 \$db = new PDO("$connection_string", "$dbuser", "$dbpass",
-               array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+               $options_dump);
 ?>
 
 END;
