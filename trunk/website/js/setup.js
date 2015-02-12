@@ -47,9 +47,17 @@ function show_choose_database_modal() {
 
 function handle_choose_database() {
     close_modal("#choose_database_modal");
+
+    var myform = $("#choose_database_modal form");
+    // Serialize form data while temporarily enabling disabled inputs
+    // (like #connection_string)
+    var disabled = myform.find(':input:disabled').removeAttr('disabled');
+    var serialized = myform.serialize();
+    disabled.attr('disabled', 'disabled');
+
     $.ajax('setup-action.php',
            {type: 'POST',
-            data: $("#choose_database_modal form").serialize(),
+            data: serialized,
             success: function(data) {
                 console.log("Success");
                 console.log(data);
