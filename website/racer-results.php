@@ -10,6 +10,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
     var g_last_update_time = ""; // First refresh is for everything
     var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
