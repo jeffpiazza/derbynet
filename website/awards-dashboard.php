@@ -81,7 +81,7 @@ $sql = 'SELECT class, rank, carnumber, lastname, firstname, racerid'
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid')
       .' WHERE passedinspection = 1 AND exclude = 0'
-      .' ORDER BY carnumber';
+      .' ORDER BY class, lastname, firstname, carnumber';
 
 foreach ($db->query($sql) as $racer) {
   $racerid = $racer['racerid'];
