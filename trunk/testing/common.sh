@@ -59,12 +59,14 @@ function test_fails() {
 	cat $DEBUG_CURL
 	echo END RESPONSE
     tput setaf 0  # black text
+    exit 1
 }
 
 function check_success() {
 	# Expecting stdin
-	grep -c "<success[ />]" > /dev/null
-	if [ $? -ne 0 ]; then
+    OK=1
+	grep -c "<success[ />]" > /dev/null || OK=0 
+	if [ $OK -eq 0 ]; then
         test_fails
 	fi
 }
@@ -74,8 +76,9 @@ function check_success() {
 # response.  The test fails if that's not the case.
 function check_failure() {
 	# Expecting stdin
-	grep -c "<failure[ />]" > /dev/null
-	if [ $? -ne 0 ]; then
+    OK=0
+	grep -c "<failure[ />]" > /dev/null && OK=1
+	if [ $OK -eq 0 ]; then
         test_fails EXPECTING ACTION TO FAIL
 	fi
 }
