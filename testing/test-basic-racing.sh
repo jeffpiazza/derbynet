@@ -85,7 +85,7 @@ curl_post action.php "action=heat-results&lane3=8.888" | check_success
 # For roundid 4, schedule two appearances per lane per racer
 curl_post action.php "action=schedule&roundid=4&nrounds=2" | check_success
 # Schedule for roundid 5
-curl_post action.php "action=schedule&roundid=5" > /dev/null # TODO | check_failure
+curl_post action.php "action=schedule&roundid=5" | check_success
 
 ### Racing for roundid=4
 curl_post action.php "action=select-heat&roundid=4&now_racing=1" | check_success

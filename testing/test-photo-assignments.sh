@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=write-settings&photo_dir=/Users/jeffpiazza/test-photos" | check_success
+curl_post action.php "action=write-settings&photo-dir=/Users/jeffpiazza/test-photos" | check_success
 curl_post action.php "action=write-settings&n-lanes=4" | check_success
 curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
