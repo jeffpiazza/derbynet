@@ -185,12 +185,12 @@ function process_new_heat(watching) {
             $('[data-lane] .time').css({opacity: 0}).text('0.000');
             $('[data-lane] .speed').css({opacity: 0}).text('200.0');
             $('[data-lane] .place span').text('');
+            $('[data-lane] img').remove();
             for (var i = 0; i < racers.length; ++i) {
                 var r = racers[i];
                 var lane = r.getAttribute('lane');
                 $('[data-lane="' + lane + '"] .lane').text(lane);
                 $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
-                $('[data-lane="' + lane + '"] img').remove();
                 if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
                     $('[data-lane="' + lane + '"] .name_and_photo').prepend(
                         '<img src="' + r.getAttribute('photo') + '"/>');
