@@ -53,11 +53,11 @@ function process_current_award(data) {
         $("#firstname").text(award.firstname);
         $("#lastname").text(award.lastname);
         $("#headphoto").empty();
-        if (award.headphoto) {
+        if (award.headphoto && award.headphoto.length > 0) {
             $("#headphoto").append("<img src=\"" + award.headphoto + "\"/>");
         }
         $("#carphoto").empty();
-        if (award.carphoto) {
+        if (award.carphoto && award.carphoto.length > 0) {
             $("#carphoto").append("<img src=\"" + award.carphoto + "\"/>");
         }
         g_current_award_key = award.key;
