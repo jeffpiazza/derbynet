@@ -20,12 +20,11 @@
 // For a non-Grand Finals round, if "bucketed" is true, then "top" tells how
 // many racers to choose from each subgroup.
 
-// TODO [Log] action=make-roster&roundid=&roundid_1=on&roundid_2=on&roundid_3=on&roundid_4=on&roundid_5=on&top=3 (coordinator.js, line 351)
-// TODO       action=make-roster&roundid=&roundid_1=on&roundid_3=on&roundid_4=on&roundid_5=on&top=3 coordinator.js:26
-// So, detect grand final by empty roundid, and scan $_POST for roundid_X entries to identify source roundids.
-
 // TODO: Finalists are selected by average time, which may give the
 // wrong result if some racers didn't finish all their heats.
+//
+// TODO: Some organizations select winners by dropping the worst time, or the
+// best and worst, or something else.
 
 start_response();
 
@@ -108,17 +107,17 @@ $bucketno_expr = '1';
 
 if ($grand_finals) {
   $and_roundid_ok = ' AND RaceChart.roundid IN ('.$all_roundids.')';
-  $keyfield = $old_round;
+  $keyfield = 'Rounds.round';
   $key = $old_round;
   if ($bucketed) {
-    $bucketno_expr = 'RegistrationInfo.rankid';
+    $bucketno_expr = 'Result.classid';
   }
 } else {
   $and_roundid_ok = '';
   $keyfield = 'RaceChart.roundid';
   $key = $roundid;
   if ($bucketed) {
-    $bucketno_expr = 'Rounds.classid';
+    $bucketno_expr = 'RegistrationInfo.rankid';
   }
 }
 
@@ -126,9 +125,8 @@ if ($grand_finals) {
 // Roster(rosterid, roundid, classid, racerid)
 // RaceChart(resultid, classid, roundid, heat, lane, racerid, finishtime, completed)
 // RegistrationInfo(racerid, ..., classid, rankid)
-
 $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, total'
-                     .' FROM (SELECT racerid, AVG(finishtime) AS total'
+                     .' FROM (SELECT racerid, Rounds.classid, AVG(finishtime) AS total'
                      .'       FROM RaceChart'
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
