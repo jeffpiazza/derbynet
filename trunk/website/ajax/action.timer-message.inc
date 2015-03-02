@@ -33,8 +33,6 @@ $racing_state = get_racing_state();
 
 start_response();
 
-// Pinning our hopes on the 
-
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if ($message == 'HELLO') {
     if (isset($_POST['lane_count']) && $_POST['lane_count'] > 0) {
