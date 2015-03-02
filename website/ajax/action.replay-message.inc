@@ -14,7 +14,12 @@ function drain_queue() {
   $queue = read_raceinfo('replay_queue');
   write_raceinfo('replay_queue', '');
   $db->commit();
-  $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
+  try {
+    $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
+  } catch (PDOException $p) {
+    echo "<set-attribute-failure/>\n";
+    // TODO - This doesn't seem to work:var_dump($p)
+  }
 
   foreach (explode("\n", $queue) as $msg) {
     if (strlen($msg) > 0) {
