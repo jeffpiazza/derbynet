@@ -19,6 +19,15 @@ function photo_size() {
   return read_raceinfo('photo-size', '94x125');
 }
 
+function car_photo_size() {
+  $size = read_raceinfo('car-photo-size');
+  if ($size === false) {
+    return photo_size();
+  } else {
+    return $size;
+  }
+}
+
 // A photo repository refers to a directory on the server where we look for
 // original photos.  We keep separate PhotoRepository objects for racer and car
 // photos, but it's OK for them to refer to the same directory.

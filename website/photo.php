@@ -62,6 +62,6 @@ header('Pragma: public');
 header('Cache-Control: max-age=86400, public');
 header('Expires: '.gmdate('D, d M Y H:i:s', time() + 86400).' GMT');
 
-header('Content-type: '.pseudo_mime_content_type($target_file_path));
+header('Content-type: '.pseudo_mime_content_type($file_path));
 
 readfile($file_path);

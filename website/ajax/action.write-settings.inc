@@ -1,10 +1,11 @@
 <?php
+// This ajax action allows configuration information to be recorded in the database.  See setting.php.
 
 require_once('inc/photo-config.inc');
 
 start_response();
 
-$num_picked = 1;  // Account for the 'action' key
+$num_picked = 1;  // 1, not 0, to account for the 'action' key
 
 // TODO: These are checkboxes, and won't be passed if the checkbox is unchecked.
 if (have_permission(SET_UP_PERMISSION)) {
@@ -30,7 +31,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                 'subgroup-label' => 'subgroup-label',
                 'supergroup-label' => 'supergroup-label',
                 'update-period' => 'update-period',
-                'photo_dir' => 'photo-directory')
+                'photo-dir' => 'photo-directory',
+                'car-photo-dir' => 'car-photo-directory')
           as $post_key => $raceinfo_key) {
     if (isset($_POST[$post_key])) {
       ++$num_picked;
@@ -39,14 +41,24 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }
 
-  if (isset($_POST['photo_width']) && isset($_POST['photo_height'])) {
+  if (isset($_POST['photo-width']) && isset($_POST['photo-height'])) {
     $num_picked += 2;
-    echo "<wrote>".$_POST['photo_width'].'x'.$_POST['photo_height']."</wrote>\n";
     $old_photo_size = read_raceinfo('photo-size');
-    $new_photo_size = $_POST['photo_width'].'x'.$_POST['photo_height'];
+    $new_photo_size = $_POST['photo-width'].'x'.$_POST['photo-height'];
     write_raceinfo('photo-size', $new_photo_size);
     if ($old_photo_size != $new_photo_size) {
       headshots()->lookup('display')->wipe_directory();
+      echo "<wiped-display-directory/>\n";
+    }
+  }
+
+  if (isset($_POST['car-photo-width']) && isset($_POST['car-photo-height'])) {
+    $num_picked += 2;
+    $old_photo_size = read_raceinfo('car-photo-size');
+    $new_photo_size = $_POST['car-photo-width'].'x'.$_POST['car-photo-height'];
+    write_raceinfo('car-photo-size', $new_photo_size);
+    if ($old_photo_size != $new_photo_size) {
+      car_photo_repository()->lookup('display')->wipe_directory();
       echo "<wiped-display-directory/>\n";
     }
   }

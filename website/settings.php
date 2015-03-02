@@ -86,30 +86,38 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
   <br/>
 
   <div class="settings_group">
-    <input id="update-period" name="update-period" type="number" min="0" max="100000"
-           value="<?php echo update_period(); ?>"/>
-    <label for="update-period">Page refresh period: ms. between updates.  Increase this value if necessary 
-                               to reduce load on server.</label>
-  </div>
-  <br/>
-
-  <div class="settings_group">
-    <label for="photo_dir">Directory for racer photos:</label>
-	<input id="photo_dir" name="photo_dir" type="text"
-		  value="<?php echo htmlspecialchars(photo_directory(), ENT_QUOTES, 'UTF-8'); ?>"/>
-    <br/>
-    <?php $photosize = explode('x', photo_size()); ?>
-	<label for="photo_width">Racer photo size:</label>
- 	<input id="photo_width" name="photo_width" type="number" min="0" max="1000"
-		  value="<?php echo $photosize[0]; ?>"/>
-    <label for="photo_width">w x </label>
- 	<input id="photo_height" name="photo_height" type="number" min="0" max="1000"
-		  value="<?php echo $photosize[1]; ?>"/>
-    <br/>
     <input type="hidden" name="show-racer-photos-checkbox" value="yes"/>
     <input id="show-racer-photos" name="show-racer-photos"
            type="checkbox"<?php if ($show_racer_photos) echo ' checked="checked"';?>/>
     <label for="show-racer-photos">Show racer photos on main racing board</label>
+    <label for="photo-dir">Directory for racer photos:</label>
+	<input id="photo-dir" name="photo-dir" type="text"
+		  value="<?php echo htmlspecialchars(photo_directory(), ENT_QUOTES, 'UTF-8'); ?>"/>
+    <br/>
+    <?php $photosize = explode('x', photo_size()); ?>
+	<label for="photo-width">Racer photo size:</label>
+ 	<input id="photo-width" name="photo-width" type="number" min="0" max="1000"
+		  value="<?php echo $photosize[0]; ?>"/>
+    <label for="photo-height">w x </label>
+ 	<input id="photo-height" name="photo-height" type="number" min="0" max="1000"
+		  value="<?php echo $photosize[1]; ?>"/>
+    <br/>
+  </div>
+  <br/>
+
+  <div class="settings_group">
+    <label for="car-photo-dir">Directory for car photos:</label>
+	<input id="car-photo-dir" name="car-photo-dir" type="text"
+		  value="<?php echo htmlspecialchars(photo_directory(), ENT_QUOTES, 'UTF-8'); ?>"/>
+    <br/>
+    <?php $car_photosize = explode('x', car_photo_size()); ?>
+	<label for="car-photo_width">Car photo size:</label>
+ 	<input id="car-photo-width" name="car-photo-width" type="number" min="0" max="1000"
+		  value="<?php echo $car_photosize[0]; ?>"/>
+    <label for="car-photo-height">w x </label>
+ 	<input id="car-photo-height" name="car-photo-height" type="number" min="0" max="1000"
+		  value="<?php echo $car_photosize[1]; ?>"/>
+    <br/>
   </div>
   <br/>
 
