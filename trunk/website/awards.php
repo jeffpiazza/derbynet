@@ -33,7 +33,7 @@ foreach ($speed_trophies as $classid => $racers) {
 $pack_trophies = top_finishers_overall($n_pack_trophies);
 for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racerid = $pack_trophies[$place];
-  $awards[$racerid] .= ', '.ordinal(1 + $place).' in '.supergroup_label_lc();
+  @$awards[$racerid] .= ', '.ordinal(1 + $place).' in '.supergroup_label_lc();
 }
 
 // TODO: Order by den, then by award "weight" within each den.
