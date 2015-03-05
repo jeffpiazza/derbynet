@@ -26,17 +26,23 @@ function handle_logout() {
     handle_login("", "");
 }
 
-function handle_password_submission(form) {
-	var role = document.getElementById("name_for_password").value;
-	var pwd = document.getElementById("pw_for_password").value;
-	handle_login(role, pwd);
+function handle_password_submission() {
+    handle_login($("#name_for_password").val(), $("#pw_for_password").val());
 }
 
 function show_password_form(name) {
 	document.getElementById("name_for_password").value = name;
-	$("#password_form").removeClass("hidden");
+    show_modal("#password_modal", function(event) {
+        handle_password_submission();
+        return false;
+    });
 	// Giving immediate focus doesn't work, because the element is still invisible.
 	// Waiting 100ms is clumsy, but reasonably effective.
 	setTimeout(function() { 
 			document.getElementById('pw_for_password').focus(); }, 100);
+}
+
+
+function show_kiosk_form() {
+    show_modal("#kiosk_modal", function(event) { console.log("No submit expected!"); });
 }

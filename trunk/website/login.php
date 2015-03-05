@@ -13,6 +13,7 @@ require_once('inc/authorize.inc');
 <title>Please Log In</title>
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/login.js"></script>
 </head>
 <body<?php if (isset($_GET['logout'])) echo ' onload="handle_logout()"'; ?>>
@@ -34,10 +35,10 @@ foreach ($roles as $name => $details) {
 ?>
 
 <div class="login-kiosk">
-<form method="link" action="kiosk.php">
-<input type="submit" value="Be a Kiosk"/> 
-</form>
+<input type="button" value="Be a Kiosk" onclick="show_kiosk_form();"/>
 </div>
+
+
 <?php
 if (@$_SESSION['role']) {
 ?>
@@ -50,16 +51,24 @@ if (@$_SESSION['role']) {
 </div>
 </div>
 
-<div class="block_buttons">
-<form id="password_form" class="floatform hidden"
-      onsubmit="handle_password_submission(this); return false;">
+<div id='password_modal' class="modal_dialog hidden block_buttons">
+<form>
   <input type="hidden" name="name" id="name_for_password" value=""/>
   <p>Enter password:</p>
   <p><input type="password" name="pw" id="pw_for_password"/></p>
   <input type="submit" value="Submit"/>
   <input type="button" value="Cancel"
-      onclick='$("#password_form").addClass("hidden");'/>
+      onclick='close_modal("#password_modal");'/>
 </form>
+</div>
+
+<div id='kiosk_modal' class="modal_dialog hidden block_buttons">
+
+<input type="button" value="Be a Kiosk" onclick="window.location='kiosk.php'"/>
+<input type="button" value="Fullscreen Kiosk" onclick="window.location='fullscreen.php'"/>
+<br/>
+<input type="button" value="Cancel" onclick='close_modal("#kiosk_modal");'/>
+
 </div>
 
 </body>
