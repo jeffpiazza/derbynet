@@ -33,3 +33,5 @@ curl_post action.php "action=pass&racer=49&value=1" | check_success
 # Exclude car 111
 curl_post action.php "action=edit-racer&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&rankid=1&exclude=1" | check_success
 
+# TODO: There was a bug that the new-row returned from this was basically empty; this doesn't test that
+curl_post action.php "action=new-racer&firstname=Fred&lastname=Flintstone&carno=789&rankid=2" | check_success

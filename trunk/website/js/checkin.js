@@ -168,8 +168,7 @@ function show_racer_photo_modal(racerid) {
 }
 
 function take_snapshot(racerid) {
-    console.log("take_snapshot: racerid = " + racerid);  // TODO
-  Webcam.snap( function(data_uri) {
+  Webcam.snap(function(data_uri) {
 	  // detect image format from within image_data_uri
 	  var image_fmt = '';
 	  if (data_uri.match(/^data\:image\/(\w+)/))

@@ -16,8 +16,9 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
 }
 
 function checkin_table_row_for_id($racerid) {
-  $row = read_single_row(
-    'SELECT racerid, carnumber, lastname, firstname, imagefile,'
+  // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
+  global $db;
+  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, imagefile,'
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -27,8 +28,10 @@ function checkin_table_row_for_id($racerid) {
                          'RegistrationInfo.classid = Classes.classid',
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid')
-    .' WHERE RegistrationInfo.racerid = :racerid',
-    array(':racerid' => $racerid));
+    .' WHERE RegistrationInfo.racerid = :racerid');
+  $rs->execute(array(':racerid' => $racerid));
+  $row = $rs->fetch(PDO::FETCH_ASSOC);
+  $rs->closeCursor();
 
   checkin_table_row($row, read_raceinfo_boolean('xbs-award'), read_raceinfo_boolean('use-subgroups'));
 }
