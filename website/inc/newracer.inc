@@ -16,9 +16,9 @@ function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $ran
 
     $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, rankid, classid, exclude)'
                          .' VALUES(:carno, :lastname, :firstname, :rankid, :classid, :exclude)');
-    $stmt->execute(array(':carno' => $carno,
-                         ':firstname' => $firstname,
-                         ':lastname' => $lastname,
+    $stmt->execute(array(':carno' => trim($carno),
+                         ':firstname' => trim($firstname),
+                         ':lastname' => trim($lastname),
                          ':rankid' => $rankid,
                          ':classid' => $classid,
                          ':exclude' => $exclude ? 1 : 0));
