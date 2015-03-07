@@ -3,6 +3,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Identify</title>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+function report_window_size() {
+$("#screensize").text($(window).width() + " x " + $(window).height());
+}
+
+$(function () {
+    report_window_size();
+    $(window).resize(function() { report_window_size(); });
+});
+</script>
 <?php require('inc/kiosk-page.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 </head>
@@ -11,6 +21,7 @@
  <p class="kiosk_title"><?php echo address_for_current_kiosk(); ?></p>
 <p id="kiosk_name" class="kiosk_title"></p>
 <div class="full_page_center">
+<p id="screensize"></p>
 <pre>
 <?php print_r($_SERVER); ?>
 </pre>
