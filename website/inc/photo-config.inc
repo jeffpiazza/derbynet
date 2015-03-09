@@ -49,17 +49,34 @@ class PhotoRepository {
     $this->column_name = $columnname;
   }
 
-  // TODO: This probably shouldn't insist on an exact match to the render
-  // directory, since that encodes the current photo-size setting that's likely
-  // to change.
+  // This assumes that any file found within any subdirectory of the repository
+  // folder is being managed by us.
   public function recognized_path($imagefile) {
-    return realpath(pathinfo($imagefile, PATHINFO_DIRNAME)) == realpath($this->lookup('display')->directory());
+    $imagepath = realpath(pathinfo($imagefile, PATHINFO_DIRNAME));
+    while ($imagepath !== false && strlen($imagepath) > 1) {
+      if ($imagepath == realpath($this->directory())) {
+        return true;
+      }
+      $next_imagepath = dirname($imagepath);
+      if ($next_imagepath == $imagepath) {
+        return false;
+      } else {
+        $imagepath = $next_imagepath;
+      }
+    }
+    return false;
   }
 
   // $row has to have racerid and the repository's column_name, at least
   public function url_for_racer(&$row, $render = 'display') {
     $imagefile = $row[$this->column_name()];
     if ($this->recognized_path($imagefile)) {
+      return $this->lookup($render)->render_url(basename($imagefile));
+    } else if (!file_exists($imagefile) &&
+          file_exists($this->lookup('original')->file_path(basename($imagefile)))) {
+      // If the field points to a non-existent file, but the image IS present in
+      // the repository, then assume that it's a case of having moved the
+      // repository, and treat as a recognized path
       return $this->lookup($render)->render_url(basename($imagefile));
     } else {
       // A racer URL
@@ -140,6 +157,8 @@ class PhotoRender {
     return $this->file_path($imagename);
   }
 
+  // Returns the render from which this render derives its pictures: either the
+  // original form or cropped.
   public function find_source_render($image_name) {
     if ($this->antecedent) {
       $source = $this->repository->lookup($this->antecedent);
@@ -153,6 +172,8 @@ class PhotoRender {
     }
   }
 
+  // For a particular image, remove all the derived versions in dependent
+  // renders.
   public function delete_dependents($image_name) {
     foreach ($this->repository->all_renders() as $render) {
       if ($render->antecedent() == $this->label()) {
@@ -171,7 +192,7 @@ class PhotoRender {
     }
   }
 
-  // Constructs a URL for the photo whose base name is $imagefile.
+  // Constructs a file URL for the photo whose base name is $imagefile.
   public function render_url($imagefile) {
     if ($imagefile != '') {
       $imagefile = basename($imagefile);
