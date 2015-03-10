@@ -60,16 +60,57 @@ img {
     vertical-align: middle
 }
 
-@media screen and (max-width: 1024px) {
+#overlay_background {
+    position: fixed;
+    z-index:100;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #000;
+    display: none;
+}
+
+.overlay_foreground {
+  display: none;
+  width: 512px;
+  padding: 15px 20px;
+  background-color: transparent;
+/*  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); */
+}
+
+#timer_overlay {
+    color: #a7101c;
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+@media screen and (max-width: 1400px) {
     td {
         font-size: 60px;
+        /* color: orange; */
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    td {
+        font-size: 40px;
+        /* color: green; */
     }
 }
 
 @media screen and (max-width: 800px) {
     td {
-        font-size: 40px;
+        font-size: 30px;
         border: 7px solid black;
         padding: 7px;
+        /* color: red; */
     }
 }

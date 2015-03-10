@@ -9,7 +9,8 @@ $num_picked = 1;  // 1, not 0, to account for the 'action' key
 
 // TODO: These are checkboxes, and won't be passed if the checkbox is unchecked.
 if (have_permission(SET_UP_PERMISSION)) {
-  foreach(array('do-use-subgroups' => 'use-subgroups',
+  foreach(array('with-gprm' => 'with-gprm',
+                'do-use-subgroups' => 'use-subgroups',
                 'use-master-sched' => 'use-master-sched',
                 'show-racer-photos' => 'show-racer-photos')
           // See also use-xbs, below

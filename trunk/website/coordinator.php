@@ -65,12 +65,16 @@ $(document).bind("mobileinit", function() {
   </div>
 
   <div class="control_group timer_control_group">
+   <?php if (read_raceinfo_boolean('with-gprm')) { ?>
+    <p>Using Grand Prix Race Manager</p>
+   <?php } else { ?>
     <div class="status_icon">
       <img id="timer_status_icon" src="img/status_unknown.png"/>
     </div>
     <h3>Timer Status</h3>
     <p><b id="timer_status_text">Timer status not yet updated</b></p>
     <p>The track has <span id="lane_count">an unknown number of</span> lane(s).</p>
+   <?php } ?>
   </div>
 
   <div class="control_group replay_control_group">
