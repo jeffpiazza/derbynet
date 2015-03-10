@@ -58,5 +58,13 @@ $(function () {
 <?php } else { ?>
 <h2>Number of lanes not yet recorded...</h2>
 <?php } ?>
+<div id="overlay_background"></div>
+<div id="paused_overlay" class="overlay_foreground">
+<img src="img/pause.png"/>
+</div>
+<div id="timer_overlay" class="overlay_foreground">
+<img src="img/timer-red.png"/>
+<p>Timer not connected.</p>
+</div>
 </body>
 </html>

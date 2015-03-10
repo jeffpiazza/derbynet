@@ -82,6 +82,39 @@ function animate_flyers(place, place_to_lane, completed) {
     }
 }
 
+var g_overlay_shown = '';
+
+function clear_overlay() {
+    $(".overlay_foreground").fadeTo(200, 0);
+    $("#overlay_background").fadeTo(200, 0);
+    g_overlay_shown = '';
+}
+
+function show_overlay(selector) {
+    if (g_overlay_shown != selector) {
+        console.log(selector);
+        var background = $("#overlay_background");
+        background.css({'display': 'block',
+                        'opacity': 0});
+        background.fadeTo(200, 0.2);
+        $(".overlay_foreground").css('opacity', 0);
+
+        var overlay = $(selector);
+        overlay.css({ 
+            'display': 'block',
+            'position': 'fixed',
+            'opacity': 0,
+            'z-index': 11000,
+            'left' : '50%',
+            'margin-left': '-256px',
+            'top': $(window).height() / 2 + "px",
+            'margin-top': '-256px'
+        });
+        overlay.fadeTo(200, 1);
+        g_overlay_shown = selector;
+    }
+}
+
 // See ajax/query.watching.inc for XML format
 
 // Processes the top-level <watching> element.
@@ -162,11 +195,17 @@ function process_new_heat(watching) {
         // hold-display deadline.  (Our display is presumed not to be visible,
         // so the display-for-ten-seconds clock shouldn't start yet.)
         g_hold_display_until = (new Date()).valueOf() + 10000;
-        console.log("Holding display until " + g_hold_display_until);  // TODO
     }
     var current = watching.getElementsByTagName("current-heat")[0];
+    if (watching.getElementsByTagName('timer-not-connected').length > 0) {
+        show_overlay('#timer_overlay');
+    } else if (current.getAttribute("now-racing") == "0" && (new Date()).valueOf() > g_hold_display_until) {
+        show_overlay('#paused_overlay')
+    } else {
+        clear_overlay();
+    }
+
     if (current.getAttribute("now-racing") != "0" && (new Date()).valueOf() > g_hold_display_until) {
-        console.log("Advancing display at " + (new Date()).valueOf());  // TODO
         g_roundid = current.getAttribute("roundid");
         g_heat = current.getAttribute("heat");
         if (current.firstChild) {  // The body of the <current-heat>

@@ -3,13 +3,21 @@
 // action.php?query=watching&roundid= &heat= 
 // Returns:
 //   <watching roundid= heat= >
+//     <timer-not-connected/>   if that's the timer state
 //     <heat-result lane="1" time="" place="" speed=""/>... if results are available
-//     <current-heat> 
+//     <current-heat ...> 
 //     - if current-heat differs from what the caller passed in, then provide:
 //     <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
 //     - if requesting a repeat of the finish-order animation:
 //      <repeat-animation/>
 //   </watching>
+
+if (!read_raceinfo_boolean('with-gprm')) {
+  require_once('inc/timer-state.inc');
+  if (get_timer_state() == TIMER_NOT_CONNECTED) {
+    echo "  <timer-not-connected/>\n";
+  }
+}
 
 require_once('inc/replay.inc');
 
@@ -20,11 +28,8 @@ $track_length = read_raceinfo('track-length', 40);  // in feet
 // $track_length / $finishtime gives feet per second.
 //  * 3600 gives feet per hour
 //  / 5280 gives miles per hour
-//  * 25 gives scale miles per mile
+//  * 25 gives scale miles per mile (not user-adjustable; makes a 7" derby car scale to 14.5 feet)
 $fps_to_scale_mph = 3600 * 25 / 5280;
-
-// TODO: Refine scale_mph_factor
-$scale_mph_factor = 12.0;  // Kinda-sorta converts fps into scale MPH
 
 $stmt = $db->prepare('SELECT lane, finishtime, finishplace, completed'
                      .' FROM RaceChart'
@@ -37,7 +42,7 @@ $stmt->execute(array(':roundid' => $roundid,
                      ':heat' => $heat));
 foreach ($stmt as $row) {
   $finishtime = $row['finishtime'];
-  $speed = $finishtime == 0 ? "--" : sprintf("%4.1f", $track_length / $finishtime * $scale_mph_factor);
+  $speed = $finishtime == 0 ? "--" : sprintf("%4.1f", $track_length / $finishtime * $fps_to_scale_mph);
   echo '  <heat-result lane="'.$row['lane'].'"';
   // TODO: Controllable number of decimal places?
   echo ' time="'.sprintf('%5.3f', $finishtime).'"';
