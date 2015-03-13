@@ -109,6 +109,7 @@ require_once('inc/checkin-table.inc');
     <th>Photo</th> <!-- TODO -->
     <th><?php echo column_header('Last Name', 'name'); ?></th>
     <th>First Name</th>
+    <th>Car Name</th>
     <th>Passed?</th>
     <?php if ($xbs) {
         echo '<th>'.$xbs_award_name.'</th>';
@@ -119,7 +120,7 @@ require_once('inc/checkin-table.inc');
 <tbody>
 <?php
 
-    $sql = 'SELECT racerid, carnumber, lastname, firstname, imagefile,'
+    $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'

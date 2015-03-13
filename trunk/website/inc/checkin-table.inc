@@ -18,7 +18,7 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
 function checkin_table_row_for_id($racerid) {
   // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
   global $db;
-  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, imagefile,'
+  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -36,7 +36,7 @@ function checkin_table_row_for_id($racerid) {
   checkin_table_row($row, read_raceinfo_boolean('xbs-award'), read_raceinfo_boolean('use-subgroups'));
 }
 
-// $row[]: racerid, firstname, lastname, carnumber, class, rank, rankid, passedinspection, imagefile, exclude
+// $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, passedinspection, imagefile, exclude
 //         xbs - whether this racer has an exclusively-by-scout award
 //         scheduled - whether this racer has any RaceChart entries
 //         denscheduled - whether any racer in this racer's class have any RaceChart entries
@@ -70,6 +70,9 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
         .htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'</td>';
     echo '<td class="sort-firstname" id="firstname-'.$row['racerid'].'">'
         .htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'</td>';
+
+    echo '<td id="car-name-'.$row['racerid'].'">'
+        .htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'</td>';
 
     // If a race schedule exists for this racer, don't offer the option to un-pass through this interface.
     // Instead, have go through unscheduling (if that's possible) and then un-pass

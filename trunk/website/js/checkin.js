@@ -47,6 +47,7 @@ function show_edit_racer_form(racerid) {
   var first_name = $('#firstname-' + racerid).text();
   var last_name = $('#lastname-' + racerid).text();
   var car_no = $('#car-number-' + racerid).text();
+  var car_name = $('#car-name-' + racerid).text();
 
   var rankid = $('#class-' + racerid).attr('data-rankid');
 
@@ -57,6 +58,8 @@ function show_edit_racer_form(racerid) {
 
   $("#edit_carno").val(car_no);
   $("#edit_carno").focus();
+
+  $("#edit_carname").val(car_name);
 
   var edit_rank = $("#edit_rank");
   edit_rank.val(rankid);
@@ -83,6 +86,9 @@ function show_new_racer_form() {
   $("#edit_lastname").val("");
 
   $("#edit_carno").val(9999);
+  $("#edit_carname").val("");
+
+  // TODO - This doesn't seem to set the control to "Eligible", which is the intent.
   $("#eligible").val(true);
   $("#eligible").trigger("change", true);
 
@@ -141,6 +147,7 @@ function handle_edit_racer() {
                     ln.attr("data-exclude", exclude);
                     ln.parents('tr').toggleClass('exclude-racer', exclude == 1);
                     $("#car-number-" + racerid).text(new_carno);
+                    $("#car-name-" + racerid).text(new_carname);
 
                     $('#class-' + racerid).attr('data-rankid', new_rankid);
                     $('#class-' + racerid).text(new_classname);
@@ -153,9 +160,11 @@ function handle_edit_racer() {
 }
 
 function show_racer_photo_modal(racerid) {
-  $("#racer_photo_name").text($('#firstname-' + racerid).text() + ' ' + $('#lastname-' + racerid).text());
+  var firstname = $('#firstname-' + racerid).text();
+  var lastname = $('#lastname-' + racerid).text();
+  $("#racer_photo_name").text(firstname + ' ' + lastname);
   show_modal("#racer_photo_modal", function() {
-      take_snapshot(racerid);
+      take_snapshot(racerid, lastname + '-' + firstname);
       return false;
   });
 
@@ -167,7 +176,10 @@ function show_racer_photo_modal(racerid) {
   Webcam.attach('#preview');
 }
 
-function take_snapshot(racerid) {
+function take_snapshot(racerid, photo_base_name) {
+  if (photo_base_name.length <= 1) {
+    photo_base_name = 'photo';
+  }
   Webcam.snap(function(data_uri) {
 	  // detect image format from within image_data_uri
 	  var image_fmt = '';
@@ -186,7 +198,7 @@ function take_snapshot(racerid) {
 	  var form_data = new FormData();
 	  form_data.append('action', 'upload-photo');
       form_data.append('racerid', racerid);
-	  form_data.append('photo', blob, 'photo'+"."+image_fmt.replace(/e/, '') );
+	  form_data.append('photo', blob, photo_base_name + "."+image_fmt.replace(/e/, '') );
 
       // Testing for <failure> elements occurs in dashboard-ajax.js
       $.ajax(g_action_url,

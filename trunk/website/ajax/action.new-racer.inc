@@ -9,10 +9,11 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
   $firstname = $_POST['firstname'];
   $lastname = $_POST['lastname'];
   $carno = $_POST['carno'];
+  $carname = $_POST['carname'];
   $rankid = $_POST['rankid'];
   $exclude = @$_POST['exclude'] ? true : false;
 
-  insert_new_racer_rankid($firstname, $lastname, $carno, $rankid, $exclude);
+  insert_new_racer_rankid($firstname, $lastname, $carno, $carname, $rankid, $exclude);
 
   echo "<success/>\n";
 

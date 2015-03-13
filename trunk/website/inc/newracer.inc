@@ -1,22 +1,24 @@
 <?php
 
 
-function insert_new_racer_rankid($firstname, $lastname, $carno, $rankid, $exclude = false) {
+function insert_new_racer_rankid($firstname, $lastname, $carno, $carname, $rankid, $exclude = false) {
   global $db;
 
   $classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
                                array(':rankid' => $rankid));
 
-  insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $rankid, $classid, $exclude);
+  insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $carname, $rankid, $classid, $exclude);
 }
 
-function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $rankid, $classid, $exclude = false) {
-    // $rank_and_den is <rankid>,<classid>
+function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $carname,
+                                             $rankid, $classid, $exclude = false) {
     global $db;
 
-    $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, rankid, classid, exclude)'
-                         .' VALUES(:carno, :lastname, :firstname, :rankid, :classid, :exclude)');
+    $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, carname,'
+                         .'                             rankid, classid, exclude)'
+                         .' VALUES(:carno, :lastname, :firstname, :carname, :rankid, :classid, :exclude)');
     $stmt->execute(array(':carno' => trim($carno),
+                         ':carname' => trim($carname),
                          ':firstname' => trim($firstname),
                          ':lastname' => trim($lastname),
                          ':rankid' => $rankid,

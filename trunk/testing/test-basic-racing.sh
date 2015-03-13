@@ -66,7 +66,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane3=2.756576818870
 
 ### Editing racers
 [ `curl_get checkin.php | grep 'class-5"' | grep -c '>Arrows'` -eq 1 ] || test_fails Initial class
-curl_post action.php "action=edit-racer&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&rankid=4" | check_success
+curl_post action.php "action=edit-racer&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_success
 [ `curl_get checkin.php | grep firstname-5 | grep -c '>Zuzu</td>'` -eq 1 ] || test_fails Firstname change
 [ `curl_get checkin.php | grep lastname-5 | grep -c '>Zingelo</td>'` -eq 1 ] || test_fails Lastname change
 [ `curl_get checkin.php | grep 'class-5"' | grep -c '>Webelos'` -eq 1 ] || test_fails Class change
