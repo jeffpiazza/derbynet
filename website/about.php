@@ -7,6 +7,8 @@ require_once('inc/authorize.inc');
 <title>About Web Race Manager</title>
 <?php require('inc/stylesheet.inc'); ?>
 <style type="text/css">
+.ip_addr { border: 2px solid red;  padding: 2px; }
+
 .phpinfo {background-color: #ffffff; color: #000000;}
 .phpinfo, .phpinfo td, .phpinfo th, .phpinfo h1, .phpinfo h2 {font-family: sans-serif;}
 .phpinfo pre {margin: 0px; font-family: monospace;}
@@ -34,6 +36,30 @@ require_once('inc/authorize.inc');
 <h1>About Web Race Manager</h1>
 
 <p></p>
+
+<?php
+$addrs = gethostbynamel(gethostname());
+if (count($addrs) == 0) {
+  echo "<p>The local IP address for this server can't be determined.</p>\n";
+} else {
+  echo '<p>It looks like you can use ';
+  // IIS apparently doesn't set REQUEST_URI.
+  if (isset($_SERVER['REQUEST_URI'])) {
+	$uri = dirname($_SERVER['REQUEST_URI']);
+  } else {
+	$uri = '/...';
+  }
+
+  $naddrs = count($addrs);
+  for ($i = 0; $i < $naddrs; ++$i) {
+    if ($i > 0) {
+      echo ' or ';
+    }
+    echo "<span class='ip_addr'>http://".$addrs[$i].$uri."</span>";
+  }
+  echo " as the URL for connecting other local devices to this server.</p>\n";
+}
+?>
 
 <p>Please include this page if you wish to report a bug, and
    contact me at <a href="mailto:bugs@jeffpiazza.org">bugs@jeffpiazza.org</a>.</p>
