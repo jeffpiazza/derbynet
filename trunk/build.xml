@@ -42,6 +42,11 @@
   </target>
 
   <target name="generated-version.inc">
+      <!-- svn info reports the last update version, not the last commited
+      version. -->
+      <exec executable="svn">
+          <arg value="update"/>
+      </exec>
       <exec executable="svn" outputproperty="svn-info-output">
           <arg value="info"/>
       </exec>
