@@ -65,10 +65,10 @@ if ($ok) {
                                         ':classid' => $classid));
     }
 
-    $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;  // TODO
-    // TODO: carname
+    $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;
+    $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
-    insert_new_racer_rankid_and_classid($_POST['firstname'], $_POST['lastname'], $carnumber,
+    insert_new_racer_rankid_and_classid($_POST['firstname'], $_POST['lastname'], $carnumber, $carname,
                                         $rankid, $classid);
 
     echo '<success/>';
