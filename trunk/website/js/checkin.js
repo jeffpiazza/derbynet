@@ -88,8 +88,7 @@ function show_new_racer_form() {
   $("#edit_carno").val(9999);
   $("#edit_carname").val("");
 
-  // TODO - This doesn't seem to set the control to "Eligible", which is the intent.
-  $("#eligible").val(true);
+  $("#eligible").prop("checked", true);
   $("#eligible").trigger("change", true);
 
   show_modal("#edit_racer_modal", function(event) {
