@@ -65,7 +65,7 @@ $allfiles = scan_directory($photo_repository->directory(),
 <?php
 require_once('inc/data.inc');
 $racers_by_photo = array();
-$stmt = $db->query('SELECT racerid, lastname, firstname, imagefile, carphoto, carnumber, class'
+$stmt = $db->query('SELECT racerid, lastname, firstname, '.$photo_repository->column_name().', carnumber, class'
 				   .' FROM RegistrationInfo'
 				   .' INNER JOIN Classes'
 				   .' ON RegistrationInfo.classid = Classes.classid'
