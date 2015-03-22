@@ -225,4 +225,13 @@ function running_round_header($now_running, $groups_use_roundid = FALSE) {
     echo '<h2 class="now_running">Racing has not yet begun.</h2>'."\n";
   }
 }
+
+// Some behaviors are a little different if we're just running alongside Grand
+// Prix Race Manager, but GPRM is actually running the race.
+//
+// By default, if using an Access (ODBC) database, we assume we're running with GPRM.
+function with_gprm() {
+  global $dbtype;
+  return read_raceinfo('with-gprm', $dbtype == 'access');
+}
 ?>

@@ -12,7 +12,7 @@
 //      <repeat-animation/>
 //   </watching>
 
-if (!read_raceinfo_boolean('with-gprm')) {
+if (!with_gprm()) {
   require_once('inc/timer-state.inc');
   if (get_timer_state() == TIMER_NOT_CONNECTED) {
     echo "  <timer-not-connected/>\n";
