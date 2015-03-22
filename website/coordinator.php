@@ -65,7 +65,7 @@ $(document).bind("mobileinit", function() {
   </div>
 
   <div class="control_group timer_control_group">
-   <?php if (read_raceinfo_boolean('with-gprm')) { ?>
+  <?php if (with_gprm()) { ?>
     <p>Using Grand Prix Race Manager</p>
    <?php } else { ?>
     <div class="status_icon">
