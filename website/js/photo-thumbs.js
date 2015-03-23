@@ -28,8 +28,6 @@
   // target is a jquery for list items that should be made assignable,
   // i.e., can receive new photo assignments.
 
-  // TODO: photo.php/head/file is wired in; won't work with car photos
-
   function make_assignable(target) {
 	  target.droppable({
 		scope: "assign",
@@ -38,14 +36,14 @@
 			var photo_base_name = ui.draggable.attr("data-image-filename");
 			var racer_id = $(this).attr("data-racer-id");
 
-			changeRacerPhotoAjax(0, racer_id, photo_base_name);
+			changeRacerPhotoAjax(racer_id, photo_base_name);
 
 			ui.draggable.closest(".thumbnail").addClass("hidden");
 			$(this).prepend('<img class="assigned"' +
 							' data-image-filename="' + photo_base_name + '"' +
-                            ' onclick="window.location.href=\'photo-crop.php?name=' +
-                                encodeURIComponent(photo_base_name) + '\'"' +
-							' src="photo.php/head/file/tiny/' +
+                            ' onclick="window.location.href=\'photo-crop.php?repo=' + photo_repo_name 
+                                + '&name=' + encodeURIComponent(photo_base_name) + '\'"' +
+							' src="photo.php/' + photo_repo_name + '/file/tiny/' +
 							encodeURIComponent(photo_base_name) + '/' +
                             'q' + Date.now() + '"/>'); 
 			make_discardable($(this).find(".assigned"));
@@ -115,20 +113,19 @@
 	});
 
 
-function changeRacerPhotoAjax(previous, racer, photo) {
-  console.log('changeRacerPhotoAjax: previous racer = ' + previous
-			  + ', new racer = ' + racer + ', photo = ' + photo);
+function changeRacerPhotoAjax(racer, photo) {
+  console.log('changeRacerPhotoAjax: racer = ' + racer + ', photo = ' + photo);
 
    var xmlhttp = new XMLHttpRequest();
    xmlhttp.open("POST", g_action_url, /*async*/true);
    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 // TODO   xmlhttp.onreadystatechange = readystate_handler;
-   xmlhttp.send("action=photo&racer=" + racer
-				+ "&previous=" + previous
+   xmlhttp.send("action=photo&repo=" + photo_repo_name 
+                + "&racer=" + racer
 				+ "&photo=" + photo);
 // TODO   ajax_add_request();
 }
 
 function removeRacerPhoto(previous) {
-  changeRacerPhotoAjax(previous, 0, '');
+  changeRacerPhotoAjax(previous, '');
 }

@@ -40,6 +40,7 @@ function updateForm(c) {
 </script>
 <div class="block_buttons">
 <form method="post" action="photo-crop-action.php">
+  <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
   <input type="hidden" id="image_name" name="image_name"
          value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" id="original_height" name="original_height" value=""/>
@@ -51,16 +52,22 @@ function updateForm(c) {
   <input type="submit" value="Crop"/>
 </form>
 <form method="post" action="photo-crop-action.php">
+  <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
   <input type="hidden" id="image_name" name="image_name"
          value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" name="rotation" value="-90"/>
   <input type="submit" value="Rotate Right"/>
 </form>
 <form method="post" action="photo-crop-action.php">
+  <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
   <input type="hidden" id="image_name" name="image_name"
          value="<?php echo htmlspecialchars($imagename, ENT_QUOTES, 'UTF-8'); ?>"/>
   <input type="hidden" name="rotation" value="90"/>
   <input type="submit" value="Rotate Left"/>
+</form>
+<form method="get" action="photo-thumbs.php">
+  <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
+  <input type="submit" value="Cancel"/>
 </form>
 </div>
 </body>

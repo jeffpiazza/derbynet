@@ -1,6 +1,8 @@
 <?php @session_start();
 // Redirects to setup page if the database hasn't yet been set up
-require_once('inc/data.inc'); ?>
+require_once('inc/data.inc');
+require_once('inc/schema_version.inc');
+?>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -48,10 +50,19 @@ require_once('inc/data.inc'); ?>
 <?php } ?>
 
 <?php if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="photo-thumbs.php">
+<form method="get" action="photo-thumbs.php">
+  <input type="hidden" name="repo" value="head"/>
   <input type="submit" value="Edit Racer Photos"/>
 </form>
 <br/>
+
+<?php if (schema_version() > 1) { ?>
+<form method="get" action="photo-thumbs.php">
+  <input type="hidden" name="repo" value="car"/>
+  <input type="submit" value="Edit Car Photos"/>
+</form>
+<br/>
+<?php } ?>
 <?php } ?>
 
 <?php

@@ -27,6 +27,11 @@ function scan_directory($directory, $pattern) {
 $allfiles = scan_directory($photo_repository->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
+function photo_crop_url($basename) {
+  global $photo_repository;
+  return 'photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($basename);
+}
+
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
 // *** Both div's are overhanging the bottom by the amount taken up by the banner and refresh button!
 // *** height=100% could be at issue.
@@ -47,10 +52,13 @@ $allfiles = scan_directory($photo_repository->directory(),
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
+<script type="text/javascript">
+var photo_repo_name = '<?php echo $photo_repository->name(); ?>';
+</script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Racer Photos'; require('inc/banner.inc'); ?>
+<?php $banner_title = ($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'; require('inc/banner.inc'); ?>
 
 <div class="block_buttons">
 <form method="link">
@@ -97,7 +105,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-      .' onclick="window.location.href=\'photo-crop.php?name='.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'\'"'
+      .' onclick="window.location.href=\''.photo_crop_url($image_filename).'\'"'
       .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
@@ -114,8 +122,7 @@ foreach ($stmt as $rs) {
 <?php
 foreach ($allfiles as $imagefile) {
   echo '<div class="thumbnail'.(isset($racers_by_photo[$imagefile]) ? ' hidden' : '').'">';
-  // TODO Pass repo information to photo-crop
-  echo '<a href="photo-crop.php?name='.urlencode($imagefile).'">';
+  echo '<a href="'.photo_crop_url($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
       .' src="'.$photo_repository->lookup('thumb')->render_url($imagefile).'"/>';
