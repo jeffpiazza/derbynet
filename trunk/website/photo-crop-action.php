@@ -40,7 +40,7 @@ if (isset($_POST['rotation']) && $_POST['rotation']) {
   $photo_repository->lookup('original')->delete_dependents($image_name);
   // We're counting on work getting regenerated upon display
 
-  header('Location: photo-crop.php?name='.urlencode($image_name));
+  header('Location: photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($image_name));
   exit(0);
 }
 
@@ -66,6 +66,6 @@ imagedestroy($crop);
 imagedestroy($im);
 
 $cropped->delete_dependents($image_name);
-header('Location: photo-thumbs.php');
+header('Location: photo-thumbs.php?repo='.$photo_repository->name());
 exit(0);
 ?>
