@@ -9,15 +9,11 @@
 <body>
 
 <?php
-// SERVER_NAME
-// REQUEST_URI
-
 $last = strrpos($_SERVER['REQUEST_URI'], '/');
 if ($last === false) {
   $last = -1;
 }
-$url = 'http://'.$_SERVER['SERVER_NAME'].substr($_SERVER['REQUEST_URI'], 0, $last + 1).'kiosk.php';
-
+$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].substr($_SERVER['REQUEST_URI'], 0, $last + 1).'kiosk.php';
 ?>
 
 <form onsubmit="go_fullscreen(); return false;" style="margin-top: 100px; margin-left: auto; margin-right: auto;">
@@ -54,6 +50,8 @@ $url = 'http://'.$_SERVER['SERVER_NAME'].substr($_SERVER['REQUEST_URI'], 0, $las
    $('body').prepend(iframe);
    document.body.style.overflow = 'hidden';
  }
+
+// TODO $(function() { setTimeout(function() { go_fullscreen(); }, 1000); });
 </script>
 </body>
 </html>
