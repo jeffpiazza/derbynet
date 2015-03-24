@@ -1,7 +1,7 @@
 <div class="banner">
 <?php if (!isset($no_back_button) || !$no_back_button) { ?>
   <div class="back_button">
-    <form method="link" action="index.php">
+    <form onsubmit="window.location='index.php'; return false;">
 	  <input type="image" src="img/back-button.png" value="Back"/>
     </form>
   </div>
