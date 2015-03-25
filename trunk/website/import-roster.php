@@ -106,7 +106,7 @@ try {
 <td data-home="classname"><div data-field="classname" class="field required" id="den-name"><?php echo group_label(); ?></div></td>
 <td data-home="carnumber"><div data-field="carnumber" class="field optional">Car Number</div></td>
 <td data-home="carname"><div data-field="carname" class="field optional">Car Name</div></td>
-<td data-home="subgroup"><div data-field="subgroup" class="field optional">Subgroup<!-- TODO --></div></td>
+<td data-home="subgroup"><div data-field="subgroup" class="field optional"><?php echo subgroup_label(); ?></div></td>
 </tr>
 </table>
 </div>
