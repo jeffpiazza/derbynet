@@ -106,21 +106,21 @@ function write_raceinfo($key, $val) {
 // Presumably they're in the Windows registry somewhere.
 
 function group_label() {
-  return read_raceinfo('GroupLabel', 'Den');
+  return read_raceinfo('group-label', 'Den');
 }
 function group_label_lc() {
   return strtolower(group_label());
 }
 
 function subgroup_label() {
-  return read_raceinfo('SubgroupLabel', 'Subgroup');
+  return read_raceinfo('subgroup-label', 'Subgroup');
 }
 function subgroup_label_lc() {
   return strtolower(subgroup_label());
 }
 
 function supergroup_label() {
-  return read_raceinfo('SupergroupLabel', 'Pack');
+  return read_raceinfo('supergroup-label', 'Pack');
 }
 function supergroup_label_lc() {
   return strtolower(supergroup_label());
