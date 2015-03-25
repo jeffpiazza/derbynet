@@ -9,6 +9,17 @@ function htmlDecode( html ) {
     return a.textContent;
 }
 
+function handle_header_row_present_change(event) {
+    if ($("#header-row-present").prop("checked")) {
+        $('[data-row="1"]').addClass("header_row");
+        $('[data-row="1"] .outcome').text("Labels:");
+    } else {
+        $('[data-row="1"]').removeClass("header_row");
+        $('[data-row="1"] .outcome').text("");
+    }
+}
+$(function() { $("#header-row-present").on("change", handle_header_row_present_change); });
+
 function printTable(file, encoding) {
     var reader = new FileReader();
 
@@ -32,8 +43,8 @@ function printTable(file, encoding) {
                     html += ' class="header_row"';
                 }
                 html += '>';
-                if (first) {
-                    html += '<th class="outcome">Label?</th>\n';
+                if (first && $("#header-row-present").prop("checked")) {
+                    html += '<th class="outcome">Labels:</th>\n';
                 } else {
                     html += '<th class="outcome"/>\n';
                 }
@@ -190,7 +201,9 @@ $(function() {
     }
 
     $('#import_button').click(function() {
-        handle_import_one_row(2);
+        // First row of file is labeled data-row="1".
+        // If the file contains a header row, the first data to process is row 2, otherwise row 1.
+        handle_import_one_row($("#header-row-present").prop("checked") ? 2 : 1);
     });
 
     $('.fields .target').droppable({

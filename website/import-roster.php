@@ -12,8 +12,19 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/import-roster.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+// Turn off jQuery Mobile bullshit page loading hijack functionality, which
+// tries to perform page loads via ajax, a "service" we don't really want.
+// Fortunately, it's possible to turn that stuff off.
+$(document).bind("mobileinit", function() {
+				   $.extend($.mobile, {
+					 ajaxEnabled: false
+					 });
+				 });
+</script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 <script type="text/javascript" src="js/jquery.csv.js"></script>
@@ -48,15 +59,15 @@ try {
   <?php } ?>
 
   <form method="link" action="setup.php">
-    <input type="submit" value="Set Up Database"/>
+    <input type="submit" data-enhanced="true" value="Set Up Database"/>
   </form>
 
   <form method="link">
-    <input type="submit" id="start_over_button" class="hidden" value="Start Over"/>
+    <input type="submit" id="start_over_button" data-enhanced="true" class="hidden" value="Start Over"/>
   </form>
 
   <div id="import_button_div">
-    <input class="hidden" type="button" id="import_button" value="Import Roster"/>
+    <input class="hidden" type="button" id="import_button" data-enhanced="true" value="Import Roster"/>
   </div>
 
   <div id="encoding">
@@ -74,14 +85,14 @@ try {
 
     </div>
 
-    <div>
+    <div class="encoding-div">
       <label for="encoding-select" id="encoding_message">
       Please select encoding (BEFORE selecting file to import):
       </label>
-      <br/>    <input type="radio" name="encoding-select" value="utf-8" checked="checked">UTF-8</input>
-      <br/>    <input type="radio" name="encoding-select" value="macintosh">Macintosh</input>
-      <br/>    <input type="radio" name="encoding-select" value="cp1252">Windows (cp1252)</input>
-      <br/>    <input type="radio" name="encoding-select" value="cp437">MS-DOS (cp437)</input>
+      <br/>    <input type="radio" name="encoding-select" data-enhanced="true" value="utf-8" checked="checked">UTF-8</input>
+      <br/>    <input type="radio" name="encoding-select" data-enhanced="true" value="macintosh">Macintosh</input>
+      <br/>    <input type="radio" name="encoding-select" data-enhanced="true" value="cp1252">Windows (cp1252)</input>
+      <br/>    <input type="radio" name="encoding-select" data-enhanced="true" value="cp437">MS-DOS (cp437)</input>
     </div>
   </div>
 
@@ -96,6 +107,10 @@ try {
 <!-- top_matter --></div>
 
 <div class="fields hidden">
+
+<label for="header-row-present">File has a header row?</label>
+<input type="checkbox" name="header-row-present" id="header-row-present" data-role="flipswitch" checked="checked"/>
+
 <h3>Drag fields to label the data columns for import.</h3>
 
 <div class="target"> <!-- targets for column labels -->

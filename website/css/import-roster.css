@@ -33,7 +33,7 @@
 }
 
 .file_target input {
-  width: 100%;
+  width: 98%;
   height: 300px;
   border: 4px dashed #023882;
   /* TODO valign: center; */
@@ -130,3 +130,15 @@ input[type='button'], input[type='submit'] {
   display: inline-block;
   width: 300px;
 }
+
+/* Sometimes all the outcome cells are empty, but we don't want the table to shift */
+.outcome {
+    width: 5em;
+}
+
+/* These try to restore the look of the page after jquery.mobile has manipulated it.
+  TODO Since all we really want out of this is the cool-looking flipswitch elements, find a way just to take that,
+  without all the weird page-loading behaviors. */
+
+.ui-page-theme-a { background-color: #ffffff; }
+body.ui-mobile-viewport, .ui-page { margin: 8px; }
