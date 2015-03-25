@@ -29,7 +29,8 @@ $allfiles = scan_directory($photo_repository->directory(),
 
 function photo_crop_url($basename) {
   global $photo_repository;
-  return 'photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($basename);
+  return htmlspecialchars('photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($basename),
+                          ENT_QUOTES, 'UTF-8');
 }
 
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
