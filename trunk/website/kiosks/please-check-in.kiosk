@@ -6,15 +6,7 @@
 <?php require('inc/kiosk-page.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript">
-function fire_reload() {
-  location.reload(true);
-}
-
-function queue_reload() {
-  setTimeout(fire_reload, 5000);
-}
-  
-$(document).ready(queue_reload);
+$(function () { setInterval(function() { location.reload(true); }, 30000); });
 </script>
 </head>
 <body>
