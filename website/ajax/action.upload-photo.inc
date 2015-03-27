@@ -63,7 +63,17 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
     if (isset($_POST['racerid'])) {
       $column_name = $photo_repository->column_name();
       $row = array('racerid' => $_POST['racerid'],
-                   $column_name => $photo_repository->lookup('display')->file_path($target_name));
+				   // We want to write a value here that will be
+				   // compatible with what GPRM needs, in case we're
+				   // working with a GPRM database.
+				   //
+				   // TODO: For a just-uploaded file, the only file
+				   // path that will properly exist is the original,
+				   // but we're writing the path for the cropped
+				   // version.  We should instead write the path for
+				   // the original now, and update to the cropped
+				   // if/when the image actually gets cropped.
+                   $column_name => $photo_repository->lookup('cropped')->file_path($target_name));
       $success = take_action_silently('UPDATE RegistrationInfo'
                                       .' SET '.$column_name.' = :photo'
                                       .' WHERE racerid = :racerid',
