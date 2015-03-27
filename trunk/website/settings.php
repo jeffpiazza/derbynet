@@ -33,7 +33,7 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
 
   <div class="settings_group">
     <input type="hidden" name="with-gprm-checkbox" value="yes"/>
-<input id="with-gprm" name="with-gprm" type="checkbox"<?php if (read_raceinfo_boolean('with-gprm')) echo ' checked="checked"';?>/>
+    <input id="with-gprm" name="with-gprm" type="checkbox"<?php if (with_gprm()) echo ' checked="checked"';?>/>
   <label for="with-gprm">Using Grand Prix Race Manager (for timer control, etc.)?</label>
   </div>
 
