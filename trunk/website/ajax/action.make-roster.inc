@@ -132,7 +132,9 @@ $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, tot
                      .'       ON RaceChart.roundid = Rounds.roundid'
                      .'       WHERE '.$keyfield.' = :key'
                      .$and_roundid_ok
-                     .'       GROUP BY racerid) AS Result'
+					 // This is basically "GROUP BY racerid"; racerid
+					 // (should) determine Rounds.classid uniquely.
+                     .'       GROUP BY racerid, Rounds.classid) AS Result'
                      .' INNER JOIN RegistrationInfo'
                      .'  ON Result.racerid = RegistrationInfo.racerid'
                      .' ORDER BY total');
