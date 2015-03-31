@@ -389,6 +389,8 @@ function write_chart($roundid, &$heats) {
 			}
 		}
 	}
+	$classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = '.$roundid);
+	$db->exec('UPDATE RaceChart SET classid = '.$classid.' WHERE roundid = '.$roundid);
 }
 
 function results_exist($roundid) {
