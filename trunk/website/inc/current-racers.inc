@@ -6,11 +6,14 @@ require_once('inc/data.inc');
 require_once('inc/photo-config.inc');
 
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
-  
-$stmt = $db->prepare('SELECT lane, lastname, firstname, carnumber, carname, imagefile, finishtime'
-                     .' FROM RaceChart'
-                     .' INNER JOIN RegistrationInfo'
-                     .' ON RaceChart.racerid = RegistrationInfo.racerid'
+$use_subgroups = read_raceinfo_boolean('use-subgroups');
+
+$stmt = $db->prepare('SELECT lane, carnumber, lastname, firstname, carname, rank, imagefile, finishtime'
+                     .' FROM '
+                     .inner_join('RaceChart', 'RegistrationInfo',
+                                 'RaceChart.racerid = RegistrationInfo.racerid',
+                                 'Ranks',
+                                 'RegistrationInfo.rankid = Ranks.rankid')
                      .' WHERE roundid = :roundid'
                      .' AND heat = :heat'
                      .' ORDER BY lane');
@@ -20,10 +23,11 @@ foreach ($stmt as $row) {
   echo '  <racer lane="'.$row['lane'].'"'
           // TODO: Offer different formats for name
         .' name="'.htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8').'"'
-       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
-       .' carnumber="'.$row['carnumber'].'"'
-       .' photo="'.($show_racer_photos ? headshots()->url_for_racer($row) : '').'"'
-       .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
-       .'/>'."\n";
+        .($use_subgroups ? ' subgroup="'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')
+        .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
+        .' carnumber="'.$row['carnumber'].'"'
+        .' photo="'.($show_racer_photos ? headshots()->url_for_racer($row) : '').'"'
+        .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
+        .'/>'."\n";
 }
 ?>
