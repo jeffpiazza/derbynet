@@ -1,8 +1,4 @@
 
-// TODO: Incomplete race results are more likely than you'd think.
-// TODO: Animation should only occur once, even if current heat doesn't advance.
-// So: should detect when there's a complete result, animate it once, and then wait for a new heat.
-
 // TODO: Window resizing should adjust the font size in some meaningful way.
 // TODO: Test display in 640x480 with the longest names we can find.
 
@@ -234,8 +230,26 @@ function process_new_heat(watching) {
                     $('[data-lane="' + lane + '"] .name_and_photo').prepend(
                         '<img src="' + r.getAttribute('photo') + '"/>');
                 }
-                // $('[data-lane="' + lane + '"] .carname').text(r.getAttribute('carname'));
-                // $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
+                var br_added = false;
+                if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
+                    if (!br_added) {
+                        $('[data-lane="' + lane + '"] .name').append('<br/>');
+                        br_added = true;
+                    }
+                    $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
+                    $('#carname-' + lane).text('"' + r.getAttribute('carname') + '"');
+                }
+                if (r.hasAttribute('subgroup')) {
+                    if (!br_added) {
+                        $('[data-lane="' + lane + '"] .name').append('<br/>');
+                        br_added = true;
+                    }
+                    $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
+                    $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
+                }
+
+
+                $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
             }
         }
     }

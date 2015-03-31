@@ -60,6 +60,11 @@ img {
     vertical-align: middle
 }
 
+.name .subtitle {
+    font-size: 75%;
+    font-style: italic;
+}
+
 #overlay_background {
     position: fixed;
     z-index:100;
