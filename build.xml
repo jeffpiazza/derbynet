@@ -10,7 +10,6 @@
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
   <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
-      <delete file="../WebRaceManager.zip " quiet="yes" failonerror="false"/>
       <loadresource property="svn">
           <file file="website/inc/generated-version.inc"/>
       </loadresource>
@@ -43,10 +42,7 @@
 
   <target name="generated-version.inc">
       <!-- svn info reports the last update version, not the last commited
-      version. -->
-      <exec executable="svn">
-          <arg value="update"/>
-      </exec>
+      version.  That's true even if the last commit came from this workspace!! -->
       <exec executable="svn" outputproperty="svn-info-output">
           <arg value="info"/>
       </exec>
