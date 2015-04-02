@@ -47,6 +47,13 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
   </div>
 
   <div class="settings_group">
+    <input type="hidden" name="drop-slowest-checkbox" value="yes"/>
+    <input id="drop-slowest" name="drop-slowest" type="checkbox"<?php 
+        if (read_raceinfo_boolean('drop-slowest')) echo ' checked="checked"';?>/>
+    <label for="drop-slowest">Drop each racer's slowest heat?</label>
+  </div>
+
+  <div class="settings_group">
     <input id="group-label" name="group-label" type="text" value="<?php echo group_label(); ?>"/>
     <label for="group-label">Group Label</label>
     <br/>

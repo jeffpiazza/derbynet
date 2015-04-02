@@ -87,8 +87,8 @@ if ($need_spacer) {
 <div class="index_spacer">&nbsp;</div>
 
 <?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards.php">
-  <input type="submit" value="Awards"/>
+<form method="link" action="standings.php">
+  <input type="submit" value="Standings"/>
 </form>
 <br/>
 <?php } ?>
