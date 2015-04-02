@@ -12,7 +12,8 @@ if (have_permission(SET_UP_PERMISSION)) {
   foreach(array('with-gprm' => 'with-gprm',
                 'do-use-subgroups' => 'use-subgroups',
                 'use-master-sched' => 'use-master-sched',
-                'show-racer-photos' => 'show-racer-photos')
+                'show-racer-photos' => 'show-racer-photos',
+                'drop-slowest' => 'drop-slowest')
           // See also use-xbs, below
           as $post_key => $raceinfo_key) {
     if (isset($_POST[$post_key.'-checkbox'])) {
