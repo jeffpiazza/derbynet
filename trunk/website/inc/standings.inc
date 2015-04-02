@@ -1,6 +1,13 @@
 <?php
 require_once('inc/data.inc');
 
+function sql_scoring_expression($finishtime = 'finishtime') {
+  // Assumes we're in the context of a GROUP BY for one racer and one roundid.
+  return read_raceinfo_boolean('drop-slowest') 
+      ? '(SUM('.$finishtime.') - MAX('.$finishtime.'))/(COUNT(*) - 1)'
+      : 'SUM('.$finishtime.')/COUNT(*)';
+}
+
 // Returns a list of roundids for the highest-numbered round for each class with
 // participants.
 function final_roundids() {
@@ -28,9 +35,7 @@ function final_roundids() {
 function standings_for_rounds($roundids) {
   global $db;
 
-  $scoring_expr = read_raceinfo_boolean('drop-slowest') 
-      ? '(SUM(finishtime) - MAX(finishtime))/(COUNT(*) - 1)'
-      : 'SUM(finishtime)/COUNT(*)';
+  $scoring_expr = sql_scoring_expression('finishtime');
 
   // We want this "overall" set of results, ordered by time score.  For any other rounds (Rounds.roundid NOT IN (0,...)),
   // we're going to need to place the values in a separate map by roundid.

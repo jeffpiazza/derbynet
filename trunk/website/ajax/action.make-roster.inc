@@ -28,6 +28,8 @@
 
 start_response();
 
+require_once('inc/standings.inc');
+
 $bucket_limit = $_POST['top'];
 $bucketed = isset($_POST['bucketed']) && $_POST['bucketed'];
 
@@ -126,7 +128,8 @@ if ($grand_finals) {
 // RaceChart(resultid, classid, roundid, heat, lane, racerid, finishtime, completed)
 // RegistrationInfo(racerid, ..., classid, rankid)
 $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, total'
-                     .' FROM (SELECT racerid, Rounds.classid, AVG(finishtime) AS total'
+                     .' FROM (SELECT racerid, Rounds.classid, '
+                     .sql_scoring_expression('finishtime').' AS total'
                      .'       FROM RaceChart'
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
