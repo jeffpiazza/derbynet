@@ -94,7 +94,11 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       $mask |= (1 << ($row['lane'] - 1));
     }
     if ($pending) {
-      echo '<heat-ready lane-mask="'.$mask.'"/>'."\n";
+      echo '<heat-ready lane-mask="'.$mask.'"'
+          .' class="'.htmlspecialchars($current['class'], ENT_QUOTES, 'UTF-8').'"'
+          .' round="'.$current['round'].'"'
+          .' heat="'.$current['heat'].'"'
+          .'/>'."\n";
       set_timer_state(TIMER_PREPARED);
       // send_replay_START($current);
     }
