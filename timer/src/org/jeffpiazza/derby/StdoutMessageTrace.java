@@ -20,6 +20,10 @@ public class StdoutMessageTrace implements HttpTask.MessageTracer {
         }
     }
 
+  public void traceInternal(String s) {
+    System.out.println(s);
+  }
+
     public static String prettyFormat(String input, int indent) {
         try {
             Source xmlInput = new StreamSource(new StringReader(input));

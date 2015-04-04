@@ -2,7 +2,6 @@ package org.jeffpiazza.derby;
 
 import java.io.*;
 
-// TODO: This isn't yet used as a MessageTracer.
 // TODO: Suppress heartbeats with uninteresting responses
 public class LogWriter implements HttpTask.MessageTracer {
   private PrintWriter writer;
@@ -27,6 +26,10 @@ public class LogWriter implements HttpTask.MessageTracer {
                    msg.replace("\r", "\\r"));
   }
 
+  public void serialPortLogInternal(String msg) {
+    serialPortLog(INTERNAL, msg);
+  }
+
   public void httpLog(int direction, String msg) {
     writer.println(System.currentTimeMillis() + "\t\t\t" +
                    (direction == INCOMING ? "<-- " :
@@ -41,5 +44,9 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   public void onMessageResponse(Message m, String response) {
     httpLog(INCOMING, response);
+  }
+
+  public void traceInternal(String s) {
+    httpLog(INTERNAL, s);
   }
 }

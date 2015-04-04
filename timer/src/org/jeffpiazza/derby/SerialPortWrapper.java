@@ -51,6 +51,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public SerialPort port() { return port; }
 
+  public LogWriter logWriter() { return logwriter; }
+
   public void registerDetector(Detector detector) {
     synchronized (detectors) {
       detectors.add(detector);

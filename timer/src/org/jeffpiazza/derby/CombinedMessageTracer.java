@@ -19,4 +19,10 @@ public class CombinedMessageTracer implements HttpTask.MessageTracer {
       t.onMessageResponse(m, response);
     }
   }
+
+  public void traceInternal(String s) {
+    for (HttpTask.MessageTracer t : tracers) {
+      t.traceInternal(s);
+    }
+  }
 }
