@@ -71,24 +71,25 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
         String nl = portWrapper.writeAndWaitForResponse(READ_LANE_COUNT, 500);
         if ('0' < nl.charAt(0) && nl.charAt(0) <= '9') {
           this.numberOfLanes = nl.charAt(0) - '0';
-          System.out.println(this.numberOfLanes + " lane(s) reported.");
+          portWrapper.logWriter().serialPortLogInternal(Timestamp.string() + ": " +
+                                                        this.numberOfLanes + " lane(s) reported.");
         }
 
         // TODO: Does this just need to be configured to
         // eliminate having to do manually?
-        System.out.println("AUTO_RESET = " +  // TODO
+        portWrapper.logWriter().serialPortLogInternal("AUTO_RESET = " + 
                            portWrapper.writeAndWaitForResponse(READ_AUTO_RESET, 500)
                            ); 
-        System.out.println("LANE_CHARACTER = " +
+        portWrapper.logWriter().serialPortLogInternal("LANE_CHARACTER = " +
                            portWrapper.writeAndWaitForResponse(READ_LANE_CHARACTER, 500)
                            );
-        System.out.println("DECIMAL_PLACES = " +
+        portWrapper.logWriter().serialPortLogInternal("DECIMAL_PLACES = " +
                            portWrapper.writeAndWaitForResponse(READ_DECIMAL_PLACES, 500)
                            );
-        System.out.println("PLACE_CHARACTER = " +
+        portWrapper.logWriter().serialPortLogInternal("PLACE_CHARACTER = " +
                            portWrapper.writeAndWaitForResponse(READ_PLACE_CHARACTER, 500)
                            );
-        System.out.println("START_SWITCH = " +
+        portWrapper.logWriter().serialPortLogInternal("START_SWITCH = " +
                            portWrapper.writeAndWaitForResponse(READ_START_SWITCH, 500)
                            );
 
@@ -172,7 +173,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
 
     if (deadline != 0) {  // Waiting for results
       if (System.currentTimeMillis() >= deadline) {
-        System.out.println("Forcing end of race");  // TODO
+        portWrapper.logWriter().serialPortLogInternal("Forcing end of race");
         setRaceFinishedDeadline(0);
         portWrapper.write(FORCE_END_OF_RACE);
       }
@@ -191,13 +192,13 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
             portWrapper.write(READY_TIMER);
             synchronized (this) {
               this.raceFinishedDeadline = System.currentTimeMillis() + 10000;
-              System.out.println("Gate opened; Race deadline set at " + raceFinishedDeadline);  // TODO
+              portWrapper.logWriter().serialPortLogInternal("Gate opened; Race deadline set at " + raceFinishedDeadline);
               waitingForGateToOpen = false;
             }
           }
         } else if (rp) {
           if (closed) {
-            System.out.println("Gate closed; waiting for race to start");  // TODO
+            portWrapper.logWriter().serialPortLogInternal("Gate closed; waiting for race to start");
             this.waitingForGateToOpen = true;
           }
         }
@@ -222,8 +223,8 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
     }
 
     // Don't know, assume unchanged
-    // TODO portWrapper.log(LogWriter.INTERNAL, "Unable to determine starting gate state");
-    System.err.println("Unable to read gate state");  // TODO
+    portWrapper.logWriter().serialPortLogInternal("** Unable to determine starting gate state");
+    System.err.println("Unable to read gate state");
     return lastGateIsClosed();
   }
 

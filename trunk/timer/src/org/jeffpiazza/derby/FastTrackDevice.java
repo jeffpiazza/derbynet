@@ -11,10 +11,12 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
   private int state = IDLE;
   private void setState(int newState) {
     state = newState;
-    System.out.println("setState(" + (state == IDLE ? "IDLE" :
-                                      state == MARK ? "MARK" :
-                                      state == SET  ? "SET" :
-                                      state == RUNNING ? "RUNNING" : "UNKNOWN") + ")");
+    portWrapper.logWriter().serialPortLogInternal("setState(" + (state == IDLE ? "IDLE" :
+                                                                 state == MARK ? "MARK" :
+                                                                 state == SET  ? "SET" :
+                                                                 state == RUNNING ? "RUNNING" :
+                                                                 "UNKNOWN")
+                                                  + ")");
   }
 
   // Nothing going on; waiting for a prepareHeat call.
@@ -103,10 +105,10 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Micro Wizard") >= 0) {
-        System.out.println("* Micro Wizard detected");
+        portWrapper.logWriter().serialPortLogInternal("* Micro Wizard detected");
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
-          System.out.println("* K timer string detected");
+          portWrapper.logWriter().serialPortLogInternal("* K timer string detected");
           setUp();
           return true;
         }
@@ -143,18 +145,19 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.
 
+    StringBuffer sb = new StringBuffer("Heat prepared: ");
     for (int lane = 0; lane < MAX_LANES; ++lane) {
       if ((lanemask & (1 << lane)) == 0) {
-        System.out.print("-");
+        sb.append("-");
         // A LANE_MASK command echoes the command (first response) and then
         // sends a "* <cr> <lf>" (second response).
         portWrapper.writeAndWaitForResponse(LANE_MASK + (char)('A' + lane));
         portWrapper.next();
       } else {
-        System.out.print(lane + 1);
+        sb.append(lane + 1);
       }
     }
-    System.out.println();
+    portWrapper.logWriter().serialPortLogInternal(sb.toString());
 
     setState(MARK);
   }

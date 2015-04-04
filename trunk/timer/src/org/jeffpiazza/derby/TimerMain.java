@@ -27,7 +27,6 @@ public class TimerMain {
     String password = "doyourbest";
     String portname = null;
     String devicename = null;
-    HttpTask.MessageTracer traceMessages = null;
     HttpTask.MessageTracer traceHeartbeats = null;
     boolean traceResponses = false;
 
@@ -38,6 +37,9 @@ public class TimerMain {
       t.printStackTrace();
       return;
     }
+
+    // Include HTTP traffic in the timer log:
+    HttpTask.MessageTracer traceMessages = logwriter;
 
     int consumed_args = 0;
     while (consumed_args + 1 < args.length) {
@@ -80,7 +82,8 @@ public class TimerMain {
     String base_url = args[consumed_args];
 
     try {
-      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename, logwriter));
+      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename, logwriter),
+                      traceMessages, traceHeartbeats);
     } catch (Throwable t) {
       t.printStackTrace();
     }
@@ -95,7 +98,7 @@ public class TimerMain {
       PortIterator ports = portname == null ? new PortIterator() : new PortIterator(portname);
       while (ports.hasNext()) {
         SerialPort port = ports.next();
-        System.out.println(port.getPortName());  // TODO: Better logging
+        System.out.println(port.getPortName());
         TimerDevice device = deviceFinder.findDevice(port, logwriter);
         if (device != null) {
           return device;
@@ -108,10 +111,12 @@ public class TimerMain {
   }
 
   public static void sayHelloAndPoll(String base_url, String username, String password,
-                                     final TimerDevice device) throws Exception {
-    final HttpTask httpTask = new HttpTask(base_url, username, password);
+                                     final TimerDevice device, 
+                                     HttpTask.MessageTracer traceMessages,
+                                     HttpTask.MessageTracer traceHeartbeat) throws Exception {
+    final HttpTask httpTask = new HttpTask(base_url, username, password, traceMessages, traceHeartbeat);
 
-    wireTogether(httpTask, device);
+    wireTogether(httpTask, device, traceMessages);
 
     int nlanes = device.getNumberOfLanes();
 
@@ -128,13 +133,17 @@ public class TimerMain {
     System.out.println("Starting HTTP thread");
     (new Thread(httpTask)).start();
 
-    runDevicePollingLoop(device);
+    runDevicePollingLoop(device, traceMessages);
   }
 
-  public static void wireTogether(final HttpTask httpTask, final TimerDevice device) {
+  public static void wireTogether(final HttpTask httpTask, final TimerDevice device,
+                                  final HttpTask.MessageTracer traceMessages) {
+    traceMessages.traceInternal(Timestamp.string() + ": Timer detected.");
+
     httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
         public void heatReady(int laneMask) {
           try {
+            traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
             device.prepareHeat(laneMask);
           } catch (Throwable t) {
             // TODO: details
@@ -148,7 +157,7 @@ public class TimerMain {
 
     httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
         public void abortHeat() {
-          System.out.println(Timestamp.string() + ": AbortHeat received");
+          traceMessages.traceInternal(Timestamp.string() + ": AbortHeat received");
           raceDeadline = -1;
           try {
             device.abortHeat();
@@ -163,7 +172,7 @@ public class TimerMain {
           // Rely on recipient to ignore if not expecting any results
           try {
             raceDeadline = -1;
-            System.out.println(Timestamp.string() + ": Race finished");
+            traceMessages.traceInternal(Timestamp.string() + ": Race finished");
             httpTask.send(new Message.Finished(results));
           } catch (Throwable t) {
           }
@@ -174,7 +183,7 @@ public class TimerMain {
         public void raceStarted() {
           try {
             raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
-            System.out.println(Timestamp.string() + ": Race started");
+            traceMessages.traceInternal(Timestamp.string() + ": Race started");
             httpTask.send(new Message.Started());
           } catch (Throwable t) {
           }
@@ -182,7 +191,8 @@ public class TimerMain {
       });
   }
 
-  private static void runDevicePollingLoop(TimerDevice device) throws SerialPortException {
+  private static void runDevicePollingLoop(TimerDevice device, HttpTask.MessageTracer traceMessages)
+      throws SerialPortException {
     while (true) {
       device.poll();
       if (!(raceDeadline < 0 || System.currentTimeMillis() < raceDeadline)) {
@@ -191,7 +201,9 @@ public class TimerMain {
         // - Send empty results back to web server.
         // - Repeat prepareHeat.
         // - Nothing, as now.
-        System.err.println(Timestamp.string() + ": ****** Race timed out *******");
+        String msg = Timestamp.string() + ": ****** Race timed out *******";
+        traceMessages.traceInternal(msg);
+        System.err.println(msg);
         raceDeadline = -1;
       }
       try {

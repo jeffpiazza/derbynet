@@ -1,10 +1,12 @@
 package org.jeffpiazza.derby;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class LogFileFactory {
   public static PrintWriter makeLogFile() throws IOException {
-    return makeLogFile("timer.log");
+    return makeLogFile("timer-" + (new SimpleDateFormat("yyyyMMddHHmm")).format(Calendar.getInstance().getTime()) + ".log");
   }
 
   public static PrintWriter makeLogFile(String path) throws IOException {

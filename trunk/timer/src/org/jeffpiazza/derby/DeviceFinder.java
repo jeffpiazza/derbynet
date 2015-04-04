@@ -58,6 +58,7 @@ public class DeviceFinder {
           deviceClass.getConstructor(SerialPortWrapper.class);
       TimerDevice device = constructor.newInstance(portWrapper);
       if (device.probe()) {
+        System.out.println("*** Identified!!");
         return device;
       }
     }

@@ -17,6 +17,7 @@ public class HttpTask implements Runnable {
     public interface MessageTracer {
         void onMessageSend(Message m, String params);
         void onMessageResponse(Message m, String response);
+        void traceInternal(String s);
     }
 
     public HttpTask(String base_url, String username, String password,
