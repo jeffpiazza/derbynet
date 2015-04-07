@@ -4,7 +4,7 @@
 // "Current" award being presented, and whether it's revealed
 
 require_once('inc/photo-config.inc');
-require_once('inc/speed_trophies.inc');
+require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
 if (isset($_GET['key'])) {
@@ -34,7 +34,7 @@ if (count($keys) >= 2) {
     $place = $keys[1];
     if (count($keys) == 3) {
       $classid = $keys[2];
-      $by_class = top_finishers_by_class($place, $classid);
+      $by_class = top_finishers_by_class($place);
       $racerid = $by_class[$classid][$place - 1];
       $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                      array(':classid' => $classid));
