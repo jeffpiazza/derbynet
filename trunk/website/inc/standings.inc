@@ -70,13 +70,48 @@ function standings_for_rounds($roundids) {
                       'lastname' => $row['lastname'],
                       'carnumber' => $row['carnumber'],
                       'base' => $row['base'],  // Number of heats run in round
-                      // TODO: Showing negative for preliminary-round standings
                       'time' => $row['avg'],
                       'best' => $row['best'],
                       'worst' => $row['worst']);
   }
 
   return $result;
+}
+
+// Returns the final standings for the whole field, according to the last round
+// raced for each class.  Racers who were eliminated in prior rounds are not
+// included.  Does not account for any Grand Finals rounds.
+function final_standings() {
+  return standings_for_rounds(implode(',', final_roundids()));
+}
+
+// Collect the top N racer IDs in each class
+function top_finishers_by_class($n_per_class) {
+  $top_finishers = array();
+  foreach (final_standings() as $row) {
+    $racerid = $row['racerid'];
+    $classid = $row['classid'];
+    if (!isset($top_finishers[$classid]))
+      $top_finishers[$classid] = array();
+    if (count($top_finishers[$classid]) < $n_per_class) {
+      $top_finishers[$classid][] = $racerid;
+    }
+  }
+  return $top_finishers;
+}
+
+// Collect the top N racer ids according to overall standings (doesn't account
+// for Grand Finals rounds)
+function top_finishers_overall($n_trophies) {
+  $results = array();
+  foreach (final_standings() as $row) {
+    $results[] = $row['racerid'];
+    if (count($results) >= $n_trophies) {
+      break;
+    }
+  }
+
+  return $results;
 }
 
 ?>

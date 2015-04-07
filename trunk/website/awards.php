@@ -12,7 +12,7 @@ require_permission(VIEW_AWARDS_PERMISSION);
 <body>
 <?php $banner_title = 'Awards Summary'; require('inc/banner.inc');
 
-require_once('inc/speed_trophies.inc');
+require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');

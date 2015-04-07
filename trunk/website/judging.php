@@ -27,7 +27,7 @@ require_permission(JUDGING_PERMISSION);
 $banner_title = 'Judging';
 require('inc/banner.inc');
 
-require_once('inc/speed_trophies.inc');
+require_once('inc/standings.inc');
 
 // TODO: Magical '3' for 'other' awards...
 $awardTypeOther = read_single_value('SELECT awardtypeid FROM AwardTypes WHERE awardtype = \'Other\'',

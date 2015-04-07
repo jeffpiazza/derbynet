@@ -79,7 +79,7 @@ foreach ($stmt as $row) {
 <?php
 $ord = 0;
 $by_roundid = array();
-foreach (standings_for_rounds(implode(',', final_roundids())) as $row) {
+foreach (final_standings() as $row) {
   echo "<tr data-roundid='".$row['roundid']."' data-final='".$row['final']."'"
        .($row['final'] ? "" : " class='hidden'").">";
   
