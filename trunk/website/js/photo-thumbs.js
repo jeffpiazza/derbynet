@@ -114,16 +114,11 @@
 
 
 function changeRacerPhotoAjax(racer, photo) {
-  console.log('changeRacerPhotoAjax: racer = ' + racer + ', photo = ' + photo);
-
-   var xmlhttp = new XMLHttpRequest();
-   xmlhttp.open("POST", g_action_url, /*async*/true);
-   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-// TODO   xmlhttp.onreadystatechange = readystate_handler;
-   xmlhttp.send("action=photo&repo=" + photo_repo_name 
-                + "&racer=" + racer
-				+ "&photo=" + photo);
-// TODO   ajax_add_request();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'photo.assign',
+                   racer: racer,
+                   photo: photo}});
 }
 
 function removeRacerPhoto(previous) {
