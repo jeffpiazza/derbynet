@@ -2,7 +2,7 @@
  // Ajax failure handling, via a (provided) #ajax-failure div, suitable for
  // unattended kiosks.
  //
- // Include by having a < ? php require('inc/ajax-failure.inc'); ? >
+ // Include by having a &lt;? php require('inc/ajax-failure.inc'); ?&gt;
  // line in the BODY of the page.
 
  $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
