@@ -1,4 +1,5 @@
-// Common ajax-handling functions for dashboard-like pages.
+// Common ajax-handling functions for dashboard-like pages.  Looks for <reload/>
+// elements to reload the page, and reports errors or failures via alerts.
 
 g_action_url = "action.php";
 

@@ -1,4 +1,10 @@
 <script type="text/javascript">
+ // Ajax failure handling, via a (provided) #ajax-failure div, suitable for
+ // unattended kiosks.
+ //
+ // Include by having a < ? php require('inc/ajax-failure.inc'); ? >
+ // line in the BODY of the page.
+
  $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
      console.log('ajaxError fired!');
     $('#ajax_status').html(jqxhr.status + " (" + thrownError + " / " +
