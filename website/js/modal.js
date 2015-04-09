@@ -9,9 +9,11 @@ function show_modal(modal_selector, submit_handler) {
     modal_background.fadeTo(200, 0.5);
 
     var modal_div = $(modal_selector);
-    var form = modal_div.find("form");
-    form.off("submit");
-    form.on("submit", submit_handler);
+    if (typeof submit_handler != 'undefined' && submit_handler) {
+        var form = modal_div.find("form");
+        form.off("submit");
+        form.on("submit", submit_handler);
+    }
 
     var modal_width = modal_div.outerWidth();
     modal_div.removeClass("hidden");
@@ -21,8 +23,7 @@ function show_modal(modal_selector, submit_handler) {
         'opacity': 0,
         'z-index': 11000,
         'left' : 50 + '%',
-        'margin-left': -(modal_width/2) + "px",
-        'top': 100 + "px"
+        'margin-left': -(modal_width/2) + "px"
     });
     modal_div.fadeTo(200, 1);
 }

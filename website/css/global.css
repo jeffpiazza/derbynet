@@ -137,6 +137,7 @@ div.banner div.back_button {
 .modal_dialog {
   display: none;
   width: 300px;
+  top: 100px;
   padding: 15px 20px;
   background: #f3f6fa;
   -webkit-border-radius: 6px;

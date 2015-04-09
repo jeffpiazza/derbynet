@@ -27,9 +27,9 @@ function scan_directory($directory, $pattern) {
 $allfiles = scan_directory($photo_repository->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
-function photo_crop_url($basename) {
+function photo_crop_expression($basename) {
   global $photo_repository;
-  return htmlspecialchars('photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($basename),
+  return htmlspecialchars('showPhotoCropModal(this, "'.$photo_repository->name().'", "'.$basename.'", '.time().')',
                           ENT_QUOTES, 'UTF-8');
 }
 
@@ -46,6 +46,7 @@ function photo_crop_url($basename) {
 <title>Assign Racer Photos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/photo-thumbs.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -53,7 +54,8 @@ function photo_crop_url($basename) {
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<script type="text/javascript" src="js/checkin.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/jquery.Jcrop.min.js"></script>
 <script type="text/javascript">
 var photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 </script>
@@ -107,7 +109,7 @@ foreach ($stmt as $rs) {
   if ($raw_imagefile != '') {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
-      .' onclick="window.location.href=\''.photo_crop_url($image_filename).'\'"'
+      .' onclick="'.photo_crop_expression($image_filename).'"'
       .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
@@ -124,11 +126,10 @@ foreach ($stmt as $rs) {
 <?php
 foreach ($allfiles as $imagefile) {
   echo '<div class="thumbnail'.(isset($racers_by_photo[$imagefile]) ? ' hidden' : '').'">';
-  echo '<a href="'.photo_crop_url($imagefile).'">';
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
+      .' onclick="'.photo_crop_expression($imagefile).'"'
       .' src="'.$photo_repository->lookup('thumb')->render_url($imagefile).'"/>';
-  echo '</a>';
   echo '</div>'."\n";
 }
 
@@ -139,6 +140,16 @@ if (empty($allfiles)) {
 </div>
 
 </div>
+
+<div id="photo_crop_modal" class="modal_dialog hidden block_buttons">
+<div id="work_image"></div>
+
+<input data-enhanced="true" type="button" value="Crop" onclick="cropPhoto(); return false;"/>
+<input data-enhanced="true" type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
+<input data-enhanced="true" type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
+<input data-enhanced="true" type="button" value="Cancel" onclick="close_modal('#photo_crop_modal');"/>
+</div>
+
 <div id="ajax_working" class="hidden">
   <span id="ajax_num_requests">0</span> request(s) pending.
 </div>
