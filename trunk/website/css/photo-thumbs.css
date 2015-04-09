@@ -43,3 +43,13 @@ img { z-index: 30; }
   background-color: #ffffb4;
 }
 
+#photo_crop_modal {
+    top: 0px;
+    width: 650px;
+}
+
+#photo_crop_modal img {
+/* TODO: Trying to center the photo in the dialog */
+    margin-left: auto;
+    margin-right: auto;
+}

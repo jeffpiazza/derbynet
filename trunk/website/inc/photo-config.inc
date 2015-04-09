@@ -366,7 +366,7 @@ function headshots() {
     $headshots->make_render('original', 0, 0, '');
     $headshots->make_render('cropped', 0, 0, 'original');
     // "Working size" images: big enough to edit, but small enough to fit on screen
-    $headshots->make_render('work', 950, 950, 'original');
+    $headshots->make_render('work', 600, 600, 'original');
     $headshots->make_render('display', $headshots->display_width(), $headshots->display_height(), 'cropped');
     // "Thumbnail" images are what get displayed on the photo-thumbs page
     $headshots->make_render('thumb', 150, 150, 'cropped');
@@ -390,7 +390,7 @@ function car_photo_repository() {
     $car_photo_repository->make_render('original', 0, 0, '');
     $car_photo_repository->make_render('cropped', 0, 0, 'original');
     // "Working size" images: big enough to edit, but small enough to fit on screen
-    $car_photo_repository->make_render('work', 950, 950, 'original');
+    $car_photo_repository->make_render('work', 600, 600, 'original');
     $car_photo_repository->make_render('display', 
                                        $car_photo_repository->display_width(),
                                        $car_photo_repository->display_height(),

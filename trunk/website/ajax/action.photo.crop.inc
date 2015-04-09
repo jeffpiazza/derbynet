@@ -1,22 +1,17 @@
 <?php
+
+// $_POST['repo'] - Name of the repository ('head' or 'car')
+// $_POST['image_name'] - Base filename of the image
+// $_POST['left'], top, right, bottom, original_height, original_width - cropping parameters, all in pixels
+
+// TODO: Permissions
+
 require_once('inc/photo-config.inc');
 
-// For rotations, we re-write the original image in place, and generate a new working image.
-//
-// For cropping, we write a new copy into the cropped directory, and
-// re-generate a (cropped) thumbnail image into the thumbs directory.
-// Crop numbers are all relative to the working copy, but we do the
-// actual cropping by re-reading the original and scaling the cropping
-// numbers.
+start_response();
 
-// $_POST: image_name
-// usually:
-//         left, top, right, bottom, original_height, original_width
-//   but alternatively:
-//         rotation
-
-// TODO
 $image_name = $_POST['image_name'];
+
 $photo_repository = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
 
 $original = $photo_repository->lookup('original');
@@ -27,22 +22,6 @@ $source_file_path = $original->file_path($image_name);
 list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
 
 $im = open_image($source_file_path, $image_type);
-
-if (isset($_POST['rotation']) && $_POST['rotation']) {
-  $rot = imagerotate($im, $_POST['rotation'], /* fill color */ 0);
-  @unlink($source_file_path);
-  if ($rot === false)
-    exit(1);
-  write_image($rot, $source_file_path, $image_type);
-  imagedestroy($im);
-  imagedestroy($rot);
-
-  $photo_repository->lookup('original')->delete_dependents($image_name);
-  // We're counting on work getting regenerated upon display
-
-  header('Location: photo-crop.php?repo='.$photo_repository->name().'&name='.urlencode($image_name));
-  exit(0);
-}
 
 $target_file_path = $cropped->target_file_path($image_name);
 
@@ -66,6 +45,10 @@ imagedestroy($crop);
 imagedestroy($im);
 
 $cropped->delete_dependents($image_name);
-header('Location: photo-thumbs.php?repo='.$photo_repository->name());
-exit(0);
+
+echo "<success/>\n";
+echo "<cache_breaker time='".time()."'/>\n";
+
+end_response();
+
 ?>

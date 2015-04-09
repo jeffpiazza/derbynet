@@ -90,7 +90,6 @@
 			drop: function(event, ui) {
 			  // ui.draggable will be the assigned <img> itself
 			  var image_filename = ui.draggable.attr("data-image-filename");
-			  console.log("discarded image filename = " + image_filename);
 
 			  var list_item = ui.draggable.closest("li");
 			  list_item.addClass("without-photo");
@@ -123,4 +122,92 @@ function changeRacerPhotoAjax(racer, photo) {
 
 function removeRacerPhoto(previous) {
   changeRacerPhotoAjax(previous, '');
+}
+
+
+function showPhotoCropModal(img, repo_name, basename, time) {
+    $("#work_image").html('<img src="photo.php/' + repo_name + '/file/work/' + basename + '/' + time + '"/>');
+    $("#work_image").data('photo', {repo: repo_name,
+                                    basename: basename,
+                                    source: $(img)});
+    g_crop = null;
+    // $('#work_image img').css('margin-left', '100px');  // TODO
+
+    $('#work_image img').Jcrop({
+	    aspectRatio: 3/4, /* TODO */
+	    onSelect: updateCrop,
+	    onChange: updateCrop
+    });
+
+    show_modal('#photo_crop_modal');
+}
+
+var g_crop;
+function updateCrop(c) {
+  g_crop = c;
+}
+
+function cropPhoto() {
+    // g_crop may be null if no cropping has happened
+    if (g_crop) {
+        var photo_data = $("#work_image").data('photo');
+        $.ajax(g_action_url,
+               {type: 'POST',
+                data: {action: 'photo.crop',
+                       repo: photo_data.repo,
+                       image_name: photo_data.basename,
+                       left: g_crop.x,
+                       top: g_crop.y,
+                       right: g_crop.x2,
+                       bottom: g_crop.y2,
+                       original_height: $('#work_image img').height(),
+                       original_width: $('#work_image img').width()
+                      },
+                success: function(data) {
+                    var breaker = data.getElementsByTagName('cache_breaker');
+                    if (breaker) {
+                        var breaker_time = breaker[0].getAttribute('time');
+                        var src = photo_data.source.attr('src');
+                        photo_data.source.attr('src', src.substr(0, src.lastIndexOf('/') + 1) + breaker_time);
+                    }
+                }
+               });
+    }
+  close_modal('#photo_crop_modal');
+}
+
+function rotatePhoto(angle) {
+    var photo_data = $("#work_image").data('photo');
+console.log({action: 'photo.rotate',
+                   repo: photo_data.repo,
+                   image_name: photo_data.basename,
+                   rotation: angle});  // TODO
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'photo.rotate',
+                   repo: photo_data.repo,
+                   image_name: photo_data.basename,
+                   rotation: angle},
+            success: function(data) {
+                var breaker = data.getElementsByTagName('cache_breaker');
+                if (breaker) {
+                    var breaker_time = breaker[0].getAttribute('time');
+
+                    // TODO Make a separate function for this
+                    $("#work_image").html('<img src="photo.php/' + photo_data.repo +
+                                          '/file/work/' + photo_data.basename + '/' + breaker_time + '"/>');
+
+                    g_crop = null;
+
+                    $('#work_image img').Jcrop({
+	                    aspectRatio: 3/4, /* TODO */
+	                    onSelect: updateCrop,
+	                    onChange: updateCrop
+                    });
+
+                    var src = photo_data.source.attr('src');
+                    photo_data.source.attr('src', src.substr(0, src.lastIndexOf('/') + 1) + breaker_time);
+                }
+            }
+           });
 }
