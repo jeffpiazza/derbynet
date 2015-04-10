@@ -41,9 +41,9 @@
 			ui.draggable.closest(".thumbnail").addClass("hidden");
 			$(this).prepend('<img class="assigned"' +
 							' data-image-filename="' + photo_base_name + '"' +
-                            ' onclick="window.location.href=\'photo-crop.php?repo=' + photo_repo_name 
+                            ' onclick="window.location.href=\'photo-crop.php?repo=' + g_photo_repo_name 
                                 + '&name=' + encodeURIComponent(photo_base_name) + '\'"' +
-							' src="photo.php/' + photo_repo_name + '/file/tiny/' +
+							' src="photo.php/' + g_photo_repo_name + '/file/tiny/' +
 							encodeURIComponent(photo_base_name) + '/' +
                             'q' + Date.now() + '"/>'); 
 			make_discardable($(this).find(".assigned"));
@@ -125,19 +125,25 @@ function removeRacerPhoto(previous) {
 }
 
 
-function showPhotoCropModal(img, repo_name, basename, time) {
+function setupPhotoCrop(repo_name, basename, time) {
     $("#work_image").html('<img src="photo.php/' + repo_name + '/file/work/' + basename + '/' + time + '"/>');
-    $("#work_image").data('photo', {repo: repo_name,
-                                    basename: basename,
-                                    source: $(img)});
+
+    // TODO: Figure out how to center the image
+
     g_crop = null;
-    // $('#work_image img').css('margin-left', '100px');  // TODO
 
     $('#work_image img').Jcrop({
-	    aspectRatio: 3/4, /* TODO */
+	    aspectRatio: g_aspect_ratio,
 	    onSelect: updateCrop,
 	    onChange: updateCrop
     });
+}
+
+function showPhotoCropModal(img, repo_name, basename, time) {
+    setupPhotoCrop(repo_name, basename, time);
+    $("#work_image").data('photo', {repo: repo_name,
+                                    basename: basename,
+                                    source: $(img)});
 
     show_modal('#photo_crop_modal');
 }
@@ -145,6 +151,16 @@ function showPhotoCropModal(img, repo_name, basename, time) {
 var g_crop;
 function updateCrop(c) {
   g_crop = c;
+}
+
+// Updates the url for an <img/> element to include a new cache-breaker
+// timestamp, which effectively causes the image to be reloaded from the server.
+//
+// img is a jquery of the <img/> element.
+// breaker_time is the new cache-breaker timestamp to use.
+function updateImage(img, breaker_time) {
+    var src = img.attr('src');
+    img.attr('src', src.substr(0, src.lastIndexOf('/') + 1) + breaker_time);
 }
 
 function cropPhoto() {
@@ -166,9 +182,7 @@ function cropPhoto() {
                 success: function(data) {
                     var breaker = data.getElementsByTagName('cache_breaker');
                     if (breaker) {
-                        var breaker_time = breaker[0].getAttribute('time');
-                        var src = photo_data.source.attr('src');
-                        photo_data.source.attr('src', src.substr(0, src.lastIndexOf('/') + 1) + breaker_time);
+                        updateImage(photo_data.source, breaker[0].getAttribute('time'));
                     }
                 }
                });
@@ -178,10 +192,6 @@ function cropPhoto() {
 
 function rotatePhoto(angle) {
     var photo_data = $("#work_image").data('photo');
-console.log({action: 'photo.rotate',
-                   repo: photo_data.repo,
-                   image_name: photo_data.basename,
-                   rotation: angle});  // TODO
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'photo.rotate',
@@ -192,21 +202,8 @@ console.log({action: 'photo.rotate',
                 var breaker = data.getElementsByTagName('cache_breaker');
                 if (breaker) {
                     var breaker_time = breaker[0].getAttribute('time');
-
-                    // TODO Make a separate function for this
-                    $("#work_image").html('<img src="photo.php/' + photo_data.repo +
-                                          '/file/work/' + photo_data.basename + '/' + breaker_time + '"/>');
-
-                    g_crop = null;
-
-                    $('#work_image img').Jcrop({
-	                    aspectRatio: 3/4, /* TODO */
-	                    onSelect: updateCrop,
-	                    onChange: updateCrop
-                    });
-
-                    var src = photo_data.source.attr('src');
-                    photo_data.source.attr('src', src.substr(0, src.lastIndexOf('/') + 1) + breaker_time);
+                    setupPhotoCrop(photo_data.repo, photo_data.basename, breaker_time);
+                    updateImage(photo_data.source, breaker_time);
                 }
             }
            });

@@ -57,7 +57,8 @@ function photo_crop_expression($basename) {
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/jquery.Jcrop.min.js"></script>
 <script type="text/javascript">
-var photo_repo_name = '<?php echo $photo_repository->name(); ?>';
+var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
+var g_aspect_ratio = <?php echo $photo_repository->display_width(); ?> / <?php echo $photo_repository->display_height(); ?>;
 </script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>

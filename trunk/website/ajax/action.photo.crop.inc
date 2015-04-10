@@ -46,7 +46,12 @@ imagedestroy($im);
 
 $cropped->delete_dependents($image_name);
 
-echo "<success/>\n";
+// TODO echo "<success/>\n";
+take_action('UPDATE RegistrationInfo'
+            .' SET '.$photo_repository->column_name().' = :photo'
+            .' WHERE '.$photo_repository->column_name().' = :original',
+            array(':photo' => $target_file_path,
+                  ':original' => $original->file_path($image_name)));
 echo "<cache_breaker time='".time()."'/>\n";
 
 end_response();

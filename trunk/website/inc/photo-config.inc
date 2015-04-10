@@ -73,7 +73,7 @@ class PhotoRepository {
     if ($this->recognized_path($imagefile)) {
       return $this->lookup($render)->render_url(basename($imagefile));
     } else if (!file_exists($imagefile) &&
-          file_exists($this->lookup('original')->file_path(basename($imagefile)))) {
+               file_exists($this->lookup('original')->file_path(basename($imagefile)))) {
       // If the field points to a non-existent file, but the image IS present in
       // the repository, then assume that it's a case of having moved the
       // repository, and treat as a recognized path
@@ -155,6 +155,20 @@ class PhotoRender {
       mkdir($this->directory());
     }
     return $this->file_path($imagename);
+  }
+
+  public function best_available_file_path($imagename) {
+    $path = $this->file_path($imagename);
+    if (file_exists($path)) {
+      return $path;
+    } else {
+      $source = $this->find_source_render($imagename);
+      if ($source) {
+        return $source->file_path($imagename);
+      } else {
+        return false;
+      }
+    }
   }
 
   // Returns the render from which this render derives its pictures: either the

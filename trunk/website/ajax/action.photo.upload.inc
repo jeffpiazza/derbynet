@@ -58,35 +58,35 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
   if ($target_name != $photo_name) {
     echo "\n".'<filename_changed>'.htmlspecialchars($target_name, ENT_QUOTES, 'UTF-8').'</filename_changed>'."\n";
   }
+
   if (move_uploaded_file($photo['tmp_name'], $photo_dir.DIRECTORY_SEPARATOR.$target_name)) {
     $success = true;
+
     if (isset($_POST['racerid'])) {
       $column_name = $photo_repository->column_name();
-      $row = array('racerid' => $_POST['racerid'],
-				   // We want to write a value here that will be
-				   // compatible with what GPRM needs, in case we're
-				   // working with a GPRM database.
-				   //
-				   // TODO: For a just-uploaded file, the only file
-				   // path that will properly exist is the original,
-				   // but we're writing the path for the cropped
-				   // version.  We should instead write the path for
-				   // the original now, and update to the cropped
-				   // if/when the image actually gets cropped.
-                   $column_name => $photo_repository->lookup('cropped')->file_path($target_name));
+      // We want to write a value here that will be compatible with what GPRM
+      // needs, in case we're working with a GPRM database.
+      //
+      // For a just-uploaded file, the only file path that will properly exist
+      // is the original.  If/when the image actually gets cropped, we'll update
+      // the path in the database to point to that.
+      $path = $photo_repository->lookup('original')->file_path($target_name);
       $success = take_action_silently('UPDATE RegistrationInfo'
                                       .' SET '.$column_name.' = :photo'
                                       .' WHERE racerid = :racerid',
-                                      array(':photo' => $row[$column_name],
-                                            ':racerid' => $row['racerid']));
-      echo '<photo-url>'.$photo_repository->url_for_racer($row, 'checkin').'</photo-url>'."\n";
+                                      array(':photo' => $path,
+                                            ':racerid' => $_POST['racerid']));
+      echo '<photo-url>'.$photo_repository->url_for_racer(array('racerid' => $_POST['racerid'],
+                                                                $column_name => $path),
+                                                          'checkin').'</photo-url>'."\n";
 
       if (!$success) {
         echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
       }
     }
+
     if ($success) {
-      echo '<success/>'."\n";
+      echo "<success/>\n";
     }
   } else {
     echo '<failure code="move_uploaded">move_uploaded_file failed.</failure>'."\n";
