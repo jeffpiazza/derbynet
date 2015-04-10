@@ -195,7 +195,7 @@ function take_snapshot(racerid, photo_base_name) {
 		
 	  // stuff into a form, so servers can easily receive it as a standard file upload
 	  var form_data = new FormData();
-	  form_data.append('action', 'upload-photo');
+	  form_data.append('action', 'photo.upload');
       form_data.append('racerid', racerid);
 	  form_data.append('photo', blob, photo_base_name + "."+image_fmt.replace(/e/, '') );
 

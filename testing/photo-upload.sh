@@ -11,5 +11,5 @@ fi
 
 # curl_post action.php
 curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-    -X POST -F photo="@$2" -F action=upload-photo
+    -X POST -F photo="@$2" -F action=photo.upload
 

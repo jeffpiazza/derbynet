@@ -41,6 +41,19 @@ function curl_post() {
 		| xmllint --format - | tee -a $OUTPUT_CURL
 }
 
+# curl_photo $1=url_tail $2=MD5digest
+function curl_photo() {
+    echo ' ' ' ' ' ' photo $1 yields $2 >&2
+    echo    >> $OUTPUT_CURL
+    echo photo $1 $2 >> $OUTPUT_CURL
+    echo    >> $OUTPUT_CURL
+    OK=1
+	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | md5 | tee $DEBUG_CURL | grep -c $2 > /dev/null || OK=0
+    if [ $OK -eq 0 ]; then
+        test_fails Wrong photo result
+    fi
+ }   
+
 function user_login() {
 	# $1 = user name
 	# $2 = password
