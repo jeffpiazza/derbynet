@@ -152,7 +152,12 @@ class PhotoRender {
 
   public function target_file_path($imagename) {
     if (!file_exists($this->directory())) {
+      // Make the subdirectory world writable -- typically we'll be running as
+      // under the web server as _www or something, and we want the photos to be
+      // conveniently accessible by the "native" machine user.
+      $old_mask = umask(0);
       mkdir($this->directory());
+      umask($old_mask);
     }
     return $this->file_path($imagename);
   }

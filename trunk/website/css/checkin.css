@@ -54,3 +54,8 @@ tr.exclude-racer td.checkin-status {
   background-image: url('../img/asterisk.png');
   background-repeat: no-repeat;
 }
+
+img.checkin-photo {
+    max-height: 60px;
+    max-width: 60px;
+}
