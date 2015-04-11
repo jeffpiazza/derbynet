@@ -4,9 +4,25 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
+PHOTO_DIR=/Users/jeffpiazza/test-photos
+
+if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
+    tput setaf 2  # green text
+    echo Skipping photo assignment tests
+    tput setaf 0  # black text
+    exit 0
+fi
+
+if [ ! -d "$PHOTO_DIR" ]; then
+    tput setaf 2  # green text
+    echo Skipping photo assignment tests
+    tput setaf 0  # black text
+    exit 0
+fi
+
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=write-settings&photo-dir=/Users/jeffpiazza/test-photos" | check_success
+curl_post action.php "action=write-settings&photo-dir=$PHOTO_DIR" | check_success
 curl_post action.php "action=write-settings&n-lanes=4" | check_success
 curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
