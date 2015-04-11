@@ -10,6 +10,7 @@ run_tests() {
     `dirname $0`/test-basic-racing.sh "$BASE_URL"
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
+    `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     if [ -z "$TEST_PHOTO_ASSIGNMENTS" ]; then
         tput setaf 2  # green text
         echo "*** Skipping photo assignment tests"

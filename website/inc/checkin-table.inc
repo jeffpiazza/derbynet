@@ -59,7 +59,7 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     echo '<td class="sort-car-number" id="car-number-'.$row['racerid'].'">'.$row['carnumber'].'</td>';
 
     echo '<td id="photo-'.$row['racerid'].'"><a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
-        .'<img src="'
+        .'<img class="checkin-photo" src="'
         .($row[headshots()->column_name()]
           ? headshots()->url_for_racer($row, 'checkin')
           : 'img/camera.png')
