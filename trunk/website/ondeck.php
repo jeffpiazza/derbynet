@@ -9,6 +9,7 @@
 <?php 
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 
     $nlanes = get_lane_count();
@@ -55,7 +56,11 @@ $sql = 'SELECT'
                          'Rounds', 'Rounds.roundid = Roster.roundid',
                          'Classes', 'Rounds.classid = Classes.classid')
     .' WHERE Rounds.roundid = RaceChart.roundid'
-    .' ORDER BY '.($use_master_sched ? 'round, masterheat, lane' : 'class, round, heat, lane');
+    .' ORDER BY '
+    .($use_master_sched
+      ? 'round, masterheat, lane'
+      : ((schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+         .'class, round, heat, lane'));
 
 $stmt = $db->query($sql);
 if ($stmt === FALSE) {

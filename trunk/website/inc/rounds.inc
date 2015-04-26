@@ -1,4 +1,5 @@
 <?php
+require_once('inc/schema_version.inc');
 
 /*
 Racing groups for different scheduling strategies:
@@ -22,7 +23,9 @@ function all_rounds() {
   foreach ($db->query('SELECT roundid, round, Classes.classid, class'
 					  .' FROM Rounds INNER JOIN Classes'
 					  .' ON Rounds.classid = Classes.classid'
-					  .' ORDER BY class, round') as $row) {
+					  .' ORDER BY '
+                      .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                      .'class, round') as $row) {
     $rounds[] = array('roundid' => $row['roundid'],
 					  'round' => $row['round'],
 					  'classid' => $row['classid'],

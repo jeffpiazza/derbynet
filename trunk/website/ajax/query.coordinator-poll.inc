@@ -2,6 +2,7 @@
 <?php /* Current heat */
 require('inc/current-heat.inc');
 require('inc/current-racers.inc');
+require_once('inc/schema_version.inc');
 ?>
 <?php /* Timer */ 
 require_once('inc/timer-state.inc');
@@ -81,7 +82,9 @@ $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
 $stmt = $db->query('SELECT roundid, Rounds.classid, Classes.class, round FROM Rounds'
                    .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
-                   .' ORDER BY round DESC, Classes.class');
+                   .' ORDER BY round DESC, '
+                   .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                   .'Classes.class');
 $rounds = array();
 foreach ($stmt as $round) {
     $rounds[] = $round;

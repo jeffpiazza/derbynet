@@ -2,6 +2,7 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/schema_version.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // This is the racer check-in page.  It appears as a table of all the
@@ -176,7 +177,9 @@ foreach ($stmt as $rs) {
     $sql = 'SELECT rankid, rank, Ranks.classid, class'
            .' FROM Ranks INNER JOIN Classes'
            .' ON Ranks.classid = Classes.classid'
-           .' ORDER BY class, rank';
+           .' ORDER BY '
+           .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+           .'class, rank';
     $stmt = $db->query($sql);
     foreach ($stmt as $rs) {
       echo "\n".'<option value="'.$rs['rankid'].'"'
