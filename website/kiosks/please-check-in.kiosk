@@ -12,12 +12,15 @@ $(function () { setInterval(function() { location.reload(true); }, 30000); });
 <body>
 <?php
 require_once('inc/data.inc');
+require_once('inc/schema_version.inc');
 $sql = 'SELECT class, lastname, firstname'
 	.' FROM RegistrationInfo'
 	.' INNER JOIN Classes'
 	.' ON RegistrationInfo.classid = Classes.classid'
 	.' WHERE NOT passedinspection'
-	.' ORDER BY class, lastname, firstname';
+	.' ORDER BY '
+    .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+    .'class, lastname, firstname';
 $stmt = $db->query($sql);
 
 $prev_class = '';

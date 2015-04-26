@@ -1,9 +1,15 @@
 <classes_and_ranks>
 <?php
+require_once('inc/schema_version.inc');
+
 $stmt = $db->prepare('SELECT class, rank'
                      .' FROM Classes'
                      .' INNER JOIN Ranks ON Classes.classid = Ranks.classid'
-                     .' ORDER BY class, rank');
+                     .' ORDER BY '.(schema_version() >= 2
+                                    ? 'Classes.sortorder, Ranks.sortorder, '
+                                    : '')
+                                  .'class, rank');
+
 $stmt->execute(array());
 $prev_class = '';
 foreach ($stmt as $row) {

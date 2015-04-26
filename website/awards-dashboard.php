@@ -2,6 +2,7 @@
 // Controls the "current award" kiosk display
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/schema_version.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><html>
 <head>
@@ -81,7 +82,9 @@ $sql = 'SELECT class, rank, carnumber, lastname, firstname, racerid'
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid')
       .' WHERE passedinspection = 1 AND exclude = 0'
-      .' ORDER BY class, lastname, firstname, carnumber';
+      .' ORDER BY '
+      .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+      .'class, lastname, firstname, carnumber';
 
 foreach ($db->query($sql) as $racer) {
   $racerid = $racer['racerid'];

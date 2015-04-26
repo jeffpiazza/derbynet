@@ -2,6 +2,7 @@
 session_start();
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 require_once('inc/standings.inc');
 ?>
@@ -54,7 +55,9 @@ $stmt = $db->query('SELECT class, round, R1.roundid, R1.classid,'
                    .' FROM Rounds R1'
                    .' INNER JOIN Classes'
                    .' ON R1.classid = Classes.classid'
-                   .' ORDER BY class, round DESC');
+                   .' ORDER BY '
+                   .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                   .'class, round DESC');
 foreach ($stmt as $row) {
   $t = $row['class'];
   if ($row['round'] < $row['max_round']) {

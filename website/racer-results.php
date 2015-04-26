@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <?php
     require_once('inc/data.inc');
+    require_once('inc/schema_version.inc');
 
     $use_master_sched = use_master_sched();
     $high_water_rounds = high_water_rounds();
@@ -56,7 +57,9 @@ $sql = 'SELECT RegistrationInfo.racerid,'
     .' WHERE Rounds.roundid = RaceChart.roundid'
     .(isset($_GET['racerid'])
           ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
-    .' ORDER BY class, round, lastname, firstname, carnumber, resultid, lane';
+    .' ORDER BY '
+    .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+    .'class, round, lastname, firstname, carnumber, resultid, lane';
 
 $stmt = $db->query($sql);
 if ($stmt === FALSE) {
