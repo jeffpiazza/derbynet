@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # Simulate the Replay application with nc, so we can observe (and
 # participate in) the traffic between the server and the Replay app.
