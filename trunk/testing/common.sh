@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [ "$BASE_URL" = "" ]; then
 	echo Base URL required!

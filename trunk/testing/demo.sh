@@ -1,5 +1,7 @@
-#! /bin/sh
+#! /bin/bash
 
+# Runs an unattended demo of the software.  Stand up a web server somewhere, and
+# point both this script and timer/testing/fake_timer at the server.
 
 BASE_URL=$1
 set -e -E -o pipefail

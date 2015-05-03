@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # Use this script to exercise the Access database, running on another (Windows) machine.
 
