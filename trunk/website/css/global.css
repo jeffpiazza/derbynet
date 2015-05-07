@@ -152,6 +152,17 @@ div.banner div.back_button {
   width: 500px;
 }
 
+#second_modal_background {
+    position: fixed;
+    z-index:11500;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #000;
+    display: none;
+}
+
 .settings_group {
   margin-bottom: 20px;
 }

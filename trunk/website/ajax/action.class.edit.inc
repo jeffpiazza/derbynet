@@ -5,13 +5,17 @@
 
 start_response();
 
-if (isset($_POST['classid']) && isset($_POST['name'])) {
-  $stmt = $db->prepare('UPDATE Classes SET class = :name WHERE classid = :classid');
-  $stmt->execute(array(':classid' => $_POST['classid'],
-                       ':name' => trim($_POST['name'])));
-  echo "<success/>\n";
+if (have_permission(SET_UP_PERMISSION)) {
+  if (isset($_POST['classid']) && isset($_POST['name'])) {
+    $stmt = $db->prepare('UPDATE Classes SET class = :name WHERE classid = :classid');
+    $stmt->execute(array(':classid' => $_POST['classid'],
+                         ':name' => trim($_POST['name'])));
+    echo "<success/>\n";
+  } else {
+    echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";
+  }
 } else {
-  echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";
+  echo "<failure code='permission'>Not authorized</failure>\n";
 }
 
 end_response();
