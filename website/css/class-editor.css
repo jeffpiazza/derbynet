@@ -1,0 +1,44 @@
+.ui-listview > li > p {
+    margin: 0;
+    display: block;
+    position: relative;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+font-size: 16px;
+font-weight: bold;
+margin-right: 40px;
+padding: .7em 1em;
+
+background-color: #f6f6f6;
+border-color: #ddd;
+color: #333;
+border-width: 1px 0 0 0;
+border-style: solid;
+}
+
+.ui-listview > li.ui-li-has-alt > p + a.ui-btn {
+position: absolute;
+width: 2.5em;
+height: 100%;
+box-sizing: border-box;
+border-left-width: 1px;
+top: 0;
+right: 0;
+margin: 0;
+padding: 0;
+z-index: 2;
+}
+
+#directories_above-button {
+    margin-bottom: 30px;
+}
+
+.top-text-input {
+    margin-bottom: 50px;
+}
+
+#class_editor_modal h3 {
+    text-align: center;
+}

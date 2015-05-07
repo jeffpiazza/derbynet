@@ -121,17 +121,20 @@ if ($need_spacer) {
   <input type="submit" value="Import Roster"/>
 </form>
 <br/>
+<form method="link" action="class-editor.php">
+  <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
+</form>
+<br/>
 <?php } ?>
-<?php if (false) { $need_spacer = true; ?>
+
+<?php if (false) {
+   $need_spacer = true; 
+?>
 <form method="link" action="utilities.php">
   <input type="submit" value="Utilities"/>
 </form>
 <br/>
 <?php } ?>
-<form method="link" action="about.php">
-  <input type="submit" value="About"/>
-</form>
-<br/>
 
 <?php
 if ($need_spacer) {
@@ -139,6 +142,11 @@ if ($need_spacer) {
   echo '<div class="index_spacer">&nbsp;</div>'."\n";
 }
 ?>
+
+<form method="link" action="about.php">
+  <input type="submit" value="About"/>
+</form>
+<br/>
 
 <form method="link" action="login.php">
  <?php if (@$_SESSION['role']) { ?>
