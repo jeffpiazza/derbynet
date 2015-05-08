@@ -66,9 +66,7 @@ var g_aspect_ratio = <?php echo $photo_repository->display_width(); ?> / <?php e
 <?php $banner_title = ($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'; require('inc/banner.inc'); ?>
 
 <div class="block_buttons">
-<form method="link">
-  <input type="submit" value="Refresh"/>
-</form>
+  <input type="button" value="Refresh" onclick="window.location.reload();"/>
 </div>
 
 <div class="body-wrapper">

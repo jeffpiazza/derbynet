@@ -404,7 +404,7 @@ function car_photo_repository() {
   global $car_photo_repository;
 
   if (!isset($car_photo_repository)) {
-    $car_photo_repository = new PhotoRepository('car', car_photo_directory(), photo_size(), 'carphoto');
+    $car_photo_repository = new PhotoRepository('car', car_photo_directory(), car_photo_size(), 'carphoto');
 
     $car_photo_repository->make_render('original', 0, 0, '');
     $car_photo_repository->make_render('cropped', 0, 0, 'original');

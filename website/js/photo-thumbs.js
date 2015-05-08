@@ -116,6 +116,7 @@ function changeRacerPhotoAjax(racer, photo) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'photo.assign',
+                   repo: g_photo_repo_name,
                    racer: racer,
                    photo: photo}});
 }
