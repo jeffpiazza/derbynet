@@ -76,15 +76,14 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
                                       .' WHERE racerid = :racerid',
                                       array(':photo' => $path,
                                             ':racerid' => $_POST['racerid']));
-      echo '<photo-url>'.$photo_repository->url_for_racer(array('racerid' => $_POST['racerid'],
-                                                                $column_name => $path),
-                                                          'checkin').'</photo-url>'."\n";
+      $row = array('racerid' => $_POST['racerid'],
+                   $column_name => $path);
+      echo '<photo-url>'.$photo_repository->url_for_racer($row, 'checkin').'</photo-url>'."\n";
 
       if (!$success) {
         echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
       }
     }
-
     if ($success) {
       echo "<success/>\n";
     }
