@@ -24,7 +24,7 @@ if ($dbtype == 'odbc') {
 function dbnow_expr() {
   global $dbtype;
   if ($dbtype == 'sqlite') {
-    return "datetime('now')";
+    return "datetime('now', 'localtime')";
   } else {
     return "NOW()";
   }
