@@ -107,7 +107,7 @@ require_once('inc/checkin-table.inc');
         echo '<th>'.subgroup_label().'</th>';
     } ?>
     <th><?php echo column_header('Car Number', 'car'); ?></th>
-    <th>Photo</th> <!-- TODO -->
+    <th>Photo</th>
     <th><?php echo column_header('Last Name', 'name'); ?></th>
     <th>First Name</th>
     <th>Car Name</th>
@@ -214,7 +214,11 @@ foreach ($stmt as $rs) {
     </div>
 
     <div class="block_buttons">
-        <input type="submit" value="Take Snapshot" data-enhanced="true"/>
+        <input type="submit" value="Capture &amp; Check In" data-enhanced="true" id="capture_and_check_in"
+           onclick='g_check_in = true;'/>
+        <br/>
+        <input type="submit" value="Capture Only" data-enhanced="true"
+          onclick='g_check_in = false;'/>
         <input type="button" value="Cancel" data-enhanced="true"
           onclick='close_racer_photo_modal();'/>
     </div>
