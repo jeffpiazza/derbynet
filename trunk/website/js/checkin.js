@@ -1,13 +1,7 @@
 // Requires dashboard-ajax.js
 // Requires modal.js
 
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var passed = xmldoc.documentElement.getElementsByTagName("passed");
-    if (passed && passed.length > 0) {
-		var racerid = passed[0].getAttribute("racer");
-		$("#passed-" + racerid).prop('checked', true);
-	}
-});
+var g_check_in;
 
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
@@ -162,6 +156,9 @@ function show_racer_photo_modal(racerid) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
   $("#racer_photo_name").text(firstname + ' ' + lastname);
+
+  $("#capture_and_check_in").toggleClass('hidden', $("#passed-" + racerid).prop('checked'));
+
   show_modal("#racer_photo_modal", function() {
       take_snapshot(racerid, lastname + '-' + firstname);
       return false;
@@ -179,6 +176,20 @@ function take_snapshot(racerid, photo_base_name) {
   if (photo_base_name.length <= 1) {
     photo_base_name = 'photo';
   }
+
+  // g_check_in set by onclick method in submit buttons
+  if (g_check_in) {
+    $("#passed-" + racerid).prop('checked', true);
+    $("#passed-" + racerid).trigger("change", true);
+
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'pass',
+                   racer: racerid,
+                   value: 1},
+           });
+  }
+
   Webcam.snap(function(data_uri) {
 	  // detect image format from within image_data_uri
 	  var image_fmt = '';
