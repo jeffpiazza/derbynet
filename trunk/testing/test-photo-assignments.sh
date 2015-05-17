@@ -1,10 +1,24 @@
 #! /bin/bash
 
+# This only works when run on the server machine, not a separate client
+
+# TODO: Test car photo assignments, which exercise different code paths
+
 BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-PHOTO_DIR=/Users/jeffpiazza/test-photos
+touch /tmp/cleanup
+rm -rf /tmp/headshots* /tmp/carphotos* /tmp/cleanup
+
+PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/headshots.XXXXXXXX`
+# Need world write access to allow web host to create subfolders
+chmod 777 "$PHOTO_DIR"
+cp `dirname $0`/data/headshots/Cub* "$PHOTO_DIR"
+
+CAR_PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/carphotos.XXXXXXXX`
+chmod 777 "$CAR_PHOTO_DIR"
+cp `dirname $0`/data/carphotos/Car* "$CAR_PHOTO_DIR"
 
 if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
     tput setaf 2  # green text
@@ -23,94 +37,183 @@ fi
 `dirname $0`/login-coordinator.sh $BASE_URL
 
 curl_post action.php "action=write-settings&photo-dir=$PHOTO_DIR" | check_success
+curl_post action.php "action=write-settings&car-photo-dir=$CAR_PHOTO_DIR" | check_success
 curl_post action.php "action=write-settings&n-lanes=4" | check_success
 curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
-curl_post action.php "action=photo.assign&racer=1&photo=IMG_5392.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=2&photo=IMG_5393.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=3&photo=Jack%20Collins.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=4&photo=audi-g.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=5&photo=bender-c.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=6&photo=berg-a.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=7&photo=berg-m.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=8&photo=berg-p.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=9&photo=cahaly-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=10&photo=collins-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=11&photo=ditelberg-s.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=12&photo=doe-b.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=13&photo=eburne-n.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=14&photo=fantasia-a.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=15&photo=fantasia-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=16&photo=gallagher-g.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=17&photo=gareau-m.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=18&photo=hillmer-r.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=19&photo=hillmer-t.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=20&photo=horner-c.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=21&photo=horner-h.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=22&photo=houghton-g.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=23&photo=howell-b.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=24&photo=lehmann-r.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=25&photo=mackinnon-h.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=26&photo=mealey-c.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=27&photo=mendes-f.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=28&photo=meyers-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=29&photo=mirick-b.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=30&photo=muenning-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=31&photo=mui-d.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=32&photo=natoli-j.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=33&photo=smith-c.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=34&photo=tellalian-e.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=35&photo=todorov-m.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=36&photo=topple-r.jpg" | check_success
 
-curl_post action.php "action=photo.assign&racer=37&photo=Aiden%20Moore.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=38&photo=Alex%20Dehn.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=39&photo=Alex%20Ma.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=40&photo=Alex%20Perkin.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=41&photo=Alex%20Perkin%202.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=42&photo=Andrew%20Ho.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=43&photo=Andrew%20Martin.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=44&photo=Ben%20Dehn.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=45&photo=Ben%20Dehn-2.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=46&photo=Ben%20Mirick.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=47&photo=Blake%20Foster.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=48&photo=Burt%20Ford.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=49&photo=Cameron%20Morken.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=50&photo=Carter%20Smith.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=51&photo=Connor%20Roy.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=52&photo=Cooper%20Reisner.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=53&photo=Devon%20Escobar.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=54&photo=Dylan%20Reepmeyer.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=55&photo=Evan%20LaRiviere.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=56&photo=Gary%20Martin.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=57&photo=Gaurav%20Capila.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=58&photo=Hayden%20Morken.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=59&photo=Henry%20Mackinnon.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=60&photo=IMG_5050.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=61&photo=Jace%20Watson.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=62&photo=Jack%20Collins.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=63&photo=Jacob%20Koppel.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=64&photo=Jaime%20Duffy.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=65&photo=James%20Castle.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=66&photo=Jase%20Watson.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=67&photo=Joey%20McNeil.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=68&photo=Jonathan%20Chiu.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=69&photo=Liam%20Donlan.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=70&photo=Marco%20Todorov.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=71&photo=Matheos%20Zarou.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=72&photo=Matt%20DeVito.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=73&photo=Matthew%20Johnson.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=74&photo=Matthew%20Klocke.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=75&photo=Matthew%20Leibman.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=76&photo=Michael%20Skuratovsky.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=77&photo=Quinn%20Fallon.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=78&photo=Robert%20Foster.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=79&photo=Will%20Webster.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=80&photo=Will%20Workman.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=81&photo=Zack%20Bender.jpg" | check_success
-curl_post action.php "action=photo.assign&racer=82&photo=Zack%20DuPont.jpg" | check_success
-# curl_post action.php "action=photo.assign&racer=83&photo=Grayson%20Houghton.jpg" | check_success
-# curl_post action.php "action=photo.assign&racer=84&photo=Matthew%20Klocke-2.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1234.jpg" | check_failure
+
+curl_post action.php "action=photo.assign&racer=1&photo=Cub-2106.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=2&photo=Cub-8843.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=3&photo=Cub-8759.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=4&photo=Cub-2825.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=5&photo=Cub-6429.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=6&photo=Cub-2127.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=7&photo=Cub-1142.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=8&photo=Cub-32106.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=9&photo=Cub-7145.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=10&photo=Cub-1612.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=11&photo=Cub-2481.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=12&photo=Cub-0117.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=13&photo=Cub-2878.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=14&photo=Cub-0707.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=15&photo=Cub-7530.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=16&photo=Cub-2773.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=17&photo=Cub-0033.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=18&photo=Cub-1809.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=19&photo=Cub-9652.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=20&photo=Cub-5312.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=21&photo=Cub-7383.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=22&photo=Cub-2995.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=23&photo=Cub-7962.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=24&photo=Cub-8200.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=25&photo=Cub-7232.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=26&photo=Cub-8094.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=27&photo=Cub-0087.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=28&photo=Cub-2961.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=29&photo=Cub-6155.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=30&photo=Cub-7348.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=31&photo=Cub-9634.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=32&photo=Cub-1478.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=33&photo=Cub-0764.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=34&photo=Cub-5517.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=35&photo=Cub-8464.jpg" | check_success
+curl_post action.php "action=photo.assign&racer=36&photo=Cub-5780.jpg" | check_success
+
+curl_post action.php "action=photo.assign&repo=head&racer=37&photo=Cub-0330.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=38&photo=Cub-6494.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=39&photo=Cub-3126.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=40&photo=Cub-4356.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=41&photo=Cub-7330.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=42&photo=Cub-6712.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=43&photo=Cub-6040.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=44&photo=Cub-4268.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=45&photo=Cub-7559.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=46&photo=Cub-1019.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=47&photo=Cub-1280.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=48&photo=Cub-2418.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=49&photo=Cub-3714.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=50&photo=Cub-4622.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=51&photo=Cub-0793.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=52&photo=Cub-9408.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=53&photo=Cub-0315.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=54&photo=Cub-4708.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=55&photo=Cub-0543.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=56&photo=Cub-7747.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=57&photo=Cub-1376.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=58&photo=Cub-4352.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=59&photo=Cub-1451.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=60&photo=Cub-6386.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=61&photo=Cub-0491.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=62&photo=Cub-3389.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=63&photo=Cub-1547.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=64&photo=Cub-0076.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=65&photo=Cub-8724.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=66&photo=Cub-7121.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=67&photo=Cub-8590.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=68&photo=Cub-7883.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=69&photo=Cub-0533.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=70&photo=Cub-8188.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=71&photo=Cub-8088.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=72&photo=Cub-4411.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=73&photo=Cub-3262.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=74&photo=Cub-4905.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=75&photo=Cub-9555.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=76&photo=Cub-2836.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=77&photo=Cub-0435.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=78&photo=Cub-4863.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=79&photo=Cub-0324.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=80&photo=Cub-8330.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=81&photo=Cub-3856.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=head&racer=82&photo=Cub-6507.jpg" | check_success
+# curl_post action.php "action=photo.assign&repo=head&racer=83&photo=Cub-7261.jpg" | check_success
 
 
+curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1637.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=2&photo=Car-1638.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=3&photo=Car-1639.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=4&photo=Car-1640.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=5&photo=Car-1641.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=6&photo=Car-1642.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=7&photo=Car-1643.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=8&photo=Car-1644.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=9&photo=Car-1645.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=10&photo=Car-1646.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=11&photo=Car-1647.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=12&photo=Car-1648.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=13&photo=Car-1649.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=14&photo=Car-1650.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=15&photo=Car-1651.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=16&photo=Car-1652.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=17&photo=Car-1688.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=18&photo=Car-1845.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=19&photo=Car-1848.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=20&photo=Car-1849.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=21&photo=Car-1850.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=22&photo=Car-1851.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=23&photo=Car-1852.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=24&photo=Car-1853.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=25&photo=Car-1854.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=26&photo=Car-1855.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=27&photo=Car-1856.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=28&photo=Car-1857.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=29&photo=Car-1858.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=30&photo=Car-1859.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=31&photo=Car-1860.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=32&photo=Car-1861.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=33&photo=Car-1862.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=34&photo=Car-1863.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=35&photo=Car-1864.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=36&photo=Car-1865.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=37&photo=Car-1866.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=38&photo=Car-1867.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=39&photo=Car-1868.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=40&photo=Car-1869.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=41&photo=Car-1870.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=42&photo=Car-1871.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=43&photo=Car-1872.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=44&photo=Car-1873.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=45&photo=Car-1874.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=46&photo=Car-1875.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=47&photo=Car-1876.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=48&photo=Car-1877.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=49&photo=Car-1878.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=50&photo=Car-1879.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=51&photo=Car-1880.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=52&photo=Car-1881.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=53&photo=Car-1882.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=54&photo=Car-1883.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=55&photo=Car-5611.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=56&photo=Car-5612.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=57&photo=Car-5613.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=58&photo=Car-5614.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=59&photo=Car-5615.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=60&photo=Car-5616.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=61&photo=Car-5618.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=62&photo=Car-5619.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=63&photo=Car-5620.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=64&photo=Car-5621.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=65&photo=Car-5622.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=66&photo=Car-5623.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=67&photo=Car-5624.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=68&photo=Car-5625.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=69&photo=Car-5626.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=70&photo=Car-5627.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=71&photo=Car-5628.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=72&photo=Car-5629.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=73&photo=Car-5630.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=74&photo=Car-5631.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=75&photo=Car-5632.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=76&photo=Car-5633.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=77&photo=Car-5634.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=78&photo=Car-5635.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=79&photo=Car-5636.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=80&photo=Car-5637.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=81&photo=Car-5638.jpg" | check_success
+curl_post action.php "action=photo.assign&repo=car&racer=82&photo=Car-5639.jpg" | check_success
+# curl_post action.php "action=photo.assign&repo=car&racer=83&photo=Car-7261.jpg" | check_success
 
+
+## Once this runs, the file links in the database become invalid
+## TODO rm -rf "$PHOTO_DIR" "$CAR_PHOTO_DIR"

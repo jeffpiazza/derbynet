@@ -3,8 +3,6 @@
 // $_POST: roundid, nrounds(=1)
 // nrounds here is the number of times each racer should race in each lane.
 
-// TODO: Permission
-
 // Add tests for no (checked-in) racers, one, two, ..., nlanes-1
 
 // Action to set number of lanes (by interrogating timer)
