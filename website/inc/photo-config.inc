@@ -233,6 +233,9 @@ class PhotoRender {
     $target_file_path = $this->target_file_path($image_name);
     if (!file_exists($target_file_path)) {
       $source = $this->find_source_render($image_name);
+      if (!$source) {
+        return NULL;
+      }
       $source_file_path = $source->file_path($image_name);
 
       if ($this->max_height() == 0) {
@@ -242,8 +245,9 @@ class PhotoRender {
         if ($source_height == 0) {
           return FALSE;
         }
-
+echo "<pre_open_image/>\n";  // TODO
         $im = open_image($source_file_path, $image_type);
+echo "<open_image/>\n";  // TODO
 
         $aspect = $source_width / $source_height;
 
