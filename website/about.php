@@ -4,7 +4,7 @@ require_once('inc/authorize.inc');
 ?><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>About Web Race Manager</title>
+<title>About DerbyNet</title>
 <?php require('inc/stylesheet.inc'); ?>
 <style type="text/css">
 .ip_addr { border: 2px solid red;  padding: 2px; }
@@ -33,7 +33,7 @@ require_once('inc/authorize.inc');
 </head>
 <body>
 <?php $banner_title = 'About'; require('inc/banner.inc'); ?>
-<h1>About Web Race Manager</h1>
+<h1>About DerbyNet</h1>
 
 <p></p>
 
@@ -64,7 +64,7 @@ if (count($addrs) == 0) {
 <p>Please include this page if you wish to report a bug, and
    contact me at <a href="mailto:bugs@jeffpiazza.org">bugs@jeffpiazza.org</a>.</p>
 
-<h4>Web Race Manager Revision</h4>
+<h4>DerbyNet Revision</h4>
 <?php 
     $version = @file_get_contents('inc/generated-version.inc');
     $build_date = @file_get_contents('inc/generated-build-date.inc');

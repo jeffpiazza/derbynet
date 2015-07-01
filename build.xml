@@ -1,4 +1,4 @@
-<project name="Web Race Manager" default="dist" basedir=".">
+<project name="DerbyNet" default="dist" basedir=".">
   <description>
     Web-based software for managing pinewood derby races
   </description>
@@ -10,12 +10,12 @@
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
   <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
-      <loadresource property="svn">
+      <loadresource property="rev-count">
           <file file="website/inc/generated-version.inc"/>
       </loadresource>
 
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
-      <zip destfile="../WebRaceManager-${svn}-${DSTAMP}.zip">
+      <zip destfile="../DerbyNet-${rev-count}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
               <include name="README.txt"/>
@@ -41,24 +41,14 @@
   </target>
 
   <target name="generated-version.inc">
-      <!-- svn info reports the last update version, not the last commited
-      version.  That's true even if the last commit came from this workspace!! -->
-      <exec executable="svn" outputproperty="svn-info-output">
-          <arg value="info"/>
+      <exec executable="git" outputproperty="git-rev-count">
+          <arg value="rev-list"/>
+          <arg value="HEAD"/>
+          <arg value="--count"/>
       </exec>
 
       <concat destfile="website/inc/generated-version.inc">
-          <propertyresource name="svn-info-output"/>
-          <filterchain>
-              <linecontains>
-                  <contains value="Revision:"/>
-              </linecontains>
-
-              <tokenfilter delimoutput="">
-                  <replacestring from="Revision: " to=""/>
-              </tokenfilter>
-
-          </filterchain>
+          <propertyresource name="git-rev-count"/>
       </concat>
   </target>
 

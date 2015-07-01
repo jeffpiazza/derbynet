@@ -6,7 +6,7 @@ require_permission(SET_UP_PERMISSION);
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Web Race Manager Set-Up</title>
+<title>DerbyNet Set-Up</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
