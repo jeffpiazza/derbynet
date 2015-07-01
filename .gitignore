@@ -1,0 +1,17 @@
+# -*- mode: gitignore; -*-
+
+# Xcode 6 
+UserInterfaceState.xcuserstate
+xcuserdata/
+
+# Project-specific stuff:
+
+replay/build/
+
+testing/*.curl
+
+timer/build/
+timer/dist/
+
+website/inc/generated-*.inc
+website/local/
