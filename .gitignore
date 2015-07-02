@@ -7,6 +7,8 @@ xcuserdata/
 # Project-specific stuff:
 *.dmg
 
+docs/dist/
+
 replay/build/
 
 testing/*.curl

@@ -1,0 +1,50 @@
+<project name="DerbyNet-docs" default="dist" basedir=".">
+   <description>
+       Documentation for installation and operation of DerbyNet software
+   </description>
+
+   <property name="soffice" location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
+   <property name="dist"  location="dist"/>
+
+   <target name="dist" depends="installation, after-installation">
+   </target>
+
+   <target name="make-dist-dir">
+       <mkdir dir="${dist}"/>
+   </target>
+
+  <mapper type="glob" from="*.fodt" to="*.pdf"/>
+
+   <macrodef name="make-pdf">
+       <attribute name="file"/>
+       <sequential>
+           <exec executable="${soffice}">
+               <arg value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
+               <arg value="--headless"/>
+               <arg value="--convert-to"/>
+               <arg value="pdf:writer_pdf_Export"/>
+               <arg value="--outdir"/>
+               <arg value="${dist}"/>
+               <arg value="@{file}"/>
+           </exec>
+       </sequential>
+   </macrodef>
+
+ <target name="installation" depends="make-dist-dir">
+     <make-pdf file="Installation- Mac.fodt"/>
+     <make-pdf file="Installation- Windows with XAMPP.fodt"/>
+ </target>
+
+ <target name="after-installation" depends="make-dist-dir">
+     <make-pdf file="After Installation- SQLite.fodt"/>
+     <make-pdf file="After Installation- MySQL.fodt"/>
+     <make-pdf file="After Installation- Windows GPRM.fodt"/>
+ </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- Delete the ${dist} directory tree -->
+    <delete dir="${dist}"/>
+  </target>
+
+</project>
