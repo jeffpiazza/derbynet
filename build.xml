@@ -9,13 +9,15 @@
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
 
-  <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc, generated-build-date.inc">
+  <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc,
+                               generated-build-date.inc, generated-commit-hash.inc">
+<!--
       <loadresource property="rev-count">
           <file file="website/inc/generated-version.inc"/>
       </loadresource>
-
+-->
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
-      <zip destfile="../DerbyNet-${rev-count}-${DSTAMP}.zip">
+      <zip destfile="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
               <include name="README.txt"/>
@@ -56,6 +58,34 @@
       <tstamp/>
       <concat destfile="website/inc/generated-build-date.inc">
           <propertyresource name="TODAY"/>
+      </concat>
+  </target>
+
+  <target name="generated-commit-hash.inc">
+      <exec executable="git" outputproperty="git-hash">
+          <arg value="rev-parse"/>
+          <arg value="HEAD"/>
+      </exec>
+
+      <exec executable="git" outputproperty="git-status-short">
+          <arg value="status"/>
+          <arg value="--short"/>
+      </exec>
+      <!-- If there's no output, git-status-short doesn't even get set.  If it
+           IS set, this property element has no effect. -->
+      <property name="git-status-short" value=""/>
+
+      <loadresource property="git-dirty">
+          <propertyresource name="git-status-short"/>
+          <filterchain>
+              <replaceregex pattern=".+" replace="-dirty" flags="s"/>
+          </filterchain>
+      </loadresource>
+      <property name="git-dirty" value=""/>
+
+      <concat destfile="website/inc/generated-commit-hash.inc">
+          <propertyresource name="git-hash"/>
+          <propertyresource name="git-dirty"/>
       </concat>
   </target>
 

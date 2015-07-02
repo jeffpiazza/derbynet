@@ -68,10 +68,12 @@ if (count($addrs) == 0) {
 <?php 
     $version = @file_get_contents('inc/generated-version.inc');
     $build_date = @file_get_contents('inc/generated-build-date.inc');
+    $git_hash = @file_get_contents('inc/generated-commit-hash.inc');
     if ($version === false) {
       echo "<p>No version found.</p>\n";
     } else {
-      echo "<p>This is revision <b>".$version."</b>, built on ".$build_date.".</p>\n";
+      echo "<p>This is revision <b>".$version."</b>, built on ".$build_date.".<br/>\n";
+      echo "(".$git_hash.")</p>\n";
     }
 
     if (have_permission(SET_UP_PERMISSION)) {

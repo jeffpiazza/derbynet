@@ -5,6 +5,7 @@ UserInterfaceState.xcuserstate
 xcuserdata/
 
 # Project-specific stuff:
+*.dmg
 
 replay/build/
 
