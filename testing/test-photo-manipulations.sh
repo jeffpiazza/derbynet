@@ -14,9 +14,10 @@ fi
 tmpdir=`mktemp -d 2>/dev/null || mktemp -d /tmp/photo_uploads.XXXXXXXX`
 chmod 777 $tmpdir
 
-user_login RaceCoordinator doyourbest
+`dirname $0`/login-coordinator.sh "$BASE_URL"
 
 curl_post action.php "action=write-settings&photo-dir=$tmpdir" | check_success
+curl_post action.php "action=write-settings&photo-width=188&photo-height=250" | check_success
 
 user_login RaceCrew murphy
 
@@ -31,12 +32,12 @@ curl_post action.php "action=photo.rotate&repo=head&image_name=ISO_12233-reschar
 # Rotating left and then right doesn't give you back the exact same image, due to compression losses in jpg
 curl_photo head/file/original/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
 curl_photo head/file/cropped/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
-curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 9b516d44a54fca1f5b29d51b5dc40d3d
+curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 16329a387284cfbb7ece2f2a6a173040
 
 curl_post action.php "action=photo.crop&repo=head&image_name=ISO_12233-reschart.jpg&left=100&top=150&right=190&bottom=270&original_height=480&original_width=900" | check_success
 curl_photo head/file/original/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
 curl_photo head/file/cropped/ISO_12233-reschart.jpg/$RANDOM cd9d674652844e7f7cdd083358a4def4
-curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM aefe04f771333da9192262e0ec6feb16
+curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM a6f23a5f3ba4b90b157c75cc9532bd61
 
 # Clean up temporary directory
 rm -rf $tmpdir

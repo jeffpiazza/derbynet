@@ -43,7 +43,7 @@ function curl_post() {
 
 # curl_photo $1=url_tail $2=MD5digest
 function curl_photo() {
-    echo ' ' ' ' ' ' photo $1 yields $2 >&2
+    echo ' ' ' ' ' ' photo $1 expected to yield $2 >&2
     echo    >> $OUTPUT_CURL
     echo photo $1 $2 >> $OUTPUT_CURL
     echo    >> $OUTPUT_CURL
@@ -53,6 +53,16 @@ function curl_photo() {
         test_fails Wrong photo result
     fi
  }   
+
+function curl_snapshot() {
+    echo ' ' ' ' ' ' load-snapshot $1
+    echo    >> $OUTPUT_CURL
+    echo load-snapshot $1 >> $OUTPUT_CURL
+    echo    >> $OUTPUT_CURL
+    curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
+        -X POST -F snapshot="@$1" -F action=load-snapshot | tee $DEBUG_CURL | \
+    xmllint --format - | tee -a $OUTPUT_CURL
+}
 
 function user_login() {
 	# $1 = user name

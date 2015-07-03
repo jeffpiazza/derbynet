@@ -19,4 +19,13 @@ run_tests() {
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
+
+    SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)
+    curl_get "action.php?query=snapshot-tables" > $SNAPSHOT
+
+    `dirname $0`/test-import-results.sh "$BASE_URL"
+    `dirname $0`/test-each-role.sh "$BASE_URL"
+
+    curl_snapshot $SNAPSHOT | check_success
+    rm $SNAPSHOT
 }
