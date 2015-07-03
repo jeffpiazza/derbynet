@@ -126,6 +126,14 @@ input[type='button'], input[type='submit'] {
     vertical-align: middle;
 }
 
+.footer {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  clear: right;
+  text-align: center;
+}
+
 #import_button_div {
   display: inline-block;
   width: 300px;

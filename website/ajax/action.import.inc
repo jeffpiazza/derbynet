@@ -74,6 +74,5 @@ if ($ok) {
     echo '<success/>';
 }
 
-
 end_response();
 ?>

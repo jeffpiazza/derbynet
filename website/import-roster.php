@@ -134,6 +134,10 @@ try {
 
 </div>
 
+<div class="footer">
+Or instead: <a href="import-results.php">Import results exported from another race...</a>
+</div>
+
 <?php require_once('inc/ajax-pending.inc'); ?>
 </body>
 </html>
