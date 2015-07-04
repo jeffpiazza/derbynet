@@ -64,13 +64,13 @@ curl_get "action.php?query=kiosk-poll" > /dev/null
 curl_get "action.php?query=update-summary" > /dev/null
 curl_get "action.php?query=watching" > /dev/null
 
-user_login RaceCoordinator doyourbest
+user_login_coordinator
 curl_get index.php | grep '<form' | diff - coordinator.index.tmp
 user_logout
 
 curl_get index.php | grep '<form' | diff - anonymous.index.tmp
 
-user_login RaceCrew murphy
+user_login_crew
 curl_get index.php | grep '<form' | diff - racecrew.index.tmp
 user_logout
 

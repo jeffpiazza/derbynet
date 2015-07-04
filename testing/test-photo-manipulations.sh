@@ -19,7 +19,7 @@ chmod 777 $tmpdir
 curl_post action.php "action=write-settings&photo-dir=$tmpdir" | check_success
 curl_post action.php "action=write-settings&photo-width=188&photo-height=250" | check_success
 
-user_login RaceCrew murphy
+user_login_crew
 
 curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
     -X POST -F action=photo.upload -F photo="@`dirname $0`/data/ISO_12233-reschart.jpg" | tee $DEBUG_CURL | check_success

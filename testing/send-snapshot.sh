@@ -10,5 +10,5 @@ if [ "$2" = "" -o "$3" != "" ]; then
 fi
 
 curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-    -X POST -F snapshot="@$2" -F action=load-snapshot
+    -X POST -F snapshot="@$2" -F action=put-snapshot
 

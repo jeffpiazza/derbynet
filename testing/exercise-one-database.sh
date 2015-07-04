@@ -21,11 +21,16 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)
-    curl_get "action.php?query=snapshot-tables" > $SNAPSHOT
+    curl_get "action.php?query=get-snapshot" > $SNAPSHOT
 
     `dirname $0`/test-import-results.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
+    user_logout
+    curl_snapshot $SNAPSHOT | check_failure
+
+    user_login_coordinator
     curl_snapshot $SNAPSHOT | check_success
+
     rm $SNAPSHOT
 }

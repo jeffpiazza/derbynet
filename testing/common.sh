@@ -55,19 +55,33 @@ function curl_photo() {
  }   
 
 function curl_snapshot() {
-    echo ' ' ' ' ' ' load-snapshot $1
+    echo ' ' ' ' ' ' put-snapshot $1 >&2
     echo    >> $OUTPUT_CURL
-    echo load-snapshot $1 >> $OUTPUT_CURL
+    echo put-snapshot $1 >> $OUTPUT_CURL
     echo    >> $OUTPUT_CURL
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-        -X POST -F snapshot="@$1" -F action=load-snapshot | tee $DEBUG_CURL | \
+        -X POST -F snapshot="@$1" -F action=put-snapshot | tee $DEBUG_CURL | \
     xmllint --format - | tee -a $OUTPUT_CURL
 }
 
 function user_login() {
 	# $1 = user name
 	# $2 = password
-	curl_post action.php "action=login&name=$1&password=$2" | check_success "login"
+	echo ' ' ' ' ' ' login $1 >&2
+	echo    >> $OUTPUT_CURL
+	echo login $1 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -d "action=login&name=$1&password=$2" \
+        -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
+		| xmllint --format - | tee -a $OUTPUT_CURL | check_success
+}
+
+function user_login_coordinator() {
+    user_login RaceCoordinator doyourbest
+}
+
+function user_login_crew() {
+    user_login RaceCrew murphy
 }
 
 function user_logout() {

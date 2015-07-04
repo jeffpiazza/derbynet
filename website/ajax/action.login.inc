@@ -1,14 +1,16 @@
 <?php
 
-start_response();
-
 if (isset($_POST['name'])) {
   $name = $_POST['name'];
   $password = $_POST['password'];
+  // Don't want the password parroted back in the response.
+  $_POST['password'] = '...';
  } else {
   $name = '';
   $password = '';
 }
+
+start_response();
 
 $role = $roles[$name];
 
