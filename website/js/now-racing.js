@@ -1,7 +1,5 @@
-
 // TODO: Window resizing should adjust the font size in some meaningful way.
 // TODO: Test display in 640x480 with the longest names we can find.
-
 var g_roundid = 0;
 var g_heat = 0;
 
@@ -19,23 +17,35 @@ var g_animated = true;
 // it's OK to update.
 var g_hold_display_until = 0;
 
+// After an animation of heat results, hold the display this many milliseconds
+// before advancing to the next heat.
+var g_display_duration_after_animation = 10000;
+
+// Queues the next poll request when processing of the current request has
+// completed, including animations, if any.  Because animations are handled
+// asynchronously, with completion callbacks, we can't just start the next
+// request when process_watching returns.
 function queue_next_poll_request() {
     setTimeout(poll_for_update, 500);  // 0.5 sec
 }
 
 function poll_for_update() {
-    $.ajax('action.php',
-           {type: 'GET',
-            data: {query: 'watching',
-                   roundid: g_roundid,
-                   heat: g_heat},
-            success: function(data) {
-                process_watching(data);
-            },
-            error: function() {
-                queue_next_poll_request();
-            }
-           });
+    if (typeof(simulated_poll_for_update) == "function") {
+        simulated_poll_for_update();
+    } else {
+        $.ajax('action.php',
+               {type: 'GET',
+                data: {query: 'watching',
+                       roundid: g_roundid,
+                       heat: g_heat},
+                success: function(data) {
+                    process_watching(data);
+                },
+                error: function() {
+                    queue_next_poll_request();
+                }
+               });
+    }
 }
 
 // Javascript passes arrays (like place_to_lane) by reference, so no
@@ -170,7 +180,7 @@ function process_watching(watching) {
             animate_flyers(1, place_to_lane, function () {
                 // Need to continue to poll for repeat-animation, just not
                 // accept new participants for 10 seconds.
-                g_hold_display_until = (new Date()).valueOf() + 10000;
+                g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
                 queue_next_poll_request();
             });
         } else {
@@ -190,7 +200,7 @@ function process_new_heat(watching) {
         // Each time a hold-current-screen element is sent, reset the
         // hold-display deadline.  (Our display is presumed not to be visible,
         // so the display-for-ten-seconds clock shouldn't start yet.)
-        g_hold_display_until = (new Date()).valueOf() + 10000;
+        g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
     }
     var current = watching.getElementsByTagName("current-heat")[0];
     if (watching.getElementsByTagName('timer-not-connected').length > 0) {

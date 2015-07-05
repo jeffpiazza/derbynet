@@ -6,6 +6,7 @@ xcuserdata/
 
 # Project-specific stuff:
 *.dmg
+*.log
 
 docs/dist/
 

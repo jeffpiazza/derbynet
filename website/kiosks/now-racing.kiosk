@@ -1,6 +1,5 @@
 <?php @session_start();
 require_once('inc/data.inc');
-
 $nlanes = get_lane_count();
 ?>
 <html>
@@ -13,6 +12,9 @@ $nlanes = get_lane_count();
 <link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/now-racing.js"></script>
+<?php if (@$simulated_polling_url) { ?>
+<script type="text/javascript" src="<?php echo @$simulated_polling_url; ?>"></script>
+<?php } ?>
 <?php // If $nlanes not yet set, then this page isn't ready for display.
     if ($nlanes <= 0) {
 ?><script type="text/javascript">
