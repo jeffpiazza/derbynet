@@ -10,36 +10,31 @@
 	<string>MacDerbyReplay</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>149d4557-f578-4cdc-88cc-a781409a2e9f++505</key>
-		<string>http://jeffpiazza.svn.cloudforge.com/webracemanager/trunk</string>
+		<key>38F23CB9E229AD3094DEB422E98FF0293F4C2AD4</key>
+		<string>https://github.com/jeffpiazza/derbynet.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>replay/MacDerbyReplay.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>149d4557-f578-4cdc-88cc-a781409a2e9f++505</key>
+		<key>38F23CB9E229AD3094DEB422E98FF0293F4C2AD4</key>
 		<string>../../..</string>
 	</dict>
-	<key>IDESourceControlProjectRepositoryRootDictionary</key>
-	<dict>
-		<key>149d4557-f578-4cdc-88cc-a781409a2e9f++505</key>
-		<string>http://jeffpiazza.svn.cloudforge.com/webracemanager</string>
-	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>http://jeffpiazza.svn.cloudforge.com/webracemanager/trunk/replay/MacDerbyReplay.xcodeproj</string>
+	<string>https://github.com/jeffpiazza/derbynet.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>149d4557-f578-4cdc-88cc-a781409a2e9f++505</string>
+	<string>38F23CB9E229AD3094DEB422E98FF0293F4C2AD4</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.subversion</string>
+			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>149d4557-f578-4cdc-88cc-a781409a2e9f++505</string>
+			<string>38F23CB9E229AD3094DEB422E98FF0293F4C2AD4</string>
 			<key>IDESourceControlWCCName</key>
-			<string>repo</string>
+			<string>derbynet</string>
 		</dict>
 	</array>
 </dict>
