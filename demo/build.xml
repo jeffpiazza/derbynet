@@ -1,13 +1,44 @@
-<project name="DerbyNet" default="dist" basedir=".">
+<project name="DerbyNet-demo" default="demo" basedir=".">
   <description>
-    Web-based software for managing pinewood derby races
+      Demo site for DerbyNet
   </description>
 
-  <property name="replay-dir" location="replay"/>
-  <property name="replay-app.name" value="MacDerbyReplay"/>
-  <property name="replay-app-dir" location="${replay-dir}/build/Release"/>
-  <property name="timer-dir" location="timer"/>
-  <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
+  <property name="destination-dir" location="../../demox"/>
+
+  <target name="demo">
+      <copy todir="${destination-dir}" overwrite="true">
+          <fileset dir="../website">
+              <include name="action.php"/>
+              <include name="ajax/query.kiosk-poll.inc"/>
+              <include name="css/global.css"/>
+              <include name="css/now-racing.css"/>
+              <include name="css/ondeck.css"/>
+              <include name="img/cubscout_emblem.png"/>
+              <include name="img/pause.png"/>
+              <include name="img/timer-red.png"/>
+              <include name="inc/ajax-failure.inc"/>
+              <include name="inc/banner.inc"/>
+              <include name="inc/kiosk-page.inc"/>
+              <include name="inc/kiosks.inc"/>
+              <include name="inc/sql-script.inc"/>
+              <include name="inc/stylesheet.inc"/>
+              <include name="js/jquery-ui-1.10.4.min.js"/>
+              <include name="js/jquery.js"/>
+              <include name="js/kiosk-page.js"/>
+              <include name="js/now-racing.js"/>
+          </fileset>
+          <fileset dir=".">
+              <include name="now-racing.php"/>
+          </fileset>
+      </copy>
+      <copy todir="${destination-dir}/js" overwrite="true">
+          <fileset dir=".">
+              <include name="simulated-polling.js"/>
+          </fileset>
+      </copy>
+  </target>
+
+
 
   <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc,
                                generated-build-date.inc, generated-commit-hash.inc">
@@ -78,7 +109,6 @@
       <loadresource property="git-dirty">
           <propertyresource name="git-status-short"/>
           <filterchain>
-              <striplinebreaks/>
               <replaceregex pattern=".+" replace="-dirty" flags="s"/>
           </filterchain>
       </loadresource>
@@ -187,10 +217,6 @@
                 <arg value="Release"/>
                 <arg value="build"/>
             </exec>
-</target>
-
-<target name="demo">
-    <ant dir="demo"/>
 </target>
 
 </project>
