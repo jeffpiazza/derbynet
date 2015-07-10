@@ -1,0 +1,27 @@
+.settings_group {
+    padding: 1em;
+    border: 2px solid #666666;
+    border-radius: 0.4em 0.4em 0.4em 0.4em;
+    margin: 1em;
+}
+
+.settings_group .settings_group_image {
+    width: 220px;
+    display: inline-block;
+}
+
+.settings_group .settings_group_image img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.settings_group .settings_group_settings {
+    display: inline-block;
+    width: 700px;
+    vertical-align: top;
+}
+
+.settings_group .settings_group_settings p {
+  margin: 5px;
+}

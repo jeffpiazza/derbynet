@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="250"
+   height="450"
+   viewBox="0 0 250 450.00001"
+   id="svg4227"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="gold-medal.svg"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/settings-gold-medal.png"
+   inkscape:export-xdpi="40"
+   inkscape:export-ydpi="40">
+  <defs
+     id="defs4229">
+    <clipPath
+       id="clipPath818"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path820"
+         d="m 6040.25,2432.69 c -16.46,331.29 -290.26,594.84 -625.63,594.84 -335.37,0 -609.18,-263.55 -625.64,-594.84 -0.51,10.46 -0.8,20.99 -0.8,31.58 0,345.96 280.46,626.42 626.44,626.42 345.96,0 626.42,-280.46 626.42,-626.42 0,-10.59 -0.28,-21.12 -0.79,-31.58" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient822"
+       spreadMethod="pad"
+       gradientTransform="matrix(1058.59,-1164.7,-1164.7,-1058.59,4941.75,2993.42)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop824"
+         offset="0"
+         style="stop-opacity:1;stop-color:#fffef4" />
+      <stop
+         id="stop826"
+         offset="0.1"
+         style="stop-opacity:1;stop-color:#fcfcd2" />
+      <stop
+         id="stop828"
+         offset="0.26"
+         style="stop-opacity:1;stop-color:#f8f565" />
+      <stop
+         id="stop830"
+         offset="0.54"
+         style="stop-opacity:1;stop-color:#f9f443" />
+      <stop
+         id="stop832"
+         offset="1"
+         style="stop-opacity:1;stop-color:#f1e013" />
+    </linearGradient>
+    <clipPath
+       id="clipPath796"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path798"
+         d="m 5423.32,1773.12 c -381.32,0 -690.46,309.13 -690.46,690.46 0,381.33 309.14,690.47 690.46,690.47 381.34,0 690.46,-309.14 690.46,-690.47 0,-381.33 -309.12,-690.46 -690.46,-690.46 m 0,1340.42 c -179.5,0 -341.94,-72.74 -459.57,-190.38 -117.64,-117.62 -190.37,-280.08 -190.37,-459.58 0,-179.49 72.73,-341.94 190.37,-459.58 117.63,-117.61 280.07,-190.34 459.57,-190.34 179.48,0 341.94,72.73 459.56,190.34 117.64,117.64 190.38,280.09 190.38,459.58 0,179.5 -72.74,341.93 -190.38,459.58 -117.62,117.64 -280.08,190.38 -459.56,190.38" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient800"
+       spreadMethod="pad"
+       gradientTransform="matrix(-954.865,1096.52,1096.52,954.865,5903.89,1911.72)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop802"
+         offset="0"
+         style="stop-opacity:1;stop-color:#fcfccf" />
+      <stop
+         id="stop804"
+         offset="0.1"
+         style="stop-opacity:1;stop-color:#f6f465" />
+      <stop
+         id="stop806"
+         offset="0.26"
+         style="stop-opacity:1;stop-color:#f9ea2f" />
+      <stop
+         id="stop808"
+         offset="0.54"
+         style="stop-opacity:1;stop-color:#fbcf23" />
+      <stop
+         id="stop810"
+         offset="1"
+         style="stop-opacity:1;stop-color:#e28616" />
+    </linearGradient>
+    <clipPath
+       id="clipPath786"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path788"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath764"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path766"
+         d="m 5290.59,1671.76 c -3.29,0 -6.54,0.27 -9.74,0.85 -47.71,7.96 -79.25,83.19 -127.93,102.99 -12.1,4.61 -25.68,6.1 -39.88,6.1 -12.87,0 -26.24,-1.22 -39.49,-2.44 -13.24,-1.22 -26.35,-2.44 -38.69,-2.44 -17.39,0 -33.24,2.43 -45.75,10.69 -40.7,25.37 -41.23,106.89 -78.95,143.99 -38.26,36.02 -119.77,33.43 -146.89,73.51 -4.7,6.76 -7.73,14.59 -9.65,23.25 -7.98,36.06 5.16,85.68 -3.19,124.69 -1.18,5.32 -2.75,10.42 -4.85,15.3 -21.24,47.45 -97.5,76.19 -107.35,124.29 -11.05,47.84 46.33,105.7 45.91,157.68 -0.1,5.31 -0.81,10.65 -1.96,15.96 -8.65,38.97 -41.24,78.61 -48.96,114.73 -1.89,8.66 -2.37,17.03 -0.9,25.12 7.99,47.74 83.19,79.28 102.98,127.94 18.88,49.46 -14.53,123.8 11.94,163.8 25.36,40.71 106.86,41.25 143.98,78.97 36.04,38.26 33.42,119.78 73.5,146.88 6.77,4.7 14.6,7.74 23.26,9.63 9.17,2.04 19.23,2.7 29.76,2.7 9.98,0 20.38,-0.59 30.88,-1.19 10.51,-0.6 21.1,-1.2 31.45,-1.2 11.29,0 22.3,0.71 32.58,2.92 5.31,1.15 10.44,2.73 15.34,4.84 47.43,21.25 76.18,97.5 124.28,107.36 4.2,0.97 8.47,1.41 12.82,1.41 22.47,0 46.73,-11.84 71.27,-23.67 24.55,-11.83 49.38,-23.67 73.01,-23.67 0.19,0 0.38,0 0.56,0 5.31,0.11 10.64,0.81 15.95,1.97 38.95,8.64 78.6,41.22 114.73,48.96 5.19,1.13 10.29,1.75 15.29,1.75 3.32,0 6.61,-0.27 9.85,-0.86 47.74,-7.99 79.26,-83.18 127.94,-102.98 12.1,-4.62 25.69,-6.11 39.91,-6.11 12.87,0 26.25,1.22 39.49,2.44 13.24,1.22 26.35,2.44 38.68,2.44 17.39,0 33.23,-2.43 45.73,-10.69 40.7,-25.38 41.24,-106.87 78.97,-143.98 38.27,-36.04 119.75,-33.42 146.88,-73.51 4.7,-6.77 7.72,-14.57 9.61,-23.23 8.02,-36.06 -5.16,-85.65 3.2,-124.68 1.15,-5.33 2.74,-10.45 4.88,-15.36 21.24,-47.43 97.5,-76.18 107.36,-124.27 11.04,-47.84 -46.34,-105.7 -45.93,-157.68 0.12,-5.31 0.8,-10.63 1.96,-15.94 8.62,-38.97 41.21,-78.62 48.95,-114.73 1.87,-8.65 2.37,-17.02 0.91,-25.15 -7.97,-47.73 -83.18,-79.27 -103.01,-127.95 -18.85,-49.43 14.57,-123.78 -11.88,-163.79 -25.38,-40.7 -106.88,-41.24 -144.02,-78.95 -36,-38.28 -33.41,-119.8 -73.48,-146.89 -6.78,-4.71 -14.61,-7.74 -23.24,-9.64 -9.17,-2.03 -19.22,-2.7 -29.74,-2.7 -10.01,0 -20.44,0.6 -30.97,1.21 -10.53,0.6 -21.14,1.2 -31.52,1.2 -11.26,0 -22.23,-0.71 -32.47,-2.9 -5.32,-1.16 -10.46,-2.74 -15.34,-4.87 -47.41,-21.24 -76.16,-97.5 -124.25,-107.36 -4.21,-0.97 -8.48,-1.41 -12.83,-1.41 -22.48,0 -46.73,11.84 -71.28,23.67 -24.54,11.84 -49.37,23.67 -73.01,23.67 -0.19,0 -0.38,0 -0.56,0 -5.32,-0.1 -10.64,-0.8 -15.98,-1.96 -38.97,-8.63 -78.6,-41.21 -114.71,-48.94 -5.24,-1.13 -10.38,-1.77 -15.41,-1.77 m 132.73,1482.29 c -381.32,0 -690.46,-309.14 -690.46,-690.47 0,-381.33 309.14,-690.46 690.46,-690.46 381.34,0 690.46,309.13 690.46,690.46 0,381.33 -309.12,690.47 -690.46,690.47 m 0,-1340.39 c -179.5,0 -341.94,72.73 -459.57,190.34 -117.64,117.64 -190.37,280.09 -190.37,459.58 0,179.5 72.73,341.96 190.37,459.58 117.63,117.64 280.07,190.38 459.57,190.38 179.48,0 341.94,-72.74 459.56,-190.38 117.64,-117.65 190.38,-280.08 190.38,-459.58 0,-179.49 -72.74,-341.94 -190.38,-459.58 -117.62,-117.61 -280.08,-190.34 -459.56,-190.34 m -8.7,1213.87 c 335.37,0 609.17,-263.55 625.63,-594.84 0.51,10.46 0.79,20.99 0.79,31.58 0,345.96 -280.46,626.42 -626.42,626.42 -345.98,0 -626.44,-280.46 -626.44,-626.42 0,-10.59 0.29,-21.12 0.8,-31.58 16.46,331.29 290.27,594.84 625.64,594.84" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient768"
+       spreadMethod="pad"
+       gradientTransform="matrix(1058.59,-1164.7,-1164.7,-1058.59,4941.75,2993.42)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop770"
+         offset="0"
+         style="stop-opacity:1;stop-color:#fcfccf" />
+      <stop
+         id="stop772"
+         offset="0.1"
+         style="stop-opacity:1;stop-color:#f6f465" />
+      <stop
+         id="stop774"
+         offset="0.26"
+         style="stop-opacity:1;stop-color:#f9ea2f" />
+      <stop
+         id="stop776"
+         offset="0.54"
+         style="stop-opacity:1;stop-color:#fbcf23" />
+      <stop
+         id="stop778"
+         offset="1"
+         style="stop-opacity:1;stop-color:#e28616" />
+    </linearGradient>
+    <clipPath
+       id="clipPath754"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path756"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath736"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path738"
+         d="m 5558.63,1968.33 -355.09,-1621.041 24.21,-31.027 360.89,1647.558 -30.01,4.51 z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient740"
+       spreadMethod="pad"
+       gradientTransform="matrix(93.9671,-16.7413,-16.7413,-93.9671,5351.17,1150.2)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop742"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop744"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop746"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+    <clipPath
+       id="clipPath726"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path728"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath708"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path710"
+         d="m 5145.92,2030.18 -360.89,-1647.571 35.83,22.02 355.09,1621.051 -30.03,4.5 z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient712"
+       spreadMethod="pad"
+       gradientTransform="matrix(249.781,-21.1828,-21.1828,-249.781,4855.68,1215.71)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop714"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop716"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop718"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+    <clipPath
+       id="clipPath696"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path698"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath678"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path680"
+         d="M 5227.75,316.262 5049.25,545.051 4785.03,382.609 5145.92,2030.18 5588.64,1963.82 5227.75,316.262 Z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient682"
+       spreadMethod="pad"
+       gradientTransform="matrix(505.914,-90.1579,-93.9728,-527.596,4934.47,1218.2)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop684"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop686"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop688"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+    <clipPath
+       id="clipPath668"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path670"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath650"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path652"
+         d="m 5669.71,2039.02 532.97,-1585.372 38.27,-19.527 -541.69,1611.299 -29.55,-6.4 z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient654"
+       spreadMethod="pad"
+       gradientTransform="matrix(135.598,35.9865,35.9865,-135.598,5872.57,1214.6)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop656"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop658"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop660"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+    <clipPath
+       id="clipPath640"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path642"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath622"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path624"
+         d="m 5263.45,1950.97 541.7,-1611.29 20.81,32.359 -532.96,1585.351 -29.55,-6.42 z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient626"
+       spreadMethod="pad"
+       gradientTransform="matrix(133.84,35.5199,35.5199,-133.84,5466.42,1127.31)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop628"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop630"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop632"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+    <clipPath
+       id="clipPath610"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path612"
+         d="M 6599.66,0 0,0 l 0,3629.81 6599.66,0 0,-3629.81" />
+    </clipPath>
+    <clipPath
+       id="clipPath592"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path594"
+         d="m 6240.95,434.121 -282.21,144.098 -153.59,-238.539 -541.7,1611.29 435.81,94.45 541.69,-1611.299 z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient596"
+       spreadMethod="pad"
+       gradientTransform="matrix(788.571,83.4152,96.7868,-819.781,5356.5,1150.7)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop598"
+         offset="0"
+         style="stop-opacity:1;stop-color:#9c1a20" />
+      <stop
+         id="stop600"
+         offset="0.494624"
+         style="stop-opacity:1;stop-color:#ed1e24" />
+      <stop
+         id="stop602"
+         offset="1"
+         style="stop-opacity:1;stop-color:#a71c21" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="-166.62696"
+     inkscape:cy="337.35529"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1880"
+     inkscape:window-height="1155"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4232">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-602.36216)">
+    <g
+       id="g588"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath592)"
+         id="g590">
+        <path
+           id="path604"
+           style="fill:url(#linearGradient596);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 6240.95,434.121 -282.21,144.098 -153.59,-238.539 -541.7,1611.29 435.81,94.45 541.69,-1611.299"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g606"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath610)"
+         id="g608">
+        <path
+           id="path614"
+           style="fill:#3676c4;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 6155.56,478.891 0.95,-2.86 65.57,14.207 -0.97,2.852 -65.55,-14.199"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path616"
+           style="fill:#3676c4;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5785.32,398.668 0.96,-2.848 66.02,14.289 -0.96,2.852 -66.02,-14.293"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g618"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath622)"
+         id="g620">
+        <path
+           id="path634"
+           style="fill:url(#linearGradient626);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5263.45,1950.97 541.7,-1611.29 20.81,32.359 -532.96,1585.351 -29.55,-6.42"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g636"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath640)"
+         id="g638">
+        <path
+           id="path644"
+           style="fill:#e9ec16;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5263.45,1950.97 -3.11,-1.04 543.87,-1617.77 25.36,39.43 -534.4,1589.63 -36,-7.82 1.17,-3.47 3.11,1.04 0.69,-3.21 26.68,5.8 531.52,-1581.072 -16.26,-25.289 -539.52,1604.821 -3.11,-1.05 0.69,-3.21 -0.69,3.21"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g646"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath650)"
+         id="g648">
+        <path
+           id="path662"
+           style="fill:url(#linearGradient654);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5669.71,2039.02 532.97,-1585.372 38.27,-19.527 -541.69,1611.299 -29.55,-6.4"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g664"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath668)"
+         id="g666">
+        <path
+           id="path672"
+           style="fill:#e9ec16;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5669.71,2039.02 -3.11,-1.05 533.39,-1586.642 46.63,-23.789 -545.19,1621.701 -36,-7.79 1.17,-3.48 3.11,1.05 0.69,-3.21 26.68,5.78 538.19,-1600.891 -29.91,15.262 -532.54,1584.099 -3.11,-1.04 0.69,-3.21 -0.69,3.21"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g674"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath678)"
+         id="g676">
+        <path
+           id="path690"
+           style="fill:url(#linearGradient682);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="M 5227.75,316.262 5049.25,545.051 4785.03,382.609 5145.92,2030.18 5588.64,1963.82 5227.75,316.262"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g692"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath696)"
+         id="g694">
+        <path
+           id="path700"
+           style="fill:#3676c4;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5173.73,383.621 66.59,-9.973 0.65,2.922 -66.61,9.989 -0.63,-2.938"
+           inkscape:connector-curvature="0" />
+        <path
+           id="path702"
+           style="fill:#3676c4;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 4797.6,440 67.07,-10.059 0.62,2.93 -67.05,10.039 -0.64,-2.91"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g704"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath708)"
+         id="g706">
+        <path
+           id="path720"
+           style="fill:url(#linearGradient712);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5145.92,2030.18 -360.89,-1647.571 35.83,22.02 355.09,1621.051 -30.03,4.5"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g722"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath726)"
+         id="g724">
+        <path
+           id="path730"
+           style="fill:#e9ec16;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5145.92,2030.18 -3.21,0.7 -362.54,-1655.11 43.6,26.8 356.13,1625.84 -36.53,5.47 -0.66,-3 3.21,-0.7 -0.49,-3.24 26.56,-3.99 -354.04,-1616.251 -28.06,-17.25 359.23,1640.031 -3.2,0.7 -0.49,-3.24 0.49,3.24"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g732"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath736)"
+         id="g734">
+        <path
+           id="path748"
+           style="fill:url(#linearGradient740);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5558.63,1968.33 -355.09,-1621.041 24.21,-31.027 360.89,1647.558 -30.01,4.51"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g750"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath754)"
+         id="g752">
+        <path
+           id="path758"
+           style="fill:#e9ec16;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5558.63,1968.33 -3.2,0.7 L 5200,346.488 l 29.46,-37.758 363.14,1657.82 -36.52,5.48 -0.65,-3 3.2,-0.7 -0.48,-3.25 26.54,-3.98 -358.65,-1637.319 -18.97,24.309 354.77,1619.53 -3.21,0.71 -0.48,-3.25 0.48,3.25"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g760"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath764)"
+         id="g762">
+        <path
+           id="path780"
+           style="fill:url(#linearGradient768);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5290.59,1671.76 c -3.29,0 -6.54,0.27 -9.74,0.85 -47.71,7.96 -79.25,83.19 -127.93,102.99 -12.1,4.61 -25.68,6.1 -39.88,6.1 -12.87,0 -26.24,-1.22 -39.49,-2.44 -13.24,-1.22 -26.35,-2.44 -38.69,-2.44 -17.39,0 -33.24,2.43 -45.75,10.69 -40.7,25.37 -41.23,106.89 -78.95,143.99 -38.26,36.02 -119.77,33.43 -146.89,73.51 -4.7,6.76 -7.73,14.59 -9.65,23.25 -7.98,36.06 5.16,85.68 -3.19,124.69 -1.18,5.32 -2.75,10.42 -4.85,15.3 -21.24,47.45 -97.5,76.19 -107.35,124.29 -11.05,47.84 46.33,105.7 45.91,157.68 -0.1,5.31 -0.81,10.65 -1.96,15.96 -8.65,38.97 -41.24,78.61 -48.96,114.73 -1.89,8.66 -2.37,17.03 -0.9,25.12 7.99,47.74 83.19,79.28 102.98,127.94 18.88,49.46 -14.53,123.8 11.94,163.8 25.36,40.71 106.86,41.25 143.98,78.97 36.04,38.26 33.42,119.78 73.5,146.88 6.77,4.7 14.6,7.74 23.26,9.63 9.17,2.04 19.23,2.7 29.76,2.7 9.98,0 20.38,-0.59 30.88,-1.19 10.51,-0.6 21.1,-1.2 31.45,-1.2 11.29,0 22.3,0.71 32.58,2.92 5.31,1.15 10.44,2.73 15.34,4.84 47.43,21.25 76.18,97.5 124.28,107.36 4.2,0.97 8.47,1.41 12.82,1.41 22.47,0 46.73,-11.84 71.27,-23.67 24.55,-11.83 49.38,-23.67 73.01,-23.67 0.19,0 0.38,0 0.56,0 5.31,0.11 10.64,0.81 15.95,1.97 38.95,8.64 78.6,41.22 114.73,48.96 5.19,1.13 10.29,1.75 15.29,1.75 3.32,0 6.61,-0.27 9.85,-0.86 47.74,-7.99 79.26,-83.18 127.94,-102.98 12.1,-4.62 25.69,-6.11 39.91,-6.11 12.87,0 26.25,1.22 39.49,2.44 13.24,1.22 26.35,2.44 38.68,2.44 17.39,0 33.23,-2.43 45.73,-10.69 40.7,-25.38 41.24,-106.87 78.97,-143.98 38.27,-36.04 119.75,-33.42 146.88,-73.51 4.7,-6.77 7.72,-14.57 9.61,-23.23 8.02,-36.06 -5.16,-85.65 3.2,-124.68 1.15,-5.33 2.74,-10.45 4.88,-15.36 21.24,-47.43 97.5,-76.18 107.36,-124.27 11.04,-47.84 -46.34,-105.7 -45.93,-157.68 0.12,-5.31 0.8,-10.63 1.96,-15.94 8.62,-38.97 41.21,-78.62 48.95,-114.73 1.87,-8.65 2.37,-17.02 0.91,-25.15 -7.97,-47.73 -83.18,-79.27 -103.01,-127.95 -18.85,-49.43 14.57,-123.78 -11.88,-163.79 -25.38,-40.7 -106.88,-41.24 -144.02,-78.95 -36,-38.28 -33.41,-119.8 -73.48,-146.89 -6.78,-4.71 -14.61,-7.74 -23.24,-9.64 -9.17,-2.03 -19.22,-2.7 -29.74,-2.7 -10.01,0 -20.44,0.6 -30.97,1.21 -10.53,0.6 -21.14,1.2 -31.52,1.2 -11.26,0 -22.23,-0.71 -32.47,-2.9 -5.32,-1.16 -10.46,-2.74 -15.34,-4.87 -47.41,-21.24 -76.16,-97.5 -124.25,-107.36 -4.21,-0.97 -8.48,-1.41 -12.83,-1.41 -22.48,0 -46.73,11.84 -71.28,23.67 -24.54,11.84 -49.37,23.67 -73.01,23.67 -0.19,0 -0.38,0 -0.56,0 -5.32,-0.1 -10.64,-0.8 -15.98,-1.96 -38.97,-8.63 -78.6,-41.21 -114.71,-48.94 -5.24,-1.13 -10.38,-1.77 -15.41,-1.77 m 132.73,1482.29 c -381.32,0 -690.46,-309.14 -690.46,-690.47 0,-381.33 309.14,-690.46 690.46,-690.46 381.34,0 690.46,309.13 690.46,690.46 0,381.33 -309.12,690.47 -690.46,690.47 m 0,-1340.39 c -179.5,0 -341.94,72.73 -459.57,190.34 -117.64,117.64 -190.37,280.09 -190.37,459.58 0,179.5 72.73,341.96 190.37,459.58 117.63,117.64 280.07,190.38 459.57,190.38 179.48,0 341.94,-72.74 459.56,-190.38 117.64,-117.65 190.38,-280.08 190.38,-459.58 0,-179.49 -72.74,-341.94 -190.38,-459.58 -117.62,-117.61 -280.08,-190.34 -459.56,-190.34 m -8.7,1213.87 c 335.37,0 609.17,-263.55 625.63,-594.84 0.51,10.46 0.79,20.99 0.79,31.58 0,345.96 -280.46,626.42 -626.42,626.42 -345.98,0 -626.44,-280.46 -626.44,-626.42 0,-10.59 0.29,-21.12 0.8,-31.58 16.46,331.29 290.27,594.84 625.64,594.84"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g782"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath786)"
+         id="g784">
+        <path
+           id="path790"
+           style="fill:#d34021;fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5718.62,1785.86 c 4.88,2.13 10.02,3.71 15.34,4.87 19.67,4.21 42.03,2.95 63.99,1.7 21.6,-1.24 42.82,-2.47 60.71,1.49 8.63,1.9 16.46,4.93 23.24,9.64 40.07,27.09 37.48,108.61 73.48,146.89 37.14,37.71 118.64,38.25 144.02,78.95 26.45,40.01 -6.97,114.36 11.88,163.79 19.83,48.68 95.04,80.22 103.01,127.95 1.46,8.13 0.96,16.5 -0.91,25.15 -7.74,36.11 -40.33,75.76 -48.95,114.73 -1.16,5.31 -1.84,10.63 -1.96,15.94 -0.41,51.98 56.97,109.84 45.93,157.68 -9.86,48.09 -86.12,76.84 -107.36,124.27 -2.14,4.91 -3.73,10.03 -4.88,15.36 -8.36,39.03 4.82,88.62 -3.2,124.68 -1.89,8.66 -4.91,16.46 -9.61,23.23 -27.13,40.09 -108.61,37.47 -146.88,73.51 -37.73,37.11 -38.27,118.6 -78.97,143.98 -21.36,14.13 -52.5,11.19 -84.41,8.25 -27.87,-2.56 -56.34,-5.13 -79.4,3.67 -48.68,19.8 -80.2,94.99 -127.94,102.98 -8.12,1.48 -16.49,0.99 -25.14,-0.89 -36.13,-7.74 -75.78,-40.32 -114.73,-48.96 -5.31,-1.16 -10.64,-1.86 -15.95,-1.97 -23.8,-0.18 -48.83,11.74 -73.57,23.67 -29.28,14.12 -58.16,28.24 -84.09,22.26 -48.1,-9.86 -76.85,-86.11 -124.28,-107.36 -4.9,-2.11 -10.03,-3.69 -15.34,-4.84 -19.69,-4.23 -42.06,-2.97 -64.03,-1.72 -21.58,1.23 -42.78,2.46 -60.64,-1.51 -8.66,-1.89 -16.49,-4.93 -23.26,-9.63 -40.08,-27.1 -37.46,-108.62 -73.5,-146.88 -37.12,-37.72 -118.62,-38.26 -143.98,-78.97 -26.47,-40 6.94,-114.34 -11.94,-163.8 -19.79,-48.66 -94.99,-80.2 -102.98,-127.94 -1.47,-8.09 -0.99,-16.46 0.9,-25.12 7.72,-36.12 40.31,-75.76 48.96,-114.73 1.15,-5.31 1.86,-10.65 1.96,-15.96 0.42,-51.98 -56.96,-109.84 -45.91,-157.68 9.85,-48.1 86.11,-76.84 107.35,-124.29 2.1,-4.88 3.67,-9.98 4.85,-15.3 8.35,-39.01 -4.79,-88.63 3.19,-124.69 1.92,-8.66 4.95,-16.49 9.65,-23.25 27.12,-40.08 108.63,-37.49 146.89,-73.51 37.72,-37.1 38.25,-118.62 78.95,-143.99 21.38,-14.12 52.53,-11.19 84.44,-8.25 27.87,2.57 56.32,5.13 79.37,-3.66 48.68,-19.8 80.22,-95.03 127.93,-102.99 8.1,-1.46 16.48,-0.95 25.15,0.92 36.11,7.73 75.74,40.31 114.71,48.94 5.34,1.16 10.66,1.86 15.98,1.96 23.8,0.19 48.84,-11.74 73.57,-23.67 29.29,-14.12 58.17,-28.25 84.11,-22.26 48.09,9.86 76.84,86.12 124.25,107.36 m -281.78,-67.87 c -4.86,-0.08 -9.78,-0.73 -14.74,-1.81 -36.74,-7.85 -76.37,-40.43 -114.74,-48.92 -9.25,-2.04 -18.52,-2.64 -27.64,-1 -52.75,10.16 -83.99,86.17 -129.15,103.35 -20.63,8.41 -47.42,5.83 -74.74,3.25 -32.44,-3.07 -65.65,-6.13 -90.19,9.21 -44.52,29.34 -44.45,111.43 -79.95,144.79 -34.4,33.94 -116.51,30.72 -147.71,74.45 -5.3,7.63 -8.61,16.3 -10.65,25.58 -8.22,38.43 4.93,88.01 -3.22,124.7 -1.07,4.95 -2.52,9.69 -4.42,14.11 -18.49,43.98 -95.58,72.5 -107.76,125.48 -10.96,53.23 47.27,111.23 45.78,158.9 -0.09,4.85 -0.74,9.75 -1.83,14.73 -7.87,36.76 -40.45,76.36 -48.96,114.74 -2.01,9.25 -2.59,18.51 -0.91,27.64 10.13,52.75 86.15,83.98 103.32,129.15 18.41,45.12 -15.78,119.71 12.49,164.92 29.34,44.52 111.37,44.44 144.77,79.95 33.94,34.41 30.74,116.52 74.46,147.69 7.61,5.3 16.27,8.62 25.55,10.64 19.26,4.12 41.32,2.88 63.16,1.64 21.72,-1.23 43.22,-2.47 61.53,1.58 4.95,1.08 9.68,2.54 14.13,4.46 43.97,18.47 72.5,95.58 125.48,107.74 28.57,5.89 58.51,-8.16 87.49,-22.21 25.02,-12.13 49.32,-24.26 71.41,-23.57 4.84,0.11 9.74,0.74 14.71,1.83 36.75,7.86 76.34,40.45 114.73,48.95 9.26,2.02 18.52,2.6 27.66,0.94 52.75,-10.15 84.01,-86.15 129.15,-103.34 20.63,-8.41 47.42,-5.83 74.74,-3.25 32.45,3.07 65.65,6.14 90.2,-9.21 44.49,-29.35 44.43,-111.41 79.94,-144.79 34.41,-33.92 116.53,-30.73 147.72,-74.47 5.27,-7.6 8.59,-16.27 10.61,-25.53 8.21,-38.42 -4.94,-87.99 3.19,-124.67 1.07,-4.98 2.54,-9.7 4.5,-14.15 18.47,-43.99 95.58,-72.5 107.75,-125.48 10.96,-53.23 -47.29,-111.24 -45.79,-158.91 0.09,-4.84 0.73,-9.76 1.82,-14.72 7.83,-36.74 40.42,-76.34 48.93,-114.72 2.01,-9.27 2.62,-18.51 0.97,-27.66 -10.15,-52.74 -86.16,-83.98 -103.35,-129.15 -18.38,-45.14 15.81,-119.72 -12.46,-164.92 -29.36,-44.52 -111.4,-44.45 -144.78,-79.96 -33.94,-34.41 -30.72,-116.51 -74.45,-147.7 -7.63,-5.31 -16.3,-8.61 -25.58,-10.62 -19.26,-4.12 -41.32,-2.88 -63.16,-1.63 -21.73,1.24 -43.23,2.48 -61.53,-1.57 -4.96,-1.09 -9.69,-2.55 -14.12,-4.49 -43.96,-18.47 -72.5,-95.59 -125.45,-107.75 -28.58,-5.88 -58.53,8.17 -87.52,22.22 -25.02,12.13 -49.32,24.26 -71.39,23.56"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g792"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath796)"
+         id="g794">
+        <path
+           id="path812"
+           style="fill:url(#linearGradient800);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 5423.32,1773.12 c -381.32,0 -690.46,309.13 -690.46,690.46 0,381.33 309.14,690.47 690.46,690.47 381.34,0 690.46,-309.14 690.46,-690.47 0,-381.33 -309.12,-690.46 -690.46,-690.46 m 0,1340.42 c -179.5,0 -341.94,-72.74 -459.57,-190.38 -117.64,-117.62 -190.37,-280.08 -190.37,-459.58 0,-179.49 72.73,-341.94 190.37,-459.58 117.63,-117.61 280.07,-190.34 459.57,-190.34 179.48,0 341.94,72.73 459.56,190.34 117.64,117.64 190.38,280.09 190.38,459.58 0,179.5 -72.74,341.93 -190.38,459.58 -117.62,117.64 -280.08,190.38 -459.56,190.38"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+    <g
+       id="g814"
+       transform="matrix(0.13333333,0,0,-0.13333333,-598.49064,1075.5449)"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/gold-medal.png"
+       inkscape:export-xdpi="3.1935501"
+       inkscape:export-ydpi="3.1935501">
+      <g
+         clip-path="url(#clipPath818)"
+         id="g816">
+        <path
+           id="path834"
+           style="fill:url(#linearGradient822);fill-opacity:1;fill-rule:nonzero;stroke:none"
+           d="m 6040.25,2432.69 c -16.46,331.29 -290.26,594.84 -625.63,594.84 -335.37,0 -609.18,-263.55 -625.64,-594.84 -0.51,10.46 -0.8,20.99 -0.8,31.58 0,345.96 280.46,626.42 626.44,626.42 345.96,0 626.42,-280.46 626.42,-626.42 0,-10.59 -0.28,-21.12 -0.79,-31.58"
+           inkscape:connector-curvature="0" />
+      </g>
+    </g>
+  </g>
+</svg>

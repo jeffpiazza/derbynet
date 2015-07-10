@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="755.83521"
+   height="617.85754"
+   id="svg7633"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="photos-line-drawing.svg"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/settings-photos.png"
+   inkscape:export-xdpi="21.43"
+   inkscape:export-ydpi="21.43">
+  <defs
+     id="defs7635">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective7641" />
+    <inkscape:perspective
+       id="perspective7598"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="-652.79667"
+     inkscape:cy="-68.214087"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1880"
+     inkscape:window-height="1155"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7638">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-99.22525,153.70945)">
+    <g
+       transform="translate(243.41032,-727.78593)"
+       id="g7579">
+      <g
+         id="g7563">
+        <rect
+           style="fill:#ffffff;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect7559"
+           width="442.85715"
+           height="457.14285"
+           x="28.571423"
+           y="578.07648" />
+        <rect
+           style="fill:#b3b3b3;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect7561"
+           width="397.14285"
+           height="308.57144"
+           x="51.42857"
+           y="609.50507" />
+      </g>
+      <g
+         transform="matrix(0.96592583,-0.25881905,0.25881905,0.96592583,-317.40015,177.9049)"
+         id="g7567">
+        <rect
+           y="578.07648"
+           x="28.571423"
+           height="457.14285"
+           width="442.85715"
+           id="rect7569"
+           style="fill:#ffffff;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none" />
+        <rect
+           y="609.50507"
+           x="51.42857"
+           height="308.57144"
+           width="397.14285"
+           id="rect7571"
+           style="fill:#b3b3b3;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none" />
+      </g>
+      <g
+         id="g7573"
+         transform="matrix(0.9961947,0.08715574,-0.08715574,0.9961947,188.39818,115.56631)">
+        <rect
+           style="fill:#ffffff;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect7575"
+           width="442.85715"
+           height="457.14285"
+           x="28.571423"
+           y="578.07648" />
+        <rect
+           style="fill:#b3b3b3;stroke:#000000;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none"
+           id="rect7577"
+           width="397.14285"
+           height="308.57144"
+           x="51.42857"
+           y="609.50507" />
+      </g>
+    </g>
+  </g>
+</svg>
