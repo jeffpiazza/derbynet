@@ -53,3 +53,10 @@ img { z-index: 30; }
     margin-left: auto;
     margin-right: auto;
 }
+
+.trouble {
+    border: 5px solid #ff6666;
+}
+.trouble img {
+    vertical-align: middle;
+}

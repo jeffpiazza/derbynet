@@ -14,8 +14,8 @@
    version="1.0"
    id="svg7500"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="readonly-icon-alt.svg"
-   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/readonly.png"
+   sodipodi:docname="readonly.svg"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/readonly.png"
    inkscape:export-xdpi="3.6940298"
    inkscape:export-ydpi="3.6940298">
   <metadata
@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -44,12 +44,12 @@
      id="namedview7528"
      showgrid="false"
      inkscape:zoom="0.76129032"
-     inkscape:cx="166.82203"
+     inkscape:cx="-63.050852"
      inkscape:cy="320.65513"
      inkscape:window-x="242"
      inkscape:window-y="174"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg7500" />
+     inkscape:current-layer="layer2" />
   <defs
      id="defs7502">
     <linearGradient
@@ -4505,30 +4505,50 @@
          id="stop7519" />
     </radialGradient>
   </defs>
-  <circle
-     id="field"
-     r="25.799999"
-     cx="31"
-     cy="49"
-     style="fill:none;stroke:#ee1634;stroke-width:2;stroke-opacity:1"
-     inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
-     inkscape:export-xdpi="90"
-     inkscape:export-ydpi="90" />
   <g
-     id="info"
-     inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
-     inkscape:export-xdpi="90"
-     inkscape:export-ydpi="90"
-     style="fill:#ffffff"
-     transform="translate(0,18)" />
-  <path
-     inkscape:connector-curvature="0"
-     style="color:#000000;display:block;overflow:visible;visibility:visible;opacity:1;fill:#ee1634;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.9999997;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
-     d="m 30.257836,34.52819 c -5.088025,0.15938 -8.460925,2.60597 -8.460925,7.65218 l 0,5.1505 -1.145125,0 c -0.840125,0 -1.526788,0.57875 -1.526788,1.3034 l 0,13.53846 c 0,0.72475 0.686625,1.30339 1.526788,1.30339 l 20.717624,0 c 0.840251,0 1.505588,-0.57863 1.505588,-1.30339 l 0,-13.53846 c 0,-0.72475 -0.665375,-1.3034 -1.505588,-1.3034 l -1.166249,0 0.02125,-5.06641 c 0,-5.35667 -3.661488,-7.67015 -9.203113,-7.73627 -0.258375,-0.003 -0.513125,-0.008 -0.763375,0 z m 0.508875,3.38462 c 0.09375,-0.002 0.200125,0 0.296875,0 6.148562,0 5.677062,4.373 5.767862,5.67606 l 0,3.742 -11.578125,0 0,-3.72098 c -0.02125,-1.29272 -0.380875,-5.56411 5.513388,-5.69708 z"
-     id="path2086"
-     inkscape:r_cx="true"
-     inkscape:r_cy="true"
-     inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
-     inkscape:export-xdpi="90"
-     inkscape:export-ydpi="90" />
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="Main">
+    <circle
+       id="field"
+       r="25.799999"
+       cx="31"
+       cy="49"
+       style="fill:none;stroke:#ee1634;stroke-width:2;stroke-opacity:1"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <g
+       id="info"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       style="fill:#ffffff"
+       transform="translate(0,18)" />
+    <path
+       inkscape:connector-curvature="0"
+       style="color:#000000;display:block;overflow:visible;visibility:visible;opacity:1;fill:#ee1634;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.9999997;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
+       d="m 30.257836,34.52819 c -5.088025,0.15938 -8.460925,2.60597 -8.460925,7.65218 l 0,5.1505 -1.145125,0 c -0.840125,0 -1.526788,0.57875 -1.526788,1.3034 l 0,13.53846 c 0,0.72475 0.686625,1.30339 1.526788,1.30339 l 20.717624,0 c 0.840251,0 1.505588,-0.57863 1.505588,-1.30339 l 0,-13.53846 c 0,-0.72475 -0.665375,-1.3034 -1.505588,-1.3034 l -1.166249,0 0.02125,-5.06641 c 0,-5.35667 -3.661488,-7.67015 -9.203113,-7.73627 -0.258375,-0.003 -0.513125,-0.008 -0.763375,0 z m 0.508875,3.38462 c 0.09375,-0.002 0.200125,0 0.296875,0 6.148562,0 5.677062,4.373 5.767862,5.67606 l 0,3.742 -11.578125,0 0,-3.72098 c -0.02125,-1.29272 -0.380875,-5.56411 5.513388,-5.69708 z"
+       id="path2086"
+       inkscape:r_cx="true"
+       inkscape:r_cy="true"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/shadow.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Bold Circle"
+     style="display:inline">
+    <circle
+       inkscape:export-ydpi="9.71"
+       inkscape:export-xdpi="9.71"
+       inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/status_readonly.png"
+       style="fill:none;stroke:#ee1634;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       cy="49"
+       cx="31"
+       r="25.799999"
+       id="circle4882" />
+  </g>
 </svg>

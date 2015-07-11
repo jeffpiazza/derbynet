@@ -133,7 +133,20 @@ foreach ($allfiles as $imagefile) {
 }
 
 if (empty($allfiles)) {
+  $trouble_first = '<h2 class="trouble"><img src="img/status_trouble.png"/>';
+  $dir_name = htmlspecialchars($photo_repository->directory(), ENT_QUOTES, 'UTF-8');
+  $trouble_last = "</h2>\n";
+  if (!file_exists($photo_repository->directory())) {
+    echo $trouble_first.'Directory '.$dir_name.' does not exist.'.$trouble_last;
+  } else if (!is_dir($photo_repository->directory())) {
+    echo $trouble_first.'Directory path '.$dir_name.' exists but is not a directory.'.$trouble_last;
+  } else if (!is_readable($photo_repository->directory())) {
+    echo $trouble_first.'Directory '.$dir_name.' cannot be read.'.$trouble_last;
+  } else if (!is_writable($photo_repository->directory())) {
+    echo $trouble_first.'Directory '.$dir_name.' is not writable.'.$trouble_last;
+  } else {
     echo '<h2>There are no photos in the photo directory yet.</h2>';
+  }
 }
 ?>
 </div>
