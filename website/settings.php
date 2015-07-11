@@ -21,23 +21,6 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/settings.js"></script>
-<script type="text/javascript">
-var g_form_modified = 0;
-$(function() {
-  $('#settings_form *').on("change", function() {
-      g_form_modified = 1;
-      $(this).closest(".settings_group").addClass("modified");
-    });
-  $("#settings_form input[type='submit']").on("click", function() {
-      g_form_modified = 0;
-    });
-  window.onbeforeunload = function() {
-    if (g_form_modified == 1) {
-      return "You have unsaved changes.";
-    }
-  }
-});
-</script>
 </head>
 <body>
 <?php
@@ -145,12 +128,15 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
     echo "<p>\n";
     echo '<label for="photo-dir">Directory for '.$category.' photos:</label>'."\n";
 	echo '<input id="'.$photo_dir_id.'" name="'.$photo_dir_id.'" type="text" data-enhanced="true"'
-    .' size="58"'
+          .' size="50"'
 		  .' value="'.htmlspecialchars($photo_dir_value, ENT_QUOTES, 'UTF-8').'"/>'."\n";
+    echo '<span id="'.$photo_dir_id.'_icon" class="status_icon"></span>'."\n";
     echo '<span class="photo_dir_choose"><input type="button" value="Browse"'
         .' data-enhanced="true"'
         .' onclick="show_choose_directory_modal($(\'#'.$photo_dir_id.'\').val(), function(path) {'
-        .'    $(\'#'.$photo_dir_id.'\').val(path); })"/>'
+        .'    $(\'#'.$photo_dir_id.'\').val(path);'
+        .'    $(\'#'.$photo_dir_id.'\').change();'
+        .' })"/>'
         .'</span>'."\n";
     echo "</p>\n";
     echo "<p>\n";

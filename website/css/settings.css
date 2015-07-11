@@ -35,3 +35,7 @@
   display: inline;
   font-size: 24px;
 }
+
+.status_icon img {
+    vertical-align: middle;
+}
