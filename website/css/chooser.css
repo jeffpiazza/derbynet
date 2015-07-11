@@ -1,0 +1,43 @@
+#chooser_modal {
+    top: 50px;
+    width: 500px;
+}
+
+#chooser_directories_above-button {
+    margin-bottom: 30px;
+}
+
+.chooser_top_text_input {
+    margin-bottom: 50px;
+}
+
+#chooser_directory_content_container {
+    height: 500px;
+    overflow: auto;
+    border: 2px solid #404040;
+    margin-bottom: 30px;
+
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px inset;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px inset;
+}
+
+
+.unwritable::before {
+    content: url('../img/readonly.png');
+    padding-right: 5px;
+}
+
+.writable::before {
+    content: url('../img/green-folder.png');
+    padding-right: 5px;
+}
+
+.unreadable::before {
+    content: url('../img/do-not-enter.png');
+    padding-right: 5px;
+}

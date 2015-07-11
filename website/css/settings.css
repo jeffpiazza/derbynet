@@ -25,3 +25,9 @@
 .settings_group .settings_group_settings p {
   margin: 5px;
 }
+
+/* Fighting with jQuery Mobile: */
+.ui-mobile label {
+  display: inline;
+  font-size: 24px;
+}
