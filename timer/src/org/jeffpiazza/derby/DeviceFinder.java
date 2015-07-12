@@ -50,6 +50,12 @@ public class DeviceFinder {
     return null;
   }
 
+  public static void listDeviceClassNames() {
+      for (Class<? extends TimerDevice> cl : allDeviceClasses) {
+        System.err.println("         " + cl.getName().substring(1 + cl.getName().lastIndexOf(".")));
+      }
+  }
+
   private TimerDevice findDeviceWithOpenPort(SerialPort port, LogWriter w) throws Exception {
     SerialPortWrapper portWrapper = new SerialPortWrapper(port, w);
     for (Class<? extends TimerDevice> deviceClass : deviceClasses) {
@@ -75,12 +81,9 @@ public class DeviceFinder {
       }
     }
     if (classes.size() == 0) {
-      System.err.println("No device classes match " + s + ":");
-      for (Class<? extends TimerDevice> cl : allDeviceClasses) {
-        System.err.println("   " + cl.getName());
-      }
+      System.err.println("**** No device classes match " + s + "; use -h option to get a list of recognized classes");
     }
-    return (Class<? extends TimerDevice>[]) classes.toArray();
+    return (Class<? extends TimerDevice>[]) classes.toArray(new Class[classes.size()]);
   }
 
   public static final Class<? extends TimerDevice>[] allDeviceClasses =

@@ -13,6 +13,7 @@ public class TimerMain {
 
   public static void usage() {
     System.err.println("Usage: [options] <base-url>");
+    System.err.println("   -h or -help or --help: This message");
     System.err.println("   -u <user>: Specify username for authenticating to web server");
     System.err.println("   -p <password>: Specify password for authenticating to web server");
     System.err.println("   -t: Trace non-heartbeat messages sent");
@@ -20,6 +21,8 @@ public class TimerMain {
     System.err.println("   -r: Show responses to traced messages");
     System.err.println("   -n <port name>: Use specified port name instead of searching");
     System.err.println("   -d <device name>: Use specified device instead of trying to identify");
+    System.err.println("      Known devices:");
+    DeviceFinder.listDeviceClassNames();
   }
 
   public static void main(String[] args) {
@@ -74,7 +77,7 @@ public class TimerMain {
       }
     }
 
-    if (consumed_args + 1 != args.length) {
+    if (consumed_args + 1 != args.length || args[consumed_args].startsWith("-")) {
       usage();
       System.exit(1);
     }

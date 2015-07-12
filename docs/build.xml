@@ -6,7 +6,7 @@
    <property name="soffice" location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
    <property name="dist"  location="dist"/>
 
-   <target name="dist" depends="installation, after-installation">
+   <target name="dist" depends="installation, after-installation, operation">
    </target>
 
    <target name="make-dist-dir">
@@ -39,6 +39,10 @@
      <make-pdf file="After Installation- SQLite.fodt"/>
      <make-pdf file="After Installation- MySQL.fodt"/>
      <make-pdf file="After Installation- Windows GPRM.fodt"/>
+ </target>
+
+ <target name="operation" depends="make-dist-dir">
+     <make-pdf file="Timer Operation.fodt"/>
  </target>
 
   <target name="clean"
