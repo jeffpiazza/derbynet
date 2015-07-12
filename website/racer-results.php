@@ -3,6 +3,7 @@
 <?php
     require_once('inc/data.inc');
     require_once('inc/schema_version.inc');
+    require_once('inc/running_round_header.inc');
 
     $use_master_sched = use_master_sched();
     $high_water_rounds = high_water_rounds();

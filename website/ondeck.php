@@ -10,6 +10,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/running_round_header.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 
     $nlanes = get_lane_count();
