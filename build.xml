@@ -8,8 +8,9 @@
   <property name="replay-app-dir" location="${replay-dir}/build/Release"/>
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
+  <property name="docs-dir" location="docs"/>
 
-  <target name="dist" depends="replay-dmg, timer-jar, generated-version.inc,
+  <target name="dist" depends="replay-dmg, timer-jar, docs-dist, generated-version.inc,
                                generated-build-date.inc, generated-commit-hash.inc">
 <!--
       <loadresource property="rev-count">
@@ -29,6 +30,13 @@
                   <exclude name="website/local/**"/>
               </fileset>
               <globmapper from="website/*" to="racemgr/*"/>
+          </mappedresources>
+
+          <mappedresources>
+              <fileset dir="docs/dist">
+                  <include name="**"/>
+              </fileset>
+              <globmapper from="*" to="docs/*"/>
           </mappedresources>
 
           <fileset dir=".">
@@ -92,6 +100,10 @@
 
   <target name="timer-jar">
       <ant dir="${timer-dir}"/>
+  </target>
+
+  <target name="docs-dist">
+      <ant dir="${docs-dir}"/>
   </target>
 
 <!-- From http://www.rkuntz.org/pmwiki.php?n=Code.AntDiskImage -->
