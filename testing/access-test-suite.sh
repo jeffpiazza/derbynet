@@ -17,5 +17,4 @@ prepare_for_setup() {
 
 prepare_for_setup
 `dirname $0`/setup-access.sh "$BASE_URL"
-TEST_PHOTO_ASSIGNMENTS=""
 run_tests

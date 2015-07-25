@@ -3,9 +3,10 @@
       Demo site for DerbyNet
   </description>
 
-  <property name="destination-dir" location="../../demox"/>
+  <property name="destination-dir" location="../../demo"/>
 
   <target name="demo">
+      <mkdir dir="${destination-dir}"/>
       <copy todir="${destination-dir}" overwrite="true">
           <fileset dir="../website">
               <include name="action.php"/>
@@ -26,6 +27,7 @@
               <include name="js/jquery.js"/>
               <include name="js/kiosk-page.js"/>
               <include name="js/now-racing.js"/>
+              <include name="kiosks/now-racing.kiosk"/>
           </fileset>
           <fileset dir=".">
               <include name="now-racing.php"/>

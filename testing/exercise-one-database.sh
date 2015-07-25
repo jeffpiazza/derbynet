@@ -29,8 +29,12 @@ run_tests() {
     user_logout
     curl_snapshot $SNAPSHOT | check_failure
 
-    user_login_coordinator
-    curl_snapshot $SNAPSHOT | check_success
+    if [ "$SKIP_PUT_SNAPSHOT" ]; then
+        user_login_coordinator
+        curl_snapshot $SNAPSHOT | check_success
+    else
+        echo Skipping snapshot put
+    fi
 
     rm $SNAPSHOT
 }

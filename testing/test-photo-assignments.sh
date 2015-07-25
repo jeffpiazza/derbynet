@@ -2,8 +2,6 @@
 
 # This only works when run on the server machine, not a separate client
 
-# TODO: Test car photo assignments, which exercise different code paths
-
 BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
@@ -22,14 +20,14 @@ cp `dirname $0`/data/carphotos/Car* "$CAR_PHOTO_DIR"
 
 if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
     tput setaf 2  # green text
-    echo Skipping photo assignment tests
+    echo Skipping photo assignment tests "(not localhost)"
     tput setaf 0  # black text
     exit 0
 fi
 
 if [ ! -d "$PHOTO_DIR" ]; then
     tput setaf 2  # green text
-    echo Skipping photo assignment tests
+    echo Skipping photo assignment tests "(no photo directory)"
     tput setaf 0  # black text
     exit 0
 fi

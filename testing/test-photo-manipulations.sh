@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
     tput setaf 2  # green text
-    echo Skipping photo manipulation tests
+    echo Skipping photo manipulation tests "(not localhost)"
     tput setaf 0  # black text
     exit 0
 fi
