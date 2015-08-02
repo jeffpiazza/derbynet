@@ -281,3 +281,112 @@ function sort_checkin_table() {
 
 	delete row_array;
 }
+
+function global_keypress(event) {
+    $(document).off("keypress");  // We want future keypresses to go to the search form
+    // TODO $("#find-racer").removeClass("hidden");
+    $("#find-racer-text").focus();
+}
+
+function remove_search_highlighting() {
+    $("span.found-racer").each(function() {
+        var p = $(this).parent();
+        $(this).contents().unwrap();
+        p.get()[0].normalize();
+    });
+}
+
+function cancel_find_racer() {
+    $("#find-racer-text").val("");
+    $("#find-racer").removeClass("notfound");
+    $("#find-racer-index").data("index", 1).text(1);
+    $("#find-racer-count").text(0);
+    $("#find-racer-message").css({visibility: 'hidden'});
+    // TODO $("#find-racer").addClass("hidden");
+    remove_search_highlighting();
+    $(document).on("keypress", global_keypress);
+}
+
+// In response to each onchange event for the #find-racer-text control, hide the
+// table rows that don't contain the value string.
+function find_racer() {
+    var search_string = $("#find-racer-text").val().toLowerCase();
+    if (search_string.length == 0) {
+        cancel_find_racer();
+    } else {
+        var find_count = $("#main_checkin_table tbody tr").find("td.sort-firstname, td.sort-lastname")
+            .filter(function() {
+                // this = <td> element for firstname or lastname
+                return $(this).text().toLowerCase().indexOf(search_string) != -1;
+            }).length;
+        if (find_count != 0) {
+            $("#find-racer").removeClass("notfound");
+            remove_search_highlighting();
+            $("#main_checkin_table tbody tr").find("td.sort-firstname, td.sort-lastname").contents()
+                .each(function() {
+                    if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
+                        var where = $(this).text().toLowerCase().indexOf(search_string);
+                        if (where != -1) {
+                            var match = this.splitText(where);
+                            match.splitText(search_string.length);
+                            $(match).wrap('<span class="found-racer"></span>');
+                        }
+                    }
+                });
+            $("#find-racer-index").data("index", 1).text(1);
+            $("#find-racer-count").text(find_count);
+            $("#find-racer-message").css({visibility: 'visible'});
+            // Scroll the first selection to the middle of the window
+            $("html, body").animate({scrollTop: $("span.found-racer").offset().top - $(window).height() / 2}, 250);
+        } else {
+            console.log("No match!");
+            $("#find-racer").addClass("notfound");
+            $("#find-racer-index").data("index", 1).text(1);
+            $("#find-racer-count").text(0);
+            $("#find-racer-message").css({visibility: 'hidden'});
+        }
+    }
+}
+
+function scroll_to_nth_found_racer(n) {
+    var found = $("span.found-racer").eq(n - 1);
+    $("html, body").animate({scrollTop: found.offset().top - $(window).height() / 2}, 250);
+}
+
+function intercept_arrow_key(event) {
+    switch (event.which) {
+    case 38:  // up
+        {
+            var count = $("#find-racer-index").data("index");
+            if (count > 1) {
+                --count;
+                $("#find-racer-index").data("index", count).text(count);
+                scroll_to_nth_found_racer(count);
+                event.preventDefault();
+                return;
+            }
+        }
+        break;
+    case 40: // down
+        {
+            var count = $("#find-racer-index").data("index");
+            if (count < $("span.found-racer").length) {
+                ++count;
+                $("#find-racer-index").data("index", count).text(count);
+                scroll_to_nth_found_racer(count);
+                event.preventDefault();
+                return;
+            }
+        }
+        break;
+    }
+}
+
+$(function() {
+    $(document).on("keypress", global_keypress);
+    $("#find-racer-text").on("input", find_racer)
+                         .on("keydown", intercept_arrow_key);
+    // jquery mobile would add a distracting "blue glow" around the input form
+    // after the text input receives focus.  Ugh.
+    $("#find-racer-text").off('focus');
+});

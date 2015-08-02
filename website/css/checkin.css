@@ -59,3 +59,42 @@ img.checkin-photo {
     max-height: 60px;
     max-width: 60px;
 }
+
+#find-racer {
+    position: fixed;
+    bottom: 0px;
+    width: 25em;
+    height: 40px;
+    right: 1em;
+    font-size: large;
+	background-color:#c3dfef;
+    padding: 5px;
+}
+
+#find-racer-form {
+  outline-color: transparent;
+  outline-style: none;
+}
+
+#find-racer img {
+    float: right;
+    margin-top: 5px;
+}
+
+#find-racer-text {
+  background-color: #ffffff;
+}
+
+
+.notfound #find-racer-text {
+    background-color: #fc828c;
+}
+
+.found-racer {
+    background-color: #80ff80;
+}
+
+#find-racer-message {
+  width: 10em;
+  visibility: hidden;  /* but still takes up space */
+}
