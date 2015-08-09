@@ -63,22 +63,26 @@ img.checkin-photo {
 #find-racer {
     position: fixed;
     bottom: 0px;
-    width: 25em;
+    width: 27em;
     height: 40px;
     right: 1em;
     font-size: large;
-	background-color:#c3dfef;
+    color: white;
+	background-color: #023882;
     padding: 5px;
 }
 
 #find-racer-form {
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 3px;
   outline-color: transparent;
   outline-style: none;
 }
 
 #find-racer img {
     float: right;
-    margin-top: 5px;
+    margin-top: 8px;
 }
 
 #find-racer-text {
