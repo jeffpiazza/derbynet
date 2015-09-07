@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+    <pkg-ref id="org.jeffpiazza.derbynet.website"/>
+    <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
+    <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
+    <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
+    <options customize="never" require-scripts="false"/>
+    <choices-outline>
+        <line choice="default">
+            <line choice="org.jeffpiazza.derbynet.website"/>
+            <line choice="org.jeffpiazza.derbynet.replay"/>
+            <line choice="org.jeffpiazza.derbynet.timer"/>
+            <line choice="org.jeffpiazza.derbynet.docs"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="org.jeffpiazza.derbynet.website" visible="false">
+        <pkg-ref id="org.jeffpiazza.derbynet.website"/>
+    </choice>
+    <pkg-ref id="org.jeffpiazza.derbynet.website" version="1.0" onConclusion="none">derbynet.website.pkg</pkg-ref>
+    <choice id="org.jeffpiazza.derbynet.replay" visible="false">
+        <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
+    </choice>
+    <pkg-ref id="org.jeffpiazza.derbynet.replay" version="1.0" onConclusion="none">derbynet.replay.pkg</pkg-ref>
+    <choice id="org.jeffpiazza.derbynet.timer" visible="false">
+        <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
+    </choice>
+    <pkg-ref id="org.jeffpiazza.derbynet.timer" version="1.0" onConclusion="none">derbynet.timer.pkg</pkg-ref>
+    <choice id="org.jeffpiazza.derbynet.docs" visible="false">
+        <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
+    </choice>
+    <pkg-ref id="org.jeffpiazza.derbynet.docs" version="1.0" onConclusion="none">derbynet.docs.pkg</pkg-ref>
+</installer-gui-script>

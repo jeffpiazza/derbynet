@@ -10,13 +10,11 @@
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
   <property name="docs-dir" location="docs"/>
 
-  <target name="dist" depends="replay-dmg, timer-jar, docs-dist, generated-version.inc,
+  <target name="dist" depends="dist.zip, dist.mac"/>
+
+  <target name="dist.zip" depends="timer-jar, docs-dist, generated-version.inc,
                                generated-build-date.inc, generated-commit-hash.inc">
-<!--
-      <loadresource property="rev-count">
-          <file file="website/inc/generated-version.inc"/>
-      </loadresource>
--->
+
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
       <zip destfile="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
@@ -29,6 +27,7 @@
                   <include name="website/**/*"/>
                   <exclude name="website/local/**"/>
               </fileset>
+              <!-- TODO name change to derbynet -->
               <globmapper from="website/*" to="racemgr/*"/>
           </mappedresources>
 
@@ -39,10 +38,7 @@
               <globmapper from="*" to="docs/*"/>
           </mappedresources>
 
-          <fileset dir=".">
-              <include name="*.dmg"/>
-          </fileset>
-          <fileset dir="timer/dist/lib">
+          <fileset dir="${timer-jar-dir}">
               <include name="*.jar"/>
           </fileset>
       </zip>
@@ -200,6 +196,102 @@
                 <arg value="build"/>
             </exec>
 </target>
+
+<target name="mac.installer.website">
+    <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
+    <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
+        <fileset dir="website">
+            <include name="**"/>
+        </fileset>
+    </copy>
+    <exec executable="/usr/bin/pkgbuild">
+        <arg value="--root"/>
+        <arg value="ROOT"/>
+        <arg value="--scripts"/>
+        <arg value="installer/mac/scripts/webserver"/>
+        <arg value="--identifier"/>
+        <arg value="org.jeffpiazza.derbynet.website"/>
+        <arg value="--version"/>
+        <arg value="1.0"/>
+        <arg value="derbynet.website.pkg"/>
+    </exec>
+    <delete dir="ROOT"/>
+</target>
+
+<target name="mac.installer.replay" depends="replay-build-release">
+    <mkdir dir="ROOT/Applications/${replay-app.name}.app"/>
+    <copy todir="ROOT/Applications/${replay-app.name}.app" overwrite="true">
+      <fileset dir="${replay-app-dir}/${replay-app.name}.app">
+          <include name="**"/>
+      </fileset>
+    </copy>
+    <chmod perm="+x" file="ROOT/Applications/${replay-app.name}.app/Contents/MacOS/${replay-app.name}"/>
+    <exec executable="/usr/bin/pkgbuild">
+        <arg value="--root"/>
+        <arg value="ROOT"/>
+        <arg value="--identifier"/>
+        <arg value="org.jeffpiazza.derbynet.replay"/>
+        <arg value="--version"/>
+        <arg value="1.0"/>
+        <arg value="derbynet.replay.pkg"/>
+    </exec>
+    <delete dir="ROOT"/>
+</target>
+
+<target name="mac.installer.timer" depends="timer-jar">
+    <mkdir dir="ROOT/Applications/DerbyNet"/>
+    <copy todir="ROOT/Applications/DerbyNet" overwrite="true">
+          <fileset dir="${timer-jar-dir}">
+              <include name="*.jar"/>
+          </fileset>
+    </copy>
+    <exec executable="/usr/bin/pkgbuild">
+        <arg value="--root"/>
+        <arg value="ROOT"/>
+        <arg value="--identifier"/>
+        <arg value="org.jeffpiazza.derbynet.timer"/>
+        <arg value="--version"/>
+        <arg value="1.0"/>
+        <arg value="derbynet.timer.pkg"/>
+    </exec>
+    <delete dir="ROOT"/>
+</target>
+
+<target name="mac.installer.docs" depends="docs-dist">
+    <mkdir dir="ROOT/Applications/DerbyNet/docs"/>
+    <copy todir="ROOT/Applications/DerbyNet" overwrite="true">
+        <mappedresources>
+            <fileset dir="docs/dist">
+                <include name="**"/>
+            </fileset>
+            <globmapper from="*" to="docs/*"/>
+        </mappedresources>
+    </copy>
+    <exec executable="/usr/bin/pkgbuild">
+        <arg value="--root"/>
+        <arg value="ROOT"/>
+        <arg value="--identifier"/>
+        <arg value="org.jeffpiazza.derbynet.docs"/>
+        <arg value="--version"/>
+        <arg value="1.0"/>
+        <arg value="derbynet.docs.pkg"/>
+    </exec>
+    <delete dir="ROOT"/>
+</target>
+
+
+<target name="dist.mac" depends="mac.installer.website,
+                                      mac.installer.replay, mac.installer.timer,
+                                      mac.installer.docs, generated-version.inc,
+                               generated-build-date.inc, generated-commit-hash.inc">
+    <mkdir dir="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+    <exec executable="/usr/bin/productbuild">
+        <arg value="--distribution"/>
+        <arg value="installer/mac/Distribution.xml"/>
+        <arg value="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}/derbynet.pkg"/>
+    </exec>
+</target>
+  
 
 <target name="demo">
     <ant dir="demo"/>

@@ -1,0 +1,4 @@
+#! /bin/sh
+
+./apache-activate-php.sh
+./maybe-rewrite-index-html.sh
