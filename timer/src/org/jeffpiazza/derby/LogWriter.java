@@ -1,5 +1,7 @@
 package org.jeffpiazza.derby;
 
+import org.w3c.dom.Element;
+
 import java.io.*;
 
 // TODO: Suppress heartbeats with uninteresting responses
@@ -42,8 +44,8 @@ public class LogWriter implements HttpTask.MessageTracer {
     httpLog(OUTGOING, m.asParameters());
   }
 
-  public void onMessageResponse(Message m, String response) {
-    httpLog(INCOMING, response);
+  public void onMessageResponse(Message m, Element response) {
+    httpLog(INCOMING, XmlSerializer.serialized(response));
   }
 
   public void traceInternal(String s) {

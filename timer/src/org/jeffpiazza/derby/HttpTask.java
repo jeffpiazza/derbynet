@@ -1,5 +1,8 @@
 package org.jeffpiazza.derby;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
@@ -16,7 +19,9 @@ public class HttpTask implements Runnable {
 
     public interface MessageTracer {
         void onMessageSend(Message m, String params);
-        void onMessageResponse(Message m, String response);
+
+        void onMessageResponse(Message m, Element response);
+
         void traceInternal(String s);
     }
 
@@ -42,20 +47,26 @@ public class HttpTask implements Runnable {
     public interface HeatReadyCallback {
         void heatReady(int lanemask);
     }
+
     public synchronized void registerHeatReadyCallback(HeatReadyCallback cb) {
         this.heatReadyCallback = cb;
     }
-    protected synchronized HeatReadyCallback getHeatReadyCallback() { return this.heatReadyCallback; }
+
+    protected synchronized HeatReadyCallback getHeatReadyCallback() {
+        return this.heatReadyCallback;
+    }
 
     public interface AbortHeatCallback {
         void abortHeat();
     }
+
     public synchronized void registerAbortHeatCallback(AbortHeatCallback cb) {
         this.abortHeatCallback = cb;
     }
-    protected synchronized AbortHeatCallback getAbortHeatCallback() { return this.abortHeatCallback; }
 
-    private static final Pattern heatReadyPattern = Pattern.compile("<heat-ready lane-mask=\"([0-9]+)\"");
+    protected synchronized AbortHeatCallback getAbortHeatCallback() {
+        return this.abortHeatCallback;
+    }
 
     // HttpTask has a queue for events to send, registers callbacks
     // for HEAT-READY(with lane mask) and ABORT.  Continually checks
@@ -63,14 +74,15 @@ public class HttpTask implements Runnable {
     // sleeps a known amount of time.
     public void run() {
         while (true) {
-            String response = "";
+            Element response = null;
             MessageTracer traceMessage = null;
             Message nextMessage;
             synchronized (queue) {
                 if (queue.size() == 0) {
                     try {
                         queue.wait(heartbeatPace);  // ms.
-                    } catch (InterruptedException e) {}
+                    } catch (InterruptedException e) {
+                    }
                 }
                 if (queue.size() > 0) {
                     nextMessage = queue.remove(0);
@@ -91,36 +103,38 @@ public class HttpTask implements Runnable {
                         succeeded = true;
                     } catch (Throwable t) {
                         System.out.println(Timestamp.string()
-                                           + ": Unable to send timer message; retrying");
+                                + ": Unable to send timer message; retrying");
                     }
                 }
             }
 
-            // Cheesy string matching suffices for now, but should be
-            // made more XML-aware if we're going to send richer XML.
-            if (response.indexOf("<success") < 0 || response.indexOf("<failure") >= 0) {
+            if (response == null) {
+                System.out.println(Timestamp.string() + ": Unparseable response for message");
+            } else if (response.getElementsByTagName("success").getLength() == 0
+                    || response.getElementsByTagName("failure").getLength() > 0) {
                 System.out.println(Timestamp.string() + ": Message resulted in failure");
                 System.out.println("=======================");
-                System.out.println(response);
+                System.out.println(XmlSerializer.serialized(response));
                 System.out.println("=======================");
             } else if (traceMessage != null) {
                 traceMessage.onMessageResponse(nextMessage, response);
             }
 
-            Matcher hrMatcher = heatReadyPattern.matcher(response);
-            if (hrMatcher.find()) {
+
+            NodeList heatReady = response.getElementsByTagName("heat-ready");
+            if (heatReady.getLength() > 0) {
                 try {
-                    int lanemask = Integer.valueOf(hrMatcher.group(1));
+                    int lanemask = Integer.valueOf(((Element) heatReady.item(0)).getAttribute("lane-mask"));
                     HeatReadyCallback cb = getHeatReadyCallback();
                     if (cb != null) {
                         cb.heatReady(lanemask);
                     }
                 } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
-                  System.out.println(Timestamp.string() 
-                                     + ": Unexpected number format exception reading heat-ready response");
+                    System.out.println(Timestamp.string()
+                            + ": Unexpected number format exception reading heat-ready response");
                 }
             }
-            if (response.indexOf("<abort/>") >= 0) {
+            if (response.getElementsByTagName("abort").getLength() > 0) {
                 AbortHeatCallback cb = getAbortHeatCallback();
                 if (cb != null) {
                     cb.abortHeat();

@@ -1,8 +1,13 @@
 package org.jeffpiazza.derby;
 
-import java.io.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.*;
-import java.util.*;
 
 public class ClientSession {
     private CookieManager manager;
@@ -23,48 +28,45 @@ public class ClientSession {
         doPost("action.php", "action=login&name=" + username + "&password=" + password);
     }
 
-    public String sendTimerMessage(String messageAndParams) throws IOException {
+    public Element sendTimerMessage(String messageAndParams) throws IOException {
         return doPost("action=timer-message&" + messageAndParams);
     }
 
-    public String doPost(String params) throws IOException {
+    public Element doPost(String params) throws IOException {
         return doPost("action.php", params);
     }
 
-    public String doPost(String url_path, String params) throws IOException {
+    public Element doPost(String url_path, String params) throws IOException {
         return doPost(new URL(base_url + url_path), params);
     }
 
-    public String doPost(URL url, String params) throws IOException {
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("POST");
+    public Element doPost(URL url, String params) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
 
-		connection.setDoOutput(true);
-		OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-		writer.write(params);
-		writer.flush();
-		writer.close();
+        connection.setDoOutput(true);
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(params);
+        writer.flush();
+        writer.close();
 
         // This code (either the getResponseCode call itself, or maybe
         // the writer.close(), above) will block until a response is
         // actually received.  That should be OK as long as there's a
         // thread dedicated to handling requests in this session.
-		int responseCode = connection.getResponseCode();
+        int responseCode = connection.getResponseCode();
 
-		if (responseCode == 200) {
-			BufferedReader in = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
- 
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine + "\n");
-			}
-			in.close();
-			return response.toString();
-		} else {
-            // TODO: throw
-			return responseCode + "";
-		}
-	}
+        if (responseCode == 200) {
+            try {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = dbf.newDocumentBuilder();
+                Document doc = db.parse(connection.getInputStream());
+                System.out.println(XmlSerializer.serialized(doc.getDocumentElement()));  // TODO
+                return doc.getDocumentElement();
+            } catch (Exception e) {
+                e.printStackTrace();  // TODO
+            }
+        }
+        return null;
+    }
 }

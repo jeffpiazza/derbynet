@@ -1,5 +1,7 @@
 package org.jeffpiazza.derby;
 
+import org.w3c.dom.Element;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
@@ -13,9 +15,9 @@ public class StdoutMessageTrace implements HttpTask.MessageTracer {
     public void onMessageSend(Message m, String params) {
         System.out.println("===================== sending " + params);
     }
-    public void onMessageResponse(Message m, String response) {
+    public void onMessageResponse(Message m, Element response) {
         if (traceResponses) {
-            System.out.println(prettyFormat(response));
+            System.out.println(prettyFormat(XmlSerializer.serialized(response)));
             System.out.println("=====================");
         }
     }

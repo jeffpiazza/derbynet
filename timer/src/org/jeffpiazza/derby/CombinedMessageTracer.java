@@ -1,5 +1,7 @@
 package org.jeffpiazza.derby;
 
+import org.w3c.dom.Element;
+
 public class CombinedMessageTracer implements HttpTask.MessageTracer {
   private HttpTask.MessageTracer[] tracers;
 
@@ -14,7 +16,7 @@ public class CombinedMessageTracer implements HttpTask.MessageTracer {
     }
   }
 
-  public void onMessageResponse(Message m, String response) {
+  public void onMessageResponse(Message m, Element response) {
     for (HttpTask.MessageTracer t : tracers) {
       t.onMessageResponse(m, response);
     }
