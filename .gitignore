@@ -16,6 +16,7 @@ replay/build/
 testing/*.curl
 
 timer/build/
+timer/out/
 timer/dist/
 
 website/inc/generated-*.inc
