@@ -88,7 +88,14 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
       echo "<success/>\n";
     }
   } else {
-    echo '<failure code="move_uploaded">move_uploaded_file failed.</failure>'."\n";
+    echo '<failure code="move_uploaded">move_uploaded_file failed.';
+    if (!is_readable($photo_dir)) {
+      echo '  <b>Check settings: photo directory is not readable.</b>';
+    }
+    if (!is_writable($photo_dir)) {
+      echo '  <b>Check settings: photo directory is not writable.</b>';
+    } 
+    echo '</failure>'."\n";
   }
 }
 
