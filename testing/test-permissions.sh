@@ -2,30 +2,41 @@
 BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
-
 cat >anonymous.index.tmp <<EOF
         <form method="link" action="ondeck.php">
         <form method="link" action="racer-results.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >coordinator.index.tmp <<EOF
-        <form method="link" action="checkin.php">
-        <form method="link" action="photo-thumbs.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="coordinator.php">
-        <form method="link" action="awards.php">
-        <form method="link" action="settings.php">
-        <form method="link" action="import-roster.php">
+        <form method="link" action="export.php">
+        <form method="link" action="about.php">
         <form method="link" action="login.php">
 EOF
 
 cat >racecrew.index.tmp <<EOF
+          <form method="link" action="checkin.php">
+          <form method="get" action="photo-thumbs.php">
+          <form method="get" action="photo-thumbs.php">
+          <form method="link" action="ondeck.php">
+          <form method="link" action="racer-results.php">
+          <form method="link" action="standings.php">
+          <form method="link" action="export.php">
+          <form method="link" action="about.php">
+          <form method="link" action="login.php">
+EOF
+
+cat >coordinator.index.tmp <<EOF
+        <form method="link" action="coordinator.php">
+        <form method="link" action="awards-dashboard.php">
         <form method="link" action="checkin.php">
+        <form method="get" action="photo-thumbs.php">
+        <form method="get" action="photo-thumbs.php">
         <form method="link" action="ondeck.php">
         <form method="link" action="racer-results.php">
-        <form method="link" action="awards.php">
+        <form method="link" action="standings.php">
+        <form method="link" action="export.php">
+        <form method="link" action="settings.php">
+        <form method="link" action="setup.php">
+        <form method="link" action="import-roster.php">
+        <form method="link" action="class-editor.php">
+        <form method="link" action="about.php">
         <form method="link" action="login.php">
 EOF
 
@@ -33,7 +44,12 @@ EOF
 
 user_logout
 
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
+OK=1
+( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+if [ $OK -eq 0 ]; then
+    curl_get index.php | grep '<form'
+    test_fails Anonymous index page
+fi
 
 curl_post action.php "action=assign-kiosk" | check_failure
 
@@ -61,20 +77,36 @@ curl_post action.php "action=xbs" | check_failure
 curl_get "action.php?query=classes" > /dev/null
 curl_get "action.php?query=coordinator-poll" > /dev/null
 curl_get "action.php?query=kiosk-poll" > /dev/null
+curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=update-summary" > /dev/null
 curl_get "action.php?query=watching" > /dev/null
 
 user_login_coordinator
-curl_get index.php | grep '<form' | diff - coordinator.index.tmp
+( curl_get index.php | grep '<form' | diff -b - coordinator.index.tmp ) || OK=0
+if [ $OK -eq 0 ]; then
+    curl_get index.php | grep '<form'
+    test_fails Coordinator index page
+fi
 user_logout
 
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
+( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+if [ $OK -eq 0 ]; then
+    test_fails Anonymous index page again
+fi
 
 user_login_crew
-curl_get index.php | grep '<form' | diff - racecrew.index.tmp
+( curl_get index.php | grep '<form' | diff -b - racecrew.index.tmp ) || OK=0
+if [ $OK -eq 0 ]; then
+    curl_get index.php | grep '<form'
+    test_fails Race crew index page
+fi
 user_logout
 
-curl_get index.php | grep '<form' | diff - anonymous.index.tmp
+( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+if [ $OK -eq 0 ]; then
+    curl_get index.php | grep '<form'
+    test_fails Anonymous third time
+fi
 
 rm *.index.tmp
 
