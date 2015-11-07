@@ -11,6 +11,7 @@ if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
     exit 0
 fi
 
+# TODO Sometimes mktemp directory is in an parent directory that's inaccessible to other users
 tmpdir=`mktemp -d 2>/dev/null || mktemp -d /tmp/photo_uploads.XXXXXXXX`
 chmod 777 $tmpdir
 
@@ -32,12 +33,15 @@ curl_post action.php "action=photo.rotate&repo=head&image_name=ISO_12233-reschar
 # Rotating left and then right doesn't give you back the exact same image, due to compression losses in jpg
 curl_photo head/file/original/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
 curl_photo head/file/cropped/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
-curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 16329a387284cfbb7ece2f2a6a173040
+# As of PHP 5.5, this gives a different signature
+# curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 16329a387284cfbb7ece2f2a6a173040
+curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 4e61175e45a4beb93aeb20973ebdc04d
 
 curl_post action.php "action=photo.crop&repo=head&image_name=ISO_12233-reschart.jpg&left=100&top=150&right=190&bottom=270&original_height=480&original_width=900" | check_success
 curl_photo head/file/original/ISO_12233-reschart.jpg/$RANDOM b539242a66779a3721d7eb0fd6d2a9c9
 curl_photo head/file/cropped/ISO_12233-reschart.jpg/$RANDOM cd9d674652844e7f7cdd083358a4def4
-curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM a6f23a5f3ba4b90b157c75cc9532bd61
+# curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM a6f23a5f3ba4b90b157c75cc9532bd61
+curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 5f7ff77c76740dc5ce88a100b550121e
 
 # Clean up temporary directory
 rm -rf $tmpdir
