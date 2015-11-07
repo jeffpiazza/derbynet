@@ -2,6 +2,7 @@
 // This ajax action allows configuration information to be recorded in the database.  See setting.php.
 
 require_once('inc/photo-config.inc');
+require_once('inc/schema_version.inc');
 
 start_response();
 
@@ -9,6 +10,7 @@ $num_picked = 1;  // 1, not 0, to account for the 'action' key
 
 // TODO: These are checkboxes, and won't be passed if the checkbox is unchecked.
 if (have_permission(SET_UP_PERMISSION)) {
+  $failures = false;
   foreach(array('with-gprm' => 'with-gprm',
                 'do-use-subgroups' => 'use-subgroups',
                 'use-master-sched' => 'use-master-sched',
@@ -40,6 +42,14 @@ if (have_permission(SET_UP_PERMISSION)) {
       ++$num_picked;
       echo "<wrote>".$post_key."</wrote>\n";
       write_raceinfo($raceinfo_key, $_POST[$post_key]);
+      if (read_raceinfo($raceinfo_key) != $_POST[$post_key]) {
+        echo "<failure code='not-written'>Value for ".$raceinfo_key." could not be written.";
+        if (schema_version() != expected_schema_version()) {
+          echo "<b>Upgrading the database schema may help.</b>";
+        }
+        echo "</failure>\n";
+        $failures = true;
+      }
     }
   }
 
@@ -74,7 +84,11 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
 
   if ($num_picked == count($_POST)) {
-    echo "<success/>\n";
+    // If $failures is set, then at least one of the settings had a problem, and
+    // we shouldn't claim success
+    if (!$failures) {
+      echo "<success/>\n";
+    }
   } else {
     echo "<failure code='unrecognized'>".(count($_POST) - $num_picked)." unrecognized setting(s)</failure>\n";
   }

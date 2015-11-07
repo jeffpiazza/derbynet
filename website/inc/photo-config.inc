@@ -2,14 +2,18 @@
 require_once('inc/data.inc');
 
 function photo_directory() {
-  // PHP_OS == 'Darwin'
-  return read_raceinfo('photo-directory', 'C:\\racer_photos');
+  // For Windows:
+  // %userprofile%\Documents\Lisano Enterprises\GrandPrix Race Manager\Images
+  // or %userprofile%\My Documents\Lisano Enterprises\GrandPrix Race Manager\Images
+  return read_raceinfo('photo-directory',
+                       is_windows_server() ? 'C:\\path\\to\\racer_photos' : '/path/to/racer_photos');
 }
 
 function car_photo_directory() {
   $dir = read_raceinfo('car-photo-directory');
   if ($dir === false) {
-    return read_raceinfo('photo-directory', 'C:\\car_photos');
+    return read_raceinfo('photo-directory', 
+                         is_windows_server() ? 'C:\\path\\to\\car_photos' : '/path/to/car_photos');
   } else {
     return $dir;
   }

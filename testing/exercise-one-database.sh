@@ -29,7 +29,7 @@ run_tests() {
     user_logout
     curl_snapshot $SNAPSHOT | check_failure
 
-    if [ "$SKIP_PUT_SNAPSHOT" ]; then
+    if [ "x$SKIP_PUT_SNAPSHOT" == "x" ]; then
         user_login_coordinator
         curl_snapshot $SNAPSHOT | check_success
     else

@@ -218,4 +218,8 @@ function with_gprm() {
   global $dbtype;
   return read_raceinfo('with-gprm', $dbtype == 'access');
 }
+
+function is_windows_server() {
+  return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+}
 ?>

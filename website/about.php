@@ -1,6 +1,10 @@
 <?php @session_start();
-require_once('inc/data.inc');
+// NOTE: Loading inc/data.inc will cause a redirect to the set-up page if there's
+// an issue with the database.  We want to avoid that, since an important use of the
+// about page is to capture diagnostic information when troubleshooting...
 require_once('inc/authorize.inc');
+// Note that schema_version doesn't load data.inc
+require_once('inc/schema_version.inc');
 ?><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -32,7 +36,7 @@ require_once('inc/authorize.inc');
 
 </head>
 <body>
-<?php $banner_title = 'About'; require('inc/banner.inc'); ?>
+<?php $banner_title = 'About DerbyNet'; require('inc/banner.inc'); ?>
 <h1>About DerbyNet</h1>
 
 <p></p>
@@ -75,25 +79,65 @@ if (count($addrs) == 0) {
       echo "<p>This is revision <b>".$version."</b>, built on ".$build_date.".<br/>\n";
       echo "(".$git_hash.")</p>\n";
     }
-
+?>
+<?php
+    $failed = false;
+    set_error_handler(function() { global $failed; $failed = true; }, E_WARNING);
+    date_default_timezone_get();
+    restore_error_handler();
+    if ($failed) {
+      echo "<h3>Time zone not set!</h3>\n";
+      echo "<p>You need to set the date.timezone setting in the php.ini file!</p>\n";
+    }
+?>
+<?php
+    echo "<h4>Database Configuration</h4>\n";
     if (have_permission(SET_UP_PERMISSION)) {
-      echo "<h4>Database Connection</h4>\n";
-
-      echo "<pre>\n";
-      echo htmlspecialchars(file_get_contents('local'.DIRECTORY_SEPARATOR.'config-database.inc',
-                                              /* use_include_path */ true),
-                            ENT_QUOTES, 'UTF-8');
-      echo "</pre>\n";
+      $config_content = @file_get_contents('local'.DIRECTORY_SEPARATOR.'config-database.inc',
+                                           /* use_include_path */ true);
+      if ($config_content === false) {
+        echo '<p>Database configuration file, '.
+            htmlspecialchars('local'.DIRECTORY_SEPARATOR.'config-database.inc',
+                             ENT_QUOTES, 'UTF-8').
+            ', could not be opened.'.
+            '</p>'."\n";
+      } else {
+        echo "<pre>\n";
+        echo htmlspecialchars($config_content, ENT_QUOTES, 'UTF-8');
+        echo "</pre>\n";
+      }
     } else {
-      echo "<h4>Please Log In</h4>\n";
       echo "<p>Database configuration information is available if you are logged in.</p>\n";
     }
+?>
+<?php
+// Try setting up the database, but it's OK if it doesn't work out
+try {
+    @include("local/config-database.inc");
+} catch (PDOException $p) {
+}
+
+if (isset($db)) {
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  echo "<h4>Database Schema</h4>\n";
+  try {
+    // Can't use schema_version(), because it depends on functions from data.inc
+    $rs = $db->prepare('SELECT itemvalue FROM RaceInfo WHERE itemkey = :key');
+    $rs->execute(array(':key' => 'schema'));
+    $row = $rs->fetch(PDO::FETCH_NUM);
+    $rs->closeCursor();
+    $schema_version = $row === false ? false : $row[0];
+    echo '<p>Schema version '.$schema_version.' (expecting version '.expected_schema_version().')</p>'."\n";
+  } catch (PDOException $p) {
+    echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
+  }
+}
 ?>
 <h4>PHP Configuration Information</h4>
 <div class="phpinfo">
 <?php
 ob_start();
- phpinfo();
+ @phpinfo();
 $buf = ob_get_clean();
 $start = strpos($buf, '<body>') + 6;
 $stop = strpos($buf, '</body>');
