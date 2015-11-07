@@ -18,6 +18,8 @@ testing/*.curl
 timer/build/
 timer/out/
 timer/dist/
+timer/.idea/workspace.xml
+timer/.idea/encodings.xml
 
 website/inc/generated-*.inc
 website/local/
