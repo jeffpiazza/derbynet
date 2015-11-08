@@ -113,7 +113,7 @@ if (isset($db) && $db) {
 
 ?>
 
-<div id="choose_database_modal" class="modal_dialog wide_modal hidden block_buttons">
+<div id="choose_database_modal" class="modal_dialog wide_modal tall_modal hidden block_buttons">
   <form>
     <input type="radio" name="connection_type" value="string" id="string_connection"
            checked="checked" data-wrapper-class="string_connection_wrapper"/>
