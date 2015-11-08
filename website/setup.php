@@ -10,6 +10,7 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
+<link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript">
@@ -112,6 +113,14 @@ if (isset($db) && $db) {
 }
 
 ?>
+<?php
+function label_driver_check($driver) {
+  // TODO: Make this a link to a troubleshooting page
+  if (!in_array($driver, pdo_drivers())) {
+    echo " <span class=\"missing_driver\">(Driver not loaded!)</span>";
+  }
+}
+?>
 
 <div id="choose_database_modal" class="modal_dialog wide_modal tall_modal hidden block_buttons">
   <form>
@@ -120,13 +129,13 @@ if (isset($db) && $db) {
     <label for="string_connection">Arbitrary connection string</label>
     <input type="radio" name="connection_type" value="odbc" id="odbc_connection"
            data-wrapper-class="odbc_connection_wrapper"/>
-    <label for="odbc_connection">ODBC data source</label>
+    <label for="odbc_connection">ODBC data source<?php label_driver_check("odbc");?></label>
     <input type="radio" name="connection_type" value="mysql" id="mysql_connection"
            data-wrapper-class="mysql_connection_wrapper"/>
-    <label for="mysql_connection">MySQL data source</label>
+    <label for="mysql_connection">MySQL data source<?php label_driver_check("mysql"); ?></label>
     <input type="radio" name="connection_type" value="sqlite" id="sqlite_connection"
            data-wrapper-class="sqlite_connection_wrapper"/>
-    <label for="sqlite_connection">SQLite data source</label>
+    <label for="sqlite_connection">SQLite data source<?php label_driver_check("sqlite"); ?></label>
 
     <div id="for_odbc_connection" class="hidden odbc_connection_wrapper">
         <label for="odbc_dsn_name">ODBC data source name (DSN):</label>
