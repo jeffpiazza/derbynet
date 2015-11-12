@@ -9,15 +9,39 @@
 <body>
 
 <?php
-$last = strrpos($_SERVER['REQUEST_URI'], '/');
+
+if (isset($_SERVER['REQUEST_URI'])) {
+  $url = $_SERVER['REQUEST_URI'];
+} else {
+  if (isset($_SERVER['SERVER_NAME'])) {
+    $server = $_SERVER['SERVER_NAME'];
+  } else if (isset($_SERVER['SERVER_ADDR'])) {
+    $server = $_SERVER['SERVER_ADDR'];
+  } else if (isset($_SERVER['LOCAL_ADDR'])) {
+    $server = $_SERVER['LOCAL_ADDR'];
+  } else {
+    $server = $_SERVER['HTTP_HOST'];
+  }
+
+  if (isset($_SERVER['PHP_SELF'])) {
+    $path = $_SERVER['PHP_SELF'];
+  } else {
+    $path = $_SERVER['SCRIPT_NAME'];
+  }
+
+  $url = $server . $path;
+}
+
+
+$last = strrpos($url, '/');
 if ($last === false) {
   $last = -1;
 }
-$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].substr($_SERVER['REQUEST_URI'], 0, $last + 1).'kiosk.php';
+$kiosk_url = 'http://'.substr($url, 0, $last + 1).'kiosk.php';
 ?>
 
 <form onsubmit="go_fullscreen(); return false;" style="margin-top: 100px; margin-left: auto; margin-right: auto;">
-  <input type="text" size="100" id="url" value="<?php echo $url; ?>"/>
+  <input type="text" size="100" id="url" value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
 <input type="submit"/>
 </form>
 
@@ -42,10 +66,6 @@ $url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].substr($_SERVER[
    iframe.style.height = '100%';
 
    $('body form').remove();
-   // Setting the background color to black MAY help avoid a white screen
-   // appearing when the kiosk page reloads.  Not sure it has any effect, but at
-   // least it shouldn't hurt.
-   $('body').css({'background-color': 'black'});
 
    $('body').prepend(iframe);
    document.body.style.overflow = 'hidden';
