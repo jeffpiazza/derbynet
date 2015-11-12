@@ -33,7 +33,9 @@ run_tests() {
         user_login_coordinator
         curl_snapshot $SNAPSHOT | check_success
     else
+        tput setaf 2  # green text
         echo Skipping snapshot put
+        tput setaf 0  # black text
     fi
 
     rm $SNAPSHOT

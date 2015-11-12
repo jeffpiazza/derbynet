@@ -17,4 +17,13 @@ prepare_for_setup() {
 
 prepare_for_setup
 `dirname $0`/setup-access.sh "$BASE_URL"
+
+# Access databases can't load a database snapshot, because it doesn't allow
+# primary key fields to be rewritten (I guess):
+#
+#  <exception>SQLSTATE[23000]: Integrity constraint violation: -1048
+#  [Microsoft][ODBC Microsoft Access Driver] Cannot update 'resultid'; field not
+#  updateable. (SQLExecute[-1048] at ext\pdo_odbc\odbc_stmt.c:254)</exception>
+
+export SKIP_PUT_SNAPSHOT=1
 run_tests
