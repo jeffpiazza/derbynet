@@ -10,7 +10,12 @@ function address_for_current_kiosk() {
   if (isset($_SESSION['address'])) {
     $addr = $_SESSION['address'];
   } else {
-    $addr = $_SERVER['REMOTE_ADDR'].'+'.$_SERVER['REMOTE_PORT'];
+    if (isset($_SERVER['REMOTE_PORT'])) {
+      $port = $_SERVER['REMOTE_PORT'];
+    } else {
+      $port = rand(100, 200);
+    }
+    $addr = $_SERVER['REMOTE_ADDR'].'+'.$port;
     $_SESSION['address'] = $addr;
   }
   return $addr;
