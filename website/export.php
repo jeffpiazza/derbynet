@@ -16,8 +16,8 @@ $stmt = $db->query('SELECT class, round, heat, lane,'
                    .' ORDER BY completed, heat, lane');
 if ($stmt === FALSE) {
 	$info = $db->errorInfo();
-    echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
-  }
+    echo '<error msg="'.htmlspecialchars($info[2], ENT_QUOTES, 'UTF-8').'" query="'.$sql.'"/>'."\n";
+}
 
 $output = fopen("php://output", "w");
 try {
@@ -26,7 +26,10 @@ try {
                            $row['firstname'], $row['lastname'], $row['carnumber'],
                            $row['finishtime'], $row['finishplace'], $row['completed']));
   }
-} finally {
-  fclose($output);
+} catch (Exception $e) {
+  echo '<error msg="'.htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8').'"/>'."\n";
 }
 
+// finally clause syntax is recognized only in PHP 5.5 and later
+fclose($output);
+?>
