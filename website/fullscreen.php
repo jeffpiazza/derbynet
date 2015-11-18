@@ -9,29 +9,32 @@
 <body>
 
 <?php
-
-if (isset($_SERVER['REQUEST_URI'])) {
-  $url = $_SERVER['REQUEST_URI'];
+if (isset($_SERVER['SERVER_NAME'])) {
+  $server = $_SERVER['SERVER_NAME'];
+} else if (isset($_SERVER['SERVER_ADDR'])) {
+  $server = $_SERVER['SERVER_ADDR'];
+} else if (isset($_SERVER['LOCAL_ADDR'])) {
+  $server = $_SERVER['LOCAL_ADDR'];
+} else if (isset($_SERVER['HTTP_HOST'])) {
+  $server = $_SERVER['HTTP_HOST'];
 } else {
-  if (isset($_SERVER['SERVER_NAME'])) {
-    $server = $_SERVER['SERVER_NAME'];
-  } else if (isset($_SERVER['SERVER_ADDR'])) {
-    $server = $_SERVER['SERVER_ADDR'];
-  } else if (isset($_SERVER['LOCAL_ADDR'])) {
-    $server = $_SERVER['LOCAL_ADDR'];
+  $addrs = gethostbynamel(gethostname());
+  if (count($addrs) > 0) {
+    $server = $addrs[0];
   } else {
-    $server = $_SERVER['HTTP_HOST'];
+    $server = ' unknown server name! ';
   }
-
-  if (isset($_SERVER['PHP_SELF'])) {
-    $path = $_SERVER['PHP_SELF'];
-  } else {
-    $path = $_SERVER['SCRIPT_NAME'];
-  }
-
-  $url = $server . $path;
 }
 
+if (isset($_SERVER['REQUEST_URI'])) {
+  $path = $_SERVER['REQUEST_URI'];
+} else if (isset($_SERVER['PHP_SELF'])) {
+  $path = $_SERVER['PHP_SELF'];
+} else {
+  $path = $_SERVER['SCRIPT_NAME'];
+}
+
+$url = $server . $path;
 
 $last = strrpos($url, '/');
 if ($last === false) {
