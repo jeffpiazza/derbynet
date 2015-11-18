@@ -32,6 +32,16 @@ function curl_get_amper() {
 		| grep -v '&' | xmllint --format - | tee -a $OUTPUT_CURL
 }
 
+# Fetch a page, but don't try to parse it as XML/HTML
+function curl_text() {
+	echo ' ' ' ' ' ' $1 >&2
+	echo    >> $OUTPUT_CURL
+	echo $1 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+        | sed -e 's/&nbsp;/ /g' | tee -a $OUTPUT_CURL
+}
+
 function curl_post() {
 	echo ' ' ' ' ' ' post $1 $2 >&2
 	echo    >> $OUTPUT_CURL
