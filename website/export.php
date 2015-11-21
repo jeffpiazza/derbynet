@@ -3,6 +3,7 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 
 header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename="derbynet-'.date('Y-m-d').'.csv"');
 
 echo "Class,Round,Heat,Lane,FirstName,LastName,CarNumber,FinishTime,FinishPlace,Completed\r\n";
 
