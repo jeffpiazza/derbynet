@@ -1,11 +1,15 @@
 package org.jeffpiazza.derby;
 
 import jssc.*;
-import java.io.*;
-import java.util.ArrayList;
+import org.jeffpiazza.derby.gui.TimerGui;
 
-// Two threads: timer polling loop runs on main thread, HttpTask runs on another
-// thread
+import javax.swing.*;
+import java.io.*;
+
+// Three threads for three "actors":
+// timer polling loop runs on main thread,
+// HttpTask runs on another thread,
+// GUI event dispatch runs on a third thread.
 
 public class TimerMain {
   public static long raceTimeoutMillis = 11000;
@@ -32,6 +36,8 @@ public class TimerMain {
     String devicename = null;
     HttpTask.MessageTracer traceHeartbeats = null;
     boolean traceResponses = false;
+    boolean showGui = false;
+    boolean fakeDevice = false;
 
     LogWriter logwriter = null;
     try {
@@ -45,7 +51,7 @@ public class TimerMain {
     HttpTask.MessageTracer traceMessages = logwriter;
 
     int consumed_args = 0;
-    while (consumed_args + 1 < args.length) {
+    while (consumed_args < args.length && args[consumed_args].startsWith("-")) {
       if (args[consumed_args].equals("-u") && consumed_args + 2 < args.length) {
         username = args[consumed_args + 1];
         consumed_args += 2;
@@ -71,96 +77,170 @@ public class TimerMain {
       } else if (args[consumed_args].equals("-r")) { // Won't have effect unless it precedes -t, -th
         traceResponses = true;
         ++consumed_args;
+      } else if (args[consumed_args].equals("-x")) {  // Undocumented: -x for experimental UI gui
+        showGui = true;
+        ++consumed_args;
+      } else if (args[consumed_args].equals("-fake")) {
+        fakeDevice = true;
+        ++consumed_args;
       } else {
         usage();
         System.exit(1);
       }
     }
-
-    if (consumed_args + 1 != args.length || args[consumed_args].startsWith("-")) {
+    String base_url = "localhost";
+    if (consumed_args + 1 == args.length) {
+      base_url = args[consumed_args];
+    } else if (!showGui) {
       usage();
       System.exit(1);
     }
 
-    String base_url = args[consumed_args];
+    ConnectorImpl connector = new ConnectorImpl(traceMessages);
 
     try {
-      sayHelloAndPoll(base_url, username, password, identifyTimerDevice(portname, devicename, logwriter),
-                      traceMessages, traceHeartbeats);
+      if (showGui) {
+        final TimerGui timerGui = new TimerGui(traceMessages, traceHeartbeats, connector);
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            timerGui.show();
+          }
+        });
+
+        TimerDevice device = identifyTimerDevice(portname, devicename, fakeDevice, timerGui, logwriter);
+        connector.setTimerDevice(device);
+        runDevicePollingLoop(device, traceMessages);
+      } else {
+        HttpTask.start(username, password, new ClientSession(base_url), traceMessages, traceHeartbeats, connector,
+            new HttpTask.LoginCallback() {
+              @Override
+              public void onLoginSuccess() {
+                System.err.println("Successful login");
+              }
+
+              @Override
+              public void onLoginFailed(String message) {
+                System.err.println("Unsuccessful login: " + message);
+                System.exit(1);
+              }
+            });
+        TimerDevice device = identifyTimerDevice(portname, devicename, fakeDevice, null, logwriter);
+        connector.setTimerDevice(device);
+        runDevicePollingLoop(device, traceMessages);
+      }
     } catch (Throwable t) {
       t.printStackTrace();
     }
   }
 
-  public static TimerDevice identifyTimerDevice(String portname, String devicename, LogWriter logwriter)
+  // Starts repeatedly scanning all serial ports (or just the one with a given name) for all devices (or just the one
+  // with a given name), and returns a TimerDevice if/when it identifies one.  Shows its progress through the
+  // TimerGui, if available.
+  public static TimerDevice identifyTimerDevice(String portname, String devicename, boolean includeFakeDevice,
+                                                TimerGui timerGui, LogWriter logwriter)
       throws SerialPortException, IOException {
     final DeviceFinder deviceFinder =
-        devicename == null ? new DeviceFinder() : new DeviceFinder(devicename);
+        devicename != null ? new DeviceFinder(devicename) :
+            includeFakeDevice ? new DeviceFinder(true) :
+                new DeviceFinder();
+    if (timerGui != null) {
+      timerGui.initializeTimerClasses(deviceFinder);
+    }
 
     while (true) {
       PortIterator ports = portname == null ? new PortIterator() : new PortIterator(portname);
+      if (timerGui != null) {
+        timerGui.updateSerialPorts();
+      }
       while (ports.hasNext()) {
         SerialPort port = ports.next();
+        if (timerGui != null) {
+          timerGui.setSerialPort(port);
+        }
         System.out.println(port.getPortName());
-        TimerDevice device = deviceFinder.findDevice(port, logwriter);
+        TimerDevice device = deviceFinder.findDevice(port, timerGui, logwriter);
         if (device != null) {
+          if (timerGui != null) {
+            timerGui.confirmDevice(port, device.getClass());
+          }
           return device;
         }
       }
+      if (timerGui != null) {
+        timerGui.deselectAll();
+      }
       try {
         Thread.sleep(10000);  // Wait 10 seconds before trying again
-      } catch (Throwable t) {}
+      } catch (Throwable t) {
+      }
     }
   }
 
-  public static void sayHelloAndPoll(String base_url, String username, String password,
-                                     final TimerDevice device, 
-                                     HttpTask.MessageTracer traceMessages,
-                                     HttpTask.MessageTracer traceHeartbeat) throws Exception {
-    final HttpTask httpTask = new HttpTask(base_url, username, password, traceMessages, traceHeartbeat);
+  // Allow the timer device and web server connection to come up in either order, or perhaps not at all; when
+  // they're both established, wire together callbacks and send hello with lane count to web server.
+  // TODO What to do if unplugged timer or disconnected web server?
+  public static class ConnectorImpl implements Connector {
+    private HttpTask httpTask;
+    private TimerDevice timerDevice;
+    private HttpTask.MessageTracer traceMessages;
 
-    wireTogether(httpTask, device, traceMessages);
+    public ConnectorImpl(HttpTask.MessageTracer traceMessages) {
+      this.traceMessages = traceMessages;
+    }
 
-    int nlanes = device.getNumberOfLanes();
+    @Override
+    public synchronized void setHttpTask(HttpTask httpTask) {
+      this.httpTask = httpTask;
+      maybeWireTogether();
+    }
 
-    boolean sentHello = false;
-    while (!sentHello) {
-      try {
-        httpTask.send(new Message.Hello(nlanes));
-        sentHello = true;
-      } catch (Throwable t) {
-        t.printStackTrace();
+    @Override
+    public synchronized void setTimerDevice(TimerDevice timerDevice) {
+      this.timerDevice = timerDevice;
+    }
+
+    private void maybeWireTogether() {
+      if (httpTask != null && timerDevice != null) {
+        wireTogether(httpTask, timerDevice, traceMessages);
+        int nlanes = 0;
+        try {
+          nlanes = timerDevice.getNumberOfLanes();
+        } catch (SerialPortException e) {
+          e.printStackTrace();
+        }
+        httpTask.sendHello(nlanes);
       }
     }
 
-    System.out.println("Starting HTTP thread");
-    (new Thread(httpTask)).start();
+    // Registers callbacks that allow the httpTask and timer device to communicate asynchronously.
+    public static void wireTogether(final HttpTask httpTask, final TimerDevice device,
+                                    final HttpTask.MessageTracer traceMessages) {
+      if (traceMessages != null) {
+        traceMessages.traceInternal(Timestamp.string() + ": Timer detected.");
+      }
 
-    runDevicePollingLoop(device, traceMessages);
-  }
-
-  public static void wireTogether(final HttpTask httpTask, final TimerDevice device,
-                                  final HttpTask.MessageTracer traceMessages) {
-    traceMessages.traceInternal(Timestamp.string() + ": Timer detected.");
-
-    httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
+      httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
         public void heatReady(int laneMask) {
           try {
-            traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
+            if (traceMessages != null) {
+              traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
+            }
             device.prepareHeat(laneMask);
           } catch (Throwable t) {
             // TODO: details
             try {
-              httpTask.send(new Message.Malfunction("Can't ready timer."));
+              httpTask.queueMessage(new Message.Malfunction("Can't ready timer."));
             } catch (Throwable tt) {
             }
           }
         }
       });
 
-    httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
+      httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
         public void abortHeat() {
-          traceMessages.traceInternal(Timestamp.string() + ": AbortHeat received");
+          if (traceMessages != null) {
+            traceMessages.traceInternal(Timestamp.string() + ": AbortHeat received");
+          }
           raceDeadline = -1;
           try {
             device.abortHeat();
@@ -170,30 +250,37 @@ public class TimerMain {
         }
       });
 
-    device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
+      device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
         public void raceFinished(Message.LaneResult[] results) {
           // Rely on recipient to ignore if not expecting any results
           try {
             raceDeadline = -1;
-            traceMessages.traceInternal(Timestamp.string() + ": Race finished");
-            httpTask.send(new Message.Finished(results));
+            if (traceMessages != null) {
+              traceMessages.traceInternal(Timestamp.string() + ": Race finished");
+            }
+            httpTask.queueMessage(new Message.Finished(results));
           } catch (Throwable t) {
           }
         }
       });
 
-    device.registerRaceStartedCallback(new TimerDevice.RaceStartedCallback() {
+      device.registerRaceStartedCallback(new TimerDevice.RaceStartedCallback() {
         public void raceStarted() {
           try {
             raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
-            traceMessages.traceInternal(Timestamp.string() + ": Race started");
-            httpTask.send(new Message.Started());
+            if (traceMessages != null) {
+              traceMessages.traceInternal(Timestamp.string() + ": Race started");
+            }
+            httpTask.queueMessage(new Message.Started());
           } catch (Throwable t) {
           }
         }
       });
+    }
   }
 
+
+  // Continuously polls the timer device for messages, and checks for timeouts of expected race results.
   private static void runDevicePollingLoop(TimerDevice device, HttpTask.MessageTracer traceMessages)
       throws SerialPortException {
     while (true) {
@@ -211,7 +298,8 @@ public class TimerMain {
       }
       try {
         Thread.sleep(50);  // ms.
-      } catch (Exception exc) {}
+      } catch (Exception exc) {
+      }
     }
   }
 }

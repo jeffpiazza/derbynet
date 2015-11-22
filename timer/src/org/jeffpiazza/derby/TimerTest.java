@@ -5,11 +5,9 @@ package org.jeffpiazza.derby;
 
 import jssc.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.regex.*;
 
 public class TimerTest implements TimerDevice.RaceStartedCallback,
-                                  TimerDevice.RaceFinishedCallback {
+    TimerDevice.RaceFinishedCallback {
 
   public static TimerDevice identifyTimerDevice(LogWriter logwriter) throws SerialPortException, IOException {
     final DeviceFinder deviceFinder = new DeviceFinder();
@@ -17,7 +15,7 @@ public class TimerTest implements TimerDevice.RaceStartedCallback,
     for (PortIterator ports = new PortIterator(); ports.hasNext(); ) {
       SerialPort port = ports.next();
       System.out.println(port.getPortName());  // TODO: Better logging
-      TimerDevice device = deviceFinder.findDevice(port, logwriter);
+      TimerDevice device = deviceFinder.findDevice(port, null, logwriter);
       if (device != null) {
         return device;
       }
@@ -48,7 +46,7 @@ public class TimerTest implements TimerDevice.RaceStartedCallback,
   }
 
   public void runTestLoop(TimerDevice device) throws SerialPortException {
-	int mask = 0;
+    int mask = 0;
     while (true) {
       -- mask;
       if (mask <= 0) { mask = 7; } // TODO: Generalize
@@ -71,7 +69,7 @@ public class TimerTest implements TimerDevice.RaceStartedCallback,
       }
 
       try {
-		System.out.println("Pausing before starting a new heat.");
+        System.out.println("Pausing before starting a new heat.");
         Thread.sleep(4000);  // 4-second pause between heats
       } catch (Exception exc) {}
     }

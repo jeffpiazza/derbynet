@@ -1,9 +1,11 @@
 package org.jeffpiazza.derby;
 
 import jssc.*;
-import java.io.*;
+import org.jeffpiazza.derby.gui.TimerGui;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DeviceFinder {
   public DeviceFinder(Class<? extends TimerDevice>[] deviceClasses) {
@@ -13,12 +15,12 @@ public class DeviceFinder {
   public DeviceFinder() {
     this(allDeviceClasses);
   }
-
+  public DeviceFinder(boolean withFake) { this(allDeviceClassesWithFake(withFake)); }
   public DeviceFinder(String s) {
     this(deviceClassesMatching(s));
   }
 
-  public TimerDevice findDevice(SerialPort port, LogWriter w) {
+  public TimerDevice findDevice(SerialPort port, TimerGui timerGui, LogWriter w) {
     try {
       if (!port.openPort()) {
         return null;
@@ -33,14 +35,15 @@ public class DeviceFinder {
 
     TimerDevice found = null;
     try {
-      found = findDeviceWithOpenPort(port, w);
+      found = findDeviceWithOpenPort(port, timerGui, w);
       return found;
     } catch (Throwable t) {
       t.printStackTrace();
     } finally {
       if (found == null) {
-        try { port.closePort(); }
-        catch (Throwable t) {
+        try {
+          port.closePort();
+        } catch (Throwable t) {
           System.err.println("Exception closing port: ");
           t.printStackTrace();
         }
@@ -50,15 +53,22 @@ public class DeviceFinder {
     return null;
   }
 
-  public static void listDeviceClassNames() {
-      for (Class<? extends TimerDevice> cl : allDeviceClasses) {
-        System.err.println("         " + cl.getName().substring(1 + cl.getName().lastIndexOf(".")));
-      }
+  public Class<? extends TimerDevice>[] deviceClasses() {
+    return Arrays.copyOf(deviceClasses, deviceClasses.length);
   }
 
-  private TimerDevice findDeviceWithOpenPort(SerialPort port, LogWriter w) throws Exception {
+  public static void listDeviceClassNames() {
+    for (Class<? extends TimerDevice> cl : allDeviceClasses) {
+      System.err.println("         " + cl.getName().substring(1 + cl.getName().lastIndexOf(".")));
+    }
+  }
+
+  private TimerDevice findDeviceWithOpenPort(SerialPort port, TimerGui timerGui, LogWriter w) throws Exception {
     SerialPortWrapper portWrapper = new SerialPortWrapper(port, w);
     for (Class<? extends TimerDevice> deviceClass : deviceClasses) {
+      if (timerGui != null) {
+        timerGui.setTimerClass(deviceClass);
+      }
       System.out.println("    " + deviceClass.getName());  // TODO: Cleaner logging
       Constructor<? extends TimerDevice> constructor =
           deviceClass.getConstructor(SerialPortWrapper.class);
@@ -86,11 +96,23 @@ public class DeviceFinder {
     return (Class<? extends TimerDevice>[]) classes.toArray(new Class[classes.size()]);
   }
 
-  public static final Class<? extends TimerDevice>[] allDeviceClasses =
-  (Class<? extends TimerDevice>[]) new Class[] {
-    ChampDevice.class,
-    FastTrackDevice.class
-  };
+  private static final Class<? extends TimerDevice>[] allDeviceClasses =
+      (Class<? extends TimerDevice>[]) new Class[]{
+          ChampDevice.class,
+          FastTrackDevice.class
+      };
+
+  public static Class<? extends TimerDevice>[] allDeviceClassesWithFake(boolean withFake) {
+    ArrayList<Class<? extends TimerDevice>> classes =
+        new ArrayList<Class<? extends TimerDevice>>();
+    for (Class<? extends TimerDevice> cl : allDeviceClasses) {
+      classes.add(cl);
+    }
+    if (withFake) {
+      classes.add(FakeDevice.class);
+    }
+    return (Class<? extends TimerDevice>[]) classes.toArray(new Class[classes.size()]);
+  }
 
   private Class<? extends TimerDevice>[] deviceClasses;
 };
