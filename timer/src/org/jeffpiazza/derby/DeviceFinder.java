@@ -1,11 +1,14 @@
 package org.jeffpiazza.derby;
 
-import jssc.*;
+import jssc.SerialPort;
+import jssc.SerialPortException;
+import org.jeffpiazza.derby.devices.*;
 import org.jeffpiazza.derby.gui.TimerGui;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class DeviceFinder {
   public DeviceFinder(Class<? extends TimerDevice>[] deviceClasses) {
@@ -63,11 +66,12 @@ public class DeviceFinder {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private TimerDevice findDeviceWithOpenPort(SerialPort port, TimerGui timerGui, LogWriter w) throws Exception {
     SerialPortWrapper portWrapper = new SerialPortWrapper(port, w);
     for (Class<? extends TimerDevice> deviceClass : deviceClasses) {
       if (timerGui != null) {
-        timerGui.setTimerClass(deviceClass);
+        timerGui.setTimerClass((Class<? extends TimerDevice>) deviceClass);
       }
       System.out.println("    " + deviceClass.getName());  // TODO: Cleaner logging
       Constructor<? extends TimerDevice> constructor =
@@ -82,6 +86,7 @@ public class DeviceFinder {
     return null;
   }
 
+  @SuppressWarnings("unchecked")
   private static Class<? extends TimerDevice>[] deviceClassesMatching(String s) {
     ArrayList<Class<? extends TimerDevice>> classes =
         new ArrayList<Class<? extends TimerDevice>>();
@@ -96,18 +101,18 @@ public class DeviceFinder {
     return (Class<? extends TimerDevice>[]) classes.toArray(new Class[classes.size()]);
   }
 
+  @SuppressWarnings("unchecked")
   private static final Class<? extends TimerDevice>[] allDeviceClasses =
       (Class<? extends TimerDevice>[]) new Class[]{
           ChampDevice.class,
           FastTrackDevice.class
       };
 
+  @SuppressWarnings("unchecked")
   public static Class<? extends TimerDevice>[] allDeviceClassesWithFake(boolean withFake) {
     ArrayList<Class<? extends TimerDevice>> classes =
         new ArrayList<Class<? extends TimerDevice>>();
-    for (Class<? extends TimerDevice> cl : allDeviceClasses) {
-      classes.add(cl);
-    }
+    Collections.addAll(classes, allDeviceClasses);
     if (withFake) {
       classes.add(FakeDevice.class);
     }

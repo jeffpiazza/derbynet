@@ -1,6 +1,8 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.devices;
 
 import jssc.*;
+import org.jeffpiazza.derby.Message;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;

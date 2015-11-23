@@ -39,16 +39,7 @@ public class PortIterator implements Iterator<SerialPort> {
 
   private static String[] defaultPortNames() {
     if (isWindows()) {
-      // TODO: The Windows case needs more work, but, of course, I expect
-      // Windows users are going to be using GPRM anyway.
-
-      // TODO: Enumeration ports = javax.comm.CommPortIdentifier.getPortIdentifiers();
-      // TODO: while (ports.hasMoreElements()) {
-      // TODO:   System.out.println(ports.nextElement().getName());
-      // TODO: }
-      //
-      // This return values is clearly not right, but may suffice in practice.
-      return new String[] { "COM1", "COM2", "COM3", "COM4", "COM5" };
+      return SerialPortList.getPortNames();
     } else {
       return mapPathNames(new File("/dev").listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
@@ -61,7 +52,7 @@ public class PortIterator implements Iterator<SerialPort> {
   }
 
   private static boolean isWindows() {
-    return System.getProperty("os.name").toLowerCase().indexOf("win") >= 0;
+    return System.getProperty("os.name").toLowerCase().contains("win");
   }
 
   String[] portNames;

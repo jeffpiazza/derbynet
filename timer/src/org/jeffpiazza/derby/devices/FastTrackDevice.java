@@ -1,9 +1,8 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.devices;
 
 import jssc.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.regex.*;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.SerialPortWrapper;
 
 public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
 

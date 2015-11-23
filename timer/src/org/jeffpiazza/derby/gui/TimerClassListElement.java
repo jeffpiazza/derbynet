@@ -1,6 +1,6 @@
 package org.jeffpiazza.derby.gui;
 
-import org.jeffpiazza.derby.TimerDevice;
+import org.jeffpiazza.derby.devices.TimerDevice;
 
 public class TimerClassListElement {
   private Class<? extends TimerDevice> type;

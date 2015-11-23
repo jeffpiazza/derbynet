@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby;
 
 import jssc.*;
+import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.gui.TimerGui;
 
 import javax.swing.*;

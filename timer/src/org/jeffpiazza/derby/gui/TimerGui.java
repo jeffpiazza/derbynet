@@ -2,9 +2,12 @@ package org.jeffpiazza.derby.gui;
 
 import jssc.SerialPort;
 import org.jeffpiazza.derby.*;
+import org.jeffpiazza.derby.devices.TimerDevice;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 public class TimerGui {
@@ -26,8 +29,18 @@ public class TimerGui {
     components.setTitle("Derby Timer Management");
     components.getRootPane().setDefaultButton(components.connectButton);
 
-    components.connectButton.addActionListener(e -> { onConnectButtonClick(); });
-    components.scanButton.addActionListener(e -> { onScanButtonClick(); });
+    components.connectButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        TimerGui.this.onConnectButtonClick();
+      }
+    });
+    components.scanButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        TimerGui.this.onScanButtonClick();
+      }
+    });
 
     components.pack();
     components.setVisible(true);
@@ -40,6 +53,21 @@ public class TimerGui {
     return rolesPopulated;
   }
 
+  private static Color green = new Color(52, 127, 79);
+  private static Color black = Color.BLACK;
+  private static Color red = Color.RED;
+
+  private void setHttpStatus(String message, Color color) {
+    components.httpStatusLabel.setForeground(color);
+    components.httpStatusLabel.setText(message);
+  }
+
+  private void setSerialStatus(String message, Color color) {
+    components.serialStatusLabel.setForeground(color);
+    components.serialStatusLabel.setText(message);
+    System.out.println("setSerialStatus(" + message + ", " + color + ")");  // TODO
+  }
+
   // Runs on dispatch thread; no individual invocation can be long-running
   private void onConnectButtonClick() {
     RoleFinder roleFinder = getRoleFinder();
@@ -48,7 +76,7 @@ public class TimerGui {
       setRoleFinder(null);
     }
     if (roleFinder == null) {
-      components.httpStatusLabel.setText("Contacting server...");
+      setHttpStatus("Contacting server...", black);
       components.roleComboBox.setEnabled(false);
       components.passwordField.setEnabled(false);
       setRoleFinder(new RoleFinder(components.urlField.getText(), this));
@@ -63,7 +91,7 @@ public class TimerGui {
       // There's an existing roleFinder for the current URL, and the user clicked "Connect."  If we're still waiting
       // for the roles to populate, then ignore the button, otherwise start a login request
       if (rolesPopulated()) {
-        components.httpStatusLabel.setText("Logging in...");
+        setHttpStatus("Logging in...", black);
         HttpTask.start(components.roleComboBox.getItemAt(
             components.roleComboBox.getSelectedIndex()),
             new String(components.passwordField.getPassword()),
@@ -71,19 +99,16 @@ public class TimerGui {
             traceMessages, traceHeartbeats, connector, new HttpTask.LoginCallback() {
               @Override
               public void onLoginSuccess() {
-                components.httpStatusLabel.setText("Connected");
-                components.httpStatusLabel.setBackground(Color.GREEN);
-                // System.out.println("Foreground color: " + components.httpStatusLabel.getForeground()); says r=g=b=0
+                setHttpStatus("Connected", green);
               }
 
               @Override
               public void onLoginFailed(String message) {
-                components.httpStatusLabel.setText("Unsuccessful login");
-                components.httpStatusLabel.setBackground(Color.RED);
+                setHttpStatus("Unsuccessful login", red);
               }
             });
       } else {
-        components.httpStatusLabel.setText("(Hold your horses!)");
+        setHttpStatus("(Hold your horses)", black);
       }
     }
   }
@@ -97,15 +122,14 @@ public class TimerGui {
   // Called to signify that all the appropriate roles from the server have been added to the role combobox
   public synchronized void rolesComplete() {
     rolesPopulated = true;
-    components.httpStatusLabel.setText("Please log in");
+    setHttpStatus("Please log in", black);
     components.roleComboBox.setEnabled(true);
     components.passwordField.setEnabled(true);
     components.passwordField.requestFocus();
   }
 
   public synchronized void roleFinderFailed(String message) {
-    components.httpStatusLabel.setText(message);
-    components.httpStatusLabel.setBackground(Color.RED);
+    setHttpStatus(message, red);
     roleFinder = null;
   }
 
@@ -173,10 +197,9 @@ public class TimerGui {
   }
 
   public void confirmDevice(SerialPort port, Class<? extends TimerDevice> timerClass) {
-    Color green = new Color(52, 127, 79);
     components.portList.setCellRenderer(new SelectedListCellRenderer(green));
     components.timerClassList.setCellRenderer(new SelectedListCellRenderer(green));
-    components.serialStatusLabel.setText("Timer device identified");
+    setSerialStatus("Timer device identified", green);
     components.scanButton.setVisible(false);
   }
 

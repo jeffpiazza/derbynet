@@ -1,8 +1,7 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.devices;
 
-import jssc.*;
-import java.io.*;
-import java.util.ArrayList;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.SerialPortWrapper;
 
 public abstract class TimerDeviceBase implements TimerDevice {
   protected SerialPortWrapper portWrapper;
@@ -11,7 +10,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
   private RaceFinishedCallback raceFinishedCallback;
   private StartingGateCallback startingGateCallback;
 
-  TimerDeviceBase(SerialPortWrapper portWrapper) {
+  protected TimerDeviceBase(SerialPortWrapper portWrapper) {
     this.portWrapper = portWrapper;
   }
 

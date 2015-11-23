@@ -4,10 +4,11 @@
 package org.jeffpiazza.derby;
 
 import jssc.*;
+import org.jeffpiazza.derby.devices.TimerDevice;
+
 import java.io.*;
 
-public class TimerTest implements TimerDevice.RaceStartedCallback,
-    TimerDevice.RaceFinishedCallback {
+public class TimerTest implements TimerDevice.RaceStartedCallback, TimerDevice.RaceFinishedCallback {
 
   public static TimerDevice identifyTimerDevice(LogWriter logwriter) throws SerialPortException, IOException {
     final DeviceFinder deviceFinder = new DeviceFinder();

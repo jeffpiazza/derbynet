@@ -1,6 +1,7 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.devices;
 
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.SerialPortWrapper;
 
 import java.util.Random;
 

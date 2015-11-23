@@ -1,9 +1,9 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.devices;
 
 import jssc.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.regex.*;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.Timestamp;
 
 public class ChampDevice extends TimerDeviceBase implements TimerDevice {
   private int numberOfLanes;  // Detected at probe time
