@@ -26,8 +26,10 @@ public class Components extends javax.swing.JFrame {
     roleComboBox = new javax.swing.JComboBox<>();
     passwordLabel = new javax.swing.JLabel();
     passwordField = new javax.swing.JPasswordField();
-    httpStatusLabel = new javax.swing.JLabel();
     connectButton = new javax.swing.JButton();
+    httpStatusLabel = new javax.swing.JLabel();
+    httpIconStatusPanel = new javax.swing.JPanel();
+    httpIconStatus = new javax.swing.JLabel();
     serialPanel = new javax.swing.JPanel();
     serialPanelBody = new javax.swing.JPanel();
     portScrollPane = new javax.swing.JScrollPane();
@@ -36,6 +38,8 @@ public class Components extends javax.swing.JFrame {
     timerClassList = new javax.swing.JList<>();
     scanButton = new javax.swing.JButton();
     serialStatusLabel = new javax.swing.JLabel();
+    serialIconStatusPanel = new javax.swing.JPanel();
+    serialIconStatus = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     getContentPane().setLayout(new java.awt.GridLayout(1, 2));
@@ -52,26 +56,39 @@ public class Components extends javax.swing.JFrame {
 
     passwordField.setEnabled(false);
 
+    connectButton.setText("Connect");
+
     httpStatusLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     httpStatusLabel.setText("Please enter server address");
 
-    connectButton.setText("Connect");
+    httpIconStatusPanel.setLayout(new javax.swing.BoxLayout(httpIconStatusPanel, javax.swing.BoxLayout.X_AXIS));
+
+    httpIconStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    httpIconStatus.setPreferredSize(new java.awt.Dimension(60, 60));
+    httpIconStatusPanel.add(httpIconStatus);
 
     javax.swing.GroupLayout httpPanelLayout = new javax.swing.GroupLayout(httpPanel);
     httpPanel.setLayout(httpPanelLayout);
     httpPanelLayout.setHorizontalGroup(
       httpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(urlField, javax.swing.GroupLayout.Alignment.TRAILING)
-      .addComponent(passwordField, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-      .addComponent(httpStatusLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-      .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(passwordField)
+      .addComponent(roleComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
       .addGroup(httpPanelLayout.createSequentialGroup()
         .addGroup(httpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(urlLabel)
-          .addComponent(passwordLabel)
-          .addComponent(roleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addContainerGap(170, Short.MAX_VALUE))
-      .addComponent(roleComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+          .addGroup(httpPanelLayout.createSequentialGroup()
+            .addGroup(httpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+              .addComponent(urlLabel)
+              .addComponent(passwordLabel)
+              .addComponent(roleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 0, Short.MAX_VALUE))
+          .addComponent(httpStatusLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+        .addContainerGap())
+      .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, httpPanelLayout.createSequentialGroup()
+        .addGap(0, 0, Short.MAX_VALUE)
+        .addComponent(httpIconStatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(0, 0, Short.MAX_VALUE))
     );
     httpPanelLayout.setVerticalGroup(
       httpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -87,10 +104,12 @@ public class Components extends javax.swing.JFrame {
         .addComponent(passwordLabel)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(passwordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 151, Short.MAX_VALUE)
         .addComponent(connectButton)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(httpStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addComponent(httpStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(httpIconStatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
     getContentPane().add(httpPanel);
@@ -116,22 +135,34 @@ public class Components extends javax.swing.JFrame {
     serialStatusLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     serialStatusLabel.setText("Scanning for connected timer");
 
+    serialIconStatusPanel.setLayout(new javax.swing.BoxLayout(serialIconStatusPanel, javax.swing.BoxLayout.X_AXIS));
+
+    serialIconStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    serialIconStatus.setPreferredSize(new java.awt.Dimension(60, 60));
+    serialIconStatusPanel.add(serialIconStatus);
+
     javax.swing.GroupLayout serialPanelLayout = new javax.swing.GroupLayout(serialPanel);
     serialPanel.setLayout(serialPanelLayout);
     serialPanelLayout.setHorizontalGroup(
       serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(serialPanelBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-      .addComponent(scanButton, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
-      .addComponent(serialStatusLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(serialPanelBody, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
+      .addComponent(serialStatusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(scanButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, serialPanelLayout.createSequentialGroup()
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(serialIconStatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(0, 0, Short.MAX_VALUE))
     );
     serialPanelLayout.setVerticalGroup(
       serialPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(serialPanelLayout.createSequentialGroup()
-        .addComponent(serialPanelBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(serialPanelBody, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(scanButton)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(serialStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+        .addComponent(serialStatusLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(serialIconStatusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
     getContentPane().add(serialPanel);
@@ -192,6 +223,8 @@ public class Components extends javax.swing.JFrame {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   public javax.swing.JButton connectButton;
+  public javax.swing.JLabel httpIconStatus;
+  public javax.swing.JPanel httpIconStatusPanel;
   public javax.swing.JPanel httpPanel;
   public javax.swing.JLabel httpStatusLabel;
   public javax.swing.JPasswordField passwordField;
@@ -201,6 +234,8 @@ public class Components extends javax.swing.JFrame {
   public javax.swing.JComboBox<String> roleComboBox;
   public javax.swing.JLabel roleLabel;
   public javax.swing.JButton scanButton;
+  public javax.swing.JLabel serialIconStatus;
+  public javax.swing.JPanel serialIconStatusPanel;
   public javax.swing.JPanel serialPanel;
   public javax.swing.JPanel serialPanelBody;
   public javax.swing.JLabel serialStatusLabel;

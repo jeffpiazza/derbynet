@@ -31,13 +31,14 @@
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
 
-    <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-    <!--jar jarfile="${dist}/lib/timer-${DSTAMP}.jar" -->
     <jar jarfile="${dist}/lib/derby-timer.jar">
         <fileset  dir="${build}">
             <exclude name="**/*Test.*"/>
             <exclude name="**/*Test$*"/>
             <exclude name="**/FakeTimerMain.*"/>
+        </fileset>
+        <fileset dir="../website/img">
+            <include name="status_*.png"/>
         </fileset>
         <manifest>
             <attribute name="Main-Class" value="org.jeffpiazza.derby.TimerMain"/>

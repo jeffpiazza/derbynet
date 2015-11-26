@@ -29,6 +29,9 @@ public class TimerGui {
     components.setTitle("Derby Timer Management");
     components.getRootPane().setDefaultButton(components.connectButton);
 
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_trouble.png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_unknown.png")));
+
     components.connectButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -62,21 +65,32 @@ public class TimerGui {
     components.httpStatusLabel.setText(message);
   }
 
+  // icon should be one of: "ok", "trouble", "unknown"
+  private void setHttpStatus(String message, Color color, String icon) {
+    setHttpStatus(message, color);
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_" + icon + ".png")));
+  }
+
   private void setSerialStatus(String message, Color color) {
     components.serialStatusLabel.setForeground(color);
     components.serialStatusLabel.setText(message);
-    System.out.println("setSerialStatus(" + message + ", " + color + ")");  // TODO
+  }
+
+  private void setSerialStatus(String message, Color color, String icon) {
+    setSerialStatus(message, color);
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_" + icon + ".png")));
   }
 
   // Runs on dispatch thread; no individual invocation can be long-running
   private void onConnectButtonClick() {
     RoleFinder roleFinder = getRoleFinder();
     if (roleFinder != null && !roleFinder.getServerAddress().equals(components.urlField.getText())) {
+      // Cancel existing rolefinder
       roleFinder.cancel();
       setRoleFinder(null);
     }
     if (roleFinder == null) {
-      setHttpStatus("Contacting server...", black);
+      setHttpStatus("Contacting server...", black, "unknown");
       components.roleComboBox.setEnabled(false);
       components.passwordField.setEnabled(false);
       setRoleFinder(new RoleFinder(components.urlField.getText(), this));
@@ -91,7 +105,7 @@ public class TimerGui {
       // There's an existing roleFinder for the current URL, and the user clicked "Connect."  If we're still waiting
       // for the roles to populate, then ignore the button, otherwise start a login request
       if (rolesPopulated()) {
-        setHttpStatus("Logging in...", black);
+        setHttpStatus("Logging in...", black, "unknown");
         HttpTask.start(components.roleComboBox.getItemAt(
             components.roleComboBox.getSelectedIndex()),
             new String(components.passwordField.getPassword()),
@@ -99,16 +113,16 @@ public class TimerGui {
             traceMessages, traceHeartbeats, connector, new HttpTask.LoginCallback() {
               @Override
               public void onLoginSuccess() {
-                setHttpStatus("Connected", green);
+                setHttpStatus("Connected", green, "ok");
               }
 
               @Override
               public void onLoginFailed(String message) {
-                setHttpStatus("Unsuccessful login", red);
+                setHttpStatus("Unsuccessful login", red, "trouble");
               }
             });
       } else {
-        setHttpStatus("(Hold your horses)", black);
+        setHttpStatus("(Hold your horses)", black, "unknown");
       }
     }
   }
@@ -122,14 +136,14 @@ public class TimerGui {
   // Called to signify that all the appropriate roles from the server have been added to the role combobox
   public synchronized void rolesComplete() {
     rolesPopulated = true;
-    setHttpStatus("Please log in", black);
+    setHttpStatus("Please log in", black, "unknown");
     components.roleComboBox.setEnabled(true);
     components.passwordField.setEnabled(true);
     components.passwordField.requestFocus();
   }
 
   public synchronized void roleFinderFailed(String message) {
-    setHttpStatus(message, red);
+    setHttpStatus(message, red, "trouble");
     roleFinder = null;
   }
 
@@ -199,8 +213,8 @@ public class TimerGui {
   public void confirmDevice(SerialPort port, Class<? extends TimerDevice> timerClass) {
     components.portList.setCellRenderer(new SelectedListCellRenderer(green));
     components.timerClassList.setCellRenderer(new SelectedListCellRenderer(green));
-    setSerialStatus("Timer device identified", green);
-    components.scanButton.setVisible(false);
+    setSerialStatus("Timer device identified", green, "ok");
+    // TODO components.scanButton.setVisible(false);
   }
 
   // Remove selections between scan cycles
