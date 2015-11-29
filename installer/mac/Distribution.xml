@@ -4,29 +4,28 @@
     <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
     <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
     <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
-    <options customize="never" require-scripts="false"/>
+    <options require-scripts="false"/>
     <choices-outline>
-        <line choice="default">
             <line choice="org.jeffpiazza.derbynet.website"/>
             <line choice="org.jeffpiazza.derbynet.replay"/>
             <line choice="org.jeffpiazza.derbynet.timer"/>
             <line choice="org.jeffpiazza.derbynet.docs"/>
-        </line>
     </choices-outline>
-    <choice id="default"/>
-    <choice id="org.jeffpiazza.derbynet.website" visible="false">
+    <choice id="default" title="Full Installation"/>
+    <choice id="org.jeffpiazza.derbynet.website" title="DerbyNet web site" visible="true">
         <pkg-ref id="org.jeffpiazza.derbynet.website"/>
     </choice>
     <pkg-ref id="org.jeffpiazza.derbynet.website" version="1.0" onConclusion="none">derbynet.website.pkg</pkg-ref>
-    <choice id="org.jeffpiazza.derbynet.replay" visible="false">
+    <choice id="org.jeffpiazza.derbynet.replay" visible="true" title="MacReplay application">
         <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
     </choice>
     <pkg-ref id="org.jeffpiazza.derbynet.replay" version="1.0" onConclusion="none">derbynet.replay.pkg</pkg-ref>
-    <choice id="org.jeffpiazza.derbynet.timer" visible="false">
+    <choice id="org.jeffpiazza.derbynet.timer" visible="true"
+            title="DerbyNet timer manager">
         <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
     </choice>
     <pkg-ref id="org.jeffpiazza.derbynet.timer" version="1.0" onConclusion="none">derbynet.timer.pkg</pkg-ref>
-    <choice id="org.jeffpiazza.derbynet.docs" visible="false">
+    <choice id="org.jeffpiazza.derbynet.docs" title="DerbyNet user documention">
         <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
     </choice>
     <pkg-ref id="org.jeffpiazza.derbynet.docs" version="1.0" onConclusion="none">derbynet.docs.pkg</pkg-ref>

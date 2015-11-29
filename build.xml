@@ -284,12 +284,15 @@
                                       mac.installer.replay, mac.installer.timer,
                                       mac.installer.docs, generated-version.inc,
                                generated-build-date.inc, generated-commit-hash.inc">
-    <mkdir dir="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}"/>
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>
-        <arg value="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}/derbynet.pkg"/>
+        <arg value="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}.pkg"/>
     </exec>
+    <delete file="derbynet.docs.pkg"/>
+    <delete file="derbynet.replay.pkg"/>
+    <delete file="derbynet.timer.pkg"/>
+    <delete file="derbynet.website.pkg"/>
 </target>
   
 
