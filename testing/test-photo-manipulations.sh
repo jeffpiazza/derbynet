@@ -11,8 +11,8 @@ if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
     exit 0
 fi
 
-# TODO Sometimes mktemp directory is in an parent directory that's inaccessible to other users
-tmpdir=`mktemp -d 2>/dev/null || mktemp -d /tmp/photo_uploads.XXXXXXXX`
+# tmpdir=`mktemp -d 2>/dev/null || mktemp -d /tmp/photo_uploads.XXXXXXXX`
+tmpdir=`mktemp -d /tmp/photo_uploads.XXXXXXXX`
 chmod 777 $tmpdir
 
 `dirname $0`/login-coordinator.sh "$BASE_URL"

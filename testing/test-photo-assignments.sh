@@ -9,12 +9,14 @@ source `dirname $0`/common.sh
 touch /tmp/cleanup
 rm -rf /tmp/headshots* /tmp/carphotos* /tmp/cleanup
 
-PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/headshots.XXXXXXXX`
+# PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/headshots.XXXXXXXX`
+PHOTO_DIR=`mktemp -d /tmp/headshots.XXXXXXXX`
 # Need world write access to allow web host to create subfolders
 chmod 777 "$PHOTO_DIR"
 cp `dirname $0`/data/headshots/Cub* "$PHOTO_DIR"
 
-CAR_PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/carphotos.XXXXXXXX`
+# CAR_PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/carphotos.XXXXXXXX`
+CAR_PHOTO_DIR=`mktemp -d /tmp/carphotos.XXXXXXXX`
 chmod 777 "$CAR_PHOTO_DIR"
 cp `dirname $0`/data/carphotos/Car* "$CAR_PHOTO_DIR"
 
