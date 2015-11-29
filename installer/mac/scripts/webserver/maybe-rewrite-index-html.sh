@@ -3,7 +3,7 @@
 if [ `md5 -q "$DSTVOLUME/Library/WebServer/Documents/index.html.en"` = 5388f60d7695cb57b87c799ee62d20b2 ] ; then
  cp "$DSTVOLUME/Library/WebServer/Documents/index.html.en" \
     "$DSTVOLUME/Library/WebServer/Documents/index.html.en.pre-derbynet"
- echo  > "$DSTVOLUME/Library/WebServer/Documents/index.html.en" <<EOF
+ cat  > "$DSTVOLUME/Library/WebServer/Documents/index.html.en" <<EOF
 <html>
   <head>
     <meta http-equiv="refresh" content="0; url=derbynet"/>
