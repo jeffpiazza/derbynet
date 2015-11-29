@@ -29,8 +29,8 @@ public class TimerGui {
     components.setTitle("Derby Timer Management");
     components.getRootPane().setDefaultButton(components.connectButton);
 
-    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_trouble.png")));
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_unknown.png")));
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/trouble.png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/unknown.png")));
 
     components.connectButton.addActionListener(new ActionListener() {
       @Override
@@ -68,7 +68,7 @@ public class TimerGui {
   // icon should be one of: "ok", "trouble", "unknown"
   private void setHttpStatus(String message, Color color, String icon) {
     setHttpStatus(message, color);
-    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_" + icon + ".png")));
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/" + icon + ".png")));
   }
 
   private void setSerialStatus(String message, Color color) {
@@ -78,7 +78,7 @@ public class TimerGui {
 
   private void setSerialStatus(String message, Color color, String icon) {
     setSerialStatus(message, color);
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status_" + icon + ".png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/" + icon + ".png")));
   }
 
   // Runs on dispatch thread; no individual invocation can be long-running

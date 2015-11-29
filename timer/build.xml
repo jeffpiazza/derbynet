@@ -38,7 +38,7 @@
             <exclude name="**/FakeTimerMain.*"/>
         </fileset>
         <fileset dir="../website/img">
-            <include name="status_*.png"/>
+            <include name="status/*.png"/>
         </fileset>
         <manifest>
             <attribute name="Main-Class" value="org.jeffpiazza.derby.TimerMain"/>

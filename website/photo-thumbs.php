@@ -133,7 +133,7 @@ foreach ($allfiles as $imagefile) {
 }
 
 if (empty($allfiles)) {
-  $trouble_first = '<h2 class="trouble"><img src="img/status_trouble.png"/>';
+  $trouble_first = '<h2 class="trouble"><img src="img/status/trouble.png"/>';
   $dir_name = htmlspecialchars($photo_repository->directory(), ENT_QUOTES, 'UTF-8');
   $trouble_last = "</h2>\n";
   if (!file_exists($photo_repository->directory())) {

@@ -39,3 +39,8 @@
 .status_icon img {
     vertical-align: middle;
 }
+
+p.photo_dir_status_message {
+    color: red;
+    font-size: 20px;
+}

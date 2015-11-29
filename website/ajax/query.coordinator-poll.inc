@@ -10,19 +10,19 @@ $tstate = get_timer_state();
 $tcontact = read_raceinfo('timer_last_contact');
 if ($tstate == TIMER_NOT_CONNECTED) {
   $msg = 'NOT CONNECTED';
-  $icon = 'img/status_not_connected.png';
+  $icon = 'img/status/not_connected.png';
 } else if ($tstate == TIMER_CONNECTED) {
   $msg ='CONNECTED ('.(time() - $tcontact).' sec.)';
-  $icon = 'img/status_ok.png';
+  $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_PREPARED) {
   $msg = 'Prepared';
-  $icon = 'img/status_ok.png';
+  $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_RUNNING) {
   $msg = 'Race running';
-  $icon = 'img/status_ok.png';
+  $icon = 'img/status/ok.png';
 } else {
   $msg = 'Unknown ('.$tstate.')';
-  $icon = 'img/status_trouble.png';
+  $icon = 'img/status/trouble.png';
 }
 echo '<timer-state lanes="'.get_lane_count().'"'
     .' last_contact="'.$tcontact.'"'
@@ -37,13 +37,13 @@ require_once('inc/replay.inc');
 $replay = get_replay();
 if ($replay['state'] == REPLAY_NOT_CONNECTED) {
   $msg = 'NOT CONNECTED';
-  $icon = 'img/status_not_connected.png';
+  $icon = 'img/status/not_connected.png';
 } else if ($replay['state'] == REPLAY_CONNECTED) {
   $msg = $replay['reported_status'].' ('.(time() - $replay['last_contact']).' sec.)';
-  $icon = 'img/status_ok.png';
+  $icon = 'img/status/ok.png';
 } else {
   $msg = 'TROUBLE: '.$replay['trouble'];
-  $icon = 'img/status_trouble.png';
+  $icon = 'img/status/trouble.png';
 }
 echo '<replay-state'
     .' last_contact="'.$replay['last_contact'].'"'

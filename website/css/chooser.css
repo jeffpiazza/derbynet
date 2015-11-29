@@ -28,16 +28,16 @@
 
 
 .unwritable::before {
-    content: url('../img/readonly.png');
+    content: url('../img/chooser/readonly.png');
     padding-right: 5px;
 }
 
 .writable::before {
-    content: url('../img/green-folder.png');
+    content: url('../img/chooser/green-folder.png');
     padding-right: 5px;
 }
 
 .unreadable::before {
-    content: url('../img/do-not-enter.png');
+    content: url('../img/chooser/do-not-enter.png');
     padding-right: 5px;
 }

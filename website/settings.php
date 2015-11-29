@@ -131,6 +131,9 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
           .' size="50"'
 		  .' value="'.htmlspecialchars($photo_dir_value, ENT_QUOTES, 'UTF-8').'"/>'."\n";
     echo '<span id="'.$photo_dir_id.'_icon" class="status_icon"></span>'."\n";
+    echo '</p>';
+    echo '<p class="photo_dir_status_message" id="'.$photo_dir_id.'_message"></p>';
+    echo '<p>';
     echo '<span class="photo_dir_choose"><input type="button" value="Browse"'
         .' data-enhanced="true"'
         .' onclick="show_choose_directory_modal($(\'#'.$photo_dir_id.'\').val(), function(path) {'

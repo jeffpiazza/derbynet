@@ -10,14 +10,14 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="620"
-   height="800"
-   viewBox="0 0 620.00001 800.00001"
+   height="620"
+   viewBox="0 0 620.00001 620.00001"
    id="svg5494"
    version="1.1"
    inkscape:version="0.91 r13725"
-   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/repo/website/img/do-not-enter.png"
-   inkscape:export-xdpi="3.1900001"
-   inkscape:export-ydpi="3.1900001"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/chooser/do-not-enter.png"
+   inkscape:export-xdpi="3.75"
+   inkscape:export-ydpi="3.75"
    sodipodi:docname="do-not-enter.svg">
   <defs
      id="defs5496" />
@@ -29,16 +29,16 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="464.83971"
+     inkscape:cx="288.06301"
      inkscape:cy="398.78169"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
-     inkscape:window-width="1880"
+     inkscape:window-width="1879"
      inkscape:window-height="1155"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="1"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5499">
@@ -56,20 +56,26 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-252.36216)">
-    <circle
-       style="opacity:1;fill:#db0000;fill-opacity:1;fill-rule:nonzero;stroke:#ee1634;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     transform="translate(0,-432.36216)">
+    <path
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 308.92479,450.17548 C 203.72242,451.10509 101.01675,511.85634 50.854422,604.55293 6.002992,685.00953 0.39902586,786.49123 38.332407,870.70811 74.948858,954.36707 151.27165,1019.9319 240.34841,1041.2645 c 86.76512,21.8532 183.13087,2.8913 254.06079,-52.00515 C 563.93386,936.68121 609.14379,852.85937 612.78213,765.56089 617.2839,679.57753 583.17642,592.10418 520.15106,533.13768 463.95367,479.45613 386.70275,448.88053 308.92479,450.17548 Z"
+       id="circle4135"
+       inkscape:connector-curvature="0" />
+    <ellipse
+       style="opacity:1;fill:#db0000;fill-opacity:1;fill-rule:nonzero;stroke:#ee1634;stroke-width:0.58061361;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path6048"
-       cx="313.14728"
-       cy="750.22504"
-       r="248.49753" />
+       cx="313.14236"
+       cy="750.23938"
+       rx="288.58868"
+       ry="288.53552" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ee1634;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ee1634;stroke-width:0.56089318;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect6050"
-       width="424.26407"
-       height="98.994949"
-       x="102.02541"
-       y="696.74786"
+       width="459.73212"
+       height="114.96478"
+       x="83.276306"
+       y="688.13605"
        ry="15.152288"
        rx="15.152288" />
   </g>

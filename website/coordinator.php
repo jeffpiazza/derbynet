@@ -69,7 +69,7 @@ $(document).bind("mobileinit", function() {
     <p>Using Grand Prix Race Manager</p>
    <?php } else { ?>
     <div class="status_icon">
-      <img id="timer_status_icon" src="img/status_unknown.png"/>
+      <img id="timer_status_icon" src="img/status/unknown.png"/>
     </div>
     <h3>Timer Status</h3>
     <p><b id="timer_status_text">Timer status not yet updated</b></p>
@@ -79,7 +79,7 @@ $(document).bind("mobileinit", function() {
 
   <div class="control_group replay_control_group">
     <div class="status_icon">
-      <img id="replay_status_icon" src="img/status_unknown.png"/>
+      <img id="replay_status_icon" src="img/status/unknown.png"/>
     </div>
     <h3>Replay Status</h3>
     <p><b id="replay_status">Remote replay status not yet updated</b></p>

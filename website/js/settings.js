@@ -30,16 +30,21 @@ function render_directory_status_icon(photo_dir_selector) {
                 if (path.length > 0) {
                     path = path[0];
                     var icon_span = $(photo_dir_selector + '_icon');
+                    var msg_para = $(photo_dir_selector + '_message');
                     if (path.getAttribute("directory") == "0" ||
                         path.getAttribute("readable") == "0") {
-                        icon_span.html('<img src="img/status_trouble.png"/>');
+                        icon_span.html('<img src="img/status/trouble.png"/>');
+                        msg_para.text('Directory does not exist or is not readable.');
                     } else if (path.getAttribute("writable") == "0") {
-                        icon_span.html('<img src="img/status_readonly.png"/>');
+                        icon_span.html('<img src="img/status/readonly.png"/>');
+                        msg_para.text('Directory is not writable.');
                     } else {
-                        icon_span.html('<img src="img/status_ok.png"/>');
+                        icon_span.html('<img src="img/status/ok.png"/>');
+                        msg_para.text('');
                     }
                 } else {
                     icon_span.html("");
+                    msg_para.text('');
                 }
             }
            });
