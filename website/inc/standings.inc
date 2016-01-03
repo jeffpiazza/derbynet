@@ -30,18 +30,22 @@ function final_roundids() {
   return $final_roundids;
 }
 
-// $roundids is a string of comma-separated roundid values.
-// Alternatively, a single numeric roundid works, too.
+// $roundids is an array of roundid values.
 function standings_for_rounds($roundids) {
   global $db;
 
   $scoring_expr = sql_scoring_expression('finishtime');
 
-  // We want this "overall" set of results, ordered by time score.  For any other rounds (Rounds.roundid NOT IN (0,...)),
-  // we're going to need to place the values in a separate map by roundid.
+  // We want this "overall" set of results, ordered by time score.  For any
+  // other rounds (Rounds.roundid NOT IN (0,...)), we're going to need to place
+  // the values in a separate map by roundid.
+  // 
+  // It's invalid SQL to test for ' IN () ', so make sure there's at least one
+  // (invalid) roundid.
+  $roundids[] = 0;
   $stmt = $db->query('SELECT Rounds.roundid, RegistrationInfo.racerid, RegistrationInfo.classid,'
                      .' class, firstname, lastname, carnumber,'
-                     .' Rounds.roundid IN (0,'.$roundids.') AS final,'
+                     .' Rounds.roundid IN ('.implode(',', $roundids).') AS final,'
                      .' COUNT(*) AS base, '.$scoring_expr.' AS avg,'
                      .' MIN(finishtime) AS best, MAX(finishtime) AS worst'
                      .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
@@ -82,7 +86,7 @@ function standings_for_rounds($roundids) {
 // raced for each class.  Racers who were eliminated in prior rounds are not
 // included.  Does not account for any Grand Finals rounds.
 function final_standings() {
-  return standings_for_rounds(implode(',', final_roundids()));
+  return standings_for_rounds(final_roundids());
 }
 
 // Collect the top N racer IDs in each class
