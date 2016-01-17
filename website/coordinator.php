@@ -57,11 +57,10 @@ $(document).bind("mobileinit", function() {
     </div>
   </div>
 
-  <div id="add_new_rounds_group" class="control_group new_round_control hidden">
-    <div class="block_buttons">
+  <div id="add_new_rounds_group" class="control_group block_buttons new_round_control hidden">
       <input type="button" data-enhanced="true" value="Add New Rounds"
              onclick="show_choose_new_round_modal()"/>
-    </div>
+      <div id="now-racing-group-buttons"></div>
   </div>
 
   <div class="control_group timer_control_group">
@@ -87,7 +86,7 @@ $(document).bind("mobileinit", function() {
       <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
     </div>
     <div class="block_buttons">
-      <input type="button" data-enhanced="true" value="Settings" onclick="show_replay_settings_modal();"/>
+      <input type="button" data-enhanced="true" value="Replay Settings" onclick="show_replay_settings_modal();"/>
     </div>
   </div>
 
@@ -227,6 +226,17 @@ $(document).bind("mobileinit", function() {
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='g_new_round_modal_open = false; close_modal("#new_round_modal");'/>
+  </form>
+</div>
+
+<div id='unschedule_modal' class="modal_dialog hidden block_buttons">
+  <p>Round <span id="unschedule_round"></span> for <span id="unschedule_class"></span>
+       has a schedule, but no heats have been run.  If you want to add or remove racers,
+       you need to delete the schedule for this round.  Is that what you would like to do?</p>
+  <form>
+    <input type="submit" data-enhanced="true" value="Unschedule"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#unschedule_modal");'/>
   </form>
 </div>
 
