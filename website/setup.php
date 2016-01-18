@@ -10,6 +10,7 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
+<link rel="stylesheet" type="text/css" href="css/chooser.css"/>
 <link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
@@ -29,6 +30,7 @@ $(document).bind("mobileinit", function() {
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/setup.js"></script>
 </head>
 <body>
@@ -123,19 +125,21 @@ function label_driver_check($driver) {
 ?>
 
 <div id="choose_database_modal" class="modal_dialog wide_modal tall_modal hidden block_buttons">
-  <form>
-    <input type="radio" name="connection_type" value="string" id="string_connection"
-           checked="checked" data-wrapper-class="string_connection_wrapper"/>
-    <label for="string_connection">Arbitrary connection string</label>
-    <input type="radio" name="connection_type" value="odbc" id="odbc_connection"
-           data-wrapper-class="odbc_connection_wrapper"/>
-    <label for="odbc_connection">ODBC data source<?php label_driver_check("odbc");?></label>
-    <input type="radio" name="connection_type" value="mysql" id="mysql_connection"
-           data-wrapper-class="mysql_connection_wrapper"/>
-    <label for="mysql_connection">MySQL data source<?php label_driver_check("mysql"); ?></label>
+  <form><?php
+    $is_windows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+?>
     <input type="radio" name="connection_type" value="sqlite" id="sqlite_connection"
            data-wrapper-class="sqlite_connection_wrapper"/>
     <label for="sqlite_connection">SQLite data source<?php label_driver_check("sqlite"); ?></label>
+    <input type="radio" name="connection_type" value="mysql" id="mysql_connection"
+           data-wrapper-class="mysql_connection_wrapper"/>
+    <label for="mysql_connection">MySQL data source<?php label_driver_check("mysql"); ?></label>
+    <input type="radio" name="connection_type" value="odbc" id="odbc_connection"
+           data-wrapper-class="odbc_connection_wrapper"/>
+    <label for="odbc_connection">ODBC data source<?php label_driver_check("odbc");?></label>
+    <input type="radio" name="connection_type" value="string" id="string_connection"
+           checked="checked" data-wrapper-class="string_connection_wrapper"/>
+    <label for="string_connection">Arbitrary connection string</label>
 
     <div id="for_odbc_connection" class="hidden odbc_connection_wrapper">
         <label for="odbc_dsn_name">ODBC data source name (DSN):</label>
@@ -150,8 +154,12 @@ function label_driver_check($driver) {
     </div>
 
     <div id="for_sqlite_connection" class="hidden sqlite_connection_wrapper">
+<!-- TODO move to a css file -->
+<input type="button" data-enhanced="true" style="float: right; width: 19%; margin-bottom: 0px; margin-top: 14px; padding:5px 5px;" value="Browse" onclick='show_choose_file_modal(/*$("#sqlite_path").val()*/"/Library/WebServer/Documents/derbynet/local", "x.sqlite");'/>
+<div style="width: 80%">
         <label for="sqlite_path">Path (on server) to SQLite data file:</label>
         <input type="text" name="sqlite_path" id="sqlite_path"/>
+</div>
     </div>
 
     <div id="for_string_connection" class="string_connection_wrapper">
@@ -194,6 +202,8 @@ function label_driver_check($driver) {
       onclick='close_modal("#update_schema_modal");'/>
   </form>
 </div>
+
+<?php require('inc/chooser.inc'); ?>
 
 </body>
 </html>

@@ -21,12 +21,12 @@ function hide_or_show_connection(jq, show) {
 
 $(function () {
     $('input[name="connection_type"]').on('change', function() {
-        $val = $('input[name="connection_type"]:checked').val();
-        // $('#for_string_connection').toggleClass('hidden', $val != 'string');
-        $('#connection_string').prop('disabled', $val != 'string');
-        hide_or_show_connection($('#for_odbc_connection'), $val == 'odbc');
-        hide_or_show_connection($('#for_mysql_connection'), $val == 'mysql');
-        hide_or_show_connection($('#for_sqlite_connection'), $val == 'sqlite');
+        val = $('input[name="connection_type"]:checked').val();
+        // $('#for_string_connection').toggleClass('hidden', val != 'string');
+        $('#connection_string').prop('disabled', val != 'string');
+        hide_or_show_connection($('#for_odbc_connection'), val == 'odbc');
+        hide_or_show_connection($('#for_mysql_connection'), val == 'mysql');
+        hide_or_show_connection($('#for_sqlite_connection'), val == 'sqlite');
     });
     $('#odbc_dsn_name').on('keyup', function() {
         $('#connection_string').val('odbc:DSN=' + $(this).val() + ';Exclusive=NO');
@@ -39,10 +39,15 @@ $(function () {
 });
 
 function show_choose_database_modal() {
-  show_modal("#choose_database_modal", function(event) {
-      handle_choose_database();
-      return false;
-  });
+    show_modal("#choose_database_modal", function(event) {
+        handle_choose_database();
+        return false;
+    });
+
+    // Merely setting the "checked" attribute doesn't trigger the "change"
+    // handler that displays the right extra fields.
+    $('#sqlite_connection').click();
+    $('input[name="connection_type"]').checkboxradio("refresh");
 }
 
 function handle_choose_database() {
