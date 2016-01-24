@@ -2,7 +2,17 @@ $(function() {
     $("body").append('<div id="modal_background"></div>');
     $("body").append('<div id="second_modal_background"></div>');
     $("body").append('<div id="third_modal_background"></div>');
+    $(document).keyup(function(e) {
+            do_close_modal(g_modal_dialogs[g_modal_dialogs.length - 1],
+                           ['#modal_background',
+                            '#second_modal_background',
+                            '#third_modal_background'][g_modal_dialogs.length - 1]);
+        }
+    });
 });
+
+// A stack of selectors for the currently-open modal dialog(s), if any.
+var g_modal_dialogs = []
 
 function do_show_modal(modal_selector, background_selector, z_index, submit_handler) {
     var modal_background = $(background_selector);
@@ -16,6 +26,8 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
         form.off("submit");
         form.on("submit", submit_handler);
     }
+
+    g_modal_dialogs.push(modal_selector);
 
     var modal_width = modal_div.outerWidth();
     modal_div.removeClass("hidden");
@@ -31,6 +43,7 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
 }
 
 function do_close_modal(modal_selector, background_selector) {
+    g_modal_dialogs.pop();
     $(background_selector).fadeOut(200);
     $(modal_selector).addClass("hidden");
     $(modal_selector).css({'display': 'none'});
