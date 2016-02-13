@@ -3,6 +3,7 @@ $(function() {
     $("body").append('<div id="second_modal_background"></div>');
     $("body").append('<div id="third_modal_background"></div>');
     $(document).keyup(function(e) {
+        if (e.keyCode == 27) {
             do_close_modal(g_modal_dialogs[g_modal_dialogs.length - 1],
                            ['#modal_background',
                             '#second_modal_background',
