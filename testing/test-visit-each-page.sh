@@ -20,7 +20,7 @@ curl_get photo-thumbs.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 # curl_get photo-crop.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get racer-results.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get settings.php | sed -n -e "/$PATTERN/ { p; q 1 }"
-curl_get setup.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get database-setup.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get standings.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 
 curl_get "kiosk.php?page=kiosks/award-presentations.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"

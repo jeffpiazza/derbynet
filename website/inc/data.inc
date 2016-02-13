@@ -6,7 +6,7 @@ try {
 
 if (!isset($db)) {
   $_SESSION['setting_up'] = 1;
-  header('Location: setup.php');
+  header('Location: database-setup.php');
   exit();
 }
 

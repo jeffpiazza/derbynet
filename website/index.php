@@ -113,7 +113,7 @@ if ($need_spacer) {
   <input type="submit" value="Settings"/>
 </form>
 <br/>
-<form method="link" action="setup.php">
+<form method="link" action="database-setup.php">
   <input type="submit" value="Database"/>
 </form>
 <br/>

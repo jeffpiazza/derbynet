@@ -6,12 +6,12 @@ require_permission(SET_UP_PERMISSION);
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>DerbyNet Set-Up</title>
+<title>Database Set-Up</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
 <link rel="stylesheet" type="text/css" href="css/chooser.css"/>
-<link rel="stylesheet" type="text/css" href="css/setup.css"/>
+<link rel="stylesheet" type="text/css" href="css/database-setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript">
@@ -31,10 +31,10 @@ $(document).bind("mobileinit", function() {
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/chooser.js"></script>
-<script type="text/javascript" src="js/setup.js"></script>
+<script type="text/javascript" src="js/database-setup.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Set-Up'; require('inc/banner.inc'); ?>
+<?php $banner_title = 'Database Set-Up'; require('inc/banner.inc'); ?>
 <h3>Current Configuration File</h3>
 <?php
 
@@ -56,11 +56,11 @@ if (file_exists($local_config_inc)) {
   echo "<p>You do not yet have a local configuration file.</p>\n";
 
   if (!is_dir('local')) {
-    $path = str_replace("setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+    $path = str_replace("database-setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
     echo "<p>You need to create a <b>'".$path."'</b> directory, and make it writable.</p>\n";
     $offer_config_button = false;
   } else if (!is_writable('local')) {
-    $path = str_replace("setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+    $path = str_replace("database-setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
     echo "<p>The <b>'".$path."'</b> directory exists, but isn't writable.</p>\n";
     $offer_config_button = false;
   }

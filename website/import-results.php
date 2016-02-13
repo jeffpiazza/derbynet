@@ -56,7 +56,7 @@ try {
     <p>The RegistrationInfo table could not be read: you should probably finish setting up the database.</p>
   <?php } ?>
 
-  <form method="link" action="setup.php">
+  <form method="link" action="database-setup.php">
     <input type="submit" data-enhanced="true" value="Set Up Database"/>
   </form>
 
