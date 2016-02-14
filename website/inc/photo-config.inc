@@ -75,13 +75,13 @@ class PhotoRepository {
   public function url_for_racer(&$row, $render = 'display') {
     $imagefile = $row[$this->column_name()];
     if ($this->recognized_path($imagefile)) {
-      return $this->lookup($render)->render_url(basename($imagefile));
+      return $this->lookup_or_any($render)->render_url(basename($imagefile));
     } else if (!file_exists($imagefile) &&
-               file_exists($this->lookup('original')->file_path(basename($imagefile)))) {
+               file_exists($this->lookup_or_any('original')->file_path(basename($imagefile)))) {
       // If the field points to a non-existent file, but the image IS present in
       // the repository, then assume that it's a case of having moved the
       // repository, and treat as a recognized path
-      return $this->lookup($render)->render_url(basename($imagefile));
+      return $this->lookup_or_any($render)->render_url(basename($imagefile));
     } else {
       // A racer URL
       return 'photo.php/'.$this->name().'/racer/'.$row['racerid'].'/'.time();
@@ -94,6 +94,17 @@ class PhotoRepository {
 
   public function lookup($label) {
     return $this->all_renders[$label];
+  }
+
+  public function lookup_or_any($label) {
+    $v = $this->lookup($label);
+    if ($v) {
+      return $v;
+    }
+    // Pick an arbitrary element if we can't find the requested one.
+    foreach ($this->all_renders as $k => $v) {
+      return $v;
+    }
   }
 
   public function name() {
@@ -249,9 +260,7 @@ class PhotoRender {
         if ($source_height == 0) {
           return FALSE;
         }
-echo "<pre_open_image/>\n";  // TODO
         $im = open_image($source_file_path, $image_type);
-echo "<open_image/>\n";  // TODO
 
         $aspect = $source_width / $source_height;
 

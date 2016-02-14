@@ -1,8 +1,11 @@
 <?php
-//     <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+//     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
 //     <input name="photo" type="file" />
 //     <select name="repo">, options are 'head' or 'car'
+
 //     <input name="racerid">, optional
+//     <input name="carnumber">, optional
+//          Either of these will assign the image to the indicated racer
 
 require_once('inc/photo-config.inc');
 
@@ -62,7 +65,19 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
   if (move_uploaded_file($photo['tmp_name'], $photo_dir.DIRECTORY_SEPARATOR.$target_name)) {
     $success = true;
 
+    $racerid = false;
     if (isset($_POST['racerid'])) {
+      $racerid = $_POST['racerid'];
+    } else if (isset($_POST['carnumber'])) {
+      $racerid = read_single_value('SELECT racerid FROM RegistrationInfo'
+                                   .' WHERE carnumber = :carno',
+                                   array(':carno' => $_POST['carnumber']));
+      if (!$racerid) {
+        echo "<no-such-car carnumber=\"".$_POST['carnumber']."\"/>\n";
+      }
+    }
+
+    if ($racerid) {
       $column_name = $photo_repository->column_name();
       // We want to write a value here that will be compatible with what GPRM
       // needs, in case we're working with a GPRM database.
@@ -75,9 +90,10 @@ if ($photo['error'] != UPLOAD_ERR_OK) {
                                       .' SET '.$column_name.' = :photo'
                                       .' WHERE racerid = :racerid',
                                       array(':photo' => $path,
-                                            ':racerid' => $_POST['racerid']));
+                                            ':racerid' => $racerid));
       $row = array('racerid' => $_POST['racerid'],
                    $column_name => $path);
+      // This is assuming that there's a 'checkin' render, which isn't the case if we're doing car photos
       echo '<photo-url>'.$photo_repository->url_for_racer($row, 'checkin').'</photo-url>'."\n";
 
       if (!$success) {
