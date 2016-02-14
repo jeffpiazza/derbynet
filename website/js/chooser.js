@@ -43,6 +43,7 @@ function repopulate_chooser_modal(path) {
 
                 var last = $("#chooser_directories_above option").filter(":last");
                 last.attr("selected", "selected");
+                // jQuery Mobile makes the ...-button element from an existing element
                 $("#chooser_directories_above-button span").text(last.text());
 
                 // <file readable writable directory> xyz </file>
@@ -110,7 +111,7 @@ function chooser_show_add_directory_modal(event) {
         $.ajax(g_action_url,
                {type: 'POST',
                 data: {action: 'make-directory',
-                       directory: parent_path + $("#new_directory_name").val()},
+                       directory: parent_path + $("#chooser_new_directory_name").val()},
                 success: function(data) {
                     var path = data.getElementsByTagName("path");
                     if (path.length > 0) {
