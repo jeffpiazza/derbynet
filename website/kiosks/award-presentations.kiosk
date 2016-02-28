@@ -14,18 +14,21 @@
 <div class="award-background">
   <div class="award-trophy" id="awardname"></div>
 
-  <p class="award-racer reveal"><span class="car-number" id="carnumber"></span></p>
-  <p class="award-racer reveal">
-    <span class="firstname reveal" id="firstname"></span>
-    <span class="lastname reveal" id="lastname"></span>
-  </p>
+  <div class="reveal" id="award-racer-text">
+    <p class="award-racer"><span class="car-number" id="carnumber"></span></p>
+    <p class="award-racer">
+      <span class="firstname" id="firstname"></span>
+      <span class="lastname" id="lastname"></span>
+    </p>
+    <p class="award-racer"><span class="car-name" id="carname"></span></p>
+  </div>    
 
-  <p class="award-racer reveal"><span class="car-name" id="carname"></span></p>
+  <div id="photos">
+    <div class="award-racer-photo reveal" id="headphoto">
+    </div>
 
-  <div class="award-racer-photo reveal" id="headphoto">
-  </div>
-
-  <div class="award-car-photo reveal" id="carphoto">
+    <div class="award-car-photo reveal" id="carphoto">
+    </div>
   </div>
 </div>
 

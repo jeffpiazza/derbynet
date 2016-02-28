@@ -8,16 +8,27 @@ p.award-racer {
     font-weight: bold;
 }
 
+#photos {
+    width: 100%;
+}
+
 .award-racer-photo { 
     float: left;
 }
 
 .award-racer-photo img {
     margin-left: 100px;
+/* Set by javascript    max-height: 90%; */
+    max-width: 90%;
 }
 
 .award-car-photo {
     float: right;
+}
+
+.award-car-photo img {
+    /* Set by javascript max-height: 90%; */
+    max-width: 90%;
 }
 
 .award-background {

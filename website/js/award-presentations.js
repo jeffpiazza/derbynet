@@ -52,13 +52,33 @@ function process_current_award(data) {
         $("#carname").text(award.carname);
         $("#firstname").text(award.firstname);
         $("#lastname").text(award.lastname);
+
+        // Need to account for the height of the award-racer text, even though
+        // it's presently hidden.
+        var previousCss  = $("#award-racer-text").attr("style");
+        $("#award-racer-text")
+            .css({
+                position:   'absolute',
+                visibility: 'hidden',
+                display:    'block'
+            });
+        var textHeight = $("#award-racer-text").height();
+        $("#award-racer-text").attr("style", previousCss ? previousCss : "");
+
+        // TODO Literal 10 vaguely accounts for margins, but is basically just a guess.
+        var maxPhotoHeight = $(window).height() - ($("#photos").offset().top + textHeight) - 10;
+        
         $("#headphoto").empty();
+        $("#headphoto").css('width', $(window).width() / 2 - 10);
         if (award.headphoto && award.headphoto.length > 0) {
             $("#headphoto").append("<img src=\"" + award.headphoto + "\"/>");
+            $("#headphoto img").css('max-height', maxPhotoHeight);
         }
         $("#carphoto").empty();
+        $("#carphoto").css('width', $(window).width() / 2 - 10);
         if (award.carphoto && award.carphoto.length > 0) {
             $("#carphoto").append("<img src=\"" + award.carphoto + "\"/>");
+            $("#carphoto img").css('max-height', maxPhotoHeight);
         }
         g_current_award_key = award.key;
 

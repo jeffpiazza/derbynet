@@ -69,8 +69,8 @@ if (isset($stmt)) {
       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
-      .' headphoto="'.headshots()->url_for_racer($row).'"'
-      .' carphoto="'.car_photo_repository()->url_for_racer($row).'"'
+    .' headphoto="'.headshots()->url_for_racer($row, 'cropped').'"'
+    .' carphoto="'.car_photo_repository()->url_for_racer($row, 'cropped').'"'
       .'/>'."\n";
   }
 }
