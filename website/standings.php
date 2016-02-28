@@ -74,6 +74,7 @@ foreach ($stmt as $row) {
     <th><?php echo group_label(); ?></th>
     <th>Car Number</th>
     <th>Name</th>
+    <th>Heats</th>
     <th>Average</th>
     <th>Best</th>
     <th>Worst</th>
@@ -100,6 +101,7 @@ foreach (final_standings() as $row) {
   echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
   echo "<td>".$row['carnumber']."</td>";
   echo "<td>".htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')."</td>";
+  echo "<td>".$row['base']."</td>";
   echo "<td>".sprintf('%5.3f', $row['time'])."</td>";
   echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
   echo "<td>".sprintf('%5.3f', $row['worst'])."</td>";
