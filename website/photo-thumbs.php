@@ -156,6 +156,7 @@ if (empty($allfiles)) {
 <div id="photo_crop_modal" class="modal_dialog hidden block_buttons">
 <div id="work_image"></div>
 
+<p>Indicate new crop boundary, <i>then</i> press Crop.</p>
 <input data-enhanced="true" type="button" value="Crop" onclick="cropPhoto(); return false;"/>
 <input data-enhanced="true" type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
 <input data-enhanced="true" type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
