@@ -58,9 +58,10 @@ function curl_photo() {
     echo photo $1 $2 >> $OUTPUT_CURL
     echo    >> $OUTPUT_CURL
     OK=1
-	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/$1 | md5 | tee $DEBUG_CURL | tee -a $OUTPUT_CURL | grep -c $2 > /dev/null || OK=0
+	PHOTO_MD5=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/$1 | md5`
+    echo $PHOTO_MD5 | tee $DEBUG_CURL | tee -a $OUTPUT_CURL | grep -c $2 > /dev/null || OK=0
     if [ $OK -eq 0 ]; then
-        test_fails Wrong photo result
+        test_fails Wrong photo result: $PHOTO_MD5
     fi
  }   
 
