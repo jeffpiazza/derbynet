@@ -155,7 +155,9 @@ function label_driver_check($driver) {
 
     <div id="for_sqlite_connection" class="hidden sqlite_connection_wrapper">
 <!-- TODO move to a css file -->
+<!-- Doesn't work yet 
 <input type="button" data-enhanced="true" style="float: right; width: 19%; margin-bottom: 0px; margin-top: 14px; padding:5px 5px;" value="Browse" onclick='show_choose_file_modal(/*$("#sqlite_path").val()*/"/Library/WebServer/Documents/derbynet/local", "x.sqlite");'/>
+-->
 <div style="width: 80%">
         <label for="sqlite_path">Path (on server) to SQLite data file:</label>
         <input type="text" name="sqlite_path" id="sqlite_path"/>
