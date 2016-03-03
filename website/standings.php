@@ -1,5 +1,19 @@
 <?php
 session_start();
+// This page contains a table of all the "standings" entries, as produced by the
+// final_standings() function.  There's a control at the top that lets the user
+// choose to view standings by individual rounds, or for the final standings of
+// the pack.
+//
+// If Grand Final rounds are used, the "All" settings is exactly equivalent to
+// viewing the results for the last Grand Final round.
+//
+// TODO We'd like to be able to see how the members of a Grand Final round were
+// selected, and what the pack standings were/would have been without the GF
+// round.  Note that the make-roster action performs SQL queries directly,
+// without using final_standings(), but performs a similar query.
+//
+// TODO View all rounds for native classes' n-th round?
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
@@ -17,13 +31,13 @@ $(function () {
         var selection = $(this).find("option:selected");
         if (typeof selection.attr('data-roundid') == typeof undefined || selection.attr('data-roundid') === false) {
           // 'All' case
-          $("tr[data-final='0']").not(".headers").addClass("hidden");
-          $("tr[data-final='1']").removeClass("hidden");
-          $("#per-group-label").text(<?php echo json_encode(group_label()); ?>);
+          $("tr[data-for-supergroup='0']").not(".headers").addClass("hidden");
+          $("tr[data-for-supergroup='1']").removeClass("hidden");
+          // $("#per-group-label").text(<?php echo json_encode(group_label()); ?>);
         } else {
           $("tr:not([data-roundid='" + selection.attr('data-roundid') + "'])").not(".headers").addClass("hidden");
           $("tr[data-roundid='" + selection.attr('data-roundid') + "']").removeClass("hidden");
-          $("#per-group-label").text("Round");
+          // $("#per-group-label").text("Round");
         }
       });
 });
@@ -69,11 +83,13 @@ foreach ($stmt as $row) {
 </select>
 </div>
 <table class="main_table">
-<tr class="headers"><th>In <?php echo supergroup_label(); ?></th>
-    <th>In <span id='per-group-label'><?php echo group_label(); ?></span></th>
-    <th><?php echo group_label(); ?></th>
+<tr class="headers">
+    <th>Place</th>
     <th>Car Number</th>
     <th>Name</th>
+    <th><?php echo group_label(); ?></th>
+    <th>In <span id='per-group-label'><?php echo group_label(); ?></span></th>
+    <th>In <?php echo supergroup_label(); ?></th>
     <th>Heats</th>
     <th>Average</th>
     <th>Best</th>
@@ -81,26 +97,63 @@ foreach ($stmt as $row) {
 </tr>
 
 <?php
+
+$standings = final_standings();
+
+$pack_so_far = 0;
+// $so_far_by_class[$classid] tells how many racers in that (native) $classid
+// we've encountered so far.  1 + $so_far_by_class[$classid] is the next place
+// to award in the class (1 = 1st, etc.).
+$so_far_by_class = array();
+// $racer_class_ranking[$racerid] gives rank within class, 1 = 1st
+$racer_class_ranking = array();
+// $racer_pack_ranking[$racerid] gives rank within the pack, 1 = 1st
+$racer_pack_ranking = array();
+foreach ($standings as $row) {
+  $racerid = $row['racerid'];
+  $classid = $row['classid'];
+  if ($row['for_group']) {
+    if (!isset($so_far_by_class[$classid])) {
+      $so_far_by_class[$classid] = 0;
+    }
+    ++$so_far_by_class[$classid];
+    $racer_class_ranking[$racerid] = $so_far_by_class[$classid];
+  }
+  if ($row['for_supergroup']) {
+    ++$pack_so_far;
+    $racer_pack_ranking[$racerid] = $pack_so_far;
+  }
+}
+    
 $ord = 0;
 $by_roundid = array();
-foreach (final_standings() as $row) {
-  echo "<tr data-roundid='".$row['roundid']."' data-final='".$row['final']."'"
-       .($row['final'] ? "" : " class='hidden'").">";
-  
-  echo "<td>";
-  if ($row['final']) { echo ++$ord; }
-  echo "</td>";
+foreach ($standings as $row) {
+  $roundid = $row['roundid'];
+  $racerid = $row['racerid'];
+  echo "<tr data-roundid='".$roundid."' data-for-supergroup='".$row['for_supergroup']."'"
+       .($row['for_supergroup'] ? "" : " class='hidden'").">";
 
   echo "<td>";
-  if (!isset($by_roundid[$row['roundid']])) {
-    $by_roundid[$row['roundid']] = 0;
+  if (!isset($by_roundid[$roundid])) {
+    $by_roundid[$roundid] = 0;
   }
-  echo ++$by_roundid[$row['roundid']];
+  echo ++$by_roundid[$roundid];  // Track order within roundid
   echo "</td>";
 
-  echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
   echo "<td>".$row['carnumber']."</td>";
   echo "<td>".htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')."</td>";
+
+  // Class
+  echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
+  // Place in class
+  echo "<td>";
+  if (isset($racer_class_ranking[$racerid])) echo $racer_class_ranking[$racerid];
+  echo "</td>";
+  // Place in pack
+  echo "<td>";
+  if (isset($racer_pack_ranking[$racerid])) echo $racer_pack_ranking[$racerid];
+  echo "</td>";
+  
   echo "<td>".$row['base']."</td>";
   echo "<td>".sprintf('%5.3f', $row['time'])."</td>";
   echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
