@@ -1,4 +1,7 @@
 // Assumes ajax-failure.inc has already established a global ajax error handler
+
+var g_kiosk_poll_interval = null;
+
 function kiosk_poll() {
   $.ajax('action.php',
          {type: 'GET',
@@ -11,12 +14,14 @@ function kiosk_poll() {
                if (page != g_kiosk_page) {
                  console.log("Forcing a reload, because page (" + page
                              + ") != g_kiosk_page (" + g_kiosk_page + ")");
+                 clearInterval(g_kiosk_poll_interval);
                  location.reload(true);
                  return;
                }
 	           var reload = data.documentElement.getElementsByTagName("reload");
                if (reload && reload.length > 0) {
                  console.log("Forcing a reload because it was explicitly requested.");
+                 clearInterval(g_kiosk_poll_interval);
                  location.reload(true);
                  return;
                }
@@ -27,7 +32,9 @@ function kiosk_poll() {
 
 
 if (g_kiosk_poll) {
-  $(document).ready(setInterval(kiosk_poll, 5000));
+    $(document).ready(function() {
+        g_kiosk_poll_interval = setInterval(kiosk_poll, 5000);
+    });
 } else {
   console.log("No g_kiosk_poll, so not polling for new pages");
 }

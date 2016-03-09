@@ -73,7 +73,10 @@ class PhotoRepository {
 
   // $row has to have racerid and the repository's column_name, at least
   public function url_for_racer(&$row, $render = 'display') {
-    $imagefile = $row[$this->column_name()];
+    return $this->url_for_file($row[$this->column_name()], $row['racerid'], $render);
+  }
+
+  public function url_for_file($imagefile, $racerid, $render = 'display') {
     if ($this->recognized_path($imagefile)) {
       return $this->lookup_or_any($render)->render_url(basename($imagefile));
     } else if (!file_exists($imagefile) &&
@@ -84,7 +87,7 @@ class PhotoRepository {
       return $this->lookup_or_any($render)->render_url(basename($imagefile));
     } else {
       // A racer URL
-      return 'photo.php/'.$this->name().'/racer/'.$row['racerid'].'/'.time();
+      return 'photo.php/'.$this->name().'/racer/'.$racerid.'/'.time();
     }
   }
 
@@ -171,6 +174,7 @@ class PhotoRender {
       // under the web server as _www or something, and we want the photos to be
       // conveniently accessible by the "native" machine user.
       $old_mask = umask(0);
+      // TODO - This fails (loudly) if the parent of $this->directory() doesn't exist, either
       mkdir($this->directory());
       umask($old_mask);
     }
