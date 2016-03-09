@@ -10,6 +10,7 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
+    `dirname $0`/test-photo-next.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     `dirname $0`/reset-database.sh "$BASE_URL"

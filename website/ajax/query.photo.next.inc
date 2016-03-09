@@ -14,21 +14,40 @@ require_once('inc/schema_version.inc');
 // TODO Any special order we prefer to racerid?
 // TODO Slideshows by subset, e.g., by den?
 
+function write_photo(&$row, $attribute_name, $column_name, &$repository) {
+  echo ' '.$attribute_name.'="'.$repository->url_for_file($row[$column_name], $row['racerid'], 'cropped').'"';
+}
+
+function write_main_photo(&$row, $attribute_name, &$repositories) {
+  if ((isset($row['main_photo']) && $row['main_photo'])) {
+    write_photo($row, $attribute_name, 'main_photo', $repositories[0]);
+    return true;  // Continue on to inset
+  } else if (isset($row['inset_photo']) && $row['inset_photo']) {
+    write_photo($row, $attribute_name, 'inset_photo', $repositories[1]);
+  }
+  return false;  // Don't also inset the inset
+}
+
 // If working with a GPRM database, the 'imagefile' field carries the only photo.
 // If working with a DerbyNet database, 'imagefile' field carries the inset photo, and 'carphoto' is the main photo.
 $inset_imagefile = schema_version() >= 2;
 
+// TODO
 $main_repository = $inset_imagefile ? car_photo_repository() : headshots();
 $inset_repository = headshots();
+
+$repositories = $inset_imagefile ? array(car_photo_repository(), headshots()) : array(headshots());
 
 $stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname,'
                      .($inset_imagefile
                        ? ' imagefile as inset_photo, carphoto as main_photo'
                        : ' imagefile as main_photo')
                      .' FROM RegistrationInfo'
-                     .' WHERE racerid > :racerid'
-                     .'  AND main_photo IS NOT NULL'
-                     .'  AND main_photo <> \'\''
+                     .' WHERE racerid > :racerid AND '
+                     .'  ((imagefile IS NOT NULL AND imagefile <> \'\')'
+                     .($inset_imagefile
+                       ? '       OR (carphoto IS NOT NULL AND carphoto <> \'\')' : '')
+                     .')'
                      .' ORDER BY racerid');
 $stmt->execute(array(':racerid' => $racerid));
 
@@ -40,14 +59,16 @@ if ($row) {
     echo ' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"';
     echo ' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"';
     echo ' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"';
-    
-    if (isset($row['inset_photo']) && $row['inset_photo']) {
-      echo ' inset_photo="'.$inset_repository->url_for_file($row['inset_photo'], $row['racerid'], 'cropped').'"';
+
+    if (write_main_photo($row, 'main_photo', $repositories)) {
+      if (isset($row['inset_photo']) && $row['inset_photo']) {
+        write_photo($row, 'inset_photo', 'inset_photo', $repositories[1]);
+      }
     }
-    echo ' main_photo="'.$main_repository->url_for_file($row['main_photo'], $row['racerid'], 'cropped').'"';
+
     $row = $stmt->fetch();
     if ($row) {
-      echo ' next_photo="'.$main_repository->url_for_file($row['main_photo'], $row['racerid'], 'cropped').'"';
+      write_main_photo($row, 'next_photo', $repositories);
     }
     echo '/>'."\n";
 }
