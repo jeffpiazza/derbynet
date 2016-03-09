@@ -51,8 +51,6 @@ function show_edit_racer_form(racerid) {
   $("#edit_lastname").val(last_name);
 
   $("#edit_carno").val(car_no);
-  $("#edit_carno").focus();
-
   $("#edit_carname").val(car_name);
 
   var edit_rank = $("#edit_rank");
@@ -69,6 +67,8 @@ function show_edit_racer_form(racerid) {
       handle_edit_racer();
       return false;
   });
+
+  $("#edit_carno").focus();
 }
 
 function show_new_racer_form() {
@@ -283,9 +283,10 @@ function sort_checkin_table() {
 }
 
 function global_keypress(event) {
-    $(document).off("keypress");  // We want future keypresses to go to the search form
-    // TODO $("#find-racer").removeClass("hidden");
-    $("#find-racer-text").focus();
+    if ($(":focus").length == 0) {
+        $(document).off("keypress");  // We want future keypresses to go to the search form
+        $("#find-racer-text").focus();
+    }
 }
 
 function remove_search_highlighting() {
