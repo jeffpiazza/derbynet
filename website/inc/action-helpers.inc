@@ -21,25 +21,29 @@ function end_response() {
 
 function take_action_silently($sql, $params) {
   global $db;
-  $log_sql = $sql;
-  foreach ($params as $key => $val) {
+  if (false) {  // Turn this on for debugging actions gone wrong.  Best to make
+                // sure there's a CheckinAudit table in that case.
+    $log_sql = $sql;
+    foreach ($params as $key => $val) {
 	  $log_sql .= ' // '.$key.' => '.$val;
-  }
-  if (strlen($log_sql) > 250) {
-	$log_sql = substr($log_sql, 1, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
-  }
+    }
+    if (strlen($log_sql) > 250) {
+      $log_sql = substr($log_sql, 0, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
+    }
 
-  try {
-    $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES('.dbnow_expr().', :logsql)');
-    @$stmt->execute(array(':logsql' => $log_sql));
-  } catch (PDOException $p) {
-    // What to do here?  Most likely it's a GPRM database that just doesn't have
-    // an audit table.  We could try to create the table and try again, but the
-    // risk seems to outweigh the benefit.
-    //
-    // if ($p->getCode() == '42S02') {
-    //   run_sql_script('audit-table');
-    // }
+    try {
+      $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES('.dbnow_expr().', :logsql)');
+      @$stmt->execute(array(':logsql' => $log_sql));
+    } catch (PDOException $p) {
+      echo '<audit-failed>'.$log_sql.'</audit-failed>'."\n";  // TODO
+      // What to do here?  Most likely it's a GPRM database that just doesn't have
+      // an audit table.  We could try to create the table and try again, but the
+      // risk seems to outweigh the benefit.
+      //
+      // if ($p->getCode() == '42S02') {
+      //   run_sql_script('audit-table');
+      // }
+    }
   }
 
   $stmt = $db->prepare($sql);

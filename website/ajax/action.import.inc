@@ -48,8 +48,6 @@ if ($ok) {
                            .' WHERE classid = :classid');
       $stmt->execute(array(':classid' => $classid,
                            ':nclasses' => $nclasses));
-    } else {
-      write_raceinfo('seen_schema', schema_version());  // TODO
     }
 
     // Creating a class usually requires creating a corresponding 1st racing round

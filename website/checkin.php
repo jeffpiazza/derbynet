@@ -122,6 +122,7 @@ require_once('inc/checkin-table.inc');
 <?php
 
     $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+      .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -133,7 +134,7 @@ require_once('inc/checkin-table.inc');
                          'RegistrationInfo.rankid = Ranks.rankid')
     .' ORDER BY '
           .($order == 'car' ? 'carnumber, lastname, firstname' :
-            ($order == 'den'  ? 'class, lastname, firstname' :
+            ($order == 'den'  ? 'class_sort, lastname, firstname' :
              'lastname, firstname'));
 
 $stmt = $db->query($sql);

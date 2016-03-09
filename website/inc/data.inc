@@ -57,6 +57,7 @@ function sql_file_path($stem) {
   return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
 }
 
+// Returns row with only numbered array elements
 function read_single_row($sql, $params) {
   global $db;
   $rs = $db->prepare($sql);

@@ -74,7 +74,7 @@ require_once('inc/photo-config.inc');
                      racer.getAttribute('next_photo') + '"/>');
         }
       } else {
-          div.append('<img class="mainphoto" src="img/derby_car.png"/>');
+          div.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="img/derby_car.png"/>');
       }
     }
 
