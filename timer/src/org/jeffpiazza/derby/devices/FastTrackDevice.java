@@ -130,7 +130,7 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
             }
           }
       });
-  };
+  }
 
   public int getNumberOfLanes() throws SerialPortException {
     // FastTrack, at least older versions, doesn't report actual number of lanes.

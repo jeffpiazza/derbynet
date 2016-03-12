@@ -35,7 +35,6 @@
         <fileset  dir="${build}">
             <exclude name="**/*Test.*"/>
             <exclude name="**/*Test$*"/>
-            <exclude name="**/FakeTimerMain.*"/>
         </fileset>
         <fileset dir="../website/img">
             <include name="status/*.png"/>

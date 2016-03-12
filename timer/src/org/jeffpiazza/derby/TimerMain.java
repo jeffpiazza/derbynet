@@ -27,6 +27,7 @@ public class TimerMain {
     System.err.println("   -n <port name>: Use specified port name instead of searching");
     System.err.println("   -d <device name>: Use specified device instead of trying to identify");
     System.err.println("      Known devices:");
+    System.err.println("   -x: Run headless, without gui.");
     DeviceFinder.listDeviceClassNames();
   }
 
@@ -37,7 +38,7 @@ public class TimerMain {
     String devicename = null;
     HttpTask.MessageTracer traceHeartbeats = null;
     boolean traceResponses = false;
-    boolean showGui = false;
+    boolean showGui = true;
     boolean fakeDevice = false;
 
     LogWriter logwriter = null;
@@ -78,8 +79,8 @@ public class TimerMain {
       } else if (args[consumed_args].equals("-r")) { // Won't have effect unless it precedes -t, -th
         traceResponses = true;
         ++consumed_args;
-      } else if (args[consumed_args].equals("-x")) {  // Undocumented: -x for experimental UI gui
-        showGui = true;
+      } else if (args[consumed_args].equals("-x")) {
+        showGui = false;
         ++consumed_args;
       } else if (args[consumed_args].equals("-fake")) {
         fakeDevice = true;
