@@ -24,3 +24,11 @@
     float: right;
     font-size: 16px;
 }
+
+#browse_for_sqlite {
+    float: right;
+    width: 19%;
+    margin-bottom: 0px;
+    margin-top: 14px;
+    padding:5px 5px;
+}

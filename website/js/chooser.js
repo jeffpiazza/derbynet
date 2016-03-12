@@ -28,8 +28,17 @@ function repopulate_chooser_modal(path) {
                     return;
                 }
                 root = root[0];
-                var path = root.getAttribute("path");  // Includes trailing directory separator
+                var path = root.getElementsByTagName("path");
+                if (path.length == 0) {
+                    return;
+                }
+                path = path[0].getAttribute("realpath"); // Includes trailing directory separator
                 $("#chooser_directory_path").val(path);
+
+                var chosen = root.getElementsByTagName("chosen");
+                if (chosen.length > 0) {
+                    $("#chooser_file_name").val(chosen[0].textContent);
+                }
 
                 var supers = root.getElementsByTagName("base");
                 for (var i = 0; i < supers.length; ++i) {
@@ -147,6 +156,8 @@ function show_choose_directory_modal(path, dir_path_callback) {
     return false;
 }
 
+// path is directory to which chooser will be pointed, filename the name of the file within that directory.
+// file_path_callback gets called with the full path chosen.
 function show_choose_file_modal(path, filename, file_path_callback) {
     g_file_chooser_mode = 'file.out';
     $("#chooser_file_name").val(filename);

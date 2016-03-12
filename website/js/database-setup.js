@@ -19,6 +19,10 @@ function hide_or_show_connection(jq, show) {
     }
 }
 
+function update_sqlite_path() {
+    $('#connection_string').val('sqlite:' + $("#sqlite_path").val());
+}
+
 $(function () {
     $('input[name="connection_type"]').on('change', function() {
         val = $('input[name="connection_type"]:checked').val();
@@ -33,12 +37,13 @@ $(function () {
     });
     $('#mysql_host').on('keyup', write_mysql_connection_string);
     $('#mysql_dbname').on('keyup', write_mysql_connection_string);
-    $('#sqlite_path').on('keyup', function() {
-        $('#connection_string').val('sqlite:' + $(this).val());
-    });
+    $('#sqlite_path').on('keyup', update_sqlite_path);
 });
 
 function show_choose_database_modal() {
+    // TODO Consider pre-populating $("#sqlite_path") if we have an existing
+    // sqlite configuration, or the #mysql_... fields if we have a mysql
+    // configuration, or #odbc_dsn_name if we have an ODBC configuration
     show_modal("#choose_database_modal", function(event) {
         handle_choose_database();
         return false;

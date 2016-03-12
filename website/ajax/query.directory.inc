@@ -6,17 +6,45 @@ if (!isset($_GET['path'])) {
    echo '<failure code="nopath">No PATH query argument provided</failure>'."\n";
 } else {
   $dirpath = $_GET['path'];
-  $files = @scandir($dirpath);
 
-  $realpath = realpath($dirpath);
+  echo '<directory original="'.htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8').'">'."\n";
+
+  while (is_link($dirpath)) {
+    $dirpath = readlink($dirpath);
+  }
+
+  if (is_file($dirpath)) {
+    $basename = pathinfo($dirpath, PATHINFO_BASENAME);
+    $dirpath = pathinfo($dirpath, PATHINFO_DIRNAME);
+    echo "<chosen>".htmlspecialchars($basename, ENT_QUOTES, 'UTF-8')."</chosen>\n";
+  }
+
+  while (true) {
+    $files = @scandir($dirpath);
+    if ($files !== false) {
+      break;
+    }
+    echo "  <failure code='unable'>"
+         ."Unable to list directory ".htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8')
+         ."</failure>\n";
+    $info = pathinfo($dirpath, PATHINFO_DIRNAME);
+    if ($dirpath == $info) {
+      // Nothing left
+      break;
+    } else {
+      $dirpath = $info;
+    }
+  }
+
   if (substr($dirpath, -1) !== DIRECTORY_SEPARATOR) {
     $dirpath .= DIRECTORY_SEPARATOR;
   }
+
+  $realpath = realpath($dirpath);
   if (substr($realpath, -1) !== DIRECTORY_SEPARATOR) {
     $realpath .= DIRECTORY_SEPARATOR;
   }
-  echo '<directory path="'.htmlspecialchars($realpath, ENT_QUOTES, 'UTF-8').'"'
-      .' original="'.htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8').'">'."\n";
+  echo '<path realpath="'.htmlspecialchars($realpath, ENT_QUOTES, 'UTF-8').'"/>'."\n";
 
   $superpath = $realpath;
   while ($superpath !== "") {
@@ -32,7 +60,6 @@ if (!isset($_GET['path'])) {
   }
 
   if ($files === false) {
-    echo "  <failure code='unable'>Unable to list directory ".htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8')."</failure>\n";
   } else {  
     foreach ($files as $file) {
       // if ($file != "." && $file != "..") {
