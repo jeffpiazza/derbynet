@@ -5,8 +5,7 @@ g_action_url = 'action.php';
 function poll_for_current_award() {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'award-presentations' /*, // TODO
-                   key: g_current_award_key */},
+            data: {query: 'award.current'},
             success: function(data) {
                 setTimeout(poll_for_current_award, 500 /* ms. */);
                 process_current_award(data);

@@ -60,7 +60,6 @@ if (have_permission(SET_UP_PERMISSION)) {
     write_raceinfo('photo-size', $new_photo_size);
     if ($old_photo_size != $new_photo_size) {
       headshots()->lookup('display')->wipe_directory();
-      echo "<wiped-display-directory/>\n";
     }
   }
 
@@ -71,7 +70,6 @@ if (have_permission(SET_UP_PERMISSION)) {
     write_raceinfo('car-photo-size', $new_photo_size);
     if ($old_photo_size != $new_photo_size) {
       car_photo_repository()->lookup('display')->wipe_directory();
-      echo "<wiped-display-directory/>\n";
     }
   }
 

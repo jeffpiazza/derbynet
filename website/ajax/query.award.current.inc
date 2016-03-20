@@ -7,13 +7,7 @@ require_once('inc/photo-config.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
-if (isset($_GET['key'])) {
-  $key = $_GET['key'];
-  // TODO: This is just to facilitate debugging until there's a proper awards dashboard.
-  write_raceinfo('current_award_key', $key);
-} else {
-  $key = read_raceinfo('current_award_key', '');
-}
+$key = read_raceinfo('current_award_key', '');
 
 // award-<awardid>
 // speed-<place>

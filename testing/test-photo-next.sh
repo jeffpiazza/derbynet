@@ -7,16 +7,16 @@ source `dirname $0`/common.sh
 # TODO Need a GPRM-schema test
 
 [ `curl_get "action.php?query=photo.next" | grep -c 'main_photo="photo.php/car/file/cropped/Car-1637.jpg/'` -eq 1 ] || test_fails
-[ `curl_get "action.php?query=photo.next" | grep -c 'inset_photo="photo.php/head/file/cropped/Cub-2106.jpg/'` -eq 1 ] || test_fails
+[ `curl_get "action.php?query=photo.next" | grep -c 'inset_photo="photo.php/head/file/cropped/head-A.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next" | grep -c 'next_photo="photo.php/car/file/cropped/Car-1638.jpg/'` -eq 1 ] || test_fails
 
 
 [ `curl_get "action.php?query=photo.next&racerid=0" | grep -c 'main_photo="photo.php/car/file/cropped/Car-1637.jpg/'` -eq 1 ] || test_fails
-[ `curl_get "action.php?query=photo.next&racerid=0" | grep -c 'inset_photo="photo.php/head/file/cropped/Cub-2106.jpg/'` -eq 1 ] || test_fails
+[ `curl_get "action.php?query=photo.next&racerid=0" | grep -c 'inset_photo="photo.php/head/file/cropped/head-A.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=0" | grep -c 'next_photo="photo.php/car/file/cropped/Car-1638.jpg/'` -eq 1 ] || test_fails
 
 [ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'main_photo="photo.php/car/file/cropped/Car-1652.jpg/'` -eq 1 ] || test_fails
-[ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'inset_photo="photo.php/head/file/cropped/Cub-2773.jpg/'` -eq 1 ] || test_fails
+[ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'inset_photo="photo.php/head/file/cropped/head-E.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'next_photo="photo.php/car/file/cropped/Car-1688.jpg/'` -eq 1 ] || test_fails
 
 # Racer 32 has car but no head shot

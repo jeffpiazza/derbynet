@@ -120,4 +120,5 @@ check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" 
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.788677259690628&lane2=3.5121727633843625&lane3=3.897900103278687&lane4=2.0171570935608143" | check_success
 
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
-curl_get "action.php?query=award-presentations&key=speed-2-1" | expect_one Asher
+curl_post action.php "action=award.present&key=speed-2-1" | check_success
+curl_get "action.php?query=award.current" | expect_one Asher
