@@ -5,17 +5,9 @@
  // Include by having a &lt;? php require('inc/ajax-failure.inc'); ?&gt;
  // line in the BODY of the page.
 
- $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
-     console.log('ajaxError fired!');
-    $('#ajax_status').html(jqxhr.status + " (" + thrownError + " / " +
-        (jqxhr.status == 0 ? "likely timeout" : jqxhr.statusText)
-        + ")");
-    $('#ajax-failure').removeClass('hidden');
-    setTimeout(function() { $('#ajax-failure').addClass('hidden'); }, 10000);
-});
-
-function ajax_failure(status, statusText) {
+function ajax_failure(status, statusText, errorThrown) {
   $('#ajax_status').html(status + " ("
+                         + (errorThrown != '' ? errorThrown + ' / ' : '')
                          + (status == 0 ? "likely timeout" : statusText)
                          + ")");
   $('#ajax-failure').removeClass('hidden');
@@ -24,6 +16,13 @@ function ajax_failure(status, statusText) {
 function cancel_ajax_failure() {
   $('#ajax-failure').addClass('hidden');
 }
+
+$(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
+  console.log('ajaxError fired!');
+  ajax_failure(jqxhr.status, jqxhr.statusText, thrownError);
+  $('#ajax-failure').removeClass('hidden');
+  setTimeout(function() { $('#ajax-failure').addClass('hidden'); }, 10000);
+});
 </script>
 
 <div id="ajax-failure" class="hidden">

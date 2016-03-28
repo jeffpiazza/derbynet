@@ -220,11 +220,11 @@ function updatecurrent_handler() {
         // freak out, let's try again in a moment.
 		console.log("XmlHttpResponse:");
 		console.log(this);
-        ajax_failure(-1, "Response from server doesn't parse as XML.");
+        ajax_failure(-1, "Response from server doesn't parse as XML.", "");
         setTimeout(updatecurrent_fire, 2500);  // 2.5 sec
       }
 	} else {
-      ajax_failure(this.status, this.statusText);
+      ajax_failure(this.status, this.statusText, "");
       setTimeout(updatecurrent_fire, 2500);  // 2.5 sec
  	}
   }

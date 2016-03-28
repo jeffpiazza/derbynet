@@ -1,5 +1,6 @@
 <?php
 require_once('inc/data.inc');
+require_once('inc/schema_version.inc');
 
 // For a given roundid, it's straightforward to calculate standings within the
 // round, provided all the heats have been run.  If not all heats have been run,
@@ -66,7 +67,8 @@ function last_grand_final_roundid() {
 }
 
 // Returns the list of roundids from which the field's overall standings should
-// be assessed.
+// be assessed.  Returns an array of roundid values for "final" rounds, i.e.,
+// the highest-numbered round for each class.
 function final_roundids() {
   $last_grand = last_grand_final_roundid();
   if ($last_grand) {
@@ -82,12 +84,16 @@ function final_roundids() {
 // time), and a flag telling whether this round's result counts toward any final
 // ranking for the full field.
 //
-// $final_roundids is an array of roundid values for "final" rounds, i.e., the
-// highest-numbered round for each class.
-
-// Returns the final standings for the whole field, according to the last round
-// raced for each class.  Racers who were eliminated in prior rounds are not
-// included.  Does not account for any Grand Finals rounds.
+// Returns summary results for each racer within each race they participated in.
+// Each summary element gives:
+//    roundid, classid -- round information
+//    racerid, firstname, lastname, carnumber -- racer information
+//    class -- name of racer's class (i.e., not "Grand Finals")
+//    base -- number of heats run in round
+//    time -- "average" time in this round, possibly after discarding worst heat
+//    best, worst -- fastest and slowest time in this round
+//    for_group -- 1 if this round determines group standings (i.e. is final round for group)
+//    for_supergroup -- 1 if this entry determines full-field standing for this racer
 function final_standings() {
   global $db;
   
@@ -186,6 +192,134 @@ function top_finishers_overall($n_trophies) {
   }
 
   return $results;
+}
+
+// $standings argument is an array as returned by final_standings.
+// Returns an array of two arrays, each indexed by racerid:
+//   - Racer's ranking within their group
+//   - Racer's ranking within the supergroup
+function collect_rankings(&$standings) {
+  // $so_far_by_class[$classid] tells how many racers in that (native) $classid
+  // we've encountered so far.  1 + $so_far_by_class[$classid] is the next place
+  // to award in the class (1 = 1st, etc.).
+  $so_far_by_class = array();
+  
+  // $racer_group_ranking[$racerid] gives rank within class, 1 = 1st
+  $racer_group_ranking = array();
+  
+  // $racer_supergroup_ranking[$racerid] gives rank within the pack, 1 = 1st
+  $racer_supergroup_ranking = array();
+  $supergroup_so_far = 0;
+  
+  foreach ($standings as $row) {
+    $racerid = $row['racerid'];
+    $classid = $row['classid'];
+    if ($row['for_group']) {
+      if (!isset($so_far_by_class[$classid])) {
+        $so_far_by_class[$classid] = 0;
+      }
+      ++$so_far_by_class[$classid];
+      $racer_group_ranking[$racerid] = $so_far_by_class[$classid];
+    }
+    if ($row['for_supergroup']) {
+      ++$supergroup_so_far;
+      $racer_supergroup_ranking[$racerid] = $supergroup_so_far;
+    }
+  }
+
+  return array($racer_group_ranking, $racer_supergroup_ranking);
+}
+
+// TODO "In Pack" may not be meaningful (e.g. district race); display should be optional
+
+function write_standings_table_headers() {
+  echo "<tr class='headers'>";
+  echo "<th>Place</th>";
+  echo "<th>Car Number</th>";
+  echo "<th>Name</th>";
+  echo "<th>".group_label()."</th>";
+  echo "<th class='ingroup'>In <span id='per-group-label'>".group_label()."</span></th>";
+  echo "<th class='insuper'>In ".supergroup_label()."</th>";
+  echo "<th>Heats</th>";
+  echo "<th>Average</th>";
+  echo "<th>Best</th>";
+  echo "<th>Worst</th>";
+  echo "</tr>\n";
+}
+
+function write_standings_table_rows(&$standings) {
+  list($racer_class_ranking, $racer_pack_ranking) = collect_rankings($standings);
+    
+  $ord = 0;
+  $by_roundid = array();
+  foreach ($standings as $row) {
+    $roundid = $row['roundid'];
+    $racerid = $row['racerid'];
+    echo "<tr data-roundid='".$roundid."' data-for-supergroup='".$row['for_supergroup']."'>";
+
+    // Cells in the first column contain two separate <div>s, only one of which is
+    // made visible at any given time.  If we're displaying the standings for a
+    // single round, the first column gives the place within the round.  If we're
+    // displaying the standings within the supergroup ("All"), we display instead
+    // the racer's place within the pack (same as the "In Pack" column).
+    echo "<td>";
+    echo "<div class='inround'>";
+    if (!isset($by_roundid[$roundid])) {
+      $by_roundid[$roundid] = 0;
+    }
+    echo ++$by_roundid[$roundid];  // Track order within roundid
+    echo "</div>";
+    echo "<div class='insuper'>";
+    if (isset($racer_pack_ranking[$racerid])) echo $racer_pack_ranking[$racerid];
+    echo "</div>";
+    echo "</td>";
+  
+    echo "<td>".$row['carnumber']."</td>";
+    echo "<td>".htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')."</td>";
+
+    // Racer's (native) class
+    echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
+
+    // Place in class
+    echo "<td class='ingroup'>";
+    if (isset($racer_class_ranking[$racerid])) echo $racer_class_ranking[$racerid];
+    echo "</td>";
+
+    // Place in pack
+    echo "<td class='insuper'>";
+    if (isset($racer_pack_ranking[$racerid])) echo $racer_pack_ranking[$racerid];
+    echo "</td>";
+  
+    echo "<td>".$row['base']."</td>";
+    echo "<td>".sprintf('%5.3f', $row['time'])."</td>";
+    echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
+    echo "<td>".sprintf('%5.3f', $row['worst'])."</td>";
+    echo "</tr>\n";
+  }
+}
+
+
+function standings_round_names($roundid = false) {
+  global $db;
+  $result = array();
+  $stmt = $db->query('SELECT class, round, R1.roundid, R1.classid,'
+                     .' (SELECT MAX(round) FROM Rounds R2 WHERE R2.classid = R1.classid) AS max_round'
+                     .' FROM Rounds R1'
+                     .' INNER JOIN Classes'
+                     .' ON R1.classid = Classes.classid'
+                     .($roundid ? ' WHERE R1.roundid = '.$roundid : '')
+                     .' ORDER BY '
+                     .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                     .'class, round DESC');
+  foreach ($stmt as $row) {
+    $t = $row['class'];
+    if ($row['round'] < $row['max_round']) {
+      $t .= ', Round '.$row['round'];
+    }
+    $result[] = array('roundid' => $row['roundid'],
+                      'name' => $t);
+  }
+  return $result;
 }
 
 ?>
