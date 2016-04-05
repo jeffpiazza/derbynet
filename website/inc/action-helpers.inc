@@ -19,17 +19,27 @@ function end_response() {
 	echo '</action-response>'."\n";
 }
 
+function describe_sql($sql, &$params) {
+  $log_sql = $sql;
+  foreach ($params as $key => $val) {
+    $log_sql .= ' // '.$key.' => '.$val;
+  }
+  return $log_sql;
+}
+
+function describe_sql_short($sql, &$params) {
+  $log_sql = describe_sql($sql, $params);
+  if (strlen($log_sql) > 250) {
+    $log_sql = substr($log_sql, 0, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
+  }
+  return $log_sql;
+}
+
 function take_action_silently($sql, $params) {
   global $db;
   if (false) {  // Turn this on for debugging actions gone wrong.  Best to make
                 // sure there's a CheckinAudit table in that case.
-    $log_sql = $sql;
-    foreach ($params as $key => $val) {
-	  $log_sql .= ' // '.$key.' => '.$val;
-    }
-    if (strlen($log_sql) > 250) {
-      $log_sql = substr($log_sql, 0, 120) . '...' . substr($log_sql, strlen($log_sql) - 120);
-    }
+    $log_sql = describe_sql_short($sql, $params);
 
     try {
       $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES('.dbnow_expr().', :logsql)');
@@ -47,7 +57,23 @@ function take_action_silently($sql, $params) {
   }
 
   $stmt = $db->prepare($sql);
-  return $stmt->execute($params);
+  // This retry loop is to overcome a suspected SQLITE_BUSY or SQLITE_LOCKED
+  // condition, should it arise.
+  for ($i = 0; $i < 3; ++$i) {  // Retry twice if necessary
+    if ($stmt->execute($params)) {
+       return true;
+    }
+    $e = $stmt->errorInfo();
+    error_log("************* SQL action failed:\n"
+              ." Statement: ".describe_sql($sql, $params)."\n"
+              ." SQLState: ".$e[0]."\n"
+              ." Driver error code: ".$e[1]."\n"
+              ." Driver error message: ".$e[2]);
+    sleep(2);
+  }
+
+  // Unsuccessful three times:
+  return false;
 }
 
 function take_action($sql, $params, $body_xml = '') {
@@ -82,10 +108,5 @@ function take_action_if_permitted($sql, $params, $permission, $body_xml = '') {
 		not_authorized();
 	}
 }
-
-
-
-
-
 
 ?>
