@@ -197,3 +197,6 @@ td.clickable div.inclickable {
 .index_spacer {
   height: 50px;
 }
+
+.heat_link span { font-size: xx-large; }
+th { font-size: x-large; }
