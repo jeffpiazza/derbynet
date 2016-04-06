@@ -43,6 +43,7 @@
 
  <target name="operation" depends="make-dist-dir">
      <make-pdf file="Timer Operation.fodt"/>
+     <make-pdf file="Running a Race with DerbyNet.fodt"/>
  </target>
 
   <target name="clean"
