@@ -148,39 +148,41 @@ $(document).bind("mobileinit", function() {
 
 <div id='replay_settings_modal' class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="change-replay"/>
+    <input type="hidden" name="action" value="write-settings"/>
 
-    <label for="replay_duration">Duration of replay, in seconds:</label>
+    <label for="replay-skipback">Duration of replay, in seconds:</label>
     <!-- Could be any decimal value... -->
-    <select id="replay_duration" name="replay_duration">
-        <option>2.0</option>
-        <option>2.5</option>
-        <option>3.0</option>
-        <option>3.5</option>
-        <option>4.0</option>
-        <option>4.5</option>
-        <option>5.0</option>
-        <option>5.5</option>
-        <option>6.0</option>
-        <option>6.5</option>
+    <!-- TODO MacReplay only accepts integral skipback values presently -->
+    <!-- TODO When displaying this modal, should read the current settings and populate controls accordingly. -->
+    <select id="replay-skipback" name="replay-skipback">
+        <option value="2">2.0</option>
+        <!-- <option>2.5</option> -->
+        <option value="3">3.0</option>
+        <!-- <option>3.5</option> -->
+        <option selected="selected" value="4">4.0</option>
+        <!-- <option>4.5</option> -->
+        <option value="5">5.0</option>
+        <!-- <option>5.5</option> -->
+        <option value="6">6.0</option>
+        <!-- <option>6.5</option> -->
     </select>
 
-    <label for="replay_num_showings">Number of times to show replay:</label>
+    <label for="replay-num-showings">Number of times to show replay:</label>
     <!-- Could be any positive integer -->
-    <select id="replay_num_showings" name="replay_num_showings">
+    <select id="replay-num-showings" name="replay-num-showings">
         <option>1</option>
-        <option>2</option>
+        <option selected="selected">2</option>
         <option>3</option>
     </select>
 
     <label for="replay_rate">Replay playback speed:</label>
     <!-- Could be any decimal value -->
-    <select id="replay_rate" name="replay_rate">
-        <option>0.1x</option>
-        <option>0.25x</option>
-        <option>0.5x</option>
-        <option>0.75x</option>
-        <option>1x</option>
+    <select id="replay-rate" name="replay-rate">
+        <option value="0.10">0.1x</option>
+        <option value="0.25">0.25x</option>
+        <option value="0.50">0.5x</option>
+        <option selected="selected" value="0.75">0.75x</option>
+        <option value="1.00">1x</option>
     </select>
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"

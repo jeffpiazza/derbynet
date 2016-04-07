@@ -76,7 +76,10 @@ function send_replay_message($cmd) {
 
 function send_replay_TEST() {
   // test <skipback_seconds> <repeat> <rate>
-  send_replay_message("TEST 4 2 0.5");
+  $skipback = read_raceinfo('replay-skipback', '4');
+  $num_showings = read_raceinfo('replay-num-showings', '2');
+  $rate = read_raceinfo('replay-rate', '0.5');
+  send_replay_message("TEST ".$skipback." ".$num_showings." ".$rate);
 }
 
 // "START video_name_root  -- start recording video\r\n"
@@ -88,8 +91,10 @@ function send_replay_START(&$current) {
 
 // "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
 function send_replay_REPLAY() {
-  // TODO: Settings to control what gets sent
-  send_replay_message("REPLAY 4 2 0.5");
+  $skipback = read_raceinfo('replay-skipback', '4');
+  $num_showings = read_raceinfo('replay-num-showings', '2');
+  $rate = read_raceinfo('replay-rate', '0.5');
+  send_replay_message("REPLAY ".$skipback." ".$num_showings." ".$rate);
 }
 
 // "CANCEL  -- cancel recording\r\n"

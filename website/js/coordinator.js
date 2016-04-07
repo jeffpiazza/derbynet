@@ -88,7 +88,7 @@ function handle_previous_heat_button() {
 function handle_test_replay() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'replay-test'}
+            data: {action: 'replay.test'}
            });
 }
 

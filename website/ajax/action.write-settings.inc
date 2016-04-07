@@ -6,11 +6,21 @@ require_once('inc/schema_version.inc');
 
 start_response();
 
+// To preclude problems with misspelled parameters, we want to be sure that we
+// account for every parameter passed.  We do that by just counting the number
+// of parameters that were recognized, and comparing to the number of parameters
+// actually passed.
 $num_picked = 1;  // 1, not 0, to account for the 'action' key
 
-// TODO: These are checkboxes, and won't be passed if the checkbox is unchecked.
 if (have_permission(SET_UP_PERMISSION)) {
+  // For checkbox controls, no parameter is passed if the checkbox is unchecked.
+  // To avoid accidentally reseting values by forgetting to pass them, we adopt
+  // a convention of sending a hidden field, named with a '-checkbox' suffix,
+  // for each checkbox Boolean field.  E.g., only if a 'with-gprm-checkbox'
+  // parameter is passed will the presence or absence of a 'with-gprm' parameter
+  // be used to control the 'with-gprm' setting.
   $failures = false;
+  // $_POST key => RaceInfo.itemkey
   foreach(array('with-gprm' => 'with-gprm',
                 'do-use-subgroups' => 'use-subgroups',
                 'use-master-sched' => 'use-master-sched',
@@ -26,6 +36,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }
 
+  // $_POST key => RaceInfo.itemkey
   foreach(array('n-lanes' => 'lane_count',
                 'track-length' => 'track-length',
                 'n-den-trophies' => 'n-den-trophies',
@@ -36,7 +47,10 @@ if (have_permission(SET_UP_PERMISSION)) {
                 'supergroup-label' => 'supergroup-label',
                 'update-period' => 'update-period',
                 'photo-dir' => 'photo-directory',
-                'car-photo-dir' => 'car-photo-directory')
+                'car-photo-dir' => 'car-photo-directory',
+                'replay-skipback' => 'replay-skipback',
+                'replay-num-showings' => 'replay-num-showings',
+                'replay-rate' => 'replay-rate')
           as $post_key => $raceinfo_key) {
     if (isset($_POST[$post_key])) {
       ++$num_picked;
