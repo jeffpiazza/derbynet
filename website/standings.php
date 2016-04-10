@@ -10,7 +10,7 @@ session_start();
 //
 // TODO We'd like to be able to see how the members of a Grand Final round were
 // selected, and what the pack standings were/would have been without the GF
-// round.  Note that the make-roster action performs SQL queries directly,
+// round.  Note that the roster.new action performs SQL queries directly,
 // without using final_standings(), but performs a similar query.
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');

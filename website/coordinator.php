@@ -196,7 +196,7 @@ $(document).bind("mobileinit", function() {
 
 <div id='new_round_modal' class="modal_dialog block_buttons hidden">
   <form>
-    <input type="hidden" name="action" value="make-roster"/>
+    <input type="hidden" name="action" value="roster.new"/>
     <input type="hidden" name="roundid" id="new_round_roundid"/>
 
     <div id="multi_flipswitches" class="multi_den_only">
