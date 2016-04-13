@@ -234,6 +234,21 @@ function handle_unschedule_button(roundid, classname, round) {
     });
 }
 
+function handle_delete_round_button(roundid, classname, round) {
+    $("#delete_round_round").text(round);
+    $("#delete_round_class").text(classname);
+    show_modal("#delete_round_modal", function(event) {
+        close_modal("#delete_round_modal");
+        $.ajax(g_action_url,
+               {type: 'POST',
+                data: {action: 'roster.delete',
+                       roundid: roundid},
+                success: function(data) { process_coordinator_poll_response(data); }
+               });
+        return false;
+    });
+}
+
 function handle_make_changes_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
@@ -633,6 +648,16 @@ function inject_into_scheduling_control_group(round, current) {
                            + round.round + ')"'
                            + ' value="Unschedule"/>');
         }
+
+        if (round.heats_scheduled == 0 && round.heats_run == 0 &&
+            (round.round > 1 || round.classname == "Grand Finals")) {
+            buttons.append('<input type="button" data-enhanced="true"'
+                           + ' onclick="handle_delete_round_button(' + round.roundid
+                           + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                           + round.round + ')"'
+                           + ' value="Delete Round"/>');
+        }
+        
 
         if (round.roundid != current.roundid) {
             // TODO: Don't offer 'race' choice for single roundid under master scheduling

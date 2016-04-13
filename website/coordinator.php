@@ -242,5 +242,16 @@ $(document).bind("mobileinit", function() {
   </form>
 </div>
 
+
+<div id='delete_round_modal' class="modal_dialog hidden block_buttons">
+  <p>Round <span id="delete_round_round"></span> for <span id="delete_round_class"></span>
+       has no schedule, and no heats have been run.  To choose different racers for this round,
+       you need to delete this round and generate a new one.  Is that what you would like to do?</p>
+  <form>
+    <input type="submit" data-enhanced="true" value="Delete Round"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#delete_round_modal");'/>
+  </form>
+</div>
 </body>
 </html>
