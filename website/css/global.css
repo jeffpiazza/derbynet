@@ -22,7 +22,7 @@ div.banner div {
 
 div.banner div.role {
   position: absolute;
-  right: 60px;
+  right: 64px;
   /* To achieve vertical centering
    (http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/)
   */
@@ -42,7 +42,8 @@ div.banner div.role a {
 div.banner img {
   display: inline;
   position: absolute;
-  right: 0;
+  top: 2;
+  right: 2;
 }
 
 div.banner form {

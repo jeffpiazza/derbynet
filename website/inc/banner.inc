@@ -14,6 +14,6 @@
 	 echo '<div class="role">In '.$_SESSION['role'].' role.<br/><a href="login.php?logout">Log out</a></div>'."\n";
    }
 ?>
-  <img src="img/cubscout_emblem.png"/>
+  <img src="img/derbynet.png"/>
 </div>
 <div class="banner_version">Version 1.0</div>
