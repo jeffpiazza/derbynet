@@ -6,6 +6,7 @@
     <title>DerbyNet by jeffpiazza</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <link rel="stylesheet" href="stylesheets/jeff.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/main.js"></script>
     <!--[if lt IE 9]>
@@ -17,6 +18,7 @@
   <body>
 
       <header>
+        <img class="project-icon" src="images/derbynet.png"/>
         <h1>DerbyNet</h1>
         <p>Open-source Pinewood Derby race management, built around a web server and database</p>
       </header>
@@ -37,15 +39,50 @@
         </div>
       </div><!-- end banner -->
 
+
     <div class="wrapper">
       <nav>
         <ul></ul>
       </nav>
-      <section>
+        
+   <section>
+      <div class="screenshots">
+          <a href="screenshots/coordinator.png" target="_blank">
+          <figure>
+          <img src="thumbs/coordinator-thumb.png"/>
+          <figcaption>Coordinator's Dashboard</figcaption>
+          </figure>
+          </a>
+          
+          <a href="screenshots/now-racing.png" target="_blank">
+          <figure>
+            <img src="thumbs/now-racing-thumb.png" max-width: "190"/>
+            <figcapture>Main Display</figcapture>
+          </figure>
+        </a>
+          <a href="screenshots/results-by-racer.png" target="_blank">
+          <figure>
+          <img src="thumbs/results-by-racer-thumb.png"/>
+          <figcapture>Supplemental Display</figcapture>
+          </figure>
+        </a>
+      </div>
+
+<h3>DerbyNet: Open-Source Pinewood Derby race management software</h3>
 
 <p>DerbyNet is a free, open-source Pinewood Derby race management system based on a
         standard web server model.  (Don't confuse DerbyNet with the commercial
         GPRM product, "DerbyWeb.")</p>
+
+<p>DerbyNet is:</p>
+<ul>
+<li>Distributed: Support as many check-in stations as you need, and as many
+  information presentations.  You host a small, local web server on one laptop or computer; other
+  computers, tablets, laptops, TV displays, or even phones connect to that
+  computer to access live race information.</li>
+<li>Free: There's nothing to pay for.  There are no licensing costs or subscription fees, no payments at all.</li>
+<li>Open Source: If you'd like the software to work a little differently, or look a little differently, you're welcome to change it.  (Some skill required, but not necessarily a lot.)</li>
+</ul>
 
 <p>DerbyNet supports two primary usage scenarios:</p>
 <ul>
@@ -63,13 +100,6 @@
 
 <p>Both forms feature support for local digital signage (also called information kiosks), typically a web browser displayed on a TV, that connects to the web server and presents information about the race, check-ins, standings, etc.</p>
 
-<p>DerbyNet is:</p>
-<ul>
-<li>Free (as in beer): There's nothing to pay for.  There are no licensing costs or subscription fees, no payments at all.</li>
-<li>Open Source, a.k.a. "Free (as in speech)": If you'd like the software to work a little differently, or look a little differently, you're welcome to change it.  (Some skill required, but not necessarily a lot.)</li>
-<li>Web-Based: You host a small, local web site on your computer, and other computers, tablets, laptops, or even phones connect to that web site.</li>
-</ul>
-
 <h3>
 <a id="use-derbynet-alone-or-combine-with-grandprix-race-manager" class="anchor" href="#use-derbynet-alone-or-combine-with-grandprix-race-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use DerbyNet Alone, or Combine with GrandPrix Race Manager</h3>
 
@@ -77,6 +107,25 @@
 or run alongside and as a supplement to GrandPrix Race Manager
 (<a href="http://grandprix-software-central.com">http://grandprix-software-central.com</a>).
 (Please note that DerbyNet is not endorsed or supported by Lisano Enterprises, LLC., the makers of GrandPrix Race Manager.)</p>
+
+<h3>
+<a id="use-multiple-clients-for-a-seamless-event" class="anchor" href="#use-multiple-clients-for-a-seamless-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use Multiple Clients for a Seamless Event</h3>
+
+<p>Being web server based, DerbyNet lets you run multiple clients (browsers) in
+multiple locations to access the same database.  A typical deployment might have:</p>
+
+<ul>
+<li><p>Volunteers at the check-in desk performing registration and inspection tasks, using
+laptops or tables to update the state of the roster in the database in real time;</p></li>
+<li><p>One or more stations capturing photos of racers and/or race cars;</p></li>
+<li><p>An event dashboard running on the race coordinator's tablet, from which s/he
+can see the overall state of the event, control information displays, generate
+racing schedules, and directly control racing by group;</p></li>
+<li><p>A main race display projected onto a large screen showing the entrants in the
+current heat and the heat results;</p></li>
+<li><p>Supplemental information displays ("kiosks" or digital signage) providing
+additional race details and statistics, updated in real time.</p></li>
+</ul>
 
 <h3>
 <a id="derbynet-runs-on-mac-linux-and-windows" class="anchor" href="#derbynet-runs-on-mac-linux-and-windows" aria-hidden="true"><span class="octicon octicon-link"></span></a>DerbyNet Runs on Mac, Linux, and Windows</h3>
@@ -93,26 +142,8 @@ the data.</p>
 district events in standalone configuration, as in other events as a supplement
 to GPRM.</p>
 
-<h3>
-<a id="use-multiple-clients-for-a-seamless-event" class="anchor" href="#use-multiple-clients-for-a-seamless-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use Multiple Clients for a Seamless Event</h3>
+</section>
 
-<p>Being web server based, DerbyNet lets you run multiple clients (browsers) in
-multiple locations to access the same database.  A typical deployment might have:</p>
-
-<ul>
-<li><p>Volunteers at the check-in desk performing registration an inspection tasks, using
-laptops or tables to update the state of the roster in the database in real time;</p></li>
-<li><p>One or more stations capturing photos of racers and/or race cars;</p></li>
-<li><p>An event dashboard running on the race coordinator's tablet, from which s/he
-can see the overall state of the event, control information displays, generate
-racing schedules, and directly control racing by group;</p></li>
-<li><p>A main race display projected onto a large screen showing the entrants in the
-current heat and the heat results;</p></li>
-<li><p>Supplemental information displays ("kiosks" or digital signage) providing
-additional race details and statistics, updated in real time.</p></li>
-</ul>
-
-      </section>
       <footer>
         <p>Project maintained by <a href="https://github.com/jeffpiazza">jeffpiazza</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
