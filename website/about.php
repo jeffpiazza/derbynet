@@ -5,7 +5,8 @@
 require_once('inc/authorize.inc');
 // Note that schema_version doesn't load data.inc
 require_once('inc/schema_version.inc');
-?><html>
+?><!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>About DerbyNet</title>

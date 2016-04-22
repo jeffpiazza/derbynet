@@ -3,7 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

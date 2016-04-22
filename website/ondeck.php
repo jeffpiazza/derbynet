@@ -4,9 +4,6 @@
 // called.  The @ is necessary to suppress the error notice that may arise in
 // this case.
 @session_start();
-?>
-<!DOCTYPE html>
-<?php 
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
@@ -18,7 +15,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
     $use_master_sched = use_master_sched();
 
     $high_water_rounds = high_water_rounds();
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

@@ -4,7 +4,8 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
-?><html>
+?><!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Awards Presentation Dashboard</title><?php require('inc/stylesheet.inc'); ?>

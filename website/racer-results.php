@@ -1,13 +1,11 @@
-<?php @session_start(); ?>
-<!DOCTYPE html>
-<?php
+<?php @session_start();
     require_once('inc/data.inc');
     require_once('inc/schema_version.inc');
     require_once('inc/running_round_header.inc');
 
     $use_master_sched = use_master_sched();
     $high_water_rounds = high_water_rounds();
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

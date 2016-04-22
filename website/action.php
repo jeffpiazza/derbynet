@@ -28,7 +28,7 @@ if (!empty($_POST)) {
         end_response();
     }
 } else {
-    echo '<html><head><title>Not a Page</title></head><body><h1>This is not a page.</h1></body></html>';
+    echo '<!DOCTYPE html><html><head><title>Not a Page</title></head><body><h1>This is not a page.</h1></body></html>';
 }
 
 ?>

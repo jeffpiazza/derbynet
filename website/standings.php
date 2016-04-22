@@ -17,7 +17,7 @@ require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 require_once('inc/standings.inc');
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

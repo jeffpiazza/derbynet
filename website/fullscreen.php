@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" itemscope itemtype="http://schema.org/Product">
 <head>
 <title>Fullscreen Kiosk</title>

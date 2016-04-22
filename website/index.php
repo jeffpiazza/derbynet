@@ -2,7 +2,7 @@
 // Redirects to setup page if the database hasn't yet been set up
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

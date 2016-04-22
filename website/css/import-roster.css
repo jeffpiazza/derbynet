@@ -33,7 +33,6 @@
 }
 
 .file_target input {
-  width: 98%;
   height: 300px;
   border: 4px dashed #023882;
   /* TODO valign: center; */
@@ -149,4 +148,7 @@ input[type='button'], input[type='submit'] {
   without all the weird page-loading behaviors. */
 
 .ui-page-theme-a { background-color: #ffffff; }
-body.ui-mobile-viewport, .ui-page { margin: 8px; }
+div.import_roster {
+    margin-left: 8px;
+    margin-right: 8px;
+}

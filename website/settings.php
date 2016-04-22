@@ -1,11 +1,10 @@
-<?php session_start(); ?>
-<?php
+<?php session_start();
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 
 require_permission(SET_UP_PERMISSION);
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

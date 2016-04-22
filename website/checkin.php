@@ -53,7 +53,7 @@ function column_header($text, $o) {
         return '<b>'.$text.'</b>';
     return '<a href="?order='.$o.'">'.$text.'</a>';
 }
-?>
+?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>

@@ -4,7 +4,8 @@ require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);
 // TODO: Wipe out existing data (option)
 // TODO: "delete racer", "delete all racers" (as super-powers on checkin page)
-?><html>
+?><!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Import Roster</title>
@@ -18,7 +19,7 @@ require_permission(SET_UP_PERMISSION);
 // Fortunately, it's possible to turn that stuff off.
 $(document).bind("mobileinit", function() {
 				   $.extend($.mobile, {
-					 ajaxEnabled: false
+                       ajaxEnabled: false
 					 });
 				 });
 </script>
