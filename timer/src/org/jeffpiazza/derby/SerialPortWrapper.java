@@ -22,14 +22,23 @@ import java.util.regex.*;
 
 public class SerialPortWrapper implements SerialPortEventListener {
   private SerialPort port;
+  // Received characters that don't yet make up a complete line, i.e., still
+  // waiting for a newline character.
   private String leftover;
-  private ArrayList<String> queue;  // Messages received from timer
+  // Messages (full lines) received from timer
+  private ArrayList<String> queue;
   private LogWriter logwriter;
+  // System time in millis when we last sent a command to the serial port.
+  // TODO What we really want is to track the last command for which we actually
+  // expect a response.
+  private long last_command;
+  // System time in millis when we last received a character from the serial
+  // port; used to detect lost contact.
+  private long last_contact;
 
   public interface Detector {
-    // Return true if line has been handled, and therefore should
-    // not be added to queue to be returned by next().
-    boolean test(String line);
+    // Return that part of line not handled by this detector
+    String apply(String line);
   }
   private ArrayList<Detector> detectors;
 
@@ -53,6 +62,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public LogWriter logWriter() { return logwriter; }
 
+  public long millisSinceLastCommand() { return System.currentTimeMillis() - last_command; }
+  public long millisSinceLastContact() { return System.currentTimeMillis() - last_contact; }
+
   public void registerDetector(Detector detector) {
     synchronized (detectors) {
       detectors.add(detector);
@@ -69,6 +81,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void serialEvent(SerialPortEvent event) {
     try {
       if (event.isRXCHAR()) {
+        last_contact = System.currentTimeMillis();
         read();
       } else {
         System.out.println("Event type is " + event.getEventType());
@@ -94,21 +107,21 @@ public class SerialPortWrapper implements SerialPortEventListener {
           String line = s.substring(0, cr).trim();
           if (line.length() > 0) {
             logwriter.serialPortLog(LogWriter.INCOMING, line);
-            boolean handled = false;
             synchronized (detectors) {
               for (Detector detector : detectors) {
-                if (detector.test(line)) {
-                  handled = true;
+                line = detector.apply(line);
+                if (line.length() == 0) {
                   break;
                 }
               }
             }
-            if (!handled) {
-              synchronized (queue) {
-                queue.add(line);
-              }
+          }
+          if (line.length() > 0) {
+            synchronized (queue) {
+              queue.add(line);
             }
           }
+
           s = s.substring(cr + 1);
         }
         leftover = s;
@@ -122,6 +135,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public void write(String s) throws SerialPortException {
     logwriter.serialPortLog(LogWriter.OUTGOING, s);
+    last_command = System.currentTimeMillis();
     port.writeString(s);
   }
 
@@ -133,13 +147,18 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   public String writeAndWaitForResponse(String cmd, int timeout) throws SerialPortException {
+    clear();
     write(cmd);
     return next(System.currentTimeMillis() + timeout);
   }
 
   public boolean hasAvailable() {
+    return hasAvailable(1);
+  }
+  
+  public boolean hasAvailable(int expected) {
     synchronized (queue) {
-      return queue.size() > 0;
+      return queue.size() >= expected;
     }
   }
 
@@ -172,5 +191,42 @@ public class SerialPortWrapper implements SerialPortEventListener {
       s = s.substring(1);
     }
     return s;
+  }
+
+  // Empties the queue immediately
+  public void clear() {
+    synchronized (queue) {
+      queue.clear();
+    }
+  }
+
+  // Waits until deadline (at the latest) for at least one expected input lines
+  // to appear in the queue, then drains the queue.
+  public void drain(long deadline, int expected) {
+    while (System.currentTimeMillis() < deadline) {
+      if (hasAvailable(expected)) {
+        clear();
+        return;
+      } else {
+        try {
+          Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
+        } catch (Exception exc) {}
+      }
+    }
+  }
+
+  public void drain() {
+    drain(System.currentTimeMillis() + 500, 1);
+  }
+
+  public void writeAndDrainResponse(String cmd, int expected, int timeout)
+        throws SerialPortException {
+    clear();
+    write(cmd);
+    drain(System.currentTimeMillis() + timeout, expected);
+  }
+
+  public void writeAndDrainResponse(String cmd) throws SerialPortException {
+    writeAndDrainResponse(cmd, 1, 2000);
   }
 }

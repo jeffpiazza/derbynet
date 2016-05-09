@@ -5,10 +5,12 @@ import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
 
+import java.util.regex.Matcher;
+
 public class ChampDevice extends TimerDeviceBase implements TimerDevice {
   private int numberOfLanes;  // Detected at probe time
 
-  // These are all require synchronized access:
+  // These all require synchronized access:
   private boolean gateIsClosed;
   private boolean racePending;
   private long raceFinishedDeadline;  // 0 for "not set"
@@ -55,7 +57,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
       return false;
     }
 
-    portWrapper.writeAndWaitForResponse("\r");
+    portWrapper.writeAndDrainResponse("\r");
 
     // Just forcing a new line, don't care about response.
     portWrapper.write(READ_VERSION);
@@ -93,8 +95,8 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
                            portWrapper.writeAndWaitForResponse(READ_START_SWITCH, 500)
                            );
 
-        portWrapper.writeAndWaitForResponse(SET_LANE_CHARACTER_A, 500);
-        portWrapper.writeAndWaitForResponse(SET_PLACE_CHARACTER_BANG, 500);
+        portWrapper.writeAndDrainResponse(SET_LANE_CHARACTER_A, 1, 500);
+        portWrapper.writeAndDrainResponse(SET_PLACE_CHARACTER_BANG, 1, 500);
 
         setUp();
         return true;
@@ -106,14 +108,16 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
 
   protected void setUp() {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
-        public boolean test(String line) {
-          Message.LaneResult[] results =
-          TimerDeviceUtils.parseCommonRaceResult(line, getSafeNumberOfLanes());
-          if (results != null) {
+        public String apply(String line) {
+          Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
+          if (m != null) {
+            Message.LaneResult[] results =
+                TimerDeviceUtils.extractResults(line, m.start(), m.end(),
+                                                getSafeNumberOfLanes());
             raceFinished(results);
-            return true;
+            return line.substring(0, m.start()) + line.substring(m.end());
           } else {
-            return false;
+            return line;
           }
         }
       });
@@ -224,7 +228,7 @@ public class ChampDevice extends TimerDeviceBase implements TimerDevice {
 
     // Don't know, assume unchanged
     portWrapper.logWriter().serialPortLogInternal("** Unable to determine starting gate state");
-    System.err.println("Unable to read gate state");
+    System.err.println(Timestamp.string() + ": Unable to read gate state");
     return lastGateIsClosed();
   }
 

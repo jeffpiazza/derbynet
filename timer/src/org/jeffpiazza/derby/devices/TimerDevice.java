@@ -21,11 +21,6 @@ public interface TimerDevice {
   // Returns 0 if can't tell/don't know
   int getNumberOfLanes() throws SerialPortException;
 
-  public interface RaceFinishedCallback {
-    void raceFinished(Message.LaneResult[] results);
-  }
-  void registerRaceFinishedCallback(RaceFinishedCallback cb);
-
   // Callback to notify when the race actually starts (i.e., the gate
   // opens after a prepareHeat call).  This mostly supplants any real
   // use of StartingGateCallback.
@@ -34,10 +29,24 @@ public interface TimerDevice {
   }
   void registerRaceStartedCallback(RaceStartedCallback cb);
 
+  public interface RaceFinishedCallback {
+    void raceFinished(Message.LaneResult[] results);
+  }
+  void registerRaceFinishedCallback(RaceFinishedCallback cb);
+
   public interface StartingGateCallback {
     void startGateChange(boolean isOpen);
   }
   void registerStartingGateCallback(StartingGateCallback cb);
+
+  // Callback invoked when a timer malfunction is detected, e.g., for lost
+  // communication or unexpected error response from the timer.
+  public interface TimerMalfunctionCallback {
+    // detectable is true if a successful poll implies the problem has been resolved.
+    // TODO Enhance poll() to indicate success/failure
+    void malfunction(boolean detectable, String msg);
+  }
+  void registerTimerMalfunctionCallback(TimerMalfunctionCallback cb);
 
   // Called when client is expecting a heat to be staged/started.
   void prepareHeat(int laneMask) throws SerialPortException;

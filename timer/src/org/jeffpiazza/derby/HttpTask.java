@@ -9,11 +9,8 @@ import java.util.ArrayList;
 
 // HttpTask expects to run in its own thread sending outgoing messages and awaiting their responses.  Sends a
 // heartbeat message periodically if the queue remains empty.
-//
-// TODO If heartbeat stops, present message to user.
 public class HttpTask implements Runnable {
   private ClientSession session;
-  private boolean awaitingHello = false;
   private final ArrayList<Message> queue;  // Messages waiting to be sent to web server
   private HeatReadyCallback heatReadyCallback;
   private AbortHeatCallback abortHeatCallback;
@@ -22,8 +19,9 @@ public class HttpTask implements Runnable {
 
   public static final long heartbeatPace = 10000;  // ms.
 
-  // HeatReadyCallback, AbortHeatCallback, and MessageTracer methods all get invoked from the thread running HttpTask.
-  // They're expected to return reasonably quickly to their caller.
+  // HeatReadyCallback, AbortHeatCallback, and MessageTracer methods all get
+  // invoked from the thread running HttpTask.  They're expected to return
+  // reasonably quickly to their caller.
   public interface HeatReadyCallback {
     void heatReady(int lanemask);
   }
@@ -46,8 +44,8 @@ public class HttpTask implements Runnable {
   }
 
   public static void start(final String username, final String password, final ClientSession session,
-                           final MessageTracer traceQueued, final MessageTracer traceHeartbeat, final Connector connector,
-                           final LoginCallback callback) {
+                           final MessageTracer traceQueued, final MessageTracer traceHeartbeat,
+                           final Connector connector, final LoginCallback callback) {
     (new Thread() {
       @Override
       public void run() {
@@ -80,23 +78,23 @@ public class HttpTask implements Runnable {
     this.queue = new ArrayList<Message>();
     this.traceQueued = traceQueued;
     this.traceHeartbeat = traceHeartbeat;
-  }
-
-  public void sendHello(int nlanes) {
-    System.out.println("Queuing HELLO message");  // TODO - Test this behaves correctly in command-line mode
     synchronized (queue) {
-      awaitingHello = false;
-      queueMessage(new Message.Hello(nlanes));
+      queueMessage(new Message.Hello());
     }
   }
 
-  // Queues a Message to be sent to the web server.  This is the main entry point once HttpTask is up and running.
+  public void sendIdentified(int nlanes) {
+    synchronized (queue) {
+      queueMessage(new Message.Identified(nlanes));
+    }
+  }
+
+  // Queues a Message to be sent to the web server.  This is the main entry
+  // point once HttpTask is up and running.
   public void queueMessage(Message message) {
     synchronized (queue) {
-      if (!awaitingHello) {
-        queue.add(message);
-        queue.notifyAll();
-      }
+      queue.add(message);
+      queue.notifyAll();
     }
   }
 
@@ -115,8 +113,6 @@ public class HttpTask implements Runnable {
   protected synchronized AbortHeatCallback getAbortHeatCallback() {
     return this.abortHeatCallback;
   }
-
-  // TODO No heartbeats until timer device has been discovered and hello message has been sent?
 
   // HttpTask has a queue for events to send, registers callbacks
   // for HEAT-READY(with lane mask) and ABORT.  Continually checks
@@ -137,13 +133,14 @@ public class HttpTask implements Runnable {
         if (queue.size() > 0) {
           nextMessage = queue.remove(0);
           traceMessage = this.traceQueued;
-        } else if (awaitingHello) {
-          // Don't send heartbeats while we're still waiting for the first hello message; go back and sleep some more
-          continue;
-        } else {
-          // Send heartbeats only if we've done at least one hello
+        } else if (getHeatReadyCallback() != null) {
+          // Send heartbeats only if we've actually identified the timer.
+          // Testing for a non-null heat-ready callback probably isn't the right
+          // way to confirm that we have an associated timer device.
           nextMessage = new Message.Heartbeat();
           traceMessage = this.traceHeartbeat;
+        } else {
+          continue;
         }
 
         boolean succeeded = false;

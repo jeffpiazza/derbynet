@@ -20,6 +20,10 @@ if ($tstate == TIMER_NOT_CONNECTED) {
 } else if ($tstate == TIMER_RUNNING) {
   $msg = 'Race running';
   $icon = 'img/status/ok.png';
+} else if ($tstate == TIMER_MALFUNCTION_AUTO ||
+           $tstate == TIMER_MALFUNCTION_MANUAL) {
+  $msg = 'MALFUNCTION';
+  $icon = 'img/status/trouble.png';
 } else {
   $msg = 'Unknown ('.$tstate.')';
   $icon = 'img/status/trouble.png';

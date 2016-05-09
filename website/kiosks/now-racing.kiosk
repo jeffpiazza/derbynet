@@ -67,7 +67,7 @@ $(function () {
 </div>
 <div id="timer_overlay" class="overlay_foreground">
 <img src="img/timer-red.png"/>
-<p>Timer not connected.</p>
+<p>Check timer.</p>
 </div>
 </body>
 </html>

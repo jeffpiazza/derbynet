@@ -3,9 +3,11 @@ package org.jeffpiazza.derby.devices;
 import jssc.*;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.Timestamp;
+
+import java.util.regex.Matcher;
 
 public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
-
   // States for the timer:
   private int state = IDLE;
   private void setState(int newState) {
@@ -82,9 +84,11 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
       }
     }
 
+    checkConnection();
+
     // Don't know, assume unchanged
-    // TODO portWrapper.log(LogWriter.INTERNAL, "Unable to determine starting gate state");
-    System.err.println("Unable to read gate state");  // TODO
+    portWrapper.logWriter().serialPortLogInternal("*** Unable to determine starting gate state");
+    System.err.println(Timestamp.string() + ": Unable to read starting gate state");
     return gateIsClosed;
   }
 
@@ -119,16 +123,17 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
 
   protected void setUp() {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
-          public boolean test(String line) {
+        public String apply(String line) {
+          Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
+          if (m != null) {
             Message.LaneResult[] results =
-                TimerDeviceUtils.parseCommonRaceResult(line, MAX_LANES);
-            if (results != null) {
-              raceFinished(results);
-              return true;
-            } else {
-              return false;
-            }
+                TimerDeviceUtils.extractResults(line, m.start(), m.end(), MAX_LANES);
+            raceFinished(results);
+            return line.substring(0, m.start()) + line.substring(m.end());
+          } else {
+            return line;
           }
+        }
       });
   }
 
@@ -146,14 +151,13 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
 
     StringBuffer sb = new StringBuffer("Heat prepared: ");
     for (int lane = 0; lane < MAX_LANES; ++lane) {
-      if ((lanemask & (1 << lane)) == 0) {
+      if ((lanemask & (1 << lane)) != 0) {
+        sb.append(lane + 1);
+      } else {
         sb.append("-");
         // A LANE_MASK command echoes the command (first response) and then
         // sends a "* <cr> <lf>" (second response).
-        portWrapper.writeAndWaitForResponse(LANE_MASK + (char)('A' + lane));
-        portWrapper.next();
-      } else {
-        sb.append(lane + 1);
+        portWrapper.writeAndDrainResponse(LANE_MASK + (char)('A' + lane), 2, 2000);
       }
     }
     portWrapper.logWriter().serialPortLogInternal(sb.toString());
@@ -164,15 +168,21 @@ public class FastTrackDevice extends TimerDeviceBase implements TimerDevice {
   public void abortHeat() throws SerialPortException {
     setState(IDLE);
   }
-
+  
   public void poll() throws SerialPortException {
     switch (state) {
     case IDLE:
+      if (portWrapper.millisSinceLastCommand() > 500) {
+        // This call to isGateClosed is just to confirm that the connection is
+        // functioning; we only need to check it occasionally.
+        isGateClosed();
+      }
       return;
     case MARK:
       // prepareHeat() called; waiting for gate to close
-      portWrapper.writeAndWaitForResponse(RESET_LASER_GATE);
-      portWrapper.next();
+      portWrapper.writeAndDrainResponse(RESET_LASER_GATE, 2, 2000);
+      checkConnection();
+
       if (isGateClosed()) {
         setState(SET);
         startGateChange(/* isOpen */ false);

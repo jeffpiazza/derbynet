@@ -8,7 +8,10 @@ require_once('inc/replay.inc');
 
 // Timer-controller-to-web-service messages:
 //
-// message="HELLO" & lane_count=
+// message="HELLO"
+// Initial message from timer controller
+//
+// message="IDENTIFIED"& lane_count=
 // Sent when timer controller discovers timer
 //
 // message="STARTED"
@@ -19,8 +22,8 @@ require_once('inc/replay.inc');
 // message="HEARTBEAT"
 //  Response provides message to timer controller
 //
-// message="MALFUNCTION"
-//  Signals operator intervention required
+// message="MALFUNCTION" & detectable=0|1 & error= message
+//   Signals lost connection or other problem with the timer
 
 // Web-service-to-timer-controller messages:
 //
@@ -35,6 +38,13 @@ start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if ($message == 'HELLO') {
+    // Timer state begins in TIMER_MALFUNCTION_AUTO until we receive
+    // confirmation that derby-timer.jar has actually connected to the timer
+    // device.  Otherwise, all we know is that derby-timer.jar is alive and
+    // scanning.
+    set_timer_state(TIMER_MALFUNCTION_AUTO);
+    echo "\n  <success/>\n";
+  } else if ($message == 'IDENTIFIED') {
     if (isset($_POST['lane_count']) && $_POST['lane_count'] > 0) {
       write_raceinfo('reported_lane_count', $_POST['lane_count']);
       // TODO: If the timer disagrees with the user as to lane
@@ -42,37 +52,45 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       write_raceinfo('lane_count', $_POST['lane_count']);
     }
     set_timer_state(TIMER_CONNECTED);
-    echo '<success/>'."\n";
+    echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
     set_timer_state(TIMER_RUNNING);
-    echo '<success/>'."\n";
+    echo "\n  <success/>\n";
   } else if ($message == 'FINISHED') {
     if (!$racing_state) {
-      echo "<failure code='notracing'>Not racing now.</failure>\n";
+      // TODO This might be a test run, or an actual race run while the "racing"
+      // switch was off.  We should prompt the race coordinator and offer to
+      // record these times somewhere.
+      echo "\n  <failure code='notracing'>Not racing now.</failure>\n";
     } else if (write_heat_results()) {
       send_replay_REPLAY();
       $current = get_running_round();
       advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
-      echo '<success/>';
+      echo "\n  <success/>\n";
     }
     // If another heat is teed up, we'll immediately change state to
     // TIMER_PREPARED, below.
     set_timer_state(TIMER_CONNECTED);
   } else if ($message == 'HEARTBEAT') {
-    echo '<success/>'."\n";
+    echo "\n  <success/>\n";
     // TODO: Capture other state information
-    if (get_timer_state() == TIMER_NOT_CONNECTED) {
+    $tstate = get_timer_state();
+    if ($tstate == TIMER_NOT_CONNECTED ||
+        $tstate == TIMER_MALFUNCTION_AUTO) {
       set_timer_state(TIMER_CONNECTED);
     } else {
       renew_timer_contact();
     }
   } else if ($message == 'MALFUNCTION') {
-    echo '<success/>'."\n";
-    // TODO: Prepare an alert.  When to clear it?  Need to better
-    // define what this means/does.
-    set_timer_state(TIMER_CONNECTED);
+    echo "\n  <success/>\n";
+    if (isset($_POST['detectable']) && $_POST['detectable'] == 0) {
+      set_timer_state(TIMER_MALFUNCTION_MANUAL);
+    } else {
+      set_timer_state(TIMER_MALFUNCTION_AUTO);
+    }
+    set_racing_state(false);
   } else {
-    echo "<failure code='notunderstood'>Message "
+    echo "\n  <failure code='notunderstood'>Message "
         .htmlspecialchars($message, ENT_QUOTES, 'UTF-8')
         ." not recognized.</failure>\n";
   }
@@ -94,7 +112,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       $mask |= (1 << ($row['lane'] - 1));
     }
     if ($pending) {
-      echo '<heat-ready lane-mask="'.$mask.'"'
+      echo '  <heat-ready lane-mask="'.$mask.'"'
           .' class="'.htmlspecialchars($current['class'], ENT_QUOTES, 'UTF-8').'"'
           .' round="'.$current['round'].'"'
           .' heat="'.$current['heat'].'"'
@@ -105,7 +123,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   if (!$racing_state && ($tstate == TIMER_PREPARED || $tstate == TIMER_RUNNING)) {
-    echo '<abort/>'."\n";
+    echo "\n  <abort/>\n";
     set_timer_state(TIMER_CONNECTED);
   }
 } else {

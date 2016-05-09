@@ -9,10 +9,25 @@ public abstract class TimerDeviceBase implements TimerDevice {
   private RaceStartedCallback raceStartedCallback;
   private RaceFinishedCallback raceFinishedCallback;
   private StartingGateCallback startingGateCallback;
+  private TimerMalfunctionCallback timerMalfunctionCallback;
 
   protected TimerDeviceBase(SerialPortWrapper portWrapper) {
     this.portWrapper = portWrapper;
   }
+
+  // Returns true if we've had any response recently, otherwise invokes
+  // malfunction callback and returns false.
+  protected boolean checkConnection() {
+    if (portWrapper.millisSinceLastContact() < 2000) {
+      return true;
+    } else {
+      String msg = "No response from timer in " + portWrapper.millisSinceLastContact() + "ms.";
+      portWrapper.logWriter().serialPortLogInternal(msg);
+      malfunction(true, msg);
+      return false;
+    }      
+  }
+
 
   public synchronized void registerRaceStartedCallback(RaceStartedCallback raceStartedCallback) {
     this.raceStartedCallback = raceStartedCallback;
@@ -50,6 +65,19 @@ public abstract class TimerDeviceBase implements TimerDevice {
     StartingGateCallback cb = getStartingGateCallback();
     if (cb != null) {
       cb.startGateChange(isOpen);
+    }
+  }
+
+  public synchronized void registerTimerMalfunctionCallback(TimerMalfunctionCallback timerMalfunctionCallback) {
+    this.timerMalfunctionCallback = timerMalfunctionCallback;
+  }
+  protected synchronized TimerMalfunctionCallback getTimerMalfunctionCallback() {
+    return timerMalfunctionCallback;
+  }
+  protected void malfunction(boolean detectable, String msg) {
+    TimerMalfunctionCallback cb = getTimerMalfunctionCallback();
+    if (cb != null) {
+      cb.malfunction(detectable, msg);
     }
   }
 }

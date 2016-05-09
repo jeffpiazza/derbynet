@@ -3,7 +3,7 @@
 // action.php?query=watching&roundid= &heat= 
 // Returns:
 //   <watching roundid= heat= >
-//     <timer-not-connected/>   if that's the timer state
+//     <timer-trouble/>   if there's a problem with the timer
 //     <heat-result lane="1" time="" place="" speed=""/>... if results are available
 //     <current-heat ...> 
 //     - if current-heat differs from what the caller passed in, then provide:
@@ -14,8 +14,11 @@
 
 if (!with_gprm()) {
   require_once('inc/timer-state.inc');
-  if (get_timer_state() == TIMER_NOT_CONNECTED) {
-    echo "  <timer-not-connected/>\n";
+  $tstate = get_timer_state();
+  if ($tstate == TIMER_NOT_CONNECTED ||
+      $tstate == TIMER_MALFUNCTION_AUTO ||
+      $tstate == TIMER_MALFUNCTION_MANUAL) {
+    echo "  <timer-trouble/>\n";
   }
 }
 

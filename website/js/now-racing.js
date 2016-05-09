@@ -203,7 +203,7 @@ function process_new_heat(watching) {
         g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
     }
     var current = watching.getElementsByTagName("current-heat")[0];
-    if (watching.getElementsByTagName('timer-not-connected').length > 0) {
+    if (watching.getElementsByTagName('timer-trouble').length > 0) {
         show_overlay('#timer_overlay');
     } else if (current.getAttribute("now-racing") == "0" && (new Date()).valueOf() > g_hold_display_until) {
         show_overlay('#paused_overlay')

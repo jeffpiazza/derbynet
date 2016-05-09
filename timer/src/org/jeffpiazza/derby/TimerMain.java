@@ -180,7 +180,6 @@ public class TimerMain {
 
   // Allow the timer device and web server connection to come up in either order, or perhaps not at all; when
   // they're both established, wire together callbacks and send hello with lane count to web server.
-  // TODO What to do if unplugged timer or disconnected web server?
   public static class ConnectorImpl implements Connector {
     private HttpTask httpTask;
     private TimerDevice timerDevice;
@@ -199,6 +198,7 @@ public class TimerMain {
     @Override
     public synchronized void setTimerDevice(TimerDevice timerDevice) {
       this.timerDevice = timerDevice;
+      maybeWireTogether();
     }
 
     private void maybeWireTogether() {
@@ -210,7 +210,7 @@ public class TimerMain {
         } catch (SerialPortException e) {
           e.printStackTrace();
         }
-        httpTask.sendHello(nlanes);
+        httpTask.sendIdentified(nlanes);
       }
     }
 
@@ -222,65 +222,73 @@ public class TimerMain {
       }
 
       httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
-        public void heatReady(int laneMask) {
-          try {
-            if (traceMessages != null) {
-              traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
-            }
-            device.prepareHeat(laneMask);
-          } catch (Throwable t) {
-            // TODO: details
+          public void heatReady(int laneMask) {
             try {
-              httpTask.queueMessage(new Message.Malfunction("Can't ready timer."));
-            } catch (Throwable tt) {
+              if (traceMessages != null) {
+                traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
+              }
+              device.prepareHeat(laneMask);
+            } catch (Throwable t) {
+              // TODO: details
+              try {
+                httpTask.queueMessage(new Message.Malfunction(false, "Can't ready timer."));
+              } catch (Throwable tt) {
+              }
             }
           }
-        }
-      });
+        });
 
       httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
-        public void abortHeat() {
-          if (traceMessages != null) {
-            traceMessages.traceInternal(Timestamp.string() + ": AbortHeat received");
-          }
-          raceDeadline = -1;
-          try {
-            device.abortHeat();
-          } catch (Throwable t) {
-            t.printStackTrace();
-          }
-        }
-      });
-
-      device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
-        public void raceFinished(Message.LaneResult[] results) {
-          // Rely on recipient to ignore if not expecting any results
-          try {
-            raceDeadline = -1;
+          public void abortHeat() {
             if (traceMessages != null) {
-              traceMessages.traceInternal(Timestamp.string() + ": Race finished");
+              traceMessages.traceInternal(Timestamp.string() + ": AbortHeat received");
             }
-            httpTask.queueMessage(new Message.Finished(results));
-          } catch (Throwable t) {
+            raceDeadline = -1;
+            try {
+              device.abortHeat();
+            } catch (Throwable t) {
+              t.printStackTrace();
+            }
           }
-        }
-      });
+        });
 
       device.registerRaceStartedCallback(new TimerDevice.RaceStartedCallback() {
-        public void raceStarted() {
-          try {
-            raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
-            if (traceMessages != null) {
-              traceMessages.traceInternal(Timestamp.string() + ": Race started");
+          public void raceStarted() {
+            try {
+              raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
+              if (traceMessages != null) {
+                traceMessages.traceInternal(Timestamp.string() + ": Race started");
+              }
+              httpTask.queueMessage(new Message.Started());
+            } catch (Throwable t) {
             }
-            httpTask.queueMessage(new Message.Started());
-          } catch (Throwable t) {
           }
-        }
-      });
+        });
+
+      device.registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
+          public void raceFinished(Message.LaneResult[] results) {
+            // Rely on recipient to ignore if not expecting any results
+            try {
+              raceDeadline = -1;
+              if (traceMessages != null) {
+                traceMessages.traceInternal(Timestamp.string() + ": Race finished");
+              }
+              httpTask.queueMessage(new Message.Finished(results));
+            } catch (Throwable t) {
+            }
+          }
+        });
+
+      device.registerTimerMalfunctionCallback(new TimerDevice.TimerMalfunctionCallback() {
+          public void malfunction(boolean detectable, String msg) {
+            try {
+              httpTask.queueMessage(new Message.Malfunction(detectable, msg));
+            } catch (Throwable t) {
+            }
+          }
+        });
     }
   }
-
 
   // Continuously polls the timer device for messages, and checks for timeouts of expected race results.
   private static void runDevicePollingLoop(TimerDevice device, HttpTask.MessageTracer traceMessages)
