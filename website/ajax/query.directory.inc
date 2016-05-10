@@ -20,6 +20,9 @@ if (!isset($_GET['path'])) {
   }
 
   while (true) {
+    if ($dirpath === "") {
+      $dirpath = DIRECTORY_SEPARATOR;
+    }
     $files = @scandir($dirpath);
     if ($files !== false) {
       break;

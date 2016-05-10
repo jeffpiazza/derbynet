@@ -40,13 +40,16 @@ $(document).bind("mobileinit", function() {
 
 $local_config_inc = 'local'.DIRECTORY_SEPARATOR.'config-database.inc';
 $offer_config_button = true;
+$config_file_contents = "";
 
 if (file_exists($local_config_inc)) {
   echo "<pre>\n";
-  echo htmlspecialchars(file_get_contents($local_config_inc,
-                                          /* use_include_path */ true),
-                        ENT_QUOTES, 'UTF-8');
+  $config_file_contents = file_get_contents($local_config_inc,
+                                            /* use_include_path */ true);
+  echo htmlspecialchars($config_file_contents, ENT_QUOTES, 'UTF-8');
+  // NOTE: $config_file_contents used to prefix dialog box, below.
   echo "</pre>\n";
+
   try {
     @include($local_config_inc);
   } catch (PDOException $p) {
@@ -165,7 +168,13 @@ function label_driver_check($driver) {
 
 <div style="width: 80%">
         <label for="sqlite_path">Path (on server) to SQLite data file:</label>
-        <input type="text" name="sqlite_path" id="sqlite_path"/>
+        <input type="text" name="sqlite_path" id="sqlite_path"
+               value="<?php
+                  if (preg_match('/"sqlite:([^"]*)"/', $config_file_contents, $matches)) {
+                      echo htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+                  }
+                ?>"/>
+
 </div>
     </div>
 
