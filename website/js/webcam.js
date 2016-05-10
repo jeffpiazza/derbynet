@@ -139,7 +139,8 @@ var Webcam = {
 				Webcam.dispatch('live');
 			},
 			function(err) {
-				return self.dispatch('error', "Could not access webcam.");
+                console.log(err);
+				return self.dispatch('error', "Could not access webcam (" + err + ").");
 			});
 		}
 		else {
