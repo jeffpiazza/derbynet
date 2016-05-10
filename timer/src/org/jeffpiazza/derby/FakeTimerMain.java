@@ -151,7 +151,8 @@ public class FakeTimerMain implements HttpTask.HeatReadyCallback, HttpTask.Abort
     task.registerAbortHeatCallback(this);
 
     System.out.println(Timestamp.string() + ": Attempting HELLO message with " + nlanes + " lanes");
-    task.queueMessage(new Message.Hello(nlanes));
+    task.queueMessage(new Message.Hello());
+    task.queueMessage(new Message.Identified(nlanes));
     (new Thread(task)).start();
   }
 }
