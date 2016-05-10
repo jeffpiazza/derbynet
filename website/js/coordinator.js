@@ -567,7 +567,8 @@ function inject_progress_text(group, round) {
 //           category: ("master-schedule", "ready-to-race", "not-yet-scheduled", "done-racing")
 //         }
 // current = { roundid: }
-function generate_scheduling_control_group(round, current) {
+// timer_state = { lanes: }
+function generate_scheduling_control_group(round, current, timer_state) {
     var elt = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
     var collapsible = " collapsible";
     if (round.roundid == current.roundid) {
@@ -609,12 +610,12 @@ function generate_scheduling_control_group(round, current) {
     // current.roundid would change the order for the rounds.
     elt.appendTo("#" + round.category + "-group");
 
-    inject_into_scheduling_control_group(round, current);
+    inject_into_scheduling_control_group(round, current, timer_state);
 }
 
 // Injects new values into an existing scheduling control group.  The
 // available control buttons get rewritten entirely.
-function inject_into_scheduling_control_group(round, current) {
+function inject_into_scheduling_control_group(round, current, timer_state) {
     var group = $("[data-roundid=" + round.roundid + "]");
 
     inject_progress_text(group, round);
@@ -632,9 +633,15 @@ function inject_into_scheduling_control_group(round, current) {
     } else {
         if (round.racers_unscheduled > 0) {
             if (round.heats_run == 0) {
-                buttons.append('<input type="button" data-enhanced="true"'
-                               + ' onclick="show_schedule_modal(' + round.roundid + ')"'
-                               + ' value="Schedule"/>');
+                if (timer_state.lanes != '' && timer_state.lanes > 0) {
+                    buttons.append('<input type="button" data-enhanced="true"'
+                                   + ' onclick="show_schedule_modal(' + round.roundid + ')"'
+                                   + ' value="Schedule"/>');
+                } else {
+                    buttons.append("<p>Can't schedule heats, because the number of lanes hasn\'t" +
+                                   " been determined.<br/>" +
+                                   "Enter the number of lanes on the <a href='settings.php'>Settings</a> page.</p>");
+                }
             } else if (false /* TODO: Reschedule is not ready for prime time */) {
                 buttons.append('<input type="button" data-enhanced="true"' 
                                + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
@@ -657,7 +664,6 @@ function inject_into_scheduling_control_group(round, current) {
                            + round.round + ')"'
                            + ' value="Delete Round"/>');
         }
-        
 
         if (round.roundid != current.roundid) {
             // TODO: Don't offer 'race' choice for single roundid under master scheduling
@@ -856,6 +862,7 @@ function offer_new_rounds(rounds) {
 }
 
 function process_coordinator_poll_response(data) {
+    var timer_state = parse_timer_state(data);
     var current = parse_current_heat(data);
     if (!current) {
         console.log("Returning early because no current heat");
@@ -875,7 +882,7 @@ function process_coordinator_poll_response(data) {
         totals.classname = "Master Schedule";
         totals.category = "master-schedule";
 
-        generate_scheduling_control_group(totals, current);
+        generate_scheduling_control_group(totals, current, timer_state);
     }
 
     var layout = {'now-racing': [],
@@ -903,17 +910,17 @@ function process_coordinator_poll_response(data) {
         // TODO Want to remove everything except data-name="buttons"
         $("#now-racing-group .heat-lineup *").remove();
         $.each(rounds, function (index, round) {
-            inject_into_scheduling_control_group(round, current);
+            inject_into_scheduling_control_group(round, current, timer_state);
         });
     } else {
         g_rounds_layout = layout;
         $(".scheduling_control_group").empty();
         $.each(rounds, function (index, round) {
-            generate_scheduling_control_group(round, current);
+            generate_scheduling_control_group(round, current, timer_state);
         });
     }
 
-    generate_timer_state_group(parse_timer_state(data));
+    generate_timer_state_group(timer_state);
 
     generate_replay_state_group(parse_replay_state(data));
 
