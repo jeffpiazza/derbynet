@@ -74,7 +74,8 @@ curl_post action.php "action=select-heat&now_racing=1" | check_success
 ## This script generated from the output of:
 ## timer/testing/fake-timer -t -l 4 localhost/xsite
 
-curl_post action.php "action=timer-message&message=HELLO&nlanes=4" | check_success
+curl_post action.php "action=timer-message&message=HELLO" | check_success
+curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.6158383929791826&lane2=3.7824151491468916&lane3=2.046356489153065&lane4=2.003682139082848" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success

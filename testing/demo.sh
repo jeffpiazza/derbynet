@@ -41,7 +41,8 @@ while true ; do
   curl_post action.php "action=class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_success
 
   # Start the timer
-  curl_post action.php "action=timer-message&message=HELLO&lane_count=4" | check_success
+  curl_post action.php "action=timer-message&message=HELLO" | check_success
+  curl_post action.php "action=timer-message&message=IDENTIFIED&lane_count=4" | check_success
 
   # Schedule Round 1
   curl_post action.php "action=schedule&roundid=1" | check_success

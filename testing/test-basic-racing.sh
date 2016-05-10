@@ -18,7 +18,8 @@ curl_post action.php "action=schedule&roundid=3" | check_success
 
 ### Racing for roundid=1: 5 heats
 curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
-curl_post action.php "action=timer-message&message=HELLO&nlanes=4" | check_success
+curl_post action.php "action=timer-message&message=HELLO" | check_success
+curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.3294268726240133&lane2=3.4179854414310484&lane3=3.818251820275865&lane4=2.240156635057904" | check_success 
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
