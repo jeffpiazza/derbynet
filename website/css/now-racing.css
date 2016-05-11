@@ -19,8 +19,22 @@
 
 html, body, table { width: 100%; height: 100%; margin: 0; padding: 0; }
 
+table { 
+  border-collapse: collapse;
+}
+
 td {
     border: 14px solid black;
+    text-align: center;
+}
+
+td p {
+    /* TODO Chrome sets these to 1em for p by default?
+        Mozilla equivalents needed?  Others? */
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 th {
@@ -96,7 +110,13 @@ img {
     text-align: center;
 }
 
+/* TODO ondeck.css:10 sets a 13px padding which makes more difference than you'd think. */
+td {
+    padding: 0px;
+}
 
+/* TODO What screen sizes are we trying to support?  Make sure 640x480 works, anyway. */
+/* TODO Work out exactly what font size we can fit, assuming two-line name cells? */
 @media screen and (max-width: 1400px) {
     td {
         font-size: 60px;

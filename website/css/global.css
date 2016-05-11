@@ -190,3 +190,8 @@ div.banner div.back_button {
   left: 50%;
   margin-left: -12.5em;
 }
+
+.hidden {
+  visibility: hidden;
+  display: none;
+}
