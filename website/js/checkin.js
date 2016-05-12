@@ -315,16 +315,16 @@ function find_racer() {
     if (search_string.length == 0) {
         cancel_find_racer();
     } else {
-        var find_count = $("#main_checkin_table tbody tr").find("td.sort-firstname, td.sort-lastname")
-            .filter(function() {
-                // this = <td> element for firstname or lastname
+        var domain = $("#main_checkin_table tbody tr")
+            .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
+        var find_count = domain.filter(function() {
+                // this = <td> element for firstname, lastname, or car number
                 return $(this).text().toLowerCase().indexOf(search_string) != -1;
             }).length;
         if (find_count != 0) {
             $("#find-racer").removeClass("notfound");
             remove_search_highlighting();
-            $("#main_checkin_table tbody tr").find("td.sort-firstname, td.sort-lastname").contents()
-                .each(function() {
+            domain.contents().each(function() {
                     if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
                         var where = $(this).text().toLowerCase().indexOf(search_string);
                         if (where != -1) {
