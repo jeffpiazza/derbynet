@@ -163,6 +163,7 @@ function handle_import_one_row(row) {
 
     // Construct param array from what's in the table row
     var params = {action: 'import'};
+    var allblank = true;
     $('#csv_content').find('.label_target').each(function (index, label_target) {
         // label_target.attr('data-column')
         // label_target.find('.field').attr('data-field')
@@ -170,24 +171,33 @@ function handle_import_one_row(row) {
         var field = $(label_target).find('.field');
 
         if (field.length > 0) {
-            params[field.attr('data-field')] =
+            var txt =
                 $('#csv_content [data-row="' + row + '"]' +
                   ' .column' + $(label_target).attr('data-column'))
                 .text();
+            params[field.attr('data-field')] = txt;
+            if (txt.trim().length > 0) {
+                allblank = false;
+            }
         }
     });
 
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: params,
-            success: function() {
-                $('[data-row="' + row + '"] th').text('OK');
-                handle_import_one_row(row + 1);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert("Error: " + textStatus + " / " + errorThrown);
-            }
-           });
+    if (allblank) {
+        $('[data-row="' + row + '"] th').text('SKIP');
+        handle_import_one_row(row + 1);
+    } else {
+        $.ajax(g_action_url,
+               {type: 'POST',
+                data: params,
+                success: function() {
+                    $('[data-row="' + row + '"] th').text('OK');
+                    handle_import_one_row(row + 1);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert("Error: " + textStatus + " / " + errorThrown);
+                }
+               });
+    }
 }
 
 $(function() {
