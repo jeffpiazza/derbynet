@@ -9,42 +9,7 @@ require_once('inc/photo-config.inc');
     <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-page.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
-    <style>
-    div.photo-background {
-      height: 100%;
-      width: 100%;
-    }
-    img.inset_photo {
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      z-index: 1;
-      max-height: 50%;
-      max-width: 25%;
-    }
-
-    img.mainphoto {
-      /* position: absolute;
-      left: 0px;
-      top: 0px; */
-      max-width: 100%;
-      max-height: 100%;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    p.subtitle {
-      z-index: 2;
-      font-size: xx-large;
-      text-align: center; width: 100%;
-      position: absolute;
-      bottom: 10px;
-      left: 0px;
-    }
-
-.carno { font-weight: bold; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/slideshow.css"/>
     <script type="text/javascript">
     // We don't know the actual rendered size of the main photo until after it's loaded, so that's
     // when we can calculate how much margin to apply to the main photo.

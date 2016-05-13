@@ -1,0 +1,40 @@
+
+/* .photo-background covers the entire viewport */
+div.photo-background {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+img.mainphoto {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+
+    /* Horizontal centering: */
+    margin-left: auto;
+    margin-right: auto;
+    /* Vertical centering: */
+    margin-top: auto; margin-bottom: auto;
+    /* Alternatively: top: 50%; margin-top: -50%; */
+}
+
+img.inset_photo {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+    max-height: 50%;
+    max-width: 25%;
+}
+
+p.subtitle {
+    z-index: 2;
+    font-size: xx-large;
+    text-align: center; width: 100%;
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
+}
+
+.carno { font-weight: bold; }
