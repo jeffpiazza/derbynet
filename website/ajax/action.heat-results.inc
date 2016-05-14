@@ -6,13 +6,20 @@
 // Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
 
 require_once('inc/write-heat-results.inc');
+require_once('inc/autoadvance.inc');
+require_once('inc/racing-state.inc');
 
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
     if (write_heat_results()) {
-		echo '<success/>';
-        require('ajax/query.coordinator-poll.inc');
+      if (get_racing_state()) {
+        send_replay_REPLAY();
+        $current = get_running_round();
+        advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
+      }
+      echo '<success/>';
+      require('ajax/query.coordinator-poll.inc');
 	}
 } else {
 	not_authorized_body();
