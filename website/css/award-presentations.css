@@ -44,4 +44,8 @@ p.award-racer {
     font-weight: bold;
 }
 
+#carname {
+    font-style: italic;
+}
+
 .fade-in {  display: none;  }

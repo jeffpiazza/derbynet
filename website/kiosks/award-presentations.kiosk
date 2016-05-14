@@ -22,6 +22,7 @@
       <span class="lastname" id="lastname"></span>
     </p>
     <p class="award-racer"><span class="car-name" id="carname"></span></p>
+    <p class="award-racer"><span class="subgroup" id="subgroup"></span></p>
   </div>    
 
   <div id="photos">

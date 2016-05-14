@@ -8,6 +8,7 @@ require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
 $key = read_raceinfo('current_award_key', '');
+$use_subgroups = read_raceinfo_boolean('use-subgroups');
 
 // award-<awardid>
 // speed-<place>
@@ -17,10 +18,11 @@ $keys = explode('-', $key);
 if (count($keys) >= 2) {
   if ($keys[0] == 'award') {
     $awardid = $keys[1];
-    $stmt = $db->prepare('SELECT awardname, carnumber, carname,'
-                         .' firstname, lastname, imagefile, carphoto'
+    $stmt = $db->prepare('SELECT racerid, awardname, firstname, lastname,'
+                         .' carnumber, carname, rank, imagefile, carphoto'
                          .' FROM '.inner_join('Awards', 'RegistrationInfo',
-                                              'Awards.racerid = RegistrationInfo.racerid')
+                                              'Awards.racerid = RegistrationInfo.racerid',
+                                              'Ranks', 'Ranks.rankid = RegistrationInfo.rankid')
                          .' WHERE awardid = :awardid');
     $stmt->execute(array(':awardid' => $awardid));
   } else if ($keys[0] == 'speed') {
@@ -40,9 +42,10 @@ if (count($keys) >= 2) {
     }
 
     if ($racerid > 0) {
-      $stmt = $db->prepare('SELECT :awardname AS awardname, carnumber, carname,'
-                           .' firstname, lastname, imagefile, carphoto'
-                           .' FROM RegistrationInfo'
+      $stmt = $db->prepare('SELECT racerid, :awardname AS awardname, firstname, lastname,'
+                           .' carnumber, carname, rank, imagefile, carphoto'
+                           .' FROM '.inner_join('RegistrationInfo', 'Ranks',
+                                                'Ranks.rankid = RegistrationInfo.rankid')
                            .' WHERE racerid = :racerid');
       $stmt->execute(array(':racerid' => $racerid,
                            ':awardname' => $awardname));
@@ -63,8 +66,10 @@ if (isset($stmt)) {
       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
-    .' headphoto="'.headshots()->url_for_racer($row, 'cropped').'"'
-    .' carphoto="'.car_photo_repository()->url_for_racer($row, 'cropped').'"'
+      .($use_subgroups ?
+       ' subgroup="'.htmlspecialchars(@$row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')
+    .($row['imagefile'] ? ' headphoto="'.headshots()->url_for_racer($row, 'cropped').'"' : '')
+    .($row['carphoto'] ? ' carphoto="'.car_photo_repository()->url_for_racer($row, 'cropped').'"' : '')
       .'/>'."\n";
   }
 }

@@ -29,6 +29,7 @@ function parse_award(data) {
             carname: award_xml.getAttribute('carname'),
             firstname: award_xml.getAttribute('firstname'),
             lastname: award_xml.getAttribute('lastname'),
+            subgroup: award_xml.getAttribute('subgroup'),
             headphoto: award_xml.getAttribute('headphoto'),
             carphoto: award_xml.getAttribute('carphoto')};
 }
@@ -48,10 +49,20 @@ function process_current_award(data) {
 
         $("#awardname").text(award.awardname);
         $("#carnumber").text(award.carnumber);
-        $("#carname").text(award.carname);
         $("#firstname").text(award.firstname);
         $("#lastname").text(award.lastname);
-
+        if (award.carname && award.carname.length > 0) {
+            $("#carname").text(award.carname);
+            $("#carname").css('display', 'block');
+        } else {
+            $("#carname").css('display', 'none');
+        }
+        if (award.subgroup && award.subgroup.length > 0) {
+            $("#subgroup").text(award.subgroup);
+            $("#subgroup").css('display', 'block');
+        } else {
+            $("#subgroup").css('display', 'none');
+        }
         // Need to account for the height of the award-racer text, even though
         // it's presently hidden.
         var previousCss  = $("#award-racer-text").attr("style");
