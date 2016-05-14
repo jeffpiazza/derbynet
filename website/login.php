@@ -12,6 +12,14 @@ require_once('inc/authorize.inc');
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Please Log In</title>
 <?php require('inc/stylesheet.inc'); ?>
+<style type="text/css">
+#pw_for_password {
+    display: block;
+    width: 270px; /* Allow for 15px horizontal padding from global.css */
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/login.js"></script>
