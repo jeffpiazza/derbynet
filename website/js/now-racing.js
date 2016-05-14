@@ -63,17 +63,23 @@ function animate_flyers(place, place_to_lane, completed) {
         var flyer = $('#place' + place);
         var target = $('[data-lane="' + place_to_lane[place] + '"] .place');
         if (target.length > 0) {
-            var border = parseInt(target.css('border-top'));
-            var padding = parseInt(target.css('padding-top'));
+            var border = parseInt(target.css('border-top-width'));
+            // Apparently WebKit and Gecko (at least) model collapsed table
+            // borders borders differently; in particular, target.offset() is
+            // affected; we need to compensate by changing the border
+            // adjustment.  Knowing that the CSS specifies 14px borders for this
+            // table, we use the reported border width to distinguish between
+            // the two engines.
+            if (border < 14) {
+                border = 0;
+            }
             var span =  $('[data-lane="' + place_to_lane[place] + '"] .place span');
             var font_size = span.css('font-size');
             flyer.css({left: -target.outerWidth(),
                        width: target.outerWidth(),
                        top: target.offset().top - border,
                        height: target.outerHeight(),
-
                        fontSize: font_size, // as a string, e.g., 85px
-                       // verticalAlign: 'middle',
                        padding: 0,
                        opacity: 100});
             flyer.animate({left: target.offset().left - border},
@@ -226,6 +232,7 @@ function process_new_heat(watching) {
             g_animated = false;
             g_num_racers = racers.length;
             // Clear old results
+            $('[data-lane] .carnumber').text('');
             $('[data-lane] .name').text('');
             $('[data-lane] .time').css({opacity: 0}).text('0.000');
             $('[data-lane] .speed').css({opacity: 0}).text('200.0');
