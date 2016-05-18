@@ -12,11 +12,14 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
-    var g_last_update_time = ""; // First refresh is for everything
-    var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
-    var g_high_water_group = <?php echo $high_water_rounds['roundid']; ?>;
-    var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
-    var g_using_groupid = false;
+var g_update_status = {
+      last_update_time: "" // First refresh is for everything
+      high_water_resultid: <?php echo high_water_resultid(); ?>,
+      high_water_tbodyid: <?php echo $high_water_rounds['roundid']; ?>,
+      use_master_sched: <?php echo $use_master_sched ? 1 : 0; ?>,
+      // Even if using master scheduling, display the round results separately.
+      merge_rounds: false,
+};
 </script>
 <?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript" src="js/update.js"></script>
@@ -116,7 +119,7 @@ foreach ($rounds as $round) {
       $now_running['classid'] == $classid)
     $is_current = 1;
 
-  echo '<tbody id="group_'.$groupid.'" class="group_'.$groupid.'">'."\n";
+  echo '<tbody id="tbody_'.$groupid.'">'."\n";
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'

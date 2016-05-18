@@ -23,12 +23,14 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript">
-    var g_last_update_time = ""; // First refresh is for everything
-    var g_high_water_resultid = <?php echo high_water_resultid(); ?>;
-    var g_high_water_group = <?php
-        echo $high_water_rounds[$use_master_sched ? 'round' : 'roundid']; ?>;
-    var g_use_master_sched = <?php echo $use_master_sched ? 1 : 0; ?>;
-    var g_using_groupid = true;
+var g_update_status = {
+      last_update_time: "", // First refresh is for everything
+      high_water_resultid: <?php echo high_water_resultid(); ?>,
+      high_water_tbodyid: <?php
+        echo $high_water_rounds[$use_master_sched ? 'round' : 'roundid']; ?>,
+      use_master_sched: <?php echo $use_master_sched ? 1 : 0; ?>,
+      merge_rounds: <?php echo $use_master_sched ? 1 : 0; ?>,
+};
 </script>
 <script type="text/javascript" src="js/update.js"></script>
 <title>Race Schedule</title>
@@ -40,7 +42,7 @@ $banner_title = 'Racing Heats'; require('inc/banner.inc');
 running_round_header($now_running);
 
 require_once('inc/rounds.inc');
-$groups = all_racing_groups();
+$groups = all_schedule_groups();
 
 $sql = 'SELECT'
     .' Classes.class, round, heat, lane, finishtime, resultid, completed, '
@@ -87,7 +89,7 @@ function write_heat_row($entry, $heat_row, $lane) {
     $heat = $entry['Heat'];
     $heat_label = 'heat_'.$entry['RoundID'].'_'.$heat;
     $seq = $entry['Seq'];
-    echo '<tr id="'.$heat_label.'" class="d'.($seq & 1).' '.$heat_label.'">'
+    echo '<tr id="'.$heat_label.'" class="d'.($seq & 1).'">'
       .'<th>'
       .htmlspecialchars(($use_master_sched ? $entry['Class'].' ' : '')
                         .'Heat '.$heat, ENT_QUOTES, 'UTF-8').'</th>'
@@ -101,7 +103,7 @@ foreach ($groups as $group) {
   $roundno = $group['round'];
   $groupid = $group['groupid'];
 
-  echo '<tbody id="group_'.$groupid.'" class="group_'.$groupid.'">'."\n";
+  echo '<tbody id="tbody_'.$groupid.'">'."\n";
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'

@@ -17,6 +17,7 @@ Master schedules:
   GroupName = Round <Round>
  */
 
+// Returns each distinct Rounds entry, with roundid as the groupid.
 function all_rounds() {
   global $db;
   $rounds = array();
@@ -37,7 +38,9 @@ function all_rounds() {
   return $rounds;
 }
 
-function all_racing_groups() {
+// Returns each distinct Rounds entry, except if master scheduling, in which
+// case, one entry per ordinal round (likely just one, or possibly 1st and 2nd).
+function all_schedule_groups() {
   global $db;
   if (use_master_sched()) {
     $groups = array();

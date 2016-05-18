@@ -19,12 +19,8 @@
 //
 // For a non-Grand Finals round, if "bucketed" is true, then "top" tells how
 // many racers to choose from each subgroup.
-
-// TODO: Finalists are selected by average time, which may give the
-// wrong result if some racers didn't finish all their heats.
 //
-// TODO: Some organizations select winners by dropping the worst time, or the
-// best and worst, or something else.
+// TODO: If racing isn't complete, selection of top finishers is likely to be wrong.
 
 start_response();
 
@@ -67,6 +63,11 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
     $db->exec("INSERT INTO Classes(class) VALUES('Grand Finals')");
     $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
                                  array(), 0);
+    if (expected_schema_version() >= 2) {
+      $stmt = $db->prepare("UPDATE Classes SET sortorder = 1 + (SELECT MAX(sortorder) FROM Classes)"
+                           ." WHERE classid = :classid");
+      $stmt->execute(array(':classid' => $classid));
+    }
   }
 }
 

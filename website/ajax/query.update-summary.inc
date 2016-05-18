@@ -24,20 +24,20 @@
 //   <current-heat classid="{classid}"
 //                 roundid="{roundid}"
 //                 round="{round}"
-//                 group="{}"
+//                 tbodyid="{tbodyid}"
 //                 heat="{heat number}"
 //     >{class name}</class>
 //   <lanes n="{nlanes}"/>
-//   <options update-period="{period in ms}" kiosk-page="(kiosk page)" use-master-sched="(0 or 1)"/>
+//   <options update-period="{period in ms}" use-master-sched="(0 or 1)"/>
 //
 //   <update resultid="{resultid}" time="{finishtime, as n.nnn}"/>
 //   <update resultid="{resultid}" time="{finishtime, as n.nnn}"/>
 //   ...
 //
-//   <has_new_schedule roundid="{roundid}" group="{groupid}"/>
+//   <has_new_schedule tbodyid="{tbodyid}"/>
 //   ...
 //
-//   <high_water roundid= resultid= completed= />
+//   <high_water roundid= round= tbodyid= resultid= completed= />
 // </update-summary>
 //
 // The class, round, and heat elements identify the "current" heat.
@@ -59,6 +59,11 @@ if (!$hwresultid) {
 	$hwresultid = 0;
 }
 
+// If true, the client is using master scheduling and therefore merging all the
+// rounds with the same round number.  We identify everything by round number in
+// that case, instead of roundid.
+$merge_rounds = @$_GET['merge_rounds'];
+
 $use_master_sched = use_master_sched();
 ?>
 <?php require('inc/current-heat.inc'); ?>
@@ -67,7 +72,6 @@ $use_master_sched = use_master_sched();
   <options update-period="<?php echo update_period(); ?>"
            use-master-sched="<?php echo $use_master_sched; ?>"/>
 <?php
-
   $sql = 'SELECT'
     .' lane, resultid, finishtime, completed'
     .' FROM Rounds'
@@ -104,7 +108,7 @@ $use_master_sched = use_master_sched();
 
   // <has_new_schedule> elements for rounds affected by newly-entered racechart rows
 
-  $sql = 'SELECT DISTINCT Rounds.roundid, round '
+$sql = 'SELECT DISTINCT Rounds.roundid, round'
     .' FROM RaceChart'
     .' INNER JOIN Rounds'
     .' ON RaceChart.roundid = Rounds.roundid'
@@ -117,14 +121,16 @@ $use_master_sched = use_master_sched();
   }
 
   foreach ($stmt as $rs) {
-    echo '<has_new_schedule roundid="'.$rs['roundid']
-      .'" groupid="'.$rs[$use_master_sched ? 'round' : 'roundid'].'"/>'."\n";
+    echo '<has_new_schedule'
+    .' tbodyid="'.$rs[$merge_rounds ? 'round' : 'roundid'].'"'
+    .'/>'."\n";
   }
 
   $high_water_rounds = high_water_rounds();
   ?>
-  <high_water roundid="<?php echo $high_water_rounds['roundid'] ?>"
-              round="<?php echo $high_water_rounds['round'] ?>"
+  <high_water roundid="<?php echo $high_water_rounds['roundid']; ?>"
+              round="<?php echo $high_water_rounds['round']; ?>"
+              tbodyid="<?php echo $high_water_rounds[$merge_rounds ? 'round' : 'roundid']; ?>"
               resultid="<?php echo high_water_resultid(); ?>"
               completed="<?php echo $max_time; ?>" />
 
