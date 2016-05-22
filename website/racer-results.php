@@ -13,7 +13,7 @@
 <?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
 <script type="text/javascript">
 var g_update_status = {
-      last_update_time: "" // First refresh is for everything
+      last_update_time: "", // First refresh is for everything
       high_water_resultid: <?php echo high_water_resultid(); ?>,
       high_water_tbodyid: <?php echo $high_water_rounds['roundid']; ?>,
       use_master_sched: <?php echo $use_master_sched ? 1 : 0; ?>,
