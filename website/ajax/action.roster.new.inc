@@ -64,9 +64,13 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
     $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
                                  array(), 0);
     if (expected_schema_version() >= 2) {
-      $stmt = $db->prepare("UPDATE Classes SET sortorder = 1 + (SELECT MAX(sortorder) FROM Classes)"
+      // Apparently mysql can't support an embedded select from the same table
+      // that's being updated, so this has to be done in two queries.
+      $max = read_single_value('SELECT MAX(sortorder) FROM Classes');
+      $stmt = $db->prepare("UPDATE Classes SET sortorder = 1 + :max"
                            ." WHERE classid = :classid");
-      $stmt->execute(array(':classid' => $classid));
+      $stmt->execute(array(':classid' => $classid,
+                           ':max' => $max));
     }
   }
 }
