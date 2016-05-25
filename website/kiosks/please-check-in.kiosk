@@ -51,7 +51,7 @@ if ($prev_class) {
 } else {
   echo '<p class="kiosk_title">All Participants Have Checked In</p>'."\n";
   echo '<div class="full_page_center">'."\n";
-  echo '<img src="Cub_Scout_emblem_800.png"/>'."\n";
+  echo '<img src="img/cubscout_emblem_800.png"/>'."\n";
   echo '</div>'."\n";
 }
 ?>
