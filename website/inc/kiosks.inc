@@ -7,7 +7,15 @@ function create_kiosk_table() {
 }
 
 function address_for_current_kiosk() {
-  if (isset($_SESSION['address'])) {
+  // The Kiosks table in the database has a field for the address, and another
+  // for the name.  Both are displayed to the race coordinator.  The address is
+  // what identifies the kiosk; the name is just a convenience for the user.
+  //
+  // The kiosk browser can include an 'id' parameter which allows an arbitrary
+  // string to be used as the address identifier.
+  if (isset($_GET['id'])) {
+    $addr = $_GET['id'];
+  } else if (isset($_SESSION['address'])) {
     $addr = $_SESSION['address'];
   } else {
     if (isset($_SERVER['REMOTE_PORT'])) {
@@ -21,15 +29,14 @@ function address_for_current_kiosk() {
   return $addr;
 }
 
-// Searches the Kiosks table, if there is one, for an entry for the
-// current client's IP address plus port.  If there's a page assigned for this
-// client, returns that.  Otherwise, returns a RaceInfo entry for the
-// default kiosk page, if there is one; otherwise, returns the
-// identify kiosk page.
-function kiosk_page() {
+// Searches the Kiosks table, if there is one, for an entry for the given kiosk
+// address.  If there's a page assigned for this client, returns that.
+// Otherwise, returns a RaceInfo entry for the default kiosk page, if there is
+// one; otherwise, returns the identify.kiosk page.
+//
+// Returns an array with a 'page' key and optional 'name'.
+function kiosk_page($addr) {
   global $db;
-
-  $addr = address_for_current_kiosk();
 
   do {  // Retry loop to allow for having to create the table
     $retry = false;
@@ -61,6 +68,7 @@ function kiosk_page() {
       }
     }
   } while ($retry);
+  // Return global kiosk-page RaceInfo setting, or identify.kiosk.
   return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
 }
 
