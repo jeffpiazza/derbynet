@@ -34,7 +34,7 @@ $(function () {
 <table>
 <tr><th>Lane</th>
     <th>Car</th>
-    <th>Racer</th>
+    <th colspan="2">Racer</th>
     <th>Time</th>
     <th>Speed <span class="aside">(scale MPH)</span></th>
     <th>Place</th>
@@ -44,7 +44,8 @@ $(function () {
   for ($i = 1; $i <= $nlanes; ++$i) {
       echo '<tr data-lane="'.$i.'"><td class="lane">'.$i.'</td>'
           .'<td class="carnumber"></td>'
-          .'<td class="name_and_photo"><p class="name"></p></td>'
+          .'<td class="photo"></td>'
+          .'<td class="name"></td>'
           .'<td class="time"></td>'
           .'<td class="speed"></td>'
           .'<td class="place"><span class="sp"/></td>'

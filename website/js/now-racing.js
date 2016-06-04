@@ -233,6 +233,7 @@ function process_new_heat(watching) {
             g_num_racers = racers.length;
             // Clear old results
             $('[data-lane] .carnumber').text('');
+            $('[data-lane] .photo').empty();
             $('[data-lane] .name').text('');
             $('[data-lane] .time').css({opacity: 0}).text('0.000');
             $('[data-lane] .speed').css({opacity: 0}).text('200.0');
@@ -244,8 +245,8 @@ function process_new_heat(watching) {
                 $('[data-lane="' + lane + '"] .lane').text(lane);
                 $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
                 if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
-                    $('[data-lane="' + lane + '"] .name_and_photo').prepend(
-                        '<img src="' + r.getAttribute('photo') + '"/>');
+                  $('[data-lane="' + lane + '"] .photo').prepend(
+                      '<img src="' + r.getAttribute('photo') + '"/>');
                 }
                 var br_added = false;
                 if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
@@ -264,7 +265,6 @@ function process_new_heat(watching) {
                     $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
                     $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
                 }
-
 
                 $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
             }
