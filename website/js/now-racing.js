@@ -108,7 +108,7 @@ function show_overlay(selector) {
         var background = $("#overlay_background");
         background.css({'display': 'block',
                         'opacity': 0});
-        background.fadeTo(200, 0.2);
+        background.fadeTo(200, 0.5);
         $(".overlay_foreground").css('opacity', 0);
 
         var overlay = $(selector);

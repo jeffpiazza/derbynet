@@ -42,8 +42,9 @@ curl_post action.php "action=write-settings&car-photo-dir=$CAR_PHOTO_DIR" | chec
 curl_post action.php "action=write-settings&n-lanes=4" | check_success
 curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
-
 curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1234.jpg" | check_failure
+# For demo purposes, we want at least one car photo assigned early in the process
+curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1637.jpg" | check_success
 
 curl_post action.php "action=photo.assign&racer=1&photo=head-A.jpg" | check_success
 curl_post action.php "action=photo.assign&racer=2&photo=head-B.jpg" | check_success
