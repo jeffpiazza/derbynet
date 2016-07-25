@@ -5,7 +5,7 @@ function kiosk_poll(address, kiosk_page) {
     console.log("Kiosk-poll " + address + " " + kiosk_page);
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'kiosk-poll',
+            data: {query: 'kiosk.poll',
                    address: address},
             success: function(data) {
               cancel_ajax_failure();

@@ -24,8 +24,8 @@ while true ; do
   curl --location -s "$BASE_URL/kiosk.php?id=main" > /dev/null
   curl --location -s "$BASE_URL/kiosk.php?id=aux" > /dev/null
 
-  curl_post action.php "action=assign-kiosk&address=main&page=kiosks/slideshow.kiosk" | check_success
-  curl_post action.php "action=assign-kiosk&address=aux&page=kiosks/welcome.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=main&page=kiosks/slideshow.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/welcome.kiosk" | check_success
 
   # Tedious set-up
   curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
@@ -40,7 +40,7 @@ while true ; do
   `dirname $0`/test-photo-assignments.sh $BASE_URL
   curl_post action.php "action=write-settings&n-lanes=4" | check_success
 
-  curl_post action.php "action=assign-kiosk&address=aux&page=kiosks/please-check-in.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/please-check-in.kiosk" | check_success
 
   `dirname $0`/checkin-all.sh "$BASE_URL"
 
@@ -60,9 +60,9 @@ while true ; do
   # Start racing
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
 
-  curl_post action.php "action=assign-kiosk&address=ondeck&page=kiosks/ondeck.kiosk" | check_success
-  curl_post action.php "action=assign-kiosk&address=main&page=kiosks/now-racing.kiosk" | check_success
-  curl_post action.php "action=assign-kiosk&address=aux&page=kiosks/results-by-racer.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=ondeck&page=kiosks/ondeck.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=main&page=kiosks/now-racing.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/results-by-racer.kiosk" | check_success
 
   # Knock off a few early rounds
   curl_post action.php "action=timer-message&message=FINISHED&lane1=3.2514&lane2=3.9601&lane3=2.1068&lane4=2.4405" | check_success
@@ -122,12 +122,12 @@ while true ; do
   # sleep 3s
 
   # TODO Not ready for prime time
-  # curl_post action.php "action=assign-kiosk&address=main&page=kiosks/standings.kiosk" | check_success
+  # curl_post action.php "action=kiosk.assign&address=main&page=kiosks/standings.kiosk" | check_success
   # curl_post action.php "action=standings.select&roundid=1&expose=all" | check_success
   
   ########## Awards Presentations ##############
   sleep 15s
-  curl_post action.php "action=assign-kiosk&address=aux&page=kiosks/award-presentations.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/award-presentations.kiosk" | check_success
   sleep 6s
   curl_post action.php "action=award.present&key=speed-2-1" | check_success
   sleep 15s
@@ -135,6 +135,6 @@ while true ; do
   sleep 15s
 
   ########## DerbyNet ##############
-  curl_post action.php "action=assign-kiosk&all=kiosks/derbynet.kiosk" | check_success
+  curl_post action.php "action=kiosk.assign&all=kiosks/derbynet.kiosk" | check_success
   sleep 30s
 done

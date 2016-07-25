@@ -10,7 +10,7 @@
       <copy todir="${destination-dir}" overwrite="true">
           <fileset dir="../website">
               <include name="action.php"/>
-              <include name="ajax/query.kiosk-poll.inc"/>
+              <include name="ajax/query.kiosk.poll.inc"/>
               <include name="css/global.css"/>
               <include name="css/now-racing.css"/>
               <include name="css/ondeck.css"/>

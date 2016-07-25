@@ -51,7 +51,7 @@ if [ $OK -eq 0 ]; then
     test_fails Anonymous index page
 fi
 
-curl_post action.php "action=assign-kiosk" | check_failure
+curl_post action.php "action=kiosk.assign" | check_failure
 
 curl_post action.php "action=delete-results" | check_failure
 curl_post action.php "action=edit-racer" | check_failure
@@ -76,7 +76,7 @@ curl_post action.php "action=xbs" | check_failure
 # nothing to check other than that they parse as XML.
 curl_get "action.php?query=classes" > /dev/null
 curl_get "action.php?query=coordinator-poll" > /dev/null
-curl_get "action.php?query=kiosk-poll" > /dev/null
+curl_get "action.php?query=kiosk.poll" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=update-summary" > /dev/null
 curl_get "action.php?query=watching" > /dev/null

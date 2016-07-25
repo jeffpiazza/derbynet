@@ -1,6 +1,9 @@
 <?php
-// $_POST['address'] identifies the kiosk
+// $_POST['address'] identifies the kiosk.  Kiosk names are for display to the
+// user, but are not used to identify kiosks for assignment.
+//
 // $_POST['page'] to choose a page to display
+// $_POST['params'] to add page parameters
 // $_POST['name'] to assign a name for the kiosk
 
 // Intended for demo mode:
@@ -9,8 +12,12 @@ start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if (isset($_POST['page'])) {
+    $page = $_POST['page'];
+    if (isset($_POST['params'])) {
+      $page .= '#'.$_POST['params'];
+    }
     $stmt = $db->prepare('UPDATE Kiosks SET page = :page WHERE address = :address');
-    $stmt->execute(array(':page' => $_POST['page'],
+    $stmt->execute(array(':page' => $page,
                          ':address' => $_POST['address']));
   }
 

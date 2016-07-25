@@ -97,7 +97,7 @@ function handle_test_replay() {
 function handle_assign_kiosk_page_change(sel) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'assign-kiosk',
+            data: {action: 'kiosk.assign',
                    address: sel.getAttribute('data-kiosk-address'),
                    page: sel.value},
            });
@@ -115,7 +115,7 @@ function handle_name_kiosk(address, name) {
     close_modal("#kiosk_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'assign-kiosk',
+            data: {action: 'kiosk.assign',
                    address: address,
                    name: name},
            });
