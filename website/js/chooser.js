@@ -20,7 +20,7 @@ function repopulate_chooser_modal(path) {
     $("#chooser_directory_content").empty();
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'directory',
+            data: {query: 'directory.nodata',
                    path: path},
             success: function(data) {
                 var root = data.getElementsByTagName("directory");
