@@ -49,6 +49,13 @@ function kiosk_page($addr) {
         $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time().' WHERE address = :address');
         $stmt->execute(array(':address' => $addr));
         if (@$row['page']) {
+          $ex = explode('#', $row['page'], 2);
+          if (count($ex) > 1) {
+            $row['page'] = $ex[0];
+            $row['params'] = $ex[1];
+          } else {
+            $row['params'] = '';
+          }
           return $row;
         }
         // else row exists, but no page set

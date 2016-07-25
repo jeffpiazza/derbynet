@@ -7,7 +7,9 @@ require_once('inc/kiosks.inc');
 if (isset($_GET['page'])) {
   require($_GET['page']);
 } else {
-  $kiosk_page = kiosk_page(address_for_current_kiosk());
-  require($kiosk_page['page']);
+  $kpage = kiosk_page(address_for_current_kiosk());
+  // For kiosk pages that use parameters:
+  $params = $kpage['params'];
+  require($kpage['page']);
 }
 ?>
