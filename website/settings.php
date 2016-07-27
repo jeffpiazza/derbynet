@@ -36,7 +36,7 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
 
 <div class="block_buttons">
 <form id="settings_form">
-  <input type="hidden" name="action" value="settings.writb"/>
+  <input type="hidden" name="action" value="settings.write"/>
 
   <div class="settings_group">
     <div class="settings_group_image">
