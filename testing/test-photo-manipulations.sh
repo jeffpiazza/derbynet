@@ -4,20 +4,8 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
-    tput setaf 2  # green text
-    echo Skipping photo manipulation tests "(not localhost)"
-    tput setaf 0  # black text
-    exit 0
-fi
-
-# tmpdir=`mktemp -d 2>/dev/null || mktemp -d /tmp/photo_uploads.XXXXXXXX`
-tmpdir=`mktemp -d /tmp/photo_uploads.XXXXXXXX`
-chmod 777 $tmpdir
-
 `dirname $0`/login-coordinator.sh "$BASE_URL"
 
-curl_post action.php "action=settings.write&photo-dir=$tmpdir" | check_success
 curl_post action.php "action=settings.write&photo-width=188&photo-height=250" | check_success
 
 user_login_crew
@@ -48,6 +36,3 @@ curl_photo head/file/cropped/ISO_12233-reschart.jpg/$RANDOM cd9d674652844e7f7cdd
 # curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM f7392996d5d93207b571a2768eea9e2e
 # PHP 5.5.30:
 curl_photo head/file/display/ISO_12233-reschart.jpg/$RANDOM 6799c28e9dfee5e1372e0231113c8652
-
-# Clean up temporary directory
-rm -rf $tmpdir

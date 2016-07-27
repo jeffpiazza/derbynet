@@ -6,8 +6,7 @@ source `dirname $0`/common.sh
 
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=run-sql&script=schema" | check_success
-curl_post action.php "action=run-sql&script=update-schema" | check_success
+`dirname $0`/reset-database.sh $BASE_URL
 
 curl_post action.php "action=import-one-result&class=Tiger&round=1&heat=1&lane=1&firstname=Matthew&lastname=Glennon&carnumber=105&finishtime=3.936&finishplace=3&completed=2015-03-08%2018:35:44" | check_success
 curl_post action.php "action=import-one-result&class=Tiger&round=1&heat=1&lane=3&firstname=Burt&lastname=Desrosier&carnumber=303&finishtime=3.313&finishplace=2&completed=2015-03-08%2018:35:44" | check_success

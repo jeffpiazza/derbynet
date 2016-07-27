@@ -6,41 +6,9 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-touch /tmp/cleanup
-rm -rf /tmp/headshots* /tmp/carphotos* /tmp/cleanup
-
-# PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/headshots.XXXXXXXX`
-PHOTO_DIR=`mktemp -d /tmp/headshots.XXXXXXXX`
-# Need world write access to allow web host to create subfolders
-chmod 777 "$PHOTO_DIR"
-cp `dirname $0`/data/headshots/Cub* "$PHOTO_DIR"
-cp `dirname $0`/data/headshots/head* "$PHOTO_DIR"
-
-# CAR_PHOTO_DIR=`mktemp -d 2>/dev/null || mktemp -d /tmp/carphotos.XXXXXXXX`
-CAR_PHOTO_DIR=`mktemp -d /tmp/carphotos.XXXXXXXX`
-chmod 777 "$CAR_PHOTO_DIR"
-cp `dirname $0`/data/carphotos/Car* "$CAR_PHOTO_DIR"
-
-if [ ! `echo "$BASE_URL" | grep -i localhost` ]; then
-    tput setaf 2  # green text
-    echo Skipping photo assignment tests "(not localhost)"
-    tput setaf 0  # black text
-    exit 0
-fi
-
-if [ ! -d "$PHOTO_DIR" ]; then
-    tput setaf 2  # green text
-    echo Skipping photo assignment tests "(no photo directory)"
-    tput setaf 0  # black text
-    exit 0
-fi
-
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success
-curl_post action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_success
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
-curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
 curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1234.jpg" | check_failure
 # For demo purposes, we want at least one car photo assigned early in the process
