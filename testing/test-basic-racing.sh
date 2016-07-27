@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=write-settings&n-lanes=4" | check_success
+curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
