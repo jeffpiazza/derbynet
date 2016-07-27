@@ -6,8 +6,8 @@ source `dirname $0`/common.sh
 
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=write-settings&use-master-sched-checkbox=1&use-master-sched=1" | check_success
-curl_post action.php "action=write-settings&n-lanes=4" | check_success
+curl_post action.php "action=settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_success
+curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
 ## Check in just two racers from one den, and everyone from another den.
 ## What happens if only two dens get scheduled when racing starts?

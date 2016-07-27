@@ -17,8 +17,8 @@ chmod 777 $tmpdir
 
 `dirname $0`/login-coordinator.sh "$BASE_URL"
 
-curl_post action.php "action=write-settings&photo-dir=$tmpdir" | check_success
-curl_post action.php "action=write-settings&photo-width=188&photo-height=250" | check_success
+curl_post action.php "action=settings.write&photo-dir=$tmpdir" | check_success
+curl_post action.php "action=settings.write&photo-width=188&photo-height=250" | check_success
 
 user_login_crew
 

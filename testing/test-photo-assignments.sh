@@ -37,10 +37,10 @@ fi
 
 `dirname $0`/login-coordinator.sh $BASE_URL
 
-curl_post action.php "action=write-settings&photo-dir=$PHOTO_DIR" | check_success
-curl_post action.php "action=write-settings&car-photo-dir=$CAR_PHOTO_DIR" | check_success
-curl_post action.php "action=write-settings&n-lanes=4" | check_success
-curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
+curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success
+curl_post action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_success
+curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
 
 
 curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1234.jpg" | check_failure

@@ -148,7 +148,7 @@ $(document).bind("mobileinit", function() {
 
 <div id='replay_settings_modal' class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="write-settings"/>
+    <input type="hidden" name="action" value="settings.write"/>
 
     <label for="replay-skipback">Duration of replay, in seconds:</label>
     <!-- Could be any decimal value... -->

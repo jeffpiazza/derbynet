@@ -12,8 +12,8 @@ source `dirname $0`/common.sh
 while true ; do
   curl_post action.php "action=run-sql&script=schema" | check_success
   curl_post action.php "action=run-sql&script=update-schema" | check_success
-  curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
-  curl_post action.php "action=write-settings&photo-width=180&photo-height=240" | check_success
+  curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
+  curl_post action.php "action=settings.write&photo-width=180&photo-height=240" | check_success
 
   # kiosk page will re-poll every 5s
   sleep 6s
@@ -27,7 +27,7 @@ while true ; do
   ########## Slideshow ##############
   curl_post action.php "action=assign-kiosk&all=kiosks/slideshow.kiosk" | check_success
 
-  curl_post action.php "action=write-settings&n-lanes=4" | check_success
+  curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
   `dirname $0`/checkin-all.sh "$BASE_URL"
   sleep 15s
