@@ -1,0 +1,36 @@
+
+.control_group {
+  border: 3px solid #023882;
+  margin:5px;
+  padding: 10px;
+  position: relative;  /* Create a positioning context */
+ }
+
+.kiosk-ident,
+.standings-control .round-select  {
+    display: inline-block;
+    vertical-align: top;
+    width: 485px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.kiosk-select,
+.standings-control .reveal {
+    margin-left: 485px;
+    min-height: 175px;
+}
+
+.kiosk_control_name {
+    font-weight: bold;
+}
+
+
+.kiosk_control .de-emphasize {
+    font-size: 80%;
+}
+
+.kiosk_control .last_contact {
+    font-size: 100%;
+}

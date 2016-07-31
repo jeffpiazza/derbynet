@@ -800,11 +800,7 @@ function process_coordinator_poll_response(data) {
 
     generate_replay_state_group(parse_replay_state(data));
 
-    generate_kiosk_controls(parse_kiosk_pages(data), parse_kiosks(data));
-
     generate_current_heat_racers(parse_racers(data), current);
-
-    $("#kiosk_control_group").trigger("create");
 }
 
 function coordinator_poll() {

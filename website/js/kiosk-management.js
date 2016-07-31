@@ -6,7 +6,7 @@
 // ignored.  To combat this, we only update the kiosk groups when
 // there's a detectable change, and for that, we keep a hash of what
 // the last state of the kiosk data was.
-g_kiosk_hash = 0;
+g_kiosk_hash = -1;
 
 function hash_string(hash, str) {
 	for (i = 0; i < str.length; i++) {
@@ -18,6 +18,7 @@ function hash_string(hash, str) {
 }
 
 function generate_kiosk_controls(pages, kiosks) {
+    var standings = false;
     var hash = 0;
     for (var i = 0; i < kiosks.length; ++i) {
         var kiosk = kiosks[i];
@@ -25,11 +26,20 @@ function generate_kiosk_controls(pages, kiosks) {
         hash = hash_string(hash, kiosk.address);
         hash = hash_string(hash, kiosk.last_contact);
         hash = hash_string(hash, kiosk.assigned_page);
+        // TODO Obviously, testing against this naked path name is undesirable.
+        if (kiosk.assigned_page == 'kiosks/standings.kiosk') {
+            standings = true;
+        }
     }
     if (hash != g_kiosk_hash) {
+        $(".standings-control").toggleClass("hidden", !standings);
         $("#kiosk_control_group").empty();
-        for (var i = 0; i < kiosks.length; ++i) {
-            generate_kiosk_control_group(i, kiosks[i], pages);
+        if (kiosks.length == 0) {
+            $("#kiosk_control_group").append("<h3>No kiosks are presently registered.</h3>");
+        } else {
+            for (var i = 0; i < kiosks.length; ++i) {
+                generate_kiosk_control_group(i, kiosks[i], pages);
+            }
         }
         g_kiosk_hash = hash;
     }
@@ -88,37 +98,42 @@ function parse_kiosks(data) {
 }
 
 function generate_kiosk_control_group(index, kiosk, pages) {
-    var div = $("<div class=\"block_buttons\"/>");
-    var elt = $("<div class=\"control_group kiosk_control\"/>");
+  var div = $("<div class=\"block_buttons\"/>");
+  var elt = $("<div class=\"control_group kiosk_control\"/>");
 
-    elt.append("<p>Kiosk <span class=\"kiosk_control_name\"></span>"
+  var ident = $("<div class='kiosk-ident'/>");
+  ident.append("<p>Kiosk <span class=\"kiosk_control_name\"></span>"
                + " <span class=\"kiosk_control_address\"></span>"
                + "</p>");
-    elt.find(".kiosk_control_name").text(kiosk.name);
-    elt.find(".kiosk_control_address").text(kiosk.address);
-
-    elt.append("<p class=\"last_contact\">Last contact: " + kiosk.last_contact + "</p>");
-    elt.append("<label for=\"kiosk-page-" + index + "\">Display:</label>");
-    var sel = $("<select name=\"kiosk-page-" + index + "\"" 
-                + " data-kiosk-address=\"" + kiosk.address + "\"" 
-                + " onchange=\"handle_assign_kiosk_page_change(this)\""
-                + "/>");
-    for (var i = 0; i < pages.length; ++i) {
-        opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
-        if (kiosk.assigned_page == pages[i].path) {
-            opt.prop("selected", true);
-        }
-        sel.append(opt);
-    }
-
-    sel.appendTo(elt);
-    elt.append('<input type="button" data-enhanced="true"'
+  ident.find(".kiosk_control_name").text(kiosk.name);
+  ident.find(".kiosk_control_address").text(kiosk.address);
+  ident.find(".kiosk_control_address").toggleClass("de-emphasize", kiosk.name.length > 0);
+  ident.append('<input type="button" data-enhanced="true"'
                + ' onclick="show_kiosk_naming_modal(\''
                + kiosk.address.replace(/"/g, '&quot;').replace(/'/, "\\'")
                + '\', \'' + kiosk.name.replace(/"/g, '&quot;').replace(/'/, "\\'")
                + '\')"'
                + ' value="Assign Name"/>');
+  ident.append("<p class=\"last_contact\">Last contact: " + kiosk.last_contact + "</p>");
+  ident.appendTo(elt);
 
-    elt.appendTo(div);
-    div.appendTo("#kiosk_control_group");
+  var select_div = $("<div class='kiosk-select'/>");
+  select_div.append("<label for=\"kiosk-page-" + index + "\">Displaying:</label>");
+  var sel = $("<select name=\"kiosk-page-" + index + "\"" 
+              + " data-kiosk-address=\"" + kiosk.address + "\"" 
+              + " onchange=\"handle_assign_kiosk_page_change(this)\""
+              + "/>");
+  for (var i = 0; i < pages.length; ++i) {
+    opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
+    if (kiosk.assigned_page == pages[i].path) {
+      opt.prop("selected", true);
+    }
+    sel.append(opt);
+  }
+
+  sel.appendTo(select_div);
+  select_div.appendTo(elt);
+
+  elt.appendTo(div);
+  div.appendTo("#kiosk_control_group");
 }

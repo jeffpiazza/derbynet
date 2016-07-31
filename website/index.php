@@ -28,19 +28,30 @@ require_once('inc/schema_version.inc');
 
 <div class="block_buttons">
 
-<?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { ?>
+<?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="coordinator.php">
   <input type="submit" value="Race Dashboard"/>
 </form>
 <br/>
+<form method="link" action="kiosk-dashboard.php">
+  <input type="submit" value="Kiosk Dashboard"/>
+</form>
+<br/>
 <?php } ?>
 
-<?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { ?>
+<?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="awards-dashboard.php">
   <input type="submit" value="Awards Dashboard"/>
 </form>
 <br/>
 <?php } ?>
+ 
+<?php
+if ($need_spacer) {
+  $need_spacer = false;
+  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+}
+?>
 
 <?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="checkin.php">
@@ -84,22 +95,6 @@ if ($need_spacer) {
 <br/>
  <?php } ?>
 
-<div class="index_spacer">&nbsp;</div>
-
-<?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="standings.php">
-  <input type="submit" value="Standings"/>
-</form>
-<br/>
-<?php } ?>
-
- <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
-<form method="link" action="export.php">
-  <input type="submit" value="Exported Results"/>
-</form>
-<br/>
- <?php } ?>
-
 <?php if ($two_columns) { ?>
 </div>
 </div>
@@ -135,6 +130,22 @@ if ($need_spacer) {
 </form>
 <br/>
 <?php } ?>
+
+<div class="index_spacer">&nbsp;</div>
+
+<?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
+<form method="link" action="standings.php">
+  <input type="submit" value="Standings"/>
+</form>
+<br/>
+<?php } ?>
+
+ <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
+<form method="link" action="export.php">
+  <input type="submit" value="Exported Results"/>
+</form>
+<br/>
+ <?php } ?>
 
 <?php
 if ($need_spacer) {
