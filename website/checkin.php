@@ -63,18 +63,8 @@ function column_header($text, $o) {
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript">
-// We're using jQuery Mobile for its nice mobile/tablet-friendly UI
-// elements.  By default, jQM also wants to hijack page loading
-// functionality, and perform page loads via ajax, a "service" we
-// don't really want.  Fortunately, it's possible to turn that stuff
-// off.
-$(document).bind("mobileinit", function() {
-				   $.extend($.mobile, {
-					 ajaxEnabled: false
-					 });
-				 });
-
 g_order = '<?php echo $order; ?>';
 </script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>

@@ -11,16 +11,7 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/import-roster.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript">
-// Turn off jQuery Mobile page loading hijack functionality, which
-// tries to perform page loads via ajax, a "service" we don't really want.
-// Fortunately, it's possible to turn that stuff off.
-$(document).bind("mobileinit", function() {
-				   $.extend($.mobile, {
-					 ajaxEnabled: false
-					 });
-				 });
-</script>
+<script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>

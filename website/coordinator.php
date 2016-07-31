@@ -13,18 +13,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
-<script type="text/javascript">
-// We're using jQuery Mobile for its nice mobile/tablet-friendly UI
-// elements.  By default, jQM also wants to hijack page loading
-// functionality, and perform page loads via ajax, a "service" we
-// don't really want.  Fortunately, it's possible to turn that stuff
-// off.
-$(document).bind("mobileinit", function() {
-                                   $.extend($.mobile, {
-                                         ajaxEnabled: false
-                                         });
-                                 });
-</script>
+<script type="text/javascript" src="js/mobile-init.js"></script>
 <!-- For flipswitch and select elements: -->
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>

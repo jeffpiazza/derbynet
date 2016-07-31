@@ -22,6 +22,7 @@ require_once('inc/standings.inc');
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/standings.js"></script>
 <script type="text/javascript">
