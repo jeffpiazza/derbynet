@@ -202,6 +202,7 @@
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">
             <include name="**"/>
+            <exclude name="local/**"/>
         </fileset>
     </copy>
     <exec executable="/usr/bin/pkgbuild">

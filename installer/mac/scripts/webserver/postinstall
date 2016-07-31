@@ -1,5 +1,5 @@
 #! /bin/sh
 
 ./maybe-create-local-directory.sh
-./apache-activate-php.sh
+./apache-updates.sh
 ./maybe-rewrite-index-html.sh
