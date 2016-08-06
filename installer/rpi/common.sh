@@ -1,6 +1,7 @@
 #! /bin/sh
 
 SERVERNAME=derby.net
+MAX_UPLOAD_SIZE=8M
 
 APT_UPDATED=0
 apt_get_install() {
@@ -12,10 +13,12 @@ apt_get_install() {
 }
 
 write_derbynet_snippet() {
-    cat <<EOF >/etc/nginx/derbynet/server-snippet.conf
+    cat <<EOF | sed -e "s/MAX_UPLOAD_SIZE/$MAX_UPLOAD_SIZE/" >/etc/nginx/derbynet/server-snippet.conf
   root /var/www/html/derbynet;
 
   index index.php;
+
+  client_max_body_size MAX_UPLOAD_SIZE;
 
   location ~ \.php(/.*)?$ {
     include snippets/fastcgi-php.conf;

@@ -16,6 +16,11 @@ fi
 ( dpkg -l | grep '^.i' | grep php5 > /dev/null) || \
     apt_get_install php5-fpm php5-curl php5-gd php5-cli php5-mysql php5-sqlite
 
+######## PHP config
+
+sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" /etc/php5/fpm/php.ini
+service php5-fpm restart
+
 ######## Disable vanilla default site
 rm -f /etc/nginx/sites-enabled/default 2>/dev/null
 
