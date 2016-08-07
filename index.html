@@ -74,44 +74,9 @@
         standard web server model.  (Don't confuse DerbyNet with the commercial
         GPRM product, "DerbyWeb.")</p>
 
-<p>DerbyNet is:</p>
-<ul>
-<li>Distributed: Support as many check-in stations as you need, and as many
-  information presentations.  You host a small, local web server on one laptop or computer; other
-  computers, tablets, laptops, TV displays, or even phones connect to that
-  computer to access live race information.</li>
-<li>Free: There's nothing to pay for.  There are no licensing costs or subscription fees, no payments at all.</li>
-<li>Open Source: If you'd like the software to work a little differently, or look a little differently, you're welcome to change it.  (Some skill required, but not necessarily a lot.)</li>
-</ul>
+<img src="images/derby-room.png"/>
 
-<p>DerbyNet supports two primary usage scenarios:</p>
-<ul>
-<li>Installed alongside GrandPrix Race Manager (Pro or Lite or whatever), as an
-  enhancement that allows additional capabilities not offered by the GPRM core
-  product.</li>
-  
-<li>Installed on its own, providing soup-to-nuts race management capabilities,
-  including interacting with timer hardware.  DerbyNet can run stand-alone on
-  Mac OS X and Linux, as well as on Windows.  Standalone DerbyNet also supports
-  the included Mac Replay application, providing "instant replay" video
-  capabilities.</li>
-  
-</ul>
-
-<p>Both forms feature support for local digital signage (also called information kiosks), typically a web browser displayed on a TV, that connects to the web server and presents information about the race, check-ins, standings, etc.</p>
-
-<h3>
-<a id="use-derbynet-alone-or-combine-with-grandprix-race-manager" class="anchor" href="#use-derbynet-alone-or-combine-with-grandprix-race-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use DerbyNet Alone, or Combine with GrandPrix Race Manager</h3>
-
-<p>It can be used standalone (directly communicating with your electronic timer),
-or run alongside and as a supplement to GrandPrix Race Manager
-(<a href="http://grandprix-software-central.com">http://grandprix-software-central.com</a>).
-(Please note that DerbyNet is not endorsed or supported by Lisano Enterprises, LLC., the makers of GrandPrix Race Manager.)</p>
-
-<h3>
-<a id="use-multiple-clients-for-a-seamless-event" class="anchor" href="#use-multiple-clients-for-a-seamless-event" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use Multiple Clients for a Seamless Event</h3>
-
-<p>Being web server based, DerbyNet lets you run multiple clients (browsers) in
+<p>Being web-server based, DerbyNet lets you run multiple clients (browsers) in
 multiple locations to access the same database.  A typical deployment might have:</p>
 
 <ul>
@@ -127,12 +92,56 @@ current heat and the heat results;</p></li>
 additional race details and statistics, updated in real time.</p></li>
 </ul>
 
-<h3>
-<a id="derbynet-runs-on-mac-linux-and-windows" class="anchor" href="#derbynet-runs-on-mac-linux-and-windows" aria-hidden="true"><span class="octicon octicon-link"></span></a>DerbyNet Runs on Mac, Linux, and Windows</h3>
+<p>DerbyNet is:</p>
+<ul>
+  <li>Free: There's nothing to pay for.  There are no licensing costs or
+  subscription fees, no payments at all.</li>
 
-<p>The heart of DerbyNet is implemented as a standards-compliant web server, which you
-can host on nearly any platform (Mac, Linux, or Windows).  We provide step-by-step
-directions for setting up your web server.</p>
+  <li>Distributed: Support as many check-in stations as you need, and as many
+  information presentations.  You host a small, local web server on one laptop
+  or computer; other computers, tablets, laptops, TV displays, or even phones
+  connect to that computer to access live race information.
+  <p style="margin-left: 20px;"><b>Update:</b> The web server can be hosted on a
+  Raspberry Pi3 for a truly turn-key set-up!</p>
+  </li>
+
+  <li>Open Source: If you'd like the software to work a little differently, or
+  look a little differently, you're welcome to change it.  (Some skill required,
+  but not necessarily a lot.)</li>
+</ul>
+
+<h3>
+<a id="use-derbynet-alone-or-combine-with-grandprix-race-manager" class="anchor" href="#use-derbynet-alone-or-combine-with-grandprix-race-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use DerbyNet Alone, or Combine with GrandPrix Race Manager</h3>
+
+<p>DerbyNet supports two primary usage scenarios:</p>
+<ul>
+
+  <li>Installed on its own, providing soup-to-nuts race management capabilities,
+  including interacting with timer hardware.  DerbyNet can run stand-alone on
+  Mac OS X, Linux, and Windows.  Standalone DerbyNet also supports
+  the included Mac Replay application, providing "instant replay" video
+  capabilities.</li>
+  
+  <li>Installed alongside GrandPrix Race Manager (Pro or Lite or whatever), as
+  an enhancement that allows additional capabilities not offered by the GPRM
+  core product. (Please note that DerbyNet is not endorsed or supported by
+  Lisano Enterprises, LLC., the makers of GrandPrix Race Manager.)</li>
+  
+</ul>
+
+<p>Both forms feature support for local digital signage (also called information
+kiosks), typically a web browser displayed on a TV, that connects to the web
+server and presents information about the race, check-ins, standings, etc.</p>
+
+<h3>
+<a id="derbynet-runs-on-mac-linux-and-windows" class="anchor"
+href="#derbynet-runs-on-mac-linux-and-windows" aria-hidden="true"><span
+class="octicon octicon-link"></span></a>DerbyNet Runs on Mac, Linux, Windows,
+and Raspberry Pi</h3>
+
+<p>The heart of DerbyNet is implemented as a standards-compliant web server,
+which you can host on nearly any platform (Mac, Linux, Windows, or Raspberry
+Pi).  We provide step-by-step directions for setting up your web server.</p>
 
 <p>Once the web server is set up, you can use anything that supports a browser (laptops,
 tablets, smart TVs) to connect to the server and display or manipulate (with passwords)
