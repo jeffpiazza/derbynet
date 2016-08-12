@@ -80,34 +80,53 @@
 multiple locations to access the same database.  A typical deployment might have:</p>
 
 <ul>
-<li><p>Volunteers at the check-in desk performing registration and inspection tasks, using
-laptops or tablets to update the state of the roster in the database in real time;</p></li>
-<li><p>One or more stations capturing photos of racers and/or race cars;</p></li>
-<li><p>An event dashboard running on the race coordinator's tablet, from which s/he
-can see the overall state of the event, control information displays, generate
-racing schedules, and directly control racing by group;</p></li>
-<li><p>A main race display projected onto a large screen showing the entrants in the
-current heat and the heat results;</p></li>
-<li><p>Supplemental information displays ("kiosks" or digital signage) providing
-additional race details and statistics, updated in real time.</p></li>
+
+  <li><p>Laptops or tablets at the check-in desk updating the state of the
+  roster in the database in real time;</p></li>
+
+  <li><p>One or more stations capturing photos of racers and/or race cars;</p></li>
+
+  <li><p>An event dashboard running on the race coordinator's tablet, from which
+  s/he can see the overall state of the event, control information displays,
+  generate racing schedules, and directly control racing by group;</p></li>
+
+  <li><p>DerbyTimer, a small cross-platform program forming the link between the
+  track timer and the web server.</p></li>
+
+  <li><p>A main race display projected onto a large screen showing the entrants in the
+  current heat and the heat results;</p></li>
+  
+  <li><p>A Mac-connected webcam triggers an "instant replay" immediately upon each
+  heat's finish.  (Instant replay is unfortunately a Mac-only feature for
+  now.)</p></li>
+  
+  <li><p>Smart TVs acting as supplemental information displays ("kiosks" or
+  digital signage) providing additional race details and statistics, updated in
+  real time.</p></li>
+
 </ul>
 
 <p>DerbyNet is:</p>
 <ul>
-  <li>Free: There's nothing to pay for.  There are no licensing costs or
-  subscription fees, no payments at all.</li>
+  <li><p><b>Free:</b> There's nothing to pay for.  There are no licensing costs or
+  subscription fees, no payments at all.</p></li>
 
-  <li>Distributed: Support as many check-in stations as you need, and as many
-  information presentations.  You host a small, local web server on one laptop
-  or computer; other computers, tablets, laptops, TV displays, or even phones
-  connect to that computer to access live race information.
-  <p style="margin-left: 20px;"><b>Update:</b> The web server can be hosted on a
-  Raspberry Pi3 for a truly turn-key set-up!</p>
+  <li><p><b>Distributed:</b> Support as many check-in stations as you need, and as many
+  information presentations.  Computers, tablets, laptops, TV displays, or even
+  phones connect to a small, local web server, running on one laptop or
+  computer, to access live race information.</p>
+
+  <p style="margin-left: 20px;"><b>Update:</b> The web server can be hosted on a Raspberry Pi3 for a
+  truly turn-key set-up!</p>
   </li>
 
-  <li>Open Source: If you'd like the software to work a little differently, or
+  <li><p><b>Multi-platform:</b> Anything that has a browser can connect to
+  DerbyNet.  The DerbyNet web server can be hosted on Mac, Windows, Linux --
+  even a Raspberry Pi!</p></li>
+
+  <li><p><b>Open Source:</b> If you'd like the software to work a little differently, or
   look a little differently, you're welcome to change it.  (Some skill required,
-  but not necessarily a lot.)</li>
+  but not necessarily a lot.)</p></li>
 </ul>
 
 <h3>
@@ -153,7 +172,28 @@ to GPRM.</p>
 
 </section>
 
-      <footer>
+<footer>
+<!--
+          <a href="screenshots/coordinator.png" target="_blank">
+          <figure>
+          <img src="thumbs/coordinator-thumb.png"/>
+          <figcaption>Coordinator's Dashboard</figcaption>
+          </figure>
+          </a>
+          
+          <a href="screenshots/now-racing.png" target="_blank">
+          <figure>
+            <img src="thumbs/now-racing-thumb.png" max-width: "190"/>
+            <figcapture>Main Display</figcapture>
+          </figure>
+        </a>
+          <a href="screenshots/results-by-racer.png" target="_blank">
+          <figure>
+          <img src="thumbs/results-by-racer-thumb.png"/>
+          <figcapture>Supplemental Display</figcapture>
+          </figure>
+        </a>
+-->
         <p>Project maintained by <a href="https://github.com/jeffpiazza">jeffpiazza</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
       </footer>
