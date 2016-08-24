@@ -26,19 +26,15 @@ require_once('inc/standings.inc');
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/standings.js"></script>
 <script type="text/javascript">
+// This bit of javascript has to be here and not standings.js because of the PHP portions
 $(function () {
     // We're initially displaying the "All" case.
     $("tr").not(".headers").addClass('hidden');
-    $(select_standings(false, '<?php echo supergroup_label(); ?>')).removeClass('hidden');
+    $(select_standings(false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
 
     $("select").on("change", function(event) {
-        $("tr").not(".headers").addClass('hidden');
-        var selection = $(this).find("option:selected");
-        if (typeof selection.attr('data-roundid') == typeof undefined || selection.attr('data-roundid') === false) {
-          $(select_standings(false, '<?php echo supergroup_label(); ?>')).removeClass('hidden');
-        } else {
-          $(select_standings(selection.attr('data-roundid'), selection.text())).removeClass('hidden');
-        }
+        standings_select_on_change($(this).find("option:selected"),
+                                   <?php echo json_encode(supergroup_label()); ?>);
       });
 });
 </script>
@@ -59,6 +55,7 @@ $(function () {
 </head>
 <body>
 <?php $banner_title = 'Race Standings'; require('inc/banner.inc'); ?>
+<div class="block_buttons">
 <div class="center-select">
 <h3><?php echo read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time" : "Averaging all heat times"; ?></h3>
 <select>
@@ -71,6 +68,7 @@ $(function () {
     }
     ?>
 </select>
+</div>
 </div>
 <table class="main_table">
 <?php

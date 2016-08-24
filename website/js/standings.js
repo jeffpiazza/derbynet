@@ -18,3 +18,13 @@ function select_standings(roundid, group_name) {
     return "tr[data-roundid='" + roundid + "']";
   }
 }
+
+function standings_select_on_change(selection, supergroup_label) {
+  $("tr").not(".headers").addClass('hidden');
+  if (typeof selection.attr('data-roundid') == typeof undefined ||
+      selection.attr('data-roundid') === false) {
+    $(select_standings(false, supergroup_label)).removeClass('hidden');
+  } else {
+    $(select_standings(selection.attr('data-roundid'), selection.text())).removeClass('hidden');
+  }
+}
