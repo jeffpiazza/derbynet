@@ -65,7 +65,7 @@ function curl_photo() {
     fi
  }   
 
-function curl_snapshot() {
+function curl_put_snapshot() {
     echo ' ' ' ' ' ' put-snapshot $1 >&2
     echo    >> $OUTPUT_CURL
     echo put-snapshot $1 >> $OUTPUT_CURL

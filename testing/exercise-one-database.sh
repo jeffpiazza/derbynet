@@ -50,11 +50,11 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     user_logout
-    curl_snapshot $SNAPSHOT | check_failure
+    curl_put_snapshot $SNAPSHOT | check_failure
 
     if [ "x$SKIP_PUT_SNAPSHOT" == "x" ]; then
         user_login_coordinator
-        curl_snapshot $SNAPSHOT | check_success
+        curl_put_snapshot $SNAPSHOT | check_success
     else
         tput setaf 2  # green text
         echo Skipping snapshot put
