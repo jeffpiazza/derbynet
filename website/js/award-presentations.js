@@ -1,29 +1,34 @@
-g_current_award_key = '';
+var g_count = 0;
+var AwardPoller = {
+  current_award_key: null,
+  revealed: true,
 
-g_action_url = 'action.php';
-
-function poll_for_current_award() {
-    $.ajax(g_action_url,
+  query_for_current_award: function() {
+    $.ajax('action.php',
            {type: 'GET',
             data: {query: 'award.current'},
             success: function(data) {
-                setTimeout(poll_for_current_award, 500 /* ms. */);
-                process_current_award(data);
+              AwardPoller.queue_next_query();
+              AwardPoller.process_current_award(data);
             },
             error: function() {
-                setTimeout(poll_for_current_award, 500 /* ms. */);
+              AwardPoller.queue_next_query();
             }
            });
-}
+  },
 
-$(function() { poll_for_current_award(); });
-
-function parse_award(data) {
+  queue_next_query: function() {
+    setTimeout(function() { AwardPoller.query_for_current_award(); }, 500 /* ms. */);
+  },
+  
+  parse_award: function(data) {
     var award_xml = data.getElementsByTagName('award')[0];
-     if (!award_xml) {
-        return false;
+    if (!award_xml) {
+      return false;
     }
+    console.log("Reveal = " + award_xml.getAttribute('reveal'));
     return {key: award_xml.getAttribute('key'),
+            reveal: award_xml.getAttribute('reveal') == 'true',
             awardname: award_xml.getAttribute('awardname'),
             carnumber: award_xml.getAttribute('carnumber'),
             carname: award_xml.getAttribute('carname'),
@@ -32,68 +37,78 @@ function parse_award(data) {
             subgroup: award_xml.getAttribute('subgroup'),
             headphoto: award_xml.getAttribute('headphoto'),
             carphoto: award_xml.getAttribute('carphoto')};
-}
+  },
 
-function process_current_award(data) {
-    var award = parse_award(data);
+  process_current_award: function(data) {
+    var award = this.parse_award(data);
     if (!award) {
-        console.log("Returning early because there's no current award");
-        console.log(data);
-        $("#firstname").text("--");
-        $("#lastname").text("--");
-        return;
+      $("#firstname").text("--");
+      $("#lastname").text("--");
+      return;
     }
 
-    if (award.key != g_current_award_key) {
-        $(".reveal").hide();
+    if (award.key != this.current_award_key) {
+      $(".reveal").hide();
 
-        $("#awardname").text(award.awardname);
-        $("#carnumber").text(award.carnumber);
-        $("#firstname").text(award.firstname);
-        $("#lastname").text(award.lastname);
-        if (award.carname && award.carname.length > 0) {
-            $("#carname").text(award.carname);
-            $("#carname").css('display', 'block');
-        } else {
-            $("#carname").css('display', 'none');
-        }
-        if (award.subgroup && award.subgroup.length > 0) {
-            $("#subgroup").text(award.subgroup);
-            $("#subgroup").css('display', 'block');
-        } else {
-            $("#subgroup").css('display', 'none');
-        }
-        // Need to account for the height of the award-racer text, even though
-        // it's presently hidden.
-        var previousCss  = $("#award-racer-text").attr("style");
-        $("#award-racer-text")
-            .css({
-                position:   'absolute',
-                visibility: 'hidden',
-                display:    'block'
-            });
-        var textHeight = $("#award-racer-text").height();
-        $("#award-racer-text").attr("style", previousCss ? previousCss : "");
+      $("#awardname").text(award.awardname);
+      $("#carnumber").text(award.carnumber);
+      $("#firstname").text(award.firstname);
+      $("#lastname").text(award.lastname);
+      if (award.carname && award.carname.length > 0) {
+        $("#carname").text(award.carname);
+        $("#carname").css('display', 'block');
+      } else {
+        $("#carname").css('display', 'none');
+      }
+      if (award.subgroup && award.subgroup.length > 0) {
+        $("#subgroup").text(award.subgroup);
+        $("#subgroup").css('display', 'block');
+      } else {
+        $("#subgroup").css('display', 'none');
+      }
+      // Need to account for the height of the award-racer text, even though
+      // it's presently hidden.
+      var previousCss  = $("#award-racer-text").attr("style");
+      $("#award-racer-text")
+        .css({
+          position:   'absolute',
+          visibility: 'hidden',
+          display:    'block'
+        });
+      var textHeight = $("#award-racer-text").height();
+      $("#award-racer-text").attr("style", previousCss ? previousCss : "");
 
-        // TODO Literal 10 vaguely accounts for margins, but is basically just a guess.
-        var maxPhotoHeight = $(window).height() - ($("#photos").offset().top + textHeight) - 10;
-        
-        $("#headphoto").empty();
-        $("#headphoto").css('width', $(window).width() / 2 - 10);
-        if (award.headphoto && award.headphoto.length > 0) {
-            $("#headphoto").append("<img src=\"" + award.headphoto + "\"/>");
-            $("#headphoto img").css('max-height', maxPhotoHeight);
-        }
-        $("#carphoto").empty();
-        $("#carphoto").css('width', $(window).width() / 2 - 10);
-        if (award.carphoto && award.carphoto.length > 0) {
-            $("#carphoto").append("<img src=\"" + award.carphoto + "\"/>");
-            $("#carphoto img").css('max-height', maxPhotoHeight);
-        }
-        g_current_award_key = award.key;
-
-        setTimeout(function () {
-            $(".reveal").fadeIn(1000);
-        }, 2000);
+      // TODO Literal 10 vaguely accounts for margins, but is basically just a guess.
+      var maxPhotoHeight = $(window).height() - ($("#photos").offset().top + textHeight) - 10;
+      
+      $("#headphoto").empty();
+      $("#headphoto").css('width', $(window).width() / 2 - 10);
+      if (award.headphoto && award.headphoto.length > 0) {
+        $("#headphoto").append("<img src=\"" + award.headphoto + "\"/>");
+        $("#headphoto img").css('max-height', maxPhotoHeight);
+      }
+      $("#carphoto").empty();
+      $("#carphoto").css('width', $(window).width() / 2 - 10);
+      if (award.carphoto && award.carphoto.length > 0) {
+        $("#carphoto").append("<img src=\"" + award.carphoto + "\"/>");
+        $("#carphoto img").css('max-height', maxPhotoHeight);
+      }
+      this.current_award_key = award.key;
     }
+
+    if (!award.reveal) {
+      $(".reveal").hide();
+      if (g_count == 0) {
+        console.log("Hiding!");
+        console.log(award);
+        ++g_count;
+      }
+    } else if (!this.revealed) {
+      $(".reveal").fadeIn(1000);
+    }
+    this.revealed = award.reveal;
+  }
 }
+
+$(function() { AwardPoller.queue_next_query(); });
+

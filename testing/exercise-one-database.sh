@@ -26,6 +26,7 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     `dirname $0`/test-basic-racing.sh "$BASE_URL"
+    `dirname $0`/test-awards.sh "$BASE_URL" basic
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     # TODO This gives different results depending on library version?
@@ -37,6 +38,7 @@ run_tests() {
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh $BASE_URL
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
+    `dirname $0`/test-awards.sh "$BASE_URL" master
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     # `dirname $0`/test-photo-manipulations.sh "$BASE_URL"

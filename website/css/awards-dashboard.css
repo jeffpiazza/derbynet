@@ -1,0 +1,106 @@
+.center-select {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.center-select h3 {
+  text-align: center;
+}
+
+.listview {
+  position: absolute;
+  top: 200px;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ui-listview > li span {
+  font-size: 16px;
+  font-weight: bold;
+}
+.ui-listview > li p {
+  font-size: 12px;
+}
+
+.ui-listview > li.hidden {
+  height: 0px;
+  padding: 0px 0px 0px 0px;
+}
+li.hidden p {
+  margin: 0px;
+}
+
+/* The presenter div covers the right half of the screen after the listview is
+   positioned absolutely along the left. */
+.presenter {
+  margin-left: 50%;
+  width: 50%;
+  font-size: x-large; /* 24px */
+ }
+
+.presenter h3 {
+    text-align: center;
+}
+
+.presenter h3:first-child {
+    margin-top: 100px;
+}
+
+h3#recipient {
+    margin-top: 100px;
+}
+
+.presenter-inner {
+  margin-left: auto;
+  margin-right: auto;
+  /* Flipswitch is 9.375em or 225px plus 2 * (5px padding + 1px border) = 237px */
+  width: 237px;
+ }
+
+.presenter .ui-flipswitch {
+  /* Leaves a gap around the button within the flipswitch */
+  padding: 5px;
+  width: 9.375em /* 225px */;
+ }
+
+.presenter .ui-btn {
+  /* font-size would otherwise be overridden, and would make the a.ui-btn
+     element too small. */
+  /* width and height are 1.75em, 42px */
+  font-size: x-large;
+ }
+
+.presenter .ui-flipswitch.ui-flipswitch-active {
+  padding-left: 7.7em;
+  /* This width is necessary to clip the "Off" text */
+  width: 45px;
+}
+
+
+/*
+    // Showing: 100px =~ 4em ("on")
+    // Hidden: 83px =~ 3.5em 3.46
+    // a.ui-btn ends up at 42px = 1.75em
+
+    // The flipswitch itself is 9.375em, leaving 7.625em without the button,
+    // less 10px for the left and right padding, 
+
+    // For "on" text, need 4em for the text, so 3.625em remaining.
+    // Place text-indent = - (4em + 3.625em/2) =~ -5.8em
+
+    // For Off text, 7.625 - 3.5 = 4.125em, split in half gives about 2em.
+    // 1.8em seems to look better.
+*/
+
+.ui-flipswitch .ui-btn.ui-flipswitch-on {
+  /* This shoves the "on" text far enough left to be fully hidden 
+     when the switch is off, and centered when the switch is on. */
+  text-indent: -5.8em;
+}
+
+.ui-flipswitch .ui-flipswitch-off {
+  text-indent: 1.8em;
+}

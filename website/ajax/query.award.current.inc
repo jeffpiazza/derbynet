@@ -2,6 +2,7 @@
 <?php
 
 // "Current" award being presented, and whether it's revealed
+// Cold-cache performance on Mac is ~75ms
 
 require_once('inc/photo-config.inc');
 require_once('inc/standings.inc');
@@ -9,6 +10,7 @@ require_once('inc/ordinals.inc');
 
 $key = read_raceinfo('current_award_key', '');
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
+$reveal = read_raceinfo_boolean('reveal_current_award');
 
 // award-<awardid>
 // speed-<place>
@@ -34,11 +36,11 @@ if (count($keys) >= 2) {
       $racerid = $by_class[$classid][$place - 1];
       $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                      array(':classid' => $classid));
-      $awardname = ($place == 1 ? '' : (ordinal($place).' ')).'Fastest in '. /* group_label().' '. */ $classname;
+      $awardname = nth_fastest($place, $classname);
     } else {
       $finishers = top_finishers_overall($place);
       $racerid = $finishers[$place - 1];
-      $awardname = ($place == 1 ? '' : (ordinal($place).' ')).'Fastest in '.supergroup_label();
+      $awardname = nth_fastest_in_pack($place);
     }
 
     if ($racerid > 0) {
@@ -61,7 +63,7 @@ if (isset($stmt)) {
   foreach ($stmt as $row) {
     echo '<award key="'.$key.'"'
       .' awardname="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
-      // TODO .' revealed="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
+      .' reveal="'.($reveal ? "true" : "false").'"'
       .' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"'
       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
       .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
@@ -70,6 +72,7 @@ if (isset($stmt)) {
        ' subgroup="'.htmlspecialchars(@$row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')
     .($row['imagefile'] ? ' headphoto="'.headshots()->url_for_racer($row, 'cropped').'"' : '')
     .($row['carphoto'] ? ' carphoto="'.car_photo_repository()->url_for_racer($row, 'cropped').'"' : '')
+    .' duration="'.(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']).'"'
       .'/>'."\n";
   }
 }

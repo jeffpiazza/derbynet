@@ -141,13 +141,13 @@ function check_heat_ready() {
 
 function expect_count {
 	# Expecting stdin
-	if [ "`grep -c $1`" -ne $2 ]; then
+	if [ "`grep -c "$1"`" -ne $2 ]; then
         test_fails expecting $2 occurrences of $1
 	fi
 }
 
 function expect_one {
-	if [ "`grep -c $1`" -ne 1 ]; then
+	if [ "`grep -c "$1"`" -ne 1 ]; then
         test_fails expecting an occurrence of $1
 	fi
 }
