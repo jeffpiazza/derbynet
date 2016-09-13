@@ -66,14 +66,17 @@ if (have_permission(SET_UP_PERMISSION)) {
 
 
   if ($ok) {
-    // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but ODBC/Access should just ignore it.
-    $options_dump = var_export($options, /* return */ true);
+    // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but other databases
+    // should just ignore it.
+    $options_exported = var_export($options, /* return */ true);
+    $connection_exported = var_export($connection_string, true);
+    $dbuser_exported = var_export($dbuser, true);
+    $dbpass_exported = var_export($dbpass, true);
     $content = <<<END
 <?php
-\$db = new PDO("$connection_string", "$dbuser", "$dbpass",
-               $options_dump);
+\$db = new PDO($connection_exported, $dbuser_exported, $dbpass_exported,
+               $options_exported);
 ?>
-
 END;
   }
 
