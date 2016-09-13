@@ -38,6 +38,7 @@ function on_choose_award(list_item) {
   $("#classname").text(item.data('class'));
   $("#rankname").text(item.data('rank'));
   $(".presenter-inner").removeClass('hidden');
+  $("#kiosk-summary").addClass('hidden');
   $("#reveal-checkbox").prop('checked', false);
   g_changing_awards = true;
   try {
@@ -55,6 +56,21 @@ function on_reveal() {
                    reveal: $("#reveal-checkbox").prop('checked') ? 1 : 0}
            });
   }
+}
+
+function on_clear_awards() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'award.present',
+                 key: '',
+                 reveal: '0'}
+         });
+  $("#awardname").text('');
+  $("#recipient").text('');
+  $("#classname").text('');
+  $("#rankname").text('');
+  $(".presenter-inner").addClass('hidden');
+  $("#kiosk-summary").addClass('hidden');
 }
 
 $(function () {

@@ -15,7 +15,19 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/awards-dashboard.js"></script>
-
+<?php
+    $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
+                                 .' WHERE page LIKE \'%award%present%\'', array());
+    if ($nkiosks == 0) {
+      echo '<script type="text/javascript">'."\n";
+      echo '$(window).load(function() {'."\n";
+      echo '  setTimeout(function() {'."\n";
+      echo '  alert("NOTE: There are NO kiosks ready for award presentation."+'."\n";
+      echo '        "  Selections on this dashboard won\'t have any observable effect.");'."\n";
+      echo '}, 500); });'."\n";
+      echo '</script>'."\n";
+    }
+?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/awards-dashboard.css"/>
 </head>
@@ -246,6 +258,19 @@ foreach ($awards as &$row) {
 
 <div class="presenter">
 
+<div id="kiosk-summary">
+<?php
+    $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
+                                 .' WHERE page LIKE \'%award%present%\'', array());
+    if ($nkiosks == 0) {
+      echo '<h3>NOTE:</h3>';
+      echo '<h3>There are NO kiosks ready for award presentation.</h3>';
+      echo '<p class="moot">Selections on this dashboard won\'t have any observable effect.</p>';
+      echo '<p class="moot">Visit the <a href="kiosk-dashboard.php">Kiosk Dashboard</a> to assign displays.</p>';
+    }
+?>
+</div>
+
 <h3 id="awardname"></h3>
 
 <h3 id="classname"></h3>
@@ -260,6 +285,11 @@ foreach ($awards as &$row) {
         data-off-text="Hidden"
         onchange="on_reveal();"/>
 </div>
+
+<div class="reset-footer block_buttons">
+    <input type="button" data-enhanced="true" value="Clear" onclick="on_clear_awards()"/>
+</div>
+
 </div>
 
 </div>

@@ -53,6 +53,10 @@ h3#recipient {
     margin-top: 100px;
 }
 
+.presenter p.moot {
+    text-align: center;
+}
+
 .presenter-inner {
   margin-left: auto;
   margin-right: auto;
@@ -103,4 +107,11 @@ h3#recipient {
 
 .ui-flipswitch .ui-flipswitch-off {
   text-indent: 1.8em;
+}
+
+.presenter .reset-footer {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    right: 0px;
 }
