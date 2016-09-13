@@ -145,7 +145,7 @@ logger -t channel-match Restarting hostapd
 service hostapd restart
 
 EOF
-
+chmod +x /opt/derbynet/channel-match
 
 cat >/etc/cron.d/channel-match <<EOF
  * * * * * root /opt/derbynet/channel-match
