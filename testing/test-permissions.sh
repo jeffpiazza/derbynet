@@ -61,7 +61,7 @@ curl_post action.php "action=initnumbers" | check_failure
 
 # curl_post action.php "action=login" | check_failure
 curl_post action.php "action=racer.new" | check_failure
-curl_post action.php "action=pass" | check_failure
+curl_post action.php "action=racer.pass" | check_failure
 curl_post action.php "action=photo" | check_failure
 # TODO Replay application registers itself without credentials, a security weakness.
 # curl_post action.php "action=register-replay" | check_failure

@@ -46,9 +46,9 @@ check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" 
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.043976595882954&lane2=3.409014449582755&lane3=3.388110311263697&lane4=2.911083015110213" | check_success
 
 ### Un-checkin a few roundid=3 and re-generate schedule
-curl_post action.php "action=pass&racer=13&value=0" | check_success
-curl_post action.php "action=pass&racer=23&value=0" | check_success
-curl_post action.php "action=pass&racer=33&value=0" | check_success
+curl_post action.php "action=racer.pass&racer=13&value=0" | check_success
+curl_post action.php "action=racer.pass&racer=23&value=0" | check_success
+curl_post action.php "action=racer.pass&racer=33&value=0" | check_success
 curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
 curl_post action.php "action=select-heat&roundid=3&now_racing=1" | check_success

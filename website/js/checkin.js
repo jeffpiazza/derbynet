@@ -16,7 +16,7 @@ function handlechange_passed(cb, racer) {
 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'pass',
+            data: {action: 'racer.pass',
                    racer: racer,
                    value: value},
            });
@@ -184,7 +184,7 @@ function take_snapshot(racerid, photo_base_name) {
 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'pass',
+            data: {action: 'racer.pass',
                    racer: racerid,
                    value: 1},
            });
