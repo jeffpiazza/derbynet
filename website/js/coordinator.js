@@ -146,7 +146,7 @@ function handle_schedule_submit(roundid, rounds) {
     close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'schedule',
+            data: {action: 'schedule.generate',
                    roundid: roundid,
                    nrounds: rounds},
             success: function(data) { process_coordinator_poll_response(data); }
@@ -157,7 +157,7 @@ function handle_reschedule_button(roundid) {
     // TODO: On success... 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'reschedule',
+            data: {action: 'schedule.reschedule',
                    roundid: roundid}});
 }
 
@@ -179,7 +179,7 @@ function handle_unschedule_button(roundid, classname, round) {
         close_modal("#unschedule_modal");
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'unschedule',
+                data: {action: 'schedule.unschedule',
                        roundid: roundid},
                 success: function(data) { process_coordinator_poll_response(data); }
                });

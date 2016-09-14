@@ -66,12 +66,12 @@ function curl_photo() {
  }   
 
 function curl_put_snapshot() {
-    echo ' ' ' ' ' ' put-snapshot $1 >&2
+    echo ' ' ' ' ' ' snapshot.put $1 >&2
     echo    >> $OUTPUT_CURL
-    echo put-snapshot $1 >> $OUTPUT_CURL
+    echo snapshot.put $1 >> $OUTPUT_CURL
     echo    >> $OUTPUT_CURL
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-        -X POST -F snapshot="@$1" -F action=put-snapshot | tee $DEBUG_CURL | \
+        -X POST -F snapshot="@$1" -F action=snapshot.put | tee $DEBUG_CURL | \
     xmllint --format - | tee -a $OUTPUT_CURL
 }
 

@@ -46,7 +46,7 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)
-    curl_get "action.php?query=get-snapshot" > $SNAPSHOT
+    curl_get "action.php?query=snapshot.get" > $SNAPSHOT
 
     `dirname $0`/test-import-results.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"

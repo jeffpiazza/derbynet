@@ -31,7 +31,7 @@ function handlechange_xbs(cb) {
 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'xbs',
+            data: {action: 'award.xbs',
                    racer: racer,
                    value: value},
            });
@@ -112,7 +112,7 @@ function handle_edit_racer() {
 
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: racerid >= 0 ? 'edit-racer' : 'new-racer',
+          data: {action: racerid >= 0 ? 'racer.edit' : 'racer.new',
                  racer: racerid,
                  firstname: new_firstname,
                  lastname: new_lastname,

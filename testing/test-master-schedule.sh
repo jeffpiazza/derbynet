@@ -61,12 +61,12 @@ curl_post action.php "action=pass&racer=44&value=1" | check_success
 curl_post action.php "action=pass&racer=49&value=1" | check_success
 
 # Schedule dens
-curl_post action.php "action=schedule&roundid=1" | check_success
-curl_post action.php "action=schedule&roundid=2" | check_success
-curl_post action.php "action=schedule&roundid=3" | check_success
-curl_post action.php "action=schedule&roundid=4" | check_success
+curl_post action.php "action=schedule.generate&roundid=1" | check_success
+curl_post action.php "action=schedule.generate&roundid=2" | check_success
+curl_post action.php "action=schedule.generate&roundid=3" | check_success
+curl_post action.php "action=schedule.generate&roundid=4" | check_success
 # Can't schedule Arrows, because no one's checked in
-curl_post action.php "action=schedule&roundid=5" | check_failure
+curl_post action.php "action=schedule.generate&roundid=5" | check_failure
 
 curl_post action.php "action=select-heat&heat=first&now_racing=0" | check_success
 curl_post action.php "action=select-heat&now_racing=1" | check_success

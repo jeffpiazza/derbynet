@@ -114,7 +114,7 @@ function makeDroppableLabelTarget(jq) {
 }
 
 // TODO: Something similar for ranks/subgroups
-// TODO: action.php?query=classes, and compare existing classes
+// TODO: action.php?query=class.list, and compare existing classes
 function collectClassNames(columnNumber) {
     $('#new_ranks').empty();
     $('#new_ranks').append('<h4>' + $('#den-name').text() + 's</h4>');

@@ -45,11 +45,11 @@ while true ; do
   curl_post action.php "action=timer-message&message=IDENTIFIED&lane_count=4" | check_success
 
   # Schedule Round 1
-  curl_post action.php "action=schedule&roundid=1" | check_success
-  curl_post action.php "action=schedule&roundid=2" | check_success
-  # curl_post action.php "action=schedule&roundid=3" | check_success
-  # curl_post action.php "action=schedule&roundid=4" | check_success
-  # curl_post action.php "action=schedule&roundid=5" | check_success
+  curl_post action.php "action=schedule.generate&roundid=1" | check_success
+  curl_post action.php "action=schedule.generate&roundid=2" | check_success
+  # curl_post action.php "action=schedule.generate&roundid=3" | check_success
+  # curl_post action.php "action=schedule.generate&roundid=4" | check_success
+  # curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
   ########## On Deck ##############
   curl_post action.php "action=kiosk.assign&all=kiosks/ondeck.kiosk" | check_success

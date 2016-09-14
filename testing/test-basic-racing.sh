@@ -12,9 +12,9 @@ curl_post action.php "action=settings.write&n-lanes=4" | check_success
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
 
 ### Schedule first round for 3 of the classes
-curl_post action.php "action=schedule&roundid=1" | check_success
-curl_post action.php "action=schedule&roundid=2" | check_success
-curl_post action.php "action=schedule&roundid=3" | check_success
+curl_post action.php "action=schedule.generate&roundid=1" | check_success
+curl_post action.php "action=schedule.generate&roundid=2" | check_success
+curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
 ### Racing for roundid=1: 5 heats
 curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
@@ -49,7 +49,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=3.043976595882
 curl_post action.php "action=pass&racer=13&value=0" | check_success
 curl_post action.php "action=pass&racer=23&value=0" | check_success
 curl_post action.php "action=pass&racer=33&value=0" | check_success
-curl_post action.php "action=schedule&roundid=3" | check_success
+curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
 curl_post action.php "action=select-heat&roundid=3&now_racing=1" | check_success
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
@@ -67,7 +67,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane3=2.756576818870
 
 ### Editing racers
 [ `curl_get checkin.php | grep 'class-5"' | grep -c '>Arrows'` -eq 1 ] || test_fails Initial class
-curl_post action.php "action=edit-racer&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_success
+curl_post action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_success
 [ `curl_get checkin.php | grep firstname-5 | grep -c '>Zuzu</td>'` -eq 1 ] || test_fails Firstname change
 [ `curl_get checkin.php | grep lastname-5 | grep -c '>Zingelo</td>'` -eq 1 ] || test_fails Lastname change
 [ `curl_get checkin.php | grep 'class-5"' | grep -c '>Webelos'` -eq 1 ] || test_fails Class change
@@ -84,9 +84,9 @@ curl_post action.php "action=select-heat&roundid=1&heat=4" | check_success
 curl_post action.php "action=heat-results&lane3=8.888" | check_success
 
 # For roundid 4, schedule two appearances per lane per racer
-curl_post action.php "action=schedule&roundid=4&nrounds=2" | check_success
+curl_post action.php "action=schedule.generate&roundid=4&nrounds=2" | check_success
 # Schedule for roundid 5
-curl_post action.php "action=schedule&roundid=5" | check_success
+curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
 ### Racing for roundid=4
 curl_post action.php "action=select-heat&roundid=4&now_racing=1" | check_success

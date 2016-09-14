@@ -61,7 +61,7 @@ function close_edit_one_class_modal() {
 function reload_class_list() {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'classes'},
+            data: {query: 'class.list'},
             success: function(data) {
                 repopulate_class_list(data);
             }});
