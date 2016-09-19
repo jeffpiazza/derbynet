@@ -123,7 +123,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
 <div id='manual_results_modal' class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="heat-results"/>
+    <input type="hidden" name="action" value="results.write"/>
     <table></table>
     <input type="button" data-enhanced="true"
            id="discard-results"
