@@ -24,7 +24,7 @@ var g_display_duration_after_animation = 10000;
 // Queues the next poll request when processing of the current request has
 // completed, including animations, if any.  Because animations are handled
 // asynchronously, with completion callbacks, we can't just start the next
-// request when process_watching returns.
+// request when process_now_racing_element returns.
 function queue_next_poll_request() {
     setTimeout(poll_for_update, 500);  // 0.5 sec
 }
@@ -35,11 +35,11 @@ function poll_for_update() {
     } else {
         $.ajax('action.php',
                {type: 'GET',
-                data: {query: 'watching',
+                data: {query: 'poll.now-racing',
                        roundid: g_roundid,
                        heat: g_heat},
                 success: function(data) {
-                    process_watching(data);
+                    process_now_racing_element(data);
                 },
                 error: function() {
                     queue_next_poll_request();
@@ -127,9 +127,9 @@ function show_overlay(selector) {
     }
 }
 
-// See ajax/query.watching.inc for XML format
+// See ajax/query.poll.now-racing.inc for XML format
 
-// Processes the top-level <watching> element.
+// Processes the top-level <now-racing> element.
 //
 // Walks through each of the <heat-result lane= time= place= speed=> elements,
 // in order, building a mapping from the reported place to the matching lane.
@@ -147,13 +147,13 @@ function show_overlay(selector) {
 // The test for a complete set of heat-results is that we have as many
 // heat-results as lanes.
 
-function process_watching(watching) {
-    var heat_results = watching.getElementsByTagName("heat-result");
+function process_now_racing_element(now_racing) {
+    var heat_results = now_racing.getElementsByTagName("heat-result");
     if (heat_results.length > 0) {
         // The presence of a <repeat-animation/> element is a request to re-run
         // the finish place animation, which we do by clearing the flag that
         // remembers we've already done it once.
-        if (watching.getElementsByTagName("repeat-animation").length > 0) {
+        if (now_racing.getElementsByTagName("repeat-animation").length > 0) {
             g_animated = false;
         }
         var place_to_lane = new Array();  // place => lane
@@ -190,10 +190,10 @@ function process_watching(watching) {
                 queue_next_poll_request();
             });
         } else {
-            process_new_heat(watching);
+            process_new_heat(now_racing);
         }
     } else {
-        process_new_heat(watching);
+        process_new_heat(now_racing);
     }
 }
 
@@ -201,15 +201,15 @@ function process_watching(watching) {
 // we get a <current-heat/> element, plus some number of <racer>
 // elements identifying the new heat's contestants.
 
-function process_new_heat(watching) {
-    if (watching.getElementsByTagName("hold-current-screen").length > 0) {
+function process_new_heat(now_racing) {
+    if (now_racing.getElementsByTagName("hold-current-screen").length > 0) {
         // Each time a hold-current-screen element is sent, reset the
         // hold-display deadline.  (Our display is presumed not to be visible,
         // so the display-for-ten-seconds clock shouldn't start yet.)
         g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
     }
-    var current = watching.getElementsByTagName("current-heat")[0];
-    if (watching.getElementsByTagName('timer-trouble').length > 0) {
+    var current = now_racing.getElementsByTagName("current-heat")[0];
+    if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
         show_overlay('#timer_overlay');
     } else if (current.getAttribute("now-racing") == "0" && (new Date()).valueOf() > g_hold_display_until) {
         show_overlay('#paused_overlay')
@@ -227,7 +227,7 @@ function process_new_heat(watching) {
                                     + ' of ' + current.getAttribute('number-of-heats'));
         }
 
-        var racers = watching.getElementsByTagName("racer");
+        var racers = now_racing.getElementsByTagName("racer");
         if (racers.length > 0) {
             g_animated = false;
             g_num_racers = racers.length;

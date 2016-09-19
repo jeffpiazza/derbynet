@@ -1,8 +1,8 @@
-<watching>
+<now-racing>
 <?php
-// action.php?query=watching&roundid= &heat= 
+// action.php?query=poll.now-racing&roundid= &heat= 
 // Returns:
-//   <watching roundid= heat= >
+//   <now-racing roundid= heat= >
 //     <timer-trouble/>   if there's a problem with the timer
 //     <heat-result lane="1" time="" place="" speed=""/>... if results are available
 //     <current-heat ...> 
@@ -10,7 +10,7 @@
 //     <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
 //     - if requesting a repeat of the finish-order animation:
 //      <repeat-animation/>
-//   </watching>
+//   </now-racing>
 
 if (!with_gprm()) {
   require_once('inc/timer-state.inc');
@@ -67,4 +67,4 @@ if (read_raceinfo('replay_just_finished')) {
   echo "<hold-current-screen/>\n";
 }
 ?>
-</watching>
+</now-racing>

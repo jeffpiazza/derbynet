@@ -1,4 +1,4 @@
-<update-summary>
+<ondeck>
 <?php
 
 // This script produces XML in response to a request from a page that wants to 
@@ -20,7 +20,7 @@
 //
 // This script returns an XML document that looks like:
 //
-// <update-summary>
+// <ondeck>
 //   <current-heat classid="{classid}"
 //                 roundid="{roundid}"
 //                 round="{round}"
@@ -38,7 +38,7 @@
 //   ...
 //
 //   <high_water roundid= round= tbodyid= resultid= completed= />
-// </update-summary>
+// </ondeck>
 //
 // The class, round, and heat elements identify the "current" heat.
 //
@@ -134,4 +134,4 @@ $sql = 'SELECT DISTINCT Rounds.roundid, round'
               resultid="<?php echo high_water_resultid(); ?>"
               completed="<?php echo $max_time; ?>" />
 
-</update-summary>
+</ondeck>

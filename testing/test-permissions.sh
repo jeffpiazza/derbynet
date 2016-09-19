@@ -79,8 +79,8 @@ curl_get "action.php?query=poll.coordinator" > /dev/null
 curl_get "action.php?query=kiosk.poll" > /dev/null
 curl_get "action.php?query=poll.kiosk.all" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null
-curl_get "action.php?query=update-summary" > /dev/null
-curl_get "action.php?query=watching" > /dev/null
+curl_get "action.php?query=poll.ondeck" > /dev/null
+curl_get "action.php?query=poll.now-racing" > /dev/null
 
 user_login_coordinator
 ( curl_get index.php | grep '<form' | diff -b - coordinator.index.tmp ) || OK=0

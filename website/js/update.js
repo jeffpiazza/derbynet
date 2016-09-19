@@ -80,7 +80,7 @@ function process_new_schedules(newly_scheduled, index, completed) {
 // classname: optional name of current racing class
 function notice_change_current_tbody(tbodyid, round, classname) {
   // g_update_status.current.tbodyid is initialized to -1, and query
-  // update-summary should keep reporting current.tbodyid=-1 before racing
+  // poll.ondeck should keep reporting current.tbodyid=-1 before racing
   // starts.  While racing is actually underway, current.tbodyid should be > 0.
   // When concluded, current.tbodyid should report an empty string.
   if (tbodyid != g_update_status.current.tbodyid) {
@@ -141,7 +141,7 @@ function notice_change_current_heat(roundid, heat) {
   }
 }
 
-// Summary is the XML document element for the full <update-summary/> response.
+// Summary is the XML document element for the full <ondeck/> response.
 function process_response_from_current(summary) {
   var current_xml = summary.getElementsByTagName("current-heat")[0];
   var current = {tbodyid: current_xml.getAttribute("tbodyid"),
@@ -219,11 +219,11 @@ function scroll_to_current(el) {
 // Returns interval id
 function start_polling() {
     return setInterval(function() {
-    console.log("Getting update-summary since=" + g_update_status.last_update_time
+    console.log("Getting poll.ondeck since=" + g_update_status.last_update_time
                 + " &high_water_resultid=" + g_update_status.high_water_resultid);
     $.ajax("action.php",
            {type: 'GET',
-            data: {query: 'update-summary',
+            data: {query: 'poll.ondeck',
                    since: g_update_status.last_update_time,
                    high_water_resultid: g_update_status.high_water_resultid,
                    merge_rounds: g_update_status.merge_rounds},
