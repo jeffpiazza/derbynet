@@ -75,13 +75,13 @@ curl_post action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
 curl_post action.php "action=select-heat&roundid=1&heat=1&now_racing=0" | check_success
-curl_post action.php "action=results.write&lane2=8.888" | check_success
+curl_post action.php "action=result.write&lane2=8.888" | check_success
 curl_post action.php "action=select-heat&roundid=1&heat=2" | check_success
-curl_post action.php "action=results.write&lane4=8.888" | check_success
+curl_post action.php "action=result.write&lane4=8.888" | check_success
 curl_post action.php "action=select-heat&roundid=1&heat=3" | check_success
-curl_post action.php "action=results.write&lane1=8.888" | check_success
+curl_post action.php "action=result.write&lane1=8.888" | check_success
 curl_post action.php "action=select-heat&roundid=1&heat=4" | check_success
-curl_post action.php "action=results.write&lane3=8.888" | check_success
+curl_post action.php "action=result.write&lane3=8.888" | check_success
 
 # For roundid 4, schedule two appearances per lane per racer
 curl_post action.php "action=schedule.generate&roundid=4&nrounds=2" | check_success

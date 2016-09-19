@@ -8,7 +8,7 @@ function loadExportedCsv(file) {
         var csv = event.target.result;
         try {
             var data = $.csv.toArrays(csv);
-            var params = {action: 'import-one-result'};
+            var params = {action: 'result.import'};
             var first = true;
             for (var row in data) {
                 if (first) {

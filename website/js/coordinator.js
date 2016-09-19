@@ -126,7 +126,7 @@ function handle_discard_results_button() {
             // the user chose.  If current-heat changes while
             // manual-results dialog is open, maybe close the dialog
             // and start over?
-            data: {action: 'results.delete',
+            data: {action: 'result.delete',
                    roundid: 'current',
                    heat: 'current'},
             success: function(data) { process_coordinator_poll_response(data); }
