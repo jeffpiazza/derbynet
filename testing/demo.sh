@@ -10,8 +10,8 @@ source `dirname $0`/common.sh
 `dirname $0`/login-coordinator.sh $BASE_URL
 
 while true ; do
-  curl_post action.php "action=run-sql&script=schema" | check_success
-  curl_post action.php "action=run-sql&script=update-schema" | check_success
+  curl_post action.php "action=database.execute&script=schema" | check_success
+  curl_post action.php "action=database.execute&script=update-schema" | check_success
   curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
   curl_post action.php "action=settings.write&photo-width=180&photo-height=240" | check_success
 

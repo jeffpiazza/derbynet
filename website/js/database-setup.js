@@ -91,7 +91,7 @@ function handle_initialize_schema() {
     close_modal("#initialize_schema_modal");
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'run-sql',
+            data: {action: 'database.execute',
                    script: 'schema'},
             success: function(data) {
 	            var success = data.documentElement.getElementsByTagName("success");
@@ -114,7 +114,7 @@ function handle_update_schema() {
     close_modal("#update_schema_modal");
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'run-sql',
+            data: {action: 'database.execute',
                    script: 'update-schema'},
             success: function(data) {
 	            var success = data.documentElement.getElementsByTagName("success");

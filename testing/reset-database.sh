@@ -11,8 +11,8 @@ PHOTO_DIR=$(curl_get "action.php?query=settings" | xmllint --format - | sed -ne 
 
 CAR_PHOTO_DIR=$(curl_get "action.php?query=settings" | xmllint --format - | sed -ne '/key="car-photo-directory"/ s#[^>]*>\([^<]*\)</setting>#\1#p')
 
-curl_post action.php "action=run-sql&script=schema" | check_success
-curl_post action.php "action=run-sql&script=update-schema" | check_success
+curl_post action.php "action=database.execute&script=schema" | check_success
+curl_post action.php "action=database.execute&script=update-schema" | check_success
 
 if [ "$PHOTO_DIR" ] ; then
     curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success
