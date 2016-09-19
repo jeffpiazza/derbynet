@@ -23,7 +23,7 @@ function render_directory_status_icon(photo_dir_selector) {
     console.log("Updating status icon for " + photo_dir_selector);
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'file-path',
+            data: {query: 'file.stat',
                    path: $(photo_dir_selector).val()},
             success: function(data) {
                 var path = data.getElementsByTagName("path");

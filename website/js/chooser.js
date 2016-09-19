@@ -20,7 +20,7 @@ function repopulate_chooser_modal(path) {
     $("#chooser_directory_content").empty();
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'directory.nodata',
+            data: {query: 'file.directory',
                    path: path},
             success: function(data) {
                 var root = data.getElementsByTagName("directory");
@@ -119,7 +119,7 @@ function chooser_show_add_directory_modal(event) {
         chooser_close_add_directory_modal();
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'make-directory',
+                data: {action: 'file.directory.new',
                        directory: parent_path + $("#chooser_new_directory_name").val()},
                 success: function(data) {
                     var path = data.getElementsByTagName("path");
