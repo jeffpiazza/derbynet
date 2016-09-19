@@ -56,7 +56,7 @@ curl_post action.php "action=kiosk.assign" | check_failure
 curl_post action.php "action=result.delete" | check_failure
 curl_post action.php "action=racer.edit" | check_failure
 curl_post action.php "action=result.write" | check_failure
-curl_post action.php "action=import" | check_failure
+curl_post action.php "action=racer.import" | check_failure
 curl_post action.php "action=initnumbers" | check_failure
 
 # curl_post action.php "action=login" | check_failure

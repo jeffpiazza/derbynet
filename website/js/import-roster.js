@@ -162,7 +162,7 @@ function handle_import_one_row(row) {
     }
 
     // Construct param array from what's in the table row
-    var params = {action: 'import'};
+    var params = {action: 'racer.import'};
     var allblank = true;
     $('#csv_content').find('.label_target').each(function (index, label_target) {
         // label_target.attr('data-column')
