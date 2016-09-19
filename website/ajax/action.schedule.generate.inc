@@ -467,7 +467,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
 	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
       echo '<success/>';
-      require('ajax/query.coordinator-poll.inc');
+      require('ajax/query.poll.coordinator.inc');
     } else {
       echo '<failure code="too-few-racers">There need to be at least two racers checked in'
           .' to generate a schedule.</failure>';

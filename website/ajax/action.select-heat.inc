@@ -77,7 +77,7 @@ if ($ok) {
   echo "<success/>\n";
 }
 
-require('ajax/query.coordinator-poll.inc');
+require('ajax/query.poll.coordinator.inc');
 
 end_response();
 ?>

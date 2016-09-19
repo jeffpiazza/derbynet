@@ -19,7 +19,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
         advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
       }
       echo '<success/>';
-      require('ajax/query.coordinator-poll.inc');
+      require('ajax/query.poll.coordinator.inc');
 	}
 } else {
 	not_authorized_body();

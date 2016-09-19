@@ -306,7 +306,7 @@ function handle_master_next_to_race() {
            });
 }
 
-// Parsing for coordinator-poll output
+// Parsing for poll.coordinator output
 
 /* <current-heat now-racing= use-master-sched= classid= roundid= round=
                  group= heat= /> */
@@ -374,7 +374,7 @@ function parse_racers(data) {
     return racers;
 }
 
-// Generate page contents in response to coordinator-poll output
+// Generate page contents in response to poll.coordinator output
 
 function update_for_current_round(current) {
     var isracing_checkbox = $("#is-currently-racing");
@@ -806,9 +806,9 @@ function process_coordinator_poll_response(data) {
 function coordinator_poll() {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'coordinator-poll'},
+            data: {query: 'poll.coordinator'},
             success: function(data) {
-                setTimeout(coordinator_poll, /* TODO: 2000 */ 6000);
+                setTimeout(coordinator_poll, 2000);
                 process_coordinator_poll_response(data);
             },
             error: function() {

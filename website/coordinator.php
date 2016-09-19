@@ -26,7 +26,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
 <div class="double_control_column">
   <div id="now-racing-group" class="scheduling_control_group">
-    <p>Waiting for coordinator-poll query...</p>
+    <p>Waiting for poll.coordinator query...</p>
   </div>
 </div>
 

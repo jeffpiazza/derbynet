@@ -24,7 +24,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     $stmt = $db->prepare('DELETE FROM Rounds WHERE roundid = :roundid');
     $stmt->execute(array(':roundid' => $_POST['roundid']));
     echo "<success/>\n";
-    require('ajax/query.coordinator-poll.inc');
+    require('ajax/query.poll.coordinator.inc');
   }
 }
 

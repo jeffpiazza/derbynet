@@ -174,7 +174,7 @@ foreach ($buckets as $bucket) {
 echo "<new-round roundid=\"".$new_roundid."\"/>\n";
 echo "<success/>\n";
 
-require('ajax/query.coordinator-poll.inc');
+require('ajax/query.poll.coordinator.inc');
 
 end_response();
 

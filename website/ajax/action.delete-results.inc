@@ -34,7 +34,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   echo "\n<success/>\n";
   echo "<sql>".htmlspecialchars($sql, ENT_QUOTES, 'UTF-8')."</sql>\n";
 
-  require('ajax/query.coordinator-poll.inc');
+  require('ajax/query.poll.coordinator.inc');
 
 } else {
   not_authorized_body();
