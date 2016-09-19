@@ -17,46 +17,45 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/kiosk-management.js"></script>
 <script type="text/javascript" src="js/kiosk-dashboard.js"></script>
 </head>
 <body>
 <?php $banner_title = 'Kiosk Dashboard'; require('inc/banner.inc'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
-<div class="hidden standings-control control_group block_buttons">
+<div class="standings-control hidden control_group block_buttons">
+  <div class="round-select">
+    <h3>Display standings for:</h3>
+      <?php
+        $current = read_raceinfo('standings-message');
+        $current_roundid = explode('-', $current)[0];
+      ?>
 
-<div class="round-select">
-<h3>Display standings for:</h3>
-<?php
-$current = read_raceinfo('standings-message');
-$current_roundid = explode('-', $current)[0];
-?>
+    <select>
+      <?php
+        require_once('inc/standings.inc');
 
-<select>
-   <?php
-      require_once('inc/standings.inc');
-
-      $sel = ' selected="selected"';
-      if ($current == '') {
-        echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
-      }
-      echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
-           .supergroup_label()
-           .'</option>';
-      foreach (standings_round_names() as $round) {
-        echo '<option data-roundid="'.$round['roundid'].'"'.($current_roundid == $round['roundid'] ? $sel : '').'>'
+        $sel = ' selected="selected"';
+        if ($current == '') {
+          echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
+        }
+        echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
+             .supergroup_label()
+             .'</option>';
+        foreach (standings_round_names() as $round) {
+          echo '<option data-roundid="'.$round['roundid'].'"'
+               .($current_roundid == $round['roundid'] ? $sel : '').'>'
                .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
                .'</option>'."\n";
-      }
-  ?>
-</select>
-</div>
-<div class="reveal block_buttons">
-<input type="button" data-enhanced="true" value="Reveal 1" onclick="handle_reveal1()"/><br/>
-<input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
-</div>
-</div>
+        }
+      ?>
+    </select>
+  </div>
+  <div class="reveal block_buttons">
+    <input type="button" data-enhanced="true" value="Reveal One" onclick="handle_reveal1()"/><br/>
+    <input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
+  </div>
+</div><!-- standings-control -->
 
 <div id="kiosk_control_group" class="kiosk_control_group">
 </div>
@@ -69,6 +68,36 @@ $current_roundid = explode('-', $current)[0];
     <input type="submit" data-enhanced="true" value="Assign"/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#kiosk_modal");'/>
+  </form>
+</div>
+
+<div id='config_classes_modal' class="modal_dialog hidden block_buttons">
+  <form>
+    <?php
+        require_once('inc/schema_version.inc');
+
+        $stmt = $db->prepare('SELECT classid, class'
+                             .' FROM Classes'
+                             .' WHERE EXISTS(SELECT 1 FROM RegistrationInfo'
+                             .'              WHERE RegistrationInfo.classid = Classes.classid)'
+                             .' ORDER BY '.(schema_version() >= 2
+                                            ? 'sortorder, ' : '')
+                             .'class');
+        $stmt->execute(array());
+
+        foreach ($stmt as $row) {
+          echo '<input type="checkbox" name="class-'.$row['classid'].'"'
+               .' id="config-class-'.$row['classid'].'"'
+               .' data-classid="'.$row['classid'].'"'
+               .'/>'."\n";
+          echo '<label for="config-class-'.$row['classid'].'">'
+              .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')
+              .'</label>'."\n";
+        }
+    ?>
+    <input type="submit" data-enhanced="true" value="Configure Kiosk"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#config_classes_modal");'/>
   </form>
 </div>
 

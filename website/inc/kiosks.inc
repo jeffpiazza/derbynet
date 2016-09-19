@@ -2,10 +2,14 @@
 
 require_once('inc/sql-script.inc');
 
+// If we're working with an unmigrated GPRM database, we may need to create a
+// kiosk table.
 function create_kiosk_table() {
   run_sql_script('kiosk-table');
 }
 
+// Compute a string that acts as the "address" for the kiosk that invoked the
+// current page.
 function address_for_current_kiosk() {
   // The Kiosks table in the database has a field for the address, and another
   // for the name.  Both are displayed to the race coordinator.  The address is
@@ -29,12 +33,25 @@ function address_for_current_kiosk() {
   return $addr;
 }
 
+// Splits $row['params'] into separate ['page'] and ['params'] fields.
+function parse_kiosk_params(&$row) {
+  $ex = explode('#', $row['page'], 2);
+  if (count($ex) > 1) {
+    $row['page'] = $ex[0];
+    $row['params'] = $ex[1];
+  } else {
+    $row['params'] = '';
+  }
+}
+
 // Searches the Kiosks table, if there is one, for an entry for the given kiosk
 // address.  If there's a page assigned for this client, returns that.
 // Otherwise, returns a RaceInfo entry for the default kiosk page, if there is
-// one; otherwise, returns the identify.kiosk page.
+// one (there won't be: obsolete feature); otherwise, returns the identify.kiosk
+// page.
 //
-// Returns an array with a 'page' key and optional 'name'.
+// Returns an array with a 'page' key and optionally 'name' (of the kiosk) and
+// 'params' (a customization string).
 function kiosk_page($addr) {
   global $db;
 
@@ -49,13 +66,7 @@ function kiosk_page($addr) {
         $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time().' WHERE address = :address');
         $stmt->execute(array(':address' => $addr));
         if (@$row['page']) {
-          $ex = explode('#', $row['page'], 2);
-          if (count($ex) > 1) {
-            $row['page'] = $ex[0];
-            $row['params'] = $ex[1];
-          } else {
-            $row['params'] = '';
-          }
+          parse_kiosk_params($row);
           return $row;
         }
         // else row exists, but no page set

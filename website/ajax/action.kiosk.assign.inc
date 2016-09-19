@@ -11,8 +11,14 @@
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-  if (isset($_POST['page'])) {
-    $page = $_POST['page'];
+  if (isset($_POST['page']) || isset($_POST['params'])) {
+    if (isset($_POST['page'])) {
+      $page = $_POST['page'];
+    } else {
+      $page = read_single_value('SELECT page FROM Kiosks WHERE address = :address',
+                                array(':address' => $_POST['address']));
+      $page = explode('#', $page, 2)[0];
+    }
     if (isset($_POST['params'])) {
       $page .= '#'.$_POST['params'];
     }
@@ -33,6 +39,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   echo "<success/>\n";
+  require('ajax/query.poll.kiosk.all.inc');
 } else {
   not_authorized_body();
 }

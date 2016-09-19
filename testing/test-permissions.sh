@@ -77,6 +77,7 @@ curl_post action.php "action=award.xbs" | check_failure
 curl_get "action.php?query=class.list" > /dev/null
 curl_get "action.php?query=coordinator-poll" > /dev/null
 curl_get "action.php?query=kiosk.poll" > /dev/null
+curl_get "action.php?query=poll.kiosk.all" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=update-summary" > /dev/null
 curl_get "action.php?query=watching" > /dev/null

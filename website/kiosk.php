@@ -5,13 +5,12 @@ require_once('inc/kiosks.inc');
 
 // 'page' query argument to support testing
 if (isset($_GET['page'])) {
+  define('KIOSK_PARAM', '');
   require($_GET['page']);
 } else {
   $kpage = kiosk_page(address_for_current_kiosk());
   // For kiosk pages that use parameters:
-  $params = $kpage['params'];
-  // TODO Prefer a more robust parameter-passing strategy than setting a global
-  // PHP variable.
+  define('KIOSK_PARAM', $kpage['params']);
   require($kpage['page']);
 }
 ?>
