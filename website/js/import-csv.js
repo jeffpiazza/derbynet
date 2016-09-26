@@ -273,10 +273,15 @@ function uploadTableRowsFrom(row, action) {
             success: function(xmldoc) {
               var ok = xmldoc.documentElement.getElementsByTagName("success");
               if (ok && ok.length > 0) {
-                $('[data-row="' + row + '"] th').append('OK');
+                $('[data-row="' + row + '"] th').append('<span class="ok_outcome">OK</span>');
               } else {
                 console.log(xmldoc);
-                $('[data-row="' + row + '"] th').append('FAILED');
+                $('[data-row="' + row + '"] th').append('<span class="failed_outcome">FAILED </span>');
+                var fail = xmldoc.documentElement.getElementsByTagName("failure");
+                if (fail && fail.length > 0) {
+                  console.log(fail[0]);
+                  $('[data-row="' + row + '"] th').append(fail[0].childNodes[0].nodeValue);
+                }
               }
               uploadTableRowsFrom(row + 1, action);
             },

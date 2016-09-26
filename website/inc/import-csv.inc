@@ -17,10 +17,11 @@ function generate_import_page_head_matter() {
 <?php
 }
 
-function generate_import_page_encoding_section() {
+function generate_import_page_encoding_section($button_label) {
 ?>
   <div id="import_button_div">
-    <input class="hidden" type="button" id="import_button" data-enhanced="true" value="Import Roster"/>
+    <input class="hidden" type="button" id="import_button" data-enhanced="true"
+           value="<?php echo htmlspecialchars($button_label, ENT_QUOTES, 'UTF-8'); ?>"/>
   </div>
 
   <div id="encoding">
@@ -80,7 +81,8 @@ function generate_import_page_column_labels(&$labels) {
 }
 
 
-function generate_import_page($page_name, $script_files, $show_encodings, $labels, $footer) {
+function generate_import_page($page_name, $button_label,
+                              $script_files, $show_encodings, $labels, $footer) {
   try {
     $racers = read_single_value("SELECT COUNT(*) FROM RegistrationInfo", array());
   } catch (PDOException $p) {
@@ -126,7 +128,7 @@ function generate_import_page($page_name, $script_files, $show_encodings, $label
                class="hidden" value="Start Over"/>
       </form>
 
-      <?php if ($show_encodings) { generate_import_page_encoding_section(); } ?>
+      <?php if ($show_encodings) { generate_import_page_encoding_section($button_label); } ?>
 
       <div id="submit_message">Please select or drag a file to import.
       </div>

@@ -143,6 +143,21 @@ input[type='button'], input[type='submit'] {
     width: 5em;
 }
 
+#csv_content tr th {
+    font-size: 16px;
+}
+#csv_content tr th.label_target {
+    font-size: 24px;
+}
+#csv_content tr th .ok_outcome {
+    font-size: 24px;
+    color: green;
+}
+#csv_content tr th .failed_outcome {
+    font-size: 24px;
+    color: red;
+}
+
 /* These try to restore the look of the page after jquery.mobile has manipulated it.
   TODO Since all we really want out of this is the cool-looking flipswitch elements, find a way just to take that,
   without all the weird page-loading behaviors. */

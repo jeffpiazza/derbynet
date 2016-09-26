@@ -6,7 +6,7 @@ require_permission(SET_UP_PERMISSION);
 require_once('inc/import-csv.inc');
 
 generate_import_page(
-  'Import Results',
+  'Import Results', '',
   array('js/import-results.js'),
   /* show_encodings */false,
   array(),

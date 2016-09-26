@@ -8,7 +8,7 @@ require_permission(SET_UP_PERMISSION);
 require_once('inc/import-csv.inc');
 
 generate_import_page(
-  'Import Roster',
+  'Import Roster', 'Import Roster',
   array('js/import-roster.js'),
   /* show_encodings */true,
   array(

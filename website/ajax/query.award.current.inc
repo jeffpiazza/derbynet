@@ -20,7 +20,7 @@ $keys = explode('-', $key);
 if (count($keys) >= 2) {
   if ($keys[0] == 'award') {
     $awardid = $keys[1];
-    $stmt = $db->prepare('SELECT racerid, awardname, firstname, lastname,'
+    $stmt = $db->prepare('SELECT Awards.racerid, awardname, firstname, lastname,'
                          .' carnumber, carname, rank, imagefile, carphoto'
                          .' FROM '.inner_join('Awards', 'RegistrationInfo',
                                               'Awards.racerid = RegistrationInfo.racerid',

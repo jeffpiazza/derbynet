@@ -11,8 +11,6 @@ function ordinal($n) {
   }
 }
 
-      $awardname = ($place == 1 ? '' : (ordinal($place).' ')).'Fastest in '. /* group_label().' '. */ $classname;
-
 function nth_fastest($n, $label) {
   return ($n == 1 ? '' : (ordinal($n).' ')).'Fastest in '.$label;
 }
