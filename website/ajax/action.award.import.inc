@@ -77,11 +77,21 @@ if ($ok) {
   if (isset($_POST['subgroup'])) {
     $rankname = substr(trim($_POST['subgroup']), 0, RANK_COLUMN_WIDTH);
     if (strlen($rankname) > 0) {
-      $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname',
+      $rank = read_single_row('SELECT rankid, classid FROM Ranks WHERE rank = :rankname',
                                   array(':rankname' => $rankname));
-      if ($rankid === false) {
+      if ($rank === false) {
         echo '<failure code="unknownrank">Unrecognized rank</failure>';
         $ok = false;
+      } else {
+        $rankid = $rank[0];
+        if ($classid == 0) {
+          $classid = $rank[1];
+        } else if ($classid != $rank[1]) {
+          echo '<failure code="wrongclass">Subgroup not in this '
+          .htmlspecialchars(group_label_lc(), ENT_QUOTES, 'UTF-8')
+          .'</failure>';
+          $ok = false;
+        }
       }
     }
   }
