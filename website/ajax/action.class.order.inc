@@ -1,5 +1,7 @@
 <?php
 // $_POST['classid_<n>'], <n> starting at 1.  Value is a classid in each case
+// <n> is the sequential order, e.g. the value of $_POST['classid_1'] is the classid which
+// should have sortorder=1
 
 start_response();
 

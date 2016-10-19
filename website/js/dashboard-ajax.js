@@ -23,7 +23,11 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 });
 
 $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
-    console.log("ajaxError: " + thrownError);
+  console.log("ajaxError: " + thrownError);
+  console.log(thrownError);
+  console.log(jqXHR);
+  console.log(jqXHR.responseText);
+  console.log(event);
 	alert("Ajax error: " + thrownError);
 });
 

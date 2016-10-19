@@ -85,15 +85,13 @@ function repopulate_class_list(data) {
 
 $(function () {
     $("#groups").sortable({stop: function(event, ui) {
-        var items = $("#class_editor_modal ul li");
-        var data = {action: 'class.order'};
-        for (var i = 0; i < items.length; ++i) {
-            data['classid_' + (i + 1)] = $(items[i]).data('classid');
-        }
-
-        $.ajax(g_action_url,
-               {type: 'POST',
-                data: data});
-                
+      var data = {action: 'class.order'};
+      $("#class_editor_modal ul li").each(function(i) {
+        data['classid_' + (i + 1)] = $(this).data('classid');
+      });
+      
+      $.ajax(g_action_url,
+             {type: 'POST',
+              data: data});
     }});
 });

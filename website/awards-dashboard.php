@@ -36,32 +36,13 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
+require_once('inc/awards.inc');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
-$classes = array();  // classid => {'class'}
-$classseq = array(); // ordered classids
-$ranks = array();    // rankid => {'class', 'rank'}
-$rankseq = array();  // ordered rankids
-foreach ($db->query('SELECT Classes.classid, class, rankid, rank'
-                     .' FROM Classes'
-                     .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
-                     .' ORDER BY '.(schema_version() >= 2
-                                    ? 'Classes.sortorder, Ranks.sortorder, '
-                                    : '')
-                    .'class, rank') as $row) {
-  if (!isset($classes[$row['classid']])) {
-    $classseq[] = $row['classid'];
-    $classes[$row['classid']] = array('class' => $row['class']);
-  }
-  $rankseq[] = $row['rankid'];
-  $ranks[$row['rankid']] = array('class' => $row['class'],
-                                 'classid' => $row['classid'],
-                                 'rank' => $row['rank'],
-                                 'rankid' => $row['rankid']);
-}
+list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 // $bins to a bin.
 
@@ -193,7 +174,7 @@ usort($awards, 'compare_by_sort');
     <select id="awardtype-select">
         <option selected="Selected">All Awards</option>
         <?php
-        foreach ($db->query('SELECT * FROM AwardTypes ORDER BY awardtype') as $atype) {
+        foreach ($db->query('SELECT awardtypeid, awardtype FROM AwardTypes ORDER BY awardtype') as $atype) {
           echo '<option data-awardtypeid="'.$atype['awardtypeid'].'">'
               .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
               .'</option>'."\n";

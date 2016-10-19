@@ -32,6 +32,39 @@ curl_get "action.php?query=award.current" | expect_count '<award ' 1
 curl_get "action.php?query=award.current" | expect_count 'Howell' 1
 curl_get "action.php?query=award.current" | expect_count ' reveal="false"' 1
 
+curl_get "action.php?query=award.list" | expect_count '<award ' 4
+curl_get "action.php?query=award.list" | grep 'awardid="3" ' | expect_one 'racerid="35"'
+curl_get "action.php?query=award.list" | grep '<award ' | expect_count 'awardtypeid="4"' 4
+curl_get "action.php?query=award.list" | grep 'awardid="4" ' | expect_one 'racerid="22"'
+
+curl_post action.php "action=award.edit&awardid=1&racerid=2" | check_success
+curl_post action.php "action=award.edit&awardid=2&class_and_rank=3,3" | check_success
+curl_post action.php "action=award.edit&awardid=3&name=Third" | check_success
+curl_post action.php "action=award.edit&awardid=4&awardtypeid=2" | check_success
+
+curl_get "action.php?query=award.list" | expect_count '<award ' 4
+curl_get "action.php?query=award.list" | grep 'awardid="1" ' | expect_one 'racerid="2"'
+curl_get "action.php?query=award.list" | expect_one 'racerid="2"'
+curl_get "action.php?query=award.list" | expect_one 'carnumber="202"'
+curl_get "action.php?query=award.list" | grep 'awardid="2" ' | expect_one 'classid="3"'
+curl_get "action.php?query=award.list" | grep 'awardid="2" ' | expect_one 'rankid="3"'
+curl_get "action.php?query=award.list" | grep '<award ' | expect_one 'classid="3"'
+curl_get "action.php?query=award.list" | grep '<award ' | expect_one 'rankid="3"'
+curl_get "action.php?query=award.list" | grep 'awardid="3" ' | expect_one 'racerid="35"'
+curl_get "action.php?query=award.list" | grep 'awardid="3" ' | expect_one 'awardname="Third"'
+curl_get "action.php?query=award.list" | grep 'awardid="4" ' | expect_one 'racerid="22"'
+curl_get "action.php?query=award.list" | grep 'awardid="4" ' | expect_one 'awardtypeid="2"'
+
+curl_post action.php "action=award.edit&awardid=2&class_and_rank=0,0" | check_success
+curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'classid="0"'
+
+curl_post action.php "action=award.delete&awardid=3" | expect_count '<award ' 3
+curl_post action.php "action=award.edit&awardid=new&awardtypeid=4&name=NewThird" | expect_count '<award ' 4
+curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="7"'
+curl_post action.php "action=award.order&awardid_1=4&awardid_2=5&awardid_3=2&awardid_4=1" | grep 'awardid="4"' | expect_one 'sort="1"'
+curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="2"'
+curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'sort="3"'
+curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="4"'
 
 # There's no current award at the very beginning, but we don't want to enforce
 # that this test has to be run at the very beginning.

@@ -103,6 +103,10 @@ div.banner div.back_button {
     cursor: pointer;
 }
 
+.block_buttons input.delete_button {
+    background: #ff0000;
+}
+
 #ajax_working {
   position: fixed;
   background-color: green;

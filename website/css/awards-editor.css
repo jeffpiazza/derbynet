@@ -1,0 +1,119 @@
+
+.instructions-wrapper {
+    position: relative;  /* Establish a positioning context for center button */
+}
+
+.instructions {
+    font-size: 16px;
+    font-style: italic;
+    margin-top: 30px;
+}
+
+.instructions-wrapper .left {
+    float: left;
+    width: 50%;
+}
+
+.instructions-wrapper .left .instructions {
+    margin-right: 130px;
+    margin-left: 30px;
+}
+
+.center-button-up {
+    position: absolute;
+    width: 260px;
+    top: 15px;
+    left: 50%;
+    margin-left: -130px;
+}
+
+.instructions-wrapper .right {
+    float: right;
+    width: 50%;
+}
+
+.instructions-wrapper .right .instructions {
+    text-align: right;
+    margin-left: 130px;
+    margin-right: 40px;
+}
+
+.listview {
+  position: absolute;
+  top: 160px;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.ui-listview > li span {
+  font-size: 16px;
+}
+
+.ui-listview > li span.awardname {
+  font-weight: bold;
+}
+.ui-listview > li p {
+  font-size: 12px;
+}
+
+.ui-listview span.recipient {
+    float: right;
+}
+
+#all_awards li.award_recipient_hover a:first-child {
+    background-color: #ffffb4;
+}
+
+#all_awards li.unacceptable_hover a:first-child {
+    background-color: #ffb4b4;
+}
+
+#all_awards li.unacceptable_class_hover span.classname,
+#all_awards li.unacceptable_class_hover span.rankname {
+    color: #ff0000;
+}
+
+#all_awards li.unacceptable_hover span.recipient {
+    color: #ff0000;
+}
+
+#all_awards span.recipient img {
+    vertical-align: 5%;
+    height: 12px;
+    width: 12px;
+    margin-right: 5px;
+}
+
+.ui-listview > li.hidden {
+  height: 0px;
+  padding: 0px 0px 0px 0px;
+}
+li.hidden p {
+  margin: 0px;
+}
+
+#racers {
+    position: absolute;
+    left: 50%;
+    right: 0;
+    top: 140px;
+    bottom: 0;
+/*    overflow-x: hidden;
+    overflow-y: auto; */
+}
+
+#racers-inset {
+    position: absolute;
+    width: 90%;
+    /* margin: 20px; */
+    top: 20px;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    border: 2px solid #808080;
+    overflow-y: auto;
+}
+

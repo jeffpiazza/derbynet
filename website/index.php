@@ -8,6 +8,8 @@ require_once('inc/schema_version.inc');
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Pinewood Derby Race Information</title>
 <?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 </head>
 <body>
 <?php
@@ -104,22 +106,7 @@ if ($need_spacer) {
 <?php } ?>
 
 <?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="settings.php">
-  <input type="submit" value="Settings"/>
-</form>
-<br/>
-<form method="link" action="database-setup.php">
-  <input type="submit" value="Database"/>
-</form>
-<br/>
-<form method="link" action="import-roster.php">
-  <input type="submit" value="Import Roster"/>
-</form>
-<br/>
-<form method="link" action="class-editor.php">
-  <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
-</form>
-<br/>
+<input type="button" value="Set-Up" onclick="show_modal('#setup_modal', function() {})"/>
 <?php } ?>
 
 <?php if (false) {
@@ -171,5 +158,30 @@ if ($need_spacer) {
 </div>
 <?php } ?>
 </div>
+
+ <div id='setup_modal' class='modal_dialog hidden block_buttons'>
+<form method="link" action="settings.php">
+  <input type="submit" value="Settings"/>
+</form>
+<br/>
+<form method="link" action="database-setup.php">
+  <input type="submit" value="Database"/>
+</form>
+<br/>
+<form method="link" action="import-roster.php">
+  <input type="submit" value="Import Roster"/>
+</form>
+<br/>
+<form method="link" action="import-awards.php">
+  <input type="submit" value="Import Awards"/>
+</form>
+<br/>
+<form method="link" action="class-editor.php">
+  <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
+</form>
+<div class="index_spacer">&nbsp;</div>
+<input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#setup_modal");'/>
+ </div>
 </body>
 </html>
