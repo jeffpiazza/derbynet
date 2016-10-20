@@ -7,21 +7,33 @@ body {
     margin: 0px;
 }
 
-div.banner {
+.banner {
   position: relative;
   width: 100%;
   height: 64px;
   background-color: #023882;
-
-  display: table;
 }
 
-div.banner div {
-  display: table-cell;
-  vertical-align: middle;
+.banner .back_button {
+    display: block;
+    height: 64px;
+    width: 66px;
+    padding-top: 12px;
+    cursor: pointer;
 }
 
-div.banner div.role {
+.banner .banner_title {
+  color: white;
+  font-size: 50px;
+  text-align: center;
+  font-family: sans-serif;
+
+  position: absolute;
+  left: 66px;
+  right: 66px;
+}
+
+.banner .role {
   position: absolute;
   right: 64px;
   /* To achieve vertical centering
@@ -34,37 +46,24 @@ div.banner div.role {
  height: 40px;
 }
 
-div.banner div.role,
-div.banner div.role a {
+.banner .role,
+.banner .role a,
+.banner .role a:visited {
   color: #F7D117;
   text-shadow: none;
 }
 
-div.banner img {
+.banner img.logo {
   display: inline;
   position: absolute;
   top: 2px;
   right: 2px;
 }
 
-div.banner form {
-  display: inline;
-  width: 66px;
-}
 
 div.banner_version { 
   position: absolute;
   right: 10px;
-}
-
-div.banner .banner_title {
-  color: white;
-  font-size: 50px;
-  text-align: center;
-}
-
-div.banner div.back_button {
-  width: 66px;
 }
 
 .block_buttons input,
