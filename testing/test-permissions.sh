@@ -24,7 +24,7 @@ EOF
 
 cat >coordinator.index.tmp <<EOF
         <form method="link" action="coordinator.php">
-        <form method="link" action="awards-dashboard.php">
+        <form method="link" action="awards-presentation.php">
         <form method="link" action="checkin.php">
         <form method="get" action="photo-thumbs.php">
         <form method="get" action="photo-thumbs.php">

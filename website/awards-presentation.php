@@ -14,7 +14,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/awards-dashboard.js"></script>
+<script type="text/javascript" src="js/awards-presentation.js"></script>
 <?php
     $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
                                  .' WHERE page LIKE \'%award%present%\'', array());
@@ -29,7 +29,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
     }
 ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
-<link rel="stylesheet" type="text/css" href="css/awards-dashboard.css"/>
+<link rel="stylesheet" type="text/css" href="css/awards-presentation.css"/>
 </head>
 <body>
 <?php $banner_title = 'Awards Presentation'; require('inc/banner.inc');

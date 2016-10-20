@@ -6,7 +6,7 @@
 
 start_response();
 
-if (have_permission(SET_UP_PERMISSION)) {
+if (have_permission(EDIT_AWARDS_PERMISSION)) {
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, strlen('awardid_')) == 'awardid_') {
       $stmt = $db->prepare('UPDATE Awards SET sort = :sort WHERE awardid = :awardid');

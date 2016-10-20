@@ -1,5 +1,5 @@
 <?php   // awardid
-if (have_permission(SET_UP_PERMISSION)) {
+if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
   try {
     $stmt = $db->prepare('DELETE FROM Awards WHERE awardid = :awardid');

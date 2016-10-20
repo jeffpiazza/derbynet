@@ -6,8 +6,8 @@ source `dirname $0`/common.sh
 
 PATTERN='Notice\|Warning\|Fatal'
 curl_get about.php | sed -n -e "/$PATTERN/ { p; q 1 }"
-curl_get awards.php | sed -n -e "/$PATTERN/ { p; q 1 }"
-curl_get awards-dashboard.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get awards-editor.php | sed -n -e "/$PATTERN/ { p; q 1 }"
+curl_get awards-presentation.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get checkin.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get coordinator.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_text export.php | sed -n -e "/$PATTERN/ { p; q 1 }"

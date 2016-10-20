@@ -41,9 +41,16 @@ require_once('inc/schema_version.inc');
 <br/>
 <?php } ?>
 
+<?php if (have_permission(EDIT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
+<form method="link" action="awards-editor.php">
+  <input type="submit" value="Awards Editor"/>
+</form>
+<br/>
+<?php } ?>
+
 <?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards-dashboard.php">
-  <input type="submit" value="Awards Dashboard"/>
+<form method="link" action="awards-presentation.php">
+  <input type="submit" value="Present Awards"/>
 </form>
 <br/>
 <?php } ?>
@@ -78,6 +85,45 @@ if ($need_spacer) {
 <?php } ?>
 <?php } ?>
 
+<?php if ($two_columns) { ?>
+</div>
+</div>
+
+<div class="index_column">
+<div class="block_buttons">
+<?php } ?>
+
+<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
+<input type="button" value="Set-Up" onclick="show_modal('#setup_modal', function() {})"/>
+
+
+        <div id='setup_modal' class='modal_dialog hidden block_buttons'>
+          <form method="link" action="settings.php">
+            <input type="submit" value="Settings"/>
+          </form>
+          <br/>
+          <form method="link" action="database-setup.php">
+            <input type="submit" value="Database"/>
+          </form>
+          <br/>
+          <form method="link" action="import-roster.php">
+            <input type="submit" value="Import Roster"/>
+          </form>
+          <br/>
+          <form method="link" action="import-awards.php">
+            <input type="submit" value="Import Awards"/>
+          </form>
+          <br/>
+          <form method="link" action="class-editor.php">
+            <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
+          </form>
+          <div class="index_spacer">&nbsp;</div>
+            <input type="button" data-enhanced="true" value="Cancel"
+                   onclick='close_modal("#setup_modal");'/>
+        </div>
+                                                
+<?php } ?>
+
 <?php
 if ($need_spacer) {
   $need_spacer = false;
@@ -96,27 +142,6 @@ if ($need_spacer) {
 </form>
 <br/>
  <?php } ?>
-
-<?php if ($two_columns) { ?>
-</div>
-</div>
-
-<div class="index_column">
-<div class="block_buttons">
-<?php } ?>
-
-<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<input type="button" value="Set-Up" onclick="show_modal('#setup_modal', function() {})"/>
-<?php } ?>
-
-<?php if (false) {
-   $need_spacer = true; 
-?>
-<form method="link" action="utilities.php">
-  <input type="submit" value="Utilities"/>
-</form>
-<br/>
-<?php } ?>
 
 <div class="index_spacer">&nbsp;</div>
 
@@ -158,30 +183,5 @@ if ($need_spacer) {
 </div>
 <?php } ?>
 </div>
-
- <div id='setup_modal' class='modal_dialog hidden block_buttons'>
-<form method="link" action="settings.php">
-  <input type="submit" value="Settings"/>
-</form>
-<br/>
-<form method="link" action="database-setup.php">
-  <input type="submit" value="Database"/>
-</form>
-<br/>
-<form method="link" action="import-roster.php">
-  <input type="submit" value="Import Roster"/>
-</form>
-<br/>
-<form method="link" action="import-awards.php">
-  <input type="submit" value="Import Awards"/>
-</form>
-<br/>
-<form method="link" action="class-editor.php">
-  <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
-</form>
-<div class="index_spacer">&nbsp;</div>
-<input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#setup_modal");'/>
- </div>
 </body>
 </html>

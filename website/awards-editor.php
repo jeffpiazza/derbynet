@@ -4,7 +4,7 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
-require_permission(PRESENT_AWARDS_PERMISSION);
+require_permission(EDIT_AWARDS_PERMISSION);
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -106,7 +106,7 @@ foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, cla
     <label for="awardtype-select">Award Category:</label>
     <select name="awardtypeid" id="awardtype-select">
         <?php
-        foreach ($db->query('SELECT * FROM AwardTypes ORDER BY awardtype') as $atype) {
+        foreach ($db->query('SELECT awardtypeid, awardtype FROM AwardTypes ORDER BY awardtype') as $atype) {
           echo '<option value="'.$atype['awardtypeid'].'">'
               .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
               .'</option>'."\n";

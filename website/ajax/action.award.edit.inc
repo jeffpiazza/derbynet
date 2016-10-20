@@ -8,7 +8,7 @@
   racerid
   sort  
 */
-if (have_permission(SET_UP_PERMISSION)) {
+if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
   if ($_POST['awardid'] == 'new') {
     $params = array(':awardname' => $_POST['name'],
