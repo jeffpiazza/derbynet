@@ -18,20 +18,57 @@ public class TimerGui {
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
 
-  public TimerGui(HttpTask.MessageTracer traceMessages, HttpTask.MessageTracer traceHeartbeats, Connector connector) {
+  public TimerGui(HttpTask.MessageTracer traceMessages,
+                  HttpTask.MessageTracer traceHeartbeats,
+                  Connector connector) {
     this.components = new Components();
     this.connector = connector;
     this.traceMessages = traceMessages;
     this.traceHeartbeats = traceHeartbeats;
   }
 
+  private static class PortListRenderer extends JLabel implements
+      ListCellRenderer<SerialPortListElement> {
+    public PortListRenderer() {
+      setOpaque(true);
+    }
+
+    @Override
+    public Component getListCellRendererComponent(
+        JList<? extends SerialPortListElement> list,
+        SerialPortListElement value,
+        int index,
+        boolean isSelected,
+        boolean cellHasFocus) {
+
+      setText(value.toString());
+
+      if (isSelected) {
+        setBackground(list.getSelectionBackground());
+        setForeground(list.getSelectionForeground());
+      } else {
+        setBackground(list.getBackground());
+        if (value.wontOpen()) {
+          setForeground(Color.red);
+        } else {
+          setForeground(list.getForeground());
+        }
+      };
+
+      return this;
+    }
+  }
+
   public void show() {
     components.setTitle("Derby Timer Management");
     components.getRootPane().setDefaultButton(components.connectButton);
 
-    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/trouble.png")));
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/unknown.png")));
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(
+        "/status/trouble.png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().
+        getResource("/status/unknown.png")));
 
+    components.portList.setCellRenderer(new PortListRenderer());
     components.connectButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -49,8 +86,13 @@ public class TimerGui {
     components.setVisible(true);
   }
 
-  private synchronized RoleFinder getRoleFinder() { return roleFinder; }
-  private void setRoleFinder(RoleFinder roleFinder) { this.roleFinder = roleFinder; }
+  private synchronized RoleFinder getRoleFinder() {
+    return roleFinder;
+  }
+
+  private void setRoleFinder(RoleFinder roleFinder) {
+    this.roleFinder = roleFinder;
+  }
 
   private synchronized boolean rolesPopulated() {
     return rolesPopulated;
@@ -60,31 +102,38 @@ public class TimerGui {
   private static Color black = Color.BLACK;
   private static Color red = Color.RED;
 
-  private void setHttpStatus(String message, Color color) {
+  public void setHttpStatus(String message, Color color) {
     components.httpStatusLabel.setForeground(color);
     components.httpStatusLabel.setText(message);
   }
 
   // icon should be one of: "ok", "trouble", "unknown"
-  private void setHttpStatus(String message, Color color, String icon) {
+  public void setHttpStatus(String message, Color color, String icon) {
     setHttpStatus(message, color);
-    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/" + icon + ".png")));
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(
+        "/status/" + icon + ".png")));
   }
 
-  private void setSerialStatus(String message, Color color) {
-    components.serialStatusLabel.setForeground(color);
+  public void setSerialStatus(String message) {
     components.serialStatusLabel.setText(message);
   }
 
-  private void setSerialStatus(String message, Color color, String icon) {
+  public void setSerialStatus(String message, Color color) {
+    components.serialStatusLabel.setForeground(color);
+    setSerialStatus(message);
+  }
+
+  public void setSerialStatus(String message, Color color, String icon) {
     setSerialStatus(message, color);
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource("/status/" + icon + ".png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().
+        getResource("/status/" + icon + ".png")));
   }
 
   // Runs on dispatch thread; no individual invocation can be long-running
   private void onConnectButtonClick() {
     RoleFinder roleFinder = getRoleFinder();
-    if (roleFinder != null && !roleFinder.getServerAddress().equals(components.urlField.getText())) {
+    if (roleFinder != null && !roleFinder.getServerAddress().equals(
+        components.urlField.getText())) {
       // Cancel existing rolefinder
       roleFinder.cancel();
       setRoleFinder(null);
@@ -102,25 +151,28 @@ public class TimerGui {
         }
       }).start();
     } else {
-      // There's an existing roleFinder for the current URL, and the user clicked "Connect."  If we're still waiting
-      // for the roles to populate, then ignore the button, otherwise start a login request
+      // There's an existing roleFinder for the current URL, and the user
+      // clicked "Connect."  If we're still waiting for the roles to
+      // populate, then ignore the button, otherwise start a login request
       if (rolesPopulated()) {
         setHttpStatus("Logging in...", black, "unknown");
         HttpTask.start(components.roleComboBox.getItemAt(
             components.roleComboBox.getSelectedIndex()),
-            new String(components.passwordField.getPassword()),
-            roleFinder.getSession(),
-            traceMessages, traceHeartbeats, connector, new HttpTask.LoginCallback() {
-              @Override
-              public void onLoginSuccess() {
-                setHttpStatus("Connected", green, "ok");
-              }
+                       new String(components.passwordField.getPassword()),
+                       roleFinder.getSession(),
+                       traceMessages, traceHeartbeats, connector,
+                       new HttpTask.LoginCallback() {
+                     @Override
+                     public void onLoginSuccess() {
+                       setHttpStatus("Connected", green, "ok");
+                     }
 
-              @Override
-              public void onLoginFailed(String message) {
-                setHttpStatus("Unsuccessful login", red, "trouble");
-              }
-            });
+                     @Override
+                     public void onLoginFailed(String message) {
+                       setHttpStatus("Unsuccessful login", red,
+                                     "trouble");
+                     }
+                   });
       } else {
         setHttpStatus("(Hold your horses)", black, "unknown");
       }
@@ -162,18 +214,25 @@ public class TimerGui {
   public void setSerialPort(SerialPort port) {
     ListModel<SerialPortListElement> model = components.portList.getModel();
     for (int i = 0; i < model.getSize(); ++i) {
-      if (model.getElementAt(i).port().getPortName().equals(port.getPortName())) {
+      if (model.getElementAt(i).port().getPortName().equals(port.
+          getPortName())) {
         components.portList.clearSelection();
-        components.portList.setSelectionBackground(Color.blue);
+        // components.portList.setSelectionForeground(Color.blue);
         components.portList.setSelectedIndex(i);
+        // We're about to try opening, so assume success
+        components.portList.getSelectedValue().setWontOpen(false);
         return;
       }
     }
   }
 
+  public void markSerialPortWontOpen() {
+    components.portList.getSelectedValue().setWontOpen(true);
+  }
+
   public void initializeTimerClasses(DeviceFinder deviceFinder) {
-    Vector<TimerClassListElement> timerModel =
-        new Vector<TimerClassListElement>();
+    Vector<TimerClassListElement> timerModel
+        = new Vector<TimerClassListElement>();
     for (Class<? extends TimerDevice> dev : deviceFinder.deviceClasses()) {
       timerModel.addElement(new TimerClassListElement(dev));
     }
@@ -181,11 +240,12 @@ public class TimerGui {
   }
 
   public void setTimerClass(Class<? extends TimerDevice> timerClass) {
-    ListModel<TimerClassListElement> model = components.timerClassList.getModel();
+    ListModel<TimerClassListElement> model = components.timerClassList.
+        getModel();
     for (int i = 0; i < model.getSize(); ++i) {
       if (model.getElementAt(i).type() == timerClass) {
         components.timerClassList.clearSelection();
-        components.timerClassList.setSelectionBackground(Color.blue);
+        // components.timerClassList.setSelectionForeground(Color.blue);
         components.timerClassList.setSelectedIndex(i);
         return;
       }
@@ -198,11 +258,19 @@ public class TimerGui {
 
   public static class SelectedListCellRenderer extends DefaultListCellRenderer {
     private Color color;
-    SelectedListCellRenderer(Color color) { this.color = color; }
+
+    SelectedListCellRenderer(Color color) {
+      this.color = color;
+    }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    public Component getListCellRendererComponent(JList list, Object value,
+                                                  int index,
+                                                  boolean isSelected,
+                                                  boolean cellHasFocus) {
+      Component c = super.getListCellRendererComponent(list, value, index,
+                                                       isSelected,
+                                                       cellHasFocus);
       if (isSelected) {
         c.setBackground(color);
       }
@@ -210,9 +278,11 @@ public class TimerGui {
     }
   }
 
-  public void confirmDevice(SerialPort port, Class<? extends TimerDevice> timerClass) {
+  public void confirmDevice(SerialPort port,
+                            Class<? extends TimerDevice> timerClass) {
     components.portList.setCellRenderer(new SelectedListCellRenderer(green));
-    components.timerClassList.setCellRenderer(new SelectedListCellRenderer(green));
+    components.timerClassList.setCellRenderer(new SelectedListCellRenderer(
+        green));
     setSerialStatus("Timer device identified", green, "ok");
     // TODO components.scanButton.setVisible(false);
   }
