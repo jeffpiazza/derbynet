@@ -21,20 +21,23 @@ public abstract class TimerDeviceBase implements TimerDevice {
     if (portWrapper.millisSinceLastContact() < 2000) {
       return true;
     } else {
-      String msg = "No response from timer in " + portWrapper.millisSinceLastContact() + "ms.";
+      String msg = "No response from timer in "
+          + portWrapper.millisSinceLastContact() + "ms.";
       portWrapper.logWriter().serialPortLogInternal(msg);
       malfunction(true, msg);
       return false;
-    }      
+    }
   }
 
-
-  public synchronized void registerRaceStartedCallback(RaceStartedCallback raceStartedCallback) {
+  public synchronized void registerRaceStartedCallback(
+      RaceStartedCallback raceStartedCallback) {
     this.raceStartedCallback = raceStartedCallback;
   }
+
   protected synchronized RaceStartedCallback getRaceStartedCallback() {
     return raceStartedCallback;
   }
+
   protected void raceStarted() {
     RaceStartedCallback cb = getRaceStartedCallback();
     if (cb != null) {
@@ -42,12 +45,15 @@ public abstract class TimerDeviceBase implements TimerDevice {
     }
   }
 
-  public synchronized void registerRaceFinishedCallback(RaceFinishedCallback raceFinishedCallback) {
+  public synchronized void registerRaceFinishedCallback(
+      RaceFinishedCallback raceFinishedCallback) {
     this.raceFinishedCallback = raceFinishedCallback;
   }
+
   protected synchronized RaceFinishedCallback getRaceFinishedCallback() {
     return raceFinishedCallback;
   }
+
   protected void raceFinished(Message.LaneResult[] results) {
     RaceFinishedCallback cb = getRaceFinishedCallback();
     if (cb != null) {
@@ -55,12 +61,15 @@ public abstract class TimerDeviceBase implements TimerDevice {
     }
   }
 
-  public synchronized void registerStartingGateCallback(StartingGateCallback startingGateCallback) {
+  public synchronized void registerStartingGateCallback(
+      StartingGateCallback startingGateCallback) {
     this.startingGateCallback = startingGateCallback;
   }
+
   protected synchronized StartingGateCallback getStartingGateCallback() {
     return startingGateCallback;
   }
+
   protected void startGateChange(boolean isOpen) {
     StartingGateCallback cb = getStartingGateCallback();
     if (cb != null) {
@@ -68,12 +77,15 @@ public abstract class TimerDeviceBase implements TimerDevice {
     }
   }
 
-  public synchronized void registerTimerMalfunctionCallback(TimerMalfunctionCallback timerMalfunctionCallback) {
+  public synchronized void registerTimerMalfunctionCallback(
+      TimerMalfunctionCallback timerMalfunctionCallback) {
     this.timerMalfunctionCallback = timerMalfunctionCallback;
   }
+
   protected synchronized TimerMalfunctionCallback getTimerMalfunctionCallback() {
     return timerMalfunctionCallback;
   }
+
   protected void malfunction(boolean detectable, String msg) {
     TimerMalfunctionCallback cb = getTimerMalfunctionCallback();
     if (cb != null) {

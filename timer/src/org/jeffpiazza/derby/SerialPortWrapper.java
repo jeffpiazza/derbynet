@@ -19,7 +19,6 @@ import java.util.regex.*;
 // finally
 // port.removeEventListener();
 //
-
 public class SerialPortWrapper implements SerialPortEventListener {
   private SerialPort port;
   // Received characters that don't yet make up a complete line, i.e., still
@@ -42,12 +41,13 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
   private ArrayList<Detector> detectors;
 
-  public SerialPortWrapper(SerialPort port, LogWriter logwriter) throws SerialPortException {
+  public SerialPortWrapper(SerialPort port, LogWriter logwriter) throws
+      SerialPortException {
     this.port = port;
     this.leftover = "";
     this.queue = new ArrayList<String>();
-	this.detectors = new ArrayList<Detector>();
-	this.logwriter = logwriter;
+    this.detectors = new ArrayList<Detector>();
+    this.logwriter = logwriter;
 
     if (!port.purgePort(SerialPort.PURGE_RXCLEAR | SerialPort.PURGE_TXCLEAR)) {
       System.out.println("purgePort failed.");  // TODO
@@ -58,12 +58,21 @@ public class SerialPortWrapper implements SerialPortEventListener {
     port.addEventListener(this, SerialPort.MASK_RXCHAR);
   }
 
-  public SerialPort port() { return port; }
+  public SerialPort port() {
+    return port;
+  }
 
-  public LogWriter logWriter() { return logwriter; }
+  public LogWriter logWriter() {
+    return logwriter;
+  }
 
-  public long millisSinceLastCommand() { return System.currentTimeMillis() - last_command; }
-  public long millisSinceLastContact() { return System.currentTimeMillis() - last_contact; }
+  public long millisSinceLastCommand() {
+    return System.currentTimeMillis() - last_command;
+  }
+
+  public long millisSinceLastContact() {
+    return System.currentTimeMillis() - last_contact;
+  }
 
   public void registerDetector(Detector detector) {
     synchronized (detectors) {
@@ -99,8 +108,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
     try {
       while (true) {
         String s = port.readString();
-        if (s == null || s.length() == 0)
+        if (s == null || s.length() == 0) {
           break;
+        }
         s = leftover + s;
         int cr;
         while ((cr = s.indexOf('\n')) >= 0) {
@@ -146,7 +156,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return writeAndWaitForResponse(cmd, 2000);
   }
 
-  public String writeAndWaitForResponse(String cmd, int timeout) throws SerialPortException {
+  public String writeAndWaitForResponse(String cmd, int timeout) throws
+      SerialPortException {
     clear();
     write(cmd);
     return next(System.currentTimeMillis() + timeout);
@@ -155,7 +166,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public boolean hasAvailable() {
     return hasAvailable(1);
   }
-  
+
   public boolean hasAvailable(int expected) {
     synchronized (queue) {
       return queue.size() >= expected;
@@ -173,7 +184,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
       } else {
         try {
           Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
-        } catch (Exception exc) {}
+        } catch (Exception exc) {
+        }
       }
     }
     return null;
@@ -210,7 +222,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
       } else {
         try {
           Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
-        } catch (Exception exc) {}
+        } catch (Exception exc) {
+        }
       }
     }
   }
@@ -220,7 +233,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   public void writeAndDrainResponse(String cmd, int expected, int timeout)
-        throws SerialPortException {
+      throws SerialPortException {
     clear();
     write(cmd);
     drain(System.currentTimeMillis() + timeout, expected);
