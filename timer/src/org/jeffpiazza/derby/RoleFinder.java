@@ -6,13 +6,15 @@ import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 
-// From a server address, tries to make first contact with the web server by asking about the available roles.
+// From a server address, tries to make first contact with the web server by
+// asking about the available roles.
 //
-// Usage: Create a new RoleFinder, spawn a new thread to run findRoles().  Cancel asynchronously by calling cancel(),
+// Usage: Create a new RoleFinder, spawn a new thread to run findRoles().
+// Cancel asynchronously by calling cancel(),
 // otherwise wait until call to gui.rolesComplete().
 public class RoleFinder {
-  // serverAddress and session are fixed for the lifetime of the RoleFinder, but gui may be set to null by
-  // a cancel() call from another thread.
+  // serverAddress and session are fixed for the lifetime of the RoleFinder,
+  // but gui may be set to null by a cancel() call from another thread.
   String serverAddress;
   TimerGui gui;
   ClientSession session;

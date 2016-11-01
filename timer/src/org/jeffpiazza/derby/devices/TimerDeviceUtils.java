@@ -7,10 +7,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
 
-
 public class TimerDeviceUtils {
-  private static final Pattern finishPattern = Pattern.compile("([A-F]=(\\d\\.\\d+).?)( [A-F]=(\\d\\.\\d+).?)*$");
-  private static final Pattern singleLanePattern = Pattern.compile("([A-F])=(\\d\\.\\d+)([^ ]?)");
+  private static final Pattern finishPattern = Pattern.compile(
+      "([A-F]=(\\d\\.\\d+).?)( [A-F]=(\\d\\.\\d+).?)*$");
+  private static final Pattern singleLanePattern = Pattern.compile(
+      "([A-F])=(\\d\\.\\d+)([^ ]?)");
 
   // Returns either a Matcher that successfully matched within line, or null.
   public static Matcher matchedCommonRaceResults(String line) {
@@ -23,7 +24,8 @@ public class TimerDeviceUtils {
 
   // In a specified (matched) range from line (as determined by
   // matchedCommonRaceResult, above), extracts the individual lane results.
-  public static Message.LaneResult[] extractResults(String line, int start, int end, int nlanes) {
+  public static Message.LaneResult[] extractResults(String line, int start,
+                                                    int end, int nlanes) {
     Message.LaneResult[] results = new Message.LaneResult[nlanes];
     Matcher m = singleLanePattern.matcher(line);
     for (int i = start; i < end && m.find(i); i = m.end() + 1) {
@@ -34,11 +36,12 @@ public class TimerDeviceUtils {
         results[index].place = m.group(3).charAt(0) - '!' + 1;
       }
     }
-                        
+
     return results;
   }
-  
-  public static Message.LaneResult[] parseCommonRaceResult(String line, int nlanes) {
+
+  public static Message.LaneResult[] parseCommonRaceResult(String line,
+                                                           int nlanes) {
     Matcher m = finishPattern.matcher(line);
     if (m.matches()) {
       Message.LaneResult[] results = new Message.LaneResult[nlanes];
@@ -51,7 +54,7 @@ public class TimerDeviceUtils {
           results[index].place = m.group(3).charAt(0) - '!' + 1;
         }
       }
-                        
+
       return results;
     }
     return null;

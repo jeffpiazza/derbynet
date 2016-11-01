@@ -37,7 +37,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public interface Detector {
     // Return that part of line not handled by this detector
-    String apply(String line);
+    String apply(String line) throws SerialPortException;
   }
   private ArrayList<Detector> detectors;
 
@@ -86,7 +86,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
-  // SerialPortEventListener interface: invoked 
+  // SerialPortEventListener interface: invoked
   public void serialEvent(SerialPortEvent event) {
     try {
       if (event.isRXCHAR()) {
@@ -151,7 +151,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   // These are unsatisfactory, because it's not a certainty that
   // the single next thing sent is the response we're looking
-  // for.  But they at least ensure that there's SOME response between 
+  // for.  But they at least ensure that there's SOME response between
   public String writeAndWaitForResponse(String cmd) throws SerialPortException {
     return writeAndWaitForResponse(cmd, 2000);
   }
@@ -167,9 +167,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return hasAvailable(1);
   }
 
-  public boolean hasAvailable(int expected) {
+  public boolean hasAvailable(int expectedLines) {
     synchronized (queue) {
-      return queue.size() >= expected;
+      return queue.size() >= expectedLines;
     }
   }
 
@@ -214,9 +214,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   // Waits until deadline (at the latest) for at least one expected input lines
   // to appear in the queue, then drains the queue.
-  public void drain(long deadline, int expected) {
+  public void drain(long deadline, int expectedLines) {
     while (System.currentTimeMillis() < deadline) {
-      if (hasAvailable(expected)) {
+      if (hasAvailable(expectedLines)) {
         clear();
         return;
       } else {
@@ -232,11 +232,11 @@ public class SerialPortWrapper implements SerialPortEventListener {
     drain(System.currentTimeMillis() + 500, 1);
   }
 
-  public void writeAndDrainResponse(String cmd, int expected, int timeout)
+  public void writeAndDrainResponse(String cmd, int expectedLines, int timeout)
       throws SerialPortException {
     clear();
     write(cmd);
-    drain(System.currentTimeMillis() + timeout, expected);
+    drain(System.currentTimeMillis() + timeout, expectedLines);
   }
 
   public void writeAndDrainResponse(String cmd) throws SerialPortException {

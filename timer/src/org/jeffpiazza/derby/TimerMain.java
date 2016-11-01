@@ -32,8 +32,8 @@ public class TimerMain {
   }
 
   public static void main(String[] args) {
-    String username = "RaceCoordinator";
-    String password = "doyourbest";
+    String username = null;
+    String password = null;
     String portname = null;
     String devicename = null;
     HttpTask.MessageTracer traceHeartbeats = null;
@@ -90,12 +90,22 @@ public class TimerMain {
         System.exit(1);
       }
     }
-    String base_url = "localhost";
+    String base_url = null;
     if (consumed_args + 1 == args.length) {
       base_url = args[consumed_args];
-    } else if (!showGui) {
-      usage();
-      System.exit(1);
+    }
+
+    if (!showGui) {
+      if (base_url == null) {
+        usage();
+        System.exit(1);
+      }
+      if (username == null) {
+        username = "RaceCoordinator";
+      }
+      if (password == null) {
+        password = "doyourbest";
+      }
     }
 
     ConnectorImpl connector = new ConnectorImpl(traceMessages);
@@ -109,6 +119,13 @@ public class TimerMain {
             timerGui.show();
           }
         });
+
+        if (base_url != null) {
+          timerGui.setUrl(base_url);
+        }
+        if (username != null || password != null) {
+          timerGui.setRoleAndPassword(username, password);
+        }
 
         (new TimerTask(portname, devicename, fakeDevice, timerGui,
                        logwriter, connector, traceMessages)).run();
@@ -181,6 +198,8 @@ public class TimerMain {
         traceMessages.traceInternal(Timestamp.string() + ": Timer detected.");
       }
 
+      httpTask.registerTimerHealthCallback(timerTask);
+
       httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
         public void heatReady(int laneMask) {
           try {
@@ -205,7 +224,6 @@ public class TimerMain {
             traceMessages.traceInternal(
                 Timestamp.string() + ": AbortHeat received");
           }
-          timerTask.clearRaceWatchdog();
           try {
             timerTask.device().abortHeat();
           } catch (Throwable t) {
@@ -218,7 +236,6 @@ public class TimerMain {
           new TimerDevice.RaceStartedCallback() {
         public void raceStarted() {
           try {
-            timerTask.startRaceWatchdog();
             if (traceMessages != null) {
               traceMessages.traceInternal(Timestamp.string() + ": Race started");
             }
@@ -233,7 +250,6 @@ public class TimerMain {
         public void raceFinished(Message.LaneResult[] results) {
           // Rely on recipient to ignore if not expecting any results
           try {
-            timerTask.clearRaceWatchdog();
             if (traceMessages != null) {
               traceMessages.
                   traceInternal(Timestamp.string() + ": Race finished");

@@ -1,5 +1,8 @@
 package org.jeffpiazza.derby.devices;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.SerialPortWrapper;
 
@@ -15,17 +18,15 @@ public abstract class TimerDeviceBase implements TimerDevice {
     this.portWrapper = portWrapper;
   }
 
+  public SerialPortWrapper getPortWrapper() {
+    return portWrapper;
+  }
+
   // Returns true if we've had any response recently, otherwise invokes
   // malfunction callback and returns false.
-  protected boolean checkConnection() {
-    if (portWrapper.millisSinceLastContact() < 2000) {
-      return true;
-    } else {
-      String msg = "No response from timer in "
-          + portWrapper.millisSinceLastContact() + "ms.";
-      portWrapper.logWriter().serialPortLogInternal(msg);
-      malfunction(true, msg);
-      return false;
+  protected void checkConnection() throws LostConnectionException {
+    if (portWrapper.millisSinceLastContact() > 2000) {
+      throw new LostConnectionException();
     }
   }
 
@@ -38,7 +39,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return raceStartedCallback;
   }
 
-  protected void raceStarted() {
+  protected void invokeRaceStartedCallback() {
     RaceStartedCallback cb = getRaceStartedCallback();
     if (cb != null) {
       cb.raceStarted();
@@ -54,7 +55,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return raceFinishedCallback;
   }
 
-  protected void raceFinished(Message.LaneResult[] results) {
+  protected void invokeRaceFinishedCallback(Message.LaneResult[] results) {
     RaceFinishedCallback cb = getRaceFinishedCallback();
     if (cb != null) {
       cb.raceFinished(results);
@@ -70,7 +71,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return startingGateCallback;
   }
 
-  protected void startGateChange(boolean isOpen) {
+  protected void invokeGateChangeCallback(boolean isOpen) {
     StartingGateCallback cb = getStartingGateCallback();
     if (cb != null) {
       cb.startGateChange(isOpen);
@@ -86,10 +87,22 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return timerMalfunctionCallback;
   }
 
-  protected void malfunction(boolean detectable, String msg) {
+  @Override
+  public synchronized void invokeMalfunctionCallback(boolean detectable,
+                                                     String msg) {
     TimerMalfunctionCallback cb = getTimerMalfunctionCallback();
     if (cb != null) {
       cb.malfunction(detectable, msg);
+    }
+  }
+
+  @Override
+  public void close() {
+    try {
+      portWrapper.port().closePort();
+    } catch (SerialPortException ex) {
+      Logger.getLogger(TimerDeviceBase.class.getName()).log(Level.SEVERE, null,
+                                                            ex);
     }
   }
 }

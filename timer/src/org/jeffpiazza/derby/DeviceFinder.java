@@ -53,6 +53,7 @@ public class DeviceFinder {
     } finally {
       if (found == null) {
         try {
+          // Performs a removeEventListener, too.
           port.closePort();
         } catch (Throwable t) {
           System.err.println("Exception closing port: ");
@@ -98,6 +99,9 @@ public class DeviceFinder {
       }
     }
 
+    // We're no longer interested in this wrapper, so the wrapper's no longer
+    // interested in events from the port.
+    port.removeEventListener();
     return null;
   }
 

@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby.devices;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +14,7 @@ import org.jeffpiazza.derby.TimerMain;
 import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.gui.TimerGui;
 
-public class TimerTask implements Runnable {
+public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
 
   private String portname;
   private String devicename;
@@ -38,19 +39,35 @@ public class TimerTask implements Runnable {
   }
 
   // Assumes control of the thread to fully manage the serial device.
-  //
-  // TODO Upon a loss of connection, fall back to identifying the timer device.
-  // Note that re-connecting an unplugged cable, probably the most common
-  // loss-of-connection situation, may result in a new serial port showing up,
-  // so we have to scan.
   public void run() {
-    try {
-      device = identifyTimerDevice();
-      connector.setTimerTask(this);
-      runDevicePollingLoop();
-    } catch (Throwable ex) {
-      Logger.getLogger(TimerTask.class.getName()).log(Level.SEVERE, null,
-                                                      ex);
+    // This while loop ensures we revert to scanning for timers upon loss of
+    // connection.
+    while (true) {
+      try {
+        device = identifyTimerDevice();
+        connector.setTimerTask(this);
+        runDevicePollingLoop();
+      } catch (TimerDevice.LostConnectionException lce) {
+        System.out.println("Lost connection!");
+        String msg = "No response from timer in "
+            + device.getPortWrapper().millisSinceLastContact() + "ms.";
+        device.getPortWrapper().logWriter().serialPortLogInternal(msg);
+        device.invokeMalfunctionCallback(true, msg);
+        if (timerGui != null) {
+          // Note that this status message will get replaced almost immediately
+          // as the new scan starts
+          timerGui.setSerialStatus("Lost connection", Color.red,
+                                   TimerGui.icon_trouble);
+        }
+      } catch (Throwable ex) {
+        Logger.getLogger(TimerTask.class.getName()).log(Level.SEVERE, null,
+                                                        ex);
+      } finally {
+        if (device != null) {
+          device.close();
+          device = null;
+        }
+      }
     }
   }
 
@@ -65,6 +82,8 @@ public class TimerTask implements Runnable {
           : fakeDevice ? new DeviceFinder(true)
             : new DeviceFinder();
     if (timerGui != null) {
+      timerGui.setSerialStatus("Initializing list of serial ports", Color.black,
+                               TimerGui.icon_unknown);
       timerGui.initializeTimerClasses(deviceFinder);
     }
     while (true) {
@@ -73,6 +92,7 @@ public class TimerTask implements Runnable {
       if (timerGui != null) {
         timerGui.updateSerialPorts();
         timerGui.setSerialStatus("Scanning for connected timer");
+        timerGui.deselectAll();
       }
       while (ports.hasNext()) {
         SerialPort port = ports.next();
@@ -101,20 +121,10 @@ public class TimerTask implements Runnable {
 
   // Continuously polls the timer device for messages, and checks for timeouts
   // of expected race results.
-  private void runDevicePollingLoop() throws SerialPortException {
+  private void runDevicePollingLoop()
+      throws SerialPortException, TimerDevice.LostConnectionException {
     while (true) {
       device.poll();
-      if (!(raceDeadline < 0 || System.currentTimeMillis() < raceDeadline)) {
-        // TODO: Race timed out, not sure what to do.
-        // Some choices:
-        // - Send empty results back to web server.
-        // - Repeat prepareHeat.
-        // - Nothing, as now.
-        String msg = Timestamp.string() + ": ****** Race timed out *******";
-        traceMessages.traceInternal(msg);
-        System.err.println(msg);
-        clearRaceWatchdog();
-      }
       try {
         Thread.sleep(50); // ms.
       } catch (Exception exc) {
@@ -122,18 +132,12 @@ public class TimerTask implements Runnable {
     }
   }
 
-  public TimerDevice device() {
+  public synchronized TimerDevice device() {
     return device;
   }
 
-  private volatile long raceDeadline = -1;
-  private final long raceTimeoutMillis = 11000;
-
-  public void startRaceWatchdog() {
-    raceDeadline = System.currentTimeMillis() + raceTimeoutMillis;
-  }
-
-  public void clearRaceWatchdog() {
-    raceDeadline = -1;
+  @Override
+  public boolean isTimerHealthy() {
+    return device() != null;
   }
 }

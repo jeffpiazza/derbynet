@@ -46,7 +46,8 @@ public class TimerTest implements TimerDevice.RaceStartedCallback, TimerDevice.R
     System.out.println();
   }
 
-  public void runTestLoop(TimerDevice device) throws SerialPortException {
+  public void runTestLoop(TimerDevice device)
+      throws SerialPortException, TimerDevice.LostConnectionException {
     int mask = 0;
     while (true) {
       -- mask;

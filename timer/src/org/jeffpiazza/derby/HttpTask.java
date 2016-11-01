@@ -7,25 +7,38 @@ import java.io.*;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-// HttpTask expects to run in its own thread sending outgoing messages and awaiting their responses.  Sends a
-// heartbeat message periodically if the queue remains empty.
+// HttpTask expects to run in its own thread sending outgoing messages and
+// awaiting their responses.  Sends a heartbeat message periodically if the
+// queue remains empty.
 public class HttpTask implements Runnable {
   private ClientSession session;
-  private final ArrayList<Message> queue;  // Messages waiting to be sent to web server
+  // Messages waiting to be sent to web server
+  private final ArrayList<Message> queue;
+  private TimerHealthCallback timerHealthCallback;
   private HeatReadyCallback heatReadyCallback;
   private AbortHeatCallback abortHeatCallback;
-  private MessageTracer traceQueued;  // Print queued Messages when actually sent.
-  private MessageTracer traceHeartbeat;  // Print heartbeat Messages when actually sent.
+  // Print queued Messages when actually sent.
+  private MessageTracer traceQueued;
+  // Print heartbeat Messages when actually sent.
+  private MessageTracer traceHeartbeat;
 
   public static final long heartbeatPace = 10000;  // ms.
 
-  // HeatReadyCallback, AbortHeatCallback, and MessageTracer methods all get
-  // invoked from the thread running HttpTask.  They're expected to return
-  // reasonably quickly to their caller.
+  // Callbacks all get invoked from the thread running HttpTask.  They're
+  // expected to return reasonably quickly to their caller.
+
+  // Called when it's time to send a heartbeat to the web server, which we'll
+  // do only if the timer is healthy (connected).
+  public interface TimerHealthCallback {
+    boolean isTimerHealthy();
+  }
+
+  // Called when a PREPARE_HEAT message is received from the web server
   public interface HeatReadyCallback {
     void heatReady(int lanemask);
   }
 
+  // Called when an ABORT_HEAT message is received from the web server
   public interface AbortHeatCallback {
     void abortHeat();
   }
@@ -40,12 +53,18 @@ public class HttpTask implements Runnable {
 
   public interface LoginCallback {
     void onLoginSuccess();
+
     void onLoginFailed(String message);
   }
 
-  public static void start(final String username, final String password, final ClientSession session,
-                           final MessageTracer traceQueued, final MessageTracer traceHeartbeat,
-                           final Connector connector, final LoginCallback callback) {
+  // When a ClientSession and credentials are available, start() launches
+  // the HttpTask in a new Thread.
+  public static void start(final String username, final String password,
+                           final ClientSession session,
+                           final MessageTracer traceQueued,
+                           final MessageTracer traceHeartbeat,
+                           final Connector connector,
+                           final LoginCallback callback) {
     (new Thread() {
       @Override
       public void run() {
@@ -62,7 +81,6 @@ public class HttpTask implements Runnable {
           callback.onLoginFailed(e.getMessage());
         }
 
-
         if (login_ok) {
           callback.onLoginSuccess();
           HttpTask task = new HttpTask(session, traceQueued, traceHeartbeat);
@@ -73,7 +91,8 @@ public class HttpTask implements Runnable {
     }).start();
   }
 
-  public HttpTask(ClientSession session, MessageTracer traceQueued, MessageTracer traceHeartbeat) {
+  public HttpTask(ClientSession session, MessageTracer traceQueued,
+                  MessageTracer traceHeartbeat) {
     this.session = session;
     this.queue = new ArrayList<Message>();
     this.traceQueued = traceQueued;
@@ -98,6 +117,13 @@ public class HttpTask implements Runnable {
     }
   }
 
+  public synchronized void registerTimerHealthCallback(TimerHealthCallback cb) {
+    this.timerHealthCallback = cb;
+  }
+
+  protected synchronized TimerHealthCallback getTimerHealthCallback() {
+    return this.timerHealthCallback;
+  }
   public synchronized void registerHeatReadyCallback(HeatReadyCallback cb) {
     this.heatReadyCallback = cb;
   }
@@ -133,14 +159,16 @@ public class HttpTask implements Runnable {
         if (queue.size() > 0) {
           nextMessage = queue.remove(0);
           traceMessage = this.traceQueued;
-        } else if (getHeatReadyCallback() != null) {
-          // Send heartbeats only if we've actually identified the timer.
-          // Testing for a non-null heat-ready callback probably isn't the right
-          // way to confirm that we have an associated timer device.
-          nextMessage = new Message.Heartbeat();
-          traceMessage = this.traceHeartbeat;
         } else {
-          continue;
+          TimerHealthCallback timerHealth = getTimerHealthCallback();
+          if (timerHealth != null && timerHealth.isTimerHealthy()) {
+            // Send heartbeats only if we've actually identified the timer and
+            // it's healthy.
+            nextMessage = new Message.Heartbeat();
+            traceMessage = this.traceHeartbeat;
+          } else {
+            continue;
+          }
         }
 
         boolean succeeded = false;
@@ -170,7 +198,8 @@ public class HttpTask implements Runnable {
       NodeList heatReady = response.getElementsByTagName("heat-ready");
       if (heatReady.getLength() > 0) {
         try {
-          int lanemask = Integer.valueOf(((Element) heatReady.item(0)).getAttribute("lane-mask"));
+          int lanemask = Integer.valueOf(((Element) heatReady.item(0)).
+              getAttribute("lane-mask"));
           HeatReadyCallback cb = getHeatReadyCallback();
           if (cb != null) {
             cb.heatReady(lanemask);

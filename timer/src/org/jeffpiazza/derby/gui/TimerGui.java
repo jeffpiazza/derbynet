@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TimerGui {
   private Components components;
@@ -86,11 +88,47 @@ public class TimerGui {
     components.setVisible(true);
   }
 
+  // If connection details were entered on the command line, use them to
+  // prefill the corresponding GUI fields, and then treat as though user
+  // performed equivalent interaction.  If all details provided, call
+  // setUrl before setRoleAndPassword.
+
+  public void setUrl(String url) {
+    components.urlField.setText(url);
+    onConnectButtonClick();
+  }
+
+  public void setRoleAndPassword(String role, String password) {
+    components.roleComboBox.setSelectedItem(role);
+    components.passwordField.setText(password);
+
+    (new Thread() {
+      @Override
+      public void run() {
+        // Wait for RoleFinder to finish populating roles.  If there's no
+        // RoleFinder, then give up (there's no URL, or the RoleFinder failed).
+        while (!rolesPopulated()) {
+          if (getRoleFinder() == null) {
+            return;
+          }
+          synchronized (TimerGui.this) {
+            try {
+              TimerGui.this.wait();
+            } catch (InterruptedException ex) {
+            }
+          }
+        }
+
+        onSecondConnectClick(getRoleFinder().getSession());
+      }
+    }).start();
+  }
+
   private synchronized RoleFinder getRoleFinder() {
     return roleFinder;
   }
 
-  private void setRoleFinder(RoleFinder roleFinder) {
+  private synchronized void setRoleFinder(RoleFinder roleFinder) {
     this.roleFinder = roleFinder;
   }
 
@@ -98,16 +136,28 @@ public class TimerGui {
     return rolesPopulated;
   }
 
+  private synchronized void setRolesPopulated(boolean rolesPopulated) {
+    this.rolesPopulated = rolesPopulated;
+    this.notifyAll();
+  }
+
   private static Color green = new Color(52, 127, 79);
   private static Color black = Color.BLACK;
   private static Color red = Color.RED;
+  private static Color defaultBackground = new Color(184, 207, 229);
 
   public void setHttpStatus(String message, Color color) {
     components.httpStatusLabel.setForeground(color);
     components.httpStatusLabel.setText(message);
   }
 
-  // icon should be one of: "ok", "trouble", "unknown"
+  // Status icons should be one of: "ok", "trouble", "unknown".
+  // Check the build file for where these icons come from, and to change the
+  // available choices.
+  public static String icon_ok = "ok";
+  public static String icon_trouble = "trouble";
+  public static String icon_unknown = "unknown";
+
   public void setHttpStatus(String message, Color color, String icon) {
     setHttpStatus(message, color);
     components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(
@@ -129,7 +179,11 @@ public class TimerGui {
         getResource("/status/" + icon + ".png")));
   }
 
-  // Runs on dispatch thread; no individual invocation can be long-running
+  // Runs on dispatch thread; no individual invocation can be long-running.
+  // The first click of the button will launch a RoleFinder in a separate
+  // thread, which attempts to contact the server and obtain a list of valid
+  // roles.  A second click is detectable by the existence of a RoleFinder
+  // already created for the current url
   private void onConnectButtonClick() {
     RoleFinder roleFinder = getRoleFinder();
     if (roleFinder != null && !roleFinder.getServerAddress().equals(
@@ -139,43 +193,50 @@ public class TimerGui {
       setRoleFinder(null);
     }
     if (roleFinder == null) {
-      setHttpStatus("Contacting server...", black, "unknown");
-      components.roleComboBox.setEnabled(false);
-      components.passwordField.setEnabled(false);
-      setRoleFinder(new RoleFinder(components.urlField.getText(), this));
-      rolesPopulated = false;  // TODO synchronized?
-      (new Thread() {
-        @Override
-        public void run() {
-          getRoleFinder().findRoles();
-        }
-      }).start();
+      onFirstConnectClick();
     } else {
-      // There's an existing roleFinder for the current URL, and the user
-      // clicked "Connect."  If we're still waiting for the roles to
-      // populate, then ignore the button, otherwise start a login request
-      if (rolesPopulated()) {
-        setHttpStatus("Logging in...", black, "unknown");
-        HttpTask.start(components.roleComboBox.getItemAt(
-            components.roleComboBox.getSelectedIndex()),
-                       new String(components.passwordField.getPassword()),
-                       roleFinder.getSession(),
-                       traceMessages, traceHeartbeats, connector,
-                       new HttpTask.LoginCallback() {
-                     @Override
-                     public void onLoginSuccess() {
-                       setHttpStatus("Connected", green, "ok");
-                     }
+      onSecondConnectClick(roleFinder.getSession());
+    }
+  }
 
-                     @Override
-                     public void onLoginFailed(String message) {
-                       setHttpStatus("Unsuccessful login", red,
-                                     "trouble");
-                     }
-                   });
-      } else {
-        setHttpStatus("(Hold your horses)", black, "unknown");
+  private void onFirstConnectClick() {
+    setHttpStatus("Contacting server...", black, icon_unknown);
+    components.roleComboBox.setEnabled(false);
+    components.passwordField.setEnabled(false);
+    setRoleFinder(new RoleFinder(components.urlField.getText(), this));
+    setRolesPopulated(false);
+    (new Thread() {
+      @Override
+      public void run() {
+        getRoleFinder().findRoles();
       }
+    }).start();
+  }
+
+  private void onSecondConnectClick(ClientSession clientSession) {
+    // There's an existing roleFinder for the current URL, and the user
+    // clicked "Connect."  If we're still waiting for the roles to
+    // populate, then ignore the button, otherwise start a login request
+    if (rolesPopulated()) {
+      setHttpStatus("Logging in...", black, icon_unknown);
+      HttpTask.start(components.roleComboBox.getItemAt(
+          components.roleComboBox.getSelectedIndex()),
+                     new String(components.passwordField.getPassword()),
+                     clientSession, traceMessages, traceHeartbeats,
+                     connector,
+                     new HttpTask.LoginCallback() {
+                       @Override
+                       public void onLoginSuccess() {
+                         setHttpStatus("Connected", green, icon_ok);
+                       }
+
+                       @Override
+                       public void onLoginFailed(String message) {
+                         setHttpStatus("Unsuccessful login", red, icon_trouble);
+                       }
+                     });
+    } else {
+      setHttpStatus("(Hold your horses)", black, icon_unknown);
     }
   }
 
@@ -187,15 +248,15 @@ public class TimerGui {
 
   // Called to signify that all the appropriate roles from the server have been added to the role combobox
   public synchronized void rolesComplete() {
-    rolesPopulated = true;
-    setHttpStatus("Please log in", black, "unknown");
+    setRolesPopulated(true);
+    setHttpStatus("Please log in", black, icon_unknown);
     components.roleComboBox.setEnabled(true);
     components.passwordField.setEnabled(true);
     components.passwordField.requestFocus();
   }
 
   public synchronized void roleFinderFailed(String message) {
-    setHttpStatus(message, red, "trouble");
+    setHttpStatus(message, red, icon_trouble);
     roleFinder = null;
   }
 
@@ -256,40 +317,19 @@ public class TimerGui {
     System.out.println("Scan/Stop Scanning button not implemented");
   }
 
-  public static class SelectedListCellRenderer extends DefaultListCellRenderer {
-    private Color color;
-
-    SelectedListCellRenderer(Color color) {
-      this.color = color;
-    }
-
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value,
-                                                  int index,
-                                                  boolean isSelected,
-                                                  boolean cellHasFocus) {
-      Component c = super.getListCellRendererComponent(list, value, index,
-                                                       isSelected,
-                                                       cellHasFocus);
-      if (isSelected) {
-        c.setBackground(color);
-      }
-      return c;
-    }
-  }
-
   public void confirmDevice(SerialPort port,
                             Class<? extends TimerDevice> timerClass) {
-    components.portList.setCellRenderer(new SelectedListCellRenderer(green));
-    components.timerClassList.setCellRenderer(new SelectedListCellRenderer(
-        green));
-    setSerialStatus("Timer device identified", green, "ok");
+    components.portList.setSelectionBackground(green);
+    components.timerClassList.setSelectionBackground(green);
+    setSerialStatus("Timer device identified", green, icon_ok);
     // TODO components.scanButton.setVisible(false);
   }
 
   // Remove selections between scan cycles
   public void deselectAll() {
     components.portList.clearSelection();
+    components.portList.setSelectionBackground(defaultBackground);
     components.timerClassList.clearSelection();
+    components.timerClassList.setSelectionBackground(defaultBackground);
   }
 }
