@@ -23,7 +23,7 @@ if ($tstate == TIMER_NOT_CONNECTED) {
   $msg ='CONNECTED ('.(time() - $timer_state->last_contact()).' sec.)';
   $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_STAGING) {
-  $msg = 'Prepared';
+  $msg = 'Staging';
   $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_RUNNING) {
   $msg = 'Race running';
