@@ -16,7 +16,8 @@ require_once('inc/action-helpers.inc');
 
 
 function local_file_name($filename) {
-  return 'local'.DIRECTORY_SEPARATOR.$filename;
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  return $configdir.DIRECTORY_SEPARATOR.$filename;
 }
 
 

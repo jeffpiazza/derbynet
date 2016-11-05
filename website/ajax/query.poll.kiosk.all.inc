@@ -23,6 +23,7 @@ try {
 }
 
 xml_for_kiosk_pages('kiosks');
-xml_for_kiosk_pages('local'.DIRECTORY_SEPARATOR.'kiosks');
+$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+xml_for_kiosk_pages($configdir.DIRECTORY_SEPARATOR.'kiosks');
 ?>
 </kiosk.all>

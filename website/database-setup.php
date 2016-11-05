@@ -25,8 +25,8 @@ require_permission(SET_UP_PERMISSION);
 <?php $banner_title = 'Database Set-Up'; require('inc/banner.inc'); ?>
 <h3>Current Configuration File</h3>
 <?php
-
-$local_config_inc = 'local'.DIRECTORY_SEPARATOR.'config-database.inc';
+$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+$local_config_inc = $configdir.DIRECTORY_SEPARATOR.'config-database.inc';
 $offer_config_button = true;
 $config_file_contents = "";
 
@@ -46,12 +46,14 @@ if (file_exists($local_config_inc)) {
 } else {
   echo "<p>You do not yet have a local configuration file.</p>\n";
 
-  if (!is_dir('local')) {
-    $path = str_replace("database-setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+  if (!is_dir($configdir)) {
+    $path = str_replace("database-setup.php", $configdir.DIRECTORY_SEPARATOR,
+			$_SERVER['SCRIPT_FILENAME']);
     echo "<p>You need to create a <b>'".$path."'</b> directory, and make it writable.</p>\n";
     $offer_config_button = false;
-  } else if (!is_writable('local')) {
-    $path = str_replace("database-setup.php", "local/", $_SERVER['SCRIPT_FILENAME']);
+  } else if (!is_writable($configdir)) {
+    $path = str_replace("database-setup.php", $configdir.DIRECTORY_SEPARATOR,
+			$_SERVER['SCRIPT_FILENAME']);
     echo "<p>The <b>'".$path."'</b> directory exists, but isn't writable.</p>\n";
     $offer_config_button = false;
   }

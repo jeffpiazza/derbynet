@@ -11,8 +11,8 @@ require_once('inc/permissions.inc');
 // selected from the $roles array, and the contained permissions
 // assigned.  There should only be one such role, and the permissions
 // associated with that role are what a non-logged-in user can do.
-
-@include_once('local/config-roles.inc');
+$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+@include_once($configdir.DIRECTORY_SEPARATOR.'config-roles.inc');
 
 if (!isset($roles)) {
   // If local/config-roles.inc doesn't exist, or for some other reason

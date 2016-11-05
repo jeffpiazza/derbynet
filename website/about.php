@@ -91,14 +91,15 @@ if (count($addrs) == 0) {
       echo "<p>You need to set the date.timezone setting in the php.ini file!</p>\n";
     }
 ?>
+<h4>Database Configuration</h4>
 <?php
-    echo "<h4>Database Configuration</h4>\n";
+    $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
     if (have_permission(SET_UP_PERMISSION)) {
-      $config_content = @file_get_contents('local'.DIRECTORY_SEPARATOR.'config-database.inc',
+      $config_content = @file_get_contents($configdir.DIRECTORY_SEPARATOR.'config-database.inc',
                                            /* use_include_path */ true);
       if ($config_content === false) {
         echo '<p>Database configuration file, '.
-            htmlspecialchars('local'.DIRECTORY_SEPARATOR.'config-database.inc',
+            htmlspecialchars($configdir.DIRECTORY_SEPARATOR.'config-database.inc',
                              ENT_QUOTES, 'UTF-8').
             ', could not be opened.'.
             '</p>'."\n";
@@ -114,7 +115,7 @@ if (count($addrs) == 0) {
 <?php
 // Try setting up the database, but it's OK if it doesn't work out
 try {
-    @include("local/config-database.inc");
+  @include($configdir.DIRECTORY_SEPARATOR."config-database.inc");
 } catch (PDOException $p) {
 }
 

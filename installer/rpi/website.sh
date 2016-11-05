@@ -1,9 +1,9 @@
 #! /bin/sh
 . `dirname $0`/common.sh
 
-if [ ! -d /var/www/html/derbynet -a -d ../../../website ] ; then
-    cp -r ../../../website/ /var/www/html/derbynet
-    # Alternatively: ln -s `realpath ../../../website` /var/www/html/derbynet
+if [ ! -d /var/www/html/derbynet -a -d `dirname $0`/../../website ] ; then
+    cp -r `dirname $0`/../../website/ /var/www/html/derbynet
+    # Alternatively: ln -s `realpath ../../website` /var/www/html/derbynet
 
     # TODO Symbolic link to flash drive?
     mkdir -m 777 /var/www/html/derbynet/local

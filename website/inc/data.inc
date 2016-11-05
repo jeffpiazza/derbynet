@@ -1,6 +1,7 @@
 <?php
+$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
 try {
-    @include("local/config-database.inc");
+    @include($configdir.DIRECTORY_SEPARATOR."config-database.inc");
 } catch (PDOException $p) {
 }
 

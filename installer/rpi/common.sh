@@ -23,6 +23,7 @@ write_derbynet_snippet() {
   location ~ \.php(/.*)?$ {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/var/run/php5-fpm.sock;
+    # fastcgi_param CONFIG_DIR /var/www/html/xderbynet/local;
   }
 EOF
 }
