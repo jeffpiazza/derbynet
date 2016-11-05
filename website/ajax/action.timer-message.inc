@@ -33,16 +33,17 @@ require_once('inc/replay.inc');
 $message = $_POST['message'];
 
 $racing_state = get_racing_state();
+$timer_state = new TimerState();
 
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if ($message == 'HELLO') {
-    // Timer state begins in TIMER_MALFUNCTION_AUTO until we receive
-    // confirmation that derby-timer.jar has actually connected to the timer
-    // device.  Otherwise, all we know is that derby-timer.jar is alive and
-    // scanning.
-    set_timer_state(TIMER_MALFUNCTION_AUTO);
+    // Timer begins in TIMER_SEARCHING, almost the same as unhealthy, until we
+    // receive confirmation that derby-timer.jar has actually connected to the
+    // timer device.  Otherwise, all we know is that derby-timer.jar is alive
+    // and scanning.
+    $timer_state->to_state(TIMER_SEARCHING);
     echo "\n  <success/>\n";
   } else if ($message == 'IDENTIFIED') {
     if (isset($_POST['lane_count']) && $_POST['lane_count'] > 0) {
@@ -51,10 +52,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       // count, who should prevail?
       write_raceinfo('lane_count', $_POST['lane_count']);
     }
-    set_timer_state(TIMER_CONNECTED);
+    $timer_state->to_state(TIMER_CONNECTED);
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
-    set_timer_state(TIMER_RUNNING);
+    $timer_state->to_state(TIMER_RUNNING);
     echo "\n  <success/>\n";
   } else if ($message == 'FINISHED') {
     if (!$racing_state) {
@@ -69,24 +70,24 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       echo "\n  <success/>\n";
     }
     // If another heat is teed up, we'll immediately change state to
-    // TIMER_PREPARED, below.
-    set_timer_state(TIMER_CONNECTED);
+    // TIMER_STAGING, below.
+    $timer_state->to_state(TIMER_CONNECTED);
   } else if ($message == 'HEARTBEAT') {
     echo "\n  <success/>\n";
     // TODO: Capture other state information
-    $tstate = get_timer_state();
-    if ($tstate == TIMER_NOT_CONNECTED ||
-        $tstate == TIMER_MALFUNCTION_AUTO) {
-      set_timer_state(TIMER_CONNECTED);
-    } else {
-      renew_timer_contact();
+    if ($timer_state->unhealthy()) {
+      $timer_state->to_state(TIMER_CONNECTED);
     }
   } else if ($message == 'MALFUNCTION') {
     echo "\n  <success/>\n";
+    if ($timer_state->state() == TIMER_NOT_CONNECTED) {
+      $timer_state->to_state(TIMER_CONNECTED);
+    }
     if (isset($_POST['detectable']) && $_POST['detectable'] == 0) {
-      set_timer_state(TIMER_MALFUNCTION_MANUAL);
+      // TODO Duration should maybe come from the malfunction message?
+      $timer_state->set_malfunction(60, isset($_POST['error']) ? $_POST['error'] : "Malfunction");
     } else {
-      set_timer_state(TIMER_MALFUNCTION_AUTO);
+      $timer_state->set_unhealthy(isset($_POST['error']) ? $_POST['error'] : "Malfunction");
     }
     set_racing_state(false);
   } else {
@@ -95,8 +96,8 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
         ." not recognized.</failure>\n";
   }
 
-  $tstate = get_timer_state();
-  if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not prepared or running
+  $tstate = $timer_state->state();
+  if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not staging or running
     $current = get_running_round();
     $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
                          .' WHERE roundid = :roundid AND heat = :heat'
@@ -117,15 +118,16 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
           .' round="'.$current['round'].'"'
           .' heat="'.$current['heat'].'"'
           .'/>'."\n";
-      set_timer_state(TIMER_PREPARED);
+      $timer_state->to_state(TIMER_STAGING);
       // send_replay_START($current);
     }
   }
 
-  if (!$racing_state && ($tstate == TIMER_PREPARED || $tstate == TIMER_RUNNING)) {
+  if (!$racing_state && ($tstate == TIMER_STAGING || $tstate == TIMER_RUNNING)) {
     echo "\n  <abort/>\n";
-    set_timer_state(TIMER_CONNECTED);
+    $timer_state->to_state(TIMER_CONNECTED);
   }
+  $timer_state->write(true);
 } else {
 	not_authorized_body();
 }

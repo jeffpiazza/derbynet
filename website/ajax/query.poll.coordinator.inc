@@ -4,32 +4,36 @@ require('inc/current-heat.inc');
 require('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
 ?>
-<?php /* Timer */ 
+<?php /* Timer */
 require_once('inc/timer-state.inc');
-$tstate = get_timer_state();
-$tcontact = read_raceinfo('timer_last_contact');
+
+$timer_state = new TimerState();
+$tstate = $timer_state->state();
+
 if ($tstate == TIMER_NOT_CONNECTED) {
   $msg = 'NOT CONNECTED';
   $icon = 'img/status/not_connected.png';
+} else if ($tstate == TIMER_SEARCHING) {
+  $msg = 'Scanning for timer';
+  $icon = 'img/status/unknown.png';
+} else if ($timer_state->troubled()) {
+  $msg = $timer_state->malfunction();
+  $icon = 'img/status/trouble.png';
 } else if ($tstate == TIMER_CONNECTED) {
-  $msg ='CONNECTED ('.(time() - $tcontact).' sec.)';
+  $msg ='CONNECTED ('.(time() - $timer_state->last_contact()).' sec.)';
   $icon = 'img/status/ok.png';
-} else if ($tstate == TIMER_PREPARED) {
+} else if ($tstate == TIMER_STAGING) {
   $msg = 'Prepared';
   $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_RUNNING) {
   $msg = 'Race running';
   $icon = 'img/status/ok.png';
-} else if ($tstate == TIMER_MALFUNCTION_AUTO ||
-           $tstate == TIMER_MALFUNCTION_MANUAL) {
-  $msg = 'MALFUNCTION';
-  $icon = 'img/status/trouble.png';
 } else {
   $msg = 'Unknown ('.$tstate.')';
   $icon = 'img/status/trouble.png';
 }
 echo '<timer-state lanes="'.get_lane_count().'"'
-    .' last_contact="'.$tcontact.'"'
+    .' last_contact="'.$timer_state->last_contact().'"'
     .' state="'.$tstate.'"'
     .' icon="'.$icon.'"'
     .'>';

@@ -14,10 +14,8 @@
 
 if (!with_gprm()) {
   require_once('inc/timer-state.inc');
-  $tstate = get_timer_state();
-  if ($tstate == TIMER_NOT_CONNECTED ||
-      $tstate == TIMER_MALFUNCTION_AUTO ||
-      $tstate == TIMER_MALFUNCTION_MANUAL) {
+  $timer_state = new TimerState();
+  if ($timer_state->troubled()) {
     echo "  <timer-trouble/>\n";
   }
 }
