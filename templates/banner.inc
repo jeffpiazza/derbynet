@@ -1,3 +1,4 @@
+<!-- GENERATED FROM TEMPLATE -->
 <div class="banner">
 <?php
    if (isset($banner_title)) {
@@ -20,4 +21,4 @@
 ?>
   <img class="logo" src="img/derbynet.png"/>
 </div>
-<div class="banner_version">Version 1.0</div>
+<div class="banner_version">@BRANCH@</div>
