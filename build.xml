@@ -12,11 +12,11 @@
 
   <target name="dist" depends="dist.zip, dist.mac"/>
 
-  <target name="dist.zip" depends="timer-jar, docs-dist, generated-version.inc,
-                               generated-build-date.inc, generated-commit-hash.inc">
+  <target name="dist.zip" depends="timer-jar, docs-dist, banner, generated-version.inc,
+                               generated-build-date.inc, release-series, generated-commit-hash.inc">
 
       <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
-      <zip destfile="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
+      <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
               <include name="README.txt"/>
@@ -92,6 +92,39 @@
           <propertyresource name="git-hash"/>
           <propertyresource name="git-dirty"/>
       </concat>
+  </target>
+
+  <target name="release-series">
+      <exec executable="git" outputproperty="git-branch">
+          <arg value="rev-parse"/>
+          <arg value="--abbrev-ref"/>
+          <arg value="HEAD"/>
+      </exec>
+      <loadresource property="release-series">
+          <propertyresource name="git-branch"/>
+          <filterchain>
+              <striplinebreaks/>
+              <replaceregex pattern="master" replace="dev" flags="s"/>
+          </filterchain>
+      </loadresource>
+  </target>
+
+  <target name="banner" depends="release-series">
+      <loadresource property="banner-release">
+          <propertyresource name="git-branch"/>
+          <filterchain>
+              <striplinebreaks/>
+              <replaceregex pattern="^v" replace="Version "/>
+              <replaceregex pattern="master" replace="Development"/>
+          </filterchain>
+      </loadresource>
+      <copy file="templates/banner.inc" tofile="website/inc/banner.inc" overwrite="true">
+          <filterchain>
+              <replacetokens>
+                  <token key="BRANCH" value="${banner-release}"/>
+              </replacetokens>
+          </filterchain>
+      </copy>
   </target>
 
   <target name="timer-jar">
@@ -288,11 +321,11 @@
 <target name="dist.mac" depends="mac.installer.website,
                                       mac.installer.replay, mac.installer.timer,
                                       mac.installer.docs, generated-version.inc,
-                               generated-build-date.inc, generated-commit-hash.inc">
+                               generated-build-date.inc, release-series, generated-commit-hash.inc">
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>
-        <arg value="../DerbyNet-${git-rev-count}${git-dirty}-${DSTAMP}.pkg"/>
+        <arg value="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.pkg"/>
     </exec>
     <delete file="derbynet.docs.pkg"/>
     <delete file="derbynet.replay.pkg"/>

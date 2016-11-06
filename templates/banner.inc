@@ -1,3 +1,4 @@
+<!-- GENERATED FROM TEMPLATE -->
 <div class="banner">
 <?php if (!isset($no_back_button) || !$no_back_button) { ?>
   <div class="back_button">
@@ -16,4 +17,4 @@
 ?>
   <img src="img/derbynet.png"/>
 </div>
-<div class="banner_version">Version 1.0</div>
+<div class="banner_version">@BRANCH@</div>
