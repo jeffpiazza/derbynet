@@ -28,7 +28,18 @@ function parse_photo_url($url_path_info) {
   }
 }
 
-$parsed = parse_photo_url($_SERVER['PATH_INFO']);
+if (isset($_SERVER['PATH_INFO'])) {
+  $path_info = $_SERVER['PATH_INFO'];
+} else if (isset($_SERVER['ORIG_PATH_INFO'])) {
+  // Rewrite rules in Apache 2.2 may leave ORIG_PATH_INFO instead of PATH_INFO
+  $path_info = 'photo.php'.$_SERVER['ORIG_PATH_INFO'];
+} else {
+  // Debugging only:
+  var_export($_SERVER);
+  exit(0);
+}
+
+$parsed = parse_photo_url($path_info);
 if (!$parsed) {  // Malformed URL
   http_response_code(404);
   exit(1);
@@ -65,3 +76,4 @@ header('Expires: '.gmdate('D, d M Y H:i:s', time() + 86400).' GMT');
 header('Content-type: '.pseudo_mime_content_type($file_path));
 
 readfile($file_path);
+?>
