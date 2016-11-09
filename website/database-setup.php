@@ -2,6 +2,8 @@
 require_once('inc/authorize.inc');
 
 require_permission(SET_UP_PERMISSION);
+
+require_once('inc/locked.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +25,6 @@ require_permission(SET_UP_PERMISSION);
 </head>
 <body>
 <?php $banner_title = 'Database Set-Up'; require('inc/banner.inc'); ?>
-<h3>Current Configuration File</h3>
 <?php
 $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
 $local_config_inc = $configdir.DIRECTORY_SEPARATOR.'config-database.inc';
@@ -31,12 +32,18 @@ $offer_config_button = true;
 $config_file_contents = "";
 
 if (file_exists($local_config_inc)) {
-  echo "<pre>\n";
-  $config_file_contents = file_get_contents($local_config_inc,
-                                            /* use_include_path */ true);
-  echo htmlspecialchars($config_file_contents, ENT_QUOTES, 'UTF-8');
-  // NOTE: $config_file_contents used to prefix dialog box, below.
-  echo "</pre>\n";
+  if (locked_settings()) {
+    // Disable database config button, and don't show the existing config file
+    $offer_config_button = false;
+  } else {
+    echo "<h3>Current Configuration File</h3>\n";
+    echo "<pre>\n";
+    $config_file_contents = file_get_contents($local_config_inc,
+                                              /* use_include_path */ true);
+    echo htmlspecialchars($config_file_contents, ENT_QUOTES, 'UTF-8');
+    // NOTE: $config_file_contents used to prefix dialog box, below.
+    echo "</pre>\n";
+  }
 
   try {
     @include($local_config_inc);

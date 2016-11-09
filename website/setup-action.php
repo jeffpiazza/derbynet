@@ -13,7 +13,7 @@ require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 
 require_once('inc/action-helpers.inc');
-
+require_once('inc/locked.inc');
 
 function local_file_name($filename) {
   $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
@@ -44,7 +44,9 @@ header('Content-Type: text/xml; charset=utf-8');
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 start_response();
 
-if (have_permission(SET_UP_PERMISSION)) {
+if (locked_settings()) {
+  echo "<failure code='locked'>Settings are locked and cannot be changed.</failure>\n";
+} else if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
 
   $connection_string = $_POST['connection_string'];

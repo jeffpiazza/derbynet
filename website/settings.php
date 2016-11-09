@@ -2,6 +2,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/locked.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -33,6 +34,7 @@ $xbs_award = read_raceinfo('xbs-award');
 if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
+$locked_settings = locked_settings();
 ?>
 
 <div class="block_buttons">
@@ -125,23 +127,25 @@ $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
 
 <?php
 function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_prefix, $photo_size_value) {
-    echo "<p>\n";
-    echo '<label for="photo-dir">Directory for '.$category.' photos:</label>'."\n";
-	echo '<input id="'.$photo_dir_id.'" name="'.$photo_dir_id.'" type="text" data-enhanced="true"'
-          .' size="50"'
-		  .' value="'.htmlspecialchars($photo_dir_value, ENT_QUOTES, 'UTF-8').'"/>'."\n";
-    echo '<span id="'.$photo_dir_id.'_icon" class="status_icon"></span>'."\n";
-    echo '</p>';
-    echo '<p class="photo_dir_status_message" id="'.$photo_dir_id.'_message"></p>';
-    echo '<p>';
-    echo '<span class="photo_dir_choose"><input type="button" value="Browse"'
-        .' data-enhanced="true"'
-        .' onclick="show_choose_directory_modal($(\'#'.$photo_dir_id.'\').val(), function(path) {'
-        .'    $(\'#'.$photo_dir_id.'\').val(path);'
-        .'    $(\'#'.$photo_dir_id.'\').change();'
-        .' })"/>'
-        .'</span>'."\n";
-    echo "</p>\n";
+    if (!locked_settings()) {
+      echo "<p>\n";
+      echo '<label for="'.$photo_dir_id.'">Directory for '.$category.' photos:</label>'."\n";
+      echo '<input id="'.$photo_dir_id.'" name="'.$photo_dir_id.'" type="text" data-enhanced="true"'
+           .' size="50"'
+		   .' value="'.htmlspecialchars($photo_dir_value, ENT_QUOTES, 'UTF-8').'"/>'."\n";
+      echo '<span id="'.$photo_dir_id.'_icon" class="status_icon"></span>'."\n";
+      echo '</p>';
+      echo '<p class="photo_dir_status_message" id="'.$photo_dir_id.'_message"></p>';
+      echo '<p>';
+      echo '<span class="photo_dir_choose"><input type="button" value="Browse"'
+          .' data-enhanced="true"'
+          .' onclick="show_choose_directory_modal($(\'#'.$photo_dir_id.'\').val(), function(path) {'
+          .'    $(\'#'.$photo_dir_id.'\').val(path);'
+          .'    $(\'#'.$photo_dir_id.'\').change();'
+          .' })"/>'
+          .'</span>'."\n";
+      echo "</p>\n";
+    }
     echo "<p>\n";
     $photosize = explode('x', $photo_size_value);
 	echo '<label for="'.$photo_size_prefix.'-width">'.ucfirst($category).' photo size:</label>'."\n";
