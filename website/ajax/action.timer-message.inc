@@ -37,7 +37,7 @@ $timer_state = new TimerState();
 
 start_response();
 
-if (have_permission(CONTROL_RACE_PERMISSION)) {
+if (have_permission(TIMER_MESSAGE_PERMISSION)) {
   if ($message == 'HELLO') {
     // Timer begins in TIMER_SEARCHING, almost the same as unhealthy, until we
     // receive confirmation that derby-timer.jar has actually connected to the

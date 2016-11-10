@@ -7,7 +7,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 while true ; do
   curl_post action.php "action=database.execute&script=schema" | check_success
@@ -41,9 +41,11 @@ while true ; do
   curl_post action.php "action=class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_success
 
   # Start the timer
+  user_login_timer
   curl_post action.php "action=timer-message&message=HELLO" | check_success
   curl_post action.php "action=timer-message&message=IDENTIFIED&lane_count=4" | check_success
 
+  user_login_coordinator
   # Schedule Round 1
   curl_post action.php "action=schedule.generate&roundid=1" | check_success
   curl_post action.php "action=schedule.generate&roundid=2" | check_success
@@ -57,6 +59,7 @@ while true ; do
   # Start racing
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
 
+  user_login_timer
   sleep 1s
   curl_post action.php "action=timer-message&message=STARTED" | check_success
   sleep 2s
@@ -79,9 +82,11 @@ while true ; do
   curl_post action.php "action=timer-message&message=FINISHED&lane1=3.8318&lane2=2.6336&lane3=3.7829&lane4=3.8474" | check_success
   sleep 3s
 
+  user_login_coordinator
   ########## Now-Racing ##############
   curl_post action.php "action=kiosk.assign&all=kiosks/now-racing.kiosk" | check_success
 
+  user_login_timer
   curl_post action.php "action=timer-message&message=STARTED" | check_success
   sleep 4s
   curl_post action.php "action=timer-message&message=FINISHED&lane1=2.8646&lane2=3.5764&lane3=3.8810&lane4=2.2240" | check_success
@@ -104,7 +109,9 @@ while true ; do
   sleep 15s
 
   ########## Results-By-Racer ##############
+  user_login_coordinator
   curl_post action.php "action=kiosk.assign&all=kiosks/results-by-racer.kiosk" | check_success
+  user_login_timer
 
   curl_post action.php "action=timer-message&message=STARTED" | check_success
   sleep 2s

@@ -6,7 +6,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
 

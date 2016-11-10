@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
@@ -18,6 +18,8 @@ curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
 ### Racing for roundid=1: 5 heats
 curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
+
+user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
@@ -32,7 +34,10 @@ check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" 
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.96617950392236&lane2=3.9673731376083374&lane3=3.56865022781857&lane4=3.8388886921923415" | check_success
 
 ### Racing for roundid=2: 5 heats
+user_login_coordinator
 curl_post action.php "action=select-heat&roundid=2&now_racing=1" | check_success
+
+user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.614998506472289&lane2=2.073131117194488&lane3=3.0402460662858495&lane4=3.7937815988460155" | check_success
@@ -45,6 +50,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=3.940308674460
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.043976595882954&lane2=3.409014449582755&lane3=3.388110311263697&lane4=2.911083015110213" | check_success
 
+user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
 curl_post action.php "action=racer.pass&racer=13&value=0" | check_success
 curl_post action.php "action=racer.pass&racer=23&value=0" | check_success
@@ -52,6 +58,8 @@ curl_post action.php "action=racer.pass&racer=33&value=0" | check_success
 curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
 curl_post action.php "action=select-heat&roundid=3&now_racing=1" | check_success
+
+user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
 ### Racing for roundid=3: 4 heats among 2 racers
@@ -65,6 +73,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane2=3.449028544898
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane3=2.756576818870377&lane4=3.0264310036127933" | check_success
 
+user_login_coordinator
 ### Editing racers
 [ `curl_get checkin.php | grep 'class-5"' | grep -c '>Arrows'` -eq 1 ] || test_fails Initial class
 curl_post action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_success
@@ -90,6 +99,7 @@ curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
 ### Racing for roundid=4
 curl_post action.php "action=select-heat&roundid=4&now_racing=1" | check_success
+user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.581933364716356&lane2=3.3400731028218082&lane3=2.739493818706433&lane4=3.917729713673916" | check_success
@@ -109,7 +119,9 @@ check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" 
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.648749488910531&lane2=3.0060133667294835&lane3=3.9589674579465677&lane4=3.617549894590156" | check_success
 
 ### Racing for roundid=5
+user_login_coordinator
 curl_post action.php "action=select-heat&roundid=5&now_racing=1" | check_success
+user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=3.9962279925545943&lane2=3.9847459663932026&lane3=2.1091805633909195&lane4=3.2685008030430156" | check_success
@@ -120,6 +132,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=3.884104613683
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.788677259690628&lane2=3.5121727633843625&lane3=3.897900103278687&lane4=2.0171570935608143" | check_success
 
+user_login_coordinator
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
 curl_post action.php "action=award.present&key=speed-2-1" | check_success
 curl_get "action.php?query=award.current" | expect_one Asher

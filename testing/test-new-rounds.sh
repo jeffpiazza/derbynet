@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 ## Testing the "add new round" functionality.  We're just generating the
 ## rosters, not making schedules or doing any racing.

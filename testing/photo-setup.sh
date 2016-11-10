@@ -36,7 +36,7 @@ if [ `echo "$BASE_URL" | grep -i localhost` ]; then
     chmod 777 "$CAR_PHOTO_DIR"
     cp `dirname $0`/data/carphotos/Car* "$CAR_PHOTO_DIR"
 
-    `dirname $0`/login-coordinator.sh $BASE_URL
+    user_login_coordinator
 
     curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success
     curl_post action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_success

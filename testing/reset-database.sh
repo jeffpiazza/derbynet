@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 # Capture settings for photo directories and restore them in the new database
 PHOTO_DIR=$(curl_get "action.php?query=settings" | xmllint --format - | sed -ne '/key="photo-directory"/ s#[^>]*>\([^<]*\)</setting>#\1#p')

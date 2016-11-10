@@ -11,7 +11,7 @@ echo Wrangler tablet kiosk id=ondeck
 echo Race Coordinator page on a tablet/iPad
 # TODO MacReplay demo?
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 while true ; do
   # Resetting the database also clears all the kiosk settings
@@ -45,10 +45,11 @@ while true ; do
   `dirname $0`/checkin-all.sh "$BASE_URL"
 
   sleep 30s
-  
+  user_login_timer
   # Start the timer
   curl_post action.php "action=timer-message&message=HELLO" | check_success
   curl_post action.php "action=timer-message&message=IDENTIFIED&lane_count=4" | check_success
+  user_login_coordinator
 
   # Schedule Round 1
   curl_post action.php "action=schedule.generate&roundid=1" | check_success
@@ -65,6 +66,7 @@ while true ; do
   curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/results-by-racer.kiosk" | check_success
 
   # Knock off a few early rounds
+  user_login_timer
   curl_post action.php "action=timer-message&message=FINISHED&lane1=3.2514&lane2=3.9601&lane3=2.1068&lane4=2.4405" | check_success
   curl_post action.php "action=timer-message&message=FINISHED&lane1=3.5577&lane2=2.2320&lane3=3.8407&lane4=3.2743" | check_success
   curl_post action.php "action=timer-message&message=FINISHED&lane1=3.0326&lane2=2.1680&lane3=2.8041&lane4=2.7058" | check_success
@@ -124,7 +126,8 @@ while true ; do
   # TODO Not ready for prime time
   # curl_post action.php "action=kiosk.assign&address=main&page=kiosks/standings.kiosk" | check_success
   # curl_post action.php "action=standings.select&roundid=1&expose=all" | check_success
-  
+
+  user_login_coordinator
   ########## Awards Presentations ##############
   sleep 15s
   curl_post action.php "action=kiosk.assign&address=aux&page=kiosks/award-presentations.kiosk" | check_success

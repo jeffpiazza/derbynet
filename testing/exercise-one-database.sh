@@ -15,7 +15,7 @@ prepare_for_setup() {
     # Delete /Library/WebServer/Documents/xsite/local/config-database.inc
     #  and /Library/WebServer/Documents/xsite/local/config-roles.inc
     # and then delete the cookies file
-    `dirname $0`/login-coordinator.sh "$BASE_URL"
+    user_login_coordinator
 }
 
 run_tests() {

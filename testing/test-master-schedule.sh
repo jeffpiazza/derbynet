@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/login-coordinator.sh $BASE_URL
+user_login_coordinator
 
 curl_post action.php "action=settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_success
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
@@ -74,6 +74,7 @@ curl_post action.php "action=select-heat&now_racing=1" | check_success
 ## This script generated from the output of:
 ## timer/testing/fake-timer -t -l 4 localhost/xsite
 
+user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success

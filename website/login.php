@@ -36,6 +36,8 @@ require_once('inc/authorize.inc');
 foreach ($roles as $name => $details) {
   if (!$details['password']) {
     $logout = $name;
+  } else if (isset($details['interactive']) && !$details['interactive']) {
+    // Ignore logins intended for robots
   } else {
     echo '<input type="button" value="'.$name.'" onclick=\'show_password_form("'.$name.'");\'/>'."\n";
   }

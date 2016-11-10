@@ -95,6 +95,10 @@ function user_login_crew() {
     user_login RaceCrew murphy
 }
 
+function user_login_timer() {
+    user_login Timer millisecond
+}
+
 function user_logout() {
 	curl_post action.php "action=login" | check_success logout
 }

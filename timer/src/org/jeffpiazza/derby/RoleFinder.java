@@ -53,6 +53,10 @@ public class RoleFinder {
         } else {
           for (int i = 0; i < roles.getLength(); ++i) {
             Element role = (Element) roles.item(i);
+            if (!role.getAttribute("timer_message").isEmpty()) {
+              gui.addRole(role.getTextContent());
+              succeeded = true;
+            }
             if (!role.getAttribute("race_control").isEmpty()) {
               gui.addRole(role.getTextContent());
               succeeded = true;
