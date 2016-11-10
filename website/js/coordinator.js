@@ -136,20 +136,36 @@ function handle_discard_results_button() {
 // Controls for racing rounds
 
 function show_schedule_modal(roundid) {
-    show_modal("#schedule_modal", function(event) {
-        handle_schedule_submit(roundid, $("#schedule_num_rounds").val());
-        return false;
-    });
+  show_modal("#schedule_modal", function(event) {
+    handle_schedule_submit(roundid,
+                           $("#schedule_num_rounds").val(),
+                           $("input[clicked='true']",
+                             $(event.target)).attr("data-race") == 'true');
+    return false;
+  });
 }
 
-function handle_schedule_submit(roundid, rounds) {
+// There are two different submit buttons for the schedule_modal, depending on
+// whether we want to start racing immediately or not.  mark_clicked() runs as an
+// onclick handler so we can distinguish between the two submit buttons.
+function mark_clicked(submit_js) {
+  $("input[type=submit]", submit_js.parents("form")).removeAttr("clicked");
+  submit_js.attr("clicked", "true");
+}
+
+function handle_schedule_submit(roundid, rounds, then_race) {
     close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'schedule.generate',
                    roundid: roundid,
                    nrounds: rounds},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(data) {
+              process_coordinator_poll_response(data);
+              if (then_race) {
+                handle_race_button(roundid);
+              }
+            }
            });
 }
 

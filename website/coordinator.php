@@ -115,7 +115,10 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <option>6</option>
     </select>
 
-    <input type="submit" data-enhanced="true" value="Schedule"/>
+    <input type="submit" data-enhanced="true" value="Schedule + Race"
+      data-race="true" onclick='mark_clicked($(this));'/>
+    <input type="submit" data-enhanced="true" value="Schedule Only"
+      data-race="false" onclick='mark_clicked($(this));'/>
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#schedule_modal");'/>
   </form>
