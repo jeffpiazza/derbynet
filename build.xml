@@ -41,6 +41,10 @@
           <fileset dir="${timer-jar-dir}">
               <include name="*.jar"/>
           </fileset>
+
+          <fileset dir="lib">
+              <include name="jSSC*src.jar"/>
+          </fileset>
       </zip>
 
       <delete file="${replay-app.name}.dmg" quiet="yes" failonerror="false"/>
@@ -281,6 +285,9 @@
     <copy todir="ROOT/Applications/DerbyNet" overwrite="true">
           <fileset dir="${timer-jar-dir}">
               <include name="*.jar"/>
+          </fileset>
+          <fileset dir="lib">
+              <include name="jSSC*src.jar"/>
           </fileset>
     </copy>
     <exec executable="/usr/bin/pkgbuild">
