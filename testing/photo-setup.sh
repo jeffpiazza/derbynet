@@ -45,6 +45,8 @@ else
     # For the remote case, assume that directories have been set up, and upload each photo
     echo Headshot uploads begin
 
+    user_login_photo
+
     for f in `dirname $0`/data/headshots/head-*.jpg `dirname $0`/data/headshots/Cub-*.jpg
     do
         echo $f

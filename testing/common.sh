@@ -99,6 +99,10 @@ function user_login_timer() {
     user_login Timer millisecond
 }
 
+function user_login_photo() {
+    user_login Photo flashbulb
+}
+
 function user_logout() {
 	curl_post action.php "action=login" | check_success logout
 }
