@@ -30,7 +30,7 @@ require_once('inc/schema_version.inc');
 
 <div class="block_buttons">
 
-<?php if (have_permission(COORDINATOR_PAGE_PERMISSION)) { $need_spacer = true; ?>
+<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
 <form method="link" action="coordinator.php">
   <input type="submit" value="Race Dashboard"/>
 </form>
