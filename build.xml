@@ -42,8 +42,9 @@
               <include name="*.jar"/>
           </fileset>
 
-          <fileset dir="lib">
-              <include name="jSSC*src.jar"/>
+          <fileset dir=".">
+              <include name="lib/jSSC*src.jar"/>
+              <include name="extras/**/*"/>
           </fileset>
       </zip>
 
@@ -324,11 +325,29 @@
     <delete dir="ROOT"/>
 </target>
 
+<target name="mac.installer.extras">
+    <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
+    <copy todir="ROOT/Applications/Derbynet/extras">
+        <fileset dir="extras"/>
+    </copy>
+    <exec executable="/usr/bin/pkgbuild">
+        <arg value="--root"/>
+        <arg value="ROOT"/>
+        <arg value="--identifier"/>
+        <arg value="org.jeffpiazza.derbynet.extras"/>
+        <arg value="--version"/>
+        <arg value="1.0"/>
+        <arg value="derbynet.extras.pkg"/>
+    </exec>
+    <delete dir="ROOT"/>
+</target>    
 
 <target name="dist.mac" depends="mac.installer.website,
                                       mac.installer.replay, mac.installer.timer,
-                                      mac.installer.docs, generated-version.inc,
-                               generated-build-date.inc, release-series, generated-commit-hash.inc">
+                                      mac.installer.docs, mac.installer.extras,
+                                      generated-version.inc,
+                                      generated-build-date.inc,
+                                      release-series, generated-commit-hash.inc">
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>
