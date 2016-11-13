@@ -354,6 +354,7 @@
         <arg value="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.pkg"/>
     </exec>
     <delete file="derbynet.docs.pkg"/>
+    <delete file="derbynet.extras.pkg"/>
     <delete file="derbynet.replay.pkg"/>
     <delete file="derbynet.timer.pkg"/>
     <delete file="derbynet.website.pkg"/>
