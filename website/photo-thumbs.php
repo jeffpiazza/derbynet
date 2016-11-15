@@ -36,8 +36,6 @@ function photo_crop_expression($basename) {
 // TODO: line-height?  "End of photos" text aligns with thumbnail image bottom.
 // *** Both div's are overhanging the bottom by the amount taken up by the banner and refresh button!
 // *** height=100% could be at issue.
-//
-// TODO: Separate requests to bind or remove photo.
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -47,6 +45,7 @@ function photo_crop_expression($basename) {
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/photo-thumbs.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -56,6 +55,7 @@ function photo_crop_expression($basename) {
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/jquery.Jcrop.min.js"></script>
+<script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript">
 var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 var g_aspect_ratio = <?php echo $photo_repository->display_width(); ?> / <?php echo $photo_repository->display_height(); ?>;
@@ -66,6 +66,23 @@ var g_aspect_ratio = <?php echo $photo_repository->display_width(); ?> / <?php e
 <?php $banner_title = ($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'; require('inc/banner.inc'); ?>
 
 <div class="block_buttons">
+  <?php
+  if (!is_writable($photo_repository->directory())) {
+  ?>
+  <div id="upload_target">
+    <div class="dz-message">
+      <span>Photo directory is not writable; check <a href="settings.php">settings.</a></span>
+    </div>
+  </div>
+  <?php
+    } else {
+  ?>
+  <form id="upload_target" action="action.php" class="dropzone">
+    <input type="hidden" name="action" value="photo.upload"/>
+    <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
+    <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
+  </form>
+   <?php } ?>
   <input type="button" value="Refresh" onclick="window.location.reload();"/>
 </div>
 

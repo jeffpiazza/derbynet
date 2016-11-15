@@ -103,6 +103,9 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
       }
       if ($success) {
         echo "<success/>\n";
+        echo "<uploaded>".htmlspecialchars($target_name, ENT_QUOTES, 'UTF-8')."</uploaded>\n";
+        echo "<thumbnail>".htmlspecialchars($photo_repository->lookup('thumb')->render_url($target_name),
+                                            ENT_QUOTES, 'UTF-8')."</thumbnail>\n";
       }
     } else {
       echo '<failure code="move_uploaded">move_uploaded_file failed.';
