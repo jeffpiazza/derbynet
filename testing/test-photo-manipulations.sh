@@ -6,8 +6,6 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_post action.php "action=settings.write&photo-width=188&photo-height=250" | check_success
-
 user_login_crew
 
 curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \

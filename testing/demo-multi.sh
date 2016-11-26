@@ -29,7 +29,7 @@ while true ; do
 
   # Tedious set-up
   curl_post action.php "action=write-settings&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
-  curl_post action.php "action=write-settings&photo-width=180&photo-height=240" | check_success
+
   `dirname $0`/import-roster.sh $BASE_URL
   curl_post action.php "action=class.edit&classid=1&name=Tigers" | check_success
   curl_post action.php "action=class.edit&classid=2&name=Wolves" | check_success

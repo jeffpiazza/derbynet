@@ -70,8 +70,8 @@ if (isset($stmt)) {
       .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
       .($use_subgroups ?
        ' subgroup="'.htmlspecialchars(@$row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')
-    .($row['imagefile'] ? ' headphoto="'.headshots()->url_for_racer($row, 'cropped').'"' : '')
-    .($row['carphoto'] ? ' carphoto="'.car_photo_repository()->url_for_racer($row, 'cropped').'"' : '')
+    .($row['imagefile'] ? ' headphoto="'.headshots()->url_for_racer($row, RENDER_CROPPED).'"' : '')
+    .($row['carphoto'] ? ' carphoto="'.car_photo_repository()->url_for_racer($row, RENDER_CROPPED).'"' : '')
     .' duration="'.(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']).'"'
       .'/>'."\n";
   }

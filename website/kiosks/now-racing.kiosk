@@ -31,8 +31,9 @@ $(function () {
 <body>
 <?php $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc'); ?>
 <?php if ($nlanes > 0) { ?>
-<table>
-<tr><th>Lane</th>
+<table id="main-table">
+<tr id="table-headers">
+    <th>Lane</th>
     <th>Car</th>
     <th colspan="2">Racer</th>
     <th>Time</th>

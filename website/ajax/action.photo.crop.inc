@@ -14,8 +14,8 @@ $image_name = $_POST['image_name'];
 
 $photo_repository = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
 
-$original = $photo_repository->lookup('original');
-$cropped = $photo_repository->lookup('cropped');
+$original = $photo_repository->lookup(RENDER_ORIGINAL);
+$cropped = $photo_repository->lookup(RENDER_CROPPED);
 
 $source_file_path = $original->file_path($image_name);
 

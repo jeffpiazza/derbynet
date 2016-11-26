@@ -80,26 +80,6 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }
 
-  if (isset($_POST['photo-width']) && isset($_POST['photo-height'])) {
-    $num_picked += 2;
-    $old_photo_size = read_raceinfo('photo-size');
-    $new_photo_size = $_POST['photo-width'].'x'.$_POST['photo-height'];
-    write_raceinfo('photo-size', $new_photo_size);
-    if ($old_photo_size != $new_photo_size) {
-      headshots()->lookup('display')->wipe_directory();
-    }
-  }
-
-  if (isset($_POST['car-photo-width']) && isset($_POST['car-photo-height'])) {
-    $num_picked += 2;
-    $old_photo_size = read_raceinfo('car-photo-size');
-    $new_photo_size = $_POST['car-photo-width'].'x'.$_POST['car-photo-height'];
-    write_raceinfo('car-photo-size', $new_photo_size);
-    if ($old_photo_size != $new_photo_size) {
-      car_photo_repository()->lookup('display')->wipe_directory();
-    }
-  }
-
   if (isset($_POST['use-xbs-checkbox'])) {
     ++$num_picked;
     if (isset($_POST['use-xbs'])) ++$num_picked;

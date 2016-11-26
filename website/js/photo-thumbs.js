@@ -43,7 +43,8 @@ function make_assignable(target) {
 					  ' data-image-filename="' + photo_base_name + '"' +
                       ' onclick="window.location.href=\'photo-crop.php?repo=' + g_photo_repo_name 
                       + '&name=' + encodeURIComponent(photo_base_name) + '\'"' +
-					  ' src="photo.php/' + g_photo_repo_name + '/file/tiny/' +
+                      // RENDER_LISTVIEW (comment for code search)
+					  ' src="photo.php/' + g_photo_repo_name + '/file/80x80/' +
 					  encodeURIComponent(photo_base_name) + '/' +
                       'q' + Date.now() + '"/>'); 
 	  make_discardable($(this).find(".assigned"));
@@ -134,6 +135,7 @@ function removeRacerPhoto(previous) {
 
 
 function setupPhotoCrop(repo_name, basename, time) {
+  // RENDER_WORKING
   $("#work_image").html('<img src="photo.php/' + repo_name + '/file/work/' + basename + '/' + time + '"/>');
 
   // TODO: Figure out how to center the image
@@ -141,7 +143,6 @@ function setupPhotoCrop(repo_name, basename, time) {
   g_crop = null;
 
   $('#work_image img').Jcrop({
-	aspectRatio: g_aspect_ratio,
 	onSelect: updateCrop,
 	onChange: updateCrop
   });

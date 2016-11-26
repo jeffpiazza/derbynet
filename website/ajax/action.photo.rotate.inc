@@ -14,7 +14,7 @@ $image_name = $_POST['image_name'];
 $photo_repository = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
 $rotation = $_POST['rotation'];
 
-$original = $photo_repository->lookup('original');
+$original = $photo_repository->lookup(RENDER_ORIGINAL);
 
 $source_file_path = $original->file_path($image_name);
 
@@ -37,7 +37,7 @@ if ($rot !== false) {
 imagedestroy($im);
 imagedestroy($rot);
 
-$photo_repository->lookup('original')->delete_dependents($image_name);
+$photo_repository->lookup(RENDER_ORIGINAL)->delete_dependents($image_name);
 
 end_response();
 

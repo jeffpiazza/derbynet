@@ -15,7 +15,7 @@ require_once('inc/schema_version.inc');
 // TODO Slideshows by subset, e.g., by den?
 
 function write_photo(&$row, $attribute_name, $column_name, &$repository) {
-  echo ' '.$attribute_name.'="'.$repository->url_for_file($row[$column_name], $row['racerid'], 'cropped').'"';
+  echo ' '.$attribute_name.'="'.$repository->url_for_file($row[$column_name], $row['racerid'], RENDER_CROPPED).'"';
 }
 
 function write_main_photo(&$row, $attribute_name, &$repositories) {

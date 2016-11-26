@@ -80,7 +80,7 @@ foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, cla
   echo ' data-rankid="'.$rankid.'"';
   echo '>';
   if (isset($row['carphoto']) && $row['carphoto']) {
-    echo '<img src="'.car_photo_repository()->url_for_racer($row, 'tiny').'"/>';
+    echo '<img src="'.car_photo_repository()->url_for_racer($row, RENDER_LISTVIEW).'"/>';
   }
   echo '<span>'.$row['carnumber'].' '
        .htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')

@@ -1,5 +1,6 @@
 <ondeck>
 <?php
+require_once('inc/current-heat.inc');
 
 // This script produces XML in response to a request from a page that wants to 
 // update itself as the race progresses.  In particular, it supports ondeck.php (showing 
@@ -65,8 +66,9 @@ if (!$hwresultid) {
 $merge_rounds = @$_GET['merge_rounds'];
 
 $use_master_sched = use_master_sched();
+$now_running = get_running_round();
+emit_current_heat($now_running, $use_master_sched);
 ?>
-<?php require('inc/current-heat.inc'); ?>
 
   <lanes n="<?php echo get_lane_count(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"

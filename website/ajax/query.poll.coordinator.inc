@@ -1,8 +1,13 @@
 <coordinator_poll>
-<?php /* Current heat */
-require('inc/current-heat.inc');
-require('inc/current-racers.inc');
+<?php
+require_once('inc/current-heat.inc');
+require_once('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
+
+$now_running = get_running_round();
+$use_master_sched = use_master_sched();
+emit_current_heat($now_running, $use_master_sched);
+emit_current_racers($now_running, /* photos */ false);
 ?>
 <?php /* Timer */
 require_once('inc/timer-state.inc');

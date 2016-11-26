@@ -30,22 +30,35 @@ function queue_next_poll_request() {
 }
 
 function poll_for_update() {
-    if (typeof(simulated_poll_for_update) == "function") {
-        simulated_poll_for_update();
-    } else {
-        $.ajax('action.php',
-               {type: 'GET',
-                data: {query: 'poll.now-racing',
-                       roundid: g_roundid,
-                       heat: g_heat},
-                success: function(data) {
-                    process_now_racing_element(data);
-                },
-                error: function() {
-                    queue_next_poll_request();
-                }
-               });
+  if (typeof(simulated_poll_for_update) == "function") {
+    simulated_poll_for_update();
+  } else {
+    var row_height = 0;
+    var photo_cells = $('td.photo');
+    var border = parseInt(photo_cells.css('border-bottom-width'));
+    
+    if (photo_cells.length > 0) {
+      // Position of the first td.photo may get adjusted 
+      row_height = Math.floor(($(window).height() - photo_cells.position().top) / photo_cells.length) - border;
+      console.log("Top photo-cell position " + photo_cells.position().top + ", yielding " + row_height);  // TODO
+      // Top photo-cell bounces between 155 (yields 218) and 196 (yields 208).
+      // That means drawing with 208 height causes the top row to get taller?
     }
+
+    $.ajax('action.php',
+           {type: 'GET',
+            data: {query: 'poll.now-racing',
+                   roundid: g_roundid,
+                   heat: g_heat,
+                   'row-height': row_height},
+            success: function(data) {
+              process_now_racing_element(data);
+            },
+            error: function() {
+              queue_next_poll_request();
+            }
+           });
+  }
 }
 
 // Javascript passes arrays (like place_to_lane) by reference, so no
@@ -202,92 +215,116 @@ function process_now_racing_element(now_racing) {
 // elements identifying the new heat's contestants.
 
 function process_new_heat(now_racing) {
-    if (now_racing.getElementsByTagName("hold-current-screen").length > 0) {
-        // Each time a hold-current-screen element is sent, reset the
-        // hold-display deadline.  (Our display is presumed not to be visible,
-        // so the display-for-ten-seconds clock shouldn't start yet.)
-        g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
-    }
-    var current = now_racing.getElementsByTagName("current-heat")[0];
-    if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
-        show_overlay('#timer_overlay');
-    } else if (current.getAttribute("now-racing") == "0" && (new Date()).valueOf() > g_hold_display_until) {
-        show_overlay('#paused_overlay')
-    } else {
-        clear_overlay();
+  if (now_racing.getElementsByTagName("hold-current-screen").length > 0) {
+    // Each time a hold-current-screen element is sent, reset the
+    // hold-display deadline.  (Our display is presumed not to be visible,
+    // so the display-for-ten-seconds clock shouldn't start yet.)
+    g_hold_display_until = (new Date()).valueOf() + g_display_duration_after_animation;
+  }
+  var current = now_racing.getElementsByTagName("current-heat")[0];
+  if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
+    show_overlay('#timer_overlay');
+  } else if (current.getAttribute("now-racing") == "0" && (new Date()).valueOf() > g_hold_display_until) {
+    show_overlay('#paused_overlay')
+  } else {
+    clear_overlay();
+  }
+
+  if ((new Date()).valueOf() > g_hold_display_until) {
+    var new_roundid = current.getAttribute("roundid");
+    var new_heat = current.getAttribute("heat");
+    var is_new_heat = new_roundid != g_roundid || new_heat != g_heat;
+    g_roundid = new_roundid;
+    g_heat = new_heat;
+    if (current.firstChild) {  // The body of the <current-heat>
+      // element names the class
+      $('.banner_title').text(current.firstChild.data 
+                              + ', Heat ' + g_heat
+                              + ' of ' + current.getAttribute('number-of-heats'));
     }
 
-    if (current.getAttribute("now-racing") != "0" && (new Date()).valueOf() > g_hold_display_until) {
-        g_roundid = current.getAttribute("roundid");
-        g_heat = current.getAttribute("heat");
-        if (current.firstChild) {  // The body of the <current-heat>
-                                   // element names the class
-            $('.banner_title').text(current.firstChild.data 
-                                    + ', Heat ' + g_heat
-                                    + ' of ' + current.getAttribute('number-of-heats'));
+    var racers = now_racing.getElementsByTagName("racer");
+    if (is_new_heat && racers.length > 0) {
+      g_animated = false;
+      g_num_racers = racers.length;
+      // Clear old results
+      $('[data-lane] .carnumber').text('');
+      $('[data-lane] .photo').empty();
+      $('[data-lane] .name').text('');
+      $('[data-lane] .time').css({opacity: 0}).text('0.000');
+      $('[data-lane] .speed').css({opacity: 0}).text('200.0');
+      $('[data-lane] .place span').text('');
+      $('[data-lane] img').remove();
+      for (var i = 0; i < racers.length; ++i) {
+        var r = racers[i];
+        var lane = r.getAttribute('lane');
+        $('[data-lane="' + lane + '"] .lane').text(lane);
+        $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
+        if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
+          $('[data-lane="' + lane + '"] .photo').html(
+            '<img src="' + r.getAttribute('photo') + '"/>');
+        }
+        var br_added = false;
+        if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
+          if (!br_added) {
+            $('[data-lane="' + lane + '"] .name').append('<br/>');
+            br_added = true;
+          }
+          $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
+          $('#carname-' + lane).text('"' + r.getAttribute('carname') + '"');
+        }
+        if (r.hasAttribute('subgroup')) {
+          if (!br_added) {
+            $('[data-lane="' + lane + '"] .name').append('<br/>');
+            br_added = true;
+          }
+          $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
+          $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
         }
 
-        var racers = now_racing.getElementsByTagName("racer");
-        if (racers.length > 0) {
-            g_animated = false;
-            g_num_racers = racers.length;
-            // Clear old results
-            $('[data-lane] .carnumber').text('');
-            $('[data-lane] .photo').empty();
-            $('[data-lane] .name').text('');
-            $('[data-lane] .time').css({opacity: 0}).text('0.000');
-            $('[data-lane] .speed').css({opacity: 0}).text('200.0');
-            $('[data-lane] .place span').text('');
-            $('[data-lane] img').remove();
-            for (var i = 0; i < racers.length; ++i) {
-                var r = racers[i];
-                var lane = r.getAttribute('lane');
-                $('[data-lane="' + lane + '"] .lane').text(lane);
-                $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
-                if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
-                  $('[data-lane="' + lane + '"] .photo').prepend(
-                      '<img src="' + r.getAttribute('photo') + '"/>');
-                }
-                var br_added = false;
-                if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
-                    if (!br_added) {
-                        $('[data-lane="' + lane + '"] .name').append('<br/>');
-                        br_added = true;
-                    }
-                    $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
-                    $('#carname-' + lane).text('"' + r.getAttribute('carname') + '"');
-                }
-                if (r.hasAttribute('subgroup')) {
-                    if (!br_added) {
-                        $('[data-lane="' + lane + '"] .name').append('<br/>');
-                        br_added = true;
-                    }
-                    $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
-                    $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
-                }
-
-                $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
-            }
+        $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
+      }
+    } else if (racers.length > 0) {
+      // Same heat, but possibly updated photo paths
+      for (var i = 0; i < racers.length; ++i) {
+        var r = racers[i];
+        var lane = r.getAttribute('lane');
+        if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
+          if ($('[data-lane="' + lane + '"] .photo img').length == 0) {
+            // A window resize, below, may have removed the <img/> element on an interim basis
+            $('[data-lane="' + lane + '"] .photo').html(
+              '<img src="' + r.getAttribute('photo') + '"/>');
+          }
+          if (r.getAttribute('photo') != $('[data-lane="' + lane + '"] .photo img').attr('src')) {
+            $('[data-lane="' + lane + '"] .photo img').attr('src', r.getAttribute('photo'));
+          }
         }
+      }
     }
+  }
 
-    queue_next_poll_request();
+  queue_next_poll_request();
 }
 
 // Update the table height to fill the window below the title bar, then adjust
 // the margin on the "flyer" elements.  The flyer height and width will be set
 // when the animation actually runs.
 function resize_table() {
-    $("table").css({height: $(window).height() - 60});
+  // Since images have a fixed size, they can cause the table to be too tall for
+  // the new window size.  We temporarily remove the photos and rely on
+  // process_new_heat, above, to repopulate with different-sized photos.
+  $("table td.photo").empty();
+  $("table").css({height: $(window).height() - 60});
 
-    var place = $('[data-lane="1"] .place');
-    var btop = parseInt(place.css('border-top'));
-    var mtop = parseInt(place.css('margin-top'));
-    $('.flying').css({margin: mtop + btop});
+  var place = $('[data-lane="1"] .place');
+  var btop = parseInt(place.css('border-top'));
+  var mtop = parseInt(place.css('margin-top'));
+  $('.flying').css({margin: mtop + btop});
 }
 
 $(function () {
-    resize_table();
-    $(window).resize(function() { resize_table(); });
-    poll_for_update();
+  resize_table();
+  $(window).resize(function() { resize_table(); });
+  // This 1-second delay is to let the initial resizing take effect
+  setTimeout(function() { poll_for_update(); }, 1000);
 });

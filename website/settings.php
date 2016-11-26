@@ -125,7 +125,7 @@ $locked_settings = locked_settings();
   </div>
 
 <?php
-function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_prefix, $photo_size_value) {
+function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_prefix) {
     if (!locked_settings()) {
       echo "<p>\n";
       echo '<label for="'.$photo_dir_id.'">Directory for '.$category.' photos:</label>'."\n";
@@ -145,17 +145,6 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
           .'</span>'."\n";
       echo "</p>\n";
     }
-    echo "<p>\n";
-    $photosize = explode('x', $photo_size_value);
-	echo '<label for="'.$photo_size_prefix.'-width">'.ucfirst($category).' photo size:</label>'."\n";
- 	echo '<input id="'.$photo_size_prefix.'-width" name="'.$photo_size_prefix.'-width" type="number" min="0" max="1000"'
-          .' data-enhanced="true"'
-		  .' value="'.$photosize[0].'"/>'."\n";
-    echo '<label for="'.$photo_size_prefix.'-height">w x </label>'."\n";
- 	echo '<input id="'.$photo_size_prefix.'-height" name="'.$photo_size_prefix.'-height" type="number" min="0" max="1000"'
-          .' data-enhanced="true"'
-		  .' value="'.$photosize[1].'"/>'."\n";
-    echo "</p>\n";
 }
 ?>
 
@@ -172,8 +161,8 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         <label>Show racer photos on main racing board</label>
       </p>
 
-      <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo', photo_size()); ?>
-      <?php photo_settings('car', 'car-photo-dir', car_photo_directory(), 'car-photo', car_photo_size()); ?>
+      <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo'); ?>
+      <?php photo_settings('car', 'car-photo-dir', car_photo_directory(), 'car-photo'); ?>
     </div>
   </div>
 

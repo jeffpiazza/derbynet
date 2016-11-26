@@ -5,7 +5,7 @@ require_once('inc/photo-config.inc');
 
 // URL for a file in one of the repositories is:
 //  photo.php/<repository>/file/<render>/<file-basename>/<cachebreaker>, e.g.
-//  photo.php/head        /file/thumb   /mygreatphoto.jpg/20150204133502
+//  photo.php/head        /file/80x80   /mygreatphoto.jpg/20150204133502
 //
 // URL for an arbitrary file named by a racer's database entry is:
 //  photo.php/<repository>/racer/<racerid>/<cachebreaker>

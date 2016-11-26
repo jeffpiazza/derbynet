@@ -86,7 +86,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         // For a just-uploaded file, the only file path that will properly exist
         // is the original.  If/when the image actually gets cropped, we'll update
         // the path in the database to point to that.
-        $path = $photo_repository->lookup('original')->file_path($target_name);
+        $path = $photo_repository->lookup(RENDER_ORIGINAL)->file_path($target_name);
         $success = take_action_silently('UPDATE RegistrationInfo'
                                         .' SET '.$column_name.' = :photo'
                                         .' WHERE racerid = :racerid',
@@ -95,7 +95,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         $row = array('racerid' => $_POST['racerid'],
                      $column_name => $path);
         // This is assuming that there's a 'checkin' render, which isn't the case if we're doing car photos
-        echo '<photo-url>'.$photo_repository->url_for_racer($row, 'checkin').'</photo-url>'."\n";
+        echo '<photo-url>'.$photo_repository->url_for_racer($row, RENDER_CHECKIN).'</photo-url>'."\n";
 
         if (!$success) {
           echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
@@ -104,7 +104,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
       if ($success) {
         echo "<success/>\n";
         echo "<uploaded>".htmlspecialchars($target_name, ENT_QUOTES, 'UTF-8')."</uploaded>\n";
-        echo "<thumbnail>".htmlspecialchars($photo_repository->lookup('thumb')->render_url($target_name),
+        echo "<thumbnail>".htmlspecialchars($photo_repository->lookup(RENDER_THUMBNAIL)->render_url($target_name),
                                             ENT_QUOTES, 'UTF-8')."</thumbnail>\n";
       }
     } else {

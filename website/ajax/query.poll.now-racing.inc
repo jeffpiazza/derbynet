@@ -1,6 +1,6 @@
 <now-racing>
 <?php
-// action.php?query=poll.now-racing&roundid= &heat= 
+// action.php?query=poll.now-racing&roundid= &heat= row-height=
 // Returns:
 //   <now-racing roundid= heat= >
 //     <timer-trouble/>   if there's a problem with the timer
@@ -21,6 +21,8 @@ if (!with_gprm()) {
 }
 
 require_once('inc/replay.inc');
+require_once('inc/current-racers.inc');
+require_once('inc/current-heat.inc');
 
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
@@ -52,11 +54,14 @@ foreach ($stmt as $row) {
   echo "/>\n";
 }
 
-require_once('inc/current-heat.inc');
+$now_running = get_running_round();
+$use_master_sched = use_master_sched();
+emit_current_heat($now_running, $use_master_sched);
 
-if (($now_running['roundid'] != $roundid || $now_running['heat'] != $heat) && $now_running['now_racing'] != 0) {
-  require('inc/current-racers.inc');
-}
+emit_current_racers($now_running,
+                    read_raceinfo_boolean('show-racer-photos') && isset($_GET['row-height']) && $_GET['row-height'] > 0
+                    ? $_GET['row-height'].'h'
+                    : false);
 
 if (read_raceinfo('replay_just_finished')) {
   write_raceinfo('replay_just_finished', 0);

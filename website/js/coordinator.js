@@ -162,7 +162,7 @@ function handle_schedule_submit(roundid, rounds, then_race) {
                    nrounds: rounds},
             success: function(data) {
               process_coordinator_poll_response(data);
-              if (then_race) {
+              if (then_race && data.getElementsByTagName('success').length > 0) {
                 handle_race_button(roundid);
               }
             }

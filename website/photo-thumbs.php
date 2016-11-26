@@ -1,5 +1,4 @@
-<?php
-session_start();
+<?php session_start();
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
@@ -27,6 +26,7 @@ function scan_directory($directory, $pattern) {
 $allfiles = scan_directory($photo_repository->directory(),
 						   "/(jpg|jpeg|png|gif|bmp)/i");
 
+// Returns a javascript expression, suitable for onclick, to perform cropping of a particular photo.
 function photo_crop_expression($basename) {
   global $photo_repository;
   return htmlspecialchars('showPhotoCropModal(this, "'.$photo_repository->name().'", "'.$basename.'", '.time().')',
@@ -58,7 +58,6 @@ function photo_crop_expression($basename) {
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript">
 var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
-var g_aspect_ratio = <?php echo $photo_repository->display_width(); ?> / <?php echo $photo_repository->display_height(); ?>;
 </script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
@@ -126,7 +125,7 @@ foreach ($stmt as $rs) {
 	echo "\n".'<img class="assigned"'
       .' data-image-filename="'.htmlspecialchars($image_filename, ENT_QUOTES, 'UTF-8').'"'
       .' onclick="'.photo_crop_expression($image_filename).'"'
-      .' src="'.$photo_repository->lookup('tiny')->render_url($image_filename).'"/>';
+      .' src="'.$photo_repository->lookup(RENDER_LISTVIEW)->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
   echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
@@ -145,7 +144,7 @@ foreach ($allfiles as $imagefile) {
   echo '<img class="unassigned-photo"'
       .' data-image-filename="'.htmlspecialchars($imagefile, ENT_QUOTES, 'UTF-8').'"'
       .' onclick="'.photo_crop_expression($imagefile).'"'
-      .' src="'.$photo_repository->lookup('thumb')->render_url($imagefile).'"/>';
+      .' src="'.$photo_repository->lookup(RENDER_THUMBNAIL)->render_url($imagefile).'"/>';
   echo '</div>'."\n";
 }
 
