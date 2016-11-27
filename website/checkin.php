@@ -212,6 +212,11 @@ foreach ($stmt as $rs) {
           onclick='g_check_in = false;'/>
         <input type="button" value="Cancel" data-enhanced="true"
           onclick='close_racer_photo_modal();'/>
+
+        <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
+        <div class="centered_flipswitch">
+          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop"/>
+        </div>
     </div>
   </form>
 </div>

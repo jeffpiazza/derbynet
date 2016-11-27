@@ -22,6 +22,25 @@
     margin-right: auto;
 }
 
+.centered_flipswitch {
+    width: 143px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    font-size: x-large;
+}
+
+.centered_flipswitch .ui-btn {
+    font-size: x-large;
+}
+
+#autocrop-label {
+    width: 100%;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+}
+
 .trophy-eligible-flipswitch.ui-flipswitch {
     width: 7.5em;
     padding: 5px;

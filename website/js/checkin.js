@@ -209,6 +209,9 @@ function take_snapshot(racerid, photo_base_name) {
 	  form_data.append('action', 'photo.upload');
       form_data.append('racerid', racerid);
 	  form_data.append('photo', blob, photo_base_name + "."+image_fmt.replace(/e/, '') );
+      if ($("#autocrop").prop('checked')) {
+        form_data.append('autocrop', '1');
+      }
 
       // Testing for <failure> elements occurs in dashboard-ajax.js
       $.ajax(g_action_url,
@@ -218,6 +221,7 @@ function take_snapshot(racerid, photo_base_name) {
               contentType: false,
               processData: false,
               success: function(data) {
+                console.log(data);
                   var photo_url_element = data.getElementsByTagName('photo-url');
                   if (photo_url_element.length > 0) {
                       $("#photo-" + racerid + " img").attr(

@@ -1,21 +1,39 @@
 <?php
-//     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
-//     <input name="photo" type="file" />
-//     <select name="repo">, options are 'head' or 'car'
-
-//     <input name="racerid">, optional
-//     <input name="carnumber">, optional
-//          Either of these will assign the image to the indicated racer
-
-require_once('inc/photo-config.inc');
-
-start_response();
-
+// $_POST['MAX_FILE_SIZE']
+//
 // $_FILES['photo']['error']
 // $_FILES['photo']['name']
 // $_FILES['photo']['size']
 // $_FILES['photo']['tmp_name']
 // $_FILES['photo']['type']
+//
+// $_POST['repo'], options are 'head' or 'car'
+//
+// $_POST['racerid'], optional
+// $_POST['carnumber'], optional
+//          Either of these will assign the image to the indicated racer
+//
+// $_POST['autocrop']: if present, and if facedetection code is available, try
+// to identify the face and crop the photo to a head shot.
+
+require_once('inc/photo-config.inc');
+
+start_response();
+
+function widen_and_clip(&$v, &$width, $scale, $max) {
+  $original_width = $width;
+  $width = round($width * $scale);
+  $v = $v - round(($width - $original_width) / 2);
+
+  if ($v < 0) {
+    $width = $width + $v;  // $width - (-$v)
+    $v = 0;  // $v + (-$v)
+  }
+
+  if ($v + $width > $max) {
+    $width = $max - $v;
+  }
+}
 
 if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
   not_authorized_body();
@@ -50,7 +68,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
              $photo['type'] != 'image/jpeg' &&
              $photo['type'] != 'image/gif') {
     echo "<failure code=\"upload_image_type\">Unacceptable file type: ".$photo['type']."</failure>\n";
-  } else { 
+  } else {
     $photo_name = basename($photo['name']);
     $target_name = $photo_name;
     $attempt = 1;
@@ -65,6 +83,54 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
 
     if (move_uploaded_file($photo['tmp_name'], $photo_dir.DIRECTORY_SEPARATOR.$target_name)) {
       $success = true;
+
+      // For a just-uploaded file, the only file path that will properly exist
+      // is the original.  If/when the image gets cropped, either in this action
+      // or a subsequent one, we'll update the path in the database to point to
+      // that.
+      $path_render = $photo_repository->lookup(RENDER_ORIGINAL);
+
+      if (isset($_POST['autocrop']) && $_POST['autocrop']) {
+        try {
+          $source_file_path = $photo_dir.DIRECTORY_SEPARATOR.$target_name;
+          list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
+
+          require_once('inc/facedetection.inc');
+          $detector = new FaceDetector();
+
+          $original = open_image($source_file_path, $image_type);
+          $face = $detector->detect_face($original);
+
+          if ($face) {
+            $x = round($face['x']);
+            $y = round($face['y']);
+            $w = round($face['width']);
+            // Relying on face detection returning a square, with width = height
+
+            // The marked face is a little tight for cropping -- widen by 10%,
+            // then adjust to 4:3 aspect
+            widen_and_clip($x, $w, 1.10, imagesx($original));
+            $h = $w;
+            widen_and_clip($y, $h, 4 / 3, imagesy($original));
+
+            $cropped_path = $photo_repository->lookup(RENDER_CROPPED)->target_file_path($target_name);
+            $cropped = imagecreatetruecolor($w, $h);
+            imagecopy($cropped, $original, 0,0, $x, $y, $w, $h);
+            write_image($cropped, $cropped_path, $image_type);
+            imagedestroy($cropped);
+
+            // Use the cropped path now rather than the original if we record
+            // the file name in the database.
+            $path_render = $photo_repository->lookup(RENDER_CROPPED);
+            echo "<cropped/>\n";
+          } else {
+            echo "\n<warning>No face detected for autocrop.</warning>\n";
+          }
+          imagedestroy($original);
+        } catch (Exception $e) {
+          echo "\n<warning>".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')."</warning>\n";
+        }
+      }
 
       $racerid = false;
       if (isset($_POST['racerid'])) {
@@ -82,11 +148,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         $column_name = $photo_repository->column_name();
         // We want to write a value here that will be compatible with what GPRM
         // needs, in case we're working with a GPRM database.
-        //
-        // For a just-uploaded file, the only file path that will properly exist
-        // is the original.  If/when the image actually gets cropped, we'll update
-        // the path in the database to point to that.
-        $path = $photo_repository->lookup(RENDER_ORIGINAL)->file_path($target_name);
+        $path = $path_render->file_path($target_name);
         $success = take_action_silently('UPDATE RegistrationInfo'
                                         .' SET '.$column_name.' = :photo'
                                         .' WHERE racerid = :racerid',
@@ -114,7 +176,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
       }
       if (!is_writable($photo_dir)) {
         echo '  <b>Check settings: photo directory is not writable.</b>';
-      } 
+      }
       echo '</failure>'."\n";
     }
   }

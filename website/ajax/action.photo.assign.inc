@@ -7,7 +7,7 @@ require_once('inc/photo-config.inc');
 $repo = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
 
 if (isset($_POST['photo']) && strlen($_POST['photo'])) {
-  $photo_path = $repo->lookup('cropped')->find_or_make_image_file($_POST['photo']);
+  $photo_path = $repo->lookup(RENDER_CROPPED)->find_or_make_image_file($_POST['photo']);
   if (!$photo_path) {
     echo '<failure code="nosuchfile">Image '.$_POST['photo'].' not found.</failure>'."\n";
   } else {

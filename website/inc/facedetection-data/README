@@ -1,0 +1,3 @@
+Face detection data distilled from opencv's haarcascade_frontalface_alt2.xml.
+See extras/facedetection for the code to convert opencv xml data into the format
+used by this detector.
