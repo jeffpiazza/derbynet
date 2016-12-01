@@ -1,12 +1,24 @@
-<project name="DerbyNet-docs" default="dist" basedir=".">
+<project name="DerbyNet-docs" default="dist" basedir="."
+	 xmlns:if="ant:if" xmlns:unless="ant:unless">
    <description>
        Documentation for installation and operation of DerbyNet software
    </description>
 
-   <property name="soffice" location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
    <property name="dist"  location="dist"/>
 
-   <target name="dist" depends="installation, after-installation, operation">
+   <!-- Set soffice for Windows if that's where we are, otherwise use
+	standard (Mac) value -->
+   <condition property="soffice"
+	      value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
+     <os family="windows"/>
+   </condition>
+   <property name="soffice"
+	     location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
+   <condition property="is_windows">
+     <os family="windows"/>
+   </condition>
+
+   <target name="dist" depends="installation, after-installation, operation, one-click">
    </target>
 
    <target name="make-dist-dir">
@@ -18,15 +30,19 @@
    <macrodef name="make-pdf">
        <attribute name="file"/>
        <sequential>
-           <exec executable="${soffice}">
-               <arg value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
-               <arg value="--headless"/>
-               <arg value="--convert-to"/>
-               <arg value="pdf:writer_pdf_Export"/>
-               <arg value="--outdir"/>
-               <arg value="${dist}"/>
-               <arg value="@{file}"/>
-           </exec>
+         <exec executable="${soffice}">
+	   <!-- This UserInstallation variable avoids any conflict with another
+		running LibreOffice on Mac, but doesn't seem to work on
+		Windows. -->
+           <arg unless:set="is_windows"
+		value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
+           <arg value="--headless"/>
+           <arg value="--convert-to"/>
+           <arg value="pdf:writer_pdf_Export"/>
+           <arg value="--outdir"/>
+           <arg value="${dist}"/>
+           <arg value="@{file}"/>
+         </exec>
        </sequential>
    </macrodef>
 
@@ -46,6 +62,10 @@
      <make-pdf file="Running a Race with DerbyNet.fodt"/>
  </target>
 
+ <target name="one-click" depends="make-dist-dir">
+   <make-pdf file="README One-Click Install for Windows.fodt"/>
+ </target>
+ 
   <target name="clean"
         description="clean up" >
     <!-- Delete the ${dist} directory tree -->

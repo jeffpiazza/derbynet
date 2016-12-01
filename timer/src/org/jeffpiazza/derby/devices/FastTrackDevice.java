@@ -25,7 +25,7 @@ public class FastTrackDevice extends TimerDeviceTypical {
   private static final String LANE_MASK = "M"; // + A to mask out lane 1, B lane 2, etc.
   private static final String CLEAR_LANE_MASK = LANE_MASK + "G";
   private static final String OLD_FORMAT = "N0"; //A=3.001! B=3.002 C=3.003 D=3.004 E=3.005 F=3.006 <LF> <CR>
-  private static final String NEW_FORMAT = "N1"; //A=3.001! B=3.002” C=3.003# D=3.004$ E=3.005% F=3.006& <CR> <LF>
+  private static final String NEW_FORMAT = "N1"; //A=3.001! B=3.002" C=3.003# D=3.004$ E=3.005% F=3.006& <CR> <LF>
   private static final String ENHANCED_FORMAT = "N2";
   // N2 => 5-digit time and start switch open/cloed status, 2012 or newer timers only
   // private static final String COUNT_DOWN_TIMER = "PC"; // e.g., PC01 to count down one minute

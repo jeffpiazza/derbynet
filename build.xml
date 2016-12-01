@@ -9,13 +9,32 @@
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
   <property name="docs-dir" location="docs"/>
+  <property name="uniserver-resources" location="../uniserver-resources"/>
+  <property name="uniserver-target" location="dist/uniserver"/>
 
+  <condition property="is_mac">
+    <os family="mac"/>
+  </condition>
+  <condition property="is_windows">
+    <os family="windows"/>
+  </condition>
+
+  <target name="clean">
+    <delete quiet="true">
+      <fileset dir="website/inc">
+	<filename name="banner.inc"/>
+	<filename name="generated-version.inc"/>
+	<filename name="generated-build-date.inc"/>
+	<filename name="generated-commit-hash.inc"/>
+      </fileset>
+    </delete>
+    <ant dir="${timer-dir}" target="clean"/>
+    <ant dir="${docs-dir}"  target="clean"/>
+  </target>
+  
   <target name="dist" depends="dist.zip, dist.mac"/>
 
-  <target name="dist.zip" depends="timer-jar, docs-dist, banner, generated-version.inc,
-                               generated-build-date.inc, release-series, generated-commit-hash.inc">
-
-      <!-- TODO: Unfortunately, this doesn't create a website/local directory when unzipped. -->
+  <target name="dist.zip" depends="timer-jar, docs-dist, generated">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
@@ -49,6 +68,11 @@
       </zip>
 
       <delete file="${replay-app.name}.dmg" quiet="yes" failonerror="false"/>
+  </target>
+
+  <target name="generated" depends="banner, generated-version.inc,
+				    generated-build-date.inc,
+				    release-series, generated-commit-hash.inc">
   </target>
 
   <target name="generated-version.inc">
@@ -142,7 +166,7 @@
 
 <!-- From http://www.rkuntz.org/pmwiki.php?n=Code.AntDiskImage -->
 <!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
-<target name="replay-dmg" depends="replay-build-release"
+<target name="replay-dmg" if="is_mac" depends="replay-build-release"
         description="Create a DMG package for MacOSX (only works on MacOSX)">
 
     <!-- Set this property value to your application name -->
@@ -224,7 +248,7 @@
             quiet="yes" failonerror="false"/>
 </target>
 
-<target name="replay-build-release"
+<target name="replay-build-release" if="is_mac"
         description="(Mac only)">
             <exec executable="/usr/bin/xcodebuild" os="Mac OS X">
                 <arg value="-project"/>
@@ -235,7 +259,7 @@
             </exec>
 </target>
 
-<target name="mac.installer.website">
+<target name="mac.installer.website" if="is_mac">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">
@@ -257,7 +281,7 @@
     <delete dir="ROOT"/>
 </target>
 
-<target name="mac.installer.replay" depends="replay-build-release">
+<target name="mac.installer.replay" if="is_mac" depends="replay-build-release">
     <mkdir dir="ROOT/Applications/DerbyNet"/>
     <copy todir="ROOT/Applications/DerbyNet/" overwrite="true">
       <fileset dir="${replay-app-dir}">
@@ -281,7 +305,7 @@
     <delete dir="ROOT"/>
 </target>
 
-<target name="mac.installer.timer" depends="timer-jar">
+<target name="mac.installer.timer" if="is_mac" depends="timer-jar">
     <mkdir dir="ROOT/Applications/DerbyNet"/>
     <copy todir="ROOT/Applications/DerbyNet" overwrite="true">
           <fileset dir="${timer-jar-dir}">
@@ -303,7 +327,7 @@
     <delete dir="ROOT"/>
 </target>
 
-<target name="mac.installer.docs" depends="docs-dist">
+<target name="mac.installer.docs" if="is_mac" depends="docs-dist">
     <mkdir dir="ROOT/Applications/DerbyNet/docs"/>
     <copy todir="ROOT/Applications/DerbyNet" overwrite="true">
         <mappedresources>
@@ -325,7 +349,7 @@
     <delete dir="ROOT"/>
 </target>
 
-<target name="mac.installer.extras">
+<target name="mac.installer.extras" if="is_mac">
     <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
     <copy todir="ROOT/Applications/Derbynet/extras">
         <fileset dir="extras"/>
@@ -342,12 +366,13 @@
     <delete dir="ROOT"/>
 </target>    
 
-<target name="dist.mac" depends="mac.installer.website,
-                                      mac.installer.replay, mac.installer.timer,
-                                      mac.installer.docs, mac.installer.extras,
-                                      generated-version.inc,
-                                      generated-build-date.inc,
-                                      release-series, generated-commit-hash.inc">
+<target name="dist.mac" if="is_mac"
+	depends="mac.installer.website,
+                 mac.installer.replay, mac.installer.timer,
+                 mac.installer.docs, mac.installer.extras,
+                 generated-version.inc,
+                 generated-build-date.inc,
+                 release-series, generated-commit-hash.inc">
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>
@@ -359,7 +384,113 @@
     <delete file="derbynet.timer.pkg"/>
     <delete file="derbynet.website.pkg"/>
 </target>
+
+<target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist">
+  <delete dir="${uniserver-target}"/>
+  <mkdir dir="${uniserver-target}"/>
+
+  <pathconvert property="controller-exe">
+    <path>
+      <fileset dir="${uniserver-resources}" includes="*controller*.exe"/>
+    </path>
+  </pathconvert>
+  <exec executable="${controller-exe}" failonerror="true">
+    <arg value="-y"/>
+    <arg value="-o${uniserver-target}"/>
+  </exec>
+
+  <pathconvert property="apache-exe">
+    <path>
+      <fileset dir="${uniserver-resources}" includes="*apache*.exe"/>
+    </path>
+  </pathconvert>
+  <exec executable="${apache-exe}" failonerror="true">
+    <arg value="-y"/>
+    <arg value="-o${uniserver-target}\UniServerZ"/>
+  </exec>
+
+  <pathconvert property="php-exe">
+    <path>
+      <fileset dir="${uniserver-resources}" includes="*php*.exe"/>
+    </path>
+  </pathconvert>
+  <exec executable="${php-exe}" failonerror="true">
+    <arg value="-y"/>
+    <arg value="-o${uniserver-target}\UniServerZ"/>
+  </exec>
+
+  <pathconvert property="php-core-dir">
+    <path>
+      <dirset file="${uniserver-target}\UniServerZ\core\php*"/>
+    </path>
+  </pathconvert>
+
+  <loadresource property="php-version">
+    <propertyresource name="php-core-dir"/>
+    <filterchain>
+      <tokenfilter>
+	<filetokenizer/>
+	<replaceregex pattern=".*\\" flags="g"/>
+      </tokenfilter>
+    </filterchain>
+  </loadresource>
+
+  <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
+		 match="PHP_SELECT=php[0-9]*"
+		 replace="PHP_SELECT=${php-version}"/>
   
+  <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
+		 match="DISPLAY_PAGE_2=yes"
+		 replace="DISPLAY_PAGE_2=no"/>
+
+  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
+		 match=";(extension=php_pdo_odbc.dll)"
+		 replace="\1"/>
+
+  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
+		 match=";(extension=php_pdo_sqlite.dll)"
+		 replace="\1"/>
+
+  <copy todir="${uniserver-target}\UniServerZ\www">
+    <fileset dir="website">
+      <exclude name="local/**"/>
+    </fileset>
+  </copy>
+  <mkdir dir="${uniserver-target}\UniServerZ\www\local"/>
+
+  <copy todir="${uniserver-target}">
+    <fileset dir="${timer-jar-dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </copy>
+
+  <copy todir="${uniserver-target}\docs">
+    <fileset dir="docs/dist">
+      <include name="**"/>
+      <exclude name="README One-Click*.pdf"/>
+    </fileset>
+  </copy>
+
+  <copy todir="${uniserver-target}\installers">
+    <fileset dir="${uniserver-resources}">
+      <include name="*.exe"/>
+      <exclude name="Zero*"/>
+    </fileset>
+  </copy>
+
+  <copy todir="${uniserver-target}">
+    <fileset dir="docs/dist">
+      <include name="README One-Click*.pdf"/>
+    </fileset>
+  </copy>
+  
+  <zip destfile="dist/DerbyNet-windows-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
+    <fileset dir="${uniserver-target}">
+      <include name="**"/>
+    </fileset>
+  </zip>
+  <delete dir="${uniserver-target}"/>
+</target>
 
 <target name="demo">
     <ant dir="demo"/>
