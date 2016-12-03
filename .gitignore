@@ -24,3 +24,5 @@ timer/.idea/encodings.xml
 website/inc/banner.inc
 website/inc/generated-*.inc
 website/local/
+
+dist/
