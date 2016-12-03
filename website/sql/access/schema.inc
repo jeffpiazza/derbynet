@@ -322,6 +322,7 @@ array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (21, 'StepOrgSetup', 'Complete')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (11, 'show-racer-photos', '1')",
   )
 );
 ?>

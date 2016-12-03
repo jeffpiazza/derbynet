@@ -21,6 +21,17 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/settings.js"></script>
+<script type="text/javascript">
+function photo_directory_base() {
+  <?php
+  if (isset($db_connection_string) && substr($db_connection_string, 0, 7) == 'sqlite:') {
+    echo 'return '.json_encode(substr($db_connection_string, 7)).';';
+  } else {
+    echo 'return "";';
+  }
+  ?>
+}
+</script>
 </head>
 <body>
 <?php
@@ -138,10 +149,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
       echo '<p>';
       echo '<span class="photo_dir_choose"><input type="button" value="Browse"'
           .' data-enhanced="true"'
-          .' onclick="show_choose_directory_modal($(\'#'.$photo_dir_id.'\').val(), function(path) {'
-          .'    $(\'#'.$photo_dir_id.'\').val(path);'
-          .'    $(\'#'.$photo_dir_id.'\').change();'
-          .' })"/>'
+          .' onclick="browse_for_photo_directory(\'#'.$photo_dir_id.'\')"/>'
           .'</span>'."\n";
       echo "</p>\n";
     }

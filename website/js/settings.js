@@ -20,7 +20,6 @@ function on_form_submission() {
 };
 
 function render_directory_status_icon(photo_dir_selector) {
-    console.log("Updating status icon for " + photo_dir_selector);
     $.ajax('action.php',
            {type: 'GET',
             data: {query: 'file.stat',
@@ -48,6 +47,18 @@ function render_directory_status_icon(photo_dir_selector) {
                 }
             }
            });
+}
+
+function browse_for_photo_directory(photo_dir_selector) {
+  var photo_dir = $(photo_dir_selector);
+  var val = photo_dir.val();
+  if (val == '') {
+    val = photo_directory_base();  // Defined in settings.php
+  }
+  show_choose_directory_modal(val, function(path) {
+    photo_dir.val(path);
+    photo_dir.change();
+  });
 }
 
 var g_form_modified = 0;

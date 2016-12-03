@@ -167,6 +167,7 @@ array(
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (11, 'show-racer-photos', '1')",
   )
 );
 ?>

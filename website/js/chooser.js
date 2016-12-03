@@ -22,6 +22,9 @@ function repopulate_chooser_modal(path) {
            {type: 'GET',
             data: {query: 'file.directory.nodata',
                    path: path},
+            // Disable the alert from dashboard-ajax.js that would show up for
+            // "unable to list directory"
+            global: false,
             success: function(data) {
                 var root = data.getElementsByTagName("directory");
                 if (root.length == 0) {
