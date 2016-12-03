@@ -16,10 +16,10 @@ $(function() {
 var g_modal_dialogs = []
 
 function do_show_modal(modal_selector, background_selector, z_index, submit_handler) {
-    var modal_background = $(background_selector);
-    modal_background.css({'display': 'block',
-                          'opacity': 0});
-    modal_background.fadeTo(200, 0.5);
+  var modal_background = $(background_selector);
+  modal_background.css({'display': 'block',
+                        'opacity': 0});
+  modal_background.fadeTo(200, 0.5);
 
     var modal_div = $(modal_selector);
     if (typeof submit_handler != 'undefined' && submit_handler) {
@@ -30,13 +30,18 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
 
     g_modal_dialogs.push(modal_selector);
 
+  if (modal_div.closest('.modal_frame').length == 0) {
+    modal_div.wrap('<div class="modal_frame"></div>');
+    modal_div.closest('.modal_frame').css({ 'z-index': z_index });
+  }
+  modal_div.closest('.modal_frame').removeClass('hidden');
+
     var modal_width = modal_div.outerWidth();
     modal_div.removeClass("hidden");
     modal_div.css({ 
         'display': 'block',
-        'position': 'fixed',
+        'position': 'absolute',
         'opacity': 0,
-        'z-index': z_index,
         'left' : 50 + '%',
         'margin-left': -(modal_width/2) + "px"
     });
@@ -46,7 +51,7 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
 function do_close_modal(modal_selector, background_selector) {
     g_modal_dialogs.pop();
     $(background_selector).fadeOut(200);
-    $(modal_selector).addClass("hidden");
+    $(modal_selector).closest('.modal_frame').addClass('hidden');
     $(modal_selector).css({'display': 'none'});
 }
 

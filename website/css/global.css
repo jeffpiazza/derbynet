@@ -139,24 +139,6 @@ div.banner_version {
     display: none;
 }
 
-.modal_dialog {
-  display: none;
-  width: 300px;
-  top: 100px;
-  padding: 15px 20px;
-  background: #f3f6fa;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-}
-
-.wide_modal {
-  width: 500px;
-}
-
 #second_modal_background {
     position: fixed;
     z-index:11500;
@@ -177,6 +159,34 @@ div.banner_version {
     width:100%;
     background: #000;
     display: none;
+}
+
+.modal_frame {
+    position: fixed;
+    background-color: transparent;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    overflow: scroll;
+}
+
+.modal_dialog {
+  display: none;
+  width: 300px;
+  top: 100px;
+  padding: 15px 20px;
+  background: #f3f6fa;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.wide_modal {
+  width: 500px;
 }
 
 .settings_group {
