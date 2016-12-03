@@ -5,9 +5,11 @@
 //
 // <action-response> is document root of reply, constructed from $_POST arguments
 //
-
-// TODO bigtime: a bad or missing config file prevents directory queries
-
+// This script will load the database config (i.e., perform a require_once of
+// inc/data.inc) UNLESS the query or action name ends in ".nodata'.  Since
+// inc/data.inc will force a page redirect if the database cannot be loaded, any
+// queries or actions that potentially run before a database config file exists
+// should be in include files that end in ".nodata.inc'.
 require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 

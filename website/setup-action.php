@@ -77,8 +77,10 @@ if (locked_settings()) {
     $dbpass_exported = var_export($dbpass, true);
     $content = <<<END
 <?php
-\$db = new PDO($connection_exported, $dbuser_exported, $dbpass_exported,
+\$db_connection_string = $connection_exported;
+\$db = new PDO(\$db_connection_string, $dbuser_exported, $dbpass_exported,
                $options_exported);
+$other
 ?>
 END;
   }

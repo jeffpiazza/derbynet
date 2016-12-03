@@ -41,9 +41,6 @@ $(function () {
 });
 
 function show_choose_database_modal() {
-    // TODO Consider pre-populating $("#sqlite_path") if we have an existing
-    // sqlite configuration, or the #mysql_... fields if we have a mysql
-    // configuration, or #odbc_dsn_name if we have an ODBC configuration
     show_modal("#choose_database_modal", function(event) {
         handle_choose_database();
         return false;
@@ -51,7 +48,7 @@ function show_choose_database_modal() {
 
     // Merely setting the "checked" attribute doesn't trigger the "change"
     // handler that displays the right extra fields.
-    $('#sqlite_connection').click();
+    $('input[name="connection_type"][checked]').click();
     $('input[name="connection_type"]').checkboxradio("refresh");
 }
 

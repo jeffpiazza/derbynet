@@ -122,6 +122,34 @@ function label_driver_check($driver) {
     echo " <span class=\"missing_driver\">(Driver not loaded!)</span>";
   }
 }
+
+// If there's an existing database config, then $db_connection_string may
+// contain the connection string, which we can parse to better populate the form
+// fields.
+$form_fields = array();
+// Default values, in case $db_connection string is unparseable:
+$form_fields['radio'] = 'sqlite';
+$form_fields['mysql_host'] = 'localhost';
+if (isset($db_connection_string)) {
+  $form_fields['connection_string'] = $db_connection_string;
+  if (substr($db_connection_string, 0, 7) == 'sqlite:') {
+    $form_fields['radio'] = 'sqlite';
+    $form_fields['sqlite_path'] = htmlspecialchars(substr($db_connection_string, 7), ENT_QUOTES, 'UTF-8');
+  } else if (substr($db_connection_string, 0, 6) == 'mysql:') {
+    $form_fields['radio'] = 'mysql';
+    if (preg_match('/host=([^;]*);/', $db_connection_string, $matches)) {
+      $form_fields['mysql_host'] = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+    }
+    if (preg_match('/dbname=(.*)/', $db_connection_string, $matches)) {
+      $form_fields['mysql_dbname'] = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+    }
+  } else if (substr($db_connection_string, 0, 5) == 'odbc:') {
+    $form_fields['radio'] = 'odbc';
+    if (preg_match('/DSN=([^;]*);/', $db_connection_string, $matches)) {
+      $form_fields['odbc_dsn_name'] = htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
+    }
+  }
+}
 ?>
 
 <div id="choose_database_modal" class="modal_dialog wide_modal tall_modal hidden block_buttons">
@@ -129,56 +157,61 @@ function label_driver_check($driver) {
     $is_windows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 ?>
     <input type="radio" name="connection_type" value="sqlite" id="sqlite_connection"
+           <?php if (@$form_fields['radio'] == 'sqlite') echo 'checked="checked"'; ?>
            data-wrapper-class="sqlite_connection_wrapper"/>
     <label for="sqlite_connection">SQLite data source<?php label_driver_check("sqlite"); ?></label>
     <input type="radio" name="connection_type" value="mysql" id="mysql_connection"
+           <?php if (@$form_fields['radio'] == 'mysql') echo 'checked="checked"'; ?>
            data-wrapper-class="mysql_connection_wrapper"/>
     <label for="mysql_connection">MySQL data source<?php label_driver_check("mysql"); ?></label>
     <input type="radio" name="connection_type" value="odbc" id="odbc_connection"
+           <?php if (@$form_fields['radio'] == 'odbc') echo 'checked="checked"'; ?>
            data-wrapper-class="odbc_connection_wrapper"/>
     <label for="odbc_connection">ODBC data source<?php label_driver_check("odbc");?></label>
     <input type="radio" name="connection_type" value="string" id="string_connection"
-           checked="checked" data-wrapper-class="string_connection_wrapper"/>
+          data-wrapper-class="string_connection_wrapper"/>
     <label for="string_connection">Arbitrary connection string</label>
 
     <div id="for_odbc_connection" class="hidden odbc_connection_wrapper">
         <label for="odbc_dsn_name">ODBC data source name (DSN):</label>
-        <input type="text" name="odbc_dsn_name" id="odbc_dsn_name"/>
+        <input type="text" name="odbc_dsn_name" id="odbc_dsn_name"
+               value="<?php echo @$form_fields['odbc_dsn_name']; ?>"/>
     </div>
 
     <div id="for_mysql_connection" class="hidden mysql_connection_wrapper">
         <label for="mysql_host">MySQL Host:</label>
-        <input type="text" name="mysql_host" id="mysql_host" value="localhost"/>
+        <input type="text" name="mysql_host" id="mysql_host"
+               value="<?php echo @$form_fields['mysql_host']; ?>"/>
         <label for="mysql_dbname">MySQL database name:</label>
-        <input type="text" name="mysql_dbname" id="mysql_dbname"/>
+        <input type="text" name="mysql_dbname" id="mysql_dbname"
+               value="<?php echo @$form_fields['mysql_dbname']; ?>"/>
     </div>
 
     <div id="for_sqlite_connection" class="hidden sqlite_connection_wrapper">
-
-<input type="button" data-enhanced="true" id="browse_for_sqlite"
+      <input type="button" data-enhanced="true" id="browse_for_sqlite"
        value="Browse"
        onclick='show_choose_file_modal($("#sqlite_path").val(), "new.sqlite",
                                        function(fullpath) {
                                          $("#sqlite_path").val(fullpath);
                                          update_sqlite_path();
                                        });'/>
-
-<div style="width: 80%">
+      <div style="width: 80%">
         <label for="sqlite_path">Path (on server) to SQLite data file:</label>
         <input type="text" name="sqlite_path" id="sqlite_path"
-               value="<?php
-                  if (preg_match('/"sqlite:([^"]*)"/', $config_file_contents, $matches)) {
-                      echo htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8');
-                  }
-                ?>"/>
-
-</div>
+               value="<?php echo @$form_fields['sqlite_path']; ?>"/>
+      </div>
     </div>
 
     <div id="for_string_connection" class="string_connection_wrapper">
         <label for="connection_string">Database connection string:</label>
         <input type="text" name="connection_string" id="connection_string"
-               placeholder="Database connection string"/>
+            <?php
+              if (isset($db_connection_string)) {
+                echo 'value="'.htmlspecialchars($db_connection_string, ENT_QUOTES, 'UTF-8').'"';
+              } else {
+                echo 'placeholder="Database connection string"';
+              }
+            ?>/>
     </div>
 
     <label for="dbuser">Database user name:</label>
