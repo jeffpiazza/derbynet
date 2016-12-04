@@ -451,6 +451,11 @@
 		 match=";(extension=php_pdo_sqlite.dll)"
 		 replace="\1"/>
 
+  <delete>
+    <!-- Delete .htaccess, favicon.ico, and other cruft -->
+    <fileset dir="${uniserver-target}\UniServerZ\www"
+	     includes="**"/>
+  </delete>
   <copy todir="${uniserver-target}\UniServerZ\www">
     <fileset dir="website">
       <exclude name="local/**"/>

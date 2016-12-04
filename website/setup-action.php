@@ -80,7 +80,6 @@ if (locked_settings()) {
 \$db_connection_string = $connection_exported;
 \$db = new PDO(\$db_connection_string, $dbuser_exported, $dbpass_exported,
                $options_exported);
-$other
 ?>
 END;
   }

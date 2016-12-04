@@ -133,7 +133,7 @@ function final_standings() {
                      // Of these, only the roundid and racerid are meaningful grouping keys; each of the other
                      // values is uniquely determined by the racerid.
                      .' GROUP BY Rounds.roundid, RegistrationInfo.racerid, RegistrationInfo.classid, '
-                     .'  class, firstname, lastname, carnumber'
+                     .'  Rounds.classid, class, firstname, lastname, carnumber'
                      //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
                      .' HAVING COUNT(*) > 1'
                      .' ORDER BY '.$scoring_expr);
