@@ -2,6 +2,18 @@
 // Redirects to setup page if the database hasn't yet been set up
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+
+// This first database access is surrounded by a try/catch in order to catch
+// broken/corrupt databases (e.g., sqlite pointing to a file that's not actually
+// a database).  The pdo may get created OK, but then fail on the first attempt
+// to access.
+try {
+  $schema_version = schema_version();
+} catch (PDOException $p) {
+  $_SESSION['setting_up'] = 1;
+  header('Location: database-setup.php');
+  exit();
+}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -76,7 +88,7 @@ if ($need_spacer) {
 </form>
 <br/>
 
-<?php if (schema_version() > 1) { ?>
+<?php if ($schema_version > 1) { ?>
 <form method="get" action="photo-thumbs.php">
   <input type="hidden" name="repo" value="car"/>
   <input type="submit" value="Edit Car Photos"/>

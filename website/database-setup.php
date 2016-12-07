@@ -66,6 +66,16 @@ if (file_exists($local_config_inc)) {
   }
 }
 
+// Installer may leave a file here to set $default_file_path variable
+$local_default_file_path_inc = $configdir.DIRECTORY_SEPARATOR.'default-file-path.inc';
+if (file_exists($local_default_file_path_inc)) {
+  try {
+    @include($local_default_file_path_inc);
+  } catch (Exception $e) {
+    unset($default_file_path);
+  }
+}
+
 if ($offer_config_button) {
 ?>
 <div class="block_buttons">
@@ -94,9 +104,11 @@ if (isset($db) && $db) {
            value="Initialize Schema" onclick="show_initialize_schema_modal()"/>
     <br/>
 <?php
-
-    try {
-        echo '<p>Schema version '.schema_version().' (expecting version '.expected_schema_version().')</p>'."\n";
+ function pad3($n) {
+    return str_pad($n, 3, '0', STR_PAD_LEFT);
+  }
+  try {
+    echo '<p>Schema version S1'.pad3(schema_version()).' (expecting version S1'.pad3(expected_schema_version()).')</p>'."\n";
         if (schema_version() < expected_schema_version()) {
 ?>
     <input type="button" data-enhanced="true"
@@ -105,8 +117,8 @@ if (isset($db) && $db) {
 <?php
         }
     } catch (PDOException $p) {
-        echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
-    }
+    echo '<p>Can\'t determine schema version (expecting version S1'.pad3(expected_schema_version()).')</p>'."\n";
+  }
 
 ?>
 
@@ -127,9 +139,16 @@ function label_driver_check($driver) {
 // contain the connection string, which we can parse to better populate the form
 // fields.
 $form_fields = array();
+
 // Default values, in case $db_connection string is unparseable:
 $form_fields['radio'] = 'sqlite';
 $form_fields['mysql_host'] = 'localhost';
+if (isset($default_file_path)) {
+  $form_fields['sqlite_path'] =
+      $default_file_path.DIRECTORY_SEPARATOR.
+          date('Ymd-Hi').'.sqlite';
+}
+
 if (isset($db_connection_string)) {
   $form_fields['connection_string'] = $db_connection_string;
   if (substr($db_connection_string, 0, 7) == 'sqlite:') {
