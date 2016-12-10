@@ -94,7 +94,7 @@ END;
 <?php
 \$roles = array('' => array('password' => '',
                             'permissions' => VIEW_RACE_RESULTS_PERMISSION),
-                'Timer' => array('password' => 'millisecond',
+                'Timer' => array('password' => '',
                                  'permissions' => TIMER_MESSAGE_PERMISSION,
                                  'interactive' => false),
                 'Photo' => array('password' => 'flashbulb',

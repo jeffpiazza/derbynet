@@ -139,7 +139,7 @@ public class TimerMain {
         username = "Timer";
       }
       if (password == null) {
-        password = "millisecond";
+        password = "";
       }
     }
 
