@@ -116,6 +116,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       echo '  <heat-ready lane-mask="'.$mask.'"'
           .' class="'.htmlspecialchars($current['class'], ENT_QUOTES, 'UTF-8').'"'
           .' round="'.$current['round'].'"'
+          .' roundid="'.$current['roundid'].'"'
           .' heat="'.$current['heat'].'"'
           .'/>'."\n";
       $timer_state->to_state(TIMER_STAGING);

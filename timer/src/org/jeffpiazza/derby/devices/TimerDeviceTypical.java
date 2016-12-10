@@ -21,11 +21,13 @@ public abstract class TimerDeviceTypical
   protected void raceFinished(Message.LaneResult[] results)
       throws SerialPortException {
     rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
-    invokeRaceFinishedCallback(results);
+    invokeRaceFinishedCallback(roundid, heat, results);
+    roundid = heat = 0;
   }
 
   public void abortHeat() throws SerialPortException {
     rsm.onEvent(RacingStateMachine.Event.ABORT_HEAT_RECEIVED, this);
+    roundid = heat = 0;
   }
 
   protected void logOverdueResults() {
@@ -39,12 +41,16 @@ public abstract class TimerDeviceTypical
 
     whileInState(state);
 
+    // Don't check the gate state while a race is running, and only check
+    // occasionally when we're idle; otherwise, check constantly while
+    // waiting for a race to start.
     boolean doCheckGate = state != RacingStateMachine.State.RUNNING;
     if (doCheckGate && state == RacingStateMachine.State.IDLE) {
       // At IDLE, only need to check gate occasionally, to confirm the
       // connection still works
       doCheckGate = portWrapper.millisSinceLastCommand() > 500;
     }
+
     if (doCheckGate) {
       boolean closed = getGateIsClosed();
       if (closed != updateGateIsClosed()) {
@@ -55,7 +61,6 @@ public abstract class TimerDeviceTypical
         if (newState == RacingStateMachine.State.RUNNING && state != newState) {
           invokeRaceStartedCallback();
         }
-        invokeGateChangeCallback( /* isOpen */!closed);
       }
     }
   }

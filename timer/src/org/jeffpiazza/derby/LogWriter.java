@@ -3,15 +3,34 @@ package org.jeffpiazza.derby;
 import org.w3c.dom.Element;
 
 import java.io.*;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // TODO: Suppress heartbeats with uninteresting responses
 public class LogWriter implements HttpTask.MessageTracer {
   private PrintWriter writer;
-  private long startTime = System.currentTimeMillis();
 
   public LogWriter() throws IOException {
     this.writer = LogFileFactory.makeLogFile();
     serialPortLog(INTERNAL, "Started at " + Timestamp.string());
+    (new Thread() {
+      @Override
+      public void run() {
+        try {
+          long seconds = (new Date(System.currentTimeMillis())).getSeconds();
+          Thread.sleep(1000 * (60 - seconds));
+        } catch (InterruptedException ex) {
+        }
+        while (true) {
+          try {
+            Thread.sleep(60000);
+          } catch (InterruptedException ex) {
+          }
+          serialPortLog(INTERNAL, Timestamp.string());
+        }
+      }
+    }).start();
   }
 
   public LogWriter(String path) throws IOException {
@@ -23,9 +42,7 @@ public class LogWriter implements HttpTask.MessageTracer {
   public static final int INTERNAL = 2;
 
   public void serialPortLog(int direction, String msg) {
-    writer.println("+" +
-                   (System.currentTimeMillis() - startTime) +
-                   "ms\t\t" +
+    writer.println("+" + Timestamp.brief() + "\t\t" +
                    (direction == INCOMING ? "<-- " :
                     direction == OUTGOING ? "--> " :
                        "INT ") +
@@ -37,9 +54,7 @@ public class LogWriter implements HttpTask.MessageTracer {
   }
 
   public void httpLog(int direction, String msg) {
-    writer.println("+" +
-                   (System.currentTimeMillis() - startTime)
-                   + "ms\t\t\t" +
+    writer.println("+" + Timestamp.brief()+ "\t\t\t" +
                    (direction == INCOMING ? "<-- " :
                     direction == OUTGOING ? "--> " :
                        "INT ") +

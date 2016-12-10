@@ -12,6 +12,15 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// On the HTTP side, the GUI makes this approximate progression:
+//
+// (obtain URL for web server)
+// (contact web server and get roles)
+// (choose role and password)
+// (login and start HttpTask)
+//
+// Command-line arguments may let us skip some of these steps.
+
 public class TimerGui {
   private Components components;
   private HttpTask.MessageTracer traceMessages;
@@ -92,7 +101,6 @@ public class TimerGui {
   // prefill the corresponding GUI fields, and then treat as though user
   // performed equivalent interaction.  If all details provided, call
   // setUrl before setRoleAndPassword.
-
   public void setUrl(String url) {
     components.urlField.setText(url);
     onConnectButtonClick();
@@ -119,9 +127,15 @@ public class TimerGui {
           }
         }
 
-        onSecondConnectClick(getRoleFinder().getSession());
+        startHttpTask(getRoleFinder().getSession());
       }
     }).start();
+  }
+
+  // This is mainly used to introduce a SimulatedClientSession and skip all the
+  // communication with an actual server.
+  public void setClientSession(ClientSession session) {
+    startHttpTask(session);
   }
 
   private synchronized RoleFinder getRoleFinder() {
@@ -193,16 +207,23 @@ public class TimerGui {
       setRoleFinder(null);
     }
     if (roleFinder == null) {
-      onFirstConnectClick();
+      setHttpStatus("Contacting server...", black, icon_unknown);
+      components.roleComboBox.setEnabled(false);
+      components.passwordField.setEnabled(false);
+      startRoleFinder();
     } else {
-      onSecondConnectClick(roleFinder.getSession());
+      // There's an existing roleFinder for the current URL, and the user
+      // clicked "Connect."  If we're still waiting for the roles to
+      // populate, then ignore the button, otherwise start a login request
+      if (rolesPopulated()) {
+        startHttpTask(roleFinder.getSession());
+      } else {
+        setHttpStatus("(Hold your horses)", black, icon_unknown);
+      }
     }
   }
 
-  private void onFirstConnectClick() {
-    setHttpStatus("Contacting server...", black, icon_unknown);
-    components.roleComboBox.setEnabled(false);
-    components.passwordField.setEnabled(false);
+  private void startRoleFinder() {
     setRoleFinder(new RoleFinder(components.urlField.getText(), this));
     setRolesPopulated(false);
     (new Thread() {
@@ -213,31 +234,24 @@ public class TimerGui {
     }).start();
   }
 
-  private void onSecondConnectClick(ClientSession clientSession) {
-    // There's an existing roleFinder for the current URL, and the user
-    // clicked "Connect."  If we're still waiting for the roles to
-    // populate, then ignore the button, otherwise start a login request
-    if (rolesPopulated()) {
-      setHttpStatus("Logging in...", black, icon_unknown);
-      HttpTask.start(components.roleComboBox.getItemAt(
-          components.roleComboBox.getSelectedIndex()),
-                     new String(components.passwordField.getPassword()),
-                     clientSession, traceMessages, traceHeartbeats,
-                     connector,
-                     new HttpTask.LoginCallback() {
-                       @Override
-                       public void onLoginSuccess() {
-                         setHttpStatus("Connected", green, icon_ok);
-                       }
+  private void startHttpTask(ClientSession clientSession) {
+    setHttpStatus("Logging in...", black, icon_unknown);
+    HttpTask.start(components.roleComboBox.getItemAt(
+        components.roleComboBox.getSelectedIndex()),
+                   new String(components.passwordField.getPassword()),
+                   clientSession, traceMessages, traceHeartbeats,
+                   connector,
+                   new HttpTask.LoginCallback() {
+                 @Override
+                 public void onLoginSuccess() {
+                   setHttpStatus("Connected", green, icon_ok);
+                 }
 
-                       @Override
-                       public void onLoginFailed(String message) {
-                         setHttpStatus("Unsuccessful login", red, icon_trouble);
-                       }
-                     });
-    } else {
-      setHttpStatus("(Hold your horses)", black, icon_unknown);
-    }
+                 @Override
+                 public void onLoginFailed(String message) {
+                   setHttpStatus("Unsuccessful login", red, icon_trouble);
+                 }
+               });
   }
 
   // Called once for each role to be added to the role combobox.  After the last role is added,
@@ -288,7 +302,10 @@ public class TimerGui {
   }
 
   public void markSerialPortWontOpen() {
-    components.portList.getSelectedValue().setWontOpen(true);
+    SerialPortListElement selectedValue = components.portList.getSelectedValue();
+    if (selectedValue != null) {
+      selectedValue.setWontOpen(true);
+    }
   }
 
   public void initializeTimerClasses(DeviceFinder deviceFinder) {

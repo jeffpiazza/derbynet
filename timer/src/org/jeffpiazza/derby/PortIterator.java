@@ -5,18 +5,21 @@ import java.io.*;
 import java.util.*;
 
 public class PortIterator implements Iterator<SerialPort> {
+  private String[] portNames;
+  private int index;
+  private boolean simulateDevice = false;
 
   public PortIterator(String[] portnames) {
     this.portNames = portnames;
     this.index = 0;
   }
 
-  public PortIterator(String portname) {
-    this(new String[]{portname});
-  }
-
-  public PortIterator(File[] files) {
-    this(mapPathNames(files));
+  public PortIterator(String portname, boolean simulateDevice) {
+    this(portname == null ? defaultPortNames() : new String[]{portname});
+    if (simulateDevice) {
+      this.portNames = new String[] { "Simulated Device" };
+      this.simulateDevice = true;
+    }
   }
 
   public PortIterator() {
@@ -28,6 +31,9 @@ public class PortIterator implements Iterator<SerialPort> {
   }
 
   public SerialPort next() {
+    if (simulateDevice) {
+      return null;
+    }
     return new SerialPort(portNames[index++]);
   }
 
@@ -84,6 +90,4 @@ public class PortIterator implements Iterator<SerialPort> {
     return System.getProperty("os.name").toLowerCase().equals("mac os x");
   }
    */
-  String[] portNames;
-  int index;
 }

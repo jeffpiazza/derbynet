@@ -16,6 +16,10 @@ public class FastTrackDevice extends TimerDeviceTypical {
     rsm.setMaxRunningTimeLimit(11000);
   }
 
+  public static String toHumanString() {
+    return "FastTrack timer";
+  }
+
   public static final int MAX_LANES = 6;
 
   private static final String PULSE_LASER_BIT = "LG";
@@ -92,7 +96,8 @@ public class FastTrackDevice extends TimerDeviceTypical {
     });
   }
 
-  public void prepareHeat(int lanemask) throws SerialPortException {
+  public void prepareHeat(int roundid, int heat, int lanemask) throws SerialPortException {
+    prepare(roundid, heat);
     portWrapper.write(CLEAR_LANE_MASK);
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.

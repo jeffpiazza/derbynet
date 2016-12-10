@@ -1,11 +1,13 @@
 package org.jeffpiazza.derby;
 
+import java.io.ByteArrayInputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.*;
 
@@ -27,7 +29,8 @@ public class ClientSession {
   }
 
   public Element login(String username, String password) throws IOException {
-    return doPost("action.php", "action=login&name=" + username + "&password=" + password);
+    return doPost("action.php",
+                  "action=login&name=" + username + "&password=" + password);
   }
 
   public Element sendTimerMessage(String messageAndParams) throws IOException {
@@ -47,7 +50,8 @@ public class ClientSession {
     connection.setRequestMethod("POST");
 
     connection.setDoOutput(true);
-    OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+    OutputStreamWriter writer = new OutputStreamWriter(connection.
+        getOutputStream());
     writer.write(params);
     writer.flush();
     writer.close(); // writer.close() may block.
@@ -70,29 +74,51 @@ public class ClientSession {
   }
 
   private Element getResponse(HttpURLConnection connection) throws IOException {
-    // This code will block until a response is actually received.  That should be OK as long as there's a
-    // thread dedicated to handling requests in this session.
-    int responseCode = connection.getResponseCode();
+    // This code will block until a response is actually received.  That should
+    // be OK as long as there's a thread dedicated to handling requests in
+    // this session.
+    if (connection.getResponseCode() == 200) {
+      return parseResponse(connection.getInputStream());
+    }
 
-    if (responseCode == 200) {
+    return null;
+  }
+
+  protected Element parseResponse(String s) throws IOException {
+    return parseResponse(new ByteArrayInputStream(s.getBytes("UTF-8")));
+  }
+
+  protected Element parseResponse(final InputStream inputStream)
+      throws IOException {
+    inputStream.mark(10000);
+    try {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       try {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(connection.getInputStream());
-        return doc.getDocumentElement();
+        return db.parse(inputStream).getDocumentElement();
       } catch (Exception e) {
+        System.err.println("Failed");
         e.printStackTrace();
       }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    System.out.
+        println(Timestamp.string() + ": Unparseable response for message");
+    inputStream.reset();
+    byte[] buffer = new byte[1024];
+    int bytesRead;
+    while ((bytesRead = inputStream.read(buffer)) != -1) {
+      System.out.write(buffer, 0, bytesRead);
     }
     return null;
   }
 
   public static boolean wasSuccessful(Element response) {
     if (response == null) {
-      System.out.println(Timestamp.string() + ": Unparseable response for message");
       return false;
     } else if (response.getElementsByTagName("success").getLength() == 0
-               || response.getElementsByTagName("failure").getLength() > 0) {
+        || response.getElementsByTagName("failure").getLength() > 0) {
       System.out.println(Timestamp.string() + ": Message resulted in failure");
       System.out.println("=======================");
       System.out.println(XmlSerializer.serialized(response));

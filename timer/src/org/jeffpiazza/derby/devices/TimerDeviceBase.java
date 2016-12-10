@@ -11,15 +11,29 @@ public abstract class TimerDeviceBase implements TimerDevice {
 
   private RaceStartedCallback raceStartedCallback;
   private RaceFinishedCallback raceFinishedCallback;
-  private StartingGateCallback startingGateCallback;
   private TimerMalfunctionCallback timerMalfunctionCallback;
+
+  // Identifiers for the currently-prepared heat
+  protected int roundid;
+  protected int heat;
 
   protected TimerDeviceBase(SerialPortWrapper portWrapper) {
     this.portWrapper = portWrapper;
+    this.roundid = this.heat = 0;
   }
 
   public SerialPortWrapper getPortWrapper() {
     return portWrapper;
+  }
+
+  @Override
+  public boolean canBeIdentified() {
+    return true;  // by default
+  }
+
+  protected void prepare(int roundid, int heat) {
+    this.roundid = roundid;
+    this.heat = heat;
   }
 
   // Returns true if we've had any response recently, otherwise invokes
@@ -55,26 +69,10 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return raceFinishedCallback;
   }
 
-  protected void invokeRaceFinishedCallback(Message.LaneResult[] results) {
+  protected void invokeRaceFinishedCallback(int roundid, int heat, Message.LaneResult[] results) {
     RaceFinishedCallback cb = getRaceFinishedCallback();
     if (cb != null) {
-      cb.raceFinished(results);
-    }
-  }
-
-  public synchronized void registerStartingGateCallback(
-      StartingGateCallback startingGateCallback) {
-    this.startingGateCallback = startingGateCallback;
-  }
-
-  protected synchronized StartingGateCallback getStartingGateCallback() {
-    return startingGateCallback;
-  }
-
-  protected void invokeGateChangeCallback(boolean isOpen) {
-    StartingGateCallback cb = getStartingGateCallback();
-    if (cb != null) {
-      cb.startGateChange(isOpen);
+      cb.raceFinished(roundid, heat, results);
     }
   }
 

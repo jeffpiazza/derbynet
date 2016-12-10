@@ -44,14 +44,20 @@ public interface Message {
     public int place;  // 0 if not known/stated
   }
   public static class Finished implements Message {
+    private int roundid;
+    private int heat;
     private LaneResult[] results;
-    public Finished(LaneResult[] results) {
+    public Finished(int roundid, int heat, LaneResult[] results) {
+      this.roundid = roundid;
+      this.heat = heat;
       this.results = results;
     }
 
     public String asParameters() {
       StringBuilder sb = new StringBuilder();
       sb.append("message=FINISHED");
+      sb.append("&roundid=").append(roundid);
+      sb.append("&heat=").append(heat);
       for (int i = 0; i < results.length; ++i) {
         if (results[i] != null) {
           sb.append("&lane").append(i + 1).append("=").append(results[i].time);

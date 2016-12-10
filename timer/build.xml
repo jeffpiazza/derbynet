@@ -8,6 +8,12 @@
   <property name="dist"  location="dist"/>
   <property name="lib" location="../lib"/>
 
+  <!-- Should be inherited from invoking task;
+       these definitions are only backups -->
+  <property name="release-series" value="development-build"/>
+  <property name="git-rev-count" value=""/>
+  <property name="git-dirty" value=""/>
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -32,6 +38,17 @@
     <mkdir dir="${dist}/lib"/>
 
     <jar jarfile="${dist}/lib/derby-timer.jar">
+        <manifest>
+            <attribute name="Main-Class" value="org.jeffpiazza.derby.TimerMain"/>
+            <attribute name="Built-By" value="${user.name}"/>
+            <section name="common">
+                <attribute name="Implementation-Version" value="${git-rev-count}${git-dirty} ${TODAY}"/> 
+            </section>
+            <section name="derbynet">
+                <attribute name="version" value="${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+            </section>
+        </manifest>
+
         <fileset  dir="${build}">
             <exclude name="**/*Test.*"/>
             <exclude name="**/*Test$*"/>
@@ -39,9 +56,6 @@
         <fileset dir="../website/img">
             <include name="status/*.png"/>
         </fileset>
-        <manifest>
-            <attribute name="Main-Class" value="org.jeffpiazza.derby.TimerMain"/>
-        </manifest>
         <!--zipgroupfileset dir="lib" includes="*.jar" /--> 
         <zipgroupfileset dir="${lib}" includes="jssc.jar"/>
     </jar>

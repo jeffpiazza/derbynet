@@ -246,7 +246,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="scanButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Stop Scanning"/>
+            <Property name="text" type="java.lang.String" value="Resume Scanning"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>

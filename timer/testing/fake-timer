@@ -2,4 +2,5 @@
 
 TESTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-java -cp "$TESTING_DIR/../build":"$TESTING_DIR/../dist/lib/timer.jar" org.jeffpiazza.derby.FakeTimerMain $*
+# java -cp "$TESTING_DIR/../build":"$TESTING_DIR/../dist/lib/timer.jar" org.jeffpiazza.derby.FakeTimerMain $*
+java -jar "$TESTING_DIR/../dist/lib/derby-timer.jar" -x -simulate-timer $*

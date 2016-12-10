@@ -1,9 +1,7 @@
 package org.jeffpiazza.derby;
 
 import jssc.*;
-import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.*;
 
 // Usage:
 //
@@ -39,23 +37,28 @@ public class SerialPortWrapper implements SerialPortEventListener {
     // Return that part of line not handled by this detector
     String apply(String line) throws SerialPortException;
   }
-  private ArrayList<Detector> detectors;
+  private final ArrayList<Detector> detectors = new ArrayList<Detector>();
+  // If there is one, the early detector gets applied repeatedly each time the
+  // buffer changes, without waiting for a newline character.
+  private Detector earlyDetector;
 
   public SerialPortWrapper(SerialPort port, LogWriter logwriter) throws
       SerialPortException {
     this.port = port;
     this.leftover = "";
     this.queue = new ArrayList<String>();
-    this.detectors = new ArrayList<Detector>();
     this.logwriter = logwriter;
 
-    if (!port.purgePort(SerialPort.PURGE_RXCLEAR | SerialPort.PURGE_TXCLEAR)) {
-      System.out.println("purgePort failed.");  // TODO
-      // return false;
-    }
+    if (port != null) {
+      if (!port.purgePort(SerialPort.PURGE_RXCLEAR |
+                          SerialPort.PURGE_TXCLEAR)) {
+        System.out.println("purgePort failed.");  // TODO
+        // return false;
+      }
 
-    logwriter.serialPortLog(LogWriter.INTERNAL, "SerialPortWrapper attached");
-    port.addEventListener(this, SerialPort.MASK_RXCHAR);
+      logwriter.serialPortLog(LogWriter.INTERNAL, "SerialPortWrapper attached");
+      port.addEventListener(this, SerialPort.MASK_RXCHAR);
+    }
   }
 
   public SerialPort port() {
@@ -86,6 +89,12 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
+  public void registerEarlyDetector(Detector detector) {
+    synchronized (detectors) {
+      earlyDetector = detector;
+    }
+  }
+
   // SerialPortEventListener interface: invoked
   public void serialEvent(SerialPortEvent event) {
     try {
@@ -112,6 +121,11 @@ public class SerialPortWrapper implements SerialPortEventListener {
           break;
         }
         s = leftover + s;
+        synchronized (detectors) {
+          if (earlyDetector != null) {
+            s = earlyDetector.apply(s);
+          }
+        }
         int cr;
         while ((cr = s.indexOf('\n')) >= 0) {
           String line = s.substring(0, cr).trim();

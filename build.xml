@@ -156,7 +156,7 @@
       </copy>
   </target>
 
-  <target name="timer-jar">
+  <target name="timer-jar" depends="generated">
       <ant dir="${timer-dir}"/>
   </target>
 

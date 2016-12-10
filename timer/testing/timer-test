@@ -1,5 +1,0 @@
-#! /bin/sh
-
-TESTING_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-java -cp "$TESTING_DIR/../build":"$TESTING_DIR/../dist/lib/derby-timer.jar" org.jeffpiazza.derby.TimerTest $*

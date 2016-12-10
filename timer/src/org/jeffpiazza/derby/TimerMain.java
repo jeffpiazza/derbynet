@@ -5,6 +5,8 @@ import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.gui.TimerGui;
 
 import javax.swing.*;
+import org.jeffpiazza.derby.devices.AllDeviceTypes;
+import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
 
 // Three threads for three "actors":
@@ -15,6 +17,7 @@ public class TimerMain {
   public static void usage() {
     System.err.println("Usage: [options] <base-url>");
     System.err.println("   -h or -help or --help: This message");
+    System.err.println("   -v: Show version");
     System.err.println("   -x: Run headless, without gui.");
     System.err.println(
         "   -u <user>: Specify username for authenticating to web server");
@@ -28,7 +31,15 @@ public class TimerMain {
     System.err.println(
         "   -d <device name>: Use specified device instead of trying to identify");
     System.err.println("      Known devices:");
-    DeviceFinder.listDeviceClassNames();
+    AllDeviceTypes.listDeviceClassNames();
+    System.err.
+        println("   -simulate-timer: Simulate timer device (for testing)");
+    System.err.println("     -lanes <n>: Specify number of lanes to report");
+    System.err.
+        println("     -pace <nsec>: Staging pace (seconds between heats)");
+    System.err.println("  -simulate-host: Exercise timer with simulated host");
+    System.err.
+        println("     -lanes <n>: Specify number of lanes for scheduling");
   }
 
   public static void main(String[] args) {
@@ -39,11 +50,15 @@ public class TimerMain {
     HttpTask.MessageTracer traceHeartbeats = null;
     boolean traceResponses = false;
     boolean showGui = true;
-    boolean fakeDevice = false;
+    boolean simulateTimer = false;
+    boolean simulateHost = false;
+    boolean recording = false;
 
-    LogWriter logwriter = null;
+    LogWriter logwriter;
     try {
       logwriter = new LogWriter();
+      logwriter.
+          serialPortLogInternal("derby-timer.jar version " + Version.get());
     } catch (Throwable t) {
       t.printStackTrace();
       return;
@@ -54,36 +69,56 @@ public class TimerMain {
 
     int consumed_args = 0;
     while (consumed_args < args.length && args[consumed_args].startsWith("-")) {
-      if (args[consumed_args].equals("-u") && consumed_args + 2 < args.length) {
+      final String arg = args[consumed_args];
+      final boolean has_value = (args.length - consumed_args) > 1;
+      if (arg.equals("-v")) {
+        System.out.println("DerbyNet version " + Version.get());
+        System.exit(0);
+      } else if (arg.equals("-u") && has_value) {
         username = args[consumed_args + 1];
         consumed_args += 2;
-      } else if (args[consumed_args].equals("-p") && consumed_args + 2 < args.length) {
+      } else if (arg.equals("-p") && has_value) {
         password = args[consumed_args + 1];
         consumed_args += 2;
-      } else if (args[consumed_args].equals("-n") && consumed_args + 2 < args.length) {
+      } else if ((arg.equals("-n") || arg.equals("-s")) && has_value) {
         portname = args[consumed_args + 1];
         consumed_args += 2;
-      } else if (args[consumed_args].equals("-d") && consumed_args + 2 < args.length) {
+      } else if (arg.equals("-d") && has_value) {
         devicename = args[consumed_args + 1];
         consumed_args += 2;
-      } else if (args[consumed_args].equals("-t")) {
+      } else if (arg.equals("-t")) {
         StdoutMessageTrace smt = new StdoutMessageTrace();
         smt.traceResponses = traceResponses;
         traceMessages = new CombinedMessageTracer(smt, logwriter);
         ++consumed_args;
-      } else if (args[consumed_args].equals("-th")) {
+      } else if (arg.equals("-th")) {
         StdoutMessageTrace smt = new StdoutMessageTrace();
         smt.traceResponses = traceResponses;
-        traceHeartbeats = new CombinedMessageTracer(traceHeartbeats, logwriter);
+        traceHeartbeats = new CombinedMessageTracer(smt, logwriter);
         ++consumed_args;
-      } else if (args[consumed_args].equals("-r")) { // Won't have effect unless it precedes -t, -th
+      } else if (arg.equals("-r")) { // Won't have effect unless it precedes -t, -th
         traceResponses = true;
         ++consumed_args;
-      } else if (args[consumed_args].equals("-x")) {
+      } else if (arg.equals("-x")) {
         showGui = false;
         ++consumed_args;
-      } else if (args[consumed_args].equals("-fake")) {
-        fakeDevice = true;
+      } else if (arg.equals("-simulate-timer")) {
+        simulateTimer = true;
+        ++consumed_args;
+      } else if (arg.equals("-simulate-host")) {
+        simulateHost = true;
+        ++consumed_args;
+      } else if (arg.equals("-lanes") && has_value) {
+        int nlanes = Integer.parseInt(args[consumed_args + 1]);
+        SimulatedDevice.setNumberOfLanes(nlanes);
+        SimulatedClientSession.setNumberOfLanes(nlanes);
+        consumed_args += 2;
+      } else if (arg.equals("-pace") && has_value) {
+        SimulatedDevice.
+            setStagingTime(Integer.parseInt(args[consumed_args + 1]));
+        consumed_args += 2;
+      } else if (arg.equals("-record")) {
+        recording = true;
         ++consumed_args;
       } else {
         usage();
@@ -91,46 +126,36 @@ public class TimerMain {
       }
     }
     String base_url = null;
-    if (consumed_args + 1 == args.length) {
+    if (consumed_args < args.length) {
       base_url = args[consumed_args];
     }
 
     if (!showGui) {
-      if (base_url == null) {
+      if (base_url == null && !simulateHost) {
         usage();
         System.exit(1);
       }
       if (username == null) {
-        username = "RaceCoordinator";
+        username = "Timer";
       }
       if (password == null) {
-        password = "doyourbest";
+        password = "millisecond";
       }
     }
 
     ConnectorImpl connector = new ConnectorImpl(traceMessages);
 
     try {
+      TimerGui timerGui = null;
       if (showGui) {
-        final TimerGui timerGui = new TimerGui(traceMessages, traceHeartbeats,
-                                               connector);
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            timerGui.show();
-          }
-        });
-
-        if (base_url != null) {
-          timerGui.setUrl(base_url);
-        }
-        if (username != null || password != null) {
-          timerGui.setRoleAndPassword(username, password);
-        }
-
-        (new TimerTask(portname, devicename, fakeDevice, timerGui,
-                       logwriter, connector, traceMessages)).run();
+        timerGui = startTimerGui(traceMessages, traceHeartbeats,
+                                 connector, base_url,
+                                 username, password, simulateHost);
       } else {
-        HttpTask.start(username, password, new ClientSession(base_url),
+        final ClientSession clientSession
+            = simulateHost ? new SimulatedClientSession()
+              : new ClientSession(base_url);
+        HttpTask.start(username, password, clientSession,
                        traceMessages, traceHeartbeats, connector,
                        new HttpTask.LoginCallback() {
                      @Override
@@ -144,12 +169,43 @@ public class TimerMain {
                        System.exit(1);
                      }
                    });
-        (new TimerTask(portname, devicename, fakeDevice, null,
-                       logwriter, connector, traceMessages)).run();
       }
+      TimerTask timerTask = new TimerTask(portname, devicename, timerGui,
+                                          logwriter, connector);
+      if (simulateTimer) {
+        timerTask.setSimulatedTimer();
+      }
+      if (recording) {
+        timerTask.setRecording();
+      }
+      timerTask.run();
     } catch (Throwable t) {
       t.printStackTrace();
     }
+  }
+
+  private static TimerGui startTimerGui(HttpTask.MessageTracer traceMessages,
+                                        HttpTask.MessageTracer traceHeartbeats,
+                                        ConnectorImpl connector, String base_url,
+                                        String username, String password,
+                                        boolean simulateHost) {
+    final TimerGui timerGui = new TimerGui(traceMessages, traceHeartbeats,
+                                           connector);
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        timerGui.show();
+      }
+    });
+    if (base_url != null) {
+      timerGui.setUrl(base_url);
+    }
+    if (username != null || password != null) {
+      timerGui.setRoleAndPassword(username, password);
+    }
+    if (simulateHost) {
+      timerGui.setClientSession(new SimulatedClientSession());
+    }
+    return timerGui;
   }
 
   // Allow the timer device and web server connection to come up in either
@@ -201,12 +257,14 @@ public class TimerMain {
       httpTask.registerTimerHealthCallback(timerTask);
 
       httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
-        public void heatReady(int laneMask) {
+        public void onHeatReady(int roundid, int heat, int laneMask) {
           try {
             if (traceMessages != null) {
-              traceMessages.traceInternal(Timestamp.string() + ": Heat ready");
+              traceMessages.traceInternal(
+                  Timestamp.string() + ": Heat ready: roundid=" + roundid
+                  + ", heat=" + heat);
             }
-            timerTask.device().prepareHeat(laneMask);
+            timerTask.device().prepareHeat(roundid, heat, laneMask);
           } catch (Throwable t) {
             // TODO: details
             try {
@@ -219,7 +277,7 @@ public class TimerMain {
       });
 
       httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
-        public void abortHeat() {
+        public void onAbortHeat() {
           if (traceMessages != null) {
             traceMessages.traceInternal(
                 Timestamp.string() + ": AbortHeat received");
@@ -247,14 +305,15 @@ public class TimerMain {
 
       timerTask.device().registerRaceFinishedCallback(
           new TimerDevice.RaceFinishedCallback() {
-        public void raceFinished(Message.LaneResult[] results) {
+        public void raceFinished(int roundid, int heat,
+                                 Message.LaneResult[] results) {
           // Rely on recipient to ignore if not expecting any results
           try {
             if (traceMessages != null) {
               traceMessages.
                   traceInternal(Timestamp.string() + ": Race finished");
             }
-            httpTask.queueMessage(new Message.Finished(results));
+            httpTask.queueMessage(new Message.Finished(roundid, heat, results));
           } catch (Throwable t) {
           }
         }

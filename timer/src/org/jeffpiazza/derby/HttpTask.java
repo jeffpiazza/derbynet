@@ -35,12 +35,12 @@ public class HttpTask implements Runnable {
 
   // Called when a PREPARE_HEAT message is received from the web server
   public interface HeatReadyCallback {
-    void heatReady(int lanemask);
+    void onHeatReady(int roundid, int heat, int lanemask);
   }
 
   // Called when an ABORT_HEAT message is received from the web server
   public interface AbortHeatCallback {
-    void abortHeat();
+    void onAbortHeat();
   }
 
   public interface MessageTracer {
@@ -140,6 +140,17 @@ public class HttpTask implements Runnable {
     return this.abortHeatCallback;
   }
 
+  private static int parseIntOrZero(String attr) {
+    try {
+      return Integer.valueOf(attr);
+    } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
+      // TODO This should be logged, not dumped to stdout
+      System.out.println(Timestamp.string()
+                         + ": Unexpected number format exception reading heat-ready response");
+      return 0;
+    }
+  }
+
   // HttpTask has a queue for events to send, registers callbacks
   // for HEAT-READY(with lane mask) and ABORT.  Continually checks
   // queue, sending queued events; otherwise sends a HEARTBEAT and
@@ -195,24 +206,22 @@ public class HttpTask implements Runnable {
         traceMessage.onMessageResponse(nextMessage, response);
       }
 
-      NodeList heatReady = response.getElementsByTagName("heat-ready");
-      if (heatReady.getLength() > 0) {
-        try {
-          int lanemask = Integer.valueOf(((Element) heatReady.item(0)).
-              getAttribute("lane-mask"));
-          HeatReadyCallback cb = getHeatReadyCallback();
-          if (cb != null) {
-            cb.heatReady(lanemask);
-          }
-        } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
-          System.out.println(Timestamp.string()
-              + ": Unexpected number format exception reading heat-ready response");
+      NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
+      if (heatReadyNodes.getLength() > 0) {
+        HeatReadyCallback cb = getHeatReadyCallback();
+        if (cb != null) {
+          Element heatReady = (Element) heatReadyNodes.item(0);
+          int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
+          int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
+          int heat = parseIntOrZero(heatReady.getAttribute("heat"));
+          cb.onHeatReady(roundid, heat, lanemask);
         }
       }
+
       if (response.getElementsByTagName("abort").getLength() > 0) {
         AbortHeatCallback cb = getAbortHeatCallback();
         if (cb != null) {
-          cb.abortHeat();
+          cb.onAbortHeat();
         }
       }
     }

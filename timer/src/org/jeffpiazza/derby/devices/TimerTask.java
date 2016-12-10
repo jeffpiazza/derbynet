@@ -11,31 +11,38 @@ import org.jeffpiazza.derby.HttpTask;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.PortIterator;
 import org.jeffpiazza.derby.TimerMain;
-import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.gui.TimerGui;
 
 public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
 
   private String portname;
+  // If the user asked for a specific device class from the command line,
+  // the name of the device class (e.g., "FastTrackDevice") gets passed in here.
   private String devicename;
-  private boolean fakeDevice;
   private TimerGui timerGui;
   private LogWriter logwriter;
   private TimerMain.ConnectorImpl connector;
-  private HttpTask.MessageTracer traceMessages;
+  private boolean simulateTimer = false;
+  private boolean recording = false;
   private TimerDevice device;
 
-  public TimerTask(String portname, String devicename, boolean fakeDevice,
-                   TimerGui timerGui, LogWriter logwriter,
-                   TimerMain.ConnectorImpl connector,
-                   HttpTask.MessageTracer traceMessages) {
+  public TimerTask(String portname, String devicename, TimerGui timerGui,
+                   LogWriter logwriter, TimerMain.ConnectorImpl connector) {
     this.portname = portname;
     this.devicename = devicename;
-    this.fakeDevice = fakeDevice;
     this.timerGui = timerGui;
     this.logwriter = logwriter;
     this.connector = connector;
-    this.traceMessages = traceMessages;
+  }
+
+  // This is called when simulating the device class
+  public void setSimulatedTimer() {
+    this.simulateTimer = true;
+    this.devicename = SimulatedDevice.class.getSimpleName();
+  }
+
+  public void setRecording() {
+    this.recording = true;
   }
 
   // Assumes control of the thread to fully manage the serial device.
@@ -77,19 +84,15 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   // TimerGui, if available.
   public TimerDevice identifyTimerDevice()
       throws SerialPortException, IOException {
-    final DeviceFinder deviceFinder
-        = devicename != null ? new DeviceFinder(devicename)
-          : fakeDevice ? new DeviceFinder(true)
-            : new DeviceFinder();
+    DeviceFinder deviceFinder = new DeviceFinder(devicename, simulateTimer);
     if (timerGui != null) {
       timerGui.setSerialStatus("Initializing list of serial ports", Color.black,
                                TimerGui.icon_unknown);
       timerGui.initializeTimerClasses(deviceFinder);
     }
     while (true) {
-      PortIterator ports = portname == null ? new PortIterator()
-                           : new PortIterator(portname);
-      if (timerGui != null) {
+      PortIterator ports = new PortIterator(portname, simulateTimer);
+      if (timerGui != null && !simulateTimer) {
         timerGui.updateSerialPorts();
         timerGui.setSerialStatus("Scanning for connected timer");
         timerGui.deselectAll();
@@ -99,8 +102,11 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         if (timerGui != null) {
           timerGui.setSerialPort(port);
         }
-        System.out.println(port.getPortName());
-        TimerDevice device = deviceFinder.findDevice(port, timerGui, logwriter);
+        if (port != null) {
+          System.out.println(port.getPortName());
+        }
+        TimerDevice device = deviceFinder.findDevice(port, timerGui, recording,
+                                                     logwriter);
         if (device != null) {
           if (timerGui != null) {
             timerGui.confirmDevice(port, device.getClass());

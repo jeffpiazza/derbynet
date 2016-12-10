@@ -41,6 +41,10 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
     rsm.setMaxRunningTimeLimit(11000);
   }
 
+  public static String toHumanString() {
+    return "Champ (BestTrack)/Smart-Line";
+  }
+
   public boolean probe() throws SerialPortException {
     if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600,
                                       SerialPort.DATABITS_8,
@@ -128,7 +132,8 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
     return numberOfLanes == 0 ? MAX_LANES : numberOfLanes;
   }
 
-  public void prepareHeat(int lanemask) throws SerialPortException {
+  public void prepareHeat(int roundid, int heat, int lanemask) throws SerialPortException {
+    prepare(roundid, heat);
     // These don't give responses, so no need to wait for any.
     portWrapper.write(RESET_LANE_MASK);
 

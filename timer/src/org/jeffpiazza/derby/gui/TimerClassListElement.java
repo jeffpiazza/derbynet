@@ -1,5 +1,7 @@
 package org.jeffpiazza.derby.gui;
 
+import java.lang.reflect.Method;
+import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.TimerDevice;
 
 public class TimerClassListElement {
@@ -14,6 +16,7 @@ public class TimerClassListElement {
   }
 
   public String toString() {
-    return type.getSimpleName();
+    String s = AllDeviceTypes.toHumanString(type);
+    return s == null ? type.getSimpleName() : s;
   }
 }
