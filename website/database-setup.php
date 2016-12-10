@@ -66,15 +66,8 @@ if (file_exists($local_config_inc)) {
   }
 }
 
-// Installer may leave a file here to set $default_file_path variable
-$local_default_file_path_inc = $configdir.DIRECTORY_SEPARATOR.'default-file-path.inc';
-if (file_exists($local_default_file_path_inc)) {
-  try {
-    @include($local_default_file_path_inc);
-  } catch (Exception $e) {
-    unset($default_file_path);
-  }
-}
+require_once('inc/default-file-path.inc');
+$default_file_path = default_file_path();
 
 if ($offer_config_button) {
 ?>
@@ -143,11 +136,7 @@ $form_fields = array();
 // Default values, in case $db_connection string is unparseable:
 $form_fields['radio'] = 'sqlite';
 $form_fields['mysql_host'] = 'localhost';
-if (isset($default_file_path)) {
-  $form_fields['sqlite_path'] =
-      $default_file_path.DIRECTORY_SEPARATOR.
-          date('Ymd-Hi').'.sqlite';
-}
+$form_fields['sqlite_path'] = $default_file_path.DIRECTORY_SEPARATOR.date('Ymd-Hi').'.sqlite';
 
 if (isset($db_connection_string)) {
   $form_fields['connection_string'] = $db_connection_string;

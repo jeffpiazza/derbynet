@@ -3,6 +3,7 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
+require_once('inc/default-file-path.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -27,7 +28,12 @@ function photo_directory_base() {
   if (isset($db_connection_string) && substr($db_connection_string, 0, 7) == 'sqlite:') {
     echo 'return '.json_encode(substr($db_connection_string, 7)).';';
   } else {
-    echo 'return "";';
+    $default_path = default_file_path();
+    if (!empty($default_path)) {
+      echo 'return '.json_encode($default_path.DIRECTORY_SEPARATOR).';';
+    } else {
+      echo 'return "";';
+    }
   }
   ?>
 }
