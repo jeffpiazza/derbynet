@@ -385,9 +385,11 @@
     <delete file="derbynet.website.pkg"/>
 </target>
 
+<!-- Builds the "one-click" zip file to run Uniform Server on Windows -->
 <target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
+  <mkdir dir="${uniserver-target}/Data"/>
 
   <pathconvert property="controller-exe">
     <path>
@@ -462,6 +464,11 @@
     </fileset>
   </copy>
   <mkdir dir="${uniserver-target}\UniServerZ\www\local"/>
+  <echo file="${uniserver-target}\UniServerZ\www\local\default-file-path.inc"><![CDATA[<?php
+    $default_file_path=dirname(dirname(dirname(dirname(__FILE__)))).DIRECTORY_SEPARATOR."Data";
+  ?>
+  ]]>
+  </echo>
 
   <copy todir="${uniserver-target}">
     <fileset dir="${timer-jar-dir}">
