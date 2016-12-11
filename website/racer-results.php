@@ -39,7 +39,7 @@ var g_update_status = {
 $banner_title = 'Results By Racer';
 require('inc/banner.inc');
 
-$nlanes = get_lane_count();
+$nlanes = get_lane_count_from_results();
 
 $now_running = get_running_round();
 running_round_header($now_running, /* Use RoundID */ TRUE);

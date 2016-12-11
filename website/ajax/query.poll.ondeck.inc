@@ -70,7 +70,7 @@ $now_running = get_running_round();
 emit_current_heat($now_running, $use_master_sched);
 ?>
 
-  <lanes n="<?php echo get_lane_count(); ?>"/>
+  <lanes n="<?php echo get_lane_count_from_results(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"
            use-master-sched="<?php echo $use_master_sched; ?>"/>
 <?php

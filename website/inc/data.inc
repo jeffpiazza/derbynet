@@ -138,6 +138,24 @@ function get_lane_count() {
   return read_raceinfo('lane_count', 0);
 }
 
+// get_lane_count is used for creating schedules, while
+// get_lane_count_for_results tells how big a table to prepare for displaying
+// results.
+function get_lane_count_from_results() {
+  global $db;
+  $nlanes = get_lane_count();
+  if ($nlanes == 0) {
+    $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
+    $row = $rs->fetch(PDO::FETCH_NUM);
+    if (!$row || !isset($row[0]) || !$row[0]) {
+      return 0;
+    } else {
+      return $row[0];
+    }
+  }
+}
+
+
 // Returns the highest ResultID from the RaceChart table.
 // Assuming this increases monotonically, a newly scheduled
 // round is detected by a new high-water resultid.  Deleting a
