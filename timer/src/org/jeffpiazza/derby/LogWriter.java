@@ -11,8 +11,12 @@ import java.util.logging.Logger;
 public class LogWriter implements HttpTask.MessageTracer {
   private PrintWriter writer;
 
-  public LogWriter() throws IOException {
-    this.writer = LogFileFactory.makeLogFile();
+  public LogWriter() {
+    try {
+      this.writer = LogFileFactory.makeLogFile();
+    } catch (IOException ex) {
+      Logger.getLogger(LogWriter.class.getName()).log(Level.SEVERE, null, ex);
+    }
     serialPortLog(INTERNAL, "Started at " + Timestamp.string());
     (new Thread() {
       @Override
@@ -33,20 +37,18 @@ public class LogWriter implements HttpTask.MessageTracer {
     }).start();
   }
 
-  public LogWriter(String path) throws IOException {
-    this.writer = LogFileFactory.makeLogFile(path);
-  }
-
   public static final int INCOMING = 0;
   public static final int OUTGOING = 1;
   public static final int INTERNAL = 2;
 
   public void serialPortLog(int direction, String msg) {
-    writer.println("+" + Timestamp.brief() + "\t\t" +
-                   (direction == INCOMING ? "<-- " :
-                    direction == OUTGOING ? "--> " :
-                       "INT ") +
-                   msg.replace("\r", "\\r"));
+    if (writer != null) {
+      writer.println("+" + Timestamp.brief() + "\t\t" +
+                     (direction == INCOMING ? "<-- " :
+                      direction == OUTGOING ? "--> " :
+                         "INT ") +
+                     msg.replace("\r", "\\r"));
+    }
   }
 
   public void serialPortLogInternal(String msg) {
@@ -54,11 +56,13 @@ public class LogWriter implements HttpTask.MessageTracer {
   }
 
   public void httpLog(int direction, String msg) {
-    writer.println("+" + Timestamp.brief()+ "\t\t\t" +
-                   (direction == INCOMING ? "<-- " :
-                    direction == OUTGOING ? "--> " :
-                       "INT ") +
-                   msg.replace("\r", "\\r"));
+    if (writer != null) {
+      writer.println("+" + Timestamp.brief()+ "\t\t\t" +
+                     (direction == INCOMING ? "<-- " :
+                      direction == OUTGOING ? "--> " :
+                         "INT ") +
+                     msg.replace("\r", "\\r"));
+    }
   }
 
   public void onMessageSend(Message m, String params) {
