@@ -10,7 +10,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
+<?php if (isset($as_kiosk)) require_once('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript">
 var g_update_status = {
       last_update_time: "", // First refresh is for everything

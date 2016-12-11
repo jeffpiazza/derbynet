@@ -15,10 +15,12 @@ function address_for_current_kiosk() {
   // for the name.  Both are displayed to the race coordinator.  The address is
   // what identifies the kiosk; the name is just a convenience for the user.
   //
-  // The kiosk browser can include an 'id' parameter which allows an arbitrary
-  // string to be used as the address identifier.
+  // The kiosk browser can include an 'id' or 'address' parameter which allows
+  // an arbitrary string to be used as the address identifier.
   if (isset($_GET['id'])) {
     $addr = $_GET['id'];
+  } else if (isset($_GET['address'])) {
+    $addr = $_GET['address'];
   } else if (isset($_SESSION['address'])) {
     $addr = $_SESSION['address'];
   } else {
@@ -87,7 +89,8 @@ function kiosk_page($addr) {
     }
   } while ($retry);
   // Return global kiosk-page RaceInfo setting, or identify.kiosk.
-  return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
+  return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'),
+               'params' => '');
 }
 
 function scan_kiosk_pages($prefix, $kiosk_page) {

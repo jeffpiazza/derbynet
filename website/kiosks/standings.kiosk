@@ -9,7 +9,7 @@ require_once('inc/standings.inc');
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Standings</title>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php require('inc/kiosk-page.inc'); ?>
+<?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/standings.js"></script>
 <script type="text/javascript">

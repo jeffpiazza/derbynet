@@ -2,10 +2,19 @@
 <?php
 
 // Returns photo information for the next racer with a photo
+//
+// $_GET['racerid']: racer id for currently-displayed photo; we want the next racer's photo
+//     If absent or zero, we want the first racer's photo.
+// $_GET['classids']: If not empty, a comma-separated list of classids; we only want photos of racers from those classes.
 
 $racerid = 0;
 if (isset($_GET['racerid'])) {
   $racerid = $_GET['racerid'];
+}
+
+$classids = '';
+if (isset($_GET['classids'])) {
+  $classids = $_GET['classids'];
 }
 
 require_once('inc/photo-config.inc');
@@ -45,6 +54,7 @@ $stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname,'
                      .' FROM RegistrationInfo'
                      .' WHERE racerid > :racerid AND '
                      .'  ((imagefile IS NOT NULL AND imagefile <> \'\')'
+                     .($classids ? ' AND classid IN ('.$classids.')' : '')
                      .($inset_imagefile
                        ? '       OR (carphoto IS NOT NULL AND carphoto <> \'\')' : '')
                      .')'
@@ -73,6 +83,6 @@ if ($row) {
     echo '/>'."\n";
 }
 // If that's the last racer, return no <racer/> element, and let the client send
-// another requrest to start from 0.
+// another request to start from 0.
 ?>
 </slideshow>

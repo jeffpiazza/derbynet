@@ -25,7 +25,7 @@ $(function() { poll_kiosk_all(); });
 //////////////////////////////////////////////////////////////////////////
 
 // TODO Find a better way to express this in javascript, so that each function
-// has a definition and there's no need for al the 'in' testing at the call
+// has a definition and there's no need for all the 'in' testing at the call
 // sites.
 //
 // A kiosk page handler potentially defines:
@@ -50,22 +50,32 @@ var g_kiosk_page_handlers = {
   },
   'kiosks/please-check-in.kiosk': {
     configure: function(kiosk, kiosk_select) {
-      $('<input type="button" data-enhanced="true" value="Configure"/>')
-        .on("click", /* selector */null, /* data: */kiosk,
-            /* handler */ show_config_classes_modal)
-        .appendTo(kiosk_select);
-      if (kiosk.parameters) {
-        var s = '';
-        var classids = kiosk.parameters.split(',');
-        for (var i = 0; i < classids.length; ++i) {
-          s += ', ' + $("label[for='config-class-" + classids[i] + "']").text();
-        }
-        $('<p class="parameters"/>').text(s.substring(2)).appendTo(kiosk_select);
-      }
+      configure_class_ids(kiosk, kiosk_select);
+    }
+  },
+  'kiosks/slideshow.kiosk': {
+    configure: function(kiosk, kiosk_select) {
+      configure_class_ids(kiosk, kiosk_select);
     }
   },
 };
 
+// This is a configuration function for kiosk pages that use a list of classids
+// as their param string.
+function configure_class_ids(kiosk, kiosk_select) {
+  $('<input type="button" data-enhanced="true" value="Configure"/>')
+    .on("click", /* selector */null, /* data: */kiosk,
+        /* handler */ show_config_classes_modal)
+    .appendTo(kiosk_select);
+  if (kiosk.parameters) {
+    var s = '';
+    var classids = kiosk.parameters.split(',');
+    for (var i = 0; i < classids.length; ++i) {
+      s += ', ' + $("label[for='config-class-" + classids[i] + "']").text();
+    }
+    $('<p class="parameters"/>').text(s.substring(2)).appendTo(kiosk_select);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Construct dynamic elements for kiosk dashboard

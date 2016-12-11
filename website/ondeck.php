@@ -20,7 +20,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php if (isset($as_kiosk)) require_once('inc/kiosk-page.inc'); ?>
+<?php if (isset($as_kiosk)) require_once('inc/kiosk-poller.inc'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript">
 var g_update_status = {
