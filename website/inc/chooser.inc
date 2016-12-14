@@ -1,4 +1,4 @@
-<div id="chooser_modal" class="modal_dialog hidden block_buttons">
+<div id="chooser_modal" class="modal_dialog wide_modal hidden block_buttons">
   <form>
     <input id="chooser_directory_path" type="hidden"/>
     <input id="chooser_file_name" type="text" data-wrapper-class="chooser_top_text_input"/>
