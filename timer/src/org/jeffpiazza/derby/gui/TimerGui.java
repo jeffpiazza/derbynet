@@ -8,9 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.jeffpiazza.derby.devices.TimerTask;
 
 // On the HTTP side, the GUI makes this approximate progression:
 //
@@ -20,7 +18,6 @@ import java.util.logging.Logger;
 // (login and start HttpTask)
 //
 // Command-line arguments may let us skip some of these steps.
-
 public class TimerGui {
   private Components components;
   private HttpTask.MessageTracer traceMessages;
@@ -29,6 +26,9 @@ public class TimerGui {
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
 
+  private TimerClassListController timerClassListController;
+  private SerialPortListController portListController;
+
   public TimerGui(HttpTask.MessageTracer traceMessages,
                   HttpTask.MessageTracer traceHeartbeats,
                   Connector connector) {
@@ -36,38 +36,11 @@ public class TimerGui {
     this.connector = connector;
     this.traceMessages = traceMessages;
     this.traceHeartbeats = traceHeartbeats;
-  }
-
-  private static class PortListRenderer extends JLabel implements
-      ListCellRenderer<SerialPortListElement> {
-    public PortListRenderer() {
-      setOpaque(true);
-    }
-
-    @Override
-    public Component getListCellRendererComponent(
-        JList<? extends SerialPortListElement> list,
-        SerialPortListElement value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus) {
-
-      setText(value.toString());
-
-      if (isSelected) {
-        setBackground(list.getSelectionBackground());
-        setForeground(list.getSelectionForeground());
-      } else {
-        setBackground(list.getBackground());
-        if (value.wontOpen()) {
-          setForeground(Color.red);
-        } else {
-          setForeground(list.getForeground());
-        }
-      };
-
-      return this;
-    }
+    timerClassListController = new TimerClassListController(
+        components.timerClassList);
+    components.timerClassList.addListSelectionListener(timerClassListController);
+    portListController = new SerialPortListController(components.portList);
+    components.portList.addListSelectionListener(portListController);
   }
 
   public void show() {
@@ -79,7 +52,7 @@ public class TimerGui {
     components.serialIconStatus.setIcon(new ImageIcon(getClass().
         getResource("/status/unknown.png")));
 
-    components.portList.setCellRenderer(new PortListRenderer());
+    components.portList.setCellRenderer(new SerialPortListRenderer());
     components.connectButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -211,18 +184,18 @@ public class TimerGui {
       components.roleComboBox.setEnabled(false);
       components.passwordField.setEnabled(false);
       startRoleFinder();
-    } else {
-      // There's an existing roleFinder for the current URL, and the user
-      // clicked "Connect."  If we're still waiting for the roles to
-      // populate, then ignore the button, otherwise start a login request
-      if (rolesPopulated()) {
+    } else // There's an existing roleFinder for the current URL, and the user
+    // clicked "Connect."  If we're still waiting for the roles to
+    // populate, then ignore the button, otherwise start a login request
+     if (rolesPopulated()) {
         startHttpTask(roleFinder.getSession());
       } else {
         setHttpStatus("(Hold your horses)", black, icon_unknown);
       }
-    }
   }
 
+  // Start a separate thread to contact the server and ask it for the available
+  // roles; use the results to populate the role picker.
   private void startRoleFinder() {
     setRoleFinder(new RoleFinder(components.urlField.getText(), this));
     setRolesPopulated(false);
@@ -260,7 +233,8 @@ public class TimerGui {
     components.roleComboBox.addItem(role);
   }
 
-  // Called to signify that all the appropriate roles from the server have been added to the role combobox
+  // Called to signify that all the appropriate roles from the server have
+  // been added to the role combobox
   public synchronized void rolesComplete() {
     setRolesPopulated(true);
     setHttpStatus("Please log in", black, icon_unknown);
@@ -274,68 +248,31 @@ public class TimerGui {
     roleFinder = null;
   }
 
-  // Perform a new scan of serial ports and update the JList to reflect them.  There's a chance that the JList will
-  // differ from what the PortIterator actually being used will enumerate, but that shouldn't be fatal, just
-  // briefly confusing to see.
-  public void updateSerialPorts() {
-    Vector<SerialPortListElement> portModel = new Vector<SerialPortListElement>();
-    PortIterator portIterator = new PortIterator();
-    while (portIterator.hasNext()) {
-      portModel.addElement(new SerialPortListElement(portIterator.next()));
-    }
-    components.portList.setListData(portModel);
+  public void updateSerialPorts(TimerTask timerTask, String[] portNames) {
+    portListController.updateSerialPorts(timerTask, portNames);
   }
 
-  public void setSerialPort(SerialPort port) {
-    ListModel<SerialPortListElement> model = components.portList.getModel();
-    for (int i = 0; i < model.getSize(); ++i) {
-      if (model.getElementAt(i).port().getPortName().equals(port.
-          getPortName())) {
-        components.portList.clearSelection();
-        // components.portList.setSelectionForeground(Color.blue);
-        components.portList.setSelectedIndex(i);
-        // We're about to try opening, so assume success
-        components.portList.getSelectedValue().setWontOpen(false);
-        return;
-      }
-    }
+  public void setSerialPort(String portName) {
+    portListController.setSerialPort(portName);
   }
 
   public void markSerialPortWontOpen() {
-    SerialPortListElement selectedValue = components.portList.getSelectedValue();
-    if (selectedValue != null) {
-      selectedValue.setWontOpen(true);
-    }
+    portListController.markSerialPortWontOpen();
   }
 
-  public void initializeTimerClasses(DeviceFinder deviceFinder) {
-    Vector<TimerClassListElement> timerModel
-        = new Vector<TimerClassListElement>();
-    for (Class<? extends TimerDevice> dev : deviceFinder.deviceClasses()) {
-      timerModel.addElement(new TimerClassListElement(dev));
-    }
-    components.timerClassList.setListData(timerModel);
+  public void updateTimerClasses(TimerTask timerTask, Class<? extends TimerDevice>[] timerClasses) {
+    timerClassListController.updateTimerClasses(timerTask, timerClasses);
   }
 
   public void setTimerClass(Class<? extends TimerDevice> timerClass) {
-    ListModel<TimerClassListElement> model = components.timerClassList.
-        getModel();
-    for (int i = 0; i < model.getSize(); ++i) {
-      if (model.getElementAt(i).type() == timerClass) {
-        components.timerClassList.clearSelection();
-        // components.timerClassList.setSelectionForeground(Color.blue);
-        components.timerClassList.setSelectedIndex(i);
-        return;
-      }
-    }
+    timerClassListController.setTimerClass(timerClass);
   }
 
   private void onScanButtonClick() {
     System.out.println("Scan/Stop Scanning button not implemented");
   }
 
-  public void confirmDevice(SerialPort port,
-                            Class<? extends TimerDevice> timerClass) {
+  public void confirmDevice() {
     components.portList.setSelectionBackground(green);
     components.timerClassList.setSelectionBackground(green);
     setSerialStatus("Timer device identified", green, icon_ok);
@@ -344,9 +281,9 @@ public class TimerGui {
 
   // Remove selections between scan cycles
   public void deselectAll() {
-    components.portList.clearSelection();
+    portListController.deselectAll();
     components.portList.setSelectionBackground(defaultBackground);
-    components.timerClassList.clearSelection();
+    timerClassListController.deselectAll();
     components.timerClassList.setSelectionBackground(defaultBackground);
   }
 }

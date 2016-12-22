@@ -15,6 +15,7 @@ public class LogWriter implements HttpTask.MessageTracer {
     try {
       this.writer = LogFileFactory.makeLogFile();
     } catch (IOException ex) {
+      System.err.println("Unable to create log file");
       Logger.getLogger(LogWriter.class.getName()).log(Level.SEVERE, null, ex);
     }
     serialPortLog(INTERNAL, "Started at " + Timestamp.string());
@@ -41,9 +42,12 @@ public class LogWriter implements HttpTask.MessageTracer {
   public static final int OUTGOING = 1;
   public static final int INTERNAL = 2;
 
+  private static final char HTTP_LOG = 'H';
+  private static final char SERIAL_PORT_LOG = 'S';
+
   public void serialPortLog(int direction, String msg) {
     if (writer != null) {
-      writer.println("+" + Timestamp.brief() + "\t\t" +
+      writer.println("+" + Timestamp.brief() + SERIAL_PORT_LOG + "\t\t" +
                      (direction == INCOMING ? "<-- " :
                       direction == OUTGOING ? "--> " :
                          "INT ") +
@@ -57,7 +61,7 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   public void httpLog(int direction, String msg) {
     if (writer != null) {
-      writer.println("+" + Timestamp.brief()+ "\t\t\t" +
+      writer.println("+" + Timestamp.brief()+ HTTP_LOG + "\t\t\t" +
                      (direction == INCOMING ? "<-- " :
                       direction == OUTGOING ? "--> " :
                          "INT ") +

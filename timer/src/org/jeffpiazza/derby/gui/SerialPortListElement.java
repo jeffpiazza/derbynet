@@ -3,11 +3,11 @@ package org.jeffpiazza.derby.gui;
 import jssc.SerialPort;
 
 public class SerialPortListElement {
-  private SerialPort port;
+  private String portName;
   private boolean wontOpen;
 
-  public SerialPortListElement(SerialPort port) {
-    this.port = port;
+  public SerialPortListElement(String portName) {
+    this.portName = portName;
     this.wontOpen = false;
   }
 
@@ -19,11 +19,11 @@ public class SerialPortListElement {
     wontOpen = value;
   }
 
-  public SerialPort port() {
-    return port;
+  public String portName() {
+    return portName;
   }
 
   public String toString() {
-    return port.getPortName();
+    return portName();
   }
 }

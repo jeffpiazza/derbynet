@@ -28,17 +28,11 @@ import org.jeffpiazza.derby.SerialPortWrapper;
 // The serial settings to view the timer results yourself are 9600 baud, 8 bits,
 // no parity, 1 stop bit, no flow control. With these settings you should be
 // able to see the results in hyperterminal.
-public class OlderFastTrackDevice extends TimerDeviceTypical {  // TODO TimerDeviceBase
-
+// Unpopulated/overdue lanes report 0.0 instead of 9.9999
+public class OlderFastTrackDevice extends TimerDeviceBase {
   public OlderFastTrackDevice(SerialPortWrapper portWrapper) {
     super(portWrapper);
-
-    // Once started, we expect a race result within 10 seconds; we allow an
-    // extra second before considering the results overdue.
-    rsm.setMaxRunningTimeLimit(11000);
   }
-
-  private boolean gateOpen = false;
 
   public static final int MAX_LANES = 6;
 
@@ -86,7 +80,7 @@ public class OlderFastTrackDevice extends TimerDeviceTypical {  // TODO TimerDev
       @Override
       public String apply(String s) throws SerialPortException {
         if (s.charAt(0) == '@') {
-          raceStarted();
+          // raceStarted();
           return s.substring(1);
         } else {
           return s;
@@ -99,52 +93,16 @@ public class OlderFastTrackDevice extends TimerDeviceTypical {  // TODO TimerDev
   public void prepareHeat(int roundid, int heat, int lanemask)
       throws SerialPortException {
     prepare(roundid, heat);
-    StringBuilder sb = new StringBuilder("Heat prepared: ");
-    for (int lane = 0; lane < MAX_LANES; ++lane) {
-      if ((lanemask & (1 << lane)) != 0) {
-        sb.append(lane + 1);
-      } else {
-        sb.append("-");
-      }
-    }
-    portWrapper.logWriter().serialPortLogInternal(sb.toString());
-    rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
   }
 
   public void abortHeat() throws SerialPortException {
-    rsm.onEvent(RacingStateMachine.Event.ABORT_HEAT_RECEIVED, this);
+    prepare(0, 0);
   }
 
-  public void raceStarted() throws SerialPortException {
-    if (gateOpen) {
-      // If we get two "@"'s in a row, somehow, then we've effectively missed
-      // a gate closure in between.
-      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
-    }
-
-    gateOpen = true;
-    rsm.onEvent(RacingStateMachine.Event.GATE_OPENED, this);
-    invokeRaceStartedCallback();
-  }
-
-  @Override
   protected void raceFinished(Message.LaneResult[] results)
       throws SerialPortException {
-    super.raceFinished(results);
-    // Finishing the race will bring us to IDLE.
-    // Now immediately handle as a gate closed event in anticipation of the
-    // next race.
-    gateOpen = false;
-    rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
-  }
-
-  // We can't directly interrogate, so we just return whatever state we've
-  // heard from the timer.  This method shouldn't get called anyway, though,
-  // because we're overriding poll(), below.
-  @Override
-  protected boolean interrogateGateIsClosed()
-      throws NoResponseException, SerialPortException, LostConnectionException {
-    return !gateOpen;
+    invokeRaceFinishedCallback(roundid, heat,
+                               TimerDeviceUtils.zeroesToNines(results));
   }
 
   public int getNumberOfLanes() throws SerialPortException {
@@ -153,25 +111,10 @@ public class OlderFastTrackDevice extends TimerDeviceTypical {  // TODO TimerDev
   }
 
   public void poll() throws SerialPortException, LostConnectionException {
-    whileInState(rsm.state(this));
-  }
-
-public void onTransition(RacingStateMachine.State oldState,
-                           RacingStateMachine.State newState) {
-    if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
-      logOverdueResults();
-    }
-  }
-
-  protected void whileInState(RacingStateMachine.State state)
-      throws SerialPortException, LostConnectionException {
-    if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
-      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
-      // This forces the state machine back to IDLE.
-      rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
+    String line;
+    while ((line = portWrapper.nextNoWait()) != null) {
       portWrapper.logWriter().serialPortLogInternal(
-          "No result from timer for the running race; giving up.");
+          "Unexpected timer output: " + line);
     }
   }
-
 }

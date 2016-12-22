@@ -4,53 +4,8 @@ import jssc.*;
 import java.io.*;
 import java.util.*;
 
-public class PortIterator implements Iterator<SerialPort> {
-  private String[] portNames;
-  private int index;
-  private boolean simulateDevice = false;
-
-  public PortIterator(String[] portnames) {
-    this.portNames = portnames;
-    this.index = 0;
-  }
-
-  public PortIterator(String portname, boolean simulateDevice) {
-    this(portname == null ? defaultPortNames() : new String[]{portname});
-    if (simulateDevice) {
-      this.portNames = new String[] { "Simulated Device" };
-      this.simulateDevice = true;
-    }
-  }
-
-  public PortIterator() {
-    this(defaultPortNames());
-  }
-
-  public boolean hasNext() {
-    return index < portNames.length;
-  }
-
-  public SerialPort next() {
-    if (simulateDevice) {
-      return null;
-    }
-    return new SerialPort(portNames[index++]);
-  }
-
-  public void remove() {
-    throw new UnsupportedOperationException();
-  }
-
-  private static String[] mapPathNames(File[] files) {
-    String[] pathnames = new String[files.length];
-    for (int i = 0; i < files.length; ++i) {
-      pathnames[i] = files[i].getPath();
-    }
-    Arrays.sort(pathnames);
-    return pathnames;
-  }
-
-  private static String[] defaultPortNames() {
+public class AllSerialPorts {
+  public static String[] getNames() {
     if (isWindows()) {
       return SerialPortList.getPortNames();
     } else if (isLinux()) {
@@ -75,6 +30,16 @@ public class PortIterator implements Iterator<SerialPort> {
         }
       }));
     }
+  }
+
+  // Converts an array of Files to a sorted array of their path Strings.
+  private static String[] mapPathNames(File[] files) {
+    String[] pathnames = new String[files.length];
+    for (int i = 0; i < files.length; ++i) {
+      pathnames[i] = files[i].getPath();
+    }
+    Arrays.sort(pathnames);
+    return pathnames;
   }
 
   private static boolean isWindows() {

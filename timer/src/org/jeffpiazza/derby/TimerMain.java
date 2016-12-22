@@ -251,7 +251,7 @@ public class TimerMain {
                                     final TimerTask timerTask,
                                     final HttpTask.MessageTracer traceMessages) {
       if (traceMessages != null) {
-        traceMessages.traceInternal(Timestamp.string() + ": Timer detected.");
+        traceMessages.traceInternal("Timer detected.");
       }
 
       httpTask.registerTimerHealthCallback(timerTask);
@@ -260,13 +260,13 @@ public class TimerMain {
         public void onHeatReady(int roundid, int heat, int laneMask) {
           try {
             if (traceMessages != null) {
-              traceMessages.traceInternal(
-                  Timestamp.string() + ": Heat ready: roundid=" + roundid
+              traceMessages.traceInternal("Heat ready: roundid=" + roundid
                   + ", heat=" + heat);
             }
             timerTask.device().prepareHeat(roundid, heat, laneMask);
           } catch (Throwable t) {
             // TODO: details
+            t.printStackTrace();
             try {
               httpTask.queueMessage(new Message.Malfunction(false,
                                                             "Can't ready timer."));
@@ -279,8 +279,7 @@ public class TimerMain {
       httpTask.registerAbortHeatCallback(new HttpTask.AbortHeatCallback() {
         public void onAbortHeat() {
           if (traceMessages != null) {
-            traceMessages.traceInternal(
-                Timestamp.string() + ": AbortHeat received");
+            traceMessages.traceInternal("AbortHeat received");
           }
           try {
             timerTask.device().abortHeat();
@@ -294,9 +293,6 @@ public class TimerMain {
           new TimerDevice.RaceStartedCallback() {
         public void raceStarted() {
           try {
-            if (traceMessages != null) {
-              traceMessages.traceInternal(Timestamp.string() + ": Race started");
-            }
             httpTask.queueMessage(new Message.Started());
           } catch (Throwable t) {
           }
@@ -309,10 +305,6 @@ public class TimerMain {
                                  Message.LaneResult[] results) {
           // Rely on recipient to ignore if not expecting any results
           try {
-            if (traceMessages != null) {
-              traceMessages.
-                  traceInternal(Timestamp.string() + ": Race finished");
-            }
             httpTask.queueMessage(new Message.Finished(roundid, heat, results));
           } catch (Throwable t) {
           }

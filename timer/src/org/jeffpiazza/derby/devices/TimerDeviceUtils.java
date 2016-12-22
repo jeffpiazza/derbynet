@@ -1,10 +1,7 @@
 package org.jeffpiazza.derby.devices;
 
-import jssc.*;
 import org.jeffpiazza.derby.Message;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.regex.*;
 
 public class TimerDeviceUtils {
@@ -12,6 +9,7 @@ public class TimerDeviceUtils {
       "([A-F]=(\\d\\.\\d+).?)( [A-F]=(\\d\\.\\d+).?)*$");
   private static final Pattern singleLanePattern = Pattern.compile(
       "([A-F])=(\\d\\.\\d+)([^ ]?)");
+  private static final Pattern zeroesPattern = Pattern.compile("^0\\.0+$");
 
   // Returns either a Matcher that successfully matched within line, or null.
   public static Matcher matchedCommonRaceResults(String line) {
@@ -58,5 +56,15 @@ public class TimerDeviceUtils {
       return results;
     }
     return null;
+  }
+
+  public static Message.LaneResult[] zeroesToNines(Message.LaneResult[] results) {
+    for (Message.LaneResult r : results) {
+      Matcher m = zeroesPattern.matcher(r.time);
+      if (m.find()) {
+        r.time = r.time.replace('0', '9');
+      }
+    }
+    return results;
   }
 }

@@ -37,6 +37,7 @@ public class SimulatedClientSession extends ClientSession {
   public Element sendTimerMessage(String messageAndParams) throws IOException {
     System.out.println("\t\t\t" + messageAndParams.replace("&", " & "));
     boolean newHeatReady = false;
+    boolean isStartedMessage = messageAndParams.contains("message=STARTED");
     if (messageAndParams.contains("message=FINISHED")) {
       // Receiving the finish results marks the end of the heat
       heatReadyString = null;
@@ -68,7 +69,7 @@ public class SimulatedClientSession extends ClientSession {
           + " roundid=\"" + (1 + random.nextInt(9)) + "\"/>\n";
     }
 
-    if (heatReadyString != null) {
+    if (heatReadyString != null && !isStartedMessage) {
       System.out.print("\t\t\t\t" + heatReadyString);
     }
 
@@ -76,7 +77,7 @@ public class SimulatedClientSession extends ClientSession {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         + "<action-response action=\"timer-message\">\n"
         + "  <success/>\n"
-        + (heatReadyString == null ? "" : heatReadyString)
+        + (heatReadyString == null || isStartedMessage ? "" : heatReadyString)
         + "</action-response>");
   }
 
