@@ -160,6 +160,10 @@
       <ant dir="${timer-dir}"/>
   </target>
 
+  <target name="debian-combined" depends="generated, timer-jar">
+    <ant dir="installer/debian" target="debian-combined"/>
+  </target>
+
   <target name="docs-dist">
       <ant dir="${docs-dir}"/>
   </target>

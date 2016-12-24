@@ -1,0 +1,13 @@
+server {
+	listen 80;
+
+	listen      443 ssl default_server;
+	listen [::]:443 ssl default_server;
+
+        ssl_certificate     /etc/nginx/derbynet/derbynet.pem;
+	ssl_certificate_key /etc/nginx/derbynet/derbynet.key;
+
+	server_name _;
+
+	include /etc/nginx/derbynet/server-snippet.conf;
+}

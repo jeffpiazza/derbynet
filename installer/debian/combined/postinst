@@ -1,0 +1,34 @@
+#! /bin/sh
+
+SERVERNAME=derby.net
+MAX_UPLOAD_SIZE=8M
+
+######## PHP config
+
+sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" /etc/php5/fpm/php.ini
+echo Restarting php5-fpm
+service php5-fpm restart
+
+######## derbynet site keys
+
+if [ ! -f "/etc/nginx/derbynet/derbynet.key" ] ; then
+   echo Generating ssh keys for $SERVERNAME
+    ssh-keygen -P "" -f "/etc/nginx/derbynet/derbynet.key"
+    openssl req -new -subj "/C=US/ST=-/O=-/localityName=-/CN=$SERVERNAME/"\
+            -key "/etc/nginx/derbynet/derbynet.key" \
+            -out "/etc/nginx/derbynet/derbynet.csr"
+    openssl x509 -req -days 3650 \
+            -in "/etc/nginx/derbynet/derbynet.csr" \
+            -signkey "/etc/nginx/derbynet/derbynet.key" \
+            -out "/etc/nginx/derbynet/derbynet.pem"
+
+    rm "/etc/nginx/derbynet/derbynet.csr"
+fi
+
+# TODO server_name in /etc/nginx/sites-available/derbynet 
+
+######## Disable vanilla default site
+rm -f /etc/nginx/sites-enabled/default 2>/dev/null
+ln -sf /etc/nginx/sites-available/derbynet /etc/nginx/sites-enabled
+
+nginx -s reload

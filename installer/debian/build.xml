@@ -1,0 +1,68 @@
+<project name="derbynet-deb" default="dist" basedir=".">
+  <description>
+    Build a Debian binary package for the DerbyNet server.
+  </description>
+
+  <property name="website" location="../../website"/>
+  <property name="timer" location="../../timer"/>
+  <property name="timer-dist" location="${timer}/dist/lib"/>
+  
+  <!-- These should be inherited from invoking task;
+       these definitions are only backups -->
+  <property name="release-series" value="development-build"/>
+  <property name="git-rev-count" value=""/>
+  <property name="git-dirty" value=""/>
+
+  <property name="deb-label"
+	    value="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+  <property name="debian-root"
+	    location="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+
+  <target name="debian-stage-website">
+    <mkdir dir="${debian-root}/var/www/html/derbynet"/>
+    <copy todir="${debian-root}/var/www/html/derbynet" overwrite="true">
+      <fileset dir="${website}">
+	<include name="**"/>
+	<exclude name="local/**"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${debian-root}/etc/nginx/sites-available"/>
+    <copy todir="${debian-root}/etc/nginx/sites-available"
+	  file="../nginx-configs/sites-available/derbynet"/>
+    <mkdir dir="${debian-root}/etc/nginx/derbynet"/>
+    <copy todir="${debian-root}/etc/nginx/derbynet">
+      <fileset dir="../nginx-configs/derbynet">
+	<include name="**"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="debian-stage-timer-jar">
+    <mkdir dir="${debian-root}/usr/bin"/>
+    <copy todir="${debian-root}/usr/bin">
+      <fileset dir="../../timer/dist/lib">
+	<include name="derby-timer.jar"/>
+      </fileset>
+    </copy>
+    <chmod file="${debian-root}/usr/bin/derby-timer.jar" perm="755"/>
+  </target>
+  
+  <target name="debian-combined" depends="debian-stage-website, debian-stage-timer-jar">
+    <mkdir dir="${debian-root}/DEBIAN"/>
+    <copy todir="${debian-root}/DEBIAN">
+      <fileset dir="./combined">
+	<include name="control"/>
+	<include name="postinst"/>
+      </fileset>
+    </copy>
+    <chmod file="${debian-root}/DEBIAN/postinst" perm="755"/>
+    <exec executable="/usr/bin/dpkg-deb">
+      <arg value="--build"/>
+      <arg value="${deb-label}"/>
+    </exec>
+    <move file="${deb-label}.deb" todir="../../.."/>
+    <delete dir="${debian-root}"/>
+  </target>
+
+  <target name="dist" depends="debian-combined"/>
+</project>
