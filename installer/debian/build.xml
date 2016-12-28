@@ -26,13 +26,16 @@
 	<exclude name="local/**"/>
       </fileset>
     </copy>
-    <mkdir dir="${debian-root}/etc/nginx/sites-available"/>
-    <copy todir="${debian-root}/etc/nginx/sites-available"
-	  file="../nginx-configs/sites-available/derbynet"/>
     <mkdir dir="${debian-root}/etc/nginx/derbynet"/>
     <copy todir="${debian-root}/etc/nginx/derbynet">
       <fileset dir="../nginx-configs/derbynet">
 	<include name="**"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${debian-root}/var/www/html">
+      <fileset dir="../nginx-configs">
+	<include name="index.html"/>
       </fileset>
     </copy>
   </target>
@@ -46,8 +49,17 @@
     </copy>
     <chmod file="${debian-root}/usr/bin/derby-timer.jar" perm="755"/>
   </target>
+
+  <target name="debian-stage-extras">
+    <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
+    <copy todir="${debian-root}/usr/share/derbynet/extras">
+      <fileset dir="../../extras">
+	<include name="**"/>
+      </fileset>
+    </copy>
+  </target>
   
-  <target name="debian-combined" depends="debian-stage-website, debian-stage-timer-jar">
+  <target name="debian-combined" depends="debian-stage-website, debian-stage-timer-jar, debian-stage-extras">
     <mkdir dir="${debian-root}/DEBIAN"/>
     <copy todir="${debian-root}/DEBIAN">
       <fileset dir="./combined">

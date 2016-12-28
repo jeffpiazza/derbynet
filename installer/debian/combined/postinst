@@ -1,7 +1,20 @@
 #! /bin/sh
 
-SERVERNAME=derby.net
 MAX_UPLOAD_SIZE=8M
+
+######## Create /var/lib/derbynet directory, for storing race information
+
+mkdir -m 777 /var/lib/derbynet 2>/dev/null || true
+
+######## Create local directory, point to /var/lib/derbynet
+
+mkdir -m 777 /var/www/html/derbynet/local 2>/dev/null || true
+
+cat <<EOF >/var/www/html/derbynet/local/default-file-path.inc
+<?php
+\$default_file_path = "/var/lib/derbynet";
+?>
+EOF
 
 ######## PHP config
 
@@ -9,26 +22,14 @@ sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_U
 echo Restarting php5-fpm
 service php5-fpm restart
 
-######## derbynet site keys
+######### Add derbynet location clause if not already there
 
-if [ ! -f "/etc/nginx/derbynet/derbynet.key" ] ; then
-   echo Generating ssh keys for $SERVERNAME
-    ssh-keygen -P "" -f "/etc/nginx/derbynet/derbynet.key"
-    openssl req -new -subj "/C=US/ST=-/O=-/localityName=-/CN=$SERVERNAME/"\
-            -key "/etc/nginx/derbynet/derbynet.key" \
-            -out "/etc/nginx/derbynet/derbynet.csr"
-    openssl x509 -req -days 3650 \
-            -in "/etc/nginx/derbynet/derbynet.csr" \
-            -signkey "/etc/nginx/derbynet/derbynet.key" \
-            -out "/etc/nginx/derbynet/derbynet.pem"
+grep derbynet /etc/nginx/sites-available/default >/dev/null 2>&1 || \
+sed -i -e '/^[ \t]*location \/ {/ i\
+\tinclude derbynet/location.snippet; \
 
-    rm "/etc/nginx/derbynet/derbynet.csr"
-fi
+' /etc/nginx/sites-available/default
 
-# TODO server_name in /etc/nginx/sites-available/derbynet 
-
-######## Disable vanilla default site
-rm -f /etc/nginx/sites-enabled/default 2>/dev/null
-ln -sf /etc/nginx/sites-available/derbynet /etc/nginx/sites-enabled
+######## Restart
 
 nginx -s reload
