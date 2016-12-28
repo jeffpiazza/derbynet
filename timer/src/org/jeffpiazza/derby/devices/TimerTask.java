@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.HttpTask;
@@ -78,8 +76,6 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     this.notifyAll();
   }
 
-  // TODO resumeScan method from GUI un-chooses timer class and serial port, and away you go.
-  // Assumes control of the thread to fully manage the serial device.
   public void run() {
     // This while loop ensures we revert to scanning for timers upon loss of
     // connection.
@@ -101,8 +97,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
                                    TimerGui.icon_trouble);
         }
       } catch (Throwable ex) {
-        Logger.getLogger(TimerTask.class.getName()).log(Level.SEVERE, null,
-                                                        ex);
+        logwriter.traceInternal(
+            "** Timer loop restarted due to " + ex.getMessage());
       } finally {
         if (device != null) {
           device.close();

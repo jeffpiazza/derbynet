@@ -80,4 +80,10 @@ public class LogWriter implements HttpTask.MessageTracer {
   public void traceInternal(String s) {
     httpLog(INTERNAL, s);
   }
+
+  public void stacktrace(Throwable t) {
+    if (writer != null) {
+      t.printStackTrace(writer);
+    }
+  }
 }

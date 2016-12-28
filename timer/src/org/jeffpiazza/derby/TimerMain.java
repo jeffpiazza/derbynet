@@ -7,6 +7,7 @@ import org.jeffpiazza.derby.gui.TimerGui;
 import javax.swing.*;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
+import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
 
 // Three threads for three "actors":
@@ -19,13 +20,15 @@ public class TimerMain {
     System.err.println("   -h or -help or --help: This message");
     System.err.println("   -v: Show version");
     System.err.println("   -x: Run headless, without gui.");
+    System.out.println("   -logdir <directory>: write log files in <directory>");
+    System.out.println("       instead of the current directory.");
+    System.err.println("   -t: Trace non-heartbeat messages sent");
+    System.err.println("   -th: Trace heartbeat messages sent");
+    System.err.println("   -r: Show responses to traced messages");
     System.err.println(
         "   -u <user>: Specify username for authenticating to web server");
     System.err.println(
         "   -p <password>: Specify password for authenticating to web server");
-    System.err.println("   -t: Trace non-heartbeat messages sent");
-    System.err.println("   -th: Trace heartbeat messages sent");
-    System.err.println("   -r: Show responses to traced messages");
     System.err.println(
         "   -n <port name>: Use specified port name instead of searching");
     System.err.println(
@@ -40,6 +43,25 @@ public class TimerMain {
     System.err.println("  -simulate-host: Exercise timer with simulated host");
     System.err.
         println("     -lanes <n>: Specify number of lanes for scheduling");
+    System.out.println();
+    System.out.println("Experimental flags for The Judge only:");
+    System.out.println(
+        "   -reset-on-ready: reset timer when next heat scheduled");
+    System.out.println(
+        "   -reset-on-race-over: reset timer immediately after Race Over from timer");
+  }
+
+  private static LogWriter makeLogWriter() {
+    try {
+      LogWriter logwriter = new LogWriter();
+      logwriter.
+          serialPortLogInternal("derby-timer.jar version " + Version.get());
+      return logwriter;
+    } catch (Throwable t) {
+      t.printStackTrace();
+      System.exit(1);
+      return null;
+    }
   }
 
   public static void main(String[] args) {
@@ -55,17 +77,9 @@ public class TimerMain {
     boolean recording = false;
 
     LogWriter logwriter;
-    try {
-      logwriter = new LogWriter();
-      logwriter.
-          serialPortLogInternal("derby-timer.jar version " + Version.get());
-    } catch (Throwable t) {
-      t.printStackTrace();
-      return;
-    }
 
     // Include HTTP traffic in the timer log:
-    HttpTask.MessageTracer traceMessages = logwriter;
+    HttpTask.MessageTracer traceMessages = null;
 
     int consumed_args = 0;
     while (consumed_args < args.length && args[consumed_args].startsWith("-")) {
@@ -74,6 +88,27 @@ public class TimerMain {
       if (arg.equals("-v")) {
         System.out.println("DerbyNet version " + Version.get());
         System.exit(0);
+      } else if (arg.equals("-x")) {
+        showGui = false;
+        ++consumed_args;
+      } else if (arg.equals("-logdir") && has_value) {
+        LogFileFactory.setLogFileDirectory(args[consumed_args + 1]);
+        consumed_args += 2;
+      } else if (arg.equals("-t")) {
+        StdoutMessageTrace smt = new StdoutMessageTrace();
+        smt.traceResponses = traceResponses;
+        logwriter = makeLogWriter();
+        traceMessages = new CombinedMessageTracer(smt, logwriter);
+        ++consumed_args;
+      } else if (arg.equals("-th")) {
+        StdoutMessageTrace smt = new StdoutMessageTrace();
+        smt.traceResponses = traceResponses;
+        logwriter = makeLogWriter();
+        traceHeartbeats = new CombinedMessageTracer(smt, logwriter);
+        ++consumed_args;
+      } else if (arg.equals("-r")) { // Won't have effect unless it precedes -t, -th
+        traceResponses = true;
+        ++consumed_args;
       } else if (arg.equals("-u") && has_value) {
         username = args[consumed_args + 1];
         consumed_args += 2;
@@ -86,22 +121,6 @@ public class TimerMain {
       } else if (arg.equals("-d") && has_value) {
         devicename = args[consumed_args + 1];
         consumed_args += 2;
-      } else if (arg.equals("-t")) {
-        StdoutMessageTrace smt = new StdoutMessageTrace();
-        smt.traceResponses = traceResponses;
-        traceMessages = new CombinedMessageTracer(smt, logwriter);
-        ++consumed_args;
-      } else if (arg.equals("-th")) {
-        StdoutMessageTrace smt = new StdoutMessageTrace();
-        smt.traceResponses = traceResponses;
-        traceHeartbeats = new CombinedMessageTracer(smt, logwriter);
-        ++consumed_args;
-      } else if (arg.equals("-r")) { // Won't have effect unless it precedes -t, -th
-        traceResponses = true;
-        ++consumed_args;
-      } else if (arg.equals("-x")) {
-        showGui = false;
-        ++consumed_args;
       } else if (arg.equals("-simulate-timer")) {
         simulateTimer = true;
         ++consumed_args;
@@ -117,6 +136,12 @@ public class TimerMain {
         SimulatedDevice.
             setStagingTime(Integer.parseInt(args[consumed_args + 1]));
         consumed_args += 2;
+      } else if (arg.equals("-reset-on-ready")) {
+        TheJudgeDevice.setResetOnReady(true);
+        ++consumed_args;
+      } else if (arg.equals("-reset-on-race-over")) {
+        TheJudgeDevice.setResetOnRaceOver(true);
+        ++consumed_args;
       } else if (arg.equals("-record")) {
         recording = true;
         ++consumed_args;
@@ -141,6 +166,11 @@ public class TimerMain {
       if (password == null) {
         password = "";
       }
+    }
+
+    logwriter = makeLogWriter();
+    if (traceMessages == null) {
+      traceMessages = logwriter;
     }
 
     ConnectorImpl connector = new ConnectorImpl(traceMessages);
@@ -180,7 +210,7 @@ public class TimerMain {
       }
       timerTask.run();
     } catch (Throwable t) {
-      t.printStackTrace();
+      logwriter.stacktrace(t);
     }
   }
 
@@ -260,18 +290,15 @@ public class TimerMain {
         public void onHeatReady(int roundid, int heat, int laneMask) {
           try {
             if (traceMessages != null) {
-              traceMessages.traceInternal("Heat ready: roundid=" + roundid
-                  + ", heat=" + heat);
+              traceMessages.traceInternal(
+                  "Heat ready: roundid=" + roundid + ", heat=" + heat);
             }
             timerTask.device().prepareHeat(roundid, heat, laneMask);
           } catch (Throwable t) {
             // TODO: details
             t.printStackTrace();
-            try {
-              httpTask.queueMessage(new Message.Malfunction(false,
-                                                            "Can't ready timer."));
-            } catch (Throwable tt) {
-            }
+            httpTask.queueMessage(
+                new Message.Malfunction(false, "Can't ready timer."));
           }
         }
       });

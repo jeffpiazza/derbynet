@@ -1,7 +1,5 @@
 #! /bin/sh
 
-## TODO This needs to replace apache-activate-php.sh, and get referenced from the rest of the installer.
-
 # This script updates the configuration files for the built-in Apache server.
 # It's tested at least to work with the Apache configuration as installed by
 # macOS 10.11 (El Capitan).

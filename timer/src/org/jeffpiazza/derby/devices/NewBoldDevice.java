@@ -70,7 +70,7 @@ public class NewBoldDevice extends TimerDeviceBase {
       while (!line.isEmpty()) {
         Matcher m = singleLanePattern.matcher(line);
         if (m.find()) {
-          int lane = Integer.getInteger(m.group(1));
+          int lane = Integer.parseInt(m.group(1));
           if (results.size() <= lane) {
             results.ensureCapacity(lane);
             while (results.size() <= lane) {

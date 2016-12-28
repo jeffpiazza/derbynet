@@ -141,6 +141,9 @@ public class HttpTask implements Runnable {
   }
 
   private static int parseIntOrZero(String attr) {
+    if (attr.isEmpty()) {
+      return 0;
+    }
     try {
       return Integer.valueOf(attr);
     } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
@@ -184,8 +187,9 @@ public class HttpTask implements Runnable {
 
         boolean succeeded = false;
         while (!succeeded) {
+          String params = null;
           try {
-            String params = nextMessage.asParameters();
+            params = nextMessage.asParameters();
             if (traceMessage != null) {
               traceMessage.onMessageSend(nextMessage, params);
             }
@@ -193,7 +197,8 @@ public class HttpTask implements Runnable {
             succeeded = true;
           } catch (Throwable t) {
             System.out.println(Timestamp.string()
-                + ": Unable to send timer message; retrying");
+                + ": Unable to send HTTP message " + params + "; retrying");
+            t.printStackTrace();
           }
         }
       }
