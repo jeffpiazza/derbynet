@@ -18,7 +18,7 @@
      <os family="windows"/>
    </condition>
 
-   <target name="dist" depends="installation, after-installation, operation, one-click">
+   <target name="dist" depends="installation, after-installation, operation">
    </target>
 
    <target name="make-dist-dir">
@@ -48,7 +48,7 @@
 
  <target name="installation" depends="make-dist-dir">
      <make-pdf file="Installation- Mac.fodt"/>
-     <make-pdf file="Installation- Windows with XAMPP.fodt"/>
+     <make-pdf file="Installation- Windows.fodt"/>
  </target>
 
  <target name="after-installation" depends="make-dist-dir">
@@ -58,12 +58,9 @@
  </target>
 
  <target name="operation" depends="make-dist-dir">
+     <make-pdf file="Default Roles and Passwords.fodt"/>
      <make-pdf file="Timer Operation.fodt"/>
      <make-pdf file="Running a Race with DerbyNet.fodt"/>
- </target>
-
- <target name="one-click" depends="make-dist-dir">
-   <make-pdf file="README One-Click Install for Windows.fodt"/>
  </target>
  
   <target name="clean"

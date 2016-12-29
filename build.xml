@@ -356,7 +356,7 @@
 <target name="mac.installer.extras" if="is_mac">
     <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
     <copy todir="ROOT/Applications/DerbyNet">
-        <fileset dir="installer/mac/scripts/website">
+        <fileset dir="installer/mac/scripts/webserver">
             <include name="update-apache-config.sh"/>
         </fileset>
     </copy>
@@ -488,7 +488,6 @@
   <copy todir="${uniserver-target}\docs">
     <fileset dir="docs/dist">
       <include name="**"/>
-      <exclude name="README One-Click*.pdf"/>
     </fileset>
   </copy>
 
@@ -500,11 +499,12 @@
   </copy>
 
   <copy todir="${uniserver-target}">
-    <fileset dir="docs/dist">
-      <include name="README One-Click*.pdf"/>
+    <fileset dir="installer/win">
+      <include name="README"/>
     </fileset>
   </copy>
-  
+
+
   <zip destfile="dist/DerbyNet-windows-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
     <fileset dir="${uniserver-target}">
       <include name="**"/>
