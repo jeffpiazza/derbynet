@@ -28,20 +28,21 @@ cat <<EOF | sed -e "s/SERVERNAME/$SERVERNAME/" >$DSTVOLUME/private/etc/apache2/d
     Allow from all
 </Directory>
 
-<VirtualHost *:80>
-    ServerName SERVERNAME
-    ServerAlias localhost
-    DocumentRoot /Library/WebServer/Documents/derbynet
-</VirtualHost>
+# Uncomment these sections to expose derbynet as the virtual host SERVERNAME, including SSL/HTTPS support.
+#<VirtualHost *:80>
+#    ServerName SERVERNAME
+#    ServerAlias localhost
+#    DocumentRoot /Library/WebServer/Documents/derbynet
+#</VirtualHost>
 
-<VirtualHost *:443>
-    ServerName SERVERNAME
-    ServerAlias localhost
-    DocumentRoot /Library/WebServer/Documents/derbynet
-
-    SSLEngine on
-    SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-    SSLCertificateFile /private/etc/apache2/derbynet/derbynet.crt
-    SSLCertificateKeyFile /private/etc/apache2/derbynet/derbynet.key
-</VirtualHost>
+#<VirtualHost *:443>
+#    ServerName SERVERNAME
+#    ServerAlias localhost
+#    DocumentRoot /Library/WebServer/Documents/derbynet
+#
+#    SSLEngine on
+#    SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+#    SSLCertificateFile /private/etc/apache2/derbynet/derbynet.crt
+#    SSLCertificateKeyFile /private/etc/apache2/derbynet/derbynet.key
+#</VirtualHost>
 EOF
