@@ -1,5 +1,6 @@
 #! /bin/sh
 
 ./maybe-create-local-directory.sh
-./apache-updates.sh
+./create-apache-derbynet-directory.sh
+./update-apache-config.sh
 ./maybe-rewrite-index-html.sh

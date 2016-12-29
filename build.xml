@@ -355,7 +355,12 @@
 
 <target name="mac.installer.extras" if="is_mac">
     <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
-    <copy todir="ROOT/Applications/Derbynet/extras">
+    <copy todir="ROOT/Applications/DerbyNet">
+        <fileset dir="installer/mac/scripts/website">
+            <include name="update-apache-config.sh"/>
+        </fileset>
+    </copy>
+    <copy todir="ROOT/Applications/DerbyNet/extras">
         <fileset dir="extras"/>
     </copy>
     <exec executable="/usr/bin/pkgbuild">
@@ -368,7 +373,7 @@
         <arg value="derbynet.extras.pkg"/>
     </exec>
     <delete dir="ROOT"/>
-</target>    
+</target>
 
 <target name="dist.mac" if="is_mac"
 	depends="mac.installer.website,
