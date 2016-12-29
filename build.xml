@@ -9,7 +9,15 @@
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
   <property name="docs-dir" location="docs"/>
+  <!-- uniserver-resources is where the downloaded Uniform Server
+       self-extracting (.exe) archives are found.  Only available on a
+       Windows machine. -->
   <property name="uniserver-resources" location="../uniserver-resources"/>
+  <!-- The self-extracting archives get applied to this directory, which can be
+       copied to non-Windows build platforms. -->
+  <property name="uniserver-unpacked" location="../uniserver-unpacked"/>
+  <!-- The content of the .win.zip is staged here, zipped, and then
+       deleted. -->
   <property name="uniserver-target" location="dist/uniserver"/>
 
   <condition property="is_mac">
@@ -32,7 +40,7 @@
     <ant dir="${docs-dir}"  target="clean"/>
   </target>
   
-  <target name="dist" depends="dist.zip, dist.mac, dist.debian"/>
+  <target name="dist" depends="dist.zip, dist.oneclick, dist.mac, dist.debian"/>
 
   <target name="dist.zip" depends="timer-jar, docs-dist, generated">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
@@ -395,11 +403,10 @@
     <delete file="derbynet.website.pkg"/>
 </target>
 
-<target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist"
-	description="Builds the &quot;one-click&quot; zip file to run Uniform Server on Windows">
-  <delete dir="${uniserver-target}"/>
-  <mkdir dir="${uniserver-target}"/>
-  <mkdir dir="${uniserver-target}/Data"/>
+<target name="unpack-uniserver" if="is_windows"
+	description="Runs the self-extracting archives from ${uniserver-resources} to build ${uniserver-unpacked}">
+  <delete dir="${uniserver-unpacked}"/>
+  <mkdir dir="${uniserver-unpacked}"/>
 
   <pathconvert property="controller-exe">
     <path>
@@ -408,7 +415,7 @@
   </pathconvert>
   <exec executable="${controller-exe}" failonerror="true">
     <arg value="-y"/>
-    <arg value="-o${uniserver-target}"/>
+    <arg value="-o${uniserver-unpacked}"/>
   </exec>
 
   <pathconvert property="apache-exe">
@@ -418,7 +425,7 @@
   </pathconvert>
   <exec executable="${apache-exe}" failonerror="true">
     <arg value="-y"/>
-    <arg value="-o${uniserver-target}\UniServerZ"/>
+    <arg value="-o${uniserver-unpacked}\UniServerZ"/>
   </exec>
 
   <pathconvert property="php-exe">
@@ -428,8 +435,21 @@
   </pathconvert>
   <exec executable="${php-exe}" failonerror="true">
     <arg value="-y"/>
-    <arg value="-o${uniserver-target}\UniServerZ"/>
+    <arg value="-o${uniserver-unpacked}\UniServerZ"/>
   </exec>
+</target>
+
+<target name="dist.oneclick" depends="generated, timer-jar, docs-dist"
+	description="Builds the &quot;one-click&quot; zip file to run Uniform Server on Windows">
+  <delete dir="${uniserver-target}"/>
+  <mkdir dir="${uniserver-target}"/>
+  <mkdir dir="${uniserver-target}/Data"/>
+
+  <copy todir="${uniserver-target}">
+    <fileset dir="${uniserver-unpacked}">
+      <include name="**"/>
+    </fileset>
+  </copy>
 
   <pathconvert property="php-core-dir">
     <path>
@@ -504,7 +524,6 @@
       <include name="README"/>
     </fileset>
   </copy>
-
 
   <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.win.zip">
     <fileset dir="${uniserver-target}">
