@@ -160,7 +160,8 @@
       <ant dir="${timer-dir}"/>
   </target>
 
-  <target name="debian-combined" depends="generated, timer-jar">
+  <target name="debian-combined" depends="generated, timer-jar"
+	  description="Build a Debian binary package (.deb) for all of DerbyNet">
     <ant dir="installer/debian" target="debian-combined"/>
   </target>
 
@@ -394,8 +395,8 @@
     <delete file="derbynet.website.pkg"/>
 </target>
 
-<!-- Builds the "one-click" zip file to run Uniform Server on Windows -->
-<target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist">
+<target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist"
+	description="Builds the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}/Data"/>
@@ -505,12 +506,13 @@
   </copy>
 
 
-  <zip destfile="dist/DerbyNet-windows-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
+  <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.win.zip">
     <fileset dir="${uniserver-target}">
       <include name="**"/>
     </fileset>
   </zip>
   <delete dir="${uniserver-target}"/>
+  <delete dir="dist"/>
 </target>
 
 <target name="demo">
