@@ -266,18 +266,21 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     }
     Class<? extends TimerDevice> timerClass = device.getClass();
     if (!device.canBeIdentified()) {
-      if (timerClass == timerClasses.chosen()) {
-        // If the user chose this class, then treat as a succeeded probe.
-        // Otherwise, treat as a failed probe.
+      if (timerClass != timerClasses.chosen()) {
+        // Unless the user chose this class, treat as a failed probe without
+        // bothering to probe.
+        System.out.println(" (skipped)");
+        return null;
+      } else {
+        // probe() method likely sets up serial parameters and/or recognizers,
+        // even if it doesn't actually probe anything.
+        device.probe();
         String msg = "Assuming " + timerClass.getSimpleName()
             + ", because positive identification is not possible.";
         System.out.println();
         System.out.println(msg);
         logwriter.serialPortLogInternal(msg);
         return device;
-      } else {
-        System.out.println(" (skipped)");
-        return null;
       }
     } else if (device.probe()) {
       String msg = "*** Identified as a(n) " + timerClass.getSimpleName();

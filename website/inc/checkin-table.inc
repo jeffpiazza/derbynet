@@ -10,9 +10,9 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
     if ($passed) echo ' checked="checked"';
     if ($passed && !have_permission(REVERT_CHECK_IN_PERMISSION)) echo ' disabled="disabled"';
     echo ' data-on-text="Yes" data-off-text="No"';
-    echo ' onchange=\'handlechange_passed(this, "'
-        .htmlspecialchars($first_name.' '.$last_name, ENT_QUOTES, 'UTF-8')
-        .'");\'/>';
+    echo ' onchange=\'handlechange_passed(this, '
+        .json_encode($first_name.' '.$last_name)
+        .');\'/>';
 }
 
 function checkin_table_row_for_id($racerid) {

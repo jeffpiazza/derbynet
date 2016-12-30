@@ -37,6 +37,7 @@ $schema = array('Classes' => array('classid', 'class'),
                 'Roster' => array('rosterid', 'roundid', 'classid', 'racerid', 'finalist', 'grandfinalist'),
                 'RaceChart' => array('resultid', 'classid', 'roundid', 'heat', 'lane', 'racerid',
                                      'chartnumber', 'finishtime', 'finishplace', 'points',
-                                     'completed', 'ignoretime', 'masterheat')
+                                     'completed', 'ignoretime', 'masterheat'),
+                'RaceInfo' => array('raceinfoid', 'itemkey', 'itemvalue'),
   );
 ?>
