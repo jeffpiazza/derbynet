@@ -19,6 +19,17 @@ require_once('inc/export-schema.inc');
 start_response();
 echo "\n";
 
+function remove_bookends($xml, $start, $stop) {
+  $start_pos = strpos($xml, $start);
+  $stop_pos = strpos($xml, $stop);
+  if ($start_pos !== false && $stop_pos !== false) {
+    $start_pos += strlen($start);
+    return substr($xml, $start_pos, $stop_pos - $start_pos);
+  } else {
+    return $xml;
+  }
+}
+
 if (have_permission(SET_UP_PERMISSION)) {
   // Reporting the original name of the uploaded file can be useful for
   // debugging e.g. parsing failures.
@@ -29,16 +40,16 @@ if (have_permission(SET_UP_PERMISSION)) {
 
   $xml = file_get_contents($_FILES['snapshot']['tmp_name']);
 
-  $start_marker = '<snapshot><![CDATA[';
-  $stop_marker = ']]></snapshot>';
+  $xml = remove_bookends($xml, '<snapshot>', '</snapshot>');
+  $xml = remove_bookends($xml, '<![CDATA[', ']]>');
 
-  $pos = strpos($xml, $start_marker) + strlen($start_marker);
-  $rpos = strrpos($xml, $stop_marker);
-
-  $json = json_decode(substr($xml, $pos, $rpos - $pos), true);
+  $json = json_decode($xml, true);
 
   if (!$json) {
     echo "<failure code='json-parsing'>Failed to parse JSON text.</failure>\n";
+    echo "<data pos='".$pos."' rpos='".$rpos."'>\n";
+    echo substr($xml, $pos, $rpos - $pos);
+    echo "</data>\n";
   } else {
     foreach ($json as $table_entry) {
       $tablename = $table_entry["table"];

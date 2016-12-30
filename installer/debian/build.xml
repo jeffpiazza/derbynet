@@ -1,80 +1,107 @@
 <project name="derbynet-deb" default="dist" basedir=".">
-  <description>
-    Build a Debian binary package for the DerbyNet server.
-  </description>
+    <description>
+        Build a Debian binary package for the DerbyNet server.
+    </description>
 
-  <property name="website" location="../../website"/>
-  <property name="timer" location="../../timer"/>
-  <property name="timer-dist" location="${timer}/dist/lib"/>
-  
-  <!-- These should be inherited from invoking task;
-       these definitions are only backups -->
-  <property name="release-series" value="development-build"/>
-  <property name="git-rev-count" value=""/>
-  <property name="git-dirty" value=""/>
+    <!-- These properties isolate us from ant file location -->
+    <property name="website" location="../../website"/>
+    <property name="timer" location="../../timer"/>
+    <property name="timer-dist" location="${timer}/dist/lib"/>
+    <property name="docs" location="../../docs"/>
+    <property name="docs-dist" location="${docs}/dist"/>
+    <property name="extras" location="../../extras"/>
+    <property name="output-dir" location="../../.."/>
+    <property name="nginx-configs" location="../nginx-configs"/>
+    
+    <!-- These should be inherited from invoking task;
+         these definitions are only backups -->
+    <property name="release-series" value="development-build"/>
+    <property name="git-rev-count" value=""/>
+    <property name="git-dirty" value=""/>
 
-  <property name="deb-label"
-	    value="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
-  <property name="debian-root"
-	    location="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+    <property name="deb-label"
+	          value="derbynet_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+    <property name="debian-root"
+	          location="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+    <property name="debian-stage" location="debian-stage"/>
 
-  <target name="debian-stage-website">
-    <mkdir dir="${debian-root}/var/www/html/derbynet"/>
-    <copy todir="${debian-root}/var/www/html/derbynet" overwrite="true">
-      <fileset dir="${website}">
-	<include name="**"/>
-	<exclude name="local/**"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${debian-root}/etc/nginx/derbynet"/>
-    <copy todir="${debian-root}/etc/nginx/derbynet">
-      <fileset dir="../nginx-configs/derbynet">
-	<include name="**"/>
-      </fileset>
-    </copy>
+    <target name="debian-stage-website">
+        <mkdir dir="${debian-root}/var/www/html/derbynet"/>
+        <copy todir="${debian-root}/var/www/html/derbynet" overwrite="true">
+            <fileset dir="${website}">
+	            <include name="**"/>
+	            <exclude name="local/**"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${debian-root}/etc/nginx/derbynet"/>
+        <copy todir="${debian-root}/etc/nginx/derbynet">
+            <fileset dir="${nginx-configs}/derbynet">
+	            <include name="**"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${debian-root}/var/www/html">
-      <fileset dir="../nginx-configs">
-	<include name="index.html"/>
-      </fileset>
-    </copy>
-  </target>
+        <copy todir="${debian-root}/var/www/html">
+            <fileset dir="${nginx-configs}">
+	            <include name="index.html"/>
+            </fileset>
+        </copy>
+    </target>
 
-  <target name="debian-stage-timer-jar">
-    <mkdir dir="${debian-root}/usr/bin"/>
-    <copy todir="${debian-root}/usr/bin">
-      <fileset dir="../../timer/dist/lib">
-	<include name="derby-timer.jar"/>
-      </fileset>
-    </copy>
-    <chmod file="${debian-root}/usr/bin/derby-timer.jar" perm="755"/>
-  </target>
+    <target name="debian-stage-timer-jar">
+        <mkdir dir="${debian-root}/usr/bin"/>
+        <copy todir="${debian-root}/usr/bin">
+            <fileset dir="${timer-dist}">
+	            <include name="derby-timer.jar"/>
+            </fileset>
+        </copy>
+        <chmod file="${debian-root}/usr/bin/derby-timer.jar" perm="755"/>
+    </target>
 
-  <target name="debian-stage-extras">
-    <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
-    <copy todir="${debian-root}/usr/share/derbynet/extras">
-      <fileset dir="../../extras">
-	<include name="**"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="debian-combined" depends="debian-stage-website, debian-stage-timer-jar, debian-stage-extras">
-    <mkdir dir="${debian-root}/DEBIAN"/>
-    <copy todir="${debian-root}/DEBIAN">
-      <fileset dir="./combined">
-	<include name="control"/>
-	<include name="postinst"/>
-      </fileset>
-    </copy>
-    <chmod file="${debian-root}/DEBIAN/postinst" perm="755"/>
-    <exec executable="/usr/bin/dpkg-deb">
-      <arg value="--build"/>
-      <arg value="${deb-label}"/>
-    </exec>
-    <move file="${deb-label}.deb" todir="../../.."/>
-    <delete dir="${debian-root}"/>
-  </target>
+    <target name="debian-stage-extras">
+        <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
+        <copy todir="${debian-root}/usr/share/derbynet/extras">
+            <fileset dir="${extras}">
+	            <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
 
-  <target name="dist" depends="debian-combined"/>
+    <target name="debian-stage-docs">
+        <mkdir  dir="${debian-root}/usr/share/derbynet/docs"/>
+        <copy todir="${debian-root}/usr/share/derbynet/docs">
+            <fileset dir="${docs-dist}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Constructs a Debian binary archive "by hand", so the task can be
+         accomplished on platforms that don't provide Debian package tooling. -->
+    <target name="debian-combined" depends="debian-stage-website,
+                                            debian-stage-timer-jar,
+                                            debian-stage-extras,
+                                            debian-stage-docs">
+        <mkdir dir="${debian-stage}"/>
+        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip" basedir="${debian-root}"/>
+        <delete dir="${debian-root}"/>
+
+        <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
+            <tarfileset file="./combined/control"/>
+            <tarfileset file="./combined/postinst" filemode="755"/>
+        </tar>
+
+        <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
+
+        <delete file="${output-dir}/${deb-label}.deb" failonerror="false" quiet="true"/>
+        <exec executable="ar">
+            <arg value="-q"/>
+            <arg value="${output-dir}/${deb-label}.deb"/>
+            <arg value="${debian-stage}/debian-binary"/>
+            <arg value="${debian-stage}/control.tar.gz"/>
+            <arg value="${debian-stage}/data.tar.gz"/>
+        </exec>
+        <delete dir="${debian-stage}"/>
+    </target>
+
+    <target name="dist" depends="debian-combined"/>
 </project>
