@@ -32,7 +32,7 @@
     <ant dir="${docs-dir}"  target="clean"/>
   </target>
   
-  <target name="dist" depends="dist.zip, dist.mac"/>
+  <target name="dist" depends="dist.zip, dist.mac, dist.debian"/>
 
   <target name="dist.zip" depends="timer-jar, docs-dist, generated">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
@@ -160,7 +160,7 @@
       <ant dir="${timer-dir}"/>
   </target>
 
-  <target name="debian-combined" depends="generated, timer-jar"
+  <target name="dist.debian" depends="generated, timer-jar, docs-dist"
 	  description="Build a Debian binary package (.deb) for all of DerbyNet">
     <ant dir="installer/debian" target="debian-combined"/>
   </target>
