@@ -5,7 +5,7 @@ img.project-icon {
 }
 
 div.screenshots figure {
-    width: 190px;
+    width: 210px;
     display: inline-block;
     text-align: center;
 }
@@ -17,4 +17,24 @@ div.screenshots figure img {
 
 div.screenshots {
     margin-bottom: 20px;
+}
+
+@media print, screen and (min-width: 1080px) {
+    div.screenshot-wrapper {
+        position: fixed;
+        top: 200px;
+        width: 240px;
+        left: 50%;
+        margin-left: 320px;
+    }
+
+    div.screenshots {
+        width: 240px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    div.screenshots figure {
+        width: 240px;
+    }
 }
