@@ -46,9 +46,11 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     </div>
   </div>
 
-  <div id="add_new_rounds_group" class="control_group block_buttons new_round_control hidden">
-      <input type="button" data-enhanced="true" value="Add New Rounds"
-             onclick="show_choose_new_round_modal()"/>
+  <div id="supplemental-control-group" class="control_group block_buttons new_round_control hidden">
+      <div id="add-new-rounds-button" class="hidden">
+          <input type="button" data-enhanced="true" value="Add New Rounds"
+                 onclick="show_choose_new_round_modal()"/>
+      </div>
       <div id="now-racing-group-buttons"></div>
   </div>
 
