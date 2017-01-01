@@ -717,40 +717,35 @@ function populate_new_round_modals() {
 }
 
 function offer_new_rounds(rounds) {
-    if (g_new_round_modal_open) {
-        console.log("Skipping offer_new_rounds because g_new_round_modal_open is set");
-        return;
+  if (g_new_round_modal_open) {
+    console.log("Skipping offer_new_rounds because g_new_round_modal_open is set");
+    return;
+  }
+
+  // What we really want to look at is the highest round for each
+  // class, and then decide whether that round was completed or not.
+
+  var highest_rounds = {};  // { classid => highest_round }
+  for (var i = 0; i < rounds.length; ++i) {
+    var round = rounds[i];
+    var classid = round.classid;
+    if (highest_rounds[classid] ? highest_rounds[classid].round < round.round : true) {
+      highest_rounds[classid] = round;
     }
+  }
 
-    // What we really want to look at is the highest round for each
-    // class, and then decide whether that round was completed or not.
-
-    var highest_rounds = {};  // { classid => highest_round }
-    for (var i = 0; i < rounds.length; ++i) {
-        var round = rounds[i];
-        var classid = round.classid;
-        if (highest_rounds[classid] ? highest_rounds[classid].round < round.round : true) {
-            highest_rounds[classid] = round;
-        }
+  var completed_rounds = [];
+  for (var classid in highest_rounds) {
+    var round = highest_rounds[classid];
+    if (round.heats_scheduled > 0 && round.heats_scheduled == round.heats_run) {
+      completed_rounds.push(round);
     }
+  }
 
-    var completed_rounds = [];
-    for (var classid in highest_rounds) {
-        var round = highest_rounds[classid];
-        if (round.heats_scheduled > 0 && round.heats_scheduled == round.heats_run) {
-            completed_rounds.push(round);
-        }
-    }
+  g_completed_rounds = completed_rounds;
 
-    g_completed_rounds = completed_rounds;
-
-    if (completed_rounds.length > 0) {
-        // Show the block with the "Add New Rounds" button
-        $("#add_new_rounds_group").removeClass("hidden");
-    } else {
-        // Hide the block with the "Add New Rounds" button
-        $("#new_round_controls").addClass("hidden");
-    }
+  // Show or hide the block with the "Add New Rounds" button
+  $("#add-new-rounds-button").toggleClass("hidden", completed_rounds.length == 0);
 }
 
 function process_coordinator_poll_response(data) {
@@ -816,7 +811,12 @@ function process_coordinator_poll_response(data) {
 
     generate_replay_state_group(parse_replay_state(data));
 
-    generate_current_heat_racers(parse_racers(data), current);
+  generate_current_heat_racers(parse_racers(data), current);
+
+  // Hide the control group if there's nothing to show
+  $("#supplemental-control-group").toggleClass("hidden",
+                                                $("#add-new-rounds-button").hasClass("hidden") &&
+                                                $("#now-racing-group-buttons").is(":empty"));
 }
 
 function coordinator_poll() {
