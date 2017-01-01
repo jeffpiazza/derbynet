@@ -11,7 +11,7 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
     if ($passed && !have_permission(REVERT_CHECK_IN_PERMISSION)) echo ' disabled="disabled"';
     echo ' data-on-text="Yes" data-off-text="No"';
     echo ' onchange=\'handlechange_passed(this, '
-        .json_encode($first_name.' '.$last_name)
+        .htmlspecialchars(json_encode($first_name.' '.$last_name), ENT_QUOTES, 'UTF-8')
         .');\'/>';
 }
 
