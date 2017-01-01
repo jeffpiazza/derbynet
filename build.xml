@@ -458,13 +458,14 @@
   </pathconvert>
 
   <loadresource property="php-version">
-    <propertyresource name="php-core-dir"/>
-    <filterchain>
-      <tokenfilter>
-	<filetokenizer/>
-	<replaceregex pattern=".*\\" flags="g"/>
-      </tokenfilter>
-    </filterchain>
+      <propertyresource name="php-core-dir"/>
+      <filterchain>
+          <tokenfilter>
+	          <filetokenizer/>
+	          <replaceregex pattern=".*\\" flags="g"/>
+	          <replaceregex pattern=".*/" flags="g"/>
+          </tokenfilter>
+      </filterchain>
   </loadresource>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
