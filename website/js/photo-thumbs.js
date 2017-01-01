@@ -90,7 +90,7 @@ function make_draggable_photo(target) {
 
 $(function() {
   make_assignable($(".without-photo"));
-  make_draggable_photo($(".unassigned_photo"));
+  make_draggable_photo($(".unassigned-photo"));
 
   $(".photothumbs").droppable({
 	hoverClass: 'droppableHover',
