@@ -144,14 +144,15 @@ function get_lane_count() {
 function get_lane_count_from_results() {
   global $db;
   $nlanes = get_lane_count();
-  if ($nlanes == 0) {
-    $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
-    $row = $rs->fetch(PDO::FETCH_NUM);
-    if (!$row || !isset($row[0]) || !$row[0]) {
-      return 0;
-    } else {
-      return $row[0];
-    }
+  if ($nlanes != 0) {
+    return $nlanes;
+  }
+  $rs = $db->query('SELECT MAX(lane), COUNT(*) FROM RaceChart');
+  $row = $rs->fetch(PDO::FETCH_NUM);
+  if (!$row || !isset($row[0]) || !$row[0]) {
+    return 0;
+  } else {
+    return $row[0];
   }
 }
 
