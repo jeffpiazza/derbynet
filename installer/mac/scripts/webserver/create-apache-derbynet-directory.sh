@@ -22,7 +22,7 @@ fi
 
 cat <<EOF | sed -e "s/SERVERNAME/$SERVERNAME/" >$DSTVOLUME/private/etc/apache2/derbynet/derbynet.conf
 <Directory /Library/WebServer/Documents/derbynet>
-    Otions FollowSymLinks Indexes MultiViews
+    Options FollowSymLinks Indexes MultiViews
     AllowOverride All
     Order allow,deny
     Allow from all
