@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>DerbyNet by jeffpiazza</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <link rel="stylesheet" href="stylesheets/jeff.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <img class="project-icon" src="images/derbynet.png"/>
+        <h1>DerbyNet</h1>
+        <p>Open-source Pinewood Derby race management, built around a web server and database</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/jeffpiazza/derbynet" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="http://www.piazzafamily.org/derbynet/builds"
+        class="button">Builds &amp; Documentation</a></li>
+            <li><a href="https://github.com/jeffpiazza/derbynet/zipball/master"
+                   class="button">Src ZIP</a></li>
+            <li><a href="https://github.com/jeffpiazza/derbynet/tarball/master"
+                   class="button">Src TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+
+    <div class="wrapper">
+      <nav>
+        <ul>
+          <li><a href="index.html">Home Page</a></li>
+        </ul>
+      </nav>
+
+<section>
+
+<!-- <h2 id="derbynet-changes-from-v1-0-">DerbyNet Changes From v1.0:</h2> -->
+<ul>
+<li><p>One-Click Install for Windows!  A bespoke Uniform Server directory that can<br>even be run from a flash drive.</p>
+</li>
+<li><p>Improved kiosk management</p>
+<ul>
+<li>Move kiosk management into a separate kiosk dashboard.</li>
+<li>Individual kiosk displays can now be parameterized:<ul>
+<li>The &quot;please check in&quot; display can be restricted to selected groups or<br> subgroups.</li>
+<li>The &quot;slideshow&quot; display can be restricted to selected groups or subgroups.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>New features for working with awards:</p>
+<ul>
+<li>&quot;Import Awards&quot; imports awards from comma-separated files</li>
+<li>&quot;Awards Editor&quot; interactively edits, adds, deletes, and re-orders awards.</li>
+<li>Drag-and-drop interface in Awards Editor for assigning award recipients.</li>
+<li>&quot;Present Awards&quot; page directly controls awards presentation kiosk display for an awards ceremony.</li>
+</ul>
+</li>
+<li><p>New photo features:</p>
+<ul>
+<li>Added drag-and-drop photo uploading for photo editor pages.</li>
+<li>Added &quot;auto-crop&quot; for photo capture, based on advanced face
+detection algorithms.</li>
+</ul>
+</li>
+<li><p>Improved timer handling in derby-timer.jar:</p>
+<ul>
+<li>Support for &quot;The Judge&quot; (thanks especially to help from Casper Bucl)</li>
+<li>Support for older FastTrack timers</li>
+<li>Experimental support for NewBold timers </li>
+<li>Detect and recover from lost connection (tripping over a wire) between derby-timer.jar and timer.</li>
+<li>Command line arguments work even when using the GUI.</li>
+<li>Bug fix: now correctly finds serial port names for Linux.</li>
+<li>Updated handling of timer malfunctions and unhealthy conditions.</li>
+<li>derby-timer.jar incorporates both host and timer simulators, for<br>testing/development.</li>
+</ul>
+</li>
+<li><p>Support for hosting on a shared server:</p>
+<ul>
+<li>Passed-in environment variable CONFIG_DIR overrides local configuration directory.</li>
+<li>Presence of a settings.lock file disables changing database or photo directories.</li>
+<li>Introduce &quot;non-interactive&quot; roles with limited privilege, to reduce risk of<br>compromised passwords used for e.g. derby-timer.jar.</li>
+</ul>
+</li>
+<li><p>Miscellaneous:</p>
+<ul>
+<li>Fixed formatting for modal dialogs to allow scrolling when screen height<br>or width is too small to display the whole dialog.</li>
+<li>&quot;Set-Up&quot; modal for index page, to declutter the main race coordinator home page. </li>
+<li>Update formatting and click handling for banner: actually center the title!</li>
+<li>Rename internal ajax actions.</li>
+<li>Clean up formatting for standings page selector.</li>
+<li>Combined &quot;Schedule + Race&quot; button in scheduling dialog.</li>
+<li>Better error messages for problems during database set-up.</li>
+</ul>
+</li>
+<li><p>Debian binary package for Raspberry Pi-based derbynet server.</p>
+</li>
+</ul>
+
+</section>
+
+<footer>
+        <p>Project maintained by <a href="https://github.com/jeffpiazza">jeffpiazza</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
