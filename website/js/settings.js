@@ -25,11 +25,11 @@ function render_directory_status_icon(photo_dir_selector) {
             data: {query: 'file.stat',
                    path: $(photo_dir_selector).val()},
             success: function(data) {
+                var icon_span = $(photo_dir_selector + '_icon');
+                var msg_para = $(photo_dir_selector + '_message');
                 var path = data.getElementsByTagName("path");
                 if (path.length > 0) {
                     path = path[0];
-                    var icon_span = $(photo_dir_selector + '_icon');
-                    var msg_para = $(photo_dir_selector + '_message');
                     if (path.getAttribute("directory") == "0" ||
                         path.getAttribute("readable") == "0") {
                         icon_span.html('<img src="img/status/trouble.png"/>');
