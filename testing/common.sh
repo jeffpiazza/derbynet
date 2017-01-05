@@ -77,30 +77,30 @@ function curl_put_snapshot() {
 
 function user_login() {
 	# $1 = user name
-	# $2 = password
+    PWD=$(sed -n -e "s/^$1://p" "${PASSWORDS_FILE:-`dirname $0`/default.passwords}")
 	echo ' ' ' ' ' ' login $1 >&2
 	echo    >> $OUTPUT_CURL
 	echo login $1 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
-	curl --location -d "action=login&name=$1&password=$2" \
+	curl --location -d "action=login&name=$1&password=$PWD" \
         -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
 		| xmllint --format - | tee -a $OUTPUT_CURL | check_success
 }
 
 function user_login_coordinator() {
-    user_login RaceCoordinator doyourbest
+    user_login RaceCoordinator
 }
 
 function user_login_crew() {
-    user_login RaceCrew murphy
+    user_login RaceCrew
 }
 
 function user_login_timer() {
-    user_login Timer millisecond
+    user_login Timer
 }
 
 function user_login_photo() {
-    user_login Photo flashbulb
+    user_login Photo
 }
 
 function user_logout() {
