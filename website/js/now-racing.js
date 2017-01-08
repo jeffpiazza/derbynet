@@ -40,9 +40,6 @@ function poll_for_update() {
     if (photo_cells.length > 0) {
       // Position of the first td.photo may get adjusted 
       row_height = Math.floor(($(window).height() - photo_cells.position().top) / photo_cells.length) - border;
-      console.log("Top photo-cell position " + photo_cells.position().top + ", yielding " + row_height);  // TODO
-      // Top photo-cell bounces between 155 (yields 218) and 196 (yields 208).
-      // That means drawing with 208 height causes the top row to get taller?
     }
 
     $.ajax('action.php',
@@ -117,7 +114,6 @@ function clear_overlay() {
 
 function show_overlay(selector) {
     if (g_overlay_shown != selector) {
-        console.log(selector);
         var background = $("#overlay_background");
         background.css({'display': 'block',
                         'opacity': 0});
@@ -259,7 +255,8 @@ function process_new_heat(now_racing) {
         var r = racers[i];
         var lane = r.getAttribute('lane');
         $('[data-lane="' + lane + '"] .lane').text(lane);
-        $('[data-lane="' + lane + '"] .name').text(r.getAttribute('name'));
+        $('[data-lane="' + lane + '"] .name').html('<div></div>');
+        $('[data-lane="' + lane + '"] .name div').text(r.getAttribute('name'));
         if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
           $('[data-lane="' + lane + '"] .photo').html(
             '<img src="' + r.getAttribute('photo') + '"/>');
@@ -327,4 +324,4 @@ $(function () {
   $(window).resize(function() { resize_table(); });
   // This 1-second delay is to let the initial resizing take effect
   setTimeout(function() { poll_for_update(); }, 1000);
-});
+    });

@@ -37,7 +37,7 @@ $(function () {
     <th>Car</th>
     <th colspan="2">Racer</th>
     <th>Time</th>
-    <th>Speed <span class="aside">(scale MPH)</span></th>
+    <th><div id="speed-div">Speed <span class="aside">(scale MPH)</span></div></th>
     <th>Place</th>
 </tr>
 

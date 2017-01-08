@@ -5,7 +5,6 @@
     left: -5em;
     top: -5em;
     width: 3em;
-    font-size: x-large;
     text-align: center;
 
     padding: 13px;
@@ -45,12 +44,23 @@ td p {
 }
 
 th {
-    font-size: xx-large;
-    height: 60px;
+    font-size: 32px;
+    /* Without fixing this value, WebKit (at least) calculates strangely large
+       initial heights, and then takes a few rounds to come to equilibrium.
+       41px = line height (1.3) for 32px font size.
+       $("#table-headers th").height() reports 48, the difference being
+       half the border width: */
+    height: 41px;
 }
 
 th .aside {
-    font-size: x-large;
+    font-size: 24px;
+}
+
+#speed-div {
+    overflow-y: hidden;
+    /* Once again, lineheight for tr th, namely, 1.3 x 32px. */
+    max-height: 41px;
 }
 
 table, td {
@@ -61,6 +71,8 @@ table, td {
 
 td {
     vertical-align: middle;
+    /* ondeck.css:10 sets a 13px padding which makes more difference than you'd think. */
+    padding: 0px;
 }
 /* Not floating the img leaves some extra whitespace below the photo,
    for reasons I don't understand (empty anonymous block box?). */
@@ -104,10 +116,6 @@ td.photo img {
     text-align: center;
 }
 
-/* TODO ondeck.css:10 sets a 13px padding which makes more difference than you'd think. */
-td {
-    padding: 0px;
-}
 
 /* TODO What screen sizes are we trying to support?  Make sure 640x480 works, anyway. */
 /* TODO Work out exactly what font size we can fit, assuming two-line name cells? */
