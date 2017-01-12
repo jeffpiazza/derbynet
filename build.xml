@@ -366,6 +366,7 @@
     <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
     <copy todir="ROOT/Applications/DerbyNet">
         <fileset dir="installer/mac/scripts/webserver">
+            <include name="create-or-update-php-ini.sh"/>
             <include name="update-apache-config.sh"/>
         </fileset>
     </copy>
