@@ -370,6 +370,10 @@
             <include name="update-apache-config.sh"/>
         </fileset>
     </copy>
+    <chmod perm="+x"
+           file="ROOT/Applications/DerbyNet/create-or-update-php-ini.sh"/>
+    <chmod perm="+x"
+           file="ROOT/Applications/DerbyNet/update-apache-config.sh"/>
     <copy todir="ROOT/Applications/DerbyNet/extras">
         <fileset dir="extras"/>
     </copy>

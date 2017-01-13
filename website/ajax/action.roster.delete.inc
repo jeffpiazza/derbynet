@@ -21,6 +21,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
                                array(':roundid' => $_POST['roundid'])) > 0) {
     echo "<failure code='scheduled'>Heats are scheduled for this round; remove before proceeding</failure>\n";
   } else {
+    $stmt = $db->prepare('DELETE FROM Roster WHERE roundid = :roundid');
+    $stmt->execute(array(':roundid' => $_POST['roundid']));
     $stmt = $db->prepare('DELETE FROM Rounds WHERE roundid = :roundid');
     $stmt->execute(array(':roundid' => $_POST['roundid']));
     echo "<success/>\n";

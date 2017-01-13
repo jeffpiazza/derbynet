@@ -103,9 +103,7 @@ function notice_change_current_tbody(tbodyid, round, classname) {
 							 + (classname ? classname + ", " : "")
 							 + "Round " + round + "</a>");
 	} else {
-	  $(".now_running").html("Racing has concluded (tbodyid " + typeof tbodyid + " " + tbodyid
-							 + ", g_update_status.current.tbodyid " + typeof g_update_status.current.tbodyid
-                             + " " + g_update_status.current.tbodyid + ".");
+	  $(".now_running").html("Racing has concluded.");
 	}
 	g_update_status.current.heat = -2;
 	g_update_status.current.tbodyid = tbodyid;

@@ -16,7 +16,7 @@ TIMEZONE=`systemsetup -gettimezone | sed -e "s/Time Zone: //"`
 
 sed -e "s#^upload_max_filesize = 2M#upload_max_filesize = 8M#" \
     -e "s#^;date.timezone =#date.timezone = $TIMEZONE#" \
-    -e "s#^;error_log = syslog#error_log = /var/log/php_errors# \
+    -e "s#^;error_log = syslog#error_log = /var/log/php_errors#" \
     < $ORIGINAL_INI > /etc/php.ini
 
 # Apache needs to be restarted for these changes to take effect; that happens in 

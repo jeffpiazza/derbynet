@@ -28,7 +28,7 @@ g_updating_current_round = false;
 // modal open.
 g_new_round_modal_open = false;
 
-// Each time an polling result arrives, we update this array describing the
+// Each time a polling result arrives, we update this array describing the
 // rounds that have completed.  If the user clicks on the "Add New Round"
 // button, this array is used to populate both the choose_new_round_modal and
 // the new_round_modal dialogs.
@@ -667,7 +667,15 @@ function populate_new_round_modals() {
                 var round = completed_rounds[i];
                 var button = $('<input type="button" data-enhanced="true"/>');
                 button.prop('value', round.classname);
-                button.on('click', function(event) { handle_new_round_chosen(round.roundid); });
+                // Although syntactically it looks like a new round variable is created
+                // each time through the loop, it's actually just one variable that's
+                // reused/assigned each time.  Capturing that reused variable in the on-click
+                // function won't work, so, we need to record the current roundid on
+                // the button itself.
+                button.prop('data-roundid', round.roundid);
+                button.on('click', function(event) {
+                  handle_new_round_chosen($(this).prop('data-roundid'));
+                });
                 modal.append(button);
 
                 var flipswitch_div = $('<div class="flipswitch-div"></div>');
