@@ -54,14 +54,34 @@
 	            <include name="derby-timer.jar"/>
             </fileset>
         </copy>
-        <chmod file="${debian-root}/usr/bin/derby-timer.jar" perm="755"/>
+        <!-- Execute permission set in tarfileset -->
     </target>
 
     <target name="debian-stage-extras">
+        <mkdir dir="${debian-root}/etc"/>
+        <copy todir="${debian-root}/etc">
+            <fileset dir="${extras}">
+                <include name="derbynet.conf"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian-root}/usr/share/derbynet/autostart">
+            <fileset dir="${extras}/autostart">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian-root}/usr/share/derbynet/scripts">
+            <fileset dir="${extras}/scripts">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <!-- Execute permissions for scripts are set in tarfileset -->
         <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
         <copy todir="${debian-root}/usr/share/derbynet/extras">
             <fileset dir="${extras}">
 	            <include name="**"/>
+                <exclude name="derbynet.conf"/>
+                <exclude name="autostart/**"/>
+                <exclude name="scripts/**"/>
             </fileset>
         </copy>
     </target>
@@ -82,10 +102,20 @@
                                             debian-stage-extras,
                                             debian-stage-docs">
         <mkdir dir="${debian-stage}"/>
-        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip" basedir="${debian-root}"/>
+        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
+            <tarfileset dir="${debian-root}" filemode="755">
+                <include name="usr/bin/**"/>
+                <include name="usr/share/derbynet/scripts/**"/>
+            </tarfileset>
+            <tarfileset dir="${debian-root}">
+                <exclude name="usr/bin/**"/>
+                <exclude name="usr/share/derbynet/scripts/**"/>
+            </tarfileset>
+        </tar>
         <delete dir="${debian-root}"/>
 
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
+            <tarfileset file="./combined/conffiles"/>
             <tarfileset file="./combined/control"/>
             <tarfileset file="./combined/postinst" filemode="755"/>
         </tar>

@@ -1,0 +1,10 @@
+The Autostart mechanism is a specification of freedesktop.org, implemented by
+many Linux desktop managers, including LXDE, the default desktop environment for
+the Raspberry Pi's Raspbian operating system.
+
+The files in this directory allow various DerbyNet-related applications to be
+automatically started by copying the corresponding desktop file to the user's
+.config/autostart folder, e.g., to /home/pi/.config/autostart/.  (It may be
+necessary first to create the .config/autostart/ folder.)
+
+It's unlikely that you would want to autostart ALL the files in this folder.

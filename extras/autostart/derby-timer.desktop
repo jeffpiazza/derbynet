@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Derby Timer
+Encoding=UTF-8
+Exec=sh -c "/usr/share/derbynet/scripts/derby-timer.sh"
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Photo Stand
+Encoding=UTF-8
+Exec=lxterminal -e "/usr/share/derbynet/scripts/photostand.sh"
+X-GNOME-Autostart-enabled=true

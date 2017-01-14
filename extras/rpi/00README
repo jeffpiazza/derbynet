@@ -1,0 +1,21 @@
+Utilities for Raspberry Pi
+==========================
+
+About the /boot Partition
+-------------------------
+
+The Raspberry Pi boots from an SD or micro-SD card.  The card includes a
+small-ish /boot partition plus a larger main partition.  While the main
+partition uses one of the Linux-only 'ext' file systems, the /boot partition is
+a vfat file system.  This means the /boot partition can be read and written by
+Windows, Mac, and Linux systems.
+
+When installed on a Raspberry Pi, the DerbyNet package installs two small files
+in the /boot partition.  These files are intended to be edited by the user.
+Placing them in the /boot partition makes it possible to change network
+parameters, server address, and passwords without having to bring keyboard,
+mouse, and monitor to attach to the Raspberry Pi.  Rather, with the Pi powered
+off, mount the SD card in a Windows, Mac, or Linux machine, and edit the
+configuration files directly in the /boot partition; then replace the card in
+the Pi and reboot.
+
