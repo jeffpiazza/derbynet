@@ -103,13 +103,13 @@
                                             debian-stage-docs">
         <mkdir dir="${debian-stage}"/>
         <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
-            <tarfileset dir="${debian-root}" filemode="755">
-                <include name="usr/bin/**"/>
-                <include name="usr/share/derbynet/scripts/**"/>
-            </tarfileset>
             <tarfileset dir="${debian-root}">
                 <exclude name="usr/bin/**"/>
                 <exclude name="usr/share/derbynet/scripts/**"/>
+            </tarfileset>
+            <tarfileset dir="${debian-root}" filemode="755">
+                <include name="usr/bin/**"/>
+                <include name="usr/share/derbynet/scripts/**"/>
             </tarfileset>
         </tar>
         <delete dir="${debian-root}"/>
