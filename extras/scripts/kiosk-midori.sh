@@ -19,4 +19,7 @@ while [ $CONTACT_OK -eq 0 ]; do
     curl --location --silent "$DERBYNET_SERVER/index.php" > /dev/null && CONTACT_OK=1
 done
 
-midori --execute Fullscreen --app "$DERBYNET_SERVER/kiosk.php"
+# While loop allows recovery from browser crashes
+while true ; do
+    midori --execute Fullscreen --app "$DERBYNET_SERVER/kiosk.php"
+done
