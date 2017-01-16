@@ -5,7 +5,7 @@ require_once('inc/awards.inc');
 
 require('ajax/query.class.list.inc');
 
-foreach ($db->query('SELECT * FROM AwardTypes ORDER BY awardtypeid') as $atype) {
+foreach ($db->query('SELECT awardtypeid, awardtype FROM AwardTypes ORDER BY awardtypeid') as $atype) {
   echo '<awardtype';
   echo ' awardtypeid="'.$atype['awardtypeid'].'"';
   echo ' awardtype="'.htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8').'"';

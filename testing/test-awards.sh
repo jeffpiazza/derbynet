@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 if [ "$2" = "basic" ] ; then
     # Basic racing
-    SECOND_TEST=' firstname="Jamison"'
+    SECOND_TEST=' firstname="Kris"'
     THIRD_TEST=' lastname="Burling"'
 else
     # Master schedule racing
