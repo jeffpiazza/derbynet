@@ -36,7 +36,14 @@ function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $car
               .' WHERE round = 1'
               .' AND NOT EXISTS(SELECT 1 FROM Roster'
               .' WHERE Roster.roundid = Rounds.roundid'
-              .' AND Roster.classid = RegistrationInfo.classid'
+              // The classid field on the Roster is a mis-design inherited from
+              // GPRM.  The field is completely redundant, which just means,
+              // sooner or later, it'll get the wrong value.
+              //
+              // A racer is enrolled in a round if there's a Roster entry connecting
+              // the racerid to the roundid; the classid shouldn't matter.
+              //
+              // .' AND Roster.classid = RegistrationInfo.classid'
               .' AND Roster.racerid = RegistrationInfo.racerid)');
 }
 
