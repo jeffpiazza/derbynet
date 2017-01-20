@@ -12,3 +12,4 @@ if (!isset($_GET['path'])) {
   echo htmlspecialchars($path, ENT_QUOTES, 'UTF-8');
   echo '</path>'."\n";
 }
+?>

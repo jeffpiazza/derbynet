@@ -215,7 +215,7 @@ foreach ($stmt as $rs) {
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
-          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop"/>
+          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
         </div>
     </div>
   </form>
