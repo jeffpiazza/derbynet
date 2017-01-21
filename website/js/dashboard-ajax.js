@@ -3,14 +3,14 @@
 
 g_action_url = "action.php";
 
-// Note that this doesn't run if the $.ajax call has a success:
-// callback that generates an error.
+// Note that this doesn't run if the $.ajax call has a 'success:' callback that
+// generates an error.
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
-	var fail = xmldoc.documentElement.getElementsByTagName("failure");
-
-	if (fail && fail.length > 0) {
-		alert("Action failed: " + fail[0].textContent);
-	}
+  var fail = xmldoc.documentElement.getElementsByTagName("failure");
+  if (fail && fail.length > 0) {
+    console.log(xmldoc);
+    alert("Action failed: " + fail[0].textContent);
+  }
 });
 
 // <reload/> element

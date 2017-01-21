@@ -41,8 +41,9 @@ function make_assignable(target) {
 	  ui.draggable.closest(".thumbnail").addClass("hidden");
 	  $(this).prepend('<img class="assigned"' +
 					  ' data-image-filename="' + photo_base_name + '"' +
-                      ' onclick="window.location.href=\'photo-crop.php?repo=' + g_photo_repo_name 
-                      + '&name=' + encodeURIComponent(photo_base_name) + '\'"' +
+                      ' onclick="showPhotoCropModal(this, ' + 
+                                                    '\'' + g_photo_repo_name + '\', ' +
+                                                    '\'' + photo_base_name + '\', 0)"' +
                       // RENDER_LISTVIEW (comment for code search)
 					  ' src="photo.php/' + g_photo_repo_name + '/file/80x80/' +
 					  encodeURIComponent(photo_base_name) + '/' +
