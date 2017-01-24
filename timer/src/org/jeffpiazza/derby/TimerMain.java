@@ -6,6 +6,7 @@ import org.jeffpiazza.derby.gui.TimerGui;
 
 import javax.swing.*;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
+import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
@@ -49,6 +50,10 @@ public class TimerMain {
         "   -reset-on-ready: reset timer when next heat scheduled");
     System.out.println(
         "   -reset-on-race-over: reset timer immediately after Race Over from timer");
+    System.out.println();
+    System.out.println("For NewBold only:");
+    System.out.println(
+        "   -reset-delay-on-race-over <nsec>: how long after race over before reset");
   }
 
   private static LogWriter makeLogWriter() {
@@ -75,6 +80,7 @@ public class TimerMain {
     boolean simulateTimer = false;
     boolean simulateHost = false;
     boolean recording = false;
+    boolean playback = false;
 
     LogWriter logwriter;
 
@@ -142,8 +148,15 @@ public class TimerMain {
       } else if (arg.equals("-reset-on-race-over")) {
         TheJudgeDevice.setResetOnRaceOver(true);
         ++consumed_args;
+      } else if (arg.equals("-reset-delay-on-race-over")) {
+        NewBoldDevice.setPostRaceDisplayDurationMillis(
+            1000 * Integer.parseInt(args[consumed_args + 1]));
+        consumed_args += 2;
       } else if (arg.equals("-record")) {
         recording = true;
+        ++consumed_args;
+      } else if (arg.equals("-playback")) {
+        playback = true;
         ++consumed_args;
       } else {
         usage();
@@ -207,6 +220,9 @@ public class TimerMain {
       }
       if (recording) {
         timerTask.setRecording();
+      }
+      if (playback) {
+        timerTask.setPlayback();
       }
       timerTask.run();
     } catch (Throwable t) {

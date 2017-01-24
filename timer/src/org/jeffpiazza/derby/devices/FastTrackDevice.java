@@ -2,7 +2,7 @@ package org.jeffpiazza.derby.devices;
 
 import jssc.*;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 
@@ -46,12 +46,12 @@ public class FastTrackDevice extends TimerDeviceTypical {
   // RX resets the timer, but then seems to make it unresponsive
 
   public boolean probe() throws SerialPortException {
-    if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600,
-                                      SerialPort.DATABITS_8,
-                                      SerialPort.STOPBITS_1,
-                                      SerialPort.PARITY_NONE,
-                                      /* rts */ false,
-                                      /* dtr */ false)) {
+    if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
+                                   SerialPort.DATABITS_8,
+                                   SerialPort.STOPBITS_1,
+                                   SerialPort.PARITY_NONE,
+                                   /* rts */ false,
+                                   /* dtr */ false)) {
       return false;
     }
 
@@ -96,7 +96,8 @@ public class FastTrackDevice extends TimerDeviceTypical {
     });
   }
 
-  public void prepareHeat(int roundid, int heat, int lanemask) throws SerialPortException {
+  public void prepareHeat(int roundid, int heat, int lanemask) throws
+      SerialPortException {
     prepare(roundid, heat);
     portWrapper.write(CLEAR_LANE_MASK);
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark

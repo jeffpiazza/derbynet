@@ -1,11 +1,13 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.serialport;
 
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 
 public class RecordingSerialPortWrapper extends SerialPortWrapper {
   public RecordingSerialPortWrapper(SerialPort port, LogWriter logwriter)

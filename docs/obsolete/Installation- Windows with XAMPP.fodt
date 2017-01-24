@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2014-12-07T08:16:39.761391000</meta:creation-date><dc:date>2016-01-03T12:48:30.976615000</dc:date><meta:editing-duration>PT1H3M25S</meta:editing-duration><meta:editing-cycles>7</meta:editing-cycles><meta:generator>LibreOffice/5.0.3.2$MacOSX_X86_64 LibreOffice_project/e5f16313668ac592c1bfb310f4390624e3dbfb75</meta:generator><meta:print-date>2015-03-12T09:15:14.917078000</meta:print-date><meta:document-statistic meta:table-count="0" meta:image-count="1" meta:object-count="0" meta:page-count="2" meta:paragraph-count="28" meta:word-count="402" meta:character-count="2746" meta:non-whitespace-character-count="2357"/></office:meta>
+ <office:meta><meta:creation-date>2014-12-07T08:16:39.761391000</meta:creation-date><dc:date>2017-01-23T18:24:18.945790000</dc:date><meta:editing-duration>PT1H8M28S</meta:editing-duration><meta:editing-cycles>8</meta:editing-cycles><meta:generator>LibreOffice/5.2.4.2$MacOSX_X86_64 LibreOffice_project/3d5603e1122f0f102b62521720ab13a38a4e0eb0</meta:generator><meta:print-date>2015-03-12T09:15:14.917078000</meta:print-date><meta:document-statistic meta:table-count="0" meta:image-count="1" meta:object-count="0" meta:page-count="2" meta:paragraph-count="29" meta:word-count="453" meta:character-count="3104" meta:non-whitespace-character-count="2662"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">27055</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">0</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">26910</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">14993</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">27656</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">15700</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">7334</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">7474</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">7303</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">5787</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">27055</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">26908</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">42046</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">0</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">27654</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">15699</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -53,8 +53,7 @@
    <config:config-item config:name="PrintSingleJobs" config:type="boolean">false</config:config-item>
    <config:config-item config:name="SmallCapsPercentage66" config:type="boolean">false</config:config-item>
    <config:config-item config:name="CollapseEmptyCellPara" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="RedlineProtectionKey" config:type="base64Binary"/>
-   <config:config-item config:name="TabAtLeftIndentForParagraphsInList" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UseFormerLineSpacing" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ProtectForm" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterSetup" config:type="base64Binary">4gD+/0VQU09OIFdvcmtGb3JjZSA2NDUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARVBTT04gV29ya0ZvcmNlIDY0NS1BaXJQcmludAAAAAAWAAQABAAAAAAAAAAIAFZUAAAkbQAADygAABIAQ09NUEFUX0RVUExFWF9NT0RFDgBEVVBMRVhfVU5LTk9XTg==</config:config-item>
@@ -71,11 +70,18 @@
    <config:config-item config:name="RsidRoot" config:type="int">1372536</config:config-item>
    <config:config-item config:name="PropLineSpacingShrinksFirstLine" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ConsiderTextWrapOnObjPos" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="TabAtLeftIndentForParagraphsInList" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="RedlineProtectionKey" config:type="base64Binary"/>
    <config:config-item config:name="UnxForceZeroExtLeading" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrintDrawings" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseFormerTextWrapping" config:type="boolean">false</config:config-item>
    <config:config-item config:name="CurrentDatabaseDataSource" config:type="string"/>
    <config:config-item config:name="AllowPrintJobCancel" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SubtractFlysAnchoredAtFlys" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="AddParaSpacingToTableCells" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="AddExternalLeading" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="AddVerticalFrameOffsets" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="TreatSingleColumnBreakAsPageBreak" config:type="boolean">false</config:config-item>
    <config:config-item config:name="MathBaselineAlignment" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AddFrameOffsets" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IsLabelDocument" config:type="boolean">false</config:config-item>
@@ -87,11 +93,8 @@
    <config:config-item config:name="PrintBlackFonts" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="SubtractFlysAnchoredAtFlys" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="AddParaSpacingToTableCells" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="AddExternalLeading" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2749004</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">2785497</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -319,6 +322,9 @@
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="00125798" officeooo:paragraph-rsid="0014f178"/>
   </style:style>
+  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:font-style="italic" fo:font-weight="bold" officeooo:rsid="002a80d9" officeooo:paragraph-rsid="002a80d9" style:font-style-asian="italic" style:font-weight-asian="bold" style:font-style-complex="italic" style:font-weight-complex="bold"/>
+  </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="001d4204"/>
   </style:style>
@@ -346,6 +352,9 @@
   <style:style style:name="T9" style:family="text">
    <style:text-properties officeooo:rsid="0029f24c"/>
   </style:style>
+  <style:style style:name="T10" style:family="text">
+   <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+  </style:style>
   <style:style style:name="fr1" style:family="graphic" style:parent-style-name="Graphics">
    <style:graphic-properties style:horizontal-pos="center" style:horizontal-rel="paragraph" style:mirror="none" fo:clip="rect(0in, 0in, 0in, 0in)" draw:luminance="0%" draw:contrast="0%" draw:red="0%" draw:green="0%" draw:blue="0%" draw:gamma="100%" draw:color-inversion="false" draw:image-opacity="100%" draw:color-mode="standard"/>
   </style:style>
@@ -369,6 +378,7 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
    <text:p text:style-name="P17">Setting Up <text:span text:style-name="T2">a Server </text:span>on <text:span text:style-name="T4">Windows with XAMPP</text:span></text:p>
+   <text:p text:style-name="P18">This document is obsolete.<text:span text:style-name="T10"> <text:s/>As of DerbyNet v2.0, the recommended set-up on Windows is to use the .win.zip file, which includes a bespoke Uniform Server to host DerbyNet. <text:s/>The process described in this document, while still correct, involves significantly more steps. <text:s/>See the document </text:span>Installation- Windows<text:span text:style-name="T10"> for the currently-recommended installation process.</text:span></text:p>
    <text:p text:style-name="P13">DerbyNet can be installed alongside Grand Prix Race Manager to provide added functionality, while leaving the actual running of the derby to GPRM. <text:s/><text:span text:style-name="T9">(Note that DerbyNet is neither endorsed nor supported by Lisano Enterprises, LLC, the makers of GrandPrix Race Manager.)</text:span></text:p>
    <text:p text:style-name="P7">DerbyNet <text:span text:style-name="T3">depends on</text:span> a web server <text:span text:style-name="T3">platform </text:span>with <text:span text:style-name="T3">PHP and</text:span> access to a database. <text:s/><text:span text:style-name="T3">This document describes setting up these underlying technologies on Windows using the XAMPP installer.</text:span></text:p>
    <text:p text:style-name="P14">(Of course, the<text:span text:style-name="T9">r</text:span>e are other options available, but they&apos;re outside the scope of this document.)</text:p>
@@ -623,9 +633,9 @@
      </draw:image>
     </draw:frame>After <text:span text:style-name="T4">downloading</text:span>, follow the instructions in the installer. <text:s/><text:span text:style-name="T6">The only elements of the stack that you&apos;ll need are Apache and PHP;</text:span><text:span text:style-name="T5"> you can de-select all the others to save space, and reduce any chance of conflict. <text:s/>For everything else, c</text:span>hoose the default options unless you have a particular reason to decide otherwise.</text:p>
    <text:p text:style-name="P11">By default, the installer will place everything it installs in the folder <text:a xlink:type="simple" xlink:href="../../../../../../../C:/xampp" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">C:\xampp</text:a>. <text:s/>(If you choose a different installation location, modify the remaining instructions in this document appropriately.)</text:p>
-   <text:h text:style-name="P2" text:outline-level="2">Activate the ODBC Driver</text:h>
+   <text:h text:style-name="P2" text:outline-level="2"><text:soft-page-break/>Activate the ODBC Driver</text:h>
    <text:p text:style-name="P11">Once the XAMPP installer finishes, we need to make a small change to the PHP configuration file. <text:s/>Use Notepad or another text editor to open the file C:\xampp\php\php.ini. <text:s/>Locate the line that says:</text:p>
-   <text:p text:style-name="P11"><text:soft-page-break/>;extension=php_pdo_odbc.dll</text:p>
+   <text:p text:style-name="P11">;extension=php_pdo_odbc.dll</text:p>
    <text:p text:style-name="P11">and just delete the semicolon. <text:s/>Remember to save the file.</text:p>
    <text:h text:style-name="P3" text:outline-level="2">Start or Restart the Apache Server</text:h>
    <text:p text:style-name="P12">If you haven&apos;t already, launch the XAMPP Control Panel (either through the Start menu, or at C:\xampp\xampp-control.exe). <text:s/>Stop the Apache server (if it&apos;s running), then (re)start it. <text:s/>This is necessary for the change to the php.ini file to take effect.</text:p>

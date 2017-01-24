@@ -5,9 +5,7 @@ import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
-
-// TODO Reset ("*") could be used to probe for The Judge.
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 /*
 Race Number 14
@@ -55,12 +53,12 @@ public class TheJudgeDevice extends TimerDeviceBase {
   // device at all, we just assume that we're talking to one.
   @Override
   public boolean probe() throws SerialPortException {
-    if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600,
-                                      SerialPort.DATABITS_8,
-                                      SerialPort.STOPBITS_1,
-                                      SerialPort.PARITY_NONE,
-                                      /* rts */ false,
-                                      /* dtr */ false)) {
+    if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
+                                   SerialPort.DATABITS_8,
+                                   SerialPort.STOPBITS_1,
+                                   SerialPort.PARITY_NONE,
+                                   /* rts */ false,
+                                   /* dtr */ false)) {
       return false;
     }
 

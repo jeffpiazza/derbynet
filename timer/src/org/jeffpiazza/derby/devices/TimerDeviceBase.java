@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public abstract class TimerDeviceBase implements TimerDevice {
   protected SerialPortWrapper portWrapper;
@@ -97,7 +97,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
   @Override
   public void close() {
     try {
-      portWrapper.port().closePort();
+      portWrapper.closePort();
     } catch (SerialPortException ex) {
       Logger.getLogger(TimerDeviceBase.class.getName()).log(Level.SEVERE, null,
                                                             ex);

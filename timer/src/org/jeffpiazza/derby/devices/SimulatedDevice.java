@@ -2,7 +2,7 @@ package org.jeffpiazza.derby.devices;
 
 import java.text.DecimalFormat;
 import jssc.SerialPortException;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.Random;
 import org.jeffpiazza.derby.Message;

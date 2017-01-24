@@ -2,7 +2,7 @@ package org.jeffpiazza.derby.devices;
 
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
 
 public abstract class TimerDeviceTypical

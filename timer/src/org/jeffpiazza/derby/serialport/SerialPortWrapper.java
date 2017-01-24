@@ -1,7 +1,8 @@
-package org.jeffpiazza.derby;
+package org.jeffpiazza.derby.serialport;
 
 import jssc.*;
 import java.util.ArrayList;
+import org.jeffpiazza.derby.LogWriter;
 
 // Usage:
 //
@@ -50,8 +51,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
     this.logwriter = logwriter;
 
     if (port != null) {
-      if (!port.purgePort(SerialPort.PURGE_RXCLEAR |
-                          SerialPort.PURGE_TXCLEAR)) {
+      if (!port.purgePort(SerialPort.PURGE_RXCLEAR
+          | SerialPort.PURGE_TXCLEAR)) {
         System.out.println("purgePort failed.");  // TODO
         // return false;
       }
@@ -61,8 +62,26 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
-  public SerialPort port() {
-    return port;
+  // These xxxPortXxx methods are the only ones that interact directly with the
+  // SerialPort member.å
+  public boolean setPortParams(int baudRate, int dataBits, int stopBits,
+                               int parity,
+                               boolean setRTS, boolean setDTR)
+      throws SerialPortException {
+    return port.setParams(baudRate, dataBits, stopBits, parity, setRTS, setDTR);
+  }
+
+  public void closePort() throws SerialPortException {
+    port.closePort();
+  }
+
+  // Read a string from the port.
+  protected String readStringFromPort() throws SerialPortException {
+    return port.readString();
+  }
+
+  protected void writeStringToPort(String s) throws SerialPortException {
+    port.writeString(s);
   }
 
   public LogWriter logWriter() {
@@ -113,10 +132,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // newline-terminated line is formed, add it to the queue.  Any
   // remaining characters, forming an incomplete line, remain in
   // leftover.
-  private void read() throws SerialPortException {
+  protected void read() throws SerialPortException {
     try {
       while (true) {
-        String s = port.readString();
+        String s = readStringFromPort();
         if (s == null || s.length() == 0) {
           break;
         }
@@ -160,7 +179,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void write(String s) throws SerialPortException {
     logwriter.serialPortLog(LogWriter.OUTGOING, s);
     last_command = System.currentTimeMillis();
-    port.writeString(s);
+    writeStringToPort(s);
   }
 
   // These are unsatisfactory, because it's not a certainty that

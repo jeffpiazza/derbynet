@@ -2,7 +2,7 @@ package org.jeffpiazza.derby.devices;
 
 import jssc.*;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
 
 import java.util.regex.Matcher;
@@ -46,12 +46,12 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
   }
 
   public boolean probe() throws SerialPortException {
-    if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600,
-                                      SerialPort.DATABITS_8,
-                                      SerialPort.STOPBITS_1,
-                                      SerialPort.PARITY_NONE,
-                                      /* rts */ false,
-                                      /* dtr */ false)) {
+    if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
+                                   SerialPort.DATABITS_8,
+                                   SerialPort.STOPBITS_1,
+                                   SerialPort.PARITY_NONE,
+                                   /* rts */ false,
+                                   /* dtr */ false)) {
       return false;
     }
 
@@ -132,7 +132,8 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
     return numberOfLanes == 0 ? MAX_LANES : numberOfLanes;
   }
 
-  public void prepareHeat(int roundid, int heat, int lanemask) throws SerialPortException {
+  public void prepareHeat(int roundid, int heat, int lanemask) throws
+      SerialPortException {
     prepare(roundid, heat);
     // These don't give responses, so no need to wait for any.
     portWrapper.write(RESET_LANE_MASK);

@@ -120,7 +120,7 @@
           <propertyresource name="git-status-short"/>
           <filterchain>
               <striplinebreaks/>
-              <replaceregex pattern=".+" replace="-dirty" flags="s"/>
+              <replaceregex pattern=".+" replace="-modified" flags="s"/>
           </filterchain>
       </loadresource>
       <property name="git-dirty" value=""/>
@@ -164,7 +164,8 @@
       </copy>
   </target>
 
-  <target name="timer-jar" depends="generated">
+  <target name="timer-jar" depends="generated"
+          description="Builds the jar file for derby-timer">
       <ant dir="${timer-dir}"/>
   </target>
 

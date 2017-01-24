@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 // TURBO  NewBold Products
 // 1 3.5109 3 3.1288 2 2.9831 4 3.5644
@@ -17,6 +17,21 @@ import org.jeffpiazza.derby.SerialPortWrapper;
 public class NewBoldDevice extends TimerDeviceBase {
   public NewBoldDevice(SerialPortWrapper portWrapper) {
     super(portWrapper);
+  }
+
+  // Once a race completes, we need to send a timer reset to prepare for the
+  // next race.  We could do that immediately upon conclusion of the race, but
+  // then the results don't display long enough to be seen.  Instead, we set
+  // this deadline value, and check it during the poll loop.
+  //
+  // < 0 means no reset is pending.
+  private long timerResetMillis = -1;
+
+  // How long to wait after a race before sending the reset?
+  private static long postRaceDisplayDurationMillis = 5000;
+
+  public static void setPostRaceDisplayDurationMillis(long v) {
+    postRaceDisplayDurationMillis = v;
   }
 
   @Override
@@ -30,12 +45,16 @@ public class NewBoldDevice extends TimerDeviceBase {
 
   @Override
   public boolean probe() throws SerialPortException {
-    return portWrapper.port().setParams(SerialPort.BAUDRATE_1200,
-                                        SerialPort.DATABITS_7,
-                                        SerialPort.STOPBITS_2,
-                                        SerialPort.PARITY_NONE,
-                                        /* rts */ false,
-                                        /* dtr */ false);
+    if (portWrapper.setPortParams(SerialPort.BAUDRATE_1200,
+                                  SerialPort.DATABITS_7,
+                                  SerialPort.STOPBITS_2,
+                                  SerialPort.PARITY_NONE,
+                                  /* rts */ false,
+                                  /* dtr */ false)) {
+      portWrapper.write(" ");  // Reset timer
+      return true;
+    }
+    return false;
   }
 
   @Override
@@ -46,20 +65,17 @@ public class NewBoldDevice extends TimerDeviceBase {
   @Override
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
-    if (this.roundid == 0 && this.heat == 0) {
-      // TODO: Sending a single SPC character would reset the timer; is that
-      // desirable?
-    }
+    // if (this.roundid == 0 && this.heat == 0) { ... }
     prepare(roundid, heat);
   }
 
   @Override
   public void abortHeat() throws SerialPortException {
-    portWrapper.port().writeString(" ");  // Reset timer
+    portWrapper.write(" ");  // Reset timer
   }
 
   private static final Pattern singleLanePattern = Pattern.compile(
-      "^\\s+(\\d)\\s+(\\d\\.\\d+)(\\s.*)");
+      "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)");
 
   @Override
   public void poll() throws SerialPortException, LostConnectionException {
@@ -71,33 +87,39 @@ public class NewBoldDevice extends TimerDeviceBase {
         Matcher m = singleLanePattern.matcher(line);
         if (m.find()) {
           int lane = Integer.parseInt(m.group(1));
-          if (results.size() <= lane) {
+          if (results.size() < lane) {
             results.ensureCapacity(lane);
-            while (results.size() <= lane) {
+            while (results.size() < lane) {
               results.add(null);
             }
           }
-          results.set(lane, new Message.LaneResult());
-          results.get(lane).place = 1 + nresults;
-          results.get(lane).time = m.group(2);
+          results.set(lane - 1, new Message.LaneResult());
+          results.get(lane - 1).place = 1 + nresults;
+          results.get(lane - 1).time = m.group(2);
           ++nresults;
-          String msg = "*   Lane " + lane + ": " + m.group(2) + " seconds";
-          System.out.println(msg);  // TODO
-          portWrapper.logWriter().traceInternal(msg);  // TODO
+          line = m.group(3).trim();
+
+          portWrapper.logWriter().traceInternal(
+              "Lane " + lane + ": " + m.group(2) + " seconds");
         } else {
-          String msg = "* Unrecognized: [[" + line + "]]";
-          System.out.println(msg);
-          portWrapper.logWriter().traceInternal(msg);
+          portWrapper.logWriter().traceInternal(
+              "* Unrecognized: [[" + line + "]]");
           break;
         }
       }
       if (nresults > 0) {
         invokeRaceFinishedCallback(roundid, heat,
-                                   (Message.LaneResult[]) results.toArray());
+                                   (Message.LaneResult[]) results.toArray(
+                                       new Message.LaneResult[results.size()]));
         roundid = heat = 0;
-        System.out.println("* Race finished!");  // TODO
-        portWrapper.logWriter().traceInternal("* Race finished!");  // TODO
+        portWrapper.logWriter().traceInternal("Race finished!");
+        timerResetMillis
+            = System.currentTimeMillis() + postRaceDisplayDurationMillis;
       }
+    }
+    if (timerResetMillis > 0 && System.currentTimeMillis() > timerResetMillis) {
+      portWrapper.write(" ");  // Reset timer
+      timerResetMillis = -1;
     }
   }
 }

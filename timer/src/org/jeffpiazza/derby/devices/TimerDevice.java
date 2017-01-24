@@ -6,7 +6,7 @@ import org.jeffpiazza.derby.Message;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.*;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public interface TimerDevice {
   // Constructor takes SerialPortWrapper, but doesn't change settings.

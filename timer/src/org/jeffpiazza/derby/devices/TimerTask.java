@@ -10,16 +10,20 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.HttpTask;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.AllSerialPorts;
-import org.jeffpiazza.derby.RecordingSerialPortWrapper;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.RecordingSerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.TimerMain;
 import org.jeffpiazza.derby.gui.TimerGui;
+import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
 
 public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private TimerGui timerGui;
   private LogWriter logwriter;
   private TimerMain.ConnectorImpl connector;
-  private boolean recording = false;
+  private static final int PORT_NORMAL = 0;
+  private static final int PORT_RECORDING = 1;
+  private static final int PORT_PLAYBACK = 2;
+  private int port_record_playback = PORT_NORMAL;
   private TimerDevice device;
 
   // Flag that's set when a click from the GUI changes the serial port or timer
@@ -48,14 +52,20 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     }
   }
 
-  // This is called when simulating the device class
+  // This is called when simulating the device class, i.e., for exercising
+  // the http task and web server
   public void setSimulatedTimer() {
     timerClasses.choose(SimulatedDevice.class);
     serialPorts.choose("");
   }
 
   public void setRecording() {
-    this.recording = true;
+    port_record_playback = PORT_RECORDING;
+  }
+
+  public void setPlayback() {
+    port_record_playback = PORT_PLAYBACK;
+    serialPorts.choose("");
   }
 
   public void userChoosesTimerClass(Class<? extends TimerDevice> timerClass) {
@@ -71,6 +81,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private synchronized boolean userIntervened() {
     return userIntervened;
   }
+
   private synchronized void setUserIntervened(boolean v) {
     userIntervened = v;
     this.notifyAll();
@@ -203,9 +214,18 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
               }
               continue;
             }
-            portWrapper = recording
-                          ? new RecordingSerialPortWrapper(port, logwriter)
-                          : new SerialPortWrapper(port, logwriter);
+          }
+          switch (port_record_playback) {
+            case PORT_NORMAL:
+            default:
+              portWrapper = new SerialPortWrapper(port, logwriter);
+              break;
+            case PORT_RECORDING:
+              portWrapper = new RecordingSerialPortWrapper(port, logwriter);
+              break;
+            case PORT_PLAYBACK:
+              portWrapper = new PlaybackSerialPortWrapper(logwriter);
+              break;
           }
           for (Class<? extends TimerDevice> timerClass
                : timerClasses.candidates()) {

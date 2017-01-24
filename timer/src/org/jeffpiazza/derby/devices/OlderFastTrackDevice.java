@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 // This device class supports older FastTrack devices that don't accept (i.e.,
 // are deaf to) commands from the host.
@@ -48,12 +48,12 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
   // Since the device doesn't listen to anything we say, we don't "probe" the
   // device at all, we just assume that we're talking to one.
   public boolean probe() throws SerialPortException {
-    if (!portWrapper.port().setParams(SerialPort.BAUDRATE_9600,
-                                      SerialPort.DATABITS_8,
-                                      SerialPort.STOPBITS_1,
-                                      SerialPort.PARITY_NONE,
-                                      /* rts */ false,
-                                      /* dtr */ false)) {
+    if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
+                                   SerialPort.DATABITS_8,
+                                   SerialPort.STOPBITS_1,
+                                   SerialPort.PARITY_NONE,
+                                   /* rts */ false,
+                                   /* dtr */ false)) {
       return false;
     }
 
