@@ -5,3 +5,5 @@
 ./create-or-update-php-ini.sh
 ./update-apache-config.sh
 ./maybe-rewrite-index-html.sh
+
+open http://localhost/derbynet
