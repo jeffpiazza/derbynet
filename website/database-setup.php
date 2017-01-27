@@ -137,6 +137,7 @@ $form_fields = array();
 $form_fields['radio'] = 'sqlite';
 $form_fields['mysql_host'] = 'localhost';
 $form_fields['sqlite_path'] = $default_file_path.DIRECTORY_SEPARATOR.date('Ymd-Hi').'.sqlite';
+$form_fields['connection_string'] = 'sqlite:'.$form_fields['sqlite_path'];
 
 if (isset($db_connection_string)) {
   $form_fields['connection_string'] = $db_connection_string;
@@ -206,17 +207,16 @@ if (isset($db_connection_string)) {
       <div style="width: 80%">
         <label for="sqlite_path">Path (on server) to SQLite data file:</label>
         <input type="text" name="sqlite_path" id="sqlite_path"
-               value="<?php echo @$form_fields['sqlite_path']; ?>"/>
+               value="<?php echo htmlspecialchars(@$form_fields['sqlite_path'], ENT_QUOTES, 'UTF-8'); ?>"/>
       </div>
     </div>
 
     <div id="for_string_connection" class="string_connection_wrapper">
         <label for="connection_string">Database connection string:</label>
         <input type="text" name="connection_string" id="connection_string"
+               value="<?php echo htmlspecialchars(@$form_fields['connection_string'], ENT_QUOTES, 'UTF-8'); ?>"
             <?php
-              if (isset($db_connection_string)) {
-                echo 'value="'.htmlspecialchars($db_connection_string, ENT_QUOTES, 'UTF-8').'"';
-              } else {
+              if (!isset($db_connection_string)) {
                 echo 'placeholder="Database connection string"';
               }
             ?>/>
