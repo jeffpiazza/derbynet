@@ -390,7 +390,7 @@
     <delete dir="ROOT"/>
 </target>
 
-<target name="dist.mac" if="is_mac"
+<target name="dist.mac" if="is_mac" description="Full Macintosh installer package"
 	depends="mac.installer.website,
                  mac.installer.replay, mac.installer.timer,
                  mac.installer.docs, mac.installer.extras,
