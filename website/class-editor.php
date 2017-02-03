@@ -1,6 +1,8 @@
 <?php @session_start();
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/authorize.inc');
+require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
 <html>
 <head>

@@ -163,8 +163,9 @@ foreach ($stmt as $rs) {
   <input id="edit_carname" type="text" name="edit_carname" value=""/>
   <br/>
 
-  <label for="edit_rank">Racing group:</label>
-  <select id="edit_rank"><?php
+<?php
+
+    $rank_options = "";
     $sql = 'SELECT rankid, rank, Ranks.classid, class'
            .' FROM Ranks INNER JOIN Classes'
            .' ON Ranks.classid = Classes.classid'
@@ -173,16 +174,27 @@ foreach ($stmt as $rs) {
            .'class, rank';
     $stmt = $db->query($sql);
     foreach ($stmt as $rs) {
-      echo "\n".'<option value="'.$rs['rankid'].'"'
+      $rank_options .= "\n".'<option value="'.$rs['rankid'].'"'
             .' data-class="'.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'"'
            .' data-rank="'.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8').'"'
            .'>'
            .htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8')
-      .' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
-	   .'</option>';
+          .' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
+	       .'</option>';
     }
-  ?>
-  </select>
+
+    if (!$rank_options) {
+      echo "<div id='rank_missing'>\n";
+      echo "<img src='img/status/trouble.png'/>\n";
+      echo "<p>There are no racing groups defined.  "
+          ."Visit the <a href='class-editor.php'>'Edit ".group_label()."'</a>"
+          ." page to define racing groups.</p>\n";
+      echo "</div>";
+    }
+?>
+  <label for="edit_rank">Racing group:</label>
+    <select id="edit_rank"><?php echo $rank_options; ?>
+    </select>
   <br/>
   <label for="eligible">Trophy eligibility:</label>
     <input type="checkbox" data-role="flipswitch" name="eligible" id="eligible"
@@ -215,7 +227,8 @@ foreach ($stmt as $rs) {
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
-          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
+          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"
+    />
         </div>
     </div>
   </form>

@@ -29,6 +29,12 @@
 # The PHOTO_REPO variable must be one of these two keywords:
 PHOTO_REPO=car
 # PHOTO_REPO=head
+
+# Auto-cropping automatically crops head shots; probably not what you want for
+# car photos.
+AUTOCROP=0
+# AUTOCROP=1
+
 PHOTO_USER=Photo
 PHOTO_PASSWORD=flashbulb
 BARCODE_SCANNER_DEV=/dev/input/by-id/usb-Megawin_Technology_Inc._USB_Keyboard-event-kbd
@@ -45,21 +51,34 @@ COOKIES=`mktemp`
 # Ignore error failures
 set +e
 
+# This gvfs daemon conflicts with chdkptp and prevents correct operation of the script,
+# so kill it if it's running
+sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
+
 # If there are connectivity problems, keep trying until login is successful.
 LOGIN_OK=0
 while [ $LOGIN_OK -eq 0 ]; do
+    echo Logging in
     curl --location --data "action=login&name=$PHOTO_USER&password=$PHOTO_PASSWORD" \
-         --silent -b "$COOKIES" -c "$COOKIES" \
-         "$DERBYNET_SERVER/action.php" > /dev/null && LOGIN_OK=1
+         --silent -b "$COOKIES" -c "$COOKIES" -o - \
+         "$DERBYNET_SERVER/action.php" \
+    | grep -q success \
+	&& LOGIN_OK=1
+    test $LOGIN_OK -eq 0 && sleep 1s
 done
 
 echo Successfully logged in
+
+# Connect to camera, set to picture-taking mode.  (This lets operator adjust
+# photo composition.)
+#
+# Assumes there's only one camera attached
+chdkptp -c -e"rec"
 
 while true ; do
     CAR_NO=`barcode $BARCODE_SCANNER_DEV | grep -e "^PWD[0-9]*$" | sed -e "s/PWD//"`
     if [ "$CAR_NO" ] ; then
 
-        # Assumes there's only one camera attached
         chdkptp -c -e"rec" -e"remoteshoot Car$CAR_NO"
         # Alternatively:
         # gphoto2 --filename "Car$CAR_NO" --capture-image-and-download
@@ -68,6 +87,7 @@ while true ; do
              -F MAX_FILE_SIZE=30000000 \
              -F repo=$PHOTO_REPO \
              -F carnumber=$CAR_NO \
+             -F autocrop=$AUTOCROP \
              -F "photo=@Car$CAR_NO.jpg;type=image/jpeg" \
              -b "$COOKIES" -c "$COOKIES" \
             "$DERBYNET_SERVER/action.php"

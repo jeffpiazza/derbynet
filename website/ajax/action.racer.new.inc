@@ -13,6 +13,11 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
   $rankid = $_POST['rankid'];
   $exclude = @$_POST['exclude'] ? true : false;
 
+  if ($rankid == "") {
+    $rankid = force_populate_a_rankid();
+    echo "<reload/>";
+  }
+
   insert_new_racer_rankid($firstname, $lastname, $carno, $carname, $rankid, $exclude);
 
   echo "<success/>\n";

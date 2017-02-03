@@ -47,4 +47,20 @@ function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $car
               .' AND Roster.racerid = RegistrationInfo.racerid)');
 }
 
+// Manufactures a classid and rankid when there are none.
+function force_populate_a_rankid() {
+  global $db;
+  if (read_single_value('SELECT COUNT(*) FROM Ranks') == 0) {
+    if (read_single_value('SELECT COUNT(*) FROM Classes') == 0) {
+      $stmt = $db->prepare("INSERT INTO Classes(class) VALUES(:classname)");
+      $stmt->execute(array(':classname' => '* Not specified'));
+    }
+    $classid = read_single_value('SELECT classid FROM Classes');
+    $stmt = $db->prepare("INSERT INTO Ranks(classid, rank) VALUES(:classid, :rankname)");
+    $stmt->execute(array(':classid' => $classid,
+                         ':rankname' => '* Not specified'));
+  }
+  return read_single_value('SELECT rankid FROM Ranks');
+}
+
 ?>
