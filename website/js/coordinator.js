@@ -626,28 +626,36 @@ function generate_current_heat_racers(racers, current) {
     }
 }
 
+// For master scheduling, calculate totals across all the rounds records for the
+// highest round number.  (I.e., if there are round 2 rounds, only total them and
+// exclude the round 1 rounds.)
 function calculate_totals(rounds) {
-    var max_round = -1;
-    var total_roster_size = 0;
-    var total_racers_passed = 0;
-    var total_racers_scheduled = 0;
-    var total_heats_scheduled = 0;
-    var total_heats_run = 0;
-    for (var i = 0; i < rounds.length; ++i) {
-        var round = rounds[i];
-        max_round = Math.max(max_round, round.round);
-        total_roster_size += round.roster_size;
-        total_racers_passed += round.racers_passed;
-        total_racers_scheduled += round.racers_scheduled;
-        total_heats_scheduled += round.heats_scheduled;
-        total_heats_run += round.heats_run;
+  var max_round = -1;
+  for (var i = 0; i < rounds.length; ++i) {
+    max_round = Math.max(max_round, rounds[i].round);
+  }
+  
+  var total_roster_size = 0;
+  var total_racers_passed = 0;
+  var total_racers_scheduled = 0;
+  var total_heats_scheduled = 0;
+  var total_heats_run = 0;
+  for (var i = 0; i < rounds.length; ++i) {
+    var round = rounds[i];
+    if (round.round == max_round) {
+      total_roster_size += round.roster_size;
+      total_racers_passed += round.racers_passed;
+      total_racers_scheduled += round.racers_scheduled;
+      total_heats_scheduled += round.heats_scheduled;
+      total_heats_run += round.heats_run;
     }
-    return {round: max_round,
-            roster_size: total_roster_size,
-            racers_passed: total_racers_passed,
-            racers_scheduled: total_racers_scheduled,
-            heats_scheduled: total_heats_scheduled,
-            heats_run: total_heats_run};
+  }
+  return {round: max_round,
+          roster_size: total_roster_size,
+          racers_passed: total_racers_passed,
+          racers_scheduled: total_racers_scheduled,
+          heats_scheduled: total_heats_scheduled,
+          heats_run: total_heats_run};
 }
 
 function populate_new_round_modals() {

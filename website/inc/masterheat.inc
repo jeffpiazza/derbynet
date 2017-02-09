@@ -41,7 +41,14 @@ function assign_master_heats($round) {
     $weights[$roundid] = round($w / $min_count);
   }
 
-  $masterheat = 1;
+  $masterheat = 1 +
+      read_single_value('SELECT MAX(masterheat)'
+                        .' FROM RaceChart'
+                        .' WHERE roundid IN'
+                        .'  (SELECT roundid FROM Rounds'
+                        .'   WHERE round < :round)',
+                        array(':round' => $round),
+                        /* default */ 0);
   $flag = true;
   while ($flag) {
     $flag = false;
