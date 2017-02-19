@@ -47,6 +47,7 @@
    </macrodef>
 
  <target name="installation" depends="make-dist-dir">
+     <make-pdf file="Installation- Debian.fodt"/>
      <make-pdf file="Installation- Mac.fodt"/>
      <make-pdf file="Installation- Windows.fodt"/>
  </target>
