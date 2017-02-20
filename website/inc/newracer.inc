@@ -1,5 +1,5 @@
 <?php
-
+require_once('inc/schema_version.inc');
 
 function insert_new_racer_rankid($firstname, $lastname, $carno, $carname, $rankid, $exclude = false) {
   global $db;
@@ -47,19 +47,31 @@ function insert_new_racer_rankid_and_classid($firstname, $lastname, $carno, $car
               .' AND Roster.racerid = RegistrationInfo.racerid)');
 }
 
-// Manufactures a classid and rankid when there are none.
+// Manufactures a classid and rankid when there are none.  This arises only if
+// creating racers from an empty roster on the check-in page.
 function force_populate_a_rankid() {
   global $db;
   if (read_single_value('SELECT COUNT(*) FROM Ranks') == 0) {
     if (read_single_value('SELECT COUNT(*) FROM Classes') == 0) {
       $stmt = $db->prepare("INSERT INTO Classes(class) VALUES(:classname)");
       $stmt->execute(array(':classname' => '* Not specified'));
+      if (schema_version() >= 2) {
+        $stmt = $db->prepare('UPDATE Classes SET sortorder = 1');
+        $stmt->execute(array());
+      }
     }
+    // If there are classes but not ranks, we'll pick a class at random, but most likely,
+    // the only class in the database is the one we just created.
     $classid = read_single_value('SELECT classid FROM Classes');
     $stmt = $db->prepare("INSERT INTO Ranks(classid, rank) VALUES(:classid, :rankname)");
     $stmt->execute(array(':classid' => $classid,
                          ':rankname' => '* Not specified'));
+    if (schema_version() >= 2) {
+      $stmt = $db->prepare('UPDATE Ranks SET sortorder = 1 WHERE classid = :classid');
+      $stmt->execute(array(':classid' => $classid));
+    }
   }
+  // Pick a rankid at random, if none was specified
   return read_single_value('SELECT rankid FROM Ranks');
 }
 

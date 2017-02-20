@@ -52,11 +52,17 @@ function final_native_roundids() {
 
 // Returns false if there are no grand final rounds, otherwise the roundid of the
 // grand-final round with the highest round number.
+//
+// Note that we're identifying the grand final rounds in part by the class name,
+// which has to match that from the roster.new action.
 function last_grand_final_roundid() {
   return read_single_value('SELECT R2.roundid AS roundid'
                            .' FROM (SELECT classid, MAX(round) AS max_round'
                            .'       FROM Rounds'
-                           .'       WHERE NOT EXISTS('
+                           .'       WHERE classid IN '
+                           .'            (SELECT classid FROM Classes'
+                           .'             WHERE class = \'Grand Finals\')'
+                           .'       AND NOT EXISTS('
                            .'            SELECT 1 FROM RegistrationInfo'
                            .'            WHERE RegistrationInfo.classid = Rounds.classid)'
                            .'       GROUP BY classid) AS R1'

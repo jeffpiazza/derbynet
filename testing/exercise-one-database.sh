@@ -21,7 +21,8 @@ prepare_for_setup() {
 run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/reset-database.sh "$BASE_URL"
-    `dirname $0`/import-roster.sh $BASE_URL
+    `dirname $0`/import-roster.sh "$BASE_URL"
+    `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/photo-setup.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
@@ -39,7 +40,8 @@ run_tests() {
 
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/reset-database.sh "$BASE_URL"
-    `dirname $0`/import-roster.sh $BASE_URL
+    `dirname $0`/import-roster.sh "$BASE_URL"
+    `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-awards.sh "$BASE_URL" master
