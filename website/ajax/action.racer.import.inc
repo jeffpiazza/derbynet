@@ -72,6 +72,15 @@ if ($ok) {
     $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname AND classid = :classid',
                                 array(':rankname' => $rankname,
                                       ':classid' => $classid));
+    if (schema_version() >= 2) {
+      $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
+                                  array(':classid' => $classid));
+      $stmt = $db->prepare('UPDATE Ranks'
+                           .' SET sortorder = :nranks'
+                           .' WHERE rankid = :rankid');
+      $stmt->execute(array(':nranks' => $nranks,
+                           ':rankid' => $rankid));
+    }
   }
 
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;

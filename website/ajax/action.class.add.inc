@@ -2,6 +2,7 @@
 // Adding a class:
 // $_POST['name']
 
+require_once('inc/schema_version.inc');
 require_once(sql_file_path('column-widths'));
 
 start_response();
@@ -17,6 +18,14 @@ if (have_permission(SET_UP_PERMISSION)) {
 
       $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
                                    array(':classname' => $classname));
+      if (schema_version() >= 2) {
+        $nclasses = read_single_value('SELECT COUNT(*) FROM Classes');
+        $stmt = $db->prepare('UPDATE Classes'
+                             .' SET sortorder = :nclasses'
+                             .' WHERE classid = :classid');
+        $stmt->execute(array(':classid' => $classid,
+                             ':nclasses' => $nclasses));
+      }
 
       // Creating a class usually requires creating a corresponding 1st racing round
       $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
@@ -35,6 +44,16 @@ if (have_permission(SET_UP_PERMISSION)) {
       $stmt = $db->prepare('INSERT INTO Ranks(rank, classid) VALUES(:rankname, :classid)');
       $stmt->execute(array(':rankname' => $classname,
                            ':classid' => $classid));
+
+      if (schema_version() >= 2) {
+        $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
+                                    array(':classid' => $classid));
+        $stmt = $db->prepare('UPDATE Ranks'
+                             .' SET sortorder = :nranks'
+                             .' WHERE rankid = :rankid');
+        $stmt->execute(array(':nranks' => $nranks,
+                             ':rankid' => $rankid));
+      }
 
       echo "<success/>\n";
     }
