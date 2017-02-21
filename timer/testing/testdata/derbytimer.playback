@@ -1,0 +1,42 @@
+## Playback script for simulating a Derby Timer device.
+##
+#on M1
+MASKING LANE 1
+#end
+#on M2
+MASKING LANE 2
+#end
+#on M3
+MASKING LANE 3
+#end
+#on C
+OK
+#end
+#on G
+U
+#end
+#on R
+RESET
+READY 3 LANES
+#end
+##
+## After discovery, pause and then spontaneously change the gate response, and
+## queue up some race results.
+## 
+#pause
+#on G
+D
+#end
+RACE
+1 1.3186
+2 1.7269
+3 2.0396
+FINISH
+##
+## A litle while after the race ends, the gate closes.
+##
+#pause
+#on G
+U
+#end
+READY 3 LANES

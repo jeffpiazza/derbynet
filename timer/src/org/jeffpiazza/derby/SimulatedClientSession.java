@@ -12,6 +12,8 @@ public class SimulatedClientSession extends ClientSession {
   // Sent after sending a heat-ready, and precludes sending another heat-ready
   // until the current one is answered.
   private static String heatReadyString = null;
+  private static boolean racePrepared = false;
+  private Random random;
 
   public static void setNumberOfLanes(int n) {
     nlanes = n;
@@ -21,8 +23,6 @@ public class SimulatedClientSession extends ClientSession {
     super("");
     random = new Random();
   }
-
-  private Random random;
 
   @Override
   public Element login(String username, String password) throws IOException {
@@ -41,20 +41,19 @@ public class SimulatedClientSession extends ClientSession {
     if (messageAndParams.contains("message=FINISHED")) {
       // Receiving the finish results marks the end of the heat
       heatReadyString = null;
+      racePrepared = false;
     }
-    if (messageAndParams.contains("message=FINISHED")
-        || messageAndParams.contains("message=HEARTBEAT")
-        || messageAndParams.contains("message=IDENTIFIED")) {
-      if (random.nextFloat() < 0.6) {
-        newHeatReady = true;
-      }
+    if (!racePrepared && (messageAndParams.contains("message=FINISHED")
+                          || messageAndParams.contains("message=HEARTBEAT")
+                          || messageAndParams.contains("message=IDENTIFIED"))
+        && random.nextFloat() < 0.6) {
+      newHeatReady = true;
     }
     if (heatReadyString != null) {
       newHeatReady = false;
     }
 
     // TODO Some probability of an abort-heat message
-
     if (newHeatReady) {
       int laneMask = 0;
       for (int lane = 0; lane < nlanes; ++lane) {
@@ -73,11 +72,17 @@ public class SimulatedClientSession extends ClientSession {
       System.out.print("\t\t\t\t" + heatReadyString);
     }
 
+    String additional = "";
+    if (!newHeatReady) {
+      additional = heatReadyString;
+      racePrepared = true;
+    }
+
     return parseResponse(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         + "<action-response action=\"timer-message\">\n"
         + "  <success/>\n"
-        + (heatReadyString == null || isStartedMessage ? "" : heatReadyString)
+        + additional
         + "</action-response>");
   }
 

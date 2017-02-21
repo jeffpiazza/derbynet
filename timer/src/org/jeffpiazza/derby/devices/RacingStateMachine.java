@@ -155,8 +155,9 @@ public class RacingStateMachine {
       if (cb != null) {
         cb.onTransition(initialState, currentState);
       }
+      System.out.println(initialState + " >--" + e + "--> " + currentState);
+      logWriter.serialPortLogInternal(initialState + " >--" + e + "--> " + currentState);
     }
-    // System.out.println(initialState + " >--" + e + "--> " + currentState);
     return currentState;
   }
 

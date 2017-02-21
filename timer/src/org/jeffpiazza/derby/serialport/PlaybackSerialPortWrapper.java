@@ -3,55 +3,143 @@ package org.jeffpiazza.derby.serialport;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 
+import java.util.HashMap;
+import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.io.FileReader;
+
 // For testing a new TimerDevice class, this simulates the data arriving on
 // the serial port.
 public class PlaybackSerialPortWrapper extends SerialPortWrapper {
+  private static String[] program;
+  private HashMap<String, Integer> commands_responses = new HashMap();
+  private int program_counter = 0;
+  private ArrayDeque<String> messages = new ArrayDeque();
+  private long pausedUntil = -1L;
+
+  public static void setFilename(String filename) {
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(filename));
+      ArrayList lines = new ArrayList();
+      try {
+        String line;
+        while ((line = reader.readLine()) != null) {
+          if ((line.length() > 0) && (line.charAt(0) == '#')) {
+            line = line.trim();
+            if (!line.startsWith("##")) {
+              continue;
+            }
+          } else {
+            line = line + "\r\n";
+          }
+          lines.add(line);
+        }
+      } finally {
+        reader.close();
+      }
+      program = (String[]) lines.toArray(new String[lines.size()]);
+    } catch (Throwable t) {
+      t.printStackTrace();
+      System.exit(1);
+    }
+  }
+
   public PlaybackSerialPortWrapper(LogWriter logwriter)
       throws SerialPortException {
     super(null, logwriter);
     System.out.println("Creating simulated port wrapper");
-    // Without a real serial port, nothing will generate events to cause a
-    // read() to happen, so we have to arrange it ourselves.
-    (new Thread() {
-      @Override
+    pushMessages();
+    new Thread() {
       public void run() {
-        while (true) {
-          try {
-            Thread.sleep(1000);
-            read();
-          } catch (Throwable ex) {
+        try {
+          for (;;) {
+            Thread.sleep(1000L);
+            pushMessages();
           }
+        } catch (Throwable t) {
         }
       }
-    }).start();
+    }.start();
   }
 
-  private int counter = 0;
+  private void pushMessages() {
+    try {
+      read();
+    } catch (SerialPortException ex) {
+    }
+  }
 
-  private String[] messages = {
-    "2 2.3374  3 2.7491  4 3.0885  1 4.2156\r\n",
-    "1 2.8838  2 3.4474  3 3.9291  4 4.4491\r\n",
-    ""};
+  private int plus1(int pc) {
 
-  @Override
+    if (pc >= program.length) {
+      pc = 0;
+    }
+    return pc;
+  }
+
+  private int interpretOne(int pc) {
+    String line = program[pc];
+    System.out.println("At " + pc + " interpret: " + line.trim());
+    if ((line.length() > 0) && (line.charAt(0) == '#')) {
+      if (line.startsWith("#on ")) {
+        commands_responses.put(line.substring(4), new Integer(pc + 1));
+        while (!program[(++pc)].equals("#end")) {
+        }
+        return plus1(pc);
+      }
+      if (line.equals("#end")) {
+        messages.addLast("");
+        pushMessages();
+        return -1;
+      }
+      if (line.equals("#pause")) {
+        pausedUntil = (System.currentTimeMillis() + 5000L);
+        return plus1(pc);
+      }
+      System.err.println("Unrecognized program marker: " + line);
+      System.exit(1);
+      return -1;
+    }
+    messages.addLast(line);
+    return plus1(pc);
+  }
+
+  public void writeStringToPort(String s) throws SerialPortException {
+    Integer response = (Integer) commands_responses.get(s);
+    if (response != null) {
+      System.out.println(
+          "Response for [[" + s + "]] is " + response);
+      int pc = response.intValue();
+      while (pc >= 0) {
+        pc = interpretOne(pc);
+      }
+    } else {
+      System.out.println("* No response for [[" + s + "]]");
+    }
+  }
+
   protected String readStringFromPort() throws SerialPortException {
-    if (counter >= messages.length) { counter = 0; }
-    return messages[counter++];
+    while (messages.size() == 0 && pausedUntil < System.currentTimeMillis()) {
+      program_counter = interpretOne(program_counter);
+      if (program_counter < 0) {
+        System.err.println("Playback program isn't supposed to terminate!");
+        System.exit(1);
+      }
+    }
+    if (messages.size() == 0) {
+      System.out.println("(Paused)");
+      return "";
+    }
+    return (String) messages.removeFirst();
   }
 
-  @Override
-  public boolean setPortParams(int baudRate, int dataBits, int stopBits, int parity,
-                           boolean setRTS, boolean setDTR)
+  public boolean setPortParams(int baudRate, int dataBits, int stopBits,
+                               int parity, boolean setRTS, boolean setDTR)
       throws SerialPortException {
     return true;
   }
 
-  @Override
   public void closePort() throws SerialPortException {
-  }
-
-  @Override
-  public void writeStringToPort(String s) throws SerialPortException {
-    // Nothing to do!
   }
 }

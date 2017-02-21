@@ -87,18 +87,10 @@ public class NewBoldDevice extends TimerDeviceBase {
         Matcher m = singleLanePattern.matcher(line);
         if (m.find()) {
           int lane = Integer.parseInt(m.group(1));
-          if (results.size() < lane) {
-            results.ensureCapacity(lane);
-            while (results.size() < lane) {
-              results.add(null);
-            }
-          }
-          results.set(lane - 1, new Message.LaneResult());
-          results.get(lane - 1).place = 1 + nresults;
-          results.get(lane - 1).time = m.group(2);
-          ++nresults;
+          String time = m.group(2);
+          TimerDeviceUtils.addOneLaneResult(lane, time, nresults, results);
+          nresults++;
           line = m.group(3).trim();
-
           portWrapper.logWriter().traceInternal(
               "Lane " + lane + ": " + m.group(2) + " seconds");
         } else {

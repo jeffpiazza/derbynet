@@ -65,14 +65,17 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // These xxxPortXxx methods are the only ones that interact directly with the
   // SerialPort member.å
   public boolean setPortParams(int baudRate, int dataBits, int stopBits,
-                               int parity,
-                               boolean setRTS, boolean setDTR)
+                               int parity, boolean setRTS, boolean setDTR)
       throws SerialPortException {
     return port.setParams(baudRate, dataBits, stopBits, parity, setRTS, setDTR);
   }
 
   public void closePort() throws SerialPortException {
     port.closePort();
+  }
+
+  public String getPortName() {
+    return port == null ? "Simulated Port" : port.getPortName();
   }
 
   // Read a string from the port.
@@ -196,29 +199,19 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return next(System.currentTimeMillis() + timeout);
   }
 
-  public boolean hasAvailable() {
-    return hasAvailable(1);
-  }
-
-  public boolean hasAvailable(int expectedLines) {
-    synchronized (queue) {
-      return queue.size() >= expectedLines;
-    }
-  }
-
   public String next() {
     return next(System.currentTimeMillis() + 500);
   }
 
   public String next(long deadline) {
     while (System.currentTimeMillis() < deadline) {
-      if (hasAvailable()) {
-        return nextNoWait();
-      } else {
-        try {
-          Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
-        } catch (Exception exc) {
-        }
+      String s = nextNoWait();
+      if (s != null) {
+        return s;
+      }
+      try {
+        Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
+      } catch (Exception exc) {
       }
     }
     return null;
@@ -241,6 +234,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // Empties the queue immediately
   public void clear() {
     synchronized (queue) {
+      for (String s : queue) {
+        logwriter.serialPortLogInternal("CLEARED: " + s);
+      }
       queue.clear();
     }
   }
@@ -249,14 +245,18 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // to appear in the queue, then drains the queue.
   public void drain(long deadline, int expectedLines) {
     while (System.currentTimeMillis() < deadline) {
-      if (hasAvailable(expectedLines)) {
-        clear();
-        return;
-      } else {
-        try {
-          Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
-        } catch (Exception exc) {
+      synchronized (queue) {
+        if (queue.size() >= expectedLines) {
+          for (String s : queue) {
+            logwriter.serialPortLogInternal("DRAINED: " + s);
+          }
+          queue.clear();
+          return;
         }
+      }
+      try {
+        Thread.sleep(50);  // Sleep briefly, 50ms = 0.05s
+      } catch (Exception exc) {
       }
     }
   }

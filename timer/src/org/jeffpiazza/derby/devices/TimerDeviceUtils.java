@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby.devices;
 
+import java.util.ArrayList;
 import org.jeffpiazza.derby.Message;
 
 import java.util.regex.*;
@@ -66,5 +67,18 @@ public class TimerDeviceUtils {
       }
     }
     return results;
+  }
+
+  public static void addOneLaneResult(int lane, String time, int place,
+                                      ArrayList<Message.LaneResult> results) {
+    if (results.size() < lane) {
+      results.ensureCapacity(lane);
+      while (results.size() < lane) {
+        results.add(null);
+      }
+    }
+    results.set(lane - 1, new Message.LaneResult());
+    ((Message.LaneResult) results.get(lane - 1)).place = (1 + place);
+    ((Message.LaneResult) results.get(lane - 1)).time = time;
   }
 }

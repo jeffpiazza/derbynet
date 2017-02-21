@@ -10,6 +10,7 @@ import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
+import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
 
 // Three threads for three "actors":
 // timer polling loop runs on main thread,
@@ -82,7 +83,7 @@ public class TimerMain {
     boolean recording = false;
     boolean playback = false;
 
-    LogWriter logwriter;
+    LogWriter logwriter = null;
 
     // Include HTTP traffic in the timer log:
     HttpTask.MessageTracer traceMessages = null;
@@ -103,13 +104,17 @@ public class TimerMain {
       } else if (arg.equals("-t")) {
         StdoutMessageTrace smt = new StdoutMessageTrace();
         smt.traceResponses = traceResponses;
-        logwriter = makeLogWriter();
+        if (logwriter == null) {
+          logwriter = makeLogWriter();
+        }
         traceMessages = new CombinedMessageTracer(smt, logwriter);
         ++consumed_args;
       } else if (arg.equals("-th")) {
         StdoutMessageTrace smt = new StdoutMessageTrace();
         smt.traceResponses = traceResponses;
-        logwriter = makeLogWriter();
+        if (logwriter == null) {
+          logwriter = makeLogWriter();
+        }
         traceHeartbeats = new CombinedMessageTracer(smt, logwriter);
         ++consumed_args;
       } else if (arg.equals("-r")) { // Won't have effect unless it precedes -t, -th
@@ -155,9 +160,10 @@ public class TimerMain {
       } else if (arg.equals("-record")) {
         recording = true;
         ++consumed_args;
-      } else if (arg.equals("-playback")) {
+      } else if (arg.equals("-playback") && has_value) {
         playback = true;
-        ++consumed_args;
+        PlaybackSerialPortWrapper.setFilename(args[consumed_args + 1]);
+        consumed_args += 2;
       } else {
         usage();
         System.exit(1);
@@ -181,7 +187,9 @@ public class TimerMain {
       }
     }
 
-    logwriter = makeLogWriter();
+    if (logwriter == null) {
+      logwriter = makeLogWriter();
+    }
     if (traceMessages == null) {
       traceMessages = logwriter;
     }

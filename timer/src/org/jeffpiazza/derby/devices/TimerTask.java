@@ -232,10 +232,6 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
             if (userIntervened()) {
               break;
             }
-            System.out.print("    " + timerClass.getSimpleName());
-            logwriter.serialPortLogInternal(
-                "Trying " + timerClass.getSimpleName() + " on "
-                + (port == null ? "Simulated Port" : port.getPortName()));
             if (timerGui != null) {
               timerGui.setTimerClass(timerClass);
             }
@@ -285,10 +281,15 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
       return null;
     }
     Class<? extends TimerDevice> timerClass = device.getClass();
+    SerialPortWrapper portWrapper = device.getPortWrapper();
+    System.out.print("    " + timerClass.getSimpleName());
     if (!device.canBeIdentified()) {
       if (timerClass != timerClasses.chosen()) {
         // Unless the user chose this class, treat as a failed probe without
         // bothering to probe.
+        logwriter.serialPortLogInternal(
+            "Skipping " + timerClass.getSimpleName()
+            + " on " + portWrapper.getPortName());
         System.out.println(" (skipped)");
         return null;
       } else {
@@ -302,15 +303,21 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         logwriter.serialPortLogInternal(msg);
         return device;
       }
-    } else if (device.probe()) {
-      String msg = "*** Identified as a(n) " + timerClass.getSimpleName();
-      System.out.println();
-      System.out.println(msg);
-      logwriter.serialPortLogInternal(msg);
-      return device;
     } else {
-      System.out.println();
-      return null;  // next device class
+      logwriter.serialPortLogInternal(
+          "Trying " + timerClass.getSimpleName()
+          + " on " + portWrapper.getPortName());
+
+      if (device.probe()) {
+        String msg = "*** Identified as a(n) " + timerClass.getSimpleName();
+        System.out.println();
+        System.out.println(msg);
+        logwriter.serialPortLogInternal(msg);
+        return device;
+      } else {
+        System.out.println();
+        return null;  // next device class
+      }
     }
   }
 
