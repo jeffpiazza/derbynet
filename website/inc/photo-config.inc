@@ -13,6 +13,9 @@ define('RENDER_LISTVIEW', '80x80');
 // For assigning photos to racers, in photo-thumbs.php
 define('RENDER_THUMBNAIL', '150x150');
 
+// For the "on deck" display.  TODO This should be dynamically sized based on window/column size!
+define('RENDER_ONDECK', '300x150');
+
 // For display on checkin page: 60h, arbitrary width
 define('RENDER_CHECKIN', '0x60');
 
@@ -216,8 +219,12 @@ class PhotoRender {
   // 'original' (i.e., deleting both cropped and other renders) only because of
   // the particular subfolder structure we use.
   public function delete_dependents($image_name) {
+    $mydir = $this->directory();
+    if (substr($mydir, -1) != DIRECTORY_SEPARATOR) {
+      $mydir .= DIRECTORY_SEPARATOR;
+    }
     foreach(glob($this->repository->directory().DIRECTORY_SEPARATOR.'*'.DIRECTORY_SEPARATOR.$image_name) as $path) {
-      if (substr($path, 0, strlen($this->directory())) != $this->directory()) {
+      if (substr($path, 0, -strlen($image_name)) != $mydir) {
         @unlink($path);
       }
     }
