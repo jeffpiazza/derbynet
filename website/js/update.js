@@ -127,7 +127,9 @@ function notice_change_current_heat(roundid, heat) {
 	curheat.removeClass("curheat");
 	curheat = $("#heat_" + roundid + "_" + heat);
 	curheat.addClass("curheat");
-	var nextheat = $("#heat_" + roundid + "_" + (parseInt(heat) + 1));
+    $(".nextheat").removeClass("nextheat");
+    var nextheat = $("#heat_" + roundid + "_" + (parseInt(heat) + 1));
+    nextheat.addClass("nextheat");
 	if (!nextheat[0]) {
 	  nextheat = curheat;
 	}

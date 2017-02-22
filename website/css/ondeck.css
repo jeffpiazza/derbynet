@@ -193,3 +193,15 @@ td.clickable div.inclickable {
 
 .heat_link span { font-size: xx-large; }
 th { font-size: x-large; }
+
+.ondeck_photo {
+    display: none;
+}
+
+.curheat .ondeck_photo.populated,
+.nextheat .ondeck_photo.populated {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 150px;
+}

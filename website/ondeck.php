@@ -1,4 +1,7 @@
 <?php
+// TODO - Write a photo src template as a data attribute instead of as the src,
+//        then convert to a square photo size based on nlanes
+//
 // When presented as a kiosk page, i.e., when this php file is included from
 // kiosks/ondeck.kiosk, the session_start() function will already have been
 // called.  The @ is necessary to suppress the error notice that may arise in
@@ -6,6 +9,7 @@
 @session_start();
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/running_round_header.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
@@ -13,6 +17,8 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
     $nlanes = get_lane_count_from_results();
     $now_running = get_running_round();
     $use_master_sched = use_master_sched();
+
+    $repo = car_photo_repository();
 
     $high_water_rounds = high_water_rounds();
 ?><!DOCTYPE html>
@@ -45,7 +51,8 @@ require_once('inc/rounds.inc');
 $groups = all_schedule_groups();
 
 $sql = 'SELECT'
-    .' Classes.class, round, heat, lane, finishtime, resultid, completed, '
+    .' Classes.class, round, heat, lane, finishtime, resultid, completed,'
+    .' RegistrationInfo.racerid, carphoto, '
     .($use_master_sched ? 'round' : 'Rounds.roundid').' as racinggroup,'
     .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
     .' RegistrationInfo.carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
@@ -74,7 +81,7 @@ if ($stmt === FALSE) {
 function byes($n) {
   $result = '';
   while ($n > 0) {
-    $result .= '<td>Bye</td>';
+    $result .= '<td>Bye<div class="ondeck_photo unpopulated"></div></td>';
     --$n;
   }
   return $result;
@@ -95,6 +102,13 @@ function write_heat_row($entry, $heat_row, $lane) {
                         .'Heat '.$heat, ENT_QUOTES, 'UTF-8').'</th>'
       .$heat_row.'</tr>'."\n";
   }
+}
+
+function maybe_mark_photos_populated($heat_row, $photo_in_heat) {
+  if ($photo_in_heat) {
+    $heat_row = str_replace('ondeck_photo unpopulated', 'ondeck_photo populated', $heat_row);
+  }
+  return $heat_row;
 }
 
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -122,9 +136,11 @@ foreach ($groups as $group) {
   $seq = -1;
   $first_entry = '';
   $heat_row = '';
+  // $photos_in_heat turns true if any entrant in the current heat has a car photo populated
+  $photos_in_heat = false;
   while ($rs and $rs['racinggroup'] == $groupid) {
     if ($seq <> $rs['seq']) {
-      write_heat_row($first_entry, $heat_row, @$lane);
+      write_heat_row($first_entry, maybe_mark_photos_populated($heat_row, $photos_in_heat), @$lane);
       $heat_row = '';
       $seq = $rs['seq'];
 	  // TODO: Make all lowercase keys
@@ -133,6 +149,7 @@ foreach ($groups as $group) {
 						   'Class' => $rs['class'],
 						   'Seq' => $seq);
       $lane = 1;
+      $photos_in_heat = false;
     }
 
     // Here, $lane is one more than the lane number of the last result we've added for this
@@ -146,14 +163,22 @@ foreach ($groups as $group) {
 
       // Add the cell with the result we just got.
       // $ft = $rs['finishtime'];
-      $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">'
-		.'<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
+      $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">';
+      $heat_row .= '<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
         .'<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES, 'UTF-8').'</span><br/>'."\n"
         .'<span class="racer">('
             .htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8').')</span><br/>'."\n"
 		.'<span class="time"></span>' // Javascript will fill in the times, later
-		.'</a>'
-		.'</td>';
+      .'</a>';
+      $heat_row .= '<div class="ondeck_photo unpopulated">';
+      if (isset($rs['carphoto']) && $rs['carphoto']) {
+        $photos_in_heat = true;
+        // RENDER_ONDECK
+        $heat_row .= '<img src="'.$repo->url_for_racer($rs, '300x150').'"/>';
+      }
+      $heat_row .= '</div>';
+
+      $heat_row .= '</td>';
       ++$lane;
     } else {
       echo '<tr>'
@@ -163,7 +188,7 @@ foreach ($groups as $group) {
     $rs = $stmt->fetch(PDO::FETCH_ASSOC);
   }
 
-  write_heat_row($first_entry, $heat_row, @$lane);
+  write_heat_row($first_entry, maybe_mark_photos_populated($heat_row, $photos_in_heat), @$lane);
 
   echo '</tbody>'."\n";
 }
