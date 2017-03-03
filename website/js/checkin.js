@@ -255,7 +255,7 @@ function sorting_key(row) {
               row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else if (g_order == 'car') {
       // carnumber (numeric), lastname, firstname
-      return [parseInt(row.children('.sort-car-number')[0].innerHTML),
+      return [parseInt(row.getElementsByClassName('sort-car-number')[0].innerHTML),
               row.getElementsByClassName('sort-lastname')[0].innerHTML,
               row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else /* 'name' */ {
