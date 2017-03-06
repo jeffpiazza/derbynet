@@ -11,7 +11,8 @@ public class AllDeviceTypes {
         FastTrackDevice.class,
         OlderFastTrackDevice.class,
         TheJudgeDevice.class,
-        NewBoldDevice.class
+        NewBoldDevice.class,
+        DerbyTimerDevice.class
       };
 
   public static String toHumanString(Class<? extends TimerDevice> type) {

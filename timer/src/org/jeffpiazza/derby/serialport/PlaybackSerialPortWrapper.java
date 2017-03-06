@@ -27,7 +27,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
         while ((line = reader.readLine()) != null) {
           if ((line.length() > 0) && (line.charAt(0) == '#')) {
             line = line.trim();
-            if (!line.startsWith("##")) {
+            if (line.startsWith("##")) {
               continue;
             }
           } else {
@@ -71,7 +71,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
   }
 
   private int plus1(int pc) {
-
+    ++pc;
     if (pc >= program.length) {
       pc = 0;
     }

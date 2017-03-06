@@ -73,7 +73,7 @@ public class SimulatedClientSession extends ClientSession {
     }
 
     String additional = "";
-    if (!newHeatReady) {
+    if (newHeatReady) {
       additional = heatReadyString;
       racePrepared = true;
     }

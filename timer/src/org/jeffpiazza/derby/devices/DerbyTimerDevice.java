@@ -14,9 +14,8 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   public DerbyTimerDevice(SerialPortWrapper portWrapper) {
     super(portWrapper);
 
-    // Once started, we expect a race result within 10 seconds; we allow an
-    // extra second before considering the results overdue.
-    rsm.setMaxRunningTimeLimit(11000);
+    // Once started, we expect a race result within 10 seconds
+    rsm.setMaxRunningTimeLimit(10000);
   }
 
   public static String toHumanString() {
@@ -36,6 +35,8 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
 
   // Response to a "G" is either "U" (up, or closed) or "D" (down, or open)
   private static final String READ_START_SWITCH = "G";
+
+  private static final String FORCE_RACE_RESULTS = "F";
 
   public boolean probe() throws SerialPortException {
     if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
@@ -122,6 +123,14 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     });
   }
 
+  // Timer reports overdue results as 0.0000, but we need to report them
+  // as 9.9999.
+  @Override
+  protected void raceFinished(Message.LaneResult[] results)
+      throws SerialPortException {
+    super.raceFinished(TimerDeviceUtils.zeroesToNines(results));
+  }
+
   // TODO synchronized?
   public synchronized void prepareHeat(int roundid, int heat, int lanemask)
       throws SerialPortException {
@@ -186,8 +195,12 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
 
   @Override
   public void onTransition(RacingStateMachine.State oldState,
-                           RacingStateMachine.State newState) {
+                           RacingStateMachine.State newState)
+      throws SerialPortException {
     if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
+      // Force results upon entering RESULTS_OVERDUE.  After another second
+      // (in whileInState), give up and revert to idle.
+      portWrapper.write(FORCE_RACE_RESULTS);
       logOverdueResults();
     }
   }
@@ -195,6 +208,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   protected void whileInState(RacingStateMachine.State state)
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
+
       // A reasonably common scenario is this: if the gate opens accidentally
       // after the PREPARE_HEAT, the timer starts but there are no cars to
       // trigger a result.
@@ -207,15 +221,18 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
         // is running.
         rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
       }
-      // This forces the state machine back to IDLE.
-      rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
-      // TODO invokeMalfunctionCallback(false,
-      //                                "No result received from last heat.");
-      // We'd like to alert the operator to intervene manually, but
-      // as currently implemented, a malfunction(false) message would require
-      // unplugging/replugging the timer to reset: too invasive.
-      portWrapper.logWriter().serialPortLogInternal(
-          "No result from timer for the running race; giving up.");
+
+      if (rsm.millisInCurrentState() > 1000) {
+        // TODO invokeMalfunctionCallback(false,
+        //                                "No result received from last heat.");
+        // We'd like to alert the operator to intervene manually, but
+        // as currently implemented, a malfunction(false) message would require
+        // unplugging/replugging the timer to reset: too invasive.
+        portWrapper.logWriter().serialPortLogInternal(
+            "No result from timer for the running race; giving up.");
+        // This forces the state machine back to IDLE.
+        rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
+      }
     }
   }
 }
