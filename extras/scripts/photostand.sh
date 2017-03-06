@@ -39,6 +39,9 @@ PHOTO_USER=Photo
 PHOTO_PASSWORD=flashbulb
 BARCODE_SCANNER_DEV=/dev/input/by-id/usb-Megawin_Technology_Inc._USB_Keyboard-event-kbd
 
+# If set to 1, the barcode scan will also check-in the racer
+PHOTO_CHECKIN=0
+
 test -f /etc/derbynet.conf  && . /etc/derbynet.conf
 test -f /boot/derbynet.conf && . /boot/derbynet.conf
 
@@ -76,8 +79,18 @@ echo Successfully logged in
 chdkptp -c -e"rec"
 
 while true ; do
-    CAR_NO=`barcode $BARCODE_SCANNER_DEV | grep -e "^PWD[0-9]*$" | sed -e "s/PWD//"`
+    BARCODE=`barcode $BARCODE_SCANNER_DEV | grep -e "^PWD[0-9]*$"`
+    CAR_NO=`echo $BARCODE | sed -e "s/PWD//"`
     if [ "$CAR_NO" ] ; then
+
+        if [ $PHOTO_CHECKIN -ne 0 ] ; then
+            # Check in the racer
+            curl --silent -F action=racer.pass \
+                 -F barcode=$BARCODE \
+                 -F value=1 \
+                 -b "$COOKIES" -c "$COOKIES" \
+                 "$DERBYNET_SERVER/action.php"
+        fi
 
         chdkptp -c -e"rec" -e"remoteshoot Car$CAR_NO"
         # Alternatively:
