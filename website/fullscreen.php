@@ -49,7 +49,7 @@ $kiosk_url = 'http://'.substr($url, 0, $last + 1).'kiosk.php';
 </form>
 
 <script type="text/javascript">
- function go_fullscreen() {
+function go_fullscreen() {
    if (screenfull.enabled) {
      screenfull.request();
    }
@@ -70,11 +70,20 @@ $kiosk_url = 'http://'.substr($url, 0, $last + 1).'kiosk.php';
 
    $('body form').remove();
 
-   $('body').prepend(iframe);
-   document.body.style.overflow = 'hidden';
- }
+   // In case the user exits fullscreen, a click restores it.  (Fullscreen has
+   // to be associated with a user gesture.)
+   $(iframe).load(function() {
+       $(this).contents().find("body").on('click', function() {
+           if (screenfull.enabled) {
+             screenfull.request();
+           }
+         });
+     });
 
-// TODO $(function() { setTimeout(function() { go_fullscreen(); }, 1000); });
+   $('body').prepend(iframe);
+
+   document.body.style.overflow = 'hidden';
+}
 </script>
 </body>
 </html>

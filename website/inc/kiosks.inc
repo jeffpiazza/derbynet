@@ -17,13 +17,15 @@ function address_for_current_kiosk() {
   //
   // The kiosk browser can include an 'id' or 'address' parameter which allows
   // an arbitrary string to be used as the address identifier.
+  $addr = "";
   if (isset($_GET['id'])) {
     $addr = $_GET['id'];
   } else if (isset($_GET['address'])) {
     $addr = $_GET['address'];
   } else if (isset($_SESSION['address'])) {
     $addr = $_SESSION['address'];
-  } else {
+  }
+  if ($addr === "") {
     if (isset($_SERVER['REMOTE_PORT'])) {
       $port = $_SERVER['REMOTE_PORT'];
     } else {
