@@ -14,7 +14,7 @@ define('RENDER_LISTVIEW', '80x80');
 define('RENDER_THUMBNAIL', '150x150');
 
 // For the "on deck" display.  TODO This should be dynamically sized based on window/column size!
-define('RENDER_ONDECK', '300x150');
+define('RENDER_ONDECK', '200x100');
 
 // For display on checkin page: 60h, arbitrary width
 define('RENDER_CHECKIN', '0x60');
@@ -168,7 +168,11 @@ class PhotoRender {
   public function antecedent() { return $this->antecedent; }
 
   public function file_path($imagename) {
-    return $this->directory.DIRECTORY_SEPARATOR.$imagename;
+    $directory = $this->directory;
+    if (substr($directory, -1) != DIRECTORY_SEPARATOR) {
+      $directory .= DIRECTORY_SEPARATOR;
+    }
+    return $directory.$imagename;
   }
 
   public function target_file_path($imagename) {

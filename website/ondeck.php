@@ -174,7 +174,7 @@ foreach ($groups as $group) {
       if (isset($rs['carphoto']) && $rs['carphoto']) {
         $photos_in_heat = true;
         // RENDER_ONDECK
-        $heat_row .= '<img src="'.$repo->url_for_racer($rs, '300x150').'"/>';
+        $heat_row .= '<img src="'.$repo->url_for_racer($rs, RENDER_ONDECK).'"/>';
       }
       $heat_row .= '</div>';
 

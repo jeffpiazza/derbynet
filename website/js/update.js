@@ -205,6 +205,8 @@ function is_visible(el) {
 }
 
 
+// If passed-in DOM element is below the viewport, then scrolls the viewport so
+// the element is vertically centered on the display.
 function scroll_to_current(el) {
   var rect = el.getBoundingClientRect();
   var w = $(window).height();
