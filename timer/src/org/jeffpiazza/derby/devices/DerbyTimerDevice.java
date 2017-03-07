@@ -163,9 +163,6 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     }
     portWrapper.logWriter().serialPortLogInternal(sb.toString());
     rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
-    if (getGateIsClosed()) {
-      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
-    }
   }
 
   // Interrogates the starting gate's state.

@@ -38,6 +38,13 @@ public abstract class TimerDeviceTypical
 
   public void poll() throws SerialPortException, LostConnectionException {
     RacingStateMachine.State state = rsm.state(this);
+    // If the gate is already closed when a PREPARE_HEAT message was delivered,
+    // the PREPARE_HEAT will have left us in a MARK state, but we need to
+    // make a GATE_CLOSED event to move ahead to SET.
+    if (state == RacingStateMachine.State.MARK && getGateIsClosed()) {
+      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
+      state = rsm.state(this);
+    }
 
     whileInState(state);
 
