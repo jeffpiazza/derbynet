@@ -121,7 +121,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void serialEvent(SerialPortEvent event) {
     try {
       if (event.isRXCHAR()) {
-        last_contact = System.currentTimeMillis();
+        noticeContact();
         read();
       } else {
         System.out.println("Event type is " + event.getEventType());
@@ -129,6 +129,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
     } catch (Exception e) {
       System.out.println("serialEvent gets an exception: " + e);
     }
+  }
+
+  protected void noticeContact() {
+    last_contact = System.currentTimeMillis();
   }
 
   // Process incoming characters from the device.  Whenever a full

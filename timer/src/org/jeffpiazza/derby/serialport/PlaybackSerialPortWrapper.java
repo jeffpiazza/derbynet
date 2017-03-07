@@ -55,6 +55,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
         try {
           for (;;) {
             Thread.sleep(1000L);
+            noticeContact();
             pushMessages();
           }
         } catch (Throwable t) {
@@ -106,7 +107,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
   }
 
   public void writeStringToPort(String s) throws SerialPortException {
-    Integer response = (Integer) commands_responses.get(s);
+    Integer response = commands_responses.get(s);
     if (response != null) {
       System.out.println(
           "Response for [[" + s + "]] is " + response);

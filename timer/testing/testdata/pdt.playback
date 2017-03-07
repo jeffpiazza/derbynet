@@ -1,0 +1,19 @@
+## Playback script for testing the PDT timer, http://www.miscjunk.org/mj/pg_pdt_soft1.html
+##
+#on R
+K
+#end
+#on G
+.
+#end
+#pause
+#on G
+O
+#end
+RACING
+1 - 0.222
+2 - 0.515
+FINISH
+LIGHTING UP LANE 1 RED
+#pause
+READY
