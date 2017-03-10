@@ -17,7 +17,7 @@ test -n "$1" && DERBYNET_SERVER="$1"
 # If the browser crashes, we'd like to resume with the same identity, rather
 # than as a new browser/kiosk.  We use the CPU serial number to identify
 # ourselves.
-if [ -f /proc/cpuinfo ] ; then
+if [ -z "$ADDRESS" -a -f /proc/cpuinfo ] ; then
     ADDRESS=$(sed -n -e 's/^Serial[ \t:]*0*\(.*\)/\1/p' /proc/cpuinfo)
 fi
 
