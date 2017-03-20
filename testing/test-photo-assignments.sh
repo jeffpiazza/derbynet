@@ -166,9 +166,10 @@ curl_post action.php "action=photo.assign&repo=car&racer=61&photo=Car-5618.jpg" 
 curl_post action.php "action=photo.assign&repo=car&racer=62&photo=Car-5619.jpg" | check_success
 curl_post action.php "action=photo.assign&repo=car&racer=63&photo=Car-5620.jpg" | check_success
 curl_post action.php "action=photo.assign&repo=car&racer=64&photo=Car-5621.jpg" | check_success
-curl_post action.php "action=photo.assign&repo=car&racer=65&photo=Car-5622.jpg" | check_success
-curl_post action.php "action=photo.assign&repo=car&racer=66&photo=Car-5623.jpg" | check_success
-curl_post action.php "action=photo.assign&repo=car&racer=67&photo=Car-5624.jpg" | check_success
+# These photo assignments should have already occurred in photo-setup.sh
+# curl_post action.php "action=photo.assign&repo=car&racer=65&photo=Car-5622.jpg" | check_success
+# curl_post action.php "action=photo.assign&repo=car&racer=66&photo=Car-5623.jpg" | check_success
+# curl_post action.php "action=photo.assign&repo=car&racer=67&photo=Car-5624.jpg" | check_success
 curl_post action.php "action=photo.assign&repo=car&racer=68&photo=Car-5625.jpg" | check_success
 curl_post action.php "action=photo.assign&repo=car&racer=69&photo=Car-5626.jpg" | check_success
 curl_post action.php "action=photo.assign&repo=car&racer=70&photo=Car-5627.jpg" | check_success

@@ -11,12 +11,14 @@
 //
 // $_POST['racerid'], optional
 // $_POST['carnumber'], optional
-//          Either of these will assign the image to the indicated racer
+// $_POST['barcode'], optional
+//          Any of these will assign the image to the indicated racer
 //
 // $_POST['autocrop']: if present, and if facedetection code is available, try
 // to identify the face and crop the photo to a head shot.
 
 require_once('inc/photo-config.inc');
+require_once('inc/barcode.inc');
 
 start_response();
 
@@ -142,6 +144,8 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         if (!$racerid) {
           echo "<no-such-car carnumber=\"".$_POST['carnumber']."\"/>\n";
         }
+      } else if (isset($_POST['barcode'])) {
+        $racerid = barcode_to_racerid($_POST['barcode']);
       }
 
       if ($racerid) {

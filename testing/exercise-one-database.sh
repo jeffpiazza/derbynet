@@ -24,6 +24,7 @@ run_tests() {
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/photo-setup.sh "$BASE_URL"
+    `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
@@ -49,6 +50,7 @@ run_tests() {
     `dirname $0`/test-each-role.sh "$BASE_URL"
     # `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
+    `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
     SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)

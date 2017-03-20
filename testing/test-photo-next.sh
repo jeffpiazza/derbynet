@@ -19,17 +19,17 @@ source `dirname $0`/common.sh
 [ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'inset_photo="photo.php/head/file/cropped/head-E.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=15" | grep -c 'next_photo="photo.php/car/file/cropped/Car-1688.jpg/'` -eq 1 ] || test_fails
 
-# Racer 32 has car but no head shot
+# Racerid 32 (Freddie Font) has car but no head shot
 [ `curl_get "action.php?query=photo.next&racerid=31" | grep -c 'main_photo="photo.php/car/file/cropped/Car-1861.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=31" | grep -c 'inset_photo="photo.php/head/file/cropped/Cub-1478.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=31" | grep -c 'next_photo="photo.php/head/file/cropped/Cub-0764.jpg/'` -eq 1 ] || test_fails
 
-# Racer 33 has head shot but no car photo
+# Racerid 33 (Freeman Fizer) has head shot but no car photo
 [ `curl_get "action.php?query=photo.next&racerid=32" | grep -c 'main_photo="photo.php/head/file/cropped/Cub-0764.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=32" | grep -c 'inset_photo='` -eq 0 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=32" | grep -c 'next_photo="photo.php/car/file/cropped/Car-1864.jpg/'` -eq 1 ] || test_fails
 
-# Racer 34 has neither; get racer 35 instead
+# Racerid 34 (Gregg Grove) has neither; get racer 35 instead
 [ `curl_get "action.php?query=photo.next&racerid=33" | grep -c 'racerid="35"'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=33" | grep -c 'main_photo="photo.php/car/file/cropped/Car-1864.jpg/'` -eq 1 ] || test_fails
 [ `curl_get "action.php?query=photo.next&racerid=33" | grep -c 'inset_photo="photo.php/head/file/cropped/Cub-8464.jpg/'` -eq 1 ] || test_fails

@@ -99,7 +99,7 @@ while true ; do
         curl --silent -F action=photo.upload \
              -F MAX_FILE_SIZE=30000000 \
              -F repo=$PHOTO_REPO \
-             -F carnumber=$CAR_NO \
+             -F barcode=$BARCODE \
              -F autocrop=$AUTOCROP \
              -F "photo=@Car$CAR_NO.jpg;type=image/jpeg" \
              -b "$COOKIES" -c "$COOKIES" \
