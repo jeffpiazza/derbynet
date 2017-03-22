@@ -20,10 +20,15 @@ function upload_carphoto_to_racer() {
 }
 
 # Racerid 65 Porter Papke, Car 465
-upload_carphoto_to_racer "`dirname $0`/data/carphotos/Text-Car-465.jpg" barcode=PWDid65
+upload_carphoto_to_racer "`dirname $0`/data/carphotos/Text-Car-465.jpg" barcode=PWDid065
 # Racerid 66 Raymon Ruffner, Car 166
 upload_carphoto_to_racer "`dirname $0`/data/carphotos/Text-Car-166.jpg" racerid=66
 # Racerid 67 Renaldo Raposo, Car 267
 upload_carphoto_to_racer "`dirname $0`/data/carphotos/Text-Car-267.jpg" carnumber=267
+
+curl_photo car/racer/65/9999999 b0cb8239fa2ffa14c750cc9a62cc10e8
+curl_photo car/racer/065/9999999 b0cb8239fa2ffa14c750cc9a62cc10e8
+curl_photo car/racer/66/9999999 a06401274cdefd4d5dd9f8318f972bad
+curl_photo car/racer/67/9999999 ad29c0c33a9a5df3f7795d6747436c35
 
 exit 0
