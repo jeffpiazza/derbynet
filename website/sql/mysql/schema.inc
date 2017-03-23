@@ -168,6 +168,7 @@ array(
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (11, 'show-racer-photos', '1')",
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (12, 'show-car-photos-on-deck', '1')",
   )
 );
 ?>

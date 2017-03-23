@@ -21,6 +21,8 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
     $repo = car_photo_repository();
 
     $high_water_rounds = high_water_rounds();
+
+    $show_car_photos = read_raceinfo_boolean('show-car-photos-on-deck');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -171,9 +173,8 @@ foreach ($groups as $group) {
 		.'<span class="time"></span>' // Javascript will fill in the times, later
       .'</a>';
       $heat_row .= '<div class="ondeck_photo unpopulated">';
-      if (isset($rs['carphoto']) && $rs['carphoto']) {
+      if ($show_car_photos && isset($rs['carphoto']) && $rs['carphoto']) {
         $photos_in_heat = true;
-        // RENDER_ONDECK
         $heat_row .= '<img src="'.$repo->url_for_racer($rs, RENDER_ONDECK).'"/>';
       }
       $heat_row .= '</div>';
