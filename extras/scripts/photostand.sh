@@ -61,12 +61,12 @@ sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
 # If there are connectivity problems, keep trying until login is successful.
 LOGIN_OK=0
 while [ $LOGIN_OK -eq 0 ]; do
-    echo Logging in
+    echo Logging in to $DERBYNET_SERVER
     curl --location --data "action=login&name=$PHOTO_USER&password=$PHOTO_PASSWORD" \
-         --silent -b "$COOKIES" -c "$COOKIES" -o - \
+         --silent --show-error -b "$COOKIES" -c "$COOKIES" -o - \
          "$DERBYNET_SERVER/action.php" \
     | grep -q success \
-	&& LOGIN_OK=1
+    && LOGIN_OK=1
     test $LOGIN_OK -eq 0 && sleep 1s
 done
 
@@ -76,14 +76,16 @@ echo Successfully logged in
 # photo composition.)
 #
 # Assumes there's only one camera attached
+echo Activating camera
 chdkptp -c -e"rec"
 
 while true ; do
-    BARCODE=`barcode $BARCODE_SCANNER_DEV | grep -e "^PWD[0-9]*$"`
-    CAR_NO=`echo $BARCODE | sed -e "s/PWD//"`
+    BARCODE=`barcode $BARCODE_SCANNER_DEV`
+    echo Scanned $BARCODE
+    CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
     if [ "$CAR_NO" ] ; then
-
         if [ $PHOTO_CHECKIN -ne 0 ] ; then
+        echo Checking in racer $BARCODE
             # Check in the racer
             curl --silent -F action=racer.pass \
                  -F barcode=$BARCODE \
@@ -92,10 +94,12 @@ while true ; do
                  "$DERBYNET_SERVER/action.php"
         fi
 
+        echo Capturing photo Car$CAR_NO.jpg
         chdkptp -c -e"rec" -e"remoteshoot Car$CAR_NO"
         # Alternatively:
         # gphoto2 --filename "Car$CAR_NO" --capture-image-and-download
 
+        echo Uploading $BARCODE
         curl --silent -F action=photo.upload \
              -F MAX_FILE_SIZE=30000000 \
              -F repo=$PHOTO_REPO \
@@ -103,6 +107,8 @@ while true ; do
              -F autocrop=$AUTOCROP \
              -F "photo=@Car$CAR_NO.jpg;type=image/jpeg" \
              -b "$COOKIES" -c "$COOKIES" \
-            "$DERBYNET_SERVER/action.php"
+             "$DERBYNET_SERVER/action.php"
+    else
+        echo Rejecting scanned barcode $BARCODE
     fi
 done
