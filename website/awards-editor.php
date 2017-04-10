@@ -70,7 +70,7 @@ $awards = all_awards();
 foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, classid'
                     .(schema_version() >= 2 ? ', carphoto' : '')
                     .' FROM RegistrationInfo'
-                    .' ORDER BY lastname, firstname') as $row) {
+                    .' ORDER BY carnumber, lastname, firstname') as $row) {
   $classid = $row['classid'];
   $rankid = $row['rankid'];
   $class = ($classid ? htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8') : '');

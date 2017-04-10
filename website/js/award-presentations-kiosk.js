@@ -20,7 +20,7 @@ var AwardPoller = {
   queue_next_query: function() {
     setTimeout(function() { AwardPoller.query_for_current_award(); }, 500 /* ms. */);
   },
-  
+
   parse_award: function(data) {
     var award_xml = data.getElementsByTagName('award')[0];
     if (!award_xml) {
@@ -80,7 +80,7 @@ var AwardPoller = {
 
       // TODO Literal 10 vaguely accounts for margins, but is basically just a guess.
       var maxPhotoHeight = $(window).height() - ($("#photos").offset().top + textHeight) - 10;
-      
+
       $("#headphoto").empty();
       $("#headphoto").css('width', $(window).width() / 2 - 10);
       if (award.headphoto && award.headphoto.length > 0) {

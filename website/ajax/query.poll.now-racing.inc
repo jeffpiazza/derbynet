@@ -1,15 +1,19 @@
 <now-racing>
 <?php
 // action.php?query=poll.now-racing&roundid= &heat= row-height=
+//  Passed-in roundid & heat affect what heat-results, if any, are returned.
+//    (That's the only thing they affect, though.)
+//  row-height is used for constructing photo URLs, if any, so photos will be
+//    the right size.
+//
 // Returns:
 //   <now-racing roundid= heat= >
 //     <timer-trouble/>   if there's a problem with the timer
 //     <heat-result lane="1" time="" place="" speed=""/>... if results are available
 //     <current-heat ...> 
-//     - if current-heat differs from what the caller passed in, then provide:
 //     <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
-//     - if requesting a repeat of the finish-order animation:
-//      <repeat-animation/>
+//     - if the server is requesting a repeat of the finish-order animation:
+//     <repeat-animation/>
 //   </now-racing>
 
 if (!with_gprm()) {

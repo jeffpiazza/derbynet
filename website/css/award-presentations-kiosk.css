@@ -12,7 +12,7 @@ p.award-racer {
     width: 100%;
 }
 
-.award-racer-photo { 
+.award-racer-photo {
     float: left;
 }
 
@@ -40,8 +40,9 @@ p.award-racer {
 
 .award-trophy {
     margin-top: 80px;
-    font-size: 120px;
+    font-size: 100px;
     font-weight: bold;
+    max-height: 156px;
 }
 
 #carname {
