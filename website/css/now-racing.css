@@ -116,12 +116,15 @@ td.photo img {
     text-align: center;
 }
 
+.banner_version { display: none; }
+
+.aside { display: none; }
 
 /* TODO What screen sizes are we trying to support?  Make sure 640x480 works, anyway. */
 /* TODO Work out exactly what font size we can fit, assuming two-line name cells? */
 @media screen and (max-width: 1400px) {
     td {
-        font-size: 60px;
+        font-size: 58px;
         /* color: orange; */
     }
 }
