@@ -92,6 +92,36 @@ float: left;
    /* visibility: visible; */
 }
 
+th.nrows1, th.nrows2, th.nrows3, th.nrows4 {
+    vertical-align: top;
+}
+.racer_label {
+    float: right;
+}
+th.nrows1 .racer_label {
+    margin-top: 19px;
+}
+th.nrows2 .racer_label {
+    margin-top: 52px;
+}
+th.nrows2 img {
+    margin-top: 34px;
+}
+
+th.nrows3 .racer_label {
+    margin-top: 86px;
+}
+th.nrows3 img {
+    margin-top: 68px;
+}
+
+th.nrows4 .racer_label {
+    margin-top: 120px;
+}
+th.nrows4 img {
+    margin-top: 102px;
+}
+
 .clickable {
 	color: #ff0000;
 }
@@ -191,8 +221,12 @@ td.clickable div.inclickable {
   height: 50px;
 }
 
-.heat_link span { font-size: xx-large; }
-th { font-size: x-large; }
+.heat_link span {
+    font-size: 32px;
+}
+th {
+    font-size: 24px;
+}
 
 .ondeck_photo {
     display: none;

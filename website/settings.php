@@ -51,6 +51,8 @@ if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
 $show_car_photos_on_deck = read_raceinfo_boolean('show-car-photos-on-deck');
+$show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
+$show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
 ?>
 
@@ -180,6 +182,18 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         <input id="show-car-photos-on-deck" name="show-car-photos-on-deck" data-enhanced="true"
                type="checkbox"<?php if ($show_car_photos_on_deck) echo ' checked="checked"';?>/>
         <label>Show car photos in on-deck display</label>
+      </p>
+      <p>
+        <input type="hidden" name="show-racer-photos-rr-checkbox" value="yes"/>
+        <input id="show-racer-photos-rr" name="show-racer-photos-rr" data-enhanced="true"
+               type="checkbox"<?php if ($show_racer_photos_rr) echo ' checked="checked"';?>/>
+        <label>Show racer photos in racer-results display</label>
+      </p>
+      <p>
+        <input type="hidden" name="show-car-photos-rr-checkbox" value="yes"/>
+        <input id="show-car-photos-rr" name="show-car-photos-rr" data-enhanced="true"
+               type="checkbox"<?php if ($show_car_photos_rr) echo ' checked="checked"';?>/>
+        <label>Show car photos in racer-results display</label>
       </p>
 
       <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo'); ?>

@@ -38,6 +38,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'use-master-sched' => 'use-master-sched',
                   'show-racer-photos' => 'show-racer-photos',
                   'show-car-photos-on-deck' => 'show-car-photos-on-deck',
+                  'show-racer-photos-rr' => 'show-racer-photos-rr',
+                  'show-car-photos-rr' => 'show-car-photos-rr',
                   'drop-slowest' => 'drop-slowest')
             // See also use-xbs, below
             as $post_key => $raceinfo_key) {
