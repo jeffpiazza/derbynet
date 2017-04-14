@@ -89,20 +89,27 @@ function byes($n) {
   return $result;
 }
 
+// The $row_counter gets incremented for each row shown; its parity determines
+// the row color.  seq field in RaceChart orders the heats, but may have gaps
+// due to deleted schedules, so can't use that.
+$row_counter = 0;
+
 function write_heat_row($entry, $heat_row, $lane) {
+  global $row_counter;
   global $nlanes;
   global $use_master_sched;
 
   if ($entry) {
     $heat_row .= byes($nlanes - $lane + 1);
-    $heat = $entry['Heat'];
-    $heat_label = 'heat_'.$entry['RoundID'].'_'.$heat;
-    $seq = $entry['Seq'];
-    echo '<tr id="'.$heat_label.'" class="d'.($seq & 1).'">'
+    $heat = $entry['heat'];
+    $heat_label = 'heat_'.$entry['roundid'].'_'.$heat;
+    echo '<tr id="'.$heat_label.'" class="d'.($row_counter & 1).'">'
       .'<th>'
-      .htmlspecialchars(($use_master_sched ? $entry['Class'].' ' : '')
-                        .'Heat '.$heat, ENT_QUOTES, 'UTF-8').'</th>'
+      .htmlspecialchars(($use_master_sched ? $entry['class'].' ' : '')
+                        .'Heat '.$heat, ENT_QUOTES, 'UTF-8')
+      .'</th>'
       .$heat_row.'</tr>'."\n";
+    ++$row_counter;
   }
 }
 
@@ -145,11 +152,10 @@ foreach ($groups as $group) {
       write_heat_row($first_entry, maybe_mark_photos_populated($heat_row, $photos_in_heat), @$lane);
       $heat_row = '';
       $seq = $rs['seq'];
-	  // TODO: Make all lowercase keys
-      $first_entry = array('RoundID' => $rs['roundid'],
-						   'Heat' => $rs['heat'],
-						   'Class' => $rs['class'],
-						   'Seq' => $seq);
+      $first_entry = array('roundid' => $rs['roundid'],
+						   'heat' => $rs['heat'],
+						   'class' => $rs['class'],
+						   'seq' => $seq);
       $lane = 1;
       $photos_in_heat = false;
     }
