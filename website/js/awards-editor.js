@@ -116,11 +116,11 @@ function handle_remove_recipient(imgxjq) {
 }
 
 function handle_new_award() {
-  
   $('#award_editor_form').find('input[name="awardid"]').val('new');
   $('#award_editor_form').find('input[name="name"]').val('');
   // TODO $('#award_editor_form').find('select[name="awardtypeid"]').val(awardtypeid).change();
   // TODO $('#award_editor_form').find('select[name="class_and_rank"]').val('0,0').change();
+  $('.delete_button').addClass('hidden');
 
   show_modal('#award_editor_modal', function() {
     close_modal('#award_editor_modal');
@@ -146,6 +146,7 @@ function handle_edit_award(list_item) {
   $('#award_editor_form').find('input[name="name"]').val(awardname);
   $('#award_editor_form').find('select[name="awardtypeid"]').val(awardtypeid).change();
   $('#award_editor_form').find('select[name="class_and_rank"]').val(classid + ',' + rankid).change();
+  $('.delete_button').removeClass('hidden');
 
   show_modal('#award_editor_modal', function() {
     close_modal('#award_editor_modal');
