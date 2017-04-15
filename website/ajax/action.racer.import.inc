@@ -8,12 +8,42 @@ start_response();
 
 if (have_permission(SET_UP_PERMISSION)) {
 
+  // $fields tells what parameters we expect, and whether each is required.
+  // Note that we don't actually test for unexpected parameters; we just ignore
+  // them.
   $fields = array('lastname' => true,  
                   'firstname' => true,
                   'classname' => true,
                   'carnumber' => false,
                   'carname' => false,
                   'subgroup' => false);
+
+  // An alternative to separate lastname and firstname parameters is a single
+  // combined field, called first-last.  The content can either be firstname
+  // then lastname separated by a space, or lastname then firstname separated by
+  // comma.
+  if (isset($_POST['first-last'])) {
+    $comma = strpos($_POST['first-last'], ',');
+    if ($comma === false) {
+      // firstname then lastname, space-separated.  Use the last space after
+      // trimming as the dividing point.
+      $first_last = trim($_POST['first-last']);
+      $space = strrpos($first_last, ' ');
+      if ($space === false) {
+        $_POST['firstname'] = '';
+        $_POST['lastname'] = $first_last;
+      } else {
+        // These will get trimmed later
+        $_POST['firstname'] = substr($first_last, 0, $space);
+        $_POST['lastname'] = substr($first_last, $space + 1);
+      }
+    } else {
+      // Comma signals lastname then firstname
+      // These will get trimmed later
+      $_POST['firstname'] = substr($_POST['first-last'], $comma + 1);
+      $_POST['lastname'] = substr($_POST['first-last'], 0, $comma);
+    }
+  }
 
   $ok = true;
 
@@ -31,7 +61,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     
 if ($ok) {
 
-  $classname = substr($_POST['classname'], 0, CLASS_COLUMN_WIDTH);
+  $classname = substr(trim($_POST['classname']), 0, CLASS_COLUMN_WIDTH);
   // We're failing to find the existing record, but trying to write a
   // new one gives a uniqueness violation against the truncated name.
   $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
@@ -61,7 +91,7 @@ if ($ok) {
     $stmt->execute(array(':classid' => $classid));
   }
 
-  $rankname = isset($_POST['subgroup']) ? $_POST['subgroup'] : $classname;
+  $rankname = isset($_POST['subgroup']) ? trim($_POST['subgroup']) : $classname;
   $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname AND classid = :classid',
                               array(':rankname' => $rankname,
                                     ':classid' => $classid));

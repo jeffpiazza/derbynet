@@ -12,11 +12,15 @@ curl_post action.php "action=racer.import&firstname=Antoine&lastname=Akiyama&cla
 curl_post action.php "action=racer.import&firstname=Arden&lastname=Aziz&classname=Webelos (\"Webes\")&carnumber=504" | check_success
 curl_post action.php "action=racer.import&firstname=Barney&lastname=Bainter&classname=Arrows %3C%3C--%3C%3C&carnumber=405" | check_success
 curl_post action.php "action=racer.import&firstname=Ben&lastname=Bittinger&classname=Lions %26 Tigers&carnumber=106" | check_success
-curl_post action.php "action=racer.import&firstname=Blake&lastname=Burling&classname=White's Wolves&carnumber=207" | check_success
-curl_post action.php "action=racer.import&firstname=Bruce&lastname=Boissonneault&classname=Bears%20and%20Fr%C3%A8res&carnumber=308" | check_success
+# curl_post action.php "action=racer.import&firstname=Blake&lastname=Burling&classname=White's Wolves&carnumber=207" | check_success
+curl_post action.php "action=racer.import&first-last=Blake Burling&classname=White's Wolves&carnumber=207" | check_success
+# curl_post action.php "action=racer.import&firstname=Bruce&lastname=Boissonneault&classname=Bears%20and%20Fr%C3%A8res&carnumber=308" | check_success
+curl_post action.php "action=racer.import&first-last= Bruce  Boissonneault &classname=Bears%20and%20Fr%C3%A8res&carnumber=308" | check_success
 curl_post action.php "action=racer.import&firstname=Byron&lastname=Billy&classname=Webelos (\"Webes\")&carnumber=509" | check_success
-curl_post action.php "action=racer.import&firstname=Carey&lastname=Craney&classname=Arrows %3C%3C--%3C%3C&carnumber=410" | check_success
-curl_post action.php "action=racer.import&firstname=Carroll&lastname=Cybulski&classname=Lions %26 Tigers&carnumber=111" | check_success
+# curl_post action.php "action=racer.import&firstname=Carey&lastname=Craney&classname=Arrows %3C%3C--%3C%3C&carnumber=410" | check_success
+curl_post action.php "action=racer.import&first-last=Craney, Carey&classname=Arrows %3C%3C--%3C%3C&carnumber=410" | check_success
+#curl_post action.php "action=racer.import&firstname=Carroll&lastname=Cybulski&classname=Lions %26 Tigers&carnumber=111" | check_success
+curl_post action.php "action=racer.import&first-last=Cybulski,Carroll&classname=Lions %26 Tigers&carnumber=111" | check_success
 curl_post action.php "action=racer.import&firstname=Christoper&lastname=Chauncey&classname=White's Wolves&carnumber=212" | check_success
 curl_post action.php "action=racer.import&firstname=Clark&lastname=Chesnutt&classname=Bears%20and%20Fr%C3%A8res&carnumber=313" | check_success
 curl_post action.php "action=racer.import&firstname=Cletus&lastname=Creager&classname=Webelos (\"Webes\")&carnumber=514" | check_success
