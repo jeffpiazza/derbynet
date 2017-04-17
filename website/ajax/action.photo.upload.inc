@@ -142,10 +142,15 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
                                      .' WHERE carnumber = :carno',
                                      array(':carno' => $_POST['carnumber']));
         if (!$racerid) {
-          echo "<no-such-car carnumber=\"".$_POST['carnumber']."\"/>\n";
+          echo "<failure code='no-such-car'>No car numbered ".$_POST['carnumber']." found.</failure>\n";
+          $success = false;
         }
       } else if (isset($_POST['barcode'])) {
         $racerid = barcode_to_racerid($_POST['barcode']);
+        if (!$racerid) {
+          echo '<failure code="barcode">Barcode not recognized</failure>'."\n";
+          $success = false;
+        }
       }
 
       if ($racerid) {
@@ -167,6 +172,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
           echo '<failure code="assign_photo">Couldn\'t assign photo to racer.</failure>'."\n";
         }
       }
+
       if ($success) {
         echo "<success/>\n";
         echo "<uploaded>".htmlspecialchars($target_name, ENT_QUOTES, 'UTF-8')."</uploaded>\n";

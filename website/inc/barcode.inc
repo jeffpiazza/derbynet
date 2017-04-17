@@ -11,7 +11,12 @@ function barcode_to_racerid($barcode) {
   global $db;
   $barcode = trim($barcode);
   if (substr($barcode, 0, strlen('PWDid')) == 'PWDid') {
-    return intval(substr($barcode, strlen('PWDid')));
+    $racerid = intval(substr($barcode, strlen('PWDid')));
+    // The database access here is to confirm that the racerid actually
+    // identifies a racer.
+    return read_single_value('SELECT racerid FROM RegistrationInfo'
+                             .' where racerid = :racerid',
+                             array(':racerid' => $racerid), 0);
   } else if (substr($barcode, 0, strlen('PWD')) == 'PWD') {
     $carno = substr($barcode, strlen('PWD'));
     if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE carnumber = :carno',
