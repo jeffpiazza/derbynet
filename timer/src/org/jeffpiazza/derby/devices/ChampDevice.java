@@ -185,13 +185,12 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
   protected void whileInState(RacingStateMachine.State state)
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
+      // Upon entering RESULTS_OVERDUE state, we sent FORCE_END_OF_RACE; see
+      // onTransition.
       if (portWrapper.millisSinceLastContact() > 1000) {
         throw new LostConnectionException();
       } else if (rsm.millisInCurrentState() > 1000) {
-        // We haven't lost contact with the timer, we just aren't getting a
-        // result from race.  Give up and return to an idle state.
-        // TODO invokeMalfunctionCallback(false): Didn't get race results
-        rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
+        giveUpOnOverdueResults();
       }
     }
   }

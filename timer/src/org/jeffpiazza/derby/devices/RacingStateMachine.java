@@ -16,7 +16,9 @@ public class RacingStateMachine {
     // When the gate then opens, the race is RUNNING.
     RUNNING,
     // If the race starts but no results received within maxRunningTimeLimit,
-    // then transition to RESULTS_OVERDUE state.
+    // then transition to RESULTS_OVERDUE state.  Depending on the device, there
+    // may or may not be "force results" or similar command to try.  If there
+    // isn't, or it doesn't work, a GIVING_UP event should eventually be posted.
     RESULTS_OVERDUE;
   }
 
@@ -29,10 +31,10 @@ public class RacingStateMachine {
     ABORT_HEAT_RECEIVED,
     GATE_OPENED,
     GATE_CLOSED,
-    // From a state machine perspective, "results overdue" is treated like
-    // RESULTS_RECEIVED, although we likely report different messages to the
-    // server for these cases.
-    RESULTS_RECEIVED;
+    RESULTS_RECEIVED,
+    // Eventually, a "results overdue" condition leads to a GIVING_UP event,
+    // which is roughly treated like another PREPARE_HEAT_RECEIVED.
+    GIVING_UP;
   }
 
   public interface TransitionCallback {
@@ -87,9 +89,8 @@ public class RacingStateMachine {
             currentState = State.MARK;
             break;
           case ABORT_HEAT_RECEIVED:
-            currentState = unexpected(e, State.IDLE);
-            break;
           case RESULTS_RECEIVED:
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
@@ -106,6 +107,7 @@ public class RacingStateMachine {
             currentState = unexpected(e, State.MARK);
             break;
           case RESULTS_RECEIVED:
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
@@ -119,12 +121,11 @@ public class RacingStateMachine {
             currentState = State.IDLE;
             break;
           case PREPARE_HEAT_RECEIVED:
-            currentState = unexpected(e, State.SET);
-            break;
           case GATE_CLOSED:
             currentState = unexpected(e, State.SET);
             break;
           case RESULTS_RECEIVED:
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
@@ -146,8 +147,11 @@ public class RacingStateMachine {
           case GATE_OPENED:
             currentState = unexpected(e, State.RUNNING);
             break;
-          // One could imagine receiving a GATE_CLOSED (affecting the start
-          // gate) while the race is running and the timer is still going.
+          // GIVING_UP takes us back to a MARK state; if the gate is closed,
+          // that should transition immediately to SET.
+          case GIVING_UP:
+            currentState = State.MARK;
+            break;
         }
     }
     if (initialState != currentState) {

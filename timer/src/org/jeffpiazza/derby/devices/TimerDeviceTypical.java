@@ -112,4 +112,30 @@ public abstract class TimerDeviceTypical
   public abstract void onTransition(RacingStateMachine.State oldState,
                                     RacingStateMachine.State newState)
       throws SerialPortException;
+
+  // A reasonably common scenario is this: if the gate opens accidentally
+  // after the PREPARE_HEAT, the timer starts but there are no cars to
+  // trigger a result.  When that happens, some timers support a "force output"
+  // command, which should be tried.  If not, or if it doesn't produce any
+  // results, it's eventually necessary to give up and return to a MARK or
+  // SET state.
+  protected void giveUpOnOverdueResults() throws SerialPortException,
+                                                 LostConnectionException {
+    // This forces the state machine back to MARK.
+    rsm.onEvent(RacingStateMachine.Event.GIVING_UP, this);
+    // updateGateIsClosed() may throw a LostConnectionException if the
+    // timer has become unresponsive; otherwise, we'll advance from
+    // MARK to SET.
+    if (updateGateIsClosed()) {
+      // It can certainly happen that the gate gets closed while the race
+      // is running.
+      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
+    }
+    // TODO invokeMalfunctionCallback(false, "No result received from last heat.");
+    // We'd like to alert the operator to intervene manually, but
+    // as currently implemented, a malfunction(false) message would require
+    // unplugging/replugging the timer to reset: too invasive.
+    portWrapper.logWriter().
+        serialPortLogInternal("No result from timer for the running race; giving up.");
+  }
 }

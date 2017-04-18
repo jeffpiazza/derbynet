@@ -151,26 +151,7 @@ public class FastTrackDevice extends TimerDeviceTypical {
   protected void whileInState(RacingStateMachine.State state)
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
-      // A reasonably common scenario is this: if the gate opens accidentally
-      // after the PREPARE_HEAT, the timer starts but there are no cars to
-      // trigger a result.
-      //
-      // updateGateIsClosed() may throw a LostConnectionException if the
-      // timer has become unresponsive; otherwise, we'll deal with an
-      // unexpected gate closure (which has no real effect).
-      if (updateGateIsClosed()) {
-        // It can certainly happen that the gate gets closed while the race
-        // is running.
-        rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
-      }
-      // This forces the state machine back to IDLE.
-      rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
-      // TODO invokeMalfunctionCallback(false, "No result received from last heat.");
-      // We'd like to alert the operator to intervene manually, but
-      // as currently implemented, a malfunction(false) message would require
-      // unplugging/replugging the timer to reset: too invasive.
-      portWrapper.logWriter().serialPortLogInternal(
-          "No result from timer for the running race; giving up.");
+      giveUpOnOverdueResults();
     } else if (state == RacingStateMachine.State.MARK) {
       // prepareHeat() called; waiting for gate to close.
       // Detecting "gate closed" and getting to SET depends on
