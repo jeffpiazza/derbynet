@@ -11,12 +11,10 @@
 # If the base URL is not given on the command line, and it's available from
 # either /boot/derbynet.conf or /etc/derbynet.conf, that value will be used.
 #
-# To control the camera, this version uses chdkptp
-# (https://app.assembla.com/wiki/show/chdkptp), which works with Canon cameras
-# running the Canon Hacker's Development Kit (http://chdk.wikia.com/wiki/CHDK).
-#
-# Alternatively, the gphoto2 command (available in most linux distributions, or
-# from http://gphoto.org) can interface to many/most dSLR cameras over USB.
+# The script logs in to the server when started, then loops waiting for barcodes
+# to be scanned.  Check the server's php.ini, particularly
+# session.gc_maxlifetime, to be sure that session cookies won't get reclaimed
+# before we're done.
 #
 # Obtain the 'barcode' command:
 #
@@ -42,6 +40,14 @@ BARCODE_SCANNER_DEV=/dev/input/by-id/usb-Megawin_Technology_Inc._USB_Keyboard-ev
 # If set to 1, the barcode scan will also check-in the racer
 PHOTO_CHECKIN=0
 
+# By default, we use gphoto2, which can talk to most dSLR cameras over USB.
+# gphoto2 is available in most linux distributions, or from http://gphoto.org.
+#
+# An alternative is to use chdkptp (https://app.assembla.com/wiki/show/chdkptp),
+# which works with Canon cameras running the Canon Hacker's Development Kit
+# (http://chdk.wikia.com/wiki/CHDK).
+USE_CHDKPTP=0
+
 test -f /etc/derbynet.conf  && . /etc/derbynet.conf
 test -f /boot/derbynet.conf && . /boot/derbynet.conf
 
@@ -54,9 +60,10 @@ COOKIES=`mktemp`
 # Ignore error failures
 set +e
 
-# This gvfs daemon conflicts with chdkptp and prevents correct operation of the script,
-# so kill it if it's running
-sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
+# This gvfs daemon conflicts with chdkptp and gphoto2, and prevents correct
+# operation of the script, so kill it if it's running.  Run a loop in the
+# background, in case it's still coming up when this script runs.
+while true ; do sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1 ; sleep 4s ; done &
 
 # If there are connectivity problems, keep trying until login is successful.
 LOGIN_OK=0
@@ -76,8 +83,10 @@ echo Successfully logged in
 # photo composition.)
 #
 # Assumes there's only one camera attached
-echo Activating camera
-chdkptp -c -e"rec"
+if [ $USE_CHDKPTP -ne 0 ] ; then
+    echo Activating camera
+    chdkptp -c -e"rec"
+fi
 
 while true ; do
     BARCODE=`barcode $BARCODE_SCANNER_DEV`
@@ -95,9 +104,11 @@ while true ; do
         fi
 
         echo Capturing photo Car$CAR_NO.jpg
-        chdkptp -c -e"rec" -e"remoteshoot Car$CAR_NO"
-        # Alternatively:
-        # gphoto2 --filename "Car$CAR_NO" --capture-image-and-download
+        if [ $USE_CHDKPTP -eq 0 ] ; then
+            gphoto2 --filename "Car$CAR_NO" --capture-image-and-download
+        else
+            chdkptp -c -e"rec" -e"remoteshoot Car$CAR_NO"
+        fi
 
         echo Uploading $BARCODE
         curl --silent -F action=photo.upload \
@@ -108,6 +119,8 @@ while true ; do
              -F "photo=@Car$CAR_NO.jpg;type=image/jpeg" \
              -b "$COOKIES" -c "$COOKIES" \
              "$DERBYNET_SERVER/action.php"
+    elif [ "$BARCODE" = "QUITQUITQUIT" ] ; then
+        sudo shutdown -h now
     else
         echo Rejecting scanned barcode $BARCODE
     fi

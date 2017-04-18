@@ -1,0 +1,13 @@
+The two scripts in this directory support automated photo upload in response to
+barcode scanning.  While the photostand.sh script takes complete control of the
+camera, causing a photo to be taken in response to reading a barcode, the two
+scripts here allow the camera to be operated by hand, with only the upload step
+triggered by a barcode scan.
+
+To use, BOTH scripts in this directory should be started.
+
+capture-tethered.sh talks to the camera, and stores each photo in response to the 
+
+
+
+TODO /home/pi and /home/pi/photos
