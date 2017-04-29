@@ -26,27 +26,23 @@ start_response();
 $ok = true;
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-  $current = get_running_round();
-
   if (isset($_POST['roundid']) || isset($_POST['heat'])) {
     // Turn off NowRacing, although it may get turned back on before
     // this action completes.  set_racing_state(0) will take care of
     // sending a replay CANCEL.
     set_racing_state(0);
 
-    // Note: roundid may be < 0 if not previously set
-    $roundid = $current['roundid'];
-    $heat = 'next';
+    $current = get_running_round();
 
     if (isset($_POST['roundid'])) {
-      $roundid = $_POST['roundid'];
+      $current['roundid'] = $_POST['roundid'];
       $heat = 1;
     }
     if (isset($_POST['heat'])) {
       $heat = $_POST['heat'];
     }
 
-    if (!advance_heat($current, $roundid, $heat, /* echo_failure: */true)) {
+    if (!advance_heat($current, $heat, /* report_failure: */true)) {
       $ok = false;
     }
   }

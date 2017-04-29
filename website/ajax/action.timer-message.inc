@@ -66,7 +66,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     } else if (write_heat_results()) {
       send_replay_REPLAY();
       $current = get_running_round();
-      advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
+      advance_heat($current, 'next', /* show failure */ false);
       echo "\n  <success/>\n";
     }
     // If another heat is teed up, we'll immediately change state to

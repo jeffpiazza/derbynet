@@ -115,7 +115,7 @@ function notice_change_current_tbody(tbodyid, round, classname) {
 // Looking for the #heat_{roundid}_{heat} row, if there is one.  (ondeck, but
 // not racer-results.)  Even if we're using master scheduling, the row will be
 // labeled with roundid, not tbodyid.
-function notice_change_current_heat(roundid, heat) {
+function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
   // Scroll if necessary to see the heat AFTER current heat, but only if the
   // previously-current heat was visible.
   if (roundid != g_update_status.current.roundid ||
@@ -128,7 +128,8 @@ function notice_change_current_heat(roundid, heat) {
 	curheat = $("#heat_" + roundid + "_" + heat);
 	curheat.addClass("curheat");
     $(".nextheat").removeClass("nextheat");
-    var nextheat = $("#heat_" + roundid + "_" + (parseInt(heat) + 1));
+
+    var nextheat = $("#heat_" + next_roundid + "_" + next_heat);
     nextheat.addClass("nextheat");
 	if (!nextheat[0]) {
 	  nextheat = curheat;
@@ -183,13 +184,16 @@ function process_response_from_current(summary) {
     return;
   }
 
+  var next_heat_xml = summary.getElementsByTagName("next-heat")[0];
+  
   process_new_schedules(summary.getElementsByTagName("has_new_schedule"),
                         0,
                         function () {
                           notice_change_current_tbody(current.tbodyid, current.round,
                                                       current.classname);
-                          notice_change_current_heat(current.roundid, current.heat);
-
+                          notice_change_current_heat(current.roundid, current.heat,
+                                                     next_heat_xml.getAttribute("roundid"),
+                                                     next_heat_xml.getAttribute("heat"));
                           process_update_elements(summary.getElementsByTagName("update"));
 
                           g_update_status.last_update_time = high_water.getAttribute("completed");
