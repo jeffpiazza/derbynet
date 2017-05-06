@@ -165,6 +165,7 @@ if (isset($db_connection_string)) {
   <form><?php
     $is_windows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 ?>
+    <input type="hidden" name="action" value="setup.nodata"/>
     <input type="radio" name="connection_type" value="sqlite" id="sqlite_connection"
            <?php if (@$form_fields['radio'] == 'sqlite') echo 'checked="checked"'; ?>
            data-wrapper-class="sqlite_connection_wrapper"/>

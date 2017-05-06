@@ -62,7 +62,7 @@ function handle_choose_database() {
     var serialized = myform.serialize();
     disabled.attr('disabled', 'disabled');
 
-    $.ajax('setup-action.php',
+    $.ajax('action.php',
            {type: 'POST',
             data: serialized,
             success: function(data) {
