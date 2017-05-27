@@ -1,6 +1,7 @@
 <?php @session_start(); ?>
 <?php
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
@@ -75,8 +76,7 @@ g_order = '<?php echo $order; ?>';
 </head>
 <body>
 <?php
-$banner_title = 'Racer Check-In';
-require('inc/banner.inc');
+make_banner('Racer Check-In');
 
 require_once('inc/checkin-table.inc');
 ?>

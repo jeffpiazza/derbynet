@@ -1,11 +1,12 @@
 <?php @session_start();
-    require_once('inc/data.inc');
-    require_once('inc/photo-config.inc');
-    require_once('inc/schema_version.inc');
-    require_once('inc/running_round_header.inc');
+require_once('inc/data.inc');
+require_once('inc/banner.inc');
+require_once('inc/photo-config.inc');
+require_once('inc/schema_version.inc');
+require_once('inc/running_round_header.inc');
 
-    $use_master_sched = use_master_sched();
-    $high_water_rounds = high_water_rounds();
+$use_master_sched = use_master_sched();
+$high_water_rounds = high_water_rounds();
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -37,8 +38,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-$banner_title = 'Results By Racer';
-require('inc/banner.inc');
+make_banner('Results By Racer');
 
 $nlanes = get_lane_count_from_results();
 

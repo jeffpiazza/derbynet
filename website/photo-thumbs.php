@@ -1,5 +1,6 @@
 <?php session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
@@ -62,7 +63,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
 <body>
-<?php $banner_title = ($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'; require('inc/banner.inc'); ?>
+<?php make_banner(($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'); ?>
 
 <div class="block_buttons">
   <?php

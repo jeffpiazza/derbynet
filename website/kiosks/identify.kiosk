@@ -20,9 +20,8 @@ $(function () {
 </head>
 <body>
 <?php
-    $banner_title = 'Kiosk Identification';
-    $no_back_button = true;
-    require('inc/banner.inc');
+require_once('inc/banner.inc');
+make_banner('Kiosk Identification', /* back_button */ false);
 ?>
  <p class="kiosk_title">DerbyNet</p>
  <p class="kiosk_title"><?php echo address_for_current_kiosk(); ?></p>

@@ -5,6 +5,7 @@
 require_once('inc/authorize.inc');
 // Note that schema_version doesn't load data.inc
 require_once('inc/schema_version.inc');
+require_once('inc/banner.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -37,7 +38,7 @@ require_once('inc/schema_version.inc');
 
 </head>
 <body>
-<?php $banner_title = 'About DerbyNet'; require('inc/banner.inc'); ?>
+<?php make_banner('About DerbyNet'); ?>
 <h1>About DerbyNet</h1>
 
 <p></p>

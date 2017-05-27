@@ -1,5 +1,6 @@
 <?php @session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);
@@ -24,7 +25,7 @@ $(function() { show_class_editor_modal(); });
 </script>
 </head>
 <body>
-<?php $banner_title = group_label().' Editor'; require('inc/banner.inc'); ?>
+<?php make_banner(group_label().' Editor'); ?>
 <!--
 <div class="block_buttons">
   <input type="button" data-enhanced="true" value="Edit <?php echo group_label(); ?>s"

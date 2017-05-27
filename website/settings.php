@@ -1,5 +1,6 @@
 <?php session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
@@ -41,8 +42,7 @@ function photo_directory_base() {
 </head>
 <body>
 <?php
-$banner_title = 'Settings';
-require('inc/banner.inc');
+make_banner('Settings');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $use_xbs = read_raceinfo_boolean('xbs-award');

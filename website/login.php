@@ -4,6 +4,7 @@
 // selection, prompt for a password and log the user in.
 
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 ?><!DOCTYPE html>
@@ -26,7 +27,7 @@ require_once('inc/authorize.inc');
 </head>
 <body<?php if (isset($_GET['logout'])) echo ' onload="handle_logout()"'; ?>>
 
-<?php require('inc/banner.inc'); ?>
+<?php make_banner(''); ?>
 
 <div class="index_background">
 <div class="block_buttons">

@@ -2,6 +2,8 @@
 // Redirects to setup page if the database hasn't yet been set up
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/banner.inc');
+require_once('inc/authorize.inc');
 
 // This first database access is surrounded by a try/catch in order to catch
 // broken/corrupt databases (e.g., sqlite pointing to a file that's not actually
@@ -25,9 +27,7 @@ try {
 </head>
 <body>
 <?php
- $no_back_button = true;
- require('inc/banner.inc');
- require_once('inc/authorize.inc');
+  make_banner('', /* back_button */ false);
 
  $need_spacer = false;
 

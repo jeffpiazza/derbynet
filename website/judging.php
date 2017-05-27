@@ -9,6 +9,7 @@
 // TODO: Write-in field for true ad hoc awards
 
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_permission(JUDGING_PERMISSION);
 ?><!DOCTYPE html>
@@ -24,8 +25,7 @@ require_permission(JUDGING_PERMISSION);
 </head>
 <body>
 <?php
-$banner_title = 'Judging';
-require('inc/banner.inc');
+make_banner('Judging');
 
 require_once('inc/standings.inc');
 

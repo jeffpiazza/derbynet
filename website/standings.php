@@ -13,6 +13,7 @@ session_start();
 // round.  Note that the roster.new action performs SQL queries directly,
 // without using final_standings(), but performs a similar query.
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
@@ -54,7 +55,7 @@ $(function () {
 <?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
-<?php $banner_title = 'Race Standings'; require('inc/banner.inc'); ?>
+<?php make_banner('Race Standings'); ?>
 <div class="block_buttons">
 <div class="center-select">
 <h3><?php echo read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time" : "Averaging all heat times"; ?></h3>

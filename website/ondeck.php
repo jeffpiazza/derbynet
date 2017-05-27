@@ -8,6 +8,7 @@
 // this case.
 @session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
@@ -46,7 +47,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-$banner_title = 'Racing Heats'; require('inc/banner.inc');
+make_banner('Racing Heats');
 running_round_header($now_running);
 
 require_once('inc/rounds.inc');

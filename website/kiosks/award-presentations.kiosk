@@ -10,8 +10,6 @@
 <script type="text/javascript" src="js/award-presentations-kiosk.js"></script>
 </head>
 <body>
-<?php /* $banner_title = 'Award Presentation'; $no_back_button = true; require('inc/banner.inc');  */ ?>
-
 <div class="award-background">
   <div class="award-trophy" id="awardname"></div>
 

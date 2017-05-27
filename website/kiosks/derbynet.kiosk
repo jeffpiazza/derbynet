@@ -15,9 +15,8 @@ p {
 </head>
 <body>
 <?php
-    $banner_title = 'DerbyNet';
-    $no_back_button = true;
-    require('inc/banner.inc');
+require_once('inc/banner.inc');
+make_banner('DerbyNet', /* back_button */ false);
 ?>
 
   <div class="full_page_center">

@@ -1,6 +1,7 @@
 <?php @session_start();
 // Add, edit, reorder, and assign awards
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
@@ -22,7 +23,7 @@ require_permission(EDIT_AWARDS_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/awards-editor.css"/>
 </head>
 <body>
-<?php $banner_title = 'Awards Editor'; require('inc/banner.inc');
+<?php make_banner('Awards Editor');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 

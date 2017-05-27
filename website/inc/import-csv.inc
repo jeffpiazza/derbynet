@@ -1,4 +1,5 @@
 <?php
+require_once('inc/banner.inc');
 
 function generate_import_page_head_matter() {
 ?>
@@ -101,7 +102,7 @@ function generate_import_page($page_name, $button_label,
 ?>
 </head>
 <body>
-<?php $banner_title = $page_name; require('inc/banner.inc'); ?>
+<?php make_banner($page_name); ?>
 <div class="import_csv">
   <div id="top_matter">
     <div id="new_ranks">

@@ -1,6 +1,7 @@
 <?php @session_start();
 // Controls the "current award" kiosk display
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
@@ -32,7 +33,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/awards-presentation.css"/>
 </head>
 <body>
-<?php $banner_title = 'Awards Presentation'; require('inc/banner.inc');
+<?php make_banner('Awards Presentation');
 
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');

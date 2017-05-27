@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <?php
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><!DOCTYPE html>
@@ -20,7 +21,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/kiosk-dashboard.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Kiosk Dashboard'; require('inc/banner.inc'); ?>
+<?php make_banner('Kiosk Dashboard'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
 <div class="standings-control hidden control_group block_buttons">

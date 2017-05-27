@@ -1,6 +1,7 @@
 <?php session_start();
 
 require_once('inc/authorize.inc');
+require_once('inc/banner.inc');
 require_permission(SET_UP_PERMISSION);
 
 ?><!DOCTYPE html>
@@ -21,7 +22,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/setup.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Set-Up'; require('inc/banner.inc'); ?>
+<?php make_banner('Set-Up'); ?>
 <?php
 
 require_once('inc/ajax-failure.inc'); // Must follow jquery
