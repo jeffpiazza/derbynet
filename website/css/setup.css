@@ -1,0 +1,75 @@
+.step_div {
+    width: 100%;
+    margin-top: 20px;
+    min-height: 100px;
+}
+
+.status_icon {
+    margin-left: 10px;
+    width: 60px;
+    float: left;
+}
+
+.step_button {
+    width: 300px;
+    float: left;
+}
+
+.step_details {
+    /* To have any visible effect, has to account for
+       the floated-left elements, status_icon and step_button. */
+    margin-left: 425px;
+}
+.step_details p {
+    padding-top: 15px;
+}
+
+span.readonly {
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.block_buttons input[disabled][type='button'],
+.block_buttons input[disabled][type='submit'] {
+    background: #a0a0a0;
+}
+
+.database_file {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.tall_modal {
+    top: 10px;
+    padding: 0px 20px;
+}
+
+.tall_modal .ui-input-text input {
+    min-height: 1.5em;
+    padding: 0.2em;
+    line-height: 1em;
+}
+
+.tall_modal .ui-input-text {
+    margin-top: 0px;
+}
+
+.ui-mobile .tall_modal label {
+    margin-bottom: 0px;
+}
+
+.block_buttons .missing_driver {
+    color: red;
+    font-weight: bold;
+    float: right;
+    font-size: 16px;
+}
+
+#browse_for_sqlite {
+    float: right;
+    width: 19%;
+    margin-bottom: 0px;
+    margin-top: 14px;
+    padding:5px 5px;
+}

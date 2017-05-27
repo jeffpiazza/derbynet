@@ -3,6 +3,7 @@
 // $_POST['name']
 
 require_once('inc/schema_version.inc');
+require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 
 start_response();

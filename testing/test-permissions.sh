@@ -33,7 +33,7 @@ cat >coordinator.index.tmp <<EOF
         <form method="link" action="standings.php">
         <form method="link" action="export.php">
         <form method="link" action="settings.php">
-        <form method="link" action="database-setup.php">
+        <form method="link" action="setup.php">
         <form method="link" action="import-roster.php">
         <form method="link" action="class-editor.php">
         <form method="link" action="about.php">

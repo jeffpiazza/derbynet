@@ -119,7 +119,7 @@ function generate_import_page($page_name, $button_label,
         finish setting up the database.</p>
       <?php } ?>
 
-      <form method="link" action="database-setup.php">
+      <form method="link" action="setup.php">
         <input type="submit" data-enhanced="true" value="Set Up Database"/>
       </form>
 

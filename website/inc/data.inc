@@ -7,7 +7,7 @@ try {
 
 if (!isset($db)) {
   $_SESSION['setting_up'] = 1;
-  header('Location: database-setup.php');
+  header('Location: setup.php');
   exit();
 }
 
@@ -51,11 +51,6 @@ function inner_join() {
     $first = false;
   }
   return $expr;
-}
-
-function sql_file_path($stem) {
-  global $dbtype;
-  return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
 }
 
 // Returns row with only numbered array elements

@@ -80,8 +80,8 @@ if [ "$DBTYPE" == "none" ] ; then
 elif [ "$DBTYPE" == "sqlite" ] ; then
     DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
     prepare_for_setup
-    curl_post setup-action.php \
-        "connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
+    curl_post action.php \
+        "action=setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
         | check_success
     run_tests
 elif [ "$DBTYPE" == "mysql" ] ; then
@@ -90,14 +90,14 @@ elif [ "$DBTYPE" == "mysql" ] ; then
     DBUSER=${2:-$DBNAME}
     DBPASS=${3:-}
     prepare_for_setup
-    curl_post setup-action.php \
-              "connection_string=mysql:host=localhost;dbname=$DBNAME&dbuser=$DBUSER&dbpass=$DBPASS" \
+    curl_post action.php \
+              "action=setup.nodata&connection_string=mysql:host=localhost;dbname=$DBNAME&dbuser=$DBUSER&dbpass=$DBPASS" \
         | check_success
     run_tests
 elif [ "$DBTYPE" == "access" ] ; then
     prepare_for_setup
-    curl_post setup-action.php \
-              "connection_string=odbc:DSN=gprm;Exclusive=NO&dbuser=&dbpass=" \
+    curl_post action.php \
+              "action=setup.nodata&connection_string=odbc:DSN=gprm;Exclusive=NO&dbuser=&dbpass=" \
         | check_success
 
     # Access databases can't load a database snapshot, because it doesn't allow

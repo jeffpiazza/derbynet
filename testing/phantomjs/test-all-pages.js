@@ -8,7 +8,6 @@ require("./preamble");
     "checkin.php",
     "class-editor.php",
     "coordinator.php",
-    "database-setup.php",
     // "export.php",
     "import-awards.php",
     "import-results.php",
@@ -20,6 +19,7 @@ require("./preamble");
     "photo-thumbs.php",
     "racer-results.php",
     "settings.php",
+    "setup.php",
     "standings.php"
   ];
 

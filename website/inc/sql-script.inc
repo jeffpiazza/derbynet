@@ -1,5 +1,10 @@
 <?php
 
+function sql_file_path($stem) {
+  global $dbtype;
+  return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
+}
+
 function report_sql_result($sql_result, $sql_stmt) {
   echo '<executed result="'.($sql_result === false ? 'FALSE' : $sql_result).'">'
       .htmlspecialchars($sql_stmt, ENT_QUOTES, 'UTF-8')."</executed>\n";

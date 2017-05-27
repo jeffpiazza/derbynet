@@ -11,7 +11,7 @@ try {
   $schema_version = schema_version();
 } catch (PDOException $p) {
   $_SESSION['setting_up'] = 1;
-  header('Location: database-setup.php');
+  header('Location: setup.php');
   exit();
 }
 ?><!DOCTYPE html>
@@ -106,33 +106,10 @@ if ($need_spacer) {
 <?php } ?>
 
 <?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<input type="button" value="Set-Up" onclick="show_modal('#setup_modal', function() {})"/>
 
-
-        <div id='setup_modal' class='modal_dialog hidden block_buttons'>
-          <form method="link" action="settings.php">
-            <input type="submit" value="Settings"/>
-          </form>
-          <br/>
-          <form method="link" action="database-setup.php">
-            <input type="submit" value="Database"/>
-          </form>
-          <br/>
-          <form method="link" action="import-roster.php">
-            <input type="submit" value="Import Roster"/>
-          </form>
-          <br/>
-          <form method="link" action="import-awards.php">
-            <input type="submit" value="Import Awards"/>
-          </form>
-          <br/>
-          <form method="link" action="class-editor.php">
-            <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
-          </form>
-          <div class="index_spacer">&nbsp;</div>
-            <input type="button" data-enhanced="true" value="Cancel"
-                   onclick='close_modal("#setup_modal");'/>
-        </div>
+<form method="link" action="setup.php">
+  <input type="submit" value="Set-Up"/>
+</form>
                                                 
 <?php } ?>
 

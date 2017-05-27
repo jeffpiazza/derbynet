@@ -1,4 +1,5 @@
 <?php
+require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 
 start_response();
