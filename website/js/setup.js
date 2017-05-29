@@ -7,7 +7,7 @@
 //            roster:
 //            classes:
 //            awards:
-//            photo:
+//            settings:
 //            form_fields: {drivers:, radio:, sqlite_path:, mysql_host:, mysql_dbname:, odbc_dsn_name:}
 function populate_details(details) {
   $("#database_step div.status_icon img").attr('src', 'img/status/' + details.database.status + '.png');
@@ -15,12 +15,12 @@ function populate_details(details) {
   $("#roster_step div.status_icon img").attr('src', 'img/status/' + details.roster.status + '.png');
   $("#classes_step div.status_icon img").attr('src', 'img/status/' + details.classes.status + '.png');
   $("#awards_step div.status_icon img").attr('src', 'img/status/' + details.awards.status + '.png');
-  $("#photo_step div.status_icon img").attr('src', 'img/status/' + details.photo.status + '.png');
+  $("#settings_step div.status_icon img").attr('src', 'img/status/' + details.settings.status + '.png');
 
   $("#roster_step input[type='submit'], "
     + "#classes_step input[type='submit'], "
     + "#awards_step input[type='submit'], "
-    + "#photo_step input[type='submit']")
+    + "#settings_step input[type='submit']")
     .prop('disabled', (details.schema.button == 'disabled') || !details.database.writable);
   
   if (details.schema.button == 'disabled' || !details.database.writable) {
@@ -47,7 +47,7 @@ function populate_details(details) {
   $("#roster_step div.step_details").html(details.roster.details);
   $("#classes_step div.step_details").html(details.classes.details);
   $("#awards_step div.step_details").html(details.awards.details);
-  $("#photo_step div.step_details").html(details.photo.details);
+  $("#settings_step div.step_details").html(details.settings.details);
 
   function maybe_mark_driver_missing(driver, radio_id) {
     var driver_ok = ($.inArray(driver, details.form_fields.drivers) >= 0);

@@ -120,12 +120,12 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="step_details"></div>
 </div>
 
-<!-- Photo directories -->
-<div id="photo_step" class="step_div">
+<!-- Photo directories and lane count -->
+<div id="settings_step" class="step_div">
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <form method="link" action="import-awards.php">
+    <form method="link" action="settings.php">
       <input type="submit" data-enhanced="true" value="Settings"/>
     </form>
   </div>

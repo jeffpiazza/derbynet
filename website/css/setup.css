@@ -24,6 +24,10 @@
     padding-top: 15px;
 }
 
+#settings_step .step_details p {
+    padding-top: 5px;
+}
+
 span.readonly {
     color: red;
     font-weight: bold;

@@ -112,8 +112,8 @@ function inspect_database() {
                   'nracers' => 0,
                   'dens' => array(),
                   'nawards' => 0,
-                  'photo_icon' => 'unknown',
-                  'photo_details' => '<p>No photo directories defined.</p>',
+                  'settings_icon' => 'unknown',
+                  'settings_details' => 'No photo directories defined.',
                   'writable' => false
     );
 
@@ -162,18 +162,22 @@ function inspect_database() {
     try {
       $racer_photo_directory = read_raceinfo('photo-directory');
       $car_photo_directory = read_raceinfo('car-photo-directory');
-      $result['photo_details'] = "<p>Racer photos: ".$racer_photo_directory."<br/>\n"
-        ."Car photos: ".$car_photo_directory."</p>\n";
+      $result['settings_details'] = "Racer photos: ".$racer_photo_directory."<br/>\n"
+          ."Car photos: ".$car_photo_directory;
     } catch (PDOException $p) {
     }
 
     if (!is_dir($racer_photo_directory) || !is_readable($racer_photo_directory) ||
         !is_dir($car_photo_directory) || !is_readable($car_photo_directory)) {
-      $result['photo_icon'] = "trouble";
+      $result['settings_icon'] = "trouble";
     } else if (!is_writable($racer_photo_directory) || !is_writable($car_photo_directory)) {
-      $result['photo_icon'] = "readonly";
+      $result['settings_icon'] = "readonly";
+    } else if (get_lane_count() == 0) {
+      $result['settings_icon'] = 'unknown';
+      $result['settings_details'] .= '<br/>The number of lanes on the track hasn\'t been set.';
     } else {
-      $result['photo_icon'] = "ok";
+      $result['settings_icon'] = "ok";
+      $result['settings_details'] .= '<br/>The track has '.get_lane_count().' lanes.';
     }
   }
   
@@ -235,19 +239,19 @@ function build_setup_details($db_connection_string, $schema) {
                                  'details' =>
                                  "<p>There ".plural($schema['nracers'], "racer", "racers")." registered."
                                  ."  (Visit the <a href=\"checkin.php\">Check-In page</a>"
-                                 ." to enter individual racers.)</p>"),
+                                 ." to enter individual racers.)</p>\n"),
                'classes' => array('status' => count($schema['dens']) == 0 ? "unknown" : "ok",
                                   'label' => $schema['group_label'],
                                   'details' =>
                                   count($schema['dens']) == 0
-                                  ? "<p>There are no ".$schema['group_label_lc']."s defined.</p>"
-                                  : "<p>".implode(", ", $schema['dens'])."</p>"),
+                                  ? "<p>There are no ".$schema['group_label_lc']."s defined.</p>\n"
+                                  : "<p>".implode(", ", $schema['dens'])."</p>\n"),
                'awards' => array('status' => $schema['nawards'] == 0 ? "unknown" : "ok",
                                  'details' => "<p>There ".plural($schema['nawards'], "award", "awards")." defined."
                                  ."  (Visit the <a href=\"awards-editor.php\">Awards Editor page</a>"
-                                 ." to enter individual awards.)</p>"),
-               'photo' => array('status' => $schema['photo_icon'],
-                                'details' => $schema['photo_details']),
+                                 ." to enter individual awards.)</p>\n"),
+               'settings' => array('status' => $schema['settings_icon'],
+                                   'details' => "<p>".$schema['settings_details']."</p>\n"),
                'form_fields' => build_form_fields($db_connection_string)
     );
 } 
