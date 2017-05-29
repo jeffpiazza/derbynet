@@ -42,7 +42,7 @@ function photo_directory_base() {
 </head>
 <body>
 <?php
-make_banner('Settings');
+make_banner('Settings', 'setup.php');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $use_xbs = read_raceinfo_boolean('xbs-award');

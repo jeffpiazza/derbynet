@@ -1,6 +1,6 @@
 // Requires dashboard-ajax.js
 
-// Note that close_class_editor_modal returns to index.php upon dismissal of the
+// Note that close_class_editor_modal returns to setup.php upon dismissal of the
 // modal dialog.
 
 function show_class_editor_modal() {
@@ -12,7 +12,7 @@ function show_class_editor_modal() {
 
 function close_class_editor_modal() {
     close_modal("#class_editor_modal");
-    window.location='index.php';
+    window.location='setup.php';
 }
 
 function show_add_class_modal() {

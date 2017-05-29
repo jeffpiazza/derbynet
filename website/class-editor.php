@@ -25,7 +25,10 @@ $(function() { show_class_editor_modal(); });
 </script>
 </head>
 <body>
-<?php make_banner(group_label().' Editor'); ?>
+<?php
+  // Since the back button is always obscured, the back button setting doesn't
+  // really have much effect.
+make_banner(group_label().' Editor', 'setup.php'); ?>
 <!--
 <div class="block_buttons">
   <input type="button" data-enhanced="true" value="Edit <?php echo group_label(); ?>s"

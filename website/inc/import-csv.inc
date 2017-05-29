@@ -102,7 +102,7 @@ function generate_import_page($page_name, $button_label,
 ?>
 </head>
 <body>
-<?php make_banner($page_name); ?>
+<?php make_banner($page_name, 'setup.php'); ?>
 <div class="import_csv">
   <div id="top_matter">
     <div id="new_ranks">
