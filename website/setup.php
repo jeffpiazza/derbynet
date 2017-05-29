@@ -16,7 +16,6 @@ require_permission(SET_UP_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/setup.js"></script>
@@ -133,7 +132,6 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="step_details"></div>
 </div>
 
-<!-- TODO Settings?  Just show the non-standard ones? -->
 
 <div id="database_modal" class="modal_dialog hidden block_buttons">
   <form>
@@ -238,6 +236,12 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#update_schema_modal");'/>
   </form>
+</div>
+
+<div id="reporting_box" class="hidden">
+  <div id="reporting_box_content"></div>
+  <div id="reporting_box_dismiss" class="hidden"
+       onclick="hide_reporting_box(); return false;">Dismiss</div>
 </div>
 
 <?php require('inc/chooser.inc'); ?>

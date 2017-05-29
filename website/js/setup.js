@@ -84,7 +84,47 @@ function populate_details_from_xml(data) {
   }
 }
 
+function hide_reporting_box() {
+  $("#reporting_box").removeClass('success failure').addClass('hidden').css('opacity', 100);
+  $("#reporting_box_dismiss").addClass('hidden');
+}
 
+function report_in_progress() {
+  $("#reporting_box_content").text("In Progress...");
+  $("#reporting_box").removeClass('hidden success failure');
+}
+
+function report_success() {
+  $("#reporting_box_content").text("Success");
+  $("#reporting_box").addClass('success').removeClass('hidden');
+  setTimeout(function() {
+    $("#reporting_box").animate({opacity: 0}, 500,
+                                function () { hide_reporting_box(); });
+  }, 1000);
+}
+
+function report_failure(text) {
+  $("#reporting_box_content").text(text);
+  $("#reporting_box_dismiss").removeClass('hidden');
+  $("#reporting_box").addClass('failure').removeClass('hidden');
+  // Has to be explicitly cleared -- no timout to disappear
+}
+
+function report_success_xml(data) {
+  var success = data.documentElement.getElementsByTagName("success");
+  if (success && success.length > 0) {
+    populate_details_from_xml(data);
+    report_success();
+  } else {
+    var fail = data.documentElement.getElementsByTagName("failure");
+    if (fail && fail.length > 0) {
+      report_failure(fail[0].textContent);
+    } else {
+      // Program bug -- the response should specify either <success/> for <failure/>
+      report_failure("Not successful");
+    }
+  }
+}
 
 function show_database_modal() {
   /* TODO E-Z setup
@@ -146,16 +186,15 @@ function handle_advanced_database_modal_submit() {
   var serialized = myform.serialize();
   disabled.attr('disabled', 'disabled');
 
+  report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
           data: serialized, // action = setup.nodata
           success: function(data) {
-            console.log("Success");
-            console.log(data);
-	        var success = data.documentElement.getElementsByTagName("success");
-            if (success && success.length > 0) {
-              populate_details_from_xml(data);
-            }
+            report_success_xml(data);
+          },
+          error: function(event, jqXHR, ajaxSettings, thrownError) {
+            report_failure(thrownError);
           }
          });
 }
@@ -169,16 +208,17 @@ function show_initialize_schema_modal() {
 
 function handle_initialize_schema() {
   close_modal("#initialize_schema_modal");
+  report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'database.execute',
                  script: 'schema'},
           success: function(data) {
-	        var success = data.documentElement.getElementsByTagName("success");
-            if (success && success.length > 0) {
-              populate_details_from_xml(data);
-            }
+            report_success_xml(data);
           },
+          error: function(event, jqXHR, ajaxSettings, thrownError) {
+            report_failure(thrownError);
+          }
          });
 }
 
@@ -191,16 +231,17 @@ function show_update_schema_modal() {
 
 function handle_update_schema() {
   close_modal("#update_schema_modal");
+  report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'database.execute',
                  script: 'update-schema'},
           success: function(data) {
-	        var success = data.documentElement.getElementsByTagName("success");
-            if (success && success.length > 0) {
-              populate_details_from_xml(data);
-            }
+            report_success_xml(data);
           },
+          error: function(event, jqXHR, ajaxSettings, thrownError) {
+            report_failure(thrownError);
+          }
          });
 }
 
