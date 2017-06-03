@@ -2,6 +2,11 @@
 http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
 */
 
+.dz-browser-not-supported .dz-message {
+    height: 0;
+    overflow: hidden;
+}
+
 body { margin: 0; }
 
 .body-wrapper { /* body row */

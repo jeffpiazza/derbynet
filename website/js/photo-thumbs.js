@@ -220,7 +220,7 @@ function rotatePhoto(angle) {
 }
 
 
-
+// For #upload-target div:
 Dropzone.options.uploadTarget = {
   paramName: 'photo',
   maxFilesize: 8,
