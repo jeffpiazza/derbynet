@@ -299,7 +299,6 @@ var Poller = {
   // next request, the watchdog periodically tests whether one seems overdue,
   // and may queue a new request if so.
   watchdog: function() {
-    console.log("Watchdog says hello!");  // TODO
     if (this.id_of_timeout != 0 && this.time_of_last_request + 15000 < (new Date()).valueOf()) {
       console.error("Watchdog notices no requests lately, and none queued!");
       this.queue_next_request();
