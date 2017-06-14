@@ -13,5 +13,6 @@ fi
 echo "[]" > "`dirname $0`/cookies.phantomjs"
 phantomjs "`dirname $0`/phantomjs/test-all-pages.js" "$BASE_URL"
 phantomjs "`dirname $0`/phantomjs/login.js" "$BASE_URL"
+phantomjs "`dirname $0`/phantomjs/test-coordinator1.js" "$BASE_URL"
 phantomjs "`dirname $0`/phantomjs/test-all-pages.js" "$BASE_URL"
 phantomjs "`dirname $0`/phantomjs/test-ondeck-columns.js" "$BASE_URL"
