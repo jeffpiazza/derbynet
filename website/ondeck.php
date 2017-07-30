@@ -23,7 +23,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 
     $high_water_rounds = high_water_rounds();
 
-    $show_car_photos = read_raceinfo_boolean('show-car-photos-on-deck');
+    $show_car_photos = read_raceinfo_boolean('show-cars-on-deck');
 ?><!DOCTYPE html>
 <html>
 <head>

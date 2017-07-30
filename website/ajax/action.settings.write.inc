@@ -37,7 +37,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'do-use-subgroups' => 'use-subgroups',
                   'use-master-sched' => 'use-master-sched',
                   'show-racer-photos' => 'show-racer-photos',
-                  'show-car-photos-on-deck' => 'show-car-photos-on-deck',
+                  'show-car-photos-on-deck' => 'show-cars-on-deck',
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
                   'drop-slowest' => 'drop-slowest')
