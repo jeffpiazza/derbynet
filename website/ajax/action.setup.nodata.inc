@@ -10,7 +10,7 @@
 
 
 require_once('inc/locked.inc');
-require_once('inc/parse_connection_string.inc');
+require_once('inc/parse-connection-string.inc');
 require_once('inc/sql-script.inc');
 require_once('inc/default-file-path.inc');
 require_once('inc/write-config-files.inc');

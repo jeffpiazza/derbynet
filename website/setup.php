@@ -25,7 +25,7 @@ require_permission(SET_UP_PERMISSION);
 <?php
 
 require_once('inc/ajax-failure.inc'); // Must follow jquery
-require_once('inc/parse_connection_string.inc');
+require_once('inc/parse-connection-string.inc');
 require_once('inc/default-file-path.inc');
 require_once('inc/standard-configs.inc');
 

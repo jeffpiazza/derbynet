@@ -2,7 +2,7 @@
 // $_POST['script']
 require_once('inc/sql-script.inc');
 require_once('inc/locked.inc');
-require_once('inc/parse_connection_string.inc');
+require_once('inc/parse-connection-string.inc');
 
 start_response();
 
