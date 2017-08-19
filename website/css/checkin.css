@@ -125,3 +125,12 @@ img.checkin-photo {
   width: 10em;
   visibility: hidden;  /* but still takes up space */
 }
+
+p.warning,
+p.warning a,
+p.warning a.ui-link {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+}

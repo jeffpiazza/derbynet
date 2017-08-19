@@ -129,6 +129,17 @@ class PhotoRepository {
     return $this->directory;
   }
 
+  // 'ok', 'readonly', 'trouble'
+  public function status() {
+    if (!is_dir($this->directory)) {
+      return 'trouble';
+    } else if (!is_writable($this->directory)) {
+      return 'readonly';
+    } else {
+      return 'ok';
+    }
+  }
+  
   public function column_name() {
     return $this->column_name;
   }

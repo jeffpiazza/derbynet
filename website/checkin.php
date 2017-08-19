@@ -4,6 +4,7 @@ require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/photo-config.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // This is the racer check-in page.  It appears as a table of all the
@@ -215,6 +216,12 @@ foreach ($stmt as $rs) {
     <div id="preview">
         <h2>Does your browser support webcams?</h2>
     </div>
+
+    <?php
+      if (headshots()->status() != 'ok') {
+        echo '<p class="warning">Check <a href="settings.php">photo directory settings</a> before proceeding!</p>';
+      }
+    ?>
 
     <div class="block_buttons">
         <input type="submit" value="Capture &amp; Check In" data-enhanced="true" id="capture_and_check_in"

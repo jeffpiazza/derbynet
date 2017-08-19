@@ -152,6 +152,16 @@ function handle_edit_racer() {
            });
 }
 
+function arm_webcam_dialog() {
+  var loaded = false;
+  Webcam.on('load', function() { loaded = true; });
+  setTimeout(function() {
+    if (!loaded) {
+      alert('You may have to enable Flash, or give permission to use your webcam.');
+    }
+  }, 2000);
+}
+
 function show_racer_photo_modal(racerid) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
@@ -164,6 +174,7 @@ function show_racer_photo_modal(racerid) {
       return false;
   });
 
+  arm_webcam_dialog();
   Webcam.set({
 	  width: 320,
 	  height: 240,
