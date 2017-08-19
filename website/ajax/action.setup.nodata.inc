@@ -1,26 +1,25 @@
 <?php
+// $_POST['ez-old']
+// or
+// $_POST['ez-new']
+//
+// otherwise, Advanced configuration:
 // $_POST['connection_string'], e.g., 'mysql:host=localhost;dbname=trial3'
 // $_POST['dbuser']
 // $_POST['dbpass']
-
-// TODO A failure encountered while setting up a new database needs to be
-// displayed, but doesn't otherwise affect the details on the setup page.  Only
-// if successful in setting up the new database (so, set $db), call
-// inspect_database and build_setup_details to return.
-//
-// attempt_to_count_racers may detect additional problems (access denied,
-// not_a_database).
 
 
 require_once('inc/locked.inc');
 require_once('inc/parse_connection_string.inc');
 require_once('inc/sql-script.inc');
+require_once('inc/default-file-path.inc');
+require_once('inc/write-config-files.inc');
+require_once('inc/standard-configs.inc');
 
 function local_file_name($filename) {
   $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
   return $configdir.DIRECTORY_SEPARATOR.$filename;
 }
-
 
 function error_handler($errno, $errstr, $errfile, $errline)
 {
@@ -30,21 +29,11 @@ function error_handler($errno, $errstr, $errfile, $errline)
 
 set_error_handler('error_handler');
 
-function write_config_file($filename, $content) {
-  global $g_errstr;
-  if (@file_put_contents(local_file_name($filename), $content, FILE_USE_INCLUDE_PATH) === false) {
-    echo "<failure code='cant_write_config'>Can't write config file: $g_errstr</failure>";
-    return false;
-  }
-
-  return true;
-}
-
 // Returns {pdo: <PDO-or-null>, exception: <PDOException>, error: <string-or-null>}
 // where <string-or-null> can take the values:
 // 'cant_connect'
 // 'acess_denied'
-function attempt_to_create_database($connection_string, $dbuser, $dbpass, $options) {
+function attempt_to_connect_to_database($connection_string, $dbuser, $dbpass, $options) {
   $result = array('pdo' => null, 'exception' => null, 'error' => null);
   try {
     $result['pdo'] = new PDO($connection_string, $dbuser, $dbpass, $options);
@@ -112,29 +101,96 @@ if (locked_settings()) {
 } else if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
 
-  $connection_string = $_POST['connection_string'];
-  $dbuser = $_POST['dbuser'];
-  $dbpass = $_POST['dbpass'];
+  // For a new ez-setup, we'll create subdirectories, and record their paths in
+  // these variables.
+  $racers_subdir = '';
+  $cars_subdir = '';
 
-  $options = array();
-  if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
-    $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
-  }
+  if (isset($_POST['ez-new']) && $_POST['ez-new'] != "") {
+    $superdir = default_file_path() . DIRECTORY_SEPARATOR . getdate()['year'];
+    $directory = $superdir . DIRECTORY_SEPARATOR . $_POST['ez-new'];
 
-  $trial = attempt_to_create_database($connection_string, $dbuser, $dbpass, $options);
-  if ($trial['pdo']) {
-    $trial_db = $trial['pdo'];
-  } else {
-    $ok = false;
-    echo "<failure code='".$trial['error']."'>";
-    if ($trial['error'] == 'access_denied') {
-      echo "Access denied:\n".$trial['exception']->getMessage();
-    } else {
-      var_dump($trial['exception']);
+    error_reporting(E_ALL);
+    
+    if (is_dir($directory)) {
+      echo '<failure code="already_exists">Directory already exists.</failure>'."\n";
+      $ok = false;
     }
-    echo "</failure>\n";
+
+    $old_umask = umask(0);
+
+    if ($ok) {
+      if (!@mkdir($directory, 0777, true)) {
+        $error = error_get_last();
+        echo '<failure code="cannot_mkdir">'
+        .htmlspecialchars($directory.':  '.$error['message'], ENT_QUOTES, 'UTF-8')
+        .'</failure>'."\n";
+        $ok = false;
+      }
+    }
+    // Create subdirectories.  Recording them in the database happens after the
+    // database is opened and initialized.
+    $racers_subdir = $directory . DIRECTORY_SEPARATOR . 'racers';
+    $cars_subdir = $directory . DIRECTORY_SEPARATOR . 'cars';
+    if ($ok) {
+      if (!@mkdir($racers_subdir)) {
+        echo '<failure code="cannot_mkdir_racers">Unable to create racers subdirectory.</failure>'."\n";
+        $ok = false;
+      }
+    }
+    if ($ok) {
+      if (!@mkdir($cars_subdir)) {
+        echo '<failure code="cannot_mkdir_cars">Unable to create cars subdirectory.</failure>'."\n";
+        $ok = false;
+      }
+    }
+
+    umask($old_umask);
+
+    if ($ok) {
+      $connection_string = 'sqlite:'. $directory . DIRECTORY_SEPARATOR . 'derbynet.sqlite3';
+      $dbuser = $dbpass = "";
+    }
+  } else if (isset($_POST['ez-old']) && $_POST['ez-old'] != "") {
+    $config = is_standard_config(default_file_path(), $_POST['ez-old']);
+    if ($config === false) {
+      echo '<failure code="not_recognized">'
+          .htmlspecialchars($_POST['ez-old'], ENT_QUOTES, 'UTF-8')
+          .' is not a recognized configuration.</failure>';
+      $ok = false;
+    } else {
+      $connection_string = 'sqlite:'.$config['database'];
+      $dbuser = $dbpass = "";
+    }
+  } else {
+    $connection_string = $_POST['connection_string'];
+    $dbuser = $_POST['dbuser'];
+    $dbpass = $_POST['dbpass'];
   }
 
+  if ($ok) {
+    $options = array();
+    if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+      $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
+    }
+
+    $trial = attempt_to_connect_to_database($connection_string, $dbuser, $dbpass, $options);
+    if ($trial['pdo']) {
+      $trial_db = $trial['pdo'];
+    } else {
+      $ok = false;
+      echo "<failure code='".$trial['error']."'>";
+      if ($trial['error'] == 'access_denied') {
+        echo "Access denied:\n".$trial['exception']->getMessage();
+      } else {
+        var_dump($trial['exception']);
+      }
+      echo "</failure>\n";
+    }
+  }
+
+  // Check database integrity; initialize an empty database
+  // Needs $trial_db, $connection_string
   if ($ok) {
     $count = attempt_to_count_racers($trial_db);
 
@@ -167,56 +223,30 @@ if (locked_settings()) {
   }
 
   if ($ok) {
-    // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but other databases
-    // should just ignore it.
-    $options_exported = var_export($options, /* return */ true);
-    $connection_exported = var_export($connection_string, true);
-    $dbuser_exported = var_export($dbuser, true);
-    $dbpass_exported = var_export($dbpass, true);
-    $content = <<<END
-<?php
-\$db_connection_string = $connection_exported;
-\$db = new PDO(\$db_connection_string, $dbuser_exported, $dbpass_exported,
-               $options_exported);
-?>
-END;
-    $ok = write_config_file('config-database.inc', $content);
+    $ok = write_database_config_file($connection_string, $dbuser, $dbpass, $options);
   }
 
   $config_roles = 'config-roles.inc';
   if ($ok && !file_exists(local_file_name($config_roles))) {
-    $content = <<<END
-<?php
-\$roles = array('' => array('password' => '',
-                            'permissions' => VIEW_RACE_RESULTS_PERMISSION),
-                'Timer' => array('password' => '',
-                                 'permissions' => TIMER_MESSAGE_PERMISSION,
-                                 'interactive' => false),
-                'Photo' => array('password' => 'flashbulb',
-                                 'permissions' => PHOTO_UPLOAD_PERMISSION,
-                                 'interactive' => false),
-                'RaceCrew' => array('password' => 'murphy',
-                                    'permissions' =>
-                                    VIEW_RACE_RESULTS_PERMISSION | VIEW_AWARDS_PERMISSION
-                                    | CHECK_IN_RACERS_PERMISSION | REVERT_CHECK_IN_PERMISSION
-                                    | ASSIGN_RACER_IMAGE_PERMISSION | PHOTO_UPLOAD_PERMISSION
-                                    | EDIT_RACER_PERMISSION | REGISTER_NEW_RACER_PERMISSION),
-                'RaceCoordinator' => array('password' => 'doyourbest',
-                                           'permissions' => -1)
-	       );
-\$post_setup_role = 'RaceCoordinator';
-?>
-
-END;
-    $ok = write_config_file($config_roles, $content);
+    write_config_roles_file($config_roles);
   }
 
+  // Configuration should be written to the file system now, so open the
+  // database like any other page would.
   if ($ok) {
+    require_once('inc/data.inc');
+
+    if ($racers_subdir != '') {
+      write_raceinfo('photo-directory', $racers_subdir);
+    }
+    if ($cars_subdir != '') {
+      write_raceinfo('car-photo-directory', $cars_subdir);
+    }
+
     echo "<success/>\n";
 
     // With the database config file written, we can construct the PDO as most
     // other scripts do.
-    require_once('inc/data.inc');
 
     // Summarize the database state for the user.
     echo "<details><![CDATA[\n";

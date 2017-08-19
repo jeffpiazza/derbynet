@@ -126,20 +126,34 @@ function report_success_xml(data) {
   }
 }
 
-function show_database_modal() {
-  /* TODO E-Z setup
-  show_modal("#database_modal", function(event) {
-    handle_database_modal_submit();
+function show_ezsetup_modal() {
+  $('#ez_database_name').val('');
+  $('#ez-old-nochoice').prop('selected', 'selected');
+  $('#ez_database_select').selectmenu('refresh');
+  show_modal("#ezsetup_modal", function(event) {
+    handle_ezsetup_modal_submit();
     return false;
   });
-  */
-  show_advanced_database_modal();
 }
 
-function handle_database_modal_submit() {
-  close_modal("#database_modal");
+function handle_ezsetup_modal_submit() {
+  close_modal("#ezsetup_modal");
   var dbname = $("#ez_database_name").val();
-  console.log("Database modal submitted: '" + dbname + "'");
+
+  var myform = $("#ezsetup_modal form");
+  var serialized = myform.serialize();
+
+  report_in_progress();
+  $.ajax('action.php',
+         {type: 'POST',
+          data: serialized, // action = setup.nodata
+          success: function(data) {
+            report_success_xml(data);
+          },
+          error: function(event, jqXHR, ajaxSettings, thrownError) {
+            report_failure(thrownError);
+          }
+         });
 }
 
 // Pulled out as a separate function because it uses two fields

@@ -106,7 +106,7 @@ function inspect_database() {
                   // What the button for schema step should say.  The special value 'disabled'
                   // means the button should be disabled (because the database isn't defined).
                   'button' => 'disabled',
-                  'message' => "<p>Schema not available without a database; configure the database first.</p>\n",
+                  'message' => "Schema not available without a database; configure the database first.",
                   'group_label' => 'Den',
                   'group_label_lc' => 'den',
                   'nracers' => 0,
@@ -225,13 +225,21 @@ function plural($n, $single, $plural) {
 // $schema array is the result of inspect_database(), above.  Constructs an
 // array that directs code in setup.js to update the setup page.
 function build_setup_details($db_connection_string, $schema) {
+  $trouble = '';
+  if ($schema['status'] != 'ok') {
+    $trouble = $schema['message'];
+  } else if (!$schema['writable']) {
+    $trouble = 'The database is read-only.';
+  }
+  if ($trouble != '') {
+    $trouble = '<br/><span class="readonly">'.$trouble.'</span>';
+  }
   return array('database' => array('status' => isset($db_connection_string) ? 'ok' : 'trouble',
                                    'writable' => $schema['writable'],
                                    'details' => "<p>".connection_string_to_html(isset($db_connection_string)
                                                                                 ? $db_connection_string : '')
-                                   .($schema['writable'] ? ''
-                                     : '<br/><span class="readonly">The database is read-only.</span>')
-                                   ."</p>\n"),
+                                                .$trouble
+                                                ."</p>\n"),
                'schema' => array('status' => $schema['status'],
                                  'button' => $schema['button'],
                                  'details' => $schema['message']),

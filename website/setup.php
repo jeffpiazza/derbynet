@@ -27,6 +27,8 @@ require_permission(SET_UP_PERMISSION);
 require_once('inc/ajax-failure.inc'); // Must follow jquery
 require_once('inc/parse_connection_string.inc');
 require_once('inc/default-file-path.inc');
+require_once('inc/standard-configs.inc');
+
 $default_file_path = default_file_path();
 
 $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
@@ -40,8 +42,6 @@ if (isset($db) && $db) {
   require_once('inc/schema_version.inc');
 }
 
-// TODO Work out the "E-Z Setup" strategy.  Where does the baseline directory get defined?
-// TODO <select> control to show existing E-Z-Setup databases.  Don't show if there are no E-Z databases.
 
 // If there's an existing database config, then $db_connection_string should
 // contain the connection string (having been set in data.inc).  We parse the
@@ -51,6 +51,8 @@ if (isset($db) && $db) {
 $schema = inspect_database();
 
 $initial_details = build_setup_details(@$db_connection_string, $schema);
+
+$ez_configs = list_standard_configs($default_file_path);
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -63,7 +65,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <input type="button" data-enhanced="true" value="Database" onclick="show_database_modal()"/>
+    <input type="button" data-enhanced="true" value="Database" onclick="show_ezsetup_modal()"/>
   </div>
 
   <div class="step_details"></div>
@@ -133,16 +135,33 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
 </div>
 
 
-<div id="database_modal" class="modal_dialog hidden block_buttons">
+<div id="ezsetup_modal" class="modal_dialog hidden block_buttons">
   <form>
+    <input type="hidden" name="action" value="setup.nodata"/>
+
     <div id="ez_database">
-      <label for="ez_database_name">Database name:</label>
-      <input type="text" name="ez_database_name" id="ez_database_name"/>
+      <label for="ez_database_name">Name for new database:</label>
+      <input type="text" name="ez-new" id="ez_database_name"/>
     </div>
 
+<?php
+if (count($ez_configs) > 0) {
+?>
+<p style="text-align: center;"><b>OR</b></p>
+    <select name="ez-old" id="ez_database_select">
+<option id="ez-old-nochoice" disabled="disabled" selected="selected" value="">Please select:</option>
+<?php
+    foreach ($ez_configs as $config) {
+      $path = htmlspecialchars($config['relpath'], ENT_QUOTES, 'UTF-8');
+      echo "<option value='".$path."'>".$path."</option>\n";
+} ?>    </select>
+<?php } ?>
+
+    <br/>
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick="close_modal('#database_modal');"/>
+      onclick="close_modal('#ezsetup_modal');"/>
+    <br/>
     <input type="button" data-enhanced="true" value="Advanced"
       onclick="show_advanced_database_modal()"/>
   </form>
@@ -193,6 +212,11 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
       </div>
     </div>
 
+    <label for="dbuser">Database user name:</label>
+    <input type="text" name="dbuser" id="username_field"/>
+    <label for="dbpass">Database password:</label>
+    <input type="text" name="dbpass" id="password_field"/>
+
     <div id="for_string_connection">
         <label for="connection_string">Database connection string:</label>
         <input type="text" name="connection_string" id="connection_string"
@@ -202,11 +226,6 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
               }
             ?>/>
     </div>
-
-    <label for="dbuser">Database user name:</label>
-    <input type="text" name="dbuser" id="username_field"/>
-    <label for="dbpass">Database password:</label>
-    <input type="text" name="dbpass" id="password_field"/>
 
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
