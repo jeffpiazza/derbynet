@@ -99,6 +99,8 @@ function pad3($n) {
 }
 
 // Assumes $db has already been defined if $db_connection_string is available
+// The presence of $db implies that $db_connection_string identifies an actual
+// database (e.g., for sqlite, the file is present)
 function inspect_database() {
   global $db;
   // Initialize with default values
@@ -106,7 +108,8 @@ function inspect_database() {
                   // What the button for schema step should say.  The special value 'disabled'
                   // means the button should be disabled (because the database isn't defined).
                   'button' => 'disabled',
-                  'message' => "Schema not available without a database; configure the database first.",
+                  'message' => "<p><span class='trouble'>Schema not available without a database; "
+                               ."configure the database first.</span></p>",
                   'group_label' => 'Den',
                   'group_label_lc' => 'den',
                   'nracers' => 0,
@@ -222,24 +225,28 @@ function plural($n, $single, $plural) {
   }
 }
 
-// $schema array is the result of inspect_database(), above.  Constructs an
-// array that directs code in setup.js to update the setup page.
+// Constructs an array from which the setup page updates its status.  $schema
+// array is the result of inspect_database(), above.
 function build_setup_details($db_connection_string, $schema) {
-  $trouble = '';
-  if ($schema['status'] != 'ok') {
-    $trouble = $schema['message'];
-  } else if (!$schema['writable']) {
-    $trouble = 'The database is read-only.';
+  global $db;
+  $db_ok = isset($db_connection_string) && isset($db);
+  $db_message = connection_string_to_html(isset($db_connection_string)
+                                          ? $db_connection_string : '');
+  if ($db_ok) {
+    if ($schema['status'] != 'ok') {
+      // $schema['message'] is already a <p> element
+      $db_message = "<p>".$db_message."</p>\n".$schema['message'];
+    } else if (!$schema['writable']) {
+      $db_message = "<p>".$db_message."<br/><span class='trouble'>The database is read-only.</span></p>\n";
+    } else {
+      $db_message = "<p>".$db_message."</p>\n";
+    }
+  } else {
+    $db_message = $schema['message'];
   }
-  if ($trouble != '') {
-    $trouble = '<br/><span class="readonly">'.$trouble.'</span>';
-  }
-  return array('database' => array('status' => isset($db_connection_string) ? 'ok' : 'trouble',
+  return array('database' => array('status' =>  $db_ok ? 'ok' : 'trouble',
                                    'writable' => $schema['writable'],
-                                   'details' => "<p>".connection_string_to_html(isset($db_connection_string)
-                                                                                ? $db_connection_string : '')
-                                                .$trouble
-                                                ."</p>\n"),
+                                   'details' => $db_message),
                'schema' => array('status' => $schema['status'],
                                  'button' => $schema['button'],
                                  'details' => $schema['message']),
