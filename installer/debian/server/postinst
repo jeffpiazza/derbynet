@@ -10,17 +10,6 @@ else
     ID=linux
 fi
 
-######## For RPi, some of the /extras scripts prefer config files in /boot,
-######## where they can be easily edited on a foreign host.
-if [ "$ID" = "raspbian" ] ; then
-  if [ ! -f /boot/derbynet.conf ] ; then
-    cp /etc/derbynet.conf /boot
-  fi
-  if [ ! -f /boot/join-network.sh ] ; then
-    cp /usr/share/derbynet/scripts/join-network.sh /boot
-  fi
-fi
-
 ######## Create /var/lib/derbynet directory, for storing race information
 
 mkdir -m 777 /var/lib/derbynet 2>/dev/null || true

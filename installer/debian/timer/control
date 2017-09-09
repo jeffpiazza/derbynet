@@ -1,8 +1,8 @@
-Package: derbynet
+Package: derbynet-timer
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
 Version: 2.0-1
 Priority: optional
 Architecture: all
-Depends: derbynet-server, derbynet-timer
+Depends: jarwrapper
 Homepage: http://jeffpiazza.github.io/derbynet/
 Description: Pinewood derby race management web server

@@ -277,7 +277,7 @@
             </exec>
 </target>
 
-<target name="mac.installer.website" if="is_mac">
+<target name="mac.installer.website" if="is_mac" depends="generated">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">

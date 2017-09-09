@@ -30,22 +30,30 @@
    <macrodef name="make-pdf">
        <attribute name="file"/>
        <sequential>
-         <exec executable="${soffice}">
-	   <!-- This UserInstallation variable avoids any conflict with another
-		running LibreOffice on Mac, but doesn't seem to work on
-		Windows. -->
-           <arg unless:set="is_windows"
-		value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
-           <arg value="--headless"/>
-           <arg value="--convert-to"/>
-           <arg value="pdf:writer_pdf_Export"/>
-           <arg value="--outdir"/>
-           <arg value="${dist}"/>
-           <arg value="@{file}"/>
-         </exec>
+           <local name="pdf.uptodate"/>
+
+           <uptodate property="pdf.uptodate" srcfile="@{file}">
+               <mapper type="regexp" from="^(.*)/(.*)\.fodt$" to="\1/dist/\2.pdf"/>
+           </uptodate>
+
+           <echo if:true="${pdf.uptodate}">pdf for @{file} is up to date</echo>
+           
+           <exec executable="${soffice}" unless:true="${pdf.uptodate}">
+	           <!-- This UserInstallation variable avoids any conflict with another
+		            running LibreOffice on Mac, but doesn't seem to work on
+		            Windows. -->
+               <arg unless:set="is_windows"
+		            value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
+               <arg value="--headless"/>
+               <arg value="--convert-to"/>
+               <arg value="pdf:writer_pdf_Export"/>
+               <arg value="--outdir"/>
+               <arg value="${dist}"/>
+               <arg value="@{file}"/>
+           </exec>
        </sequential>
    </macrodef>
-
+   
  <target name="installation" depends="make-dist-dir">
      <make-pdf file="Installation- Debian.fodt"/>
      <make-pdf file="Installation- Mac.fodt"/>
