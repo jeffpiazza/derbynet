@@ -26,10 +26,11 @@ require_permission(SET_UP_PERMISSION);
 
 require_once('inc/ajax-failure.inc'); // Must follow jquery
 require_once('inc/parse-connection-string.inc');
-require_once('inc/default-file-path.inc');
+require_once('inc/details-for-setup-page.inc');
+require_once('inc/default-database-directory.inc');
 require_once('inc/standard-configs.inc');
+require_once('inc/locked.inc');
 
-$default_file_path = default_file_path();
 
 $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
 try {
@@ -48,11 +49,9 @@ if (isset($db) && $db) {
 // connection string to figure out how to populate the fields of the "advanced"
 // database dialog.
 
-$schema = inspect_database();
+$initial_details = build_setup_page_details();
 
-$initial_details = build_setup_details(@$db_connection_string, $schema);
-
-$ez_configs = list_standard_configs($default_file_path);
+$ez_configs = list_standard_configs(default_database_directory());
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -65,7 +64,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <input type="button" data-enhanced="true" value="Database" onclick="show_ezsetup_modal()"/>
+    <input type="button" data-enhanced="true" value="Choose Database" onclick="show_ezsetup_modal()"/>
   </div>
 
   <div class="step_details"></div>

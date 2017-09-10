@@ -2,7 +2,9 @@
 // Requires modal.js
 
 
-// details = {database: {status:, details:},
+// details = {
+//            locked: true/false
+//            database: {status:, details:},
 //            schema: {status:, details:, button:}
 //            roster:
 //            classes:
@@ -22,6 +24,8 @@ function populate_details(details) {
     + "#awards_step input[type='submit'], "
     + "#settings_step input[type='submit']")
     .prop('disabled', (details.schema.button == 'disabled') || !details.database.writable);
+
+  $("#database_step").toggleClass('hidden', details.locked);
   
   if (details.schema.button == 'disabled' || !details.database.writable) {
     $("#schema_step input[type='button']")

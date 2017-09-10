@@ -4,7 +4,7 @@ require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
-require_once('inc/default-file-path.inc');
+require_once('inc/default-database-directory.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -24,12 +24,14 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/settings.js"></script>
 <script type="text/javascript">
+// Returns a string identifying the directory at which browsing for photo
+// directories should start.  See js/settings.js' browse_for_photo_directory().
 function photo_directory_base() {
   <?php
   if (isset($db_connection_string) && substr($db_connection_string, 0, 7) == 'sqlite:') {
     echo 'return '.json_encode(substr($db_connection_string, 7)).';';
   } else {
-    $default_path = default_file_path();
+    $default_path = default_database_directory();
     if (!empty($default_path)) {
       echo 'return '.json_encode($default_path.DIRECTORY_SEPARATOR).';';
     } else {

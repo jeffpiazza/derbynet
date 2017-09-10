@@ -2,7 +2,7 @@
 // $_POST['script']
 require_once('inc/sql-script.inc');
 require_once('inc/locked.inc');
-require_once('inc/parse-connection-string.inc');
+require_once('inc/details-for-setup-page.inc');
 
 start_response();
 
@@ -23,7 +23,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
 }
 
 echo "<details><![CDATA[\n";
-echo json_encode(build_setup_details($db_connection_string, inspect_database()));
+echo json_encode(build_setup_page_details());
 echo "\n]]></details>\n";
 
 end_response();

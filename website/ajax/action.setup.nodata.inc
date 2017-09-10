@@ -10,9 +10,9 @@
 
 
 require_once('inc/locked.inc');
-require_once('inc/parse-connection-string.inc');
+require_once('inc/details-for-setup-page.inc');
 require_once('inc/sql-script.inc');
-require_once('inc/default-file-path.inc');
+require_once('inc/default-database-directory.inc');
 require_once('inc/write-config-files.inc');
 require_once('inc/standard-configs.inc');
 
@@ -107,7 +107,7 @@ if (locked_settings()) {
   $cars_subdir = '';
 
   if (isset($_POST['ez-new']) && $_POST['ez-new'] != "") {
-    $superdir = default_file_path() . DIRECTORY_SEPARATOR . getdate()['year'];
+    $superdir = default_database_directory() . DIRECTORY_SEPARATOR . getdate()['year'];
     $directory = $superdir . DIRECTORY_SEPARATOR . $_POST['ez-new'];
 
     error_reporting(E_ALL);
@@ -152,7 +152,7 @@ if (locked_settings()) {
       $dbuser = $dbpass = "";
     }
   } else if (isset($_POST['ez-old']) && $_POST['ez-old'] != "") {
-    $config = is_standard_config(default_file_path(), $_POST['ez-old']);
+    $config = is_standard_config(default_database_directory(), $_POST['ez-old']);
     if ($config === false) {
       echo '<failure code="not_recognized">'
           .htmlspecialchars($_POST['ez-old'], ENT_QUOTES, 'UTF-8')
@@ -250,7 +250,7 @@ if (locked_settings()) {
 
     // Summarize the database state for the user.
     echo "<details><![CDATA[\n";
-    echo json_encode(build_setup_details($connection_string, inspect_database()));
+    echo json_encode(build_setup_page_details());
     echo "\n]]></details>\n";
 
     // Setup permissions were granted temporarily because there was no

@@ -4,11 +4,8 @@
 // the database and the photo directories.  This is specifically intended to support hosting
 // for multiple groups on a single shared hosting account.
 
-// Defines $configdir
-require_once('inc/roles.inc');
-
 function locked_settings() {
-  global $configdir;
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
   return file_exists($configdir.DIRECTORY_SEPARATOR.'settings.lock');
 }
 
