@@ -161,9 +161,7 @@ function handle_edit_award(list_item) {
   });
 }
 
-// Assumes that we were invoked through the award_editor_modal, and that
-// therefore the relevant award information is available in the form.
-function handle_delete_award(formjq) {
+function handle_delete_award() {
   close_modal('#award_editor_modal');
   if (confirm('Really delete award "' + $('#award_editor_form input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
