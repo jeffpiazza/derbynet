@@ -37,7 +37,16 @@ function edit_one_class(who) {
   var list_item = $(who).parent("li");
   $("#edit_class_name").val(list_item.find('.class-name').text());
   $("#edit_class_name").data('classid', list_item.data('classid'));
-  $("#delete_button_extension").toggleClass('hidden', list_item.data('count') != 0);
+
+  // The "completed rounds" message appears only if there are no native racers,
+  // but there are some completed rounds that prevent offering deletion of the
+  // class.
+  $("#completed_rounds_extension").toggleClass('hidden',
+                                               !(list_item.data('count') == 0 && list_item.data('nrounds') != 0));
+  $("#completed_rounds_count").text(list_item.data('nrounds'));
+
+  $("#delete_button_extension").toggleClass('hidden',
+                                            !(list_item.data('count') == 0 && list_item.data('nrounds') == 0));
   show_edit_one_class_modal(list_item);
 }
 
@@ -63,7 +72,7 @@ function close_edit_one_class_modal() {
 
 function handle_delete_class() {
   close_edit_one_class_modal();
-  if (confirm('Really delete ' + group_label()
+  if (confirm('Really delete ' + group_label_lc()
               + ' "' + $('#edit_one_class_modal input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
@@ -97,6 +106,7 @@ function repopulate_class_list(data) {
               "<li class='ui-li-has-alt'"
                     + " data-classid='" + cl.getAttribute('classid') + "'"
                     + " data-count='" + cl.getAttribute('count') + "'"
+                    + " data-nrounds='" + cl.getAttribute('nrounds') + "'"
                     + ">"
                     + "<p><span class='class-name'></span><span class='count'></span></p>"
                     + "<a class='ui-btn ui-btn-icon-notext ui-icon-gear' onclick='edit_one_class(this);'></a>"

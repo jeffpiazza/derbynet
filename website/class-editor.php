@@ -22,6 +22,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/class-editor.js"></script>
 <script type="text/javascript">
 function group_label() { return <?php echo json_encode(group_label()); ?>; }
+function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>; }
 $(function() { show_class_editor_modal(); });
 </script>
 </head>
@@ -68,6 +69,10 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
   <h3>New <?php echo group_label(); ?> Name</h3>
   <form>
     <input id="edit_class_name" name="name" type="text"/>
+
+    <div id="completed_rounds_extension">
+      <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>
+    </div>
 
     <input type="submit" data-enhanced="true"/>
     <input type="button" value="Cancel" data-enhanced="true"

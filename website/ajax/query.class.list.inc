@@ -4,7 +4,12 @@ require_once('inc/schema_version.inc');
 
 $stmt = $db->prepare('SELECT Classes.classid, class, rankid, rank, '
                      .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.classid = Classes.classid) AS nclass,'
-                     .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.rankid = Ranks.rankid) AS nrank'
+                     .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.rankid = Ranks.rankid) AS nrank,'
+                     .' (SELECT COUNT(*) FROM Rounds'
+                     .'     WHERE Rounds.classid = Classes.classid'
+                     .'       AND (SELECT COUNT(*) FROM RaceChart'
+                     .'             WHERE RaceChart.roundid = Rounds.roundid'
+                     .'               AND finishtime IS NOT NULL) > 0) AS nrounds'
                      .' FROM Classes'
                      .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
                      .' ORDER BY '.(schema_version() >= 2
@@ -19,8 +24,11 @@ foreach ($stmt as $row) {
         if ($prev_class != '') {
             echo '</class>'."\n";
         }
+        // count attribute is the number of racers registered in this class
+        // nrounds attribute is the number of racing rounds *with results* for this class
         echo '<class classid="'.$row['classid'].'"'
             .' count="'.$row['nclass'].'"'
+            .' nrounds="'.$row['nrounds'].'"'
             .' name="'.htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'">'."\n";
         $prev_class = $row['class'];
     }
