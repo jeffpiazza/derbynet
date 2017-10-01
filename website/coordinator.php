@@ -31,6 +31,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   </div>
 </div>
 
+<div class="control_column_container">
+
 <div class="control_column">
 
   <div class="control_group heat_control_group">
@@ -93,6 +95,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <div id="ready-to-race-group" class="scheduling_control_group"></div>
   <div id="not-yet-scheduled-group" class="scheduling_control_group"></div>
   <div id="done-racing-group" class="scheduling_control_group"></div>
+
+</div>
 
 </div>
 

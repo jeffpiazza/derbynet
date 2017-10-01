@@ -6,6 +6,14 @@
 
 .double_control_column {
   width: 975px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.control_column_container {
+  width: 975px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .heat-lineup {
