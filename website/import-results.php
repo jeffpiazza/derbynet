@@ -5,12 +5,27 @@ require_permission(SET_UP_PERMISSION);
 
 require_once('inc/import-csv.inc');
 
-generate_import_page(
-  'Import Results', '',
-  array('js/import-results.js'),
-  /* show_encodings */false,
-  array(),
-  '<div id="import_results_button_div" class="hidden">'
-  .'<input type="button" id="import_results_button" data-enhanced="true" value="Import Race Results"/>'
-  .'</div>');
+class ImportResults extends ImportCsvGenerator {
+  protected function make_encoding_section() {
+  }  // No encodings to choose
+}
+?><!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Import Results</title>
+<?php make_head_matter_for_import_page(); ?>
+<script type="text/javascript" src="js/import-results.js"></script>
+</head>
+<body>
+<?php
+  make_banner('Import Results', 'setup.php');
+  $page_maker = new ImportResults;
+  $page_maker->make_import_csv_div('Import Race Results', array());
 ?>
+<?php
+  require_once('inc/ajax-pending.inc');
+?>
+</body>
+</html>
+

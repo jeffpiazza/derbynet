@@ -22,7 +22,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   // An alternative to separate lastname and firstname parameters is a single
   // combined field, called first-last.  The content can either be firstname
   // then lastname separated by a space, or lastname then firstname separated by
-  // comma.
+  // comma and optional space.
   if (isset($_POST['first-last'])) {
     $comma = strpos($_POST['first-last'], ',');
     if ($comma === false) {
