@@ -16,11 +16,6 @@ require_once('inc/default-database-directory.inc');
 require_once('inc/write-config-files.inc');
 require_once('inc/standard-configs.inc');
 
-function local_file_name($filename) {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
-  return $configdir.DIRECTORY_SEPARATOR.$filename;
-}
-
 function error_handler($errno, $errstr, $errfile, $errline)
 {
   $g_errstr = $errstr;

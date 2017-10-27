@@ -37,7 +37,7 @@ curl_get "action.php?query=award.list" | grep 'awardid="3" ' | expect_one 'racer
 curl_get "action.php?query=award.list" | grep '<award ' | expect_count 'awardtypeid="4"' 4
 curl_get "action.php?query=award.list" | grep 'awardid="4" ' | expect_one 'racerid="22"'
 
-curl_post action.php "action=award.edit&awardid=1&racerid=2" | check_success
+curl_post action.php "action=award.winner&awardid=1&racerid=2" | check_success
 curl_post action.php "action=award.edit&awardid=2&class_and_rank=3,3" | check_success
 curl_post action.php "action=award.edit&awardid=3&name=Third" | check_success
 curl_post action.php "action=award.edit&awardid=4&awardtypeid=2" | check_success

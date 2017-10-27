@@ -1,5 +1,10 @@
 <?php
 
+function local_file_name($filename) {
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  return $configdir.DIRECTORY_SEPARATOR.$filename;
+}
+
 function write_config_file($filename, $content) {
   global $g_errstr;
   if (@file_put_contents(local_file_name($filename), $content, FILE_USE_INCLUDE_PATH) === false) {
@@ -47,7 +52,7 @@ function write_config_roles_file($filename) {
                                     'permissions' =>
                                     VIEW_RACE_RESULTS_PERMISSION | VIEW_AWARDS_PERMISSION
                                     | CHECK_IN_RACERS_PERMISSION | REVERT_CHECK_IN_PERMISSION
-                                    | ASSIGN_RACER_IMAGE_PERMISSION | PHOTO_UPLOAD_PERMISSION
+                                    | ASSIGN_RACER_IMAGE_PERMISSION | JUDGING_PERMISSION | PHOTO_UPLOAD_PERMISSION
                                     | EDIT_RACER_PERMISSION | REGISTER_NEW_RACER_PERMISSION),
                 'RaceCoordinator' => array('password' => 'doyourbest',
                                            'permissions' => -1)

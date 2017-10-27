@@ -106,7 +106,7 @@ function update_awards(dataxml) {
 function handle_remove_recipient(imgxjq) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'award.edit',
+          data: {action: 'award.winner',
                  awardid: imgxjq.closest("[data-awardid]").attr("data-awardid"),
                  racerid: 0},
           success: function(data) {
@@ -218,7 +218,7 @@ function makeAwardsDroppable() {
       if (acceptableAwardAssignment($(event.target), $(ui.draggable)) == 0) {
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'award.edit',
+                data: {action: 'award.winner',
                        awardid: $(event.target).attr('data-awardid'),
                        racerid: $(ui.draggable).attr('data-racerid')},
                 success: function(data) {

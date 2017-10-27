@@ -18,6 +18,13 @@ mkdir -m 777 /var/lib/derbynet 2>/dev/null || true
 
 mkdir -m 777 /var/www/html/derbynet/local 2>/dev/null || true
 
+# V2.0 didn't include JUDGING_PERMISSION for race crew in the default
+# config-roles file.  Delete and recreate the config-roles file.
+test -e /var/www/html/derbynet/local/config-roles.inc && \
+grep -q -v JUDGING_PERMISSION /var/www/html/derbynet/local/config-roles.inc && \
+    sed -i.bak -e 's/ASSIGN_RACER_IMAGE_PERMISSION/ASSIGN_RACER_IMAGE_PERMISSION | JUDGING_PERMISSION/' \
+        /var/www/html/derbynet/local/config-roles.inc
+
 cat <<EOF >/var/www/html/derbynet/local/default-file-path.inc
 <?php
 \$default_file_path = "/var/lib/derbynet";

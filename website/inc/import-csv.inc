@@ -97,7 +97,9 @@ class ImportCsvGenerator {
                echo '<td data-home="'.$field.'"'.(isset($details['span']) ? ' colspan="'.$details['span'].'"' : '').'>';
                if (is_string($field)) {
                  echo '<div data-field="'.$field.'" class="field '
-                     .($details['required'] ? 'required' : 'optional').'">'.$details['name'].'</div>';
+                     .($details['required'] ? 'required' : 'optional').'">'
+                     .htmlspecialchars($details['name'], ENT_QUOTES, 'UTF-8')
+                     .'</div>';
                }
                echo "</td>\n";
              }

@@ -5,7 +5,6 @@
   name
   awardtypeid
   class_and_rank
-  racerid
   sort  
 */
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
@@ -28,11 +27,6 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
         $params[':rankid'] = $class_and_rank[1];
         // TODO Confirm that rankid and classid agree
       }
-    }
-    if (isset($_POST['racerid'])) {
-      $fields .= ', racerid';
-      $values .= ', :racerid';
-      $params[':racerid'] = $_POST['racerid'];
     }
     if (isset($_POST['sort'])) {
       $fields .= ', sort';
@@ -74,10 +68,6 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
         $params[':rankid'] = $class_and_rank[1];
         // TODO Confirm that rankid and classid agree
       }
-    }
-    if (isset($_POST['racerid'])) {
-      $fields .= ', racerid = :racerid';
-      $params[':racerid'] = $_POST['racerid'];
     }
     if (isset($_POST['sort'])) {
       $fields .= ', sort = :sort';
