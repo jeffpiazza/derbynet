@@ -16,6 +16,19 @@ try {
   header('Location: setup.php');
   exit();
 }
+
+function make_link_button($label, $link, $hidden = NULL) {
+  echo "<form method='get' action='".$link."'>\n";
+  if (!is_null($hidden)) {
+    foreach ($hidden as $param => $value) {
+      echo "<input type='hidden' name='".$param."' value='".$value."'/>\n";
+    }
+  }
+  echo "<input type='submit' value='".$label."'/>\n";
+  echo "</form>\n";
+  echo "<br/>\n";
+}
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -24,6 +37,21 @@ try {
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
+<style type="text/css">
+div.index_spacer {
+  height: 40px;
+}
+
+div.index_background {
+  width: 100%;
+}
+
+div.index_column {
+  width: 50%;
+  display: inline-block;
+  float: left;
+}
+</style>
 </head>
 <body>
 <?php
@@ -33,144 +61,105 @@ try {
 
  // This is a heuristic more than a hard rule -- when are there so many buttons that we need a second column?
  $two_columns = have_permission(SET_UP_PERMISSION);
-?>
-<div class="index_background">
 
-<?php if ($two_columns) { ?>
-<div class="index_column">
-<?php } ?>
+echo "<div class='index_background'>\n";
 
-<div class="block_buttons">
+if ($two_columns) {
+  echo "<div class='index_column'>\n";
+}
 
-<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="coordinator.php">
-  <input type="submit" value="Race Dashboard"/>
-</form>
-<br/>
-<form method="link" action="kiosk-dashboard.php">
-  <input type="submit" value="Kiosk Dashboard"/>
-</form>
-<br/>
-<?php } ?>
+echo "<div class='block_buttons'>\n";
 
-<?php if (have_permission(EDIT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards-editor.php">
-  <input type="submit" value="Awards Editor"/>
-</form>
-<br/>
-<?php } ?>
+if (have_permission(SET_UP_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Race Dashboard', 'coordinator.php');
+  make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php');
+}
 
-<?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards-presentation.php">
-  <input type="submit" value="Present Awards"/>
-</form>
-<br/>
-<?php } ?>
- 
-<?php
+if (have_permission(EDIT_AWARDS_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Awards Editor', 'awards-editor.php');
+}
+
+if (have_permission(PRESENT_AWARDS_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Present Awards', 'awards-presentation.php');
+}
+
 if ($need_spacer) {
   $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+  echo "<div class='index_spacer'>&nbsp;</div>\n";
 }
-?>
 
-<?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="checkin.php">
-  <input type="submit" value="Race Check-In"/>
-</form>
-<br/>
-<?php } ?>
+if (have_permission(CHECK_IN_RACERS_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Race Check-In', 'checkin.php');
+}
 
-<?php if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) { $need_spacer = true; ?>
-<form method="get" action="photo-thumbs.php">
-  <input type="hidden" name="repo" value="head"/>
-  <input type="submit" value="Edit Racer Photos"/>
-</form>
-<br/>
+if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Edit Racer Photos', 'photo-thumbs.php', array('repo' => 'head'));
+  if ($schema_version > 1) {
+    make_link_button('Edit Car Photos', 'photo-thumbs.php', array('repo' => 'car'));
+  }
+}
 
-<?php if ($schema_version > 1) { ?>
-<form method="get" action="photo-thumbs.php">
-  <input type="hidden" name="repo" value="car"/>
-  <input type="submit" value="Edit Car Photos"/>
-</form>
-<br/>
-<?php } ?>
-<?php } ?>
+if ($two_columns) {
+  echo "</div>\n";
+  echo "</div>\n";
 
-<?php if ($two_columns) { ?>
-</div>
-</div>
+  echo "<div class='index_column'>\n";
+  echo "<div class='block_buttons'>\n";
+}
 
-<div class="index_column">
-<div class="block_buttons">
-<?php } ?>
+if (have_permission(SET_UP_PERMISSION)) {
+  $need_spacer = true; 
+  make_link_button('Set-Up', 'setup.php');
+  // TODO No br
+}
 
-<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-
-<form method="link" action="setup.php">
-  <input type="submit" value="Set-Up"/>
-</form>
-                                                
-<?php } ?>
-
-<?php
 if ($need_spacer) {
   $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+  echo "<div class='index_spacer'>&nbsp;</div>\n";
 }
-?>
 
-<form method="link" action="ondeck.php">
-  <input type="submit" value="Racers On Deck"/>
-</form>
-<br/>
+make_link_button('Racers On Deck', 'ondeck.php');
 
- <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
-<form method="link" action="racer-results.php">
-  <input type="submit" value="Results By Racer"/>
-</form>
-<br/>
- <?php } ?>
+if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) {
+  make_link_button('Results By Racer', 'racer-results.php');
+}
 
-<div class="index_spacer">&nbsp;</div>
+echo "<div class='index_spacer'>&nbsp;</div>\n";
 
-<?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="standings.php">
-  <input type="submit" value="Standings"/>
-</form>
-<br/>
-<?php } ?>
+if (have_permission(VIEW_AWARDS_PERMISSION)) {
+  $need_spacer = true;
+  make_link_button('Standings', 'standings.php');
+}
 
- <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
-<form method="link" action="export.php">
-  <input type="submit" value="Exported Results"/>
-</form>
-<br/>
- <?php } ?>
+if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) {
+  make_link_button('Exported Results', 'export.php');
+}
 
-<?php
 if ($need_spacer) {
   $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+  echo "<div class='index_spacer'>&nbsp;</div>\n";
 }
+
+make_link_button('About', 'about.php');
+
+if (@$_SESSION['role']) {
+  make_link_button('Log out', 'login.php', array('logout' => ''));
+} else {
+  make_link_button('Log in', 'login.php');
+}
+// TODO No <br/>
+
+echo "</div>\n";
+if (have_permission(SET_UP_PERMISSION)) {
+  echo "</div>\n";
+}
+
+echo "</div>\n";
+echo "</body>\n";
+echo "</html>\n";
 ?>
-
-<form method="link" action="about.php">
-  <input type="submit" value="About"/>
-</form>
-<br/>
-
-<form method="link" action="login.php">
- <?php if (@$_SESSION['role']) { ?>
-  <input type="hidden" name="logout" value=""/>
- <?php } ?>
-  <input type="submit" value="Log <?php echo $_SESSION['role'] ? 'out' : 'in'; ?>"/>
-</form>
-
-</div>
-<?php if (have_permission(SET_UP_PERMISSION)) { ?>
-</div>
-<?php } ?>
-</div>
-</body>
-</html>

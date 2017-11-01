@@ -65,17 +65,6 @@ tbody tr:first-child th {
   padding-top: 10px;
 }
 
-/* Yuck.  These really don't do what I want. */
-div.index_background {
-  width: 100%;
-}
-
-div.index_column {
-  width: 50%;
-  display: inline-block;
-float: left;
-}
-
 /* These are for checkin page */
 .floatform {
    position: fixed;
@@ -215,10 +204,6 @@ td.clickable div.inclickable {
 
 .award_choices {
   width: 80%;
-}
-
-.index_spacer {
-  height: 50px;
 }
 
 .heat_link span {
