@@ -16,7 +16,9 @@ public class ClientSession {
   private String base_url;
 
   public ClientSession(String base_url) {
-    if (!base_url.startsWith("http://")) {
+    String lowercase_url = base_url.toLowerCase();
+    if (!lowercase_url.startsWith("http://") &&
+        !lowercase_url.startsWith("https://")) {
       base_url = "http://" + base_url;
     }
     if (!base_url.endsWith("/")) {
@@ -46,6 +48,7 @@ public class ClientSession {
   }
 
   public Element doPost(URL url, String params) throws IOException {
+    // TODO Sun Security Validator failed
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("POST");
 
