@@ -17,16 +17,20 @@ try {
   exit();
 }
 
-function make_link_button($label, $link, $hidden = NULL) {
-  echo "<form method='get' action='".$link."'>\n";
-  if (!is_null($hidden)) {
-    foreach ($hidden as $param => $value) {
-      echo "<input type='hidden' name='".$param."' value='".$value."'/>\n";
-    }
+function make_link_button($label, $link, $permission, $button_class) {
+  if (have_permission($permission)) {
+    echo "<a class='button_link ".$button_class."' href='".$link."'>".$label."</a>\n";
+    echo "<br/>\n";
+    return true;
+  } else {
+    return false;
   }
-  echo "<input type='submit' value='".$label."'/>\n";
-  echo "</form>\n";
-  echo "<br/>\n";
+}
+
+function make_spacer_if($cond) {
+  if ($cond) {
+    echo "<div class='index_spacer'>&nbsp;</div>\n";
+  }
 }
 
 ?><!DOCTYPE html>
@@ -51,6 +55,58 @@ div.index_column {
   display: inline-block;
   float: left;
 }
+
+.block_buttons a.button_link { 
+  font-size: 24px; /*x-large; */
+
+  /* Unique to button_link: */
+  text-align: center;
+  text-decoration: none;
+  
+  color:#ffffff;
+	width: 238px;
+	margin-left: auto;
+	margin-right: auto;
+    margin-top:3px;
+	margin-bottom: 20px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    display: block;
+    font-size: x-large;
+  font-family: system-ui;
+  /* line-height: normal; */
+  height: 30px;
+
+    background: #2d2d2d; /* Old browsers */
+    background: -moz-linear-gradient(top,  #424242 0%, #2d2d2d 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#424242), color-stop(100%,#2d2d2d)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* IE10+ */
+    background: linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* W3C */
+    border: 1px solid #666666;
+    border-right-width: 1px;
+    border-radius: 0.4em 0.4em 0.4em 0.4em;
+
+    cursor: pointer;
+}
+
+.block_buttons a.button_link.before_button,
+.block_buttons input.before_button[type='submit'] {
+  color: #ffffcc;
+}
+.block_buttons a.button_link.during_button,
+.block_buttons input.during_button[type='submit'] {
+  color: #ddffdd;
+}
+.block_buttons a.button_link.after_button,
+.block_buttons input.after_button[type='submit'] {
+  color: #ddddff;
+}
+.block_buttons a.button_link.other_button,
+.block_buttons input.other_button[type='submit'] {
+  color: #ffddff;
+}
 </style>
 </head>
 <body>
@@ -70,39 +126,22 @@ if ($two_columns) {
 
 echo "<div class='block_buttons'>\n";
 
-if (have_permission(SET_UP_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Race Dashboard', 'coordinator.php');
-  make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php');
+// *********** Before ***************
+$need_spacer = make_link_button('Set-Up', 'setup.php', SET_UP_PERMISSION, 'before_button');
+$need_spacer = make_link_button('Race Check-In', 'checkin.php', CHECK_IN_RACERS_PERMISSION, 'before_button') || $need_spacer;
+$need_spacer = make_link_button('Edit Racer Photos', 'photo-thumbs.php?repo=head', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
+if ($schema_version > 1) {
+  $need_spacer = make_link_button('Edit Car Photos', 'photo-thumbs.php?repo=car', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
 }
 
-if (have_permission(EDIT_AWARDS_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Awards Editor', 'awards-editor.php');
-}
+make_spacer_if($need_spacer);
 
-if (have_permission(PRESENT_AWARDS_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Present Awards', 'awards-presentation.php');
-}
-
-if ($need_spacer) {
-  $need_spacer = false;
-  echo "<div class='index_spacer'>&nbsp;</div>\n";
-}
-
-if (have_permission(CHECK_IN_RACERS_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Race Check-In', 'checkin.php');
-}
-
-if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Edit Racer Photos', 'photo-thumbs.php', array('repo' => 'head'));
-  if ($schema_version > 1) {
-    make_link_button('Edit Car Photos', 'photo-thumbs.php', array('repo' => 'car'));
-  }
-}
+// *********** During ***************
+$need_spacer = make_link_button('Race Dashboard', 'coordinator.php', SET_UP_PERMISSION, 'during_button');
+$need_spacer = make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Judging', 'judging.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
+  
+// end first column default set-up
 
 if ($two_columns) {
   echo "</div>\n";
@@ -112,47 +151,28 @@ if ($two_columns) {
   echo "<div class='block_buttons'>\n";
 }
 
-if (have_permission(SET_UP_PERMISSION)) {
-  $need_spacer = true; 
-  make_link_button('Set-Up', 'setup.php');
-  // TODO No br
-}
+// *********** During, part 2 ***************
+$need_spacer = make_link_button('Racers On Deck', 'ondeck.php', -1, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Results By Racer', 'racer-results.php', VIEW_RACE_RESULTS_PERMISSION, 'during_button')
+    || $need_spacer;
 
-if ($need_spacer) {
-  $need_spacer = false;
-  echo "<div class='index_spacer'>&nbsp;</div>\n";
-}
+make_spacer_if($need_spacer);
 
-make_link_button('Racers On Deck', 'ondeck.php');
+// *********** After ***************
+$need_spacer = make_link_button('Present Awards', 'awards-presentation.php', PRESENT_AWARDS_PERMISSION, 'after_button');
+$need_spacer = make_link_button('Standings', 'standings.php', VIEW_AWARDS_PERMISSION, 'after_button') || $need_spacer;
+$need_spacer = make_link_button('Exported Results', 'export.php', VIEW_RACE_RESULTS_PERMISSION, 'after_button') || $need_spacer;
 
-if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) {
-  make_link_button('Results By Racer', 'racer-results.php');
-}
+make_spacer_if($need_spacer);
 
-echo "<div class='index_spacer'>&nbsp;</div>\n";
-
-if (have_permission(VIEW_AWARDS_PERMISSION)) {
-  $need_spacer = true;
-  make_link_button('Standings', 'standings.php');
-}
-
-if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) {
-  make_link_button('Exported Results', 'export.php');
-}
-
-if ($need_spacer) {
-  $need_spacer = false;
-  echo "<div class='index_spacer'>&nbsp;</div>\n";
-}
-
-make_link_button('About', 'about.php');
+// *********** Other ***************
+make_link_button('About', 'about.php', -1, 'other_button');
 
 if (@$_SESSION['role']) {
-  make_link_button('Log out', 'login.php', array('logout' => ''));
+  make_link_button('Log out', 'login.php?logout', -1, 'other_button');
 } else {
-  make_link_button('Log in', 'login.php');
+  make_link_button('Log in', 'login.php', -1, 'other_button');
 }
-// TODO No <br/>
 
 echo "</div>\n";
 if (have_permission(SET_UP_PERMISSION)) {
