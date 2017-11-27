@@ -31,6 +31,22 @@ body { margin: 0; }
 
 .thumblist li { z-index: 2; }
 
+.thumbnail {
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+}
+
+.thumbnail a img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+ }
+
+.lost_photo {
+  font-style: italic;
+}
+
 .photothumbs {
  position: absolute;
  top: 0;
