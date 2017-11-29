@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/photo-config.inc');
+require_once('inc/schema_version.inc');
 
 // These functions construct each row of the main table on the check-in page.
 
@@ -19,6 +20,7 @@ function checkin_table_row_for_id($racerid) {
   // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
   global $db;
   $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+      .(schema_version() < 2 ? "" : " carphoto,")
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -58,13 +60,29 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
 
     echo '<td class="sort-car-number" id="car-number-'.$row['racerid'].'">'.$row['carnumber'].'</td>';
 
-    echo '<td id="photo-'.$row['racerid'].'"><a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
-        .'<img class="checkin-photo" src="'
-        .($row[headshots()->column_name()]
+    echo '<td id="photo-'.$row['racerid'].'">';
+
+    echo '<a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
+          .'<img class="checkin-photo" src="'
+          .($row[headshots()->column_name()]
           ? headshots()->url_for_racer($row, RENDER_CHECKIN)
-          : 'img/camera.png')
+          : 'img/photo-headshot.png')
         .'"/>'
-        .'</a></td>';
+        .'</a>';
+
+    // TODO - This causes repeated reads.
+    // The issue is presumably null carphoto values
+    if (schema_version() >= 2) {
+      echo '<a href="javascript:show_car_photo_modal('.$row['racerid'].')">'
+          .'<img class="checkin-photo" src="'
+          .($row[car_photo_repository()->column_name()]
+            ? car_photo_repository()->url_for_racer($row, RENDER_CHECKIN)
+            : 'img/photo-car.png')
+          .'"/>'
+        .'</a>';
+    }
+
+    echo '</td>';
 
     echo '<td class="sort-lastname" id="lastname-'.$row['racerid'].'" data-exclude="'.$row['exclude'].'">'
         .htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'</td>';

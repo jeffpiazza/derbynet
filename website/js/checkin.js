@@ -152,25 +152,42 @@ function handle_edit_racer() {
            });
 }
 
+function disable_preview() {
+  $("#preview").html('<h2>Webcam Disabled</h2>')
+    .css({'border': '2px solid black',
+          'background': '#d2d2d2'});
+}
+
+// In (some versions of) Safari, if Flash isn't enabled, the Webcam instance
+// just silently fails to load.  We want to present a modal to the user in that
+// case, so make clear what the issue is.
 function arm_webcam_dialog() {
   var loaded = false;
   Webcam.on('load', function() { loaded = true; });
+  // If the Webcam instance is going to present an error, we don't want to put
+  // up another one.
+  Webcam.on('error', function(msg) { loaded = true; disable_preview(); alert("Webcam.js Error: " + msg); });
   setTimeout(function() {
     if (!loaded) {
+      disable_preview();
       alert('You may have to enable Flash, or give permission to use your webcam.');
     }
   }, 2000);
 }
 
-function show_racer_photo_modal(racerid) {
+function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
   $("#racer_photo_name").text(firstname + ' ' + lastname);
+  $("#photo_modal_repo").val(repo);  // TODO Is this useful?
+
+  // TODO Default auto-crop for head shots only, but don't override last user choice.
 
   $("#capture_and_check_in").toggleClass('hidden', $("#passed-" + racerid).prop('checked'));
 
-  show_modal("#racer_photo_modal", function() {
-      take_snapshot(racerid, lastname + '-' + firstname);
+  // TODO Two different submit buttons that set a global, g_check_in.  Eww.
+  show_modal("#photo_modal", function() {
+    take_snapshot(racerid, repo, lastname + '-' + firstname);
       return false;
   });
 
@@ -183,7 +200,14 @@ function show_racer_photo_modal(racerid) {
   Webcam.attach('#preview');
 }
 
-function take_snapshot(racerid, photo_base_name) {
+function show_racer_photo_modal(racerid) {
+  show_photo_modal(racerid, 'head');
+}
+function show_car_photo_modal(racerid) {
+  show_photo_modal(racerid, 'car');
+}
+
+function take_snapshot(racerid, repo, photo_base_name) {
   if (photo_base_name.length <= 1) {
     photo_base_name = 'photo';
   }
@@ -219,6 +243,7 @@ function take_snapshot(racerid, photo_base_name) {
 	  var form_data = new FormData();
 	  form_data.append('action', 'photo.upload');
       form_data.append('racerid', racerid);
+      form_data.append('repo', repo);
 	  form_data.append('photo', blob, photo_base_name + "."+image_fmt.replace(/e/, '') );
       if ($("#autocrop").prop('checked')) {
         form_data.append('autocrop', '1');
@@ -241,12 +266,12 @@ function take_snapshot(racerid, photo_base_name) {
               }
              });
 
-      close_modal("#racer_photo_modal");
+      close_modal("#photo_modal");
   });
 }
 
-function close_racer_photo_modal() {
-    close_modal("#racer_photo_modal");
+function close_photo_modal() {
+    close_modal("#photo_modal");
 }
 
 function compare_first(a, b) {

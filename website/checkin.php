@@ -113,6 +113,7 @@ require_once('inc/checkin-table.inc');
 <?php
 
     $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+      .(schema_version() < 2 ? "" : " carphoto,")
       .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
@@ -210,8 +211,9 @@ foreach ($stmt as $rs) {
 </form>
 </div>
 
-<div id='racer_photo_modal' class="modal_dialog hidden block_buttons">
+<div id='photo_modal' class="modal_dialog hidden block_buttons">
   <form>
+    <input type="hidden" id="photo_modal_repo" name="repo"/>
     <h3>Capture photo for <span id="racer_photo_name"></span></h3>
     <div id="preview">
         <h2>Does your browser support webcams?</h2>
@@ -230,12 +232,11 @@ foreach ($stmt as $rs) {
         <input type="submit" value="Capture Only" data-enhanced="true"
           onclick='g_check_in = false;'/>
         <input type="button" value="Cancel" data-enhanced="true"
-          onclick='close_racer_photo_modal();'/>
+          onclick='close_photo_modal();'/>
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
-          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"
-    />
+          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
         </div>
     </div>
   </form>
