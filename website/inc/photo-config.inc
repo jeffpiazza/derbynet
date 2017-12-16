@@ -19,6 +19,9 @@ define('RENDER_ONDECK', '200x100');
 // For display on checkin page: 60h, arbitrary width
 define('RENDER_CHECKIN', '0x60');
 
+// For display on award judging page
+define('RENDER_JUDGING', '100x100');
+
 function photo_directory() {
   // For Windows:
   // %userprofile%\Documents\Lisano Enterprises\GrandPrix Race Manager\Images

@@ -1,0 +1,134 @@
+#top_matter {
+    height: 80px;
+}
+
+.award_superlative {
+    text-align: right;
+    width: 6em;
+}
+
+.award_primary {
+    text-align: left;
+}
+
+.award_racers {
+    float: right;
+    width: 20%;
+}
+
+#awards {
+    position: absolute;
+    left: 0;
+    width: 300px;
+    top: 140px; 
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#awards ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left: 10px;
+}
+
+#awards li {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+
+    min-height: 100px;
+    border: 1px black solid;
+}
+
+#awards a {
+    color: black;
+    cursor: pointer;
+}
+
+#awards li p {
+    padding-bottom: 0px;
+    margin: 0px;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+#awards p.awardname {
+    font-weight: bold;
+    margin-top: 12px;
+}
+#awards .awardtype {
+    font-style: italic;
+}
+#awards .recipient {
+    float: right;
+}
+#racers {
+    position: absolute;
+    left: 300px;
+    right: 0;
+    top: 140px;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.award_marker {
+    position: absolute;
+    left: 61px;  /* (150px - 27px) / 2 */
+    /* bottom: 10px; */
+    z-index: -1;
+}
+
+.judging_racer {
+    position: relative;
+    display: inline-block;
+    /* Default is vertical-align: baseline, which lines up the bottoms of the images. */
+    vertical-align: top;
+    width: 150px;
+    height: 200px;
+}
+.judging_racer img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.judging_racer .carno {
+    text-align: center;
+    width: 100%;
+    font-size: 24px;
+    font-weight: bold;
+}
+.judging_racer .racer_name,
+.judging_racer .group_name,
+.judging_racer .rank_name {
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+}
+
+#awards li.award-recipient-hover,
+#racers .judging_racer.award-recipient-hover {
+    background-color: #ffffb4;
+}
+
+#awards li.award-recipient-hover.unacceptable-hover-filled,
+#awards li.award-recipient-hover.unacceptable-hover-wrong-class,
+#racers .judging_racer.unacceptable-hover-wrong-class {
+    background-color: #ffffff;
+}
+
+#awards li.unacceptable-hover-filled a.recipient {
+    background-color: #ffb4b4;
+}
+
+#awards li.unacceptable-hover-wrong-class p.class-and-rank,
+#racers div.judging_racer.unacceptable-hover-wrong-class div.subgroup_name, 
+#racers div.judging_racer.unacceptable-hover-wrong-class div.group_name {
+    background-color: #ffb4b4;
+}
+
+
+#racer_awards_modal span {
+    font-size: inherit;
+}

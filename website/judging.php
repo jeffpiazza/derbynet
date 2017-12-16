@@ -1,16 +1,9 @@
 <?php @session_start();
 
-// EXPERIMENTAL
-// Lists common non-specific awards (e.g., "Most Aerodynamic"), along
-// with a drop-down selection element of potential recipients for
-// each.
-// TODO: Assigning an award presently has no effect!!
-// TODO: Drag-and-drop, a la photo-thumbs
-// TODO: Write-in field for true ad hoc awards
-
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+require_once('inc/photo-config.inc');
 require_permission(JUDGING_PERMISSION);
 ?><!DOCTYPE html>
 <html>
@@ -18,10 +11,16 @@ require_permission(JUDGING_PERMISSION);
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Award Judging</title>
 <?php require('inc/stylesheet.inc'); ?>
-<meta http-equiv="refresh" content="300"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<script type="text/javascript" src="js/checkin.js"></script>
+<!-- script type="text/javascript" src="js/mobile-init.js"></script -->
+<!-- script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script-->
+<script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/judging.js"></script>
+<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/judging.css"/>
 </head>
 <body>
 <?php
@@ -29,99 +28,30 @@ make_banner('Judging');
 
 require_once('inc/standings.inc');
 
-// TODO: Magical '3' for 'other' awards...
-$awardTypeOther = read_single_value('SELECT awardtypeid FROM AwardTypes WHERE awardtype = \'Other\'',
-									array(), 3);
-$awards = Array(Array('Most', 'Aerodynamic'),
-				Array('Most', 'Amazing'),
-				Array('Best', 'Animal Theme'),
-				Array('Most', 'Artistic'),
-				Array('Most', 'Astonishing'),
-				Array('Most', 'Attractive'),
-				Array('Most', 'Awesome'),
-				Array('Most', 'Box-Like'),
-				Array('Most', 'Cheerful'),
-				Array('Most', 'Colorful'),
-				Array('', 'Coolest Car'),
-				Array('Most', 'Cosmic'),
-				Array('Most', 'Creative'),
-				Array('Most', 'Creative Use of Materials'),
-				Array('', 'Cubbiest Car'),
-				Array('Most', 'Decals'),
-				Array('Best', 'Detail'),
-				Array('Most', 'Distinct'),
-				Array('Most', 'Distinguished'),
-				Array('Best', 'Driver in the Car'),
-				Array('Most', 'Elaborate'),
-				Array('Most', 'Expensive-Looking'),
-				Array('Most', 'Extraordinary'),
-				Array('Most', 'Extreme'),
-				Array('', 'Fanciest'),
-				Array('Most', 'Fascinating'),
-				Array('', 'Fastest-Looking Car'),
-				Array('Most', 'Funky'),
-				Array('', 'Funniest'),
-				Array('Most', 'Futuristic'),
-				Array('Most', 'Galactic'),
-				Array('', 'Glossiest'),
-				Array('Most', 'Grandiose'),
-				Array('Most', 'Humorous'),
-				Array('Most', 'Imaginative Design'),
-				Array('Most', 'Impressive'),
-				Array('Most', 'Incredible'),
-				Array('Most', 'Innovative'),
-				Array('Most', 'Interesting'),
-				Array('Most', 'Inventive'),
-				Array('Most', 'Magnificent'),
-				Array('Most', 'Majestic'),
-				Array('Most', 'Original'),
-				Array('Most', 'Outstanding'),
-				Array('Most', 'Patriotic'),
-				Array('Most', 'Phenomenal'),
-				Array('Most', 'Radical'),
-				Array('Most', 'Realistic-Looking'),
-				Array('Most', 'Remarkable'),
-				Array('Most', 'Resourceful'),
-				Array('', 'Scariest'),
-				Array('Best', 'Scout Theme'),
-				Array('', 'Shiniest Car'),
-				Array('', 'Sleekest Car'),
-				Array('', 'Smoothest Finish'),
-				Array('Most', 'Spirited'),
-				Array('', 'Sportiest-Looking'),
-				Array('Most', 'Stellar'),
-				Array('', 'Strangest Shape'),
-				Array('Most', 'Unusual'),
-				Array('Best', 'Use of Color'),
-				Array('Best', 'Use of the Color Blue'),
-				Array('Best', 'Use of the Color Green'),
-				Array('Best', 'Use of the Color Orange'),
-				Array('Best', 'Use of the Color Purple'),
-				Array('Best', 'Use of the Color Red'),
-				Array('Best', 'Use of the Color Yellow'),
-				Array('Best', 'Use of the Color _____'),
-				Array('Best', 'Vehicle Not a Car'),
-				Array('Best', 'Wedge Shape'),
-				Array('', 'Zaniest'));
+$racers = array();
+$awards = array();
 
-$sql = 'SELECT racerid, carnumber, lastname, firstname, class'
-      .' FROM RegistrationInfo'
-      .' INNER JOIN Classes'
-      .' ON Classes.classid = RegistrationInfo.classid'
+$sql = 'SELECT racerid, carnumber, lastname, firstname,'
+      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile, carphoto'
+      .' FROM '.inner_join('RegistrationInfo',
+                           'Classes', 'Classes.classid = RegistrationInfo.classid',
+                           'Ranks', 'Ranks.rankid = RegistrationInfo.rankid')
       .' WHERE passedinspection = 1 AND exclude = 0'
       .' ORDER BY carnumber';
-$racers = array();
-$stmt = $db->query($sql);
-foreach ($stmt as $rs) {
+foreach ($db->query($sql) as $rs) {
   $racerid = $rs['racerid'];
   $racers[$racerid] = array('racerid' => $racerid,
 							'carnumber' => $rs['carnumber'],
 							'lastname' => $rs['lastname'],
 							'firstname' => $rs['firstname'],
+                            'classid' => $rs['classid'],
 							'class' => $rs['class'],
+                            'rankid' => $rs['rankid'],
+                            'rank' => $rs['rank'],
+                            'imagefile' => $rs['imagefile'],
+                            'carphoto' => $rs['carphoto'],
 							'awards' => array());
 }
-$stmt->closeCursor();
 
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
@@ -141,64 +71,66 @@ for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.supergroup_label_lc();
 }
 
-$sql = 'SELECT awardname, racerid'
+$stmt = $db->query('SELECT awardname, racerid'
   .' FROM Awards'
-  .' ORDER BY sort';
-$stmt = $db->query($sql);
+  .' ORDER BY sort');
 foreach ($stmt as $rs) {
   $racerid = $rs['racerid'];
   if (isset($racers[$racerid]))
 	$racers[$racerid]['awards'][] = $rs['awardname'];
 }
-
-
-  // Awards table:
-  // AwardID, AwardName, AwardTypeID, ClassID, RankID, RacerID, Sort
-  // 
-  // AwardTypeID just maps to a string, AwardType, through AwardTypes string.
-
 ?>
-<div class="award_racers">
-<ul>
-<?php
-foreach ($racers as $racer) {
-  echo '<li>'.htmlspecialchars($racer['carnumber'], ENT_QUOTES, 'UTF-8').' - '
-      .htmlspecialchars($racer['lastname'].', '.$racer['firstname'], ENT_QUOTES, 'UTF-8');
-  foreach ($racer['awards'] as $award) {
-	echo '; '.htmlspecialchars($award, ENT_QUOTES, 'UTF-8');
-  }
-  echo '</li>'."\n";
-}
-?>
-</ul>
+<div id="top_matter" class="block_buttons">
+  <form method="link" action="awards-editor.php">
+    <input type="submit" value="Edit Awards"/>
+  </form>
 </div>
 
-<div class="award_choices">
-<table class="main_table">
-<?php
+<div id="awards">
+  <ul data-rolex="listview">
+  </ul>
+</div>
 
-$r = 0;
-foreach ($awards as $award) {
-  echo '<tr class="d'.($r & 1).'">';
-  ++$r;
-  echo '<td class="award_superlative">'.$award[0].'</td><td class="award_primary">'.$award[1].'</td>';
-  echo '<td>';
-  echo '<div class="block_buttons">';
-  echo '<select>'."\n";
-  echo '<option value="0">&lt;None&gt;</option>';
+<div id="racers">
+  <?php
+
+  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+
   foreach ($racers as $racer) {
-	echo '<option value="'.$racer['racerid'].'">'
-      .htmlspecialchars($racer['carnumber'], ENT_QUOTES, 'UTF-8').' - '
-      .htmlspecialchars($racer['lastname'].', '.$racer['firstname'], ENT_QUOTES, 'UTF-8')
-	  .'</option>'."\n";
+    echo "<div class='judging_racer' data-racerid='".$racer['racerid']."' onclick='show_racer_awards_modal($(this));'>\n";
+    if ($racer['carphoto']) {
+      echo "<img src='".car_photo_repository()->lookup(RENDER_JUDGING)->render_url($racer['carphoto'])."'/>";
+    }
+    echo "<div class='carno'>";
+    echo $racer['carnumber'];
+    echo "</div>";
+
+
+    echo "<div class='racer_name'>".htmlspecialchars($racer['firstname'].' '.$racer['lastname'], ENT_QUOTES, 'UTF-8')."</div>";
+    echo "<div class='group_name' data-classid='".$racer['classid']."'>"
+        .htmlspecialchars($racer['class'], ENT_QUOTES, 'UTF-8')
+    ."</div>";
+    if ($use_subgroups) {
+      echo "<div class='subgroup_name' data-rankid='".$racer['rankid']."'>"
+          .htmlspecialchars($racer['rank'], ENT_QUOTES, 'UTF-8')
+      ."</div>";
+    }
+    // These get hidden/unhidden by javascript code, based on award results
+    echo "<img class='award_marker' src='img/award-ribbon-27x36.png'/>";
+    echo "</div>\n";
   }
-  echo '</select>';
-  echo '</div>';
-  echo '</td>';
-  echo '</tr>'."\n";
-}
 ?>
-</table>
+</div>
+
+<div id="racer_awards_modal" class="modal_dialog hidden block_buttons">
+  <form id="racer_awards_form">
+    <h3>Awards for <span id="racer_awards_recipient_carno"></span> <span id="racer_awards_recipient_name"></span></h3>
+
+    <ul id="racer_awards">
+    </ul>
+   <input type="button" value="Close" data-enhanced="true"
+          onclick='close_racer_awards_modal();'/>
+  </form>
 </div>
 
 </body>
