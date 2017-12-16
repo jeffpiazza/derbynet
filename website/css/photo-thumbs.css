@@ -37,6 +37,11 @@ body { margin: 0; }
   height: 150px;
 }
 
+.thumbnail.hidden {
+   display: none;
+}
+
+
 .thumbnail a img {
   display: block;
   margin-left: auto;
