@@ -13,6 +13,7 @@ require("./preamble");
     "import-results.php",
     "import-roster.php",
     "index.php",
+    "judging.php",
     "kiosk-dashboard.php",
     "login.php",
     "ondeck.php",
