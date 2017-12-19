@@ -4,7 +4,7 @@ start_response();
 
 // $read_fields and $write_fields are as would be passed to $stmt->execute(), but the
 // keys, minus a colon, have to correspond with column names in the table.
-function get_or_create_id($idfield, $tablename, $read_fields, $write_fields) {
+function get_or_create_id($idfield, $tablename, $read_fields, $write_fields = null) {
   global $db;
   if (!$write_fields) {
     $write_fields = $read_fields;
