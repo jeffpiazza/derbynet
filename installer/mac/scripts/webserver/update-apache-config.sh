@@ -12,7 +12,7 @@
 # server's configuration file, then enables two other modules to support SSH
 # handling.
 sed -i.pre-derbynet \
-  -e 's!# *\(LoadModule *php5_module .*\)!\1!' \
+  -e 's!# *\(LoadModule *php[57]_module .*\)!\1!' \
   -e 's!# *\(AddModule *mod_php5.c\)!\1!' \
   \
   -e 's!# *\(LoadModule *socache_shmcb_module .*\)!\1!' \
