@@ -35,34 +35,33 @@ function rankid_to_rank(rankid, dataxml) {
 function update_awards(dataxml) {
   var awards = dataxml.getElementsByTagName('award');
 
-  if ($("#all_awards").find('li').length < awards.length) {
-    while ($("#all_awards").find('li').length < awards.length) {
+  if ($("#all_awards li").length < awards.length) {
+    while ($("#all_awards li").length < awards.length) {
       $('<li></li>')
         .append('<a>' +
                 '<span class="awardname"></span>' +
                 '<p>' +
                     '<span class="awardtype"></span>' +
                 '</p>' +
-                '<p>' +
+                '<p class="class-and-rank">' +
                     '<span class="rankname"></span>' +
                     '<span class="classname"></span> ' +
                     '<span class="recipient"></span>' +
                 '</p>' +
-                '</a>')
+               '</a>')
         .append('<a onclick="handle_edit_award($(this).closest(\'li\'));"></a>')
         .appendTo('#all_awards');
     }
     $("#all_awards").listview("refresh");
-    makeAwardsDroppable();
   }
   
-  $("#all_awards").find('li').each(function(i) {
+  $("#all_awards li").each(function(i) {
     if (i >= awards.length) {
       $(this).remove();
     } else {
       $(this).attr("data-awardid", awards[i].getAttribute("awardid"));
       if ($(this).attr("data-awardname") != awards[i].getAttribute("awardname")) {
-        $(this).find('a').find('span.awardname').text(awards[i].getAttribute("awardname"));
+        $(this).find('span.awardname').text(awards[i].getAttribute("awardname"));
         $(this).attr("data-awardname", awards[i].getAttribute("awardname"));
       }
       if ($(this).attr("data-awardtypeid") != awards[i].getAttribute("awardtypeid")) {
@@ -94,25 +93,9 @@ function update_awards(dataxml) {
           .empty()
           .text(awards[i].getAttribute("firstname") + " " +
                 awards[i].getAttribute("lastname"));
-        if (awards[i].getAttribute("racerid") != 0) {
-          $(this).find('.recipient')
-            .prepend('<img src="img/cancel-12.png" onclick="handle_remove_recipient($(this));"/>')
-        }
       }
     }
   });
-}
-
-function handle_remove_recipient(imgxjq) {
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: 'award.winner',
-                 awardid: imgxjq.closest("[data-awardid]").attr("data-awardid"),
-                 racerid: 0},
-          success: function(data) {
-            update_awards(data);
-          }
-         });
 }
 
 function handle_new_award() {
@@ -176,59 +159,6 @@ function handle_delete_award() {
   return false;
 }
 
-// Returns 0 if acceptable,
-// 1 if already filled
-// 2 if unacceptable because of classid/rankid
-function acceptableAwardAssignment(awardjq, racerjq) {
-  var racerid = awardjq.attr("data-racerid");
-  if (racerid != 0) {
-    return 1;
-  }
-  var classid = awardjq.attr("data-classid");
-  if (classid != 0 && racerjq.attr("data-classid") != classid) {
-    return 2;
-  }
-  var rankid = awardjq.attr("data-rankid");
-  if (rankid != 0 && racerjq.attr("data-rankid") != rankid) {
-    return 2;
-  }
-  return 0;
-}
-
-// A racer can be dragged onto an award to "claim" the award for that racer.
-function makeAwardsDroppable() {
-  $("#all_awards li").droppable({
-    hoverClass: "award_recipient_hover",
-    over: function(event, ui) {
-      var draggable = $(ui.draggable);
-      var target = $(event.target);
-      // This event also arises when re-ordering the awards themselves
-      if (draggable[0].hasAttribute("data-racerid") &&
-          !draggable[0].hasAttribute("data-awardid")) {
-        var acceptable = acceptableAwardAssignment(target, draggable);
-        target.toggleClass('unacceptable_hover', acceptable != 0);
-        target.toggleClass('unacceptable_class_hover', acceptable == 2);
-      }
-    },
-    out: function(event, ui) {
-      $(event.target).removeClass('unacceptable_hover unacceptable_class_hover');
-    },
-    drop: function(event, ui) {
-      $(event.target).removeClass('unacceptable_hover unacceptable_class_hover');
-      if (acceptableAwardAssignment($(event.target), $(ui.draggable)) == 0) {
-        $.ajax(g_action_url,
-               {type: 'POST',
-                data: {action: 'award.winner',
-                       awardid: $(event.target).attr('data-awardid'),
-                       racerid: $(ui.draggable).attr('data-racerid')},
-                success: function(data) {
-                  update_awards(data);
-                }
-               });
-      }
-    }});
-}
-
 $(function() {
   $("#all_awards").sortable({stop: function(event, ui) {
     var data = {action: 'award.order'};
@@ -244,14 +174,6 @@ $(function() {
             }
            });
   }});
-
-  // Make the racer list items draggable (to an award)
-  $('#racers li').draggable({
-    helper: 'clone',
-    appendTo: 'body',
-    opacity: 0.5,
-    revert: 'invalid'
-  });
 
   // TODO Poll on this, not just this one time
   $.ajax(g_action_url,

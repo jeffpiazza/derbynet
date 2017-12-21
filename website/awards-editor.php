@@ -46,10 +46,6 @@ $awards = all_awards();
        onclick="handle_new_award();"/>
 </div>
 
-<div class="right">
-<p class="instructions">Drag a racer onto an award to claim.</p>
-</div>
-
 </div>
 
 <div class="block_buttons">
@@ -62,39 +58,6 @@ $awards = all_awards();
 ?>
 </ul>
 </div><!-- listview -->
-
-<div id="racers">
-<div id="racers-inset">
-<ul data-role="listview">
-<?php
-// Generate the list of racers:
-
-foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, classid'
-                    .(schema_version() >= 2 ? ', carphoto' : '')
-                    .' FROM RegistrationInfo'
-                    .' ORDER BY carnumber, lastname, firstname') as $row) {
-  $classid = $row['classid'];
-  $rankid = $row['rankid'];
-  $class = ($classid ? htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8') : '');
-  $rank = ($rankid ? htmlspecialchars($ranks[$rankid]['rank'], ENT_QUOTES, 'UTF-8') : '');
-  echo '<li';
-  echo ' data-racerid="'.$row['racerid'].'"';
-  echo ' data-classid="'.$classid.'"';
-  echo ' data-rankid="'.$rankid.'"';
-  echo '>';
-  if (isset($row['carphoto']) && $row['carphoto']) {
-    echo '<img src="'.car_photo_repository()->url_for_racer($row, RENDER_LISTVIEW).'"/>';
-  }
-  echo '<span>'.$row['carnumber'].' '
-       .htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')
-       .'</span>';
-  echo '<p>'.($use_subgroups ? $rank.', ' : '').$class.'</p>';
-  echo '</li>';
-}
-?>
-</ul>
-</div>
-</div>
 
 </div><!-- block_buttons -->
 

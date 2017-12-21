@@ -39,10 +39,10 @@
 }
 
 .listview {
-  position: absolute;
+  position: absolute; 
   top: 160px;
   bottom: 0;
-  left: 0;
+  left: 25%;
   width: 50%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -53,14 +53,18 @@
 }
 
 .ui-listview > li span.awardname {
-  font-weight: bold;
+    font-weight: bold;
 }
 .ui-listview > li p {
-  font-size: 12px;
+    font-size: 12px;
 }
 
 .ui-listview span.recipient {
     float: right;
+}
+
+#all_awards li > a:first-child {
+    cursor: default;
 }
 
 #all_awards li.award_recipient_hover a:first-child {
@@ -93,27 +97,5 @@
 }
 li.hidden p {
   margin: 0px;
-}
-
-#racers {
-    position: absolute;
-    left: 50%;
-    right: 0;
-    top: 140px;
-    bottom: 0;
-/*    overflow-x: hidden;
-    overflow-y: auto; */
-}
-
-#racers-inset {
-    position: absolute;
-    width: 90%;
-    /* margin: 20px; */
-    top: 20px;
-    bottom: 20px;
-    right: 20px;
-    left: 20px;
-    border: 2px solid #808080;
-    overflow-y: auto;
 }
 
