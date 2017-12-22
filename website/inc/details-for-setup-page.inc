@@ -182,7 +182,8 @@ function diagnose_configuration() {
 
   $config_dir = isset($_SERVER['CONFIG_DIR'])
       ? $_SERVER['CONFIG_DIR']
-      : (dirname(__FILE__).DIRECTORY_SEPARATOR.'local');
+      // dirname 2 levels up, because we're in the /inc subdirectory
+      : (dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'local');
 
   $config_file = $config_dir.DIRECTORY_SEPARATOR."config-database.inc";
 
