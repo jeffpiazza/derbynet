@@ -96,26 +96,24 @@ public class FastTrackDevice extends TimerDeviceTypical {
     });
   }
 
-  public void prepareHeat(int roundid, int heat, int lanemask) throws
-      SerialPortException {
-    prepare(roundid, heat);
+  @Override
+  public int getSafeNumberOfLanes() {
+    return MAX_LANES;
+  }
+
+  @Override
+  protected void maskLanes(int lanemask) throws SerialPortException {
     portWrapper.write(CLEAR_LANE_MASK);
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.
-    StringBuilder sb = new StringBuilder("Heat prepared: ");
     for (int lane = 0; lane < MAX_LANES; ++lane) {
-      if ((lanemask & (1 << lane)) != 0) {
-        sb.append(lane + 1);
-      } else {
-        sb.append("-");
+      if ((lanemask & (1 << lane)) == 0) {
         // A LANE_MASK command echoes the command (first response) and then
         // sends a "* <cr> <lf>" (second response).
         portWrapper.writeAndDrainResponse(
             LANE_MASK + (char) ('A' + lane), 2, 2000);
       }
     }
-    portWrapper.logWriter().serialPortLogInternal(sb.toString());
-    rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
   }
 
   // Interrogates the starting gate's state.  CAUTION: polling while a

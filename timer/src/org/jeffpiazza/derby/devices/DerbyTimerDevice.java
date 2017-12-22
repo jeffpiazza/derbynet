@@ -79,8 +79,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
         if (line.equals("RACE")) {
           if (getGateIsClosed()) {
             setGateIsClosed(false);
-            rsm.onEvent(RacingStateMachine.Event.GATE_OPENED,
-                        DerbyTimerDevice.this);
+            rsm.onEvent(RacingStateMachine.Event.GATE_OPENED);
           }
           return "";
         } else if (line.equals("FINISH")) {
@@ -102,8 +101,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
             }
             if (!getGateIsClosed()) {
               setGateIsClosed(true);
-              rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED,
-                          DerbyTimerDevice.this);
+              rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED);
             }
             return "";
           }
@@ -131,38 +129,16 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     super.raceFinished(TimerDeviceUtils.zeroesToNines(results));
   }
 
-  // TODO synchronized?
-  public synchronized void prepareHeat(int roundid, int heat, int lanemask)
-      throws SerialPortException {
-    RacingStateMachine.State state = rsm.state(this);
-    // TODO This isn't necessary if the server won't send a redundant heat-ready
-    // No need to bother doing anything if we're already prepared for this heat.
-    if (this.roundid == roundid && this.heat == heat
-        && (state == RacingStateMachine.State.MARK
-            || state == RacingStateMachine.State.SET)) {
-      portWrapper.logWriter().traceInternal("Ignoring redundant prepareHeat()");  // TODO
-      return;
-    }
-
-    prepare(roundid, heat);
-    nresults = 0;
-    results = new ArrayList<Message.LaneResult>();
-
+  protected void maskLanes(int lanemask) throws SerialPortException {
     portWrapper.writeAndDrainResponse(CLEAR_LANE_MASK);
 
-    StringBuilder sb = new StringBuilder("Heat prepared: ");
     for (int lane = 0; lane < laneCount; ++lane) {
-      if ((lanemask & (1 << lane)) != 0) {
-        sb.append(lane + 1);
-      } else {
-        sb.append("-");
+      if ((lanemask & (1 << lane)) == 0) {
         // Response is "MASKING LANE <n>"
         portWrapper.writeAndDrainResponse(
             LANE_MASK + (char) ('1' + lane), 1, 500);
       }
     }
-    portWrapper.logWriter().serialPortLogInternal(sb.toString());
-    rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
   }
 
   // Interrogates the starting gate's state.
@@ -186,6 +162,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     throw new NoResponseException();
   }
 
+  @Override
   public int getNumberOfLanes() throws SerialPortException {
     return laneCount;
   }
@@ -194,7 +171,10 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   public void onTransition(RacingStateMachine.State oldState,
                            RacingStateMachine.State newState)
       throws SerialPortException {
-    if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
+    if (newState == RacingStateMachine.State.MARK) {
+      nresults = 0;
+      results = new ArrayList<Message.LaneResult>();
+    } else if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
       // Force results upon entering RESULTS_OVERDUE.  After another second
       // (in whileInState), give up and revert to idle.
       portWrapper.write(FORCE_RACE_RESULTS);

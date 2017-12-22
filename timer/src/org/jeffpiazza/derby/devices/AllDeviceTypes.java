@@ -7,12 +7,13 @@ public class AllDeviceTypes {
   @SuppressWarnings(value = "unchecked")
   public static final Class<? extends TimerDevice>[] allDeviceClasses
       = (Class<? extends TimerDevice>[]) new Class[]{
-        ChampDevice.class,
+        SmartLineDevice.class,
         FastTrackDevice.class,
         OlderFastTrackDevice.class,
         TheJudgeDevice.class,
         NewBoldDevice.class,
-        DerbyTimerDevice.class
+        DerbyTimerDevice.class,
+        MiscJunkDevice.class
       };
 
   public static String toHumanString(Class<? extends TimerDevice> type) {

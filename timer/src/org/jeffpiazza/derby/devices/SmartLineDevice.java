@@ -7,7 +7,7 @@ import org.jeffpiazza.derby.Timestamp;
 
 import java.util.regex.Matcher;
 
-public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
+public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
   private int numberOfLanes;  // Detected at probe time
 
   private static final String READ_DECIMAL_PLACES = "od\r";
@@ -33,7 +33,7 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
   private static final String READ_START_SWITCH = "rs\r";
   private static final String READ_VERSION = "v\r";
 
-  public ChampDevice(SerialPortWrapper portWrapper) {
+  public SmartLineDevice(SerialPortWrapper portWrapper) {
     super(portWrapper);
 
     // Once started, we expect a race result within 10 seconds; we allow an
@@ -42,7 +42,7 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
   }
 
   public static String toHumanString() {
-    return "Champ (BestTrack)/Smart-Line";
+    return "SmartLine/eTekGadget/BestTrack \"The Champ\"";
   }
 
   public boolean probe() throws SerialPortException {
@@ -128,13 +128,11 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
 
   private static final int MAX_LANES = 6;
 
-  private int getSafeNumberOfLanes() {
+  public int getSafeNumberOfLanes() {
     return numberOfLanes == 0 ? MAX_LANES : numberOfLanes;
   }
 
-  public void prepareHeat(int roundid, int heat, int lanemask) throws
-      SerialPortException {
-    prepare(roundid, heat);
+  protected void maskLanes(int lanemask) throws SerialPortException {
     // These don't give responses, so no need to wait for any.
     portWrapper.write(RESET_LANE_MASK);
 
@@ -143,12 +141,10 @@ public class ChampDevice extends TimerDeviceTypical implements TimerDevice {
         portWrapper.write(MASK_LANE + (char) ('1' + lane) + "\r");
       }
     }
-
-    rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
   }
 
   public void abortHeat() throws SerialPortException {
-    rsm.onEvent(RacingStateMachine.Event.ABORT_HEAT_RECEIVED, this);
+    rsm.onEvent(RacingStateMachine.Event.ABORT_HEAT_RECEIVED);
   }
 
   @Override

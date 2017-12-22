@@ -109,7 +109,9 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         }
       } catch (Throwable ex) {
         logwriter.traceInternal(
-            "** Timer loop restarted due to " + ex.getMessage());
+            "** Timer loop restarted due to " +
+            ex.getCause().getClass().getName() + ": " + ex.getMessage());
+        logwriter.stacktrace(ex);
       } finally {
         if (device != null) {
           device.close();

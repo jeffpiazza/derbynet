@@ -123,8 +123,13 @@ public class SerialPortWrapper implements SerialPortEventListener {
       if (event.isRXCHAR()) {
         noticeContact();
         read();
+      } else if (event.isTXEMPTY()) {
+        // Not sure what this means or what causes it, but
+        // it comes up sometimes on Windows
+        noticeContact();
       } else {
-        System.out.println("Event type is " + event.getEventType());
+        System.out.println("\n(Unexpected serialEvent type: " + event.
+            getEventType() + " with value " + event.getEventValue() + ")");
       }
     } catch (Exception e) {
       System.out.println("serialEvent gets an exception: " + e);
@@ -175,7 +180,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
           s = s.substring(cr + 1);
         }
         leftover = s;
-        // logwriter.serialPortLog(LogWriter.INTERNAL, "leftover = <<" + leftover + ">>");
       }
     } catch (Exception exc) {
       System.out.println("Exception while reading: " + exc);
