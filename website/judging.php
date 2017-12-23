@@ -15,8 +15,9 @@ require_permission(JUDGING_PERMISSION);
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<!-- script type="text/javascript" src="js/mobile-init.js"></script -->
-<!-- script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script-->
+<!-- jquery.mobile on this page ONLY for the text input in ad hoc award -->
+<script type="text/javascript" src="js/mobile-init.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/judging.js"></script>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
@@ -82,7 +83,7 @@ foreach ($stmt as $rs) {
 ?>
 <div id="top_matter" class="block_buttons">
   <form method="link" action="awards-editor.php">
-    <input type="submit" value="Edit Awards"/>
+    <input type="submit" data-enhanced="true" value="Edit Awards"/>
   </form>
 </div>
 
@@ -117,19 +118,28 @@ foreach ($stmt as $rs) {
     }
     // These get hidden/unhidden by javascript code, based on award results
     echo "<img class='award_marker' src='img/award-ribbon-27x36.png'/>";
+    echo "<img class='adhoc_marker' src='img/goldstar.png'/>";
     echo "</div>\n";
   }
 ?>
 </div>
 
 <div id="racer_awards_modal" class="modal_dialog hidden block_buttons">
-  <form id="racer_awards_form">
-    <h3>Awards for <span id="racer_awards_recipient_carno"></span> <span id="racer_awards_recipient_name"></span></h3>
+  <h3>Awards for <span id="racer_awards_recipient_carno"></span> <span id="racer_awards_recipient_name"></span>
+  </h3>
 
-    <ul id="racer_awards">
-    </ul>
-   <input type="button" value="Close" data-enhanced="true"
-          onclick='close_racer_awards_modal();'/>
+  <ul id="racer_awards">
+  </ul>
+
+  <form id="racer_awards_form">
+    <input type="hidden" name="action" value="award.adhoc"/>
+    <input type="hidden" name="racerid" value="" id="racer_awards_racerid"/>
+    <label for="awardname"><i>Ad hoc</i> award:</label>
+    <input type="text" name="awardname" id="racer_awards_awardname"/>
+
+    <input type="submit" data-enhanced="true"/>
+    <input type="button" value="Close" data-enhanced="true"
+           onclick='close_racer_awards_modal();'/>
   </form>
 </div>
 

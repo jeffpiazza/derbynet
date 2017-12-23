@@ -33,6 +33,10 @@ li.hidden p {
   margin: 0px;
 }
 
+.ui-listview > li.ui-btn.adhoc {
+    background-color: #f0f0f6;
+}
+
 /* The presenter div covers the right half of the screen after the listview is
    positioned absolutely along the left. */
 .presenter {

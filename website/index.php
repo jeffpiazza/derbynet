@@ -139,7 +139,7 @@ make_spacer_if($need_spacer);
 // *********** During ***************
 $need_spacer = make_link_button('Race Dashboard', 'coordinator.php', SET_UP_PERMISSION, 'during_button');
 $need_spacer = make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
-$need_spacer = make_link_button('Judging', 'judging.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Judging', 'judging.php', JUDGING_PERMISSION, 'during_button') || $need_spacer;
   
 // end first column default set-up
 

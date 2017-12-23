@@ -3,6 +3,8 @@
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
+define('AD_HOC_AWARDTYPEID', 6);
+
 // list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 function classes_and_ranks() {
   global $db;
@@ -36,7 +38,7 @@ function classes_and_ranks() {
 
 // Returns all the awards in the Awards table.  Note that this does NOT include
 // speed awards.
-function all_awards() {
+function all_awards($include_ad_hoc) {
   global $db;
   $recipients = array();
   foreach ($db->query('SELECT Awards.racerid, firstname, lastname, carnumber'
@@ -53,6 +55,7 @@ function all_awards() {
                       .' Awards.awardtypeid, Awards.classid, Awards.rankid, racerid, sort'
                       .' FROM '.inner_join('Awards', 'AwardTypes',
                                            'Awards.awardtypeid = AwardTypes.awardtypeid')
+                      .($include_ad_hoc ? '' : (' WHERE Awards.awardtypeid <> '.AD_HOC_AWARDTYPEID))
                       .' ORDER BY sort, awardtype, awardname') as $row) {
     $racer = @$recipients[$row['racerid']];
     $awards[] =

@@ -178,7 +178,8 @@ $(function() {
   // TODO Poll on this, not just this one time
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'award.list'},
+          data: {query: 'award.list',
+                 adhoc: '0'},
           success: function(data) {
             update_awards(data);
           }

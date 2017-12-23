@@ -66,6 +66,18 @@ curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="
 curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'sort="3"'
 curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="4"'
 
+# Try some ad-hoc awards
+# 21 = Derek Dreier, car 121
+# 12 = Christopher Chauncey, car 212
+curl_post action.php "action=award.adhoc&racerid=21&awardname=Best%20Use%20Of%20Chocolate"
+curl_post action.php "action=award.adhoc&racerid=12&awardname=Most%20Glittery"
+curl_post action.php "action=award.adhoc&racerid=21&awardname="
+
+curl_get "action.php?query=award.list" | expect_count 'Chocolate' 0
+curl_get "action.php?query=award.list" | expect_count 'racerid=12' 0
+curl_get "action.php?query=award.list" | grep 'Glittery' | expect_one 'racerid="12"'
+curl_get "action.php?query=award.list&adhoc=0" | expect_count 'Glittery' 0
+
 # There's no current award at the very beginning, but we don't want to enforce
 # that this test has to be run at the very beginning.
 #

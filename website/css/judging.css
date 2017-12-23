@@ -75,8 +75,11 @@
 .award_marker {
     position: absolute;
     left: 61px;  /* (150px - 27px) / 2 */
-    /* bottom: 10px; */
-    z-index: -1;
+}
+
+.adhoc_marker {
+    position: absolute;
+    left: 90px;
 }
 
 .judging_racer {

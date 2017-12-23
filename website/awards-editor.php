@@ -31,8 +31,6 @@ $use_subgroups = read_raceinfo_boolean('use-subgroups');
 require_once('inc/awards.inc');
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-
-$awards = all_awards();
 ?>
 
 <div class="instructions-wrapper" style="position: relative;">

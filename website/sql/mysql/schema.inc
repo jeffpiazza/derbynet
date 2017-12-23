@@ -165,6 +165,7 @@ array(
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (3, 'Other')",
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (4, 'Design Trophy')",
 "INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
+"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (6, 'Ad Hoc')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (11, 'show-racer-photos', '1')",

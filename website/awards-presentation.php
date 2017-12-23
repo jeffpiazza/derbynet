@@ -84,8 +84,6 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 // TODO Provide for auto-generating participation awards
 
-// TODO Provide a page for entering/sorting awards.  Also award import.
-
 // TODO Include award export?
 
 $awards = array();
@@ -162,8 +160,16 @@ foreach ($db->query('SELECT awardid, awardname, awardtype,'
 }
 
 function compare_by_sort(&$lhs, &$rhs) {
-  return $lhs['sort'] == $rhs['sort'] ? 0 :
-      $lhs['sort'] < $rhs['sort'] ? -1 : 1;
+  if ($lhs['sort'] != $rhs['sort']) {
+    return $lhs['sort'] < $rhs['sort'] ? -1 : 1;
+  }
+  if ($lhs['lastname'] != $rhs['lastname']) {
+    return $lhs['lastname'] < $rhs['lastname'] ? -1 : 1;
+  }
+  if ($lhs['firstname'] != $rhs['firstname']) {
+    return $lhs['firstname'] < $rhs['firstname'] ? -1 : 1;
+  }
+  return 0;
 }
 
 usort($awards, 'compare_by_sort');
@@ -214,7 +220,7 @@ usort($awards, 'compare_by_sort');
 foreach ($awards as &$row) {
    $classid = isset($row['classid']) ? $row['classid'] : 0;
    $rankid = (isset($row['rankid']) && $use_subgroups) ? $row['rankid'] : 0;
-    echo '<li class="ui-btn ui-btn-icon-right ui-icon-carat-r"'
+   echo '<li class="ui-btn ui-btn-icon-right ui-icon-carat-r'.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
         .' onclick="on_choose_award(this);"'
         .' data-awardkey="'.$row['awardkey'].'"'
         .' data-awardtypeid="'.$row['awardtypeid'].'"'
