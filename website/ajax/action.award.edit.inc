@@ -7,6 +7,9 @@
   class_and_rank
   sort  
 */
+
+require_once('inc/awards-xml.inc');
+
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
   if ($_POST['awardid'] == 'new') {
@@ -82,7 +85,7 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
     echo "<success/>\n";
-    require('ajax/query.award.list.inc');
+    emit_award_list(/* include_ad_hoc */ false);
   } catch (Exception $e) {
     echo "<failure code='sql'>".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')."</failure>\n";
   }

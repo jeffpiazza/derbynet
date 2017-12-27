@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/awards-xml.inc');
+
 // $_POST['racerid']
 // $_POST['awardname']
 //
@@ -32,7 +34,7 @@ if (have_permission(JUDGING_PERMISSION)) {
   }
 
   echo "<success/>\n";
-  require('ajax/query.award.list.inc');
+  emit_award_list(/* include_ad_hoc */ true);
 
   end_response();
 } else {

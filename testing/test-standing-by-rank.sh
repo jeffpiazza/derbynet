@@ -122,4 +122,12 @@ curl_get "action.php?query=standings.reveal" | expect_one '<round roundid=.1. ra
 curl_post action.php "action=standings.reveal&roundid=1&rankid=2" | check_success
 curl_get "action.php?query=standings.reveal" | expect_one '<round roundid=.1. rankid=.2.>Tigers</round>'
 
+# Rank-specific awards:
 
+curl_post action.php "action=award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_success
+curl_post action.php "action=award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_success
+curl_post action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_success
+curl_post action.php "action=award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_failure
+
+curl_post action.php "action=award.winner&awardid=1&racerid=2" | expect_failure
+curl_post action.php "action=award.winner&awardid=1&racerid=1" | expect_success

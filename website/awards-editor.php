@@ -71,9 +71,11 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
     <select name="awardtypeid" id="awardtype-select">
         <?php
         foreach ($db->query('SELECT awardtypeid, awardtype FROM AwardTypes ORDER BY awardtype') as $atype) {
-          echo '<option value="'.$atype['awardtypeid'].'">'
-              .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
-              .'</option>'."\n";
+          if ($atype['awardtypeid'] != AD_HOC_AWARDTYPEID) {
+            echo '<option value="'.$atype['awardtypeid'].'">'
+                .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
+                .'</option>'."\n";
+          }
         }
         ?>
     </select>

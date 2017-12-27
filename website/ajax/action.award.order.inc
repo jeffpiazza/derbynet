@@ -4,6 +4,8 @@
 // <n> is the sequential order, e.g. the value of $_POST['awardid_1'] is the awardid which
 // should have sort=1
 
+require_once('inc/awards-xml.inc');
+
 start_response();
 
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
@@ -15,7 +17,7 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
     }
   }
   echo "<success/>\n";
-  require('ajax/query.award.list.inc');
+  emit_award_list(/* include_ad_hoc */ false);
 } else {
   echo "<failure code='permission'>Not authorized</failure>\n";
 }

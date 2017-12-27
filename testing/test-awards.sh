@@ -69,9 +69,9 @@ curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="
 # Try some ad-hoc awards
 # 21 = Derek Dreier, car 121
 # 12 = Christopher Chauncey, car 212
-curl_post action.php "action=award.adhoc&racerid=21&awardname=Best%20Use%20Of%20Chocolate"
-curl_post action.php "action=award.adhoc&racerid=12&awardname=Most%20Glittery"
-curl_post action.php "action=award.adhoc&racerid=21&awardname="
+curl_post action.php "action=award.adhoc&racerid=21&awardname=Best%20Use%20Of%20Chocolate" | check_success
+curl_post action.php "action=award.adhoc&racerid=12&awardname=Most%20Glittery" | check_success
+curl_post action.php "action=award.adhoc&racerid=21&awardname=" | check_success
 
 curl_get "action.php?query=award.list" | expect_count 'Chocolate' 0
 curl_get "action.php?query=award.list" | expect_count 'racerid=12' 0
