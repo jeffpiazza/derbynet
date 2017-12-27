@@ -27,27 +27,37 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <div class="standings-control hidden control_group block_buttons">
   <div class="round-select">
     <h3>Display standings for:</h3>
-      <?php
-        $current = read_raceinfo('standings-message');
-        $current_roundid = explode('-', $current)[0];
-      ?>
-
     <select>
       <?php
+        // This <select> elements lets the operator choose what standings should be displayed on
+        // kiosks displaying standings.
+        $current = explode('-', read_raceinfo('standings-message'));
+        $current_roundid = $current[0];
+        $current_rankid = $current[1];
+
         require_once('inc/standings.inc');
+        $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
         $sel = ' selected="selected"';
-        if ($current == '') {
+        if (count($current) == 0) {
           echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
         }
-        echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
+        echo '<option data-roundid=""'.((count($current) != 0 && $current_roundid == '') ? $sel : '').'>'
              .supergroup_label()
              .'</option>';
-        foreach (standings_round_names() as $round) {
-          echo '<option data-roundid="'.$round['roundid'].'"'
-               .($current_roundid == $round['roundid'] ? $sel : '').'>'
+        foreach (rounds_for_standings() as $round) {
+          echo '<option data-roundid="'.$round['roundid'].'" data-rankid=""'
+               .($current_roundid == $round['roundid'] && $current_rankid == '' ? $sel : '').'>'
                .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
                .'</option>'."\n";
+          if ($use_subgroups) {
+            foreach ($round['ranks'] as $rank) {
+              echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'"'
+              .($current_roundid == $round['roundid'] && $current_rankid == $rank['rankid'] ? $sel : '').'>';
+              echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
+              echo "</option>\n";
+            }
+          }
         }
       ?>
     </select>

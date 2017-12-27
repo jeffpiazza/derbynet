@@ -62,10 +62,19 @@ $(function () {
 <select>
     <option selected="selected">All</option>
     <?php
-    foreach (standings_round_names() as $round) {
+    $use_subgroups = read_raceinfo_boolean('use-subgroups');
+    $rounds = rounds_for_standings();
+    foreach ($rounds as $round) {
       echo '<option data-roundid="'.$round['roundid'].'">'
           .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
           .'</option>'."\n";
+      if ($use_subgroups) {
+        foreach ($round['ranks'] as $rank) {
+          echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'">';
+          echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
+          echo "</option>\n";
+        }
+      }
     }
     ?>
 </select>

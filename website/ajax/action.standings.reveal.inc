@@ -1,7 +1,9 @@
 <?php
 
-// $_POST['roundid'] for "no change"
+// $_POST['roundid'] unset for "no change"
 // $_POST['roundid']: set but empty for pack standings
+//
+// $_POST['rankid'] if roundid is present: either empty or a rankid for standings within a rank.
 //
 // $_POST['expose'] unset for "show none", i.e., same as 0
 // $_POST['expose'] = n or +n or 'all'
@@ -19,8 +21,13 @@ start_response();
 if (have_permission(PRESENT_AWARDS_PERMISSION)) {
   $prev = explode('-', read_raceinfo('standings-message', '-'));
   $roundid = $prev[0];
+  $rankid = count($prev) > 2 ? $prev[1] : '';  // Backwards compatibility
+
   if (isset($_POST['roundid'])) {
     $roundid = $_POST['roundid'];  // Possibly empty
+  }
+  if (isset($_POST['rankid'])) {
+    $rankid = $_POST['rankid'];
   }
 
   if (!isset($_POST['expose']) or $_POST['expose'] == '') {
@@ -33,9 +40,9 @@ if (have_permission(PRESENT_AWARDS_PERMISSION)) {
     $expose = intval($_POST['expose']);
   }
 
-  write_raceinfo('standings-message', $roundid.'-'.$expose);
+  write_raceinfo('standings-message', $roundid.'-'.$rankid.'-'.$expose);
   echo "<success/>\n";
-  echo "<standings>".$roundid.'-'.$expose."</standings>\n";
+  echo "<standings>".$roundid.'-'.$rankid.'-'.$expose."</standings>\n";
 } else {
   not_authorized_body();
 }

@@ -263,7 +263,8 @@ $(function () {
            {type: 'POST',
             data: {
               action: 'standings.reveal',
-              roundid: selection.attr('data-roundid')
+              roundid: selection.attr('data-roundid'),
+              rankid: selection.attr('data-rankid'),
             }});
   });
 });

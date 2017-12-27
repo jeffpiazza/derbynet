@@ -42,6 +42,7 @@ $(function() {
     $("tr").not(".headers").addClass('hidden');
     var poller = {
       roundid: -1,
+      rankid: -1,
       exposed: 0,
       group_name: "",
       poll: function() {
@@ -55,6 +56,7 @@ $(function() {
                 success: function(data) {
                   var round_element = data.getElementsByTagName('round');
                   var changed = false;
+
                   if (round_element.length > 0 && round_element[0].getAttribute('roundid') != state.roundid) {
                     changed = true;
                     // Hide everything: the roundid changed
@@ -66,6 +68,19 @@ $(function() {
                     }
                     state.group_name = round_element[0].textContent;
                   }
+
+                  if (round_element.length > 0 && round_element[0].getAttribute('rankid') != state.rankid) {
+                    changed = true;
+                    // Hide everything: the roundid changed
+                    $("tr").not(".headers").addClass('hidden');
+                    if (round_element[0].getAttribute('rankid') == "") {
+                      state.rankid = false;
+                    } else {
+                      state.rankid = round_element[0].getAttribute('rankid');
+                    }
+                    state.group_name = round_element[0].textContent;
+                  }
+
                   var exposed_element = data.getElementsByTagName('exposed');
                   if (exposed_element.length > 0) {
                     var new_exposed = 0;
@@ -81,7 +96,7 @@ $(function() {
                     }
                   }
                   if (changed) {
-                    autoreveal(select_standings(state.roundid, state.group_name), state.exposed);
+                    autoreveal(select_standings(state.roundid, state.rankid, state.group_name), state.exposed);
                   }
                 }
                });
