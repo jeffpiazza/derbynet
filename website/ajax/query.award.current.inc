@@ -15,6 +15,7 @@ $reveal = read_raceinfo_boolean('reveal_current_award');
 // award-<awardid>
 // speed-<place>
 // speed-<place>-<den>
+// speed-<place>-<den>-<rank>
 $keys = explode('-', $key);
 
 if (count($keys) >= 2) {
@@ -30,7 +31,18 @@ if (count($keys) >= 2) {
   } else if ($keys[0] == 'speed') {
     // 1st place is 1, 2nd place is 2, etc.
     $place = $keys[1];
-    if (count($keys) == 3) {
+    if (count($keys) == 4) {
+      $classid = $keys[2];
+      $rankid = $keys[3];
+      $by_rank = top_finishers_by_rank($place);
+      $racerid = $by_rank[$rankid][$place - 1];
+      // TODO classname isn't used
+      $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                     array(':classid' => $classid));
+      $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
+                                    array(':rankid' => $rankid));
+      $awardname = nth_fastest($place, $rankname);
+    } else if (count($keys) == 3) {
       $classid = $keys[2];
       $by_class = top_finishers_by_class($place);
       $racerid = $by_class[$classid][$place - 1];

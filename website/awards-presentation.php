@@ -40,8 +40,9 @@ require_once('inc/ordinals.inc');
 require_once('inc/awards.inc');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
-$n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
+$n_den_trophies = read_raceinfo('n-den-trophies', 3);
+$n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
@@ -111,7 +112,7 @@ function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
     $awards[] = array('bin_key' => $key,
                       'classid' => @$classid,
                       'rankid' => @$rankid,
-                      'awardkey' => 'speed-'.$place.(isset($classid) ? '-'.$classid : ''),
+                      'awardkey' => 'speed-'.$place.(isset($classid) ? '-'.$classid : '').(isset($rankid) ? '-'.$rankid : ''),
                       'awardname' => nth_fastest($place, $label),
                       // TODO 'Speed Trophy' and 5 should be user-selectable, not hard wired like this.
                       'awardtype' => 'Speed Trophy',
@@ -132,8 +133,8 @@ foreach (final_standings() as $row) {
   }
   if ($row['for_group']) {
     add_speed_award($row, @$row['classid'], null, $n_den_trophies, $classes[$row['classid']]['class']);
+    add_speed_award($row, @$row['classid'], @$row['rankid'], $n_rank_trophies, $ranks[$row['rankid']]['rank']);
   }
-  // TODO Speed awards by rank, as well as by class?
 }
 
 // TODO Break ties for award sorting according to class and rank ordering

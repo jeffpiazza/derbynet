@@ -123,14 +123,19 @@ $locked_settings = locked_settings();
 
     <div class="settings_group_settings">
       <p>
-        <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" data-enhanced="true"
-               value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
-        <label for="n-den">Number of trophies per <?php echo group_label_lc(); ?></label>
-      </p>
-      <p>
         <input id="n-pack" name="n-pack-trophies" type="number" min="0" max="20" data-enhanced="true"
                value="<?php echo read_raceinfo('n-pack-trophies', 3); ?>"/>
-        <label for="n-pack">Number of trophies for the <?php echo supergroup_label_lc(); ?></label>
+        <label for="n-pack">Number of speed trophies at the <?php echo supergroup_label_lc(); ?> level</label>
+      </p>
+      <p>
+        <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" data-enhanced="true"
+               value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
+        <label for="n-den">Number of speed trophies per <?php echo group_label_lc(); ?></label>
+      </p>
+      <p>
+        <input id="n-rank" name="n-rank-trophies" type="number" min="0" max="20" data-enhanced="true"
+               value="<?php echo read_raceinfo('n-rank-trophies', 0); ?>"/>
+        <label for="n-pack">Number of speed trophies per <?php echo subgroup_label_lc(); ?></label>
       </p>
       <p>
         <input type="hidden" name="use-xbs-checkbox" value="yes"/>

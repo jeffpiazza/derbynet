@@ -54,8 +54,9 @@ if (have_permission(SET_UP_PERMISSION)) {
     // $_POST key => RaceInfo.itemkey
     foreach(array('n-lanes' => 'lane_count',
                   'track-length' => 'track-length',
-                  'n-den-trophies' => 'n-den-trophies',
                   'n-pack-trophies' => 'n-pack-trophies',
+                  'n-den-trophies' => 'n-den-trophies',
+                  'n-rank-trophies' => 'n-rank-trophies',
                   'xbs-award' => 'xbs-award',  // @$_POST['use-xbs'] ? $_POST['xbs-award'] : ''
                   'group-label' => 'group-label',
                   'subgroup-label' => 'subgroup-label',
