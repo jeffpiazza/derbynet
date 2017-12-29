@@ -31,18 +31,23 @@ require_permission(PRESENT_AWARDS_PERMISSION);
       <?php
         // This <select> elements lets the operator choose what standings should be displayed on
         // kiosks displaying standings.
-        $current = explode('-', read_raceinfo('standings-message'));
-        $current_roundid = $current[0];
-        $current_rankid = $current[1];
+        $current = read_raceinfo('standings-message', '');
+        list($current_roundid, $current_rankid, $current_exposed) = explode('-', $current);
+
+        if ($current_exposed === '') {
+          $current_exposed = 'all';
+        } else {
+          $current_exposed = 'lowest '.$current_exposed;
+        }
 
         require_once('inc/standings.inc');
         $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
         $sel = ' selected="selected"';
-        if (count($current) == 0) {
+        if ($current == '') {
           echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
         }
-        echo '<option data-roundid=""'.((count($current) != 0 && $current_roundid == '') ? $sel : '').'>'
+        echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
              .supergroup_label()
              .'</option>';
         foreach (rounds_for_standings() as $round) {
@@ -63,6 +68,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
     </select>
   </div>
   <div class="reveal block_buttons">
+        <h3 <?php if ($current == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
     <input type="button" data-enhanced="true" value="Reveal One" onclick="handle_reveal1()"/><br/>
     <input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
   </div>

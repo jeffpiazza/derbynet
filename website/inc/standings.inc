@@ -297,12 +297,16 @@ function write_standings_table_headers() {
 
 function write_standings_table_rows(&$standings) {
   list($racer_pack_standing, $racer_class_standing, $racer_subgroup_standing) = collect_standings($standings);
-  $ord = 0;
+  $first = true;
   $by_roundid = array();
   foreach ($standings as $row) {
     $roundid = $row['roundid'];
     $racerid = $row['racerid'];
-    echo "<tr data-roundid='".$roundid."' data-rankid='".$row['rankid']."' data-for-supergroup='".$row['for_supergroup']."'>";
+    echo "<tr data-roundid='".$roundid."' data-rankid='".$row['rankid']."'"
+        ." data-for-supergroup='".$row['for_supergroup']."'"
+        .($first ? " data-first='1'" : "")
+        .">";
+    $first = false;
 
     // Cells in the first column contain two separate <div>s, only one of which is
     // made visible at any given time.  If we're displaying the standings for a

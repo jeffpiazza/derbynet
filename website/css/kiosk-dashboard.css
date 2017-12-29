@@ -22,6 +22,10 @@
     min-height: 175px;
 }
 
+.standings-control .reveal h3 {
+    text-align: center;
+}
+
 .kiosk_control_name {
     font-weight: bold;
 }

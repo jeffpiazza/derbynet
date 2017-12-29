@@ -17,6 +17,17 @@ tr.d0 td {
   background-color: #fcf6cf;
 }
 
+/* These borders seem to create unwanted horizontal scroll bars,
+   at least for Chrome */
+.main_table tr td:first-child,
+.main_table tr th:first-child {
+    border-left: 0px;
+}
+.main_table tr td:last-child,
+.main_table tr th:last-child {
+    border-right: 0px;
+}
+
 .group_spacer {
    height: 30px;
 }

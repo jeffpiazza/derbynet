@@ -252,6 +252,16 @@ function handle_name_kiosk(address, name) {
 //////////////////////////////////////////////////////////////////////////
 // Controls for the standings display
 //////////////////////////////////////////////////////////////////////////
+function process_standings_reveal_result(data) {
+  var reveal = data.documentElement.getElementsByTagName('standings');
+  if (reveal.length > 0) {
+    var pieces = reveal[0].textContent.split('-');
+    var current_exposed = pieces[2];
+    $("#current_exposed").text(current_exposed == '' ? 'all' : ('lowest ' + current_exposed));
+    $(".standings-control .reveal h3").removeClass('hidden');
+  }
+}
+
 $(function () {
   // TODO Disable buttons if there's no current roundid selection.
   $("select").on("change", function(event) {
@@ -265,6 +275,9 @@ $(function () {
               action: 'standings.reveal',
               roundid: selection.attr('data-roundid'),
               rankid: selection.attr('data-rankid'),
+            },
+            success: function(data) {
+              process_standings_reveal_result(data);
             }});
   });
 });
@@ -275,6 +288,9 @@ function handle_reveal1() {
           data: {
             action: 'standings.reveal',
             expose: '+1'
+            },
+            success: function(data) {
+              process_standings_reveal_result(data);
           }});
 }
 
@@ -284,6 +300,9 @@ function handle_reveal_all() {
           data: {
             action: 'standings.reveal',
             expose: 'all'
+            },
+            success: function(data) {
+              process_standings_reveal_result(data);
           }});
 }
 

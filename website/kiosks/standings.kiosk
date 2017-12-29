@@ -1,4 +1,5 @@
-<?php
+<!DOCTYPE html><?php
+ // Amazingly: the DOCTYPE is required in order for $(window).height() to work correctly on Chrome.
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
@@ -12,98 +13,14 @@ require_once('inc/standings.inc');
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
-<script type="text/javascript" src="js/standings.js"></script>
-<script type="text/javascript">
-
-function autoreveal(row_selector, goal) {
-  // goal says how many we're supposed to be displaying, or may be false if
-  // we're trying to display all.
-  if (goal === false || $(row_selector).not(".hidden").length < goal) {
-    var next = $(row_selector + ".hidden:last");
-    if (next.length > 0) {
-      var td = next.removeClass('hidden').find('td');
-      var padding = td.css('padding');
-      td.css({padding: '0px'})
-        .animate({padding: '13px'}, {duration: 400})
-        .wrapInner('<div style="display: none;" />')
-        .parent()
-        .find('td > div')
-        .slideDown(400, function() {
-            // This callback gets called for each td/div in the row, not just once per row.
-            $(this).replaceWith($(this).contents());
-          });
-      setTimeout(function() { autoreveal(row_selector, goal); }, 1500);
-    }
-  }
+<style type="text/css">
+/* This draws a divider line above the very first visible row, useful for scrolling */
+.main_table tr.first_visible {
+  border-top: 3px solid black;
 }
-
-
-$(function() {
-    $("tr").not(".headers").addClass('hidden');
-    var poller = {
-      roundid: -1,
-      rankid: -1,
-      exposed: 0,
-      group_name: "",
-      poll: function() {
-        var state = this;
-        $.ajax({type: 'GET',
-                url: 'action.php',
-                data: {
-                  query: 'standings.reveal'
-                },
-                dataType: "xml",
-                success: function(data) {
-                  var round_element = data.getElementsByTagName('round');
-                  var changed = false;
-
-                  if (round_element.length > 0 && round_element[0].getAttribute('roundid') != state.roundid) {
-                    changed = true;
-                    // Hide everything: the roundid changed
-                    $("tr").not(".headers").addClass('hidden');
-                    if (round_element[0].getAttribute('roundid') == "") {
-                      state.roundid = false;
-                    } else {
-                      state.roundid = round_element[0].getAttribute('roundid');
-                    }
-                    state.group_name = round_element[0].textContent;
-                  }
-
-                  if (round_element.length > 0 && round_element[0].getAttribute('rankid') != state.rankid) {
-                    changed = true;
-                    // Hide everything: the roundid changed
-                    $("tr").not(".headers").addClass('hidden');
-                    if (round_element[0].getAttribute('rankid') == "") {
-                      state.rankid = false;
-                    } else {
-                      state.rankid = round_element[0].getAttribute('rankid');
-                    }
-                    state.group_name = round_element[0].textContent;
-                  }
-
-                  var exposed_element = data.getElementsByTagName('exposed');
-                  if (exposed_element.length > 0) {
-                    var new_exposed = 0;
-                    if (exposed_element[0].getAttribute('count') == "") {
-                        new_exposed = false;
-                    } else {
-                      new_exposed = Number(exposed_element[0].getAttribute('count'));
-                    }
-
-                    if (new_exposed !== state.exposed) {
-                      changed = true;
-                      state.exposed = new_exposed;
-                    }
-                  }
-                  if (changed) {
-                    autoreveal(select_standings(state.roundid, state.rankid, state.group_name), state.exposed);
-                  }
-                }
-               });
-      }};
-  setInterval(function() { poller.poll(); }, 300);
-});
-</script>
+</style>
+<script type="text/javascript" src="js/standings.js"></script>
+<script type="text/javascript" src="js/standings-kiosk.js"></script>
 </head>
 <body>
 <?php make_banner('Standings', /* back_button */ false); ?>

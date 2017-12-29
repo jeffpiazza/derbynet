@@ -9,7 +9,7 @@ function on_form_submission() {
                  alert("Action failed: " + fail[0].textContent);
                } else {
                  g_form_modified = 0;
-                 window.location.href = "index.php";
+                 window.location.href = "setup.php";
                }
              },
              error: function(jqXHR, ajaxSettings, thrownError) {
