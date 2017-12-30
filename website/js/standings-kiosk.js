@@ -1,19 +1,7 @@
 // row_selector is a string that selects the rows for the round and/or rank
 // we're trying to display.  Some of the selected rows may be hidden.  goal says
 // how many rows we want not to be hidden, or false if we're trying to display
-// all.  Callback gets invoked if/when all row_selector rows are displayed.
-function autoreveal(row_selector, goal, callback) {
-  if (goal === false || $(row_selector).not(".hidden").length < goal) {
-    var next = $(row_selector + ".hidden:last");
-    if (next.length > 0) {
-      reveal_one_row(next.removeClass('hidden'));
-      setTimeout(function() { autoreveal(row_selector, goal, callback); }, 1500);
-    } else if (callback) {
-      callback();
-    }
-  }
-}
-
+// all.  Returns true if it actually reveals a row.
 function maybe_reveal_one_row(row_selector, goal) {
   if (goal === false || $(row_selector).not(".hidden").length < goal) {
     var next = $(row_selector + ".hidden:last");
