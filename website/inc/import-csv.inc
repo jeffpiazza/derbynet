@@ -12,7 +12,6 @@ function make_head_matter_for_import_page() {
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-    <script type="text/javascript" src="js/checkin.js"></script>
     <script type="text/javascript" src="js/jquery.csv.js"></script>
     <script type="text/javascript" src="js/import-csv.js"></script>
 <?php
