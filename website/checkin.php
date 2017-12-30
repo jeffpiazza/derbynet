@@ -62,6 +62,7 @@ function column_header($text, $o) {
 <meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -73,6 +74,7 @@ g_order = '<?php echo $order; ?>';
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/webcam.js"></script>
+<script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
@@ -212,9 +214,13 @@ foreach ($stmt as $rs) {
 </div>
 
 <div id='photo_modal' class="modal_dialog hidden block_buttons">
-  <form>
+  <form id="photo_drop" class="dropzone">
+    <input type="hidden" name="action" value="photo.upload"/>
     <input type="hidden" id="photo_modal_repo" name="repo"/>
-    <h3>Capture photo for <span id="racer_photo_name"></span></h3>
+    <input type="hidden" id="photo_modal_racerid" name="racerid"/>
+    <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
+
+    <h3>Capture <span id="racer_photo_repo"></span> photo for <span id="racer_photo_name"></span></h3>
     <div id="preview">
         <h2>Does your browser support webcams?</h2>
     </div>
@@ -239,6 +245,7 @@ foreach ($stmt as $rs) {
           <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
         </div>
     </div>
+    <div class="dz-message"><span>NOTE: You can drop a photo here to upload instead</span></div>
   </form>
 </div>
 

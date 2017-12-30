@@ -34,6 +34,11 @@
     font-size: x-large;
 }
 
+.centered_flipswitch * {
+    /* Normally the default, but overridden by Dropzone */
+    box-sizing: content-box;
+}
+
 .centered_flipswitch .ui-btn {
     font-size: x-large;
 }

@@ -1,7 +1,28 @@
 // Requires dashboard-ajax.js
 // Requires modal.js
 
+// For the photo_modal dialog, this boolean controls whether the racer gets
+// checked in as a side-effect of uploading a photo.
 var g_check_in;
+
+// Default values for autocrop, depending on repo.  If user changes the setting,
+// that setting endures for the repo for as long as the page is loaded.
+var g_autocrop_head = true;
+var g_autocrop_car = false;
+
+function set_autocrop_state(repo) {
+  $("#autocrop").prop('checked', repo == 'head' ? g_autocrop_head : g_autocrop_car);
+  $("#autocrop").flipswitch("refresh");
+}
+
+function preserve_autocrop_state() {
+  var repo = $("#photo_modal_repo").val();
+  if (repo == 'head') {
+    g_autocrop_head = $("#autocrop").prop('checked');
+  } else {
+    g_autocrop_car = $("#autocrop").prop('checked');
+  }
+}
 
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
@@ -152,10 +173,12 @@ function handle_edit_racer() {
            });
 }
 
-function disable_preview() {
+function disable_preview(msg) {
   $("#preview").html('<h2>Webcam Disabled</h2>')
+    .append('<p></p>')
     .css({'border': '2px solid black',
           'background': '#d2d2d2'});
+  $("#preview p").text(msg).css({'font-size': '18px'});
 }
 
 // In (some versions of) Safari, if Flash isn't enabled, the Webcam instance
@@ -166,27 +189,60 @@ function arm_webcam_dialog() {
   Webcam.on('load', function() { loaded = true; });
   // If the Webcam instance is going to present an error, we don't want to put
   // up another one.
-  Webcam.on('error', function(msg) { loaded = true; disable_preview(); alert("Webcam.js Error: " + msg); });
+  Webcam.on('error', function(msg) {
+    loaded = true;
+    disable_preview(msg);
+  });
   setTimeout(function() {
     if (!loaded) {
-      disable_preview();
-      alert('You may have to enable Flash, or give permission to use your webcam.');
+      disable_preview('You may have to enable Flash, or give permission to use your webcam.');
     }
   }, 2000);
 }
+
+// For #photo_drop form:
+Dropzone.options.photoDrop = {
+  paramName: 'photo',
+  maxFiles: 1,
+  maxFilesize: 8,
+  url: 'action.php',
+  acceptedFiles: 'image/*',
+  // dropzone considers the upload successful as long as there was an HTTP response.  We need to look at the
+  // message that came back and determine whether the file was actually accepted.
+  sending: function(xhr, form_data) {
+    preserve_autocrop_state();
+  },
+  success: function(file, response) {
+    this.removeFile(file);
+
+    var data = $.parseXML(response);
+    var photo_url_element = data.getElementsByTagName('photo-url');
+    if (photo_url_element.length > 0) {
+      $("#photo-" + $("#photo_modal_racerid").val() + " img[data-repo='" + $("#photo_modal_repo").val() + "']").attr(
+        'src', photo_url_element[0].childNodes[0].nodeValue);
+    }
+
+    close_modal("#photo_modal");
+  },
+};
+
 
 function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
   $("#racer_photo_name").text(firstname + ' ' + lastname);
-  $("#photo_modal_repo").val(repo);  // TODO Is this useful?
+  $("#racer_photo_repo").text(repo);
+  $("#photo_modal_repo").val(repo);
+  $("#photo_modal_racerid").val(racerid);
 
-  // TODO Default auto-crop for head shots only, but don't override last user choice.
+  set_autocrop_state(repo);
 
+  // If the racer's already been checked in, don't offer "Capture & Check In" button
   $("#capture_and_check_in").toggleClass('hidden', $("#passed-" + racerid).prop('checked'));
 
   // TODO Two different submit buttons that set a global, g_check_in.  Eww.
   show_modal("#photo_modal", function() {
+    preserve_autocrop_state();
     take_snapshot(racerid, repo, lastname + '-' + firstname);
       return false;
   });
@@ -257,10 +313,9 @@ function take_snapshot(racerid, repo, photo_base_name) {
               contentType: false,
               processData: false,
               success: function(data) {
-                console.log(data);
                   var photo_url_element = data.getElementsByTagName('photo-url');
                   if (photo_url_element.length > 0) {
-                      $("#photo-" + racerid + " img").attr(
+                      $("#photo-" + racerid + " img[data-repo='" + repo + "'").attr(
                           'src', photo_url_element[0].childNodes[0].nodeValue);
                   }
               }

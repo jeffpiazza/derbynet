@@ -63,7 +63,7 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     echo '<td id="photo-'.$row['racerid'].'">';
 
     echo '<a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
-          .'<img class="checkin-photo" src="'
+          .'<img class="checkin-photo" data-repo="head" src="'
           .($row[headshots()->column_name()]
           ? headshots()->url_for_racer($row, RENDER_CHECKIN)
           : 'img/photo-headshot.png')
@@ -74,7 +74,7 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     // The issue is presumably null carphoto values
     if (schema_version() >= 2) {
       echo '<a href="javascript:show_car_photo_modal('.$row['racerid'].')">'
-          .'<img class="checkin-photo" src="'
+          .'<img class="checkin-photo" data-repo="car" src="'
           .($row[car_photo_repository()->column_name()]
             ? car_photo_repository()->url_for_racer($row, RENDER_CHECKIN)
             : 'img/photo-car.png')
