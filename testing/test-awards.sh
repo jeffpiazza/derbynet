@@ -83,6 +83,10 @@ curl_get "action.php?query=award.list" | expect_count 'racerid=12' 0
 curl_get "action.php?query=award.list" | grep 'Glittery' | expect_one 'racerid="12"'
 curl_get "action.php?query=award.list&adhoc=0" | expect_count 'Glittery' 0
 
+# Ad hoc awards aren't supposed to affect numbering for named awards
+curl_post action.php "action=award.edit&awardid=new&awardtypeid=4&name=NewFourth" | check_success
+curl_get "action.php?query=award.list" | grep NewFourth | expect_one 'sort="5"'
+
 # There's no current award at the very beginning, but we don't want to enforce
 # that this test has to be run at the very beginning.
 #

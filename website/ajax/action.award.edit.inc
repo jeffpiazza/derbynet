@@ -36,7 +36,10 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
       $values .= ', :sort';
       $params[':sort'] = $_POST['sort'];
     } else {
-      $max_sort = read_single_value('SELECT MAX(sort) FROM Awards', array());
+      $max_sort = read_single_value("SELECT MAX(sort) FROM Awards"
+                                    ." WHERE awardtypeid <> (SELECT awardtypeid FROM AwardTypes"
+                                    ."                       WHERE awardtype = 'Ad Hoc')",
+                                    array());
       if (!$max_sort) {
         $max_sort = 1;
       }

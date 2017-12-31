@@ -104,7 +104,10 @@ if ($ok) {
   } else {
     $sort = read_single_value('SELECT COUNT(*) FROM Awards');
     if ($sort > 0) {
-      $sort = read_single_value('SELECT MAX(sort) FROM Awards');
+      $sort = read_single_value("SELECT MAX(sort) FROM Awards"
+                                ." WHERE awardtypeid <> (SELECT awardtypeid FROM AwardTypes"
+                                ."                       WHERE awardtype = 'Ad Hoc')",
+                                array());
     }
   }
 }

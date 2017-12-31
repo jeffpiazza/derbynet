@@ -136,6 +136,8 @@ function update_awards(dataxml) {
   }
   
   // Update the list items to match the data from the server.
+  // NOTE This assumes that all the ad hoc awards are at the end of the list, so
+  // the named awards and the #awards <li> elements have matching indices.
   $("#awards li").each(function(i) {
     if (i >= awards.length - adhoc_count) {
       $(this).remove();

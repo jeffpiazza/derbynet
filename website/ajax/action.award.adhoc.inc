@@ -11,7 +11,8 @@ if (have_permission(JUDGING_PERMISSION)) {
   start_response();
 
   // Remove old award, if any
-  $stmt = $db->prepare("DELETE FROM Awards WHERE racerid = :racerid");
+  $stmt = $db->prepare("DELETE FROM Awards WHERE awardtypeid = (SELECT awardtypeid FROM AwardTypes WHERE awardtype = 'Ad Hoc')"
+                       ." AND racerid = :racerid");
   $stmt->execute(array(':racerid' => $_POST['racerid']));
 
   // Write new award, if not empty
