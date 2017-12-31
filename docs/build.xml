@@ -61,9 +61,8 @@
  </target>
 
  <target name="after-installation" depends="make-dist-dir">
-     <make-pdf file="After Installation- SQLite.fodt"/>
-     <make-pdf file="After Installation- MySQL.fodt"/>
-     <make-pdf file="After Installation- Windows GPRM.fodt"/>
+     <make-pdf file="Advanced Database Set-Up for DerbyNet.fodt"/>
+     <make-pdf file="Sharing a Database With GPRM.fodt"/>
  </target>
 
  <target name="operation" depends="make-dist-dir">
