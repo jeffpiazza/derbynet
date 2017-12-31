@@ -15,7 +15,7 @@ public class MiscJunkDevice extends TimerDeviceTypical {
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
-    rsm.setMaxRunningTimeLimit(15000);
+    rsm.setMaxRunningTimeLimit(11000);
   }
 
   public static String toHumanString() {
