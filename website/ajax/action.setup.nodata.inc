@@ -100,6 +100,7 @@ if (locked_settings()) {
   // these variables.
   $racers_subdir = '';
   $cars_subdir = '';
+  $new_database_path = '';
 
   if (isset($_POST['ez-new']) && $_POST['ez-new'] != "") {
     $superdir = default_database_directory() . DIRECTORY_SEPARATOR . getdate()['year'];
@@ -143,7 +144,8 @@ if (locked_settings()) {
     umask($old_umask);
 
     if ($ok) {
-      $connection_string = 'sqlite:'. $directory . DIRECTORY_SEPARATOR . 'derbynet.sqlite3';
+      $new_database_path = $directory . DIRECTORY_SEPARATOR . 'derbynet.sqlite3';
+      $connection_string = 'sqlite:'. $new_database_path;
       $dbuser = $dbpass = "";
     }
   } else if (isset($_POST['ez-old']) && $_POST['ez-old'] != "") {
@@ -172,6 +174,15 @@ if (locked_settings()) {
     $trial = attempt_to_connect_to_database($connection_string, $dbuser, $dbpass, $options);
     if ($trial['pdo']) {
       $trial_db = $trial['pdo'];
+      if ($new_database_path) {
+        // By default, a newly-created sqlite database will offer write
+        // permissions only to the creator, i.e., the www user.  This can
+        // frustrate the actual human user if they ever have occasion to want to
+        // access the database directly.
+        $old_umask = umask(0);
+        chmod($new_database_path, 0777);
+        umask($old_umask);
+      }
     } else {
       $ok = false;
       echo "<failure code='".$trial['error']."'>";
