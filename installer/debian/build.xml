@@ -120,7 +120,7 @@
             <tarfileset file="./combined/postinst" filemode="755"/>
         </tar>
 
-        <echo file="${debian-stage}/debian-binary">3.0&#10;</echo>
+        <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
 
         <delete file="${output-dir}/${deb-label}.deb" failonerror="false" quiet="true"/>
         <exec executable="ar">
