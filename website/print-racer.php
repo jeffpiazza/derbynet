@@ -15,7 +15,21 @@ abstract class PrintableRacerDocument {
   function __construct() {
     $this->pdf = new PDF_Combined('L', 'in', 'Letter');
   }
-  
+
+  // Argument contains these keys:
+  //
+  // racerid
+  // firstname
+  // lastname
+  // carnumber
+  // carname
+  // class
+  // classid
+  // rank
+  // rankid
+  // imagefile
+  // carphoto
+  // barcode
   abstract public function DrawOne(&$racer);
 
   public function Output() {
@@ -24,7 +38,8 @@ abstract class PrintableRacerDocument {
 
 }
 
-if (!@include('printables/racer-' . $_GET['template'] . '.inc')) {
+if (strpos($_GET['template'], '..') !== false ||
+    !@include('printables/racer/' . $_GET['template'] . '/document.inc')) {
   start_response();
   echo "<failure code='unknown-template'>No such template</failure>\n";
   end_response();
@@ -43,6 +58,14 @@ if (!@include('printables/racer-' . $_GET['template'] . '.inc')) {
   .' ORDER BY lastname, firstname, carnumber';
 
   foreach ($db->query($sql) as $racer) {
+    foreach ($racer as $key => $value) {
+      if (is_string($value)) {
+        $racer[$key] = iconv('UTF-8', 'windows-1252', $value);
+      }
+    }
+
+    $racer['barcode'] = 'PWDid'.sprintf('%03d', $racer['racerid']);
+
     $doc->DrawOne($racer);
   }
 

@@ -17,7 +17,7 @@ function make_new_document() {
 // desired.
 function path_to_rank_image(&$racer) {
   $grade = min(5, intval($racer['carnumber'] / 100));
-  return dirname($_SERVER['SCRIPT_FILENAME']) . '/printables/cub-scout-ranks/' . $grade . '00-series.jpg';
+  return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
 }
 
 class CarTagsDocument extends PrintableRacerDocument {
@@ -43,16 +43,12 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->StartTransform();
     $this->pdf->Rotate(90, $cx, $cy);
     $this->pdf->CenteredSequence($cx, $cy,
-                                 array(new SetFontTag('Times', '', 30),
-                                       iconv('UTF-8', 'windows-1252', $racer['firstname'])." ",
-                                       new SetFontTag('Times', 'B', 30),
-                                       iconv('UTF-8', 'windows-1252', $racer['lastname'])));
+                                 array(new SetFontTag('Times', '', 30), $racer['firstname']." ",
+                                       new SetFontTag('Times', 'B', 30), $racer['lastname']));
     $this->pdf->StopTransform();
   }
   
   protected function DrawOneAt($left, &$racer) {
-    $id = sprintf('%03d', $racer['racerid']);
-
     // This Rect would draw dividing lines between the tags, but it's difficult
     // to cut precisely on the line for every page in a stack, so better not to
     // highlight the problem by showing the lines.
@@ -61,7 +57,7 @@ class CarTagsDocument extends PrintableRacerDocument {
 
     // Center barcode y over [0, 5.5], so 2.75 is center and 0.75 is the top
     $this->pdf->SetFillColor(0,0,0);
-    $this->pdf->VerticalBarCode($left + 1.75, 0.75, 0.5, 4, "PWDid".$id);
+    $this->pdf->VerticalBarCode($left + 1.75, 0.75, 0.5, 4, $racer['barcode']);
 
     $this->RotatedCenteredName($left + 0.7, 2.75, $racer);
 
