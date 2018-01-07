@@ -117,6 +117,9 @@
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
             <tarfileset file="./combined/conffiles"/>
             <tarfileset file="./combined/control"/>
+            <!-- TODO The effort to split the debian package into separate ones
+                 was not completed.  This combined postinst repeats the content
+                 of server/postinst and extras/postinst.  -->
             <tarfileset file="./combined/postinst" filemode="755"/>
         </tar>
 
