@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2017-02-19T16:00:46.777805000</meta:creation-date><meta:editing-duration>PT21S</meta:editing-duration><meta:editing-cycles>2</meta:editing-cycles><meta:generator>LibreOffice/5.2.4.2$MacOSX_X86_64 LibreOffice_project/3d5603e1122f0f102b62521720ab13a38a4e0eb0</meta:generator><dc:date>2017-02-19T16:46:54.778897000</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="8" meta:word-count="79" meta:character-count="545" meta:non-whitespace-character-count="474"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-02-19T16:00:45.871134000"/></office:meta>
+ <office:meta><meta:creation-date>2017-02-19T16:00:46.777805000</meta:creation-date><meta:editing-duration>PT12M44S</meta:editing-duration><meta:editing-cycles>4</meta:editing-cycles><meta:generator>LibreOffice/5.2.4.2$MacOSX_X86_64 LibreOffice_project/3d5603e1122f0f102b62521720ab13a38a4e0eb0</meta:generator><dc:date>2018-01-08T11:49:03.065824397</dc:date><meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="17" meta:word-count="170" meta:character-count="1127" meta:non-whitespace-character-count="972"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-02-19T16:00:45.871134000"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">0</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">9167</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">21964</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">15413</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">26910</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">15700</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">2501</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">3621</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">4660</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">21110</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">21962</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">15411</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">9167</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">26908</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">24866</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -94,7 +94,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2286442</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">2487540</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -126,7 +126,6 @@
   <style:font-face style:name="Lucida Sans1" svg:font-family="&apos;Lucida Sans&apos;" style:font-family-generic="swiss"/>
   <style:font-face style:name="Calibri" svg:font-family="Calibri" style:font-family-generic="roman" style:font-pitch="variable"/>
   <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
-  <style:font-face style:name="Monaco" svg:font-family="Monaco" style:font-family-generic="roman" style:font-pitch="variable"/>
   <style:font-face style:name="Calibri1" svg:font-family="Calibri" style:font-adornments="Bold" style:font-family-generic="swiss" style:font-pitch="variable"/>
   <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
   <style:font-face style:name="Lucida Sans" svg:font-family="&apos;Lucida Sans&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
@@ -202,6 +201,9 @@
    <style:paragraph-properties fo:margin-top="0.0972in" fo:margin-bottom="0.0835in" loext:contextual-spacing="false"/>
    <style:text-properties fo:color="#808080" style:font-name="Calibri1" fo:font-family="Calibri" style:font-style-name="Bold" style:font-family-generic="swiss" style:font-pitch="variable" fo:font-size="13pt" fo:font-weight="bold" style:font-size-asian="14pt" style:font-weight-asian="bold" style:font-size-complex="14pt" style:font-weight-complex="normal"/>
   </style:style>
+  <style:style style:name="Table_20_Contents" style:display-name="Table Contents" style:family="paragraph" style:parent-style-name="Standard" style:class="extra">
+   <style:paragraph-properties text:number-lines="false" text:line-number="0"/>
+  </style:style>
   <style:style style:name="Internet_20_link" style:display-name="Internet link" style:family="text">
    <style:text-properties fo:color="#000080" fo:language="zxx" fo:country="none" style:text-underline-style="solid" style:text-underline-width="auto" style:text-underline-color="font-color" style:language-asian="zxx" style:country-asian="none" style:language-complex="zxx" style:country-complex="none"/>
   </style:style>
@@ -271,7 +273,28 @@
   <text:linenumbering-configuration text:number-lines="false" text:offset="0.1965in" style:num-format="1" text:number-position="left" text:increment="5"/>
  </office:styles>
  <office:automatic-styles>
-  <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+  <style:style style:name="Dependencies" style:family="table">
+   <style:table-properties style:width="6.925in" table:align="margins"/>
+  </style:style>
+  <style:style style:name="Dependencies.A" style:family="table-column">
+   <style:table-column-properties style:column-width="1.1278in" style:rel-column-width="1624*"/>
+  </style:style>
+  <style:style style:name="Dependencies.B" style:family="table-column">
+   <style:table-column-properties style:column-width="5.7972in" style:rel-column-width="8348*"/>
+  </style:style>
+  <style:style style:name="Dependencies.A1" style:family="table-cell">
+   <style:table-cell-properties fo:padding="0.0382in" fo:border-left="0.05pt solid #000000" fo:border-right="none" fo:border-top="0.05pt solid #000000" fo:border-bottom="0.05pt solid #000000"/>
+  </style:style>
+  <style:style style:name="Dependencies.B1" style:family="table-cell">
+   <style:table-cell-properties fo:padding="0.0382in" fo:border="0.05pt solid #000000"/>
+  </style:style>
+  <style:style style:name="Dependencies.A2" style:family="table-cell">
+   <style:table-cell-properties fo:padding="0.0382in" fo:border-left="0.05pt solid #000000" fo:border-right="none" fo:border-top="none" fo:border-bottom="0.05pt solid #000000"/>
+  </style:style>
+  <style:style style:name="Dependencies.B2" style:family="table-cell">
+   <style:table-cell-properties fo:padding="0.0382in" fo:border-left="0.05pt solid #000000" fo:border-right="0.05pt solid #000000" fo:border-top="none" fo:border-bottom="0.05pt solid #000000"/>
+  </style:style>
+  <style:style style:name="P1" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="0020662a" officeooo:paragraph-rsid="0020662a"/>
   </style:style>
@@ -287,11 +310,42 @@
   <style:style style:name="P5" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00217dbd" officeooo:paragraph-rsid="00217dbd"/>
   </style:style>
+  <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+   <style:paragraph-properties style:page-number="auto"/>
+   <style:text-properties officeooo:rsid="0020662a" officeooo:paragraph-rsid="0020662a"/>
+  </style:style>
+  <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:text-properties officeooo:rsid="00243479" officeooo:paragraph-rsid="00243479"/>
+  </style:style>
+  <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+   <style:text-properties officeooo:rsid="00244570" officeooo:paragraph-rsid="00244570"/>
+  </style:style>
+  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+   <style:text-properties officeooo:rsid="00258d0c" officeooo:paragraph-rsid="00258d0c"/>
+  </style:style>
+  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+   <style:text-properties officeooo:rsid="0025f4f4" officeooo:paragraph-rsid="0025f4f4"/>
+  </style:style>
+  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="00217dbd" officeooo:paragraph-rsid="00217dbd"/>
+  </style:style>
+  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0025f4f4" officeooo:paragraph-rsid="0025f4f4"/>
+  </style:style>
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0020662a" officeooo:paragraph-rsid="0020662a"/>
+  </style:style>
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="00244570" officeooo:paragraph-rsid="00244570"/>
+  </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="00217dbd"/>
   </style:style>
   <style:style style:name="T2" style:family="text">
    <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T3" style:family="text">
+   <style:text-properties officeooo:rsid="0025f4f4"/>
   </style:style>
   <style:page-layout style:name="pm1">
    <style:page-layout-properties fo:page-width="8.5in" fo:page-height="11in" style:num-format="1" style:print-orientation="portrait" fo:margin-top="0.7874in" fo:margin-bottom="0.7874in" fo:margin-left="0.7874in" fo:margin-right="0.7874in" style:writing-mode="lr-tb" style:footnote-max-height="0in">
@@ -312,14 +366,65 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
-   <text:p text:style-name="P1">Installing DerbyNet on Debian Linux<text:line-break/><text:span text:style-name="T1">(including Ubuntu </text:span>or Raspb<text:span text:style-name="T1">ian)</text:span></text:p>
+   <text:p text:style-name="P6">Installing DerbyNet on Debian Linux<text:line-break/><text:span text:style-name="T1">(including Ubuntu </text:span>or Raspb<text:span text:style-name="T1">ian)</text:span></text:p>
    <text:p text:style-name="P4">For Debian-based Linux distributions, including Ubuntu, or Raspbian for Raspberry Pi, DerbyNet is distributed as a “deb” package file.</text:p>
-   <text:p text:style-name="P5">To install the deb file after downloading, first execute:</text:p>
+   <text:p text:style-name="P14">DerbyNet has the following dependencies that must be met before the package can be successfully installed:</text:p>
+   <table:table table:name="Dependencies" table:style-name="Dependencies">
+    <table:table-column table:style-name="Dependencies.A"/>
+    <table:table-column table:style-name="Dependencies.B"/>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A1" office:value-type="string">
+      <text:p text:style-name="P8">nginx</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B1" office:value-type="string">
+      <text:p text:style-name="P8">Some form of nginx is required; any of nginx-light, nginx-full, or nginx-extras is suitable.</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A2" office:value-type="string">
+      <text:p text:style-name="P8">php-fpm or php5-fpm</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B2" office:value-type="string">
+      <text:p text:style-name="P9">DerbyNet works with either PHP5 or PHP7. <text:s/>Install whichever version your distribution provides. <text:s/>(Note that, if you use Debian 9 (Squeeze) or later, you may have a concrete PHP package, e.g., php7.0-fpm, installed, but still need to install the empty php-fpm package in addition.)</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A2" office:value-type="string">
+      <text:p text:style-name="P9">php-curl or php5-curl</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B2" office:value-type="string">
+      <text:p text:style-name="P10">Choose the package that’s consistent with your PHP version.</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A2" office:value-type="string">
+      <text:p text:style-name="P9">php-gd or php5-gd</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B2" office:value-type="string">
+      <text:p text:style-name="P10">Choose the package that’s consistent with your PHP version.</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A2" office:value-type="string">
+      <text:p text:style-name="P9">php-sqlite3 or php5-sqlite</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B2" office:value-type="string">
+      <text:p text:style-name="P10">Choose the package that’s consistent with your PHP version.</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell table:style-name="Dependencies.A2" office:value-type="string">
+      <text:p text:style-name="P9">jarwrapper</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Dependencies.B2" office:value-type="string">
+      <text:p text:style-name="P10"/>
+     </table:table-cell>
+    </table:table-row>
+   </table:table>
+   <text:p text:style-name="P14"/>
+   <text:p text:style-name="P5">To install the deb file, execute:</text:p>
    <text:p text:style-name="P2">sudo dpkg -i derbynet_<text:span text:style-name="T2">buildidentifier</text:span>.deb</text:p>
-   <text:p text:style-name="P3">This command will (most likely) fail because of dependency problems, but it’s necessary to start the installation process.</text:p>
-   <text:p text:style-name="P3">In order to fix the dependency problems, next execute:</text:p>
-   <text:p text:style-name="P2">sudo apt-get install -f -y</text:p>
-   <text:p text:style-name="P3">This will complete the DerbyNet installation.</text:p>
+   <text:p text:style-name="P12">If it fails due to unmet dependencies, use apt-get to install the required package(s) and try again.</text:p>
    <text:p text:style-name="P3"/>
   </office:text>
  </office:body>
