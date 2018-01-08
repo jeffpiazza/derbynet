@@ -120,6 +120,7 @@
             <!-- TODO The effort to split the debian package into separate ones
                  was not completed.  This combined postinst repeats the content
                  of server/postinst and extras/postinst.  -->
+            <tarfileset file="./combined/prerm" filemode="755"/>
             <tarfileset file="./combined/postinst" filemode="755"/>
         </tar>
 
@@ -133,6 +134,7 @@
             <arg value="${debian-stage}/control.tar.gz"/>
             <arg value="${debian-stage}/data.tar.gz"/>
         </exec>
+
         <delete dir="${debian-stage}"/>
     </target>
 

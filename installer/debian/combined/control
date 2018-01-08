@@ -3,6 +3,7 @@ Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
 Version: 3.0-1
 Priority: optional
 Architecture: all
-Depends: nginx, php5-fpm, php5-curl, php5-gd, php5-cli, php5-mysql, php5-sqlite, jarwrapper
+Depends: nginx, php-fpm | php5-fpm, php-curl | php5-curl, php-gd | php5-gd, php-sqlite3 | php5-sqlite, jarwrapper
+Suggests: php-mysql | php5-mysql
 Homepage: http://jeffpiazza.github.io/derbynet/
 Description: Pinewood derby race management web server
