@@ -1,0 +1,16 @@
+#! /bin/sh
+
+
+######## Remove file created in local directory by postinst script
+
+[ -e /var/www/html/derbynet/local/default-file-path.inc ] && rm /var/www/html/derbynet/local/default-file-path.inc
+[ -e /var/www/html/derbynet/local/config-database.inc ] && rm /var/www/html/derbynet/local/config-database.inc
+[ -e /var/www/html/derbynet/local/config-roles.inc ] && rm /var/www/html/derbynet/local/config-roles.inc
+
+# If that's all, then remove the local directory, which will otherwise prevent deleting /var/www/html/derbynet
+[ -z "`ls /var/www/html/derbynet/local`" ] && rm -rf /var/www/html/derbynet/local
+
+######## Undo edit to default nginx site
+
+sed -i -e '/include derbynet\/location.snippet/ d' /etc/nginx/sites-available/default
+

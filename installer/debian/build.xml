@@ -1,6 +1,9 @@
 <project name="derbynet-deb" default="dist" basedir=".">
     <description>
-        Build a Debian binary package for the DerbyNet server.
+        Build Debian binary packages for DerbyNet.
+    
+        The binary archives are constructed "by hand", so the task can be
+         accomplished on platforms that don't provide Debian package tooling. -->
     </description>
 
     <!-- These properties isolate us from ant file location -->
@@ -21,8 +24,20 @@
 
     <property name="deb-label"
 	          value="derbynet_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+
+    <property name="deb-server-label"
+	          value="derbynet-server_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+    <property name="deb-timer-label"
+	          value="derbynet-timer_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+    <property name="deb-extras-label"
+	          value="derbynet-extras_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+
+    <!-- debian-root is where we assemble the files we intend to install on the
+         destination system -->
     <property name="debian-root"
 	          location="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+    <!-- debian-stage is where we assemble the very specific files that get
+         archived into the final deb file. -->
     <property name="debian-stage" location="debian-stage"/>
 
     <target name="debian-stage-website">
@@ -95,41 +110,36 @@
         </copy>
     </target>
 
-    <!-- Constructs a Debian binary archive "by hand", so the task can be
-         accomplished on platforms that don't provide Debian package tooling. -->
-    <target name="debian-combined" depends="debian-stage-website,
-                                            debian-stage-timer-jar,
-                                            debian-stage-extras,
-                                            debian-stage-docs">
+    <target name="debian-server" depends="debian-stage-website,
+                                          debian-stage-docs">
         <mkdir dir="${debian-stage}"/>
         <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
             <tarfileset dir="${debian-root}">
-                <exclude name="usr/bin/**"/>
-                <exclude name="usr/share/derbynet/scripts/**"/>
-            </tarfileset>
-            <tarfileset dir="${debian-root}" filemode="755">
-                <include name="usr/bin/**"/>
-                <include name="usr/share/derbynet/scripts/**"/>
+                <include name="var/www/**"/>
+                <include name="etc/nginx/**"/>
+                <!-- /usr/share reliably exists on the target, but
+                     usr/share/derbynet has to be created explicitly.  The "**"
+                     entry that follows will only try to create the final
+                     .../docs directory. -->
+                <include name="usr/share/derbynet"/>
+                <include name="usr/share/derbynet/docs/**"/>
+                <exclude name="usr/share/derbynet/docs/Timer Operation.pdf"/>
             </tarfileset>
         </tar>
-        <delete dir="${debian-root}"/>
 
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
-            <tarfileset file="./combined/conffiles"/>
-            <tarfileset file="./combined/control"/>
-            <!-- TODO The effort to split the debian package into separate ones
-                 was not completed.  This combined postinst repeats the content
-                 of server/postinst and extras/postinst.  -->
-            <tarfileset file="./combined/prerm" filemode="755"/>
-            <tarfileset file="./combined/postinst" filemode="755"/>
+            <tarfileset file="./server/conffiles"/>
+            <tarfileset file="./server/control"/>
+            <tarfileset file="./server/postinst" filemode="755"/>
+            <tarfileset file="./server/prerm" filemode="755"/>
         </tar>
 
         <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
 
-        <delete file="${output-dir}/${deb-label}.deb" failonerror="false" quiet="true"/>
+        <delete file="${output-dir}/${deb-server-label}.deb" failonerror="false" quiet="true"/>
         <exec executable="ar">
             <arg value="-q"/>
-            <arg value="${output-dir}/${deb-label}.deb"/>
+            <arg value="${output-dir}/${deb-server-label}.deb"/>
             <arg value="${debian-stage}/debian-binary"/>
             <arg value="${debian-stage}/control.tar.gz"/>
             <arg value="${debian-stage}/data.tar.gz"/>
@@ -138,5 +148,77 @@
         <delete dir="${debian-stage}"/>
     </target>
 
-    <target name="dist" depends="debian-combined"/>
+    <target name="debian-timer" depends="debian-stage-timer-jar,
+                                         debian-stage-docs">
+        <mkdir dir="${debian-stage}"/>
+        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
+            <tarfileset dir="${debian-root}">
+                <!-- /usr/share reliably exists on the target, but
+                     usr/share/derbynet has to be created explicitly.  -->
+                <include name="usr/share/derbynet"/>
+                <include name="usr/share/derbynet/docs"/>
+                <include name="usr/share/derbynet/docs/Timer Operation.pdf"/>
+            </tarfileset>
+            <!-- This second tarfileset sets executable permissions for these
+                 files. -->
+            <tarfileset dir="${debian-root}" filemode="755">
+                <include name="usr/bin/**"/>
+            </tarfileset>
+        </tar>
+
+        <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
+            <tarfileset file="./timer/conffiles"/>
+            <tarfileset file="./timer/control"/>
+        </tar>
+
+        <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
+
+        <delete file="${output-dir}/${deb-timer-label}.deb" failonerror="false" quiet="true"/>
+        <exec executable="ar">
+            <arg value="-q"/>
+            <arg value="${output-dir}/${deb-timer-label}.deb"/>
+            <arg value="${debian-stage}/debian-binary"/>
+            <arg value="${debian-stage}/control.tar.gz"/>
+            <arg value="${debian-stage}/data.tar.gz"/>
+        </exec>
+        <delete dir="${debian-stage}"/>
+    </target>
+
+    <target name="debian-extras" depends="debian-stage-extras">
+        <mkdir dir="${debian-stage}"/>
+        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
+            <tarfileset dir="${debian-root}">
+                <include name="etc/*"/>
+                <include name="usr/share/derbynet"/>
+                <include name="usr/share/derbynet/autostart/**"/>
+                <include name="usr/share/derbynet/extras/**"/>
+            </tarfileset>
+            <!-- This second tarfileset sets executable permissions for these
+                 files. -->
+            <tarfileset dir="${debian-root}" filemode="755">
+                <include name="usr/share/derbynet/scripts/**"/>
+            </tarfileset>
+        </tar>
+
+        <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
+            <tarfileset file="./extras/conffiles"/>
+            <tarfileset file="./extras/control"/>
+            <tarfileset file="./extras/postinst" filemode="755"/>
+        </tar>
+
+        <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
+
+        <delete file="${output-dir}/${deb-extras-label}.deb" failonerror="false" quiet="true"/>
+        <exec executable="ar">
+            <arg value="-q"/>
+            <arg value="${output-dir}/${deb-extras-label}.deb"/>
+            <arg value="${debian-stage}/debian-binary"/>
+            <arg value="${debian-stage}/control.tar.gz"/>
+            <arg value="${debian-stage}/data.tar.gz"/>
+        </exec>
+        <delete dir="${debian-stage}"/>
+    </target>
+
+    <target name="dist" depends="debian-server, debian-timer, debian-extras">
+    </target>
 </project>
