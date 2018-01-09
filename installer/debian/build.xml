@@ -2,7 +2,7 @@
     <description>
         Build Debian binary packages for DerbyNet.
     
-        The binary archives are constructedw "by hand", so the task can be
+        The binary archives are constructed "by hand", so the task can be
          accomplished on platforms that don't provide Debian package tooling. -->
     </description>
 
@@ -32,8 +32,12 @@
     <property name="deb-extras-label"
 	          value="derbynet-extras_${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
 
+    <!-- debian-root is where we assemble the files we intend to install on the
+         destination system -->
     <property name="debian-root"
 	          location="derbynet_${release-series}-${git-rev-count}${git-dirty}"/>
+    <!-- debian-stage is where we assemble the very specific files that get
+         archived into the final deb file. -->
     <property name="debian-stage" location="debian-stage"/>
 
     <target name="debian-stage-website">
@@ -127,6 +131,7 @@
             <tarfileset file="./server/conffiles"/>
             <tarfileset file="./server/control"/>
             <tarfileset file="./server/postinst" filemode="755"/>
+            <tarfileset file="./server/prerm" filemode="755"/>
         </tar>
 
         <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
@@ -214,36 +219,6 @@
         <delete dir="${debian-stage}"/>
     </target>
 
-    <target name="debian-combined" depends="
-                                            debian-server, debian-timer, debian-extras">
-        <mkdir dir="${debian-stage}"/>
-        <!-- No data: -->
-        <echo file="${debian-stage}/ignored">Ignore me</echo>
-        <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
-            <tarfileset dir="${debian-stage}">
-                <exclude name="ignored"/>
-            </tarfileset>
-        </tar>
-
-        <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
-            <tarfileset file="./combined/conffiles"/>
-            <tarfileset file="./combined/control"/>
-        </tar>
-
-        <echo file="${debian-stage}/debian-binary">2.0&#10;</echo>
-
-        <delete file="${output-dir}/${deb-label}.deb" failonerror="false" quiet="true"/>
-        <exec executable="ar">
-            <arg value="-q"/>
-            <arg value="${output-dir}/${deb-label}.deb"/>
-            <arg value="${debian-stage}/debian-binary"/>
-            <arg value="${debian-stage}/control.tar.gz"/>
-            <arg value="${debian-stage}/data.tar.gz"/>
-        </exec>
-        <delete dir="${debian-stage}"/>
-
-        <delete dir="${debian-root}"/>
+    <target name="dist" depends="debian-server, debian-timer, debian-extras">
     </target>
-
-    <target name="dist" depends="debian-combined"/>
 </project>

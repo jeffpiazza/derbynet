@@ -175,7 +175,7 @@
 
   <target name="dist.debian" depends="generated, timer-jar, docs-dist"
 	  description="Build a Debian binary package (.deb) for all of DerbyNet">
-    <ant dir="installer/debian" target="debian-combined"/>
+    <ant dir="installer/debian" target="dist"/>
   </target>
 
   <target name="docs-dist" description="Generate documentation PDFs">
