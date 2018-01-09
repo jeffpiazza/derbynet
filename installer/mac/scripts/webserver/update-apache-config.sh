@@ -2,7 +2,7 @@
 
 # This script updates the configuration files for the built-in Apache server.
 # It's tested at least to work with the Apache configuration as installed by
-# macOS 10.11 (El Capitan).
+# macOS 10.13 (High Sierra).
 #
 # On a Mac that already has non-trivial configuration changes, this script may
 # not have the desired effect, but it should be trivial to identify and correct
