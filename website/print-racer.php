@@ -3,49 +3,27 @@
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/action-helpers.inc');
+require_once('inc/racer_document_classes.inc');
 require_once('fpdf/ext/combined.php');
 
-// $_GET['template']
+// $_GET['document']
 // TODO $_GET['where']
 // TODO $_GET['order-by']
+// $_GET['options']
 
-abstract class PrintableRacerDocument {
-  protected $pdf;
-
-  function __construct() {
-    $this->pdf = new PDF_Combined('L', 'in', 'Letter');
-  }
-
-  // Argument contains these keys:
-  //
-  // racerid
-  // firstname
-  // lastname
-  // carnumber
-  // carname
-  // class
-  // classid
-  // rank
-  // rankid
-  // imagefile
-  // carphoto
-  // barcode
-  abstract public function DrawOne(&$racer);
-
-  public function Output() {
-    $this->pdf->Output();
-  }
-
-}
-
-if (strpos($_GET['template'], '..') !== false ||
-    !@include('printables/racer/' . $_GET['template'] . '/document.inc')) {
+if (!is_subclass_of($_GET['document'], 'PrintableRacerDocument')) {
   start_response();
-  echo "<failure code='unknown-template'>No such template</failure>\n";
+  echo "<failure code='unknown-document-class'>No such document class</failure>\n";
   end_response();
 } else {
-  
-  $doc = make_new_document();
+
+  $doc = new $_GET['document'];
+
+  $doc->StartDocument();
+
+  if (isset($_GET['options'])) {
+    $doc->set_options(unserialize($_GET['options']));
+  }
 
   $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
   .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'

@@ -1,9 +1,4 @@
 <?php
-
-function make_new_document() {
-  return new CarTagsDocument();
-}
-
 // Generates "car tags", which:
 // - are each 2.75 x 8.5" -- just wide enough to be a parking spot for one car
 // - are produced four-up per 8.5 x 11" sheet of paper
@@ -11,20 +6,16 @@ function make_new_document() {
 // - carry a barcode identifying the car
 // - optionally show a group-specific image
 
-// Group (class) names may vary from one event to another, and the assignment of
-// classid to name is definitely unstable.  This is using the car number
-// instead, and assuming that the hundreds digit identifies which image is
-// desired.
-function path_to_rank_image(&$racer) {
-  $grade = min(5, intval($racer['carnumber'] / 100));
-  return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
-}
-
 class CarTagsDocument extends PrintableRacerDocument {
   protected $count;
 
-  function __construct() {
-    parent::__construct();
+  function get_available_options() {
+    return array('rank_image' => array('desc' => 'Draw icon for rank',
+                                       'default' => true));
+  }
+  
+  function StartDocument() {
+    $this->initialize_pdf('L', 'in', 'Letter');
     $this->count = 0;
   }
 
@@ -37,6 +28,15 @@ class CarTagsDocument extends PrintableRacerDocument {
     }
     $this->DrawOneAt($col * 2.75, $racer);
     ++$this->count;
+  }
+
+  // Group (class) names may vary from one event to another, and the assignment of
+  // classid to name is definitely unstable.  This is using the car number
+  // instead, and assuming that the hundreds digit identifies which image is
+  // desired.
+  static protected function path_to_rank_image(&$racer) {
+    $grade = min(5, intval($racer['carnumber'] / 100));
+    return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
   }
 
   protected function RotatedCenteredName($cx, $cy, &$racer) {

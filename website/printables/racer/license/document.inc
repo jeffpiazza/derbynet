@@ -1,16 +1,22 @@
 <?php
 
-require_once('inc/photo-config.inc');
 
-function make_new_document() {
-  return new DriversLicenseDocument();
-}
+require_once('inc/photo-config.inc');
 
 class DriversLicenseDocument extends PrintableRacerDocument {
   protected $count;
 
-  function __construct() {
-    parent::__construct();
+  function get_available_options() {
+    return array(
+      'use_photo' => array('desc' => 'Include racer\'s photo',
+                           'default' => true),
+      'use_barcode' => array('desc' => 'Include barcode',
+                             'default' => true),
+      );
+  }
+
+  function StartDocument() {
+    $this->initialize_pdf('L', 'in', 'Letter');
     $this->count = 0;
   }
 
@@ -67,7 +73,8 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                              array(new SetFontTag('Times', '', 10), group_label().": ",
                                    new SetFontTag('Times', 'B', 10), $racer['class']));
 
-    if ($racer['imagefile']) {
+    if (isset($this->options['use_photo']) && !$this->options['use_photo']) {
+    } else if ($racer['imagefile']) {
       $this->pdf->Image($racer['imagefile'], $x + 2.35, $y + 0.25, 1.00);
     } else {
       $this->pdf->SetFont('Arial', '', 10);
@@ -81,7 +88,9 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                                  array(new SetFontTag('Arial', 'B', 24), $racer['carnumber']));
 
     $this->pdf->SetFillColor(0);
-    $this->pdf->HorizontalBarcode($x + 0.90, $y + 1.90, 2.0, 0.20, $racer['barcode']);
+    if (!isset($this->options['use_barcode']) || $this->options['use_barcode']) {
+      $this->pdf->HorizontalBarcode($x + 0.90, $y + 1.90, 2.0, 0.20, $racer['barcode']);
+    }
     
 //    $this->pdf->DrawSequence($x + 0.75, $y + 2.25,
 //                             array(new SetFontTag('Times', '', 10), 'Restrictions: ',
