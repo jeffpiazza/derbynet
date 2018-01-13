@@ -61,7 +61,7 @@ function write_config_roles_file($filename) {
 ?>
 
 END;
-    return write_config_file($config_roles, $content);
+    return write_config_file($filename, $content);
 }
 // ====================================================================
 
