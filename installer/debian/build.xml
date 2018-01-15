@@ -220,5 +220,6 @@
     </target>
 
     <target name="dist" depends="debian-server, debian-timer, debian-extras">
+        <delete dir="${debian-root}"/>
     </target>
 </project>
