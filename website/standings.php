@@ -31,7 +31,7 @@ require_once('inc/standings.inc');
 $(function () {
     // We're initially displaying the "All" case.
     $("tr").not(".headers").addClass('hidden');
-    $(select_standings(false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
+    $(select_standings(false, false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
 
     $("select").on("change", function(event) {
         standings_select_on_change($(this).find("option:selected"),
