@@ -31,8 +31,9 @@ function onFileSelect(event) {
   $("#encoding").addClass("hidden");
 
   $(".fields").removeClass("hidden");
+  $("#import_button_div").removeClass("hidden");
 
-  hideOrShowImportButton();
+  enableOrDisableImportButton();
 
   // The .label_target elements are only created by printTable(), above, and
   // don't appear immediately within the DOM.  Delaying like this seems to work,
@@ -168,12 +169,12 @@ function dragOutOfLabelTarget(label_target_jq) {
   }, 50);
 }
 
-function hideOrShowImportButton() {
+function enableOrDisableImportButton() {
   if ($('.field.required').closest('[data-home]').length == 0) {
-    $('#import_button_div').removeClass('hidden');
+    $('#import_button_div input[type="button"]').prop('disabled', false);
     $('#assign_label_message').addClass('hidden');
   } else {
-    $('#import_button_div').addClass('hidden');
+    $('#import_button_div input[type="button"]').prop('disabled', true);
     $('#assign_label_message').removeClass('hidden');
   }
 }
@@ -196,7 +197,7 @@ function makeDroppableLabelTarget(label_target_jq) {
       $(this).addClass('label_target_filled');
       $('.column' + $(this).attr('data-column')).removeClass('dim');
 
-      hideOrShowImportButton();
+      enableOrDisableImportButton();
 
       onDrop($(ui.draggable[0]), $(this));
     }
@@ -319,7 +320,7 @@ $(function() {
       $(this).find('[data-home="' + $(ui.draggable[0]).attr('data-field') + '"]')
         .append(ui.draggable[0]);
 
-      hideOrShowImportButton();
+      enableOrDisableImportButton();
 
       onUndrop($(ui.draggable[0]));
     }

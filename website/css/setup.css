@@ -34,11 +34,6 @@ span.trouble {
     font-size: 16px;
 }
 
-.block_buttons input[disabled][type='button'],
-.block_buttons input[disabled][type='submit'] {
-    background: #a0a0a0;
-}
-
 .database_file {
     font-size: 20px;
     font-weight: bold;

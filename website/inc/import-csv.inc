@@ -62,7 +62,7 @@ class ImportCsvGenerator {
   protected function make_import_button($button_label) {
 ?>
   <div id="import_button_div" class="block_buttons hidden">
-    <input type="button" id="import_button" data-enhanced="true"
+    <input type="button" id="import_button" data-enhanced="true" disabled="disabled"
            value="<?php echo htmlspecialchars($button_label, ENT_QUOTES, 'UTF-8'); ?>"/>
   </div>
 <?php
