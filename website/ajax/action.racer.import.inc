@@ -5,6 +5,17 @@ require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/schema_version.inc');
 
+
+function as_boolean($val) {
+  if (is_string($val)) {
+    $val = trim($val);
+  }
+  if ($val === true || $val === 1 || $val === '1') return true;
+  if ($val === false || $val === 0 || $val === '0' || $val === '') return false;
+  $val = strtolower($val)[0];
+  return $val != 'n';
+}
+
 start_response();
 
 if (have_permission(SET_UP_PERMISSION)) {
@@ -17,7 +28,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'classname' => true,
                   'carnumber' => false,
                   'carname' => false,
-                  'subgroup' => false);
+                  'subgroup' => false,
+                  'exclude' => false);
 
   // An alternative to separate lastname and firstname parameters is a single
   // combined field, called first-last.  The content can either be firstname
@@ -117,8 +129,10 @@ if ($ok) {
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
+  $exclude = isset($_POST['exclude']) ? as_boolean($_POST['exclude']) : false;
+   
   insert_new_racer_rankid_and_classid($_POST['firstname'], $_POST['lastname'], $carnumber, $carname,
-                                      $rankid, $classid);
+                                      $rankid, $classid, $exclude);
 
   echo '<success/>';
 }

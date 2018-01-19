@@ -10,19 +10,25 @@ user_login_coordinator
 
 curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_success
 
-curl_post action.php "action=racer.import&firstname=Jewell&lastname=Jeansonne&classname=ThePack&carnumber=101&subgroup=Lions" | check_success
+# Single group, ThePack
+# Subgroup Lions = 1
+# Subgroup Tigers = 2
+# Subgroup Bears = 3
+# Subgroup Wolves = 4
+
+curl_post action.php "action=racer.import&firstname=Jewell&lastname=Jeansonne&classname=ThePack&carnumber=101&subgroup=Lions&exclude=" | check_success
 curl_post action.php "action=racer.import&firstname=Cedrick&lastname=Charley&classname=ThePack&carnumber=202&subgroup=Tigers" | check_success
 curl_post action.php "action=racer.import&firstname=Grant&lastname=Gribble&classname=ThePack&carnumber=303&subgroup=Bears" | check_success
 curl_post action.php "action=racer.import&firstname=Harrison&lastname=Hanks&classname=ThePack&carnumber=404&subgroup=Wolves" | check_success
-curl_post action.php "action=racer.import&firstname=Jerald&lastname=Jerry&classname=ThePack&carnumber=105&subgroup=Lions" | check_success
+curl_post action.php "action=racer.import&firstname=Jerald&lastname=Jerry&classname=ThePack&carnumber=105&subgroup=Lions&exclude=X" | check_success
 curl_post action.php "action=racer.import&firstname=Ernest&lastname=Edelman&classname=ThePack&carnumber=206&subgroup=Tigers" | check_success
 curl_post action.php "action=racer.import&firstname=Lloyd&lastname=Lightsey&classname=ThePack&carnumber=307&subgroup=Bears" | check_success
 curl_post action.php "action=racer.import&firstname=Gary&lastname=Grissom&classname=ThePack&carnumber=408&subgroup=Wolves" | check_success
-curl_post action.php "action=racer.import&firstname=Von&lastname=Vassar&classname=ThePack&carnumber=109&subgroup=Lions" | check_success
-curl_post action.php "action=racer.import&firstname=Harold&lastname=Hayek&classname=ThePack&carnumber=210&subgroup=Tigers" | check_success
+curl_post action.php "action=racer.import&firstname=Von&lastname=Vassar&classname=ThePack&carnumber=109&subgroup=Lions&exclude=NO" | check_success
+curl_post action.php "action=racer.import&firstname=Harold&lastname=Hayek&classname=ThePack&carnumber=210&subgroup=Tigers&exclude=yes" | check_success
 curl_post action.php "action=racer.import&firstname=Pasquale&lastname=Procopio&classname=ThePack&carnumber=311&subgroup=Bears" | check_success
 curl_post action.php "action=racer.import&firstname=Winford&lastname=Weld&classname=ThePack&carnumber=412&subgroup=Wolves" | check_success
-curl_post action.php "action=racer.import&firstname=John&lastname=Jefferys&classname=ThePack&carnumber=113&subgroup=Lions" | check_success
+curl_post action.php "action=racer.import&firstname=John&lastname=Jefferys&classname=ThePack&carnumber=113&subgroup=Lions&exclude=0" | check_success
 curl_post action.php "action=racer.import&firstname=Thanh&lastname=Turner&classname=ThePack&carnumber=214&subgroup=Tigers" | check_success
 curl_post action.php "action=racer.import&firstname=Demetrius&lastname=Demming&classname=ThePack&carnumber=315&subgroup=Bears" | check_success
 curl_post action.php "action=racer.import&firstname=Everette&lastname=Esses&classname=ThePack&carnumber=416&subgroup=Wolves" | check_success
@@ -108,11 +114,37 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=3.020&lane2=5.
 check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=2.519&lane2=1.01&lane3=3.015&lane4=5.506" | check_success
 
+# Standings by times:
+# 101 Jewell Jeansonne
+# 105 Jerald Jerry    -- ineligible
+# 109 Von Vassar
+# 113 John Jefferys
+# 117 forrest Figgins
+# 303 Grant Gribble
+# 404 Harrison Hanks
+# 307 Lloyd Lightsey
+# 408 Gary Grissom
+# 319 Delmar Donnelly
+# 311 Pasquale Procopio
+# 412 Winford Weld
+# 315 Demetrius Demming
+# 416 Everette Esses
+# 420 Stanton Salmon
+# 202 Cedrick Charley
+# 206 Ernest Edelman
+# 210 Harold Hayek  -- ineligible
+# 214 Thanh Turner
+# 218 Sterling Spalla
+
 user_login_coordinator
 
-curl_get "standings.php" | grep '<tr' | expect_count "data-rankid=.2." 5
+curl_get "standings.php" | grep '<tr' | expect_count "data-rankid=.3." 5
+# Because Harold is ineligible, only 4 show up
+curl_get "standings.php" | grep '<tr' | expect_count "data-rankid=.2." 4
+
 # curl_get would parse the HTML and leave one tag per line
-curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "insubgroup.>4<" | expect_one "Thanh Turner"
+# Thanh came in 4th by time, but with Harold ineligible, he becomes 3rd, and Sterling is 4th
+curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "insubgroup.>4<" | expect_one "Sterling Spalla"
 
 curl_get "action.php?query=standings.reveal" | expect_count round 0
 curl_post action.php "action=standings.reveal&roundid=" | check_success
@@ -136,12 +168,12 @@ curl_post action.php "action=settings.write&n-rank-trophies=3" | check_success
 
 curl_post action.php "action=award.present&key=speed-3-1-2" | check_success
 curl_get "action.php?query=award.current" | expect_one '3rd Fastest in Tigers'
-curl_get "action.php?query=award.current" | expect_one Hayek
+curl_get "action.php?query=award.current" | expect_one Thanh
 
 curl_post action.php "action=award.present&key=speed-3-1" | check_success
 curl_get "action.php?query=award.current" | expect_one '3rd Fastest in ThePack'
-curl_get "action.php?query=award.current" | expect_one Vassar
+curl_get "action.php?query=award.current" | expect_one Jefferys
 
 curl_post action.php "action=award.present&key=speed-3" | check_success
 curl_get "action.php?query=award.current" | expect_one '3rd Fastest in Pack'
-curl_get "action.php?query=award.current" | expect_one Vassar
+curl_get "action.php?query=award.current" | expect_one Jefferys
