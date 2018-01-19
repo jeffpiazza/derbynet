@@ -13,7 +13,7 @@ if (have_permission(JUDGING_PERMISSION)) {
     if ($_POST['racerid'] != 0) {
       $award = read_single_row('SELECT classid, rankid FROM Awards WHERE awardid = :awardid',
                                array(':awardid' => $_POST['awardid']));
-      $racer = read_single_row('SELECT classid, rankid FROM RegistrationInfo WHERE racerid = :racerid',
+      $racer = read_single_row('SELECT classid, rankid, exclude FROM RegistrationInfo WHERE racerid = :racerid',
                                array(':racerid' => $_POST['racerid']));
       if (!$award) {
         $ok = false;
@@ -23,8 +23,12 @@ if (have_permission(JUDGING_PERMISSION)) {
         echo "<failure code='no-such-racer'>Racer not found</failure>\n";
       } else {
         list($award_classid, $award_rankid) = $award;
-        list($racer_classid, $racer_rankid) = $racer;
-        if (isset($award_classid) && $award_classid != 0 && $award_classid != $racer_classid) {
+        list($racer_classid, $racer_rankid, $racer_exclude) = $racer;
+
+        if ($racer_exclude) {
+          $ok = false;
+          echo "<failure code='ineligible'>Racer not eligible for awards</failure>\n";
+        } else if (isset($award_classid) && $award_classid != 0 && $award_classid != $racer_classid) {
           $ok = false;
           echo "<failure code='wrong-class'>Award is for a different class</failure>\n";
         } else if (isset($award_rankid) && $award_rankid != 0 && $award_rankid != $racer_rankid) {
