@@ -3,14 +3,18 @@
 require_once('inc/data.inc');
 require_once('inc/kiosks.inc');
 
+$g_kiosk_parameters_string = '';
+function kiosk_parameters() {
+  global $g_kiosk_parameters_string;
+  return json_decode($g_kiosk_parameters_string, true);
+}
+
 // 'page' query argument to support testing
 if (isset($_GET['page'])) {
-  define('KIOSK_PARAM', '');
   require($_GET['page']);
 } else {
   $kpage = kiosk_page(address_for_current_kiosk());
-  // For kiosk pages that use parameters:
-  define('KIOSK_PARAM', $kpage['params']);
+  $g_kiosk_parameters_string = $kpage['params'];
   require($kpage['page']);
 }
 ?>

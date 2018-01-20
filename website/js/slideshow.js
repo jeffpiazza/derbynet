@@ -7,9 +7,9 @@ function mainphoto_onload(img) {
 
 (function() {
   var current_racer_id = 0;
-  var classids = '';
-  KioskPoller.param_callback = function(param_string) {
-    classids = param_string;
+  var kiosk_parameters = {};
+  KioskPoller.param_callback = function(parameters) {
+    kiosk_parameters = parameters;
   };
 
   function refresh_page(racer) {
@@ -39,11 +39,12 @@ function mainphoto_onload(img) {
   }
 
   function photo_poll() {
+    var classids = kiosk_parameters.classids;
     $.ajax('action.php',
            {type: 'GET',
             data: {query: 'photo.next',
                    racerid: current_racer_id,
-                   classids: classids},
+                   classids: classids && classids.length > 0 ? classids.join(',') : ''},
             success: function(data) {
               var racers = data.getElementsByTagName("racer");
               if (racers.length > 0) {

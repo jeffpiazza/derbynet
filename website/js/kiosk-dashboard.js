@@ -24,6 +24,11 @@ $(function() { poll_kiosk_all(); });
 // Parameter handling for specific pages
 //////////////////////////////////////////////////////////////////////////
 
+// Things like modal dialogs are defined in kiosk-dashboard.php, and each kiosk
+// page requiring parameter handling registers a page handler here.  Ideally
+// we'd prefer that each kiosk page be able to supply its own arbitrary
+// configuration UI, but this implementation isn't nearly that modular.
+//
 // TODO Find a better way to express this in javascript, so that each function
 // has a definition and there's no need for all the 'in' testing at the call
 // sites.
@@ -37,6 +42,10 @@ $(function() { poll_kiosk_all(); });
 // init_found = function() {}
 //
 // Adds any controls desired for custom configuration
+//    kiosk describes the kiosk: {name:, address:, last_contact:, assigned_page:, parameters:}
+//    kiosk_select is the <div> to which the page handler should add any desired
+//        configuration controls (e.g., a Configure button that activates a
+//        modal dialog).
 // configure = function(kiosk, kiosk_select) {}
 
 var g_kiosk_page_handlers = {
@@ -60,16 +69,18 @@ var g_kiosk_page_handlers = {
   },
 };
 
-// This is a configuration function for kiosk pages that use a list of classids
-// as their param string.
+// Configuration function for parameters of {classids: [...]}
 function configure_class_ids(kiosk, kiosk_select) {
   $('<input type="button" data-enhanced="true" value="Configure"/>')
     .on("click", /* selector */null, /* data: */kiosk,
         /* handler */ show_config_classes_modal)
     .appendTo(kiosk_select);
-  if (kiosk.parameters) {
+
+  // If there are any classids specified, build a <p> element to describe the
+  // current setting.
+  if (kiosk.parameters.classids && kiosk.parameters.classids.length > 0) {
     var s = '';
-    var classids = kiosk.parameters.split(',');
+    var classids = kiosk.parameters.classids;
     for (var i = 0; i < classids.length; ++i) {
       s += ', ' + $("label[for='config-class-" + classids[i] + "']").text();
     }
@@ -98,6 +109,8 @@ function hash_string(hash, str) {
   return hash;
 }
 
+// pages: array of {brief:, path:}
+// kiosks: array of {name:, address:, last_contact:, assigned_page:, parameters:}
 function generate_kiosk_control_group(pages, kiosks) {
   var hash = 0;
   for (var i = 0; i < kiosks.length; ++i) {
@@ -106,7 +119,7 @@ function generate_kiosk_control_group(pages, kiosks) {
     hash = hash_string(hash, kiosk.address);
     hash = hash_string(hash, kiosk.last_contact);
     hash = hash_string(hash, kiosk.assigned_page);
-    hash = hash_string(hash, kiosk.parameters);
+    hash = hash_string(hash, JSON.stringify(kiosk.parameters));
   }
   if (hash != g_kiosk_hash) {
     for (var kiosk_page in g_kiosk_page_handlers) {
@@ -127,6 +140,8 @@ function generate_kiosk_control_group(pages, kiosks) {
   }
 }
 
+// Returns an array of entries, {brief:, path:}, describing each available kiosk page.
+// (brief is the kiosk file name only, path is the full path to access it.)
 function parse_kiosk_pages(data) {
   var kiosk_pages_xml = data.getElementsByTagName("kiosk-page");
   var kiosk_pages = new Array(kiosk_pages_xml.length);
@@ -137,16 +152,19 @@ function parse_kiosk_pages(data) {
   return kiosk_pages;
 }
 
+// Returns an array of entries for each known kiosk currently connected to the server.
+// {name:, address:, last_contact:, assigned_page:, parameters:}
 function parse_kiosks(data) {
   var kiosks_xml = data.getElementsByTagName("kiosk");
   var kiosks = new Array(kiosks_xml.length);
   for (var i = 0; i < kiosks_xml.length; ++i) {
     var kiosk_xml = kiosks_xml[i];
+    var param_string = kiosk_xml.getElementsByTagName("parameters")[0].textContent;
     kiosks[i] = {name: kiosk_xml.getElementsByTagName("name")[0].textContent,
                  address: kiosk_xml.getElementsByTagName("address")[0].textContent,
                  last_contact: kiosk_xml.getElementsByTagName("last_contact")[0].textContent,
                  assigned_page: kiosk_xml.getElementsByTagName("assigned_page")[0].textContent,
-                 parameters: kiosk_xml.getElementsByTagName("parameters")[0].textContent
+                 parameters: param_string ? JSON.parse(param_string) : {}
                 };
   }
   return kiosks;
@@ -154,7 +172,7 @@ function parse_kiosks(data) {
 
 // Generates a block of controls for a single kiosk.
 // index is just a sequential counter used for making unique control names.
-// kiosk is an object, {name:, address:, ...}, as produced by parse_kiosks.
+// kiosk describes the kiosk's state: {name:, address:, last_contact:, assigned_page:, parameters:}
 // pages is an array of {path:, brief:} objects, as produced by parse_kiosk_pages.
 function generate_kiosk_control(index, kiosk, pages) {
   var kiosk_control = $("<div class=\"block_buttons control_group kiosk_control\"/>");
@@ -312,9 +330,9 @@ function handle_reveal_all() {
 function show_config_classes_modal(event) {
   var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
   var parameters = kiosk.parameters;
-  if (parameters) {
+  if (parameters.classids && parameters.classids.length > 0) {
     $("#config_classes_modal input[type='checkbox']").prop("checked", false);
-    var classids = parameters.split(',');
+    var classids = parameters.classids;
     for (var i = 0; i < classids.length; ++i) {
       $("#config-class-" + classids[i])
         .prop("checked", true);
@@ -326,24 +344,22 @@ function show_config_classes_modal(event) {
   show_modal("#config_classes_modal", function(event) {
     close_modal("#config_classes_modal");
     var any_unchecked = false;
-    var new_params = '';
+    var new_params = {classids: []};
     $("#config_classes_modal input[type='checkbox']").each(function() {
       if ($(this).prop("checked")) {
-        new_params += ',' + $(this).data("classid");
+        new_params.classids.push(parseInt($(this).data("classid")));
       } else {
         any_unchecked = true;
       }
     });
-    if (any_unchecked) {
-      new_params = new_params.substring(1);
-    } else {
-      new_params = '';
+    if (!any_unchecked) {
+      new_params.classids = [];
     }
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'kiosk.assign',
                    address: kiosk.address,
-                   params: new_params},
+                   params: JSON.stringify(new_params)},
             success: function(data) {
               generate_kiosk_control_group(parse_kiosk_pages(data),
                                            parse_kiosks(data));
