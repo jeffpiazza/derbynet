@@ -54,10 +54,10 @@ $stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname,'
                      .' FROM RegistrationInfo'
                      .' WHERE racerid > :racerid AND '
                      .'  ((imagefile IS NOT NULL AND imagefile <> \'\')'
-                     .($classids ? ' AND classid IN ('.$classids.')' : '')
                      .($inset_imagefile
                        ? '       OR (carphoto IS NOT NULL AND carphoto <> \'\')' : '')
                      .')'
+                     .($classids ? ' AND classid IN ('.$classids.')' : '')
                      .' ORDER BY racerid');
 $stmt->execute(array(':racerid' => $racerid));
 
