@@ -77,7 +77,7 @@ public class MiscJunkDevice extends TimerDeviceTypical {
   private void setUp() {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
-        if (line == "B") {
+        if (line.equals("B")) {
           portWrapper.logWriter().serialPortLogInternal("Detected gate opening");  // TODO
           // Sent when the gate opens
           onGateStateChange(false);
