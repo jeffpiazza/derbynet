@@ -35,6 +35,9 @@ var KioskPoller = (function(KioskPoller) {
                   return;
                 }
                 var params_string = data.documentElement.getAttribute("params");
+                if (params_string == '') {
+                  params_string = '{}';
+                }
                 KioskPoller.param_callback(JSON.parse(params_string));
               }
              });
