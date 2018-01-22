@@ -111,20 +111,12 @@ var Lineup = {
             $('[data-lane="' + lane + '"] .photo').html(
               '<img src="' + r.getAttribute('photo') + '"/>');
           }
-          var br_added = false;
+
           if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
-            if (!br_added) {
-              $('[data-lane="' + lane + '"] .name').append('<br/>');
-              br_added = true;
-            }
             $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
             $('#carname-' + lane).text('"' + r.getAttribute('carname') + '"');
           }
           if (r.hasAttribute('subgroup')) {
-            if (!br_added) {
-              $('[data-lane="' + lane + '"] .name').append('<br/>');
-              br_added = true;
-            }
             $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
             $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
           }
