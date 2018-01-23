@@ -55,7 +55,8 @@ $groups = all_schedule_groups();
 
 $sql = 'SELECT'
     .' Classes.class, round, heat, lane, finishtime, resultid, completed,'
-    .' RegistrationInfo.racerid, carphoto, '
+    .' RegistrationInfo.racerid,'
+    .(schema_version() < 2 ? ' \'\' as' : '').' carphoto, '
     .($use_master_sched ? 'round' : 'Rounds.roundid').' as racinggroup,'
     .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
     .' RegistrationInfo.carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
