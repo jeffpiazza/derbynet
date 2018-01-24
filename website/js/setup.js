@@ -182,7 +182,7 @@ function update_sqlite_path() {
 }
 
 function show_advanced_database_modal() {
-  hide_modal("#database_modal");
+  hide_modal("#ezsetup_modal");
   show_modal("#advanced_database_modal", function(event) {
     handle_advanced_database_modal_submit();
     return false;
