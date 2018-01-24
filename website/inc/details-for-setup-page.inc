@@ -232,10 +232,7 @@ function build_setup_page_details() {
   $db_ok = isset($db_connection_string) && isset($db);
   if ($db_ok) {
     $schema = inspect_database();
-    if ($schema['schema_status'] != 'ok') {
-      // $schema['schema_message'] is already a <p> element
-      $db_message = "<p>".$db_message."</p>\n".$schema['schema_message'];
-    } else if (!$schema['writable']) {
+    if ($schema['schema_status'] == 'ok' && !$schema['writable']) {
       $db_message = "<p>".$db_message."<br/><span class='trouble'>The database is read-only.</span></p>\n";
     } else {
       $db_message = "<p>".$db_message."</p>\n";
