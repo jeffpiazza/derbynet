@@ -18,7 +18,7 @@
      <os family="windows"/>
    </condition>
 
-   <target name="dist" depends="installation, after-installation, operation">
+   <target name="dist" depends="installation, after-installation, operation, advanced-topics">
    </target>
 
    <target name="make-dist-dir">
@@ -71,11 +71,15 @@
      <make-pdf file="Running a Race with DerbyNet.fodt"/>
      <make-pdf file="Photo Upload Options.fodt"/>
  </target>
- 
-  <target name="clean"
+
+ <target name="advanced-topics" depends="make-dist-dir">
+     <make-pdf file="Developers- Replay Messages.fodt"/>
+ </target>
+
+ <target name="clean"
         description="clean up" >
     <!-- Delete the ${dist} directory tree -->
     <delete dir="${dist}"/>
-  </target>
+ </target>
 
 </project>
