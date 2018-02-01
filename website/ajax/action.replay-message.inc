@@ -5,7 +5,7 @@
 
 require_once('inc/replay.inc');
 
-start_response();
+start_response(); echo "\n";
 
 function drain_queue() {
   global $db;
@@ -17,7 +17,6 @@ function drain_queue() {
   try {
     $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
   } catch (PDOException $p) {
-    echo "<set-attribute-failure/>\n";
     // TODO - This doesn't seem to work:var_dump($p)
   }
 
@@ -30,14 +29,13 @@ function drain_queue() {
 
 $replay = get_replay();
 
-if ($replay['state'] == REPLAY_CONNECTED) {
-  echo "<ignored/>\n";
-} else {
+if ($replay['state'] != REPLAY_CONNECTED) {
   write_raceinfo('replay_state', REPLAY_CONNECTED);
   echo "<replay-message>HELLO</replay-message>\n";  // TODO
 }
 
 write_raceinfo('replay_reported', $_POST['status']);
+
 if ($_POST['status'] == REPLAY_REPORTED_PLAYING &&
     $replay['status'] != REPLAY_REPORTED_PLAYING) {
   // Record the timestamp for when Replay first claimed to be playing back
