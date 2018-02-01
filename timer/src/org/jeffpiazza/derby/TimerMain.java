@@ -196,16 +196,18 @@ public class TimerMain {
 
     ConnectorImpl connector = new ConnectorImpl(traceMessages);
 
+    SimulatedClientSession simulatedSession
+        = simulateHost ? new SimulatedClientSession(logwriter) : null;
     try {
       TimerGui timerGui = null;
       if (showGui) {
         timerGui = startTimerGui(traceMessages, traceHeartbeats,
                                  connector, base_url,
-                                 username, password, simulateHost);
+                                 username, password, simulatedSession);
       } else {
-        final ClientSession clientSession
-            = simulateHost ? new SimulatedClientSession()
-              : new ClientSession(base_url);
+        final ClientSession clientSession =
+            simulatedSession == null ? new ClientSession(base_url)
+            : simulatedSession;
         HttpTask.start(username, password, clientSession,
                        traceMessages, traceHeartbeats, connector,
                        new HttpTask.LoginCallback() {
@@ -221,6 +223,7 @@ public class TimerMain {
                      }
                    });
       }
+
       TimerTask timerTask = new TimerTask(portname, devicename, timerGui,
                                           logwriter, connector);
       if (simulateTimer) {
@@ -242,7 +245,7 @@ public class TimerMain {
                                         HttpTask.MessageTracer traceHeartbeats,
                                         ConnectorImpl connector, String base_url,
                                         String username, String password,
-                                        boolean simulateHost) {
+                                        ClientSession simulatedSession) {
     final TimerGui timerGui = new TimerGui(traceMessages, traceHeartbeats,
                                            connector);
     SwingUtilities.invokeLater(new Runnable() {
@@ -256,8 +259,8 @@ public class TimerMain {
     if (username != null || password != null) {
       timerGui.setRoleAndPassword(username, password);
     }
-    if (simulateHost) {
-      timerGui.setClientSession(new SimulatedClientSession());
+    if (simulatedSession != null) {
+      timerGui.setClientSession(simulatedSession);
     }
     return timerGui;
   }

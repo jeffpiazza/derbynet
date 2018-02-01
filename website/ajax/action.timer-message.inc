@@ -32,8 +32,8 @@ require_once('inc/replay.inc');
 
 $message = $_POST['message'];
 
-$racing_state = get_racing_state();
-$timer_state = new TimerState();
+$racing_state = get_racing_state();  // True if we're racing, false if not
+$timer_state = new TimerState();     // An object carrying our idea of the timer's current state
 
 start_response();
 

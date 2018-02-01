@@ -6,10 +6,34 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 
-public class FastTrackDevice extends TimerDeviceTypical {
-
+public class FastTrackDevice extends TimerDeviceCommon {
   public FastTrackDevice(SerialPortWrapper portWrapper) {
-    super(portWrapper);
+    super(portWrapper, new GateWatcher(portWrapper) {
+        // Interrogates the starting gate's state.  CAUTION: polling while a
+        // race is running may cause the race results, sent asynchronously, to
+        // be mixed with the RG response, making them unintelligible.
+        @Override
+        protected boolean interrogateGateIsClosed()
+            throws NoResponseException, SerialPortException,
+                   LostConnectionException {
+          portWrapper.write(READ_START_SWITCH);
+          long deadline = System.currentTimeMillis() + 1000;
+          String s;
+          while ((s = portWrapper.next(deadline)) != null) {
+            if (s.startsWith(READ_START_SWITCH)) {
+              if (s.length() >= 3) {
+                return s.charAt(2) == '1';
+              }
+              // K1 timer seems to respond "RG" followed by separate "X" response
+              s = portWrapper.next(deadline);
+              if (s != null) {
+                return s.equals("X");
+              }
+            }
+          }
+          throw new NoResponseException();
+        }
+      });
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
@@ -31,7 +55,7 @@ public class FastTrackDevice extends TimerDeviceTypical {
   private static final String OLD_FORMAT = "N0"; //A=3.001! B=3.002 C=3.003 D=3.004 E=3.005 F=3.006 <LF> <CR>
   private static final String NEW_FORMAT = "N1"; //A=3.001! B=3.002" C=3.003# D=3.004$ E=3.005% F=3.006& <CR> <LF>
   private static final String ENHANCED_FORMAT = "N2";
-  // N2 => 5-digit time and start switch open/cloed status, 2012 or newer timers only
+  // N2 => 5-digit time and start switch open/closed status, 2012 or newer timers only
   // private static final String COUNT_DOWN_TIMER = "PC"; // e.g., PC01 to count down one minute
   private static final String FORCE_RESULTS = "RA";
   // RA doesn't report anything unless at least one car has crossed the line
@@ -64,11 +88,13 @@ public class FastTrackDevice extends TimerDeviceTypical {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Micro Wizard") >= 0) {
-        portWrapper.logWriter().serialPortLogInternal("* Micro Wizard detected");
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
-          portWrapper.logWriter().serialPortLogInternal(
-              "* K timer string detected");
+          // Clean up the timer state and capture some details into the log
+          portWrapper.writeAndDrainResponse(RESET_ELIMINATOR_MODE, 2, 1000);
+          portWrapper.writeAndDrainResponse(NEW_FORMAT, 2, 1000);
+          // This "RM" command seems to silence the K1 timer.
+          // TODO portWrapper.writeAndDrainResponse(READ_MODE);
           setUp();
           return true;
         }
@@ -79,7 +105,6 @@ public class FastTrackDevice extends TimerDeviceTypical {
   }
 
   protected void setUp() {
-    // TODO Can we take control of the timer in a way to show that it's been recognized?
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
@@ -103,34 +128,9 @@ public class FastTrackDevice extends TimerDeviceTypical {
 
   @Override
   protected void maskLanes(int lanemask) throws SerialPortException {
-    portWrapper.write(CLEAR_LANE_MASK);
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.
-    for (int lane = 0; lane < MAX_LANES; ++lane) {
-      if ((lanemask & (1 << lane)) == 0) {
-        // A LANE_MASK command echoes the command (first response) and then
-        // sends a "* <cr> <lf>" (second response).
-        portWrapper.writeAndDrainResponse(
-            LANE_MASK + (char) ('A' + lane), 2, 2000);
-      }
-    }
-  }
-
-  // Interrogates the starting gate's state.  CAUTION: polling while a
-  // race is running may cause the race results, sent asynchronously, to
-  // be mixed with the RG response, making them unintelligible.
-  @Override
-  protected boolean interrogateGateIsClosed()
-      throws NoResponseException, SerialPortException, LostConnectionException {
-    portWrapper.write(READ_START_SWITCH);
-    long deadline = System.currentTimeMillis() + 1000;
-    String s;
-    while ((s = portWrapper.next(deadline)) != null) {
-      if (s.startsWith(READ_START_SWITCH)) {
-        return (s.charAt(2) == '1');
-      }
-    }
-    throw new NoResponseException();
+    doMaskLanes(lanemask, CLEAR_LANE_MASK, 0, LANE_MASK, 'A', 2);
   }
 
   public int getNumberOfLanes() throws SerialPortException {

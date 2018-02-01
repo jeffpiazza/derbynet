@@ -10,16 +10,16 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.HttpTask;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.AllSerialPorts;
+import org.jeffpiazza.derby.Connector;
 import org.jeffpiazza.derby.serialport.RecordingSerialPortWrapper;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-import org.jeffpiazza.derby.TimerMain;
 import org.jeffpiazza.derby.gui.TimerGui;
 import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
 
 public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private TimerGui timerGui;
   private LogWriter logwriter;
-  private TimerMain.ConnectorImpl connector;
+  private Connector connector;
   private static final int PORT_NORMAL = 0;
   private static final int PORT_RECORDING = 1;
   private static final int PORT_PLAYBACK = 2;
@@ -31,7 +31,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private boolean userIntervened = false;
 
   public TimerTask(String portname, String devicename, TimerGui timerGui,
-                   LogWriter logwriter, TimerMain.ConnectorImpl connector) {
+                   LogWriter logwriter, Connector connector) {
     this.timerGui = timerGui;
     this.logwriter = logwriter;
     this.connector = connector;
@@ -97,10 +97,14 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         runDevicePollingLoop();
       } catch (TimerDevice.LostConnectionException lce) {
         System.out.println("Lost connection!");
-        String msg = "No response from timer in "
-            + device.getPortWrapper().millisSinceLastContact() + "ms.";
-        device.getPortWrapper().logWriter().serialPortLogInternal(msg);
-        device.invokeMalfunctionCallback(true, msg);
+        if (device != null) {
+          String msg = "No response from timer in "
+              + device.getPortWrapper().millisSinceLastContact() + "ms.";
+          logwriter.serialPortLogInternal(msg);
+          device.invokeMalfunctionCallback(true, msg);
+        } else {
+          logwriter.traceInternal("LostConnectionException with no device!");
+        }
         if (timerGui != null) {
           // Note that this status message will get replaced almost immediately
           // as the new scan starts
@@ -108,9 +112,13 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
                                    TimerGui.icon_trouble);
         }
       } catch (Throwable ex) {
+        Throwable cause = ex.getCause();
+        if (cause == null) {
+          cause = ex;
+        }
         logwriter.traceInternal(
-            "** Timer loop restarted due to " +
-            ex.getCause().getClass().getName() + ": " + ex.getMessage());
+            "** Timer loop restarted due to "
+            + cause.getClass().getName() + ": " + ex.getMessage());
         logwriter.stacktrace(ex);
       } finally {
         if (device != null) {
@@ -203,7 +211,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
           break;
         }
         SerialPort port = portName.isEmpty() ? null : new SerialPort(portName);
-        SerialPortWrapper portWrapper = null;
+        SerialPortWrapper portWrapper;
         if (timerGui != null) {
           timerGui.setSerialPort(portName);
         }
@@ -214,6 +222,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
               if (timerGui != null) {
                 timerGui.markSerialPortWontOpen();
               }
+              port = null;  // So we don't try to close it later
               continue;
             }
           }

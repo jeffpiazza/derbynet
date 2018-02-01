@@ -7,7 +7,7 @@ import org.jeffpiazza.derby.Timestamp;
 
 import java.util.regex.Matcher;
 
-public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
+public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
   private int numberOfLanes;  // Detected at probe time
 
   private static final String READ_DECIMAL_PLACES = "od\r";
@@ -34,7 +34,24 @@ public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
   private static final String READ_VERSION = "v\r";
 
   public SmartLineDevice(SerialPortWrapper portWrapper) {
-    super(portWrapper);
+    super(portWrapper, new GateWatcher(portWrapper) {
+        @Override
+        protected boolean interrogateGateIsClosed()
+            throws NoResponseException, SerialPortException,
+                   LostConnectionException {
+          portWrapper.write(READ_START_SWITCH);
+          long deadline = System.currentTimeMillis() + 500;
+          String s;
+          while ((s = portWrapper.next(deadline)) != null) {
+            if (s.equals("1")) {
+              return false;
+            } else if (s.equals("0")) {
+              return true;
+            }
+          }
+          throw new NoResponseException();
+        }
+      });
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
@@ -133,6 +150,9 @@ public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
   }
 
   protected void maskLanes(int lanemask) throws SerialPortException {
+    // Need "\r" at the end of MASK_LANE command; that's what keeps us from
+    // using doMaskLanes.
+
     // These don't give responses, so no need to wait for any.
     portWrapper.write(RESET_LANE_MASK);
 
@@ -148,22 +168,6 @@ public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
   }
 
   @Override
-  protected boolean interrogateGateIsClosed()
-      throws NoResponseException, SerialPortException, LostConnectionException {
-    portWrapper.write(READ_START_SWITCH);
-    long deadline = System.currentTimeMillis() + 500;
-    String s;
-    while ((s = portWrapper.next(deadline)) != null) {
-      if (s.equals("1")) {
-        return false;
-      } else if (s.equals("0")) {
-        return true;
-      }
-    }
-    throw new NoResponseException();
-  }
-
-  @Override
   public void onTransition(RacingStateMachine.State oldState,
                            RacingStateMachine.State newState)
       throws SerialPortException {
@@ -172,6 +176,7 @@ public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
       // Can this be sent during the SET state?
       portWrapper.write(RETURN_RESULTS_WHEN_RACE_ENDS);
     } else if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
+      System.out.println("******** Overdue results! **************");  // TODO
       portWrapper.write(FORCE_END_OF_RACE);
       logOverdueResults();
     }
@@ -182,10 +187,13 @@ public class SmartLineDevice extends TimerDeviceTypical implements TimerDevice {
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
       // Upon entering RESULTS_OVERDUE state, we sent FORCE_END_OF_RACE; see
-      // onTransition.
-      if (portWrapper.millisSinceLastContact() > 1000) {
-        throw new LostConnectionException();
-      } else if (rsm.millisInCurrentState() > 1000) {
+      // onTransition.  Because we stopped polling while the race was running,
+      // a checkConnection is likely to throw LostConnectionException, so we
+      // avoid doing a checkConnection until the timer's had a chance to
+      // respond to the FORCE.
+      if (rsm.millisInCurrentState() > 1000) {
+        System.out.println("********* Abandoning overdue results! ***************");  // TODO
+        checkConnection();
         giveUpOnOverdueResults();
       }
     }
