@@ -176,7 +176,6 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
       // Can this be sent during the SET state?
       portWrapper.write(RETURN_RESULTS_WHEN_RACE_ENDS);
     } else if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
-      System.out.println("******** Overdue results! **************");  // TODO
       portWrapper.write(FORCE_END_OF_RACE);
       logOverdueResults();
     }
@@ -192,7 +191,6 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
       // avoid doing a checkConnection until the timer's had a chance to
       // respond to the FORCE.
       if (rsm.millisInCurrentState() > 1000) {
-        System.out.println("********* Abandoning overdue results! ***************");  // TODO
         checkConnection();
         giveUpOnOverdueResults();
       }

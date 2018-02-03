@@ -13,7 +13,8 @@ public class AllDeviceTypes {
         TheJudgeDevice.class,
         NewBoldDevice.class,
         DerbyTimerDevice.class,
-        MiscJunkDevice.class
+        MiscJunkDevice.class,
+        DerbyMagicDevice.class
       };
 
   public static String toHumanString(Class<? extends TimerDevice> type) {
