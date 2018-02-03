@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2015-07-06T09:32:04.242022000</meta:creation-date><meta:editing-duration>PT2H47M42S</meta:editing-duration><meta:editing-cycles>9</meta:editing-cycles><meta:generator>LibreOffice/5.2.2.2$MacOSX_X86_64 LibreOffice_project/8f96e87c890bf8fa77463cd4b640a2312823f3ad</meta:generator><dc:date>2016-12-29T12:05:00.373694000</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="1" meta:object-count="0" meta:page-count="1" meta:paragraph-count="13" meta:word-count="238" meta:character-count="1622" meta:non-whitespace-character-count="1391"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2015-07-06T09:32:03.977425000"/></office:meta>
+ <office:meta><meta:creation-date>2015-07-06T09:32:04.242022000</meta:creation-date><meta:editing-duration>PT2H58M11S</meta:editing-duration><meta:editing-cycles>10</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2018-02-02T17:38:28.432877990</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="1" meta:object-count="0" meta:page-count="2" meta:paragraph-count="21" meta:word-count="331" meta:character-count="2331" meta:non-whitespace-character-count="2018"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2015-07-06T09:32:03.977425000"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">8281</config:config-item>
-   <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">23571</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">16235</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">14517</config:config-item>
+   <config:config-item config:name="ViewAreaLeft" config:type="long">127</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">22394</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">12876</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">7938</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">23167</config:config-item>
-     <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">8281</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">23569</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">24515</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">16027</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">21939</config:config-item>
+     <config:config-item config:name="VisibleLeft" config:type="long">127</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">14517</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">22520</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">27391</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
      <config:config-item config:name="ZoomFactor" config:type="short">120</config:config-item>
      <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
     </config:config-item-map-entry>
    </config:config-item-map-indexed>
   </config:config-item-set>
@@ -38,6 +39,7 @@
    <config:config-item config:name="PrintFaxName" config:type="string"/>
    <config:config-item config:name="PrintPaperFromSetup" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrintTextPlaceholder" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="DisableOffPagePositioning" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ApplyParagraphMarkFormatToNumbering" config:type="boolean">true</config:config-item>
    <config:config-item config:name="PrintReversed" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TabOverMargin" config:type="boolean">false</config:config-item>
@@ -53,7 +55,6 @@
    <config:config-item config:name="PrintSingleJobs" config:type="boolean">false</config:config-item>
    <config:config-item config:name="SmallCapsPercentage66" config:type="boolean">false</config:config-item>
    <config:config-item config:name="CollapseEmptyCellPara" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UseFormerLineSpacing" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ProtectForm" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterSetup" config:type="base64Binary"/>
@@ -85,6 +86,7 @@
    <config:config-item config:name="MathBaselineAlignment" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AddFrameOffsets" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IsLabelDocument" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="MsWordCompTrailingBlanks" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreFirstLineIndentInNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="OutlineLevelYieldsNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string"/>
@@ -94,7 +96,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2503406</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">2679479</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -137,7 +139,7 @@
  <office:styles>
   <style:default-style style:family="graphic">
    <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.1181in" draw:shadow-offset-y="0.1181in" draw:start-line-spacing-horizontal="0.1114in" draw:start-line-spacing-vertical="0.1114in" draw:end-line-spacing-horizontal="0.1114in" draw:end-line-spacing-vertical="0.1114in" style:flow-with-text="false"/>
-   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:writing-mode="lr-tb" style:font-independent-line-spacing="false">
+   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:font-independent-line-spacing="false">
     <style:tab-stops/>
    </style:paragraph-properties>
    <style:text-properties style:use-window-font-color="true" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="SimSun" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lucida Sans" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
@@ -303,14 +305,17 @@
   <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:text-properties officeooo:rsid="00248e47" officeooo:paragraph-rsid="00248e47"/>
   </style:style>
-  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
+  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="002632ee" officeooo:paragraph-rsid="002632ee"/>
+  </style:style>
+  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
   </style:style>
-  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Command_20_Line">
+  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Command_20_Line">
    <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
   </style:style>
-  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" loext:contextual-spacing="false">
     <style:tab-stops>
      <style:tab-stop style:position="0.389in"/>
@@ -328,15 +333,15 @@
     </style:tab-stops>
    </style:paragraph-properties>
   </style:style>
-  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" loext:contextual-spacing="false"/>
    <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
   </style:style>
-  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" loext:contextual-spacing="false"/>
    <style:text-properties fo:color="#000000" style:font-name="Monaco" fo:font-size="10pt" officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040" style:font-size-asian="10pt"/>
   </style:style>
-  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" loext:contextual-spacing="false">
     <style:tab-stops>
      <style:tab-stop style:position="0.389in"/>
@@ -355,16 +360,12 @@
    </style:paragraph-properties>
    <style:text-properties fo:color="#000000" style:font-name="Monaco" fo:font-size="10pt" style:font-size-asian="10pt"/>
   </style:style>
-  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Text_20_body">
+  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" loext:contextual-spacing="false"/>
    <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
   </style:style>
-  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Footnote">
+  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Footnote">
    <style:text-properties officeooo:rsid="00248e47" officeooo:paragraph-rsid="00248e47"/>
-  </style:style>
-  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
-   <style:paragraph-properties style:page-number="auto"/>
-   <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
   </style:style>
   <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
    <style:text-properties officeooo:rsid="0022e9cc" officeooo:paragraph-rsid="0022e9cc"/>
@@ -373,10 +374,32 @@
    <style:text-properties officeooo:rsid="0022e9cc" officeooo:paragraph-rsid="00248e47"/>
   </style:style>
   <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="00248e47" officeooo:paragraph-rsid="00248e47"/>
+   <style:text-properties officeooo:rsid="0027f53a" officeooo:paragraph-rsid="0027f53a"/>
   </style:style>
   <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="00283253" officeooo:paragraph-rsid="0028e2b7"/>
+  </style:style>
+  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+   <style:text-properties officeooo:paragraph-rsid="00283253"/>
+  </style:style>
+  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+   <style:text-properties officeooo:paragraph-rsid="0028e2b7"/>
+  </style:style>
+  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:text-properties officeooo:rsid="002632ee" officeooo:paragraph-rsid="002632ee"/>
+  </style:style>
+  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0028e2b7" officeooo:paragraph-rsid="0028e2b7"/>
+  </style:style>
+  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+   <style:paragraph-properties style:page-number="auto"/>
+   <style:text-properties officeooo:rsid="00206040" officeooo:paragraph-rsid="00206040"/>
+  </style:style>
+  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:text-properties officeooo:rsid="0028e2b7" officeooo:paragraph-rsid="0028e2b7"/>
+  </style:style>
+  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Footnote">
+   <style:text-properties officeooo:rsid="00248e47" officeooo:paragraph-rsid="00248e47"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties fo:color="#000000" style:font-name="Monaco" fo:font-size="10pt" style:font-size-asian="10pt"/>
@@ -387,10 +410,68 @@
   <style:style style:name="T3" style:family="text">
    <style:text-properties officeooo:rsid="00248e47"/>
   </style:style>
+  <style:style style:name="T4" style:family="text">
+   <style:text-properties officeooo:rsid="0027f53a"/>
+  </style:style>
+  <style:style style:name="T5" style:family="text">
+   <style:text-properties officeooo:rsid="0028e2b7"/>
+  </style:style>
   <style:style style:name="fr1" style:family="graphic" style:parent-style-name="Graphics">
    <style:graphic-properties style:wrap="left" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="from-top" style:vertical-rel="paragraph" style:horizontal-pos="from-left" style:horizontal-rel="paragraph" style:mirror="none" fo:clip="rect(0in, 0in, 0in, 0in)" draw:luminance="0%" draw:contrast="0%" draw:red="0%" draw:green="0%" draw:blue="0%" draw:gamma="100%" draw:color-inversion="false" draw:image-opacity="100%" draw:color-mode="standard"/>
   </style:style>
   <text:list-style style:name="L1">
+   <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="2" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="3" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="4" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="5" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="6" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="7" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="8" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="9" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="10" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-bullet>
+  </text:list-style>
+  <text:list-style style:name="L2">
    <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
@@ -454,15 +535,16 @@
   <style:master-page style:name="Standard" style:page-layout-name="pm1"/>
  </office:master-styles>
  <office:body>
-  <office:text>
+  <office:text text:use-soft-page-breaks="true">
+   <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
    <text:sequence-decls>
     <text:sequence-decl text:display-outline-level="0" text:name="Illustration"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Table"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
-   <text:p text:style-name="P17">DerbyNet Race Timer Operation</text:p>
-   <text:p text:style-name="P2"><draw:frame draw:style-name="fr1" draw:name="Image1" text:anchor-type="paragraph" svg:x="2.4791in" svg:y="-0.0634in" svg:width="4.9075in" svg:height="3.6866in" draw:z-index="0"><draw:image>
+   <text:p text:style-name="P26">DerbyNet Race Timer Operation</text:p>
+   <text:p text:style-name="P2"><draw:frame draw:style-name="fr1" draw:name="Image1" text:anchor-type="paragraph" svg:x="2.4791in" svg:y="-0.0634in" svg:width="4.9075in" svg:height="3.6866in" draw:z-index="0"><draw:image loext:mime-type="image/png">
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAxgAAAJTCAYAAACLlbB/AAC/6ElEQVR4nOzdB2ATZR8G8Cfd
        e0Gh7L2UvRVkiBtFcSPujQiouPeeuP0cgBNFwQ2K4mAjQxQQGbL3aoEWOuhKvvu/yYVryGyv
        bdo+v++LTXKXuzfXkrzPvePCQEREREREZJKwyi4AERERERFVHwwYRERERERkGgYMIiIiIiIy
@@ -1379,25 +1461,46 @@
     </draw:frame>DerbyNet communicates with your track timer through a small Java program, <text:span text:style-name="T3">derby-timer.jar,</text:span> that runs on whatever machine (typically laptop) your timer is connected to. <text:s text:c="2"/><text:span text:style-name="T3">derby-timer.jar can be launched by double-clicking (on most platforms), or from the command line. </text:span><text:s/><text:span text:style-name="T3">By default, derby-timer.jar puts up a simple user interface, seen here:</text:span></text:p>
    <text:p text:style-name="P3">The left side of the window controls the connection to the DerbyNet web server. <text:s/>If you run derby-timer.jar on the machine that is hosting your DerbyNet web server, enter localhost/derbynet as the server URL, and click “Connect.”</text:p>
    <text:p text:style-name="P3">The right side of the window controls the serial port connection to the timer device. <text:s/>derby-timer.jar will attempt to scan all available serial ports and identify the attached timer device. <text:s/>If this scan doesn’t successfully identify your timer, click on the correct serial port and timer device to force the choice. <text:s/>See also the “-d” and “-n” command-line options.</text:p>
-   <text:p text:style-name="P5">Presently, the following electronic timers are recognized:</text:p>
-   <text:list xml:id="list5215851650723173528" text:style-name="L1">
+   <text:p text:style-name="P5">Presently, the following electronic timers are <text:span text:style-name="T4">automatically detectable</text:span>:</text:p>
+   <text:list xml:id="list1731077118" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P18">Microwizard “Fast Track” Timer: <text:a xlink:type="simple" xlink:href="http://www.microwizard.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://www.microwizard.com</text:a></text:p>
+     <text:p text:style-name="P18">Microwizard “Fast Track” <text:span text:style-name="T4">K-Series </text:span>Timer: <text:a xlink:type="simple" xlink:href="http://www.microwizard.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://www.microwizard.com</text:a></text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P18">BestTrack “Champ” Timer: <text:a xlink:type="simple" xlink:href="http://www.besttrack.com/champ_timer.htm" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://www.besttrack.com/champ_timer.htm</text:a></text:p>
+     <text:p text:style-name="P18"><text:span text:style-name="T4">SmartLine / eTekGadget / </text:span>BestTrack “<text:span text:style-name="T4">The </text:span>Champ” Timer: <text:a xlink:type="simple" xlink:href="http://www.besttrack.com/champ_timer.htm" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://www.besttrack.com/champ_timer.htm</text:a></text:p>
     </text:list-item>
     <text:list-item>
      <text:p text:style-name="P19">“<text:span text:style-name="T3">The Judge:” </text:span><text:a xlink:type="simple" xlink:href="http://www.newdirections.ws/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">http://www.newdirections.ws</text:span></text:a></text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P20">NewBold DT, TURBO, or DerbyStick (untested)<text:note text:id="ftn1" text:note-class="footnote"><text:note-citation>1</text:note-citation><text:note-body>
-        <text:p text:style-name="P16"><text:s/>If you have access to one of these devices, please get in touch! <text:s/></text:p></text:note-body></text:note></text:p>
+     <text:p text:style-name="P20">MiscJunk PDT<text:span text:style-name="T3"> (http://www.miscjunk.org/mj/pg_pdt.html)</text:span></text:p>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P8">For automation purposes, or for platforms that don’t support launching a jar file by double-clicking, derby-timer.jar can be launched from the command line:</text:p>
+   <text:list xml:id="list3513881458" text:style-name="L2">
+    <text:list-item>
+     <text:p text:style-name="P23"><text:span text:style-name="T3">Derby Timer: </text:span><text:a xlink:type="simple" xlink:href="https://derbytimer.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">https://derbytimer.com</text:span></text:a></text:p>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P21">Additionally, these timers are compatible, but <text:span text:style-name="T5">can’t be automatically discovered. <text:s/>Instead, they </text:span>must be manually specified on the command line:</text:p>
+   <text:list xml:id="list173830601523237" text:continue-numbering="true" text:style-name="L2">
+    <text:list-item>
+     <text:p text:style-name="P22"><text:span text:style-name="T3">Microwizard Fast Track P-Series: </text:span><text:a xlink:type="simple" xlink:href="http://www.microwizard.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">http://www.microwizard.com</text:span></text:a></text:p>
+    </text:list-item>
+    <text:list-item>
+     <text:p text:style-name="P23"><text:span text:style-name="T3">NewBold DT, TURBO, or DerbyStick (untested)</text:span><text:span text:style-name="T3"><text:note text:id="ftn1" text:note-class="footnote"><text:note-citation>1</text:note-citation><text:note-body>
+         <text:p text:style-name="P17"><text:s/>If you have access to one of these devices, please get in touch! <text:s/></text:p></text:note-body></text:note></text:span><text:span text:style-name="T3">: </text:span><text:a xlink:type="simple" xlink:href="http://www.pinewood-derby-timer.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">http://www.pinewood-derby-timer.com</text:span></text:a></text:p>
+    </text:list-item>
+    <text:list-item>
+     <text:p text:style-name="P23"><text:span text:style-name="T3">Derby Magic timer: </text:span><text:a xlink:type="simple" xlink:href="http://www.derbymagic.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T3">http://www.derbymagic.com</text:span></text:a></text:p>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P8"><text:soft-page-break/>For automation purposes, or for platforms that don’t support launching a jar file by double-clicking, derby-timer.jar can be launched from the command line:</text:p>
    <text:p text:style-name="Command_20_Line">java -jar derby-timer.jar –help</text:p>
-   <text:p text:style-name="P21">(Note that, when run from the command line, it’s possible to suppress the user interface and run derby-timer.jar completely headless.)</text:p>
+   <text:p text:style-name="P9">(Note that, when run from the command line, it’s possible to suppress the user interface and run derby-timer.jar completely headless.)</text:p>
+   <text:p text:style-name="P25">For a compatible but not discoverable timer, you must identify the timer and the port from the command line, e.g.,</text:p>
+   <text:p text:style-name="P27">java -jar derby-timer.jar -n /dev/usb.serial -d OlderFastTrackDevice</text:p>
+   <text:p text:style-name="P25">Use the –help option to see a list of known devices; choose the name the corresponds to your timer.</text:p>
+   <text:p text:style-name="P25"/>
   </office:text>
  </office:body>
 </office:document>
