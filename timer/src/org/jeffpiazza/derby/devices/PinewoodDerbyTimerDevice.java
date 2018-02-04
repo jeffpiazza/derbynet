@@ -86,7 +86,7 @@ public class PinewoodDerbyTimerDevice extends TimerDeviceTypical {
     }
 
     // Powerup "P" response is unique on USB port reset
-    portWrapper.write("\r");
+    portWrapper.write("G");
     long deadline = System.currentTimeMillis() + 500;
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
@@ -96,7 +96,7 @@ public class PinewoodDerbyTimerDevice extends TimerDeviceTypical {
         return true;
       }
     }
-    return false;
+    return true;
   }
 
   private static final Pattern readyNLanesPattern = Pattern.compile(
