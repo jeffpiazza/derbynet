@@ -1,5 +1,6 @@
 <?php @session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);
@@ -20,17 +21,16 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/class-editor.js"></script>
 <script type="text/javascript">
+function group_label() { return <?php echo json_encode(group_label()); ?>; }
+function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>; }
 $(function() { show_class_editor_modal(); });
 </script>
 </head>
 <body>
-<?php $banner_title = group_label().' Editor'; require('inc/banner.inc'); ?>
-<!--
-<div class="block_buttons">
-  <input type="button" data-enhanced="true" value="Edit <?php echo group_label(); ?>s"
-         onclick="show_class_editor_modal();"/>
-</div>
--->
+<?php
+  // Since the back button is always obscured, the back button setting doesn't
+  // really have much effect.
+make_banner(group_label().' Editor', 'setup.php'); ?>
 
 <div id="class_editor_modal" class="modal_dialog hidden block_buttons">
   <form>
@@ -70,10 +70,19 @@ $(function() { show_class_editor_modal(); });
   <form>
     <input id="edit_class_name" name="name" type="text"/>
 
-    <input type="submit" data-enhanced="true"/>
+    <div id="completed_rounds_extension">
+      <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>
+    </div>
 
+    <input type="submit" data-enhanced="true"/>
     <input type="button" value="Cancel" data-enhanced="true"
            onclick="close_edit_one_class_modal();"/>
+
+    <div id="delete_button_extension">
+    <input type="button" value="Delete <?php echo group_label(); ?>"
+           class="delete_button" data-enhanced="true"
+           onclick="handle_delete_class();"/>
+    </div>
   </form>
 </div>
 

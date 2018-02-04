@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <?php
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 ?><!DOCTYPE html>
@@ -21,7 +22,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Race Dashboard'; require('inc/banner.inc'); ?>
+<?php make_banner('Race Dashboard'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
 <div class="double_control_column">
@@ -29,6 +30,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <p>Waiting for poll.coordinator query...</p>
   </div>
 </div>
+
+<div class="control_column_container">
 
 <div class="control_column">
 
@@ -92,6 +95,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <div id="ready-to-race-group" class="scheduling_control_group"></div>
   <div id="not-yet-scheduled-group" class="scheduling_control_group"></div>
   <div id="done-racing-group" class="scheduling_control_group"></div>
+
+</div>
 
 </div>
 

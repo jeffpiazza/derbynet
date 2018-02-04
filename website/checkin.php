@@ -1,8 +1,10 @@
 <?php @session_start(); ?>
 <?php
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/photo-config.inc');
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // This is the racer check-in page.  It appears as a table of all the
@@ -60,6 +62,7 @@ function column_header($text, $o) {
 <meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -71,12 +74,12 @@ g_order = '<?php echo $order; ?>';
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/webcam.js"></script>
+<script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
 <?php
-$banner_title = 'Racer Check-In';
-require('inc/banner.inc');
+make_banner('Racer Check-In');
 
 require_once('inc/checkin-table.inc');
 ?>
@@ -112,6 +115,7 @@ require_once('inc/checkin-table.inc');
 <?php
 
     $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+      .(schema_version() < 2 ? "" : " carphoto,")
       .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
@@ -209,12 +213,23 @@ foreach ($stmt as $rs) {
 </form>
 </div>
 
-<div id='racer_photo_modal' class="modal_dialog hidden block_buttons">
-  <form>
-    <h3>Capture photo for <span id="racer_photo_name"></span></h3>
+<div id='photo_modal' class="modal_dialog hidden block_buttons">
+  <form id="photo_drop" class="dropzone">
+    <input type="hidden" name="action" value="photo.upload"/>
+    <input type="hidden" id="photo_modal_repo" name="repo"/>
+    <input type="hidden" id="photo_modal_racerid" name="racerid"/>
+    <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
+
+    <h3>Capture <span id="racer_photo_repo"></span> photo for <span id="racer_photo_name"></span></h3>
     <div id="preview">
         <h2>Does your browser support webcams?</h2>
     </div>
+
+    <?php
+      if (headshots()->status() != 'ok') {
+        echo '<p class="warning">Check <a href="settings.php">photo directory settings</a> before proceeding!</p>';
+      }
+    ?>
 
     <div class="block_buttons">
         <input type="submit" value="Capture &amp; Check In" data-enhanced="true" id="capture_and_check_in"
@@ -223,14 +238,14 @@ foreach ($stmt as $rs) {
         <input type="submit" value="Capture Only" data-enhanced="true"
           onclick='g_check_in = false;'/>
         <input type="button" value="Cancel" data-enhanced="true"
-          onclick='close_racer_photo_modal();'/>
+          onclick='close_photo_modal();'/>
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
-          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"
-    />
+          <input type="checkbox" data-role="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
         </div>
     </div>
+    <div class="dz-message"><span>NOTE: You can drop a photo here to upload instead</span></div>
   </form>
 </div>
 

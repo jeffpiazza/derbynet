@@ -14,3 +14,19 @@ exports.equal = function(expect, actual) {
     phantom.exit(1);
   }
 };
+
+exports.notEqual = function(expect, actual) {
+  if (expect == actual) {
+    console.log("Expected notEqual: " + actual);
+    phantom.exit(1);
+  }
+};
+
+exports.includes = function(needle, haystack) {
+  if (haystack.indexOf(needle) < 0) {
+    console.log("Actual: " + haystack);
+    console.log("Expected to contain " + needle);
+    phantom.exit(1);
+  }
+};
+

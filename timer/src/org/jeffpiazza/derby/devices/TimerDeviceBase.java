@@ -36,8 +36,8 @@ public abstract class TimerDeviceBase implements TimerDevice {
     this.heat = heat;
   }
 
-  // Returns true if we've had any response recently, otherwise invokes
-  // malfunction callback and returns false.
+  // Checks if we've had any response recently; if not, invokes
+  // malfunction callback.
   protected void checkConnection() throws LostConnectionException {
     if (portWrapper.millisSinceLastContact() > 2000) {
       throw new LostConnectionException();
@@ -99,8 +99,8 @@ public abstract class TimerDeviceBase implements TimerDevice {
     try {
       portWrapper.closePort();
     } catch (SerialPortException ex) {
-      Logger.getLogger(TimerDeviceBase.class.getName()).log(Level.SEVERE, null,
-                                                            ex);
+      Logger.getLogger(TimerDeviceBase.class.getName())
+          .log(Level.SEVERE, null, ex);
     }
   }
 }

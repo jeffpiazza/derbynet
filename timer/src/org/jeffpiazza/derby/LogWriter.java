@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jeffpiazza.derby.devices.SimulatedDevice;
 
 // TODO: Suppress heartbeats with uninteresting responses
 public class LogWriter implements HttpTask.MessageTracer {
@@ -44,6 +45,7 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   private static final char HTTP_LOG = 'H';
   private static final char SERIAL_PORT_LOG = 'S';
+  private static final char SIMULATION_LOG = '*';
 
   public void serialPortLog(int direction, String msg) {
     if (writer != null) {
@@ -69,6 +71,14 @@ public class LogWriter implements HttpTask.MessageTracer {
     }
   }
 
+  public void simulationLog(String msg) {
+    System.out.println();
+    System.out.println(msg);
+    if (writer != null) {
+      writer.println("\n+" + Timestamp.brief()+ SIMULATION_LOG + "\t" + msg);
+    }
+  }
+
   public void onMessageSend(Message m, String params) {
     httpLog(OUTGOING, m.asParameters());
   }
@@ -85,5 +95,26 @@ public class LogWriter implements HttpTask.MessageTracer {
     if (writer != null) {
       t.printStackTrace(writer);
     }
+  }
+
+  public static String laneMaskString(int laneMask, int nlanes) {
+    int lane_count = nlanes;
+    if (nlanes == 0) {
+      lane_count = 32 - Integer.numberOfLeadingZeros(laneMask);
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append('[');
+    for (int lane = 0; lane < lane_count; ++lane) {
+      if (lane > 0) {
+        sb.append(' ');
+      }
+      if ((laneMask & (1 << lane)) != 0) {
+        sb.append(1 + lane);
+      } else {
+        sb.append('-');
+      }
+    }
+    sb.append(']');
+    return sb.toString();
   }
 }

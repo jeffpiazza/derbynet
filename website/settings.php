@@ -1,9 +1,10 @@
 <?php session_start();
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
-require_once('inc/default-file-path.inc');
+require_once('inc/default-database-directory.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -23,12 +24,14 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/chooser.js"></script>
 <script type="text/javascript" src="js/settings.js"></script>
 <script type="text/javascript">
+// Returns a string identifying the directory at which browsing for photo
+// directories should start.  See js/settings.js' browse_for_photo_directory().
 function photo_directory_base() {
   <?php
   if (isset($db_connection_string) && substr($db_connection_string, 0, 7) == 'sqlite:') {
     echo 'return '.json_encode(substr($db_connection_string, 7)).';';
   } else {
-    $default_path = default_file_path();
+    $default_path = default_database_directory();
     if (!empty($default_path)) {
       echo 'return '.json_encode($default_path.DIRECTORY_SEPARATOR).';';
     } else {
@@ -41,8 +44,7 @@ function photo_directory_base() {
 </head>
 <body>
 <?php
-$banner_title = 'Settings';
-require('inc/banner.inc');
+make_banner('Settings', 'setup.php');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $use_xbs = read_raceinfo_boolean('xbs-award');
@@ -50,6 +52,9 @@ $xbs_award = read_raceinfo('xbs-award');
 if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos');
+$show_car_photos_on_deck = read_raceinfo_boolean('show-cars-on-deck');
+$show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
+$show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
 ?>
 
@@ -118,14 +123,19 @@ $locked_settings = locked_settings();
 
     <div class="settings_group_settings">
       <p>
-        <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" data-enhanced="true"
-               value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
-        <label for="n-den">Number of trophies per <?php echo group_label_lc(); ?></label>
-      </p>
-      <p>
         <input id="n-pack" name="n-pack-trophies" type="number" min="0" max="20" data-enhanced="true"
                value="<?php echo read_raceinfo('n-pack-trophies', 3); ?>"/>
-        <label for="n-pack">Number of trophies for the <?php echo supergroup_label_lc(); ?></label>
+        <label for="n-pack">Number of speed trophies at the <?php echo supergroup_label_lc(); ?> level</label>
+      </p>
+      <p>
+        <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" data-enhanced="true"
+               value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
+        <label for="n-den">Number of speed trophies per <?php echo group_label_lc(); ?></label>
+      </p>
+      <p>
+        <input id="n-rank" name="n-rank-trophies" type="number" min="0" max="20" data-enhanced="true"
+               value="<?php echo read_raceinfo('n-rank-trophies', 0); ?>"/>
+        <label for="n-pack">Number of speed trophies per <?php echo subgroup_label_lc(); ?></label>
       </p>
       <p>
         <input type="hidden" name="use-xbs-checkbox" value="yes"/>
@@ -173,6 +183,24 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         <input id="show-racer-photos" name="show-racer-photos" data-enhanced="true"
                type="checkbox"<?php if ($show_racer_photos) echo ' checked="checked"';?>/>
         <label>Show racer photos on main racing board</label>
+      </p>
+      <p>
+        <input type="hidden" name="show-car-photos-on-deck-checkbox" value="yes"/>
+        <input id="show-car-photos-on-deck" name="show-car-photos-on-deck" data-enhanced="true"
+               type="checkbox"<?php if ($show_car_photos_on_deck) echo ' checked="checked"';?>/>
+        <label>Show car photos in on-deck display</label>
+      </p>
+      <p>
+        <input type="hidden" name="show-racer-photos-rr-checkbox" value="yes"/>
+        <input id="show-racer-photos-rr" name="show-racer-photos-rr" data-enhanced="true"
+               type="checkbox"<?php if ($show_racer_photos_rr) echo ' checked="checked"';?>/>
+        <label>Show racer photos in racer-results display</label>
+      </p>
+      <p>
+        <input type="hidden" name="show-car-photos-rr-checkbox" value="yes"/>
+        <input id="show-car-photos-rr" name="show-car-photos-rr" data-enhanced="true"
+               type="checkbox"<?php if ($show_car_photos_rr) echo ' checked="checked"';?>/>
+        <label>Show car photos in racer-results display</label>
       </p>
 
       <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo'); ?>

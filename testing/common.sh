@@ -1,4 +1,11 @@
 #! /bin/bash
+#
+# Set environment variable PASSWORDS_FILE to point to a file containing, e.g.,
+#
+#RaceCoordinator:doyourbest
+#RaceCrew:murphy
+#
+#
 
 if [ "$BASE_URL" = "" ]; then
 	echo Base URL required!

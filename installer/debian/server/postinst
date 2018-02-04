@@ -1,0 +1,65 @@
+#! /bin/sh
+
+MAX_UPLOAD_SIZE=8M
+
+if [ -f /etc/os-release ] ; then
+    . /etc/os-release
+elif [ -f /usr/lib/os-release ] ; then
+    . /usr/lib/os-release
+else
+    ID=linux
+fi
+
+######## Create /var/lib/derbynet directory, for storing race information
+
+mkdir -m 777 /var/lib/derbynet 2>/dev/null || true
+
+######## Create local directory, point to /var/lib/derbynet
+
+mkdir -m 777 /var/www/html/derbynet/local 2>/dev/null || true
+
+# V2.0 didn't include JUDGING_PERMISSION for race crew in the default
+# config-roles file.  Delete and recreate the config-roles file.
+test -e /var/www/html/derbynet/local/config-roles.inc && \
+grep -q -v JUDGING_PERMISSION /var/www/html/derbynet/local/config-roles.inc && \
+    sed -i.bak -e 's/ASSIGN_RACER_IMAGE_PERMISSION/ASSIGN_RACER_IMAGE_PERMISSION | JUDGING_PERMISSION/' \
+        /var/www/html/derbynet/local/config-roles.inc
+
+cat <<EOF >/var/www/html/derbynet/local/default-file-path.inc
+<?php
+\$default_file_path = "/var/lib/derbynet";
+?>
+EOF
+
+######## PHP config
+
+if [ -e /etc/php5 ] ; then
+    sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" /etc/php5/fpm/php.ini
+    echo Restarting php5-fpm
+    service php5-fpm restart
+else
+    sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" \
+        `find /etc/php -name php.ini`
+    for SVC in  `find /etc/init.d -name php\* -exec basename {} \;` ; do
+        echo Restarting $SVC
+        service $SVC restart
+    done
+fi
+
+######### Update derbynet location snippet to match PHP version
+
+VAR_RUN=`readlink /var/run`
+SOCKET=`find "$VAR_RUN" -name \*fpm.sock`
+sed -i -e"s#/var/run/php5-fpm.sock#$SOCKET#" /etc/nginx/derbynet/location.snippet
+
+######### Add derbynet location clause if not already there
+
+grep derbynet /etc/nginx/sites-available/default >/dev/null 2>&1 || \
+sed -i -e '/^[ \t]*location \/ {/ i\
+\tinclude derbynet/location.snippet; \
+
+' /etc/nginx/sites-available/default
+
+######## Restart
+
+nginx -s reload

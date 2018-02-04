@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>DerbyNet Software</title>
-    <script type="text/javascript" src="js/jquery.js"></script>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<title>DerbyNet Software</title>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
-    <style>
-      h1 {
-          margin-top: 80px;
-          font-size: 120px;
-          font-weight: bold;
-          text-align: center;
-      }
+<style>
+p {
+    font-size: 40px;
+    text-align: center;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="css/big-logo.css"/>
+</head>
+<body>
+<?php
+require_once('inc/banner.inc');
+make_banner('DerbyNet', /* back_button */ false);
+?>
 
-      p {
-        font-size: 80px;
-        text-align: center;
-      }
-    </style>
-  </head>
+  <div class="full_page_center">
+    <p id="screensize"></p>
+    <div class="logo-frame">
+      <img class="big-logo" src="img/derbynet-300.png"/>
+    </div>
+  </div>
 
-  <body>
-    <h1>DerbyNet</h1>
+    <p>Open-Source<br/> Pinewood Derby Race Management Software</p>
 
-    <p>Open-Source Pinewood Derby Race Management Software</p>
-
-    <p>    <img style="float: left; vertical-align: middle;" src="img/qr-code-derbynet.jpg"/>
- Download for Free:</p>
-
-    <p><a href="http://jeffpiazza.github.io/derbynet/">http://jeffpiazza.github.io/derbynet/</a></p>
-
-
-  </body>
+  <p>Download for Free:
+  <a
+  href="https://github.com/search?q=derbynet">https://github.com/search?q=derbynet</a>
+  </p>
+</body>
 </html>

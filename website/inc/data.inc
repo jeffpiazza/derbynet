@@ -7,7 +7,7 @@ try {
 
 if (!isset($db)) {
   $_SESSION['setting_up'] = 1;
-  header('Location: database-setup.php');
+  header('Location: setup.php');
   exit();
 }
 
@@ -53,13 +53,8 @@ function inner_join() {
   return $expr;
 }
 
-function sql_file_path($stem) {
-  global $dbtype;
-  return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
-}
-
 // Returns row with only numbered array elements
-function read_single_row($sql, $params) {
+function read_single_row($sql, $params = array()) {
   global $db;
   $rs = $db->prepare($sql);
   $rs->execute($params);
@@ -68,7 +63,7 @@ function read_single_row($sql, $params) {
   return $row;
 }
 
-function read_single_value($sql, $params, $def = false) {
+function read_single_value($sql, $params = array(), $def = false) {
   $row = read_single_row($sql, $params);
   if ($row === false || $row[0] === null) {
 	return $def;

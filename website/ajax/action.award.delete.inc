@@ -1,11 +1,13 @@
 <?php   // awardid
+require_once('inc/awards-xml.inc');
+
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
   try {
     $stmt = $db->prepare('DELETE FROM Awards WHERE awardid = :awardid');
     if ($stmt->execute(array(':awardid' => $_POST['awardid']))) {
       echo "<success/>\n";
-      require('ajax/query.award.list.inc');
+      emit_award_list(/* include_ad_hoc */ false);
     } else {
       echo "<failure/>\n";
     }

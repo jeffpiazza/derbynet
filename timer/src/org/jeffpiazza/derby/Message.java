@@ -32,7 +32,7 @@ public interface Message {
       return "message=IDENTIFIED&lane_count=" + nlanes;
     }
   }
-  
+
   public static class Started implements Message {
     public String asParameters() {
       return "message=STARTED";
@@ -60,7 +60,11 @@ public interface Message {
       sb.append("&heat=").append(heat);
       for (int i = 0; i < results.length; ++i) {
         if (results[i] != null) {
-          sb.append("&lane").append(i + 1).append("=").append(results[i].time);
+          String time = results[i].time;
+          if (time == null) {
+            time = "9.9999";
+          }
+          sb.append("&lane").append(i + 1).append("=").append(time);
           if (results[i].place != 0) {
             sb.append("&place").append(i + 1).append("=").append(results[i].place);
           }

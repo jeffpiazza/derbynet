@@ -115,7 +115,7 @@ function notice_change_current_tbody(tbodyid, round, classname) {
 // Looking for the #heat_{roundid}_{heat} row, if there is one.  (ondeck, but
 // not racer-results.)  Even if we're using master scheduling, the row will be
 // labeled with roundid, not tbodyid.
-function notice_change_current_heat(roundid, heat) {
+function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
   // Scroll if necessary to see the heat AFTER current heat, but only if the
   // previously-current heat was visible.
   if (roundid != g_update_status.current.roundid ||
@@ -127,7 +127,10 @@ function notice_change_current_heat(roundid, heat) {
 	curheat.removeClass("curheat");
 	curheat = $("#heat_" + roundid + "_" + heat);
 	curheat.addClass("curheat");
-	var nextheat = $("#heat_" + roundid + "_" + (parseInt(heat) + 1));
+    $(".nextheat").removeClass("nextheat");
+
+    var nextheat = $("#heat_" + next_roundid + "_" + next_heat);
+    nextheat.addClass("nextheat");
 	if (!nextheat[0]) {
 	  nextheat = curheat;
 	}
@@ -181,13 +184,16 @@ function process_response_from_current(summary) {
     return;
   }
 
+  var next_heat_xml = summary.getElementsByTagName("next-heat")[0];
+
   process_new_schedules(summary.getElementsByTagName("has_new_schedule"),
                         0,
                         function () {
                           notice_change_current_tbody(current.tbodyid, current.round,
                                                       current.classname);
-                          notice_change_current_heat(current.roundid, current.heat);
-
+                          notice_change_current_heat(current.roundid, current.heat,
+                                                     next_heat_xml ? next_heat_xml.getAttribute("roundid") : 0,
+                                                     next_heat_xml ? next_heat_xml.getAttribute("heat") : 0);
                           process_update_elements(summary.getElementsByTagName("update"));
 
                           g_update_status.last_update_time = high_water.getAttribute("completed");
@@ -203,6 +209,8 @@ function is_visible(el) {
 }
 
 
+// If passed-in DOM element is below the viewport, then scrolls the viewport so
+// the element is vertically centered on the display.
 function scroll_to_current(el) {
   var rect = el.getBoundingClientRect();
   var w = $(window).height();
@@ -226,7 +234,6 @@ function start_polling() {
                    high_water_resultid: g_update_status.high_water_resultid,
                    merge_rounds: g_update_status.merge_rounds},
             success: function(data) {
-              console.log(data);
               process_response_from_current(data);
             }
            });

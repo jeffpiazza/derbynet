@@ -27,7 +27,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
         while ((line = reader.readLine()) != null) {
           if ((line.length() > 0) && (line.charAt(0) == '#')) {
             line = line.trim();
-            if (!line.startsWith("##")) {
+            if (line.startsWith("##")) {
               continue;
             }
           } else {
@@ -55,6 +55,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
         try {
           for (;;) {
             Thread.sleep(1000L);
+            noticeContact();
             pushMessages();
           }
         } catch (Throwable t) {
@@ -71,7 +72,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
   }
 
   private int plus1(int pc) {
-
+    ++pc;
     if (pc >= program.length) {
       pc = 0;
     }
@@ -106,7 +107,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
   }
 
   public void writeStringToPort(String s) throws SerialPortException {
-    Integer response = (Integer) commands_responses.get(s);
+    Integer response = commands_responses.get(s);
     if (response != null) {
       System.out.println(
           "Response for [[" + s + "]] is " + response);

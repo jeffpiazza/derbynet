@@ -765,89 +765,94 @@ function offer_new_rounds(rounds) {
 }
 
 function process_coordinator_poll_response(data) {
-    var timer_state = parse_timer_state(data);
-    var current = parse_current_heat(data);
-    if (!current) {
-        console.log("Returning early because no current heat");
-        return;
-    }
-    $("#now-racing-group-buttons").empty();
-    update_for_current_round(current);
+  var timer_state = parse_timer_state(data);
+  var current = parse_current_heat(data);
+  if (!current) {
+    console.log("Returning early because no current heat");
+    return;
+  }
+  $("#now-racing-group-buttons").empty();
+  update_for_current_round(current);
 
-    var rounds = parse_rounds(data);
+  var rounds = parse_rounds(data);
 
-    offer_new_rounds(rounds);
+  offer_new_rounds(rounds);
 
+  if (current.master_schedule && $("#master-schedule-group .control_group").length == 0) {
     $("#master-schedule-group").empty();
-    if (current.master_schedule) {  // TODO: Consolidate with generate_scheduling_round_group?
-        var totals = calculate_totals(rounds);
-        totals.roundid = -1;
-        totals.classname = "Master Schedule";
-        totals.category = "master-schedule";
+    var totals = calculate_totals(rounds);
+    totals.roundid = -1;
+    totals.classname = "Master Schedule";
+    totals.category = "master-schedule";
 
-        generate_scheduling_control_group(totals, current, timer_state);
+    generate_scheduling_control_group(totals, current, timer_state);
+  } else if (!current.master_schedule) {
+    $("#master-schedule-group").empty();
+  }
+
+  var layout = {'now-racing': [],
+                'ready-to-race': [],
+                'done-racing': [],
+                'not-yet-scheduled': []};
+  $.each(rounds, function (index, round) {
+    if (round.roundid == current.roundid) {
+      current.heats_scheduled = round.heats_scheduled;
+      round.category = 'now-racing';
     }
+    layout[round.category].push(round.roundid);
+  });
 
-    var layout = {'now-racing': [],
-                  'ready-to-race': [],
-                  'done-racing': [],
-                  'not-yet-scheduled': []};
+  // matched will be true if the number and order of rounds hasn't
+  // changed from what's displayed.
+  var matched = true;
+  for (var key in layout) {
+    if (layout[key].toString() != g_rounds_layout[key].toString()) {
+      matched = false;
+    }
+  }
+
+  if (matched) {
+    // TODO Want to remove everything except data-name="buttons"
+    $("#now-racing-group .heat-lineup *").remove();
     $.each(rounds, function (index, round) {
-        if (round.roundid == current.roundid) {
-            current.heats_scheduled = round.heats_scheduled;
-            round.category = 'now-racing';
-        }
-        layout[round.category].push(round.roundid);
+      inject_into_scheduling_control_group(round, current, timer_state);
     });
+  } else {
+    g_rounds_layout = layout;
+    $(".scheduling_control_group").empty();
+    $.each(rounds, function (index, round) {
+      generate_scheduling_control_group(round, current, timer_state);
+    });
+  }
 
-    // matched will be true if the number and order of rounds hasn't
-    // changed from what's displayed.
-    var matched = true;
-    for (var key in layout) {
-        if (layout[key].toString() != g_rounds_layout[key].toString()) {
-            matched = false;
-        }
-    }
+  generate_timer_state_group(timer_state);
 
-    if (matched) {
-        // TODO Want to remove everything except data-name="buttons"
-        $("#now-racing-group .heat-lineup *").remove();
-        $.each(rounds, function (index, round) {
-            inject_into_scheduling_control_group(round, current, timer_state);
-        });
-    } else {
-        g_rounds_layout = layout;
-        $(".scheduling_control_group").empty();
-        $.each(rounds, function (index, round) {
-            generate_scheduling_control_group(round, current, timer_state);
-        });
-    }
-
-    generate_timer_state_group(timer_state);
-
-    generate_replay_state_group(parse_replay_state(data));
+  generate_replay_state_group(parse_replay_state(data));
 
   generate_current_heat_racers(parse_racers(data), current);
 
   // Hide the control group if there's nothing to show
   $("#supplemental-control-group").toggleClass("hidden",
-                                                $("#add-new-rounds-button").hasClass("hidden") &&
-                                                $("#now-racing-group-buttons").is(":empty"));
+                                               $("#add-new-rounds-button").hasClass("hidden") &&
+                                               $("#now-racing-group-buttons").is(":empty"));
 }
 
 function coordinator_poll() {
+  if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
     $.ajax(g_action_url,
            {type: 'GET',
             data: {query: 'poll.coordinator'},
             success: function(data) {
-                setTimeout(coordinator_poll, 2000);
-                process_coordinator_poll_response(data);
+              process_coordinator_poll_response(data);
             },
-            error: function() {
-                setTimeout(coordinator_poll, 2000);
-            }
            });
+  } else {
+    console.log("NOT polling");
+  }
 }
 
 
-$(function() { coordinator_poll(); });
+$(function() {
+  setInterval(coordinator_poll, 2000);
+  coordinator_poll();
+});

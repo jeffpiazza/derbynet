@@ -2,10 +2,10 @@
 
 if (have_permission(EDIT_RACER_PERMISSION)) {
   $racerid = $_POST['racer'];
-  $firstname = $_POST['firstname'];
-  $lastname = $_POST['lastname'];
-  $carno = $_POST['carno'];
-  $carname = $_POST['carname'];
+  $firstname = trim($_POST['firstname']);
+  $lastname = trim($_POST['lastname']);
+  $carno = trim($_POST['carno']);
+  $carname = trim($_POST['carname']);
   $rankid = $_POST['rankid'];
   $classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
                                array(':rankid' => $rankid));

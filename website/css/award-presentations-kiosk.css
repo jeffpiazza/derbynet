@@ -1,0 +1,52 @@
+
+p.award-racer {
+    line-height: 0.4;
+}
+
+.award-racer .firstname,
+.award-racer .lastname {
+    font-weight: bold;
+}
+
+#photos {
+    width: 100%;
+}
+
+.award-racer-photo {
+    float: left;
+}
+
+.award-racer-photo img {
+    margin-left: 100px;
+/* Set by javascript    max-height: 90%; */
+    max-width: 90%;
+}
+
+.award-car-photo {
+    float: right;
+}
+
+.award-car-photo img {
+    /* Set by javascript max-height: 90%; */
+    max-width: 90%;
+}
+
+.award-background {
+    color: #003882;
+    font-size: 80px;
+    text-align: center;
+    clear: both;
+}
+
+.award-trophy {
+    margin-top: 80px;
+    font-size: 100px;
+    font-weight: bold;
+    max-height: 156px;
+}
+
+#carname {
+    font-style: italic;
+}
+
+.fade-in {  display: none;  }

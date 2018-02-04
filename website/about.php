@@ -5,6 +5,7 @@
 require_once('inc/authorize.inc');
 // Note that schema_version doesn't load data.inc
 require_once('inc/schema_version.inc');
+require_once('inc/banner.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -33,11 +34,30 @@ require_once('inc/schema_version.inc');
 .phpinfo .vr {background-color: #cccccc; text-align: right; color: #000000;}
 .phpinfo img {float: right; border: 0px;}
 .phpinfo hr {width: 600px; background-color: #cccccc; border: 0px; height: 1px; color: #000000;}
+
+.main-body {
+  margin-right: 350px;
+}
+
+.capture-link {
+  position: absolute;
+  top: 100px;
+  right: 50px;
+  height: 50px;
+  width: 250px;
+  padding-top: 30px;
+  text-align: center;
+  background-color: #408040;
+}
+.capture-link a {
+  color: white;
+}
 </style>
 
 </head>
 <body>
-<?php $banner_title = 'About DerbyNet'; require('inc/banner.inc'); ?>
+<?php make_banner('About DerbyNet'); ?>
+<div class="main-body">
 <h1>About DerbyNet</h1>
 
 <p></p>
@@ -130,12 +150,20 @@ if (isset($db)) {
     $rs->closeCursor();
     $schema_version = $row === false ? false : $row[0];
     echo '<p>Schema version '.$schema_version.' (expecting version '.expected_schema_version().')</p>'."\n";
+
+    if (have_permission(SET_UP_PERMISSION)) {
+      echo "<p class='capture-link'><a download='derbynet-".date('Ymd-His').".xml'"
+           ." href='action.php?query=snapshot.get'>Download Database Snapshot</a></p>\n";
+    }
+
   } catch (PDOException $p) {
     echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
   }
 }
 ?>
 <h4>PHP Configuration Information</h4>
+</div>
+
 <div class="phpinfo">
 <?php
 ob_start();

@@ -8,12 +8,11 @@
 
 var KioskPoller = (function(KioskPoller) {
 
-  KioskPoller.param_callback = function(param_string) {
+  KioskPoller.param_callback = function(parameters) {
     // console.log("Params: " + param_string);
   };
   
   KioskPoller.start = function(address, kiosk_page) {
-    console.log("KioskPoller: " + address + " " + kiosk_page);
     setInterval(function() {
       $.ajax('action.php',
              {type: 'GET',
@@ -35,7 +34,11 @@ var KioskPoller = (function(KioskPoller) {
                   location.reload(true);
                   return;
                 }
-                KioskPoller.param_callback(data.documentElement.getAttribute("params"));
+                var params_string = data.documentElement.getAttribute("params");
+                if (params_string == '') {
+                  params_string = '{}';
+                }
+                KioskPoller.param_callback(JSON.parse(params_string));
               }
              });
     }, 5000);

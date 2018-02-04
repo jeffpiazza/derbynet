@@ -18,7 +18,7 @@
      <os family="windows"/>
    </condition>
 
-   <target name="dist" depends="installation, after-installation, operation">
+   <target name="dist" depends="installation, after-installation, operation, advanced-topics">
    </target>
 
    <target name="make-dist-dir">
@@ -30,22 +30,30 @@
    <macrodef name="make-pdf">
        <attribute name="file"/>
        <sequential>
-         <exec executable="${soffice}">
-	   <!-- This UserInstallation variable avoids any conflict with another
-		running LibreOffice on Mac, but doesn't seem to work on
-		Windows. -->
-           <arg unless:set="is_windows"
-		value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
-           <arg value="--headless"/>
-           <arg value="--convert-to"/>
-           <arg value="pdf:writer_pdf_Export"/>
-           <arg value="--outdir"/>
-           <arg value="${dist}"/>
-           <arg value="@{file}"/>
-         </exec>
+           <local name="pdf.uptodate"/>
+
+           <uptodate property="pdf.uptodate" srcfile="@{file}">
+               <mapper type="regexp" from="^(.*)/(.*)\.fodt$" to="\1/dist/\2.pdf"/>
+           </uptodate>
+
+           <echo if:true="${pdf.uptodate}">pdf for @{file} is up to date</echo>
+           
+           <exec executable="${soffice}" unless:true="${pdf.uptodate}">
+	           <!-- This UserInstallation variable avoids any conflict with another
+		            running LibreOffice on Mac, but doesn't seem to work on
+		            Windows. -->
+               <arg unless:set="is_windows"
+		            value="-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}"/>
+               <arg value="--headless"/>
+               <arg value="--convert-to"/>
+               <arg value="pdf:writer_pdf_Export"/>
+               <arg value="--outdir"/>
+               <arg value="${dist}"/>
+               <arg value="@{file}"/>
+           </exec>
        </sequential>
    </macrodef>
-
+   
  <target name="installation" depends="make-dist-dir">
      <make-pdf file="Installation- Debian.fodt"/>
      <make-pdf file="Installation- Mac.fodt"/>
@@ -53,23 +61,25 @@
  </target>
 
  <target name="after-installation" depends="make-dist-dir">
-     <make-pdf file="After Installation- SQLite.fodt"/>
-     <make-pdf file="After Installation- MySQL.fodt"/>
-     <make-pdf file="After Installation- Windows GPRM.fodt"/>
+     <make-pdf file="Advanced Database Set-Up for DerbyNet.fodt"/>
+     <make-pdf file="Sharing a Database With GPRM.fodt"/>
  </target>
 
  <target name="operation" depends="make-dist-dir">
      <make-pdf file="Default Roles and Passwords.fodt"/>
      <make-pdf file="Timer Operation.fodt"/>
      <make-pdf file="Running a Race with DerbyNet.fodt"/>
-     <make-pdf file="Running a Race with DerbyNet.fodt"/>
      <make-pdf file="Photo Upload Options.fodt"/>
  </target>
- 
-  <target name="clean"
+
+ <target name="advanced-topics" depends="make-dist-dir">
+     <make-pdf file="Developers- Replay Messages.fodt"/>
+ </target>
+
+ <target name="clean"
         description="clean up" >
     <!-- Delete the ${dist} directory tree -->
     <delete dir="${dist}"/>
-  </target>
+ </target>
 
 </project>

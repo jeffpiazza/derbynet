@@ -1,0 +1,271 @@
+<?php
+
+require_once('inc/parse-connection-string.inc');
+require_once('inc/default-database-directory.inc');
+require_once('inc/locked.inc');
+
+// Tests whether there are any tables defined in the database, for those
+// database types that we know how to test.
+function database_is_empty() {
+  global $db;
+  global $dbtype;
+  if (isset($db) && isset($dbtype)) {
+    try {
+      if ($dbtype == 'sqlite') {
+        if (read_single_value("SELECT COUNT(*) FROM sqlite_master"
+                              ." WHERE type='table'", array()) == 0) {
+          return true;
+        }
+      } else if ($dbtype == 'mysql') {
+        if (read_single_value("SELECT COUNT(DISTINCT table_name) FROM information_schema.columns"
+                              ." WHERE table_schema = database()", array()) == 0) {
+          return true;
+        }
+      }
+    } catch (PDOException $p) {
+    }
+  }
+
+  return false;
+}
+
+function connection_string_to_html($conn_string) {
+  $parsed = parse_connection_string($conn_string);
+  if ($parsed['scheme'] == 'sqlite') {
+    return "SQLITE: ".htmlspecialchars($parsed['sqlite_path'], ENT_QUOTES, 'UTF-8');
+  } else if ($parsed['scheme'] == 'mysql') {
+    return "MYSQL: Database <b>".htmlspecialchars($parsed['mysql_dbname'], ENT_QUOTES, 'UTF-8')."</b>"
+           ." on ".htmlspecialchars($parsed['mysql_host'], ENT_QUOTES, 'UTF-8');
+  } else if ($parsed['scheme'] == 'odbc') {
+    return "ODBC: ".htmlspecialchars($parsed['odbc_dsn_name'], ENT_QUOTES, 'UTF-8');
+  } else {
+    return htmlspecialchars($parsed['connection_string'], ENT_QUOTES, 'UTF-8');
+  }
+}
+
+function pad3($n) {
+  return str_pad($n, 3, '0', STR_PAD_LEFT);
+}
+
+// Assumes $db has already been defined if $db_connection_string is available
+// The presence of $db implies that $db_connection_string identifies an actual
+// database (e.g., for sqlite, the file is present)
+function inspect_database() {
+  global $db;
+  // Initialize with default values
+  $result = array('schema_status' => 'trouble',  // icon for schema step
+                  // What the button for schema step should say.  The special value 'disabled'
+                  // means the button should be disabled (because the database isn't defined).
+                  'schema_button' => 'disabled',
+                  'schema_message' => "<p><span class='trouble'>Schema not available without a database; "
+                                      ."configure the database first.</span></p>",
+                  'group_label' => 'Den',
+                  'group_label_lc' => 'den',
+                  'nracers' => 0,
+                  'dens' => array(),
+                  'nawards' => 0,
+                  'settings_icon' => 'unknown',
+                  'settings_details' => 'No photo directories defined.',
+                  'writable' => false
+    );
+
+  if (!isset($db) || !$db) {
+  } else {
+    try {
+      $schema_version = schema_version();
+      $result['group_label'] = group_label();
+      $result['group_label_lc'] = group_label_lc();
+      
+      $result['nracers'] = read_single_value('SELECT COUNT(*) FROM RegistrationInfo', array());
+      $result['nawards'] = read_single_value('SELECT COUNT(*) FROM Awards', array());
+
+      $sorting_field = 'sortorder';
+      if ($schema_version < 2) { $sorting_field = 'class'; }
+
+      $dens = array();
+      foreach ($db->query('SELECT class FROM Classes ORDER BY '.$sorting_field) as $row) {
+        $dens[] = $row['class'];
+      }
+      $result['dens'] = $dens;
+
+      if ($schema_version == expected_schema_version()) {
+        $result['schema_status'] = "ok";
+        $result['schema_button'] = 're-initialize';
+        $result['schema_message'] = "<p>Schema version is S1".pad3($schema_version).", as expected.</p>\n";
+      } else {
+        $result['schema_status'] = "unknown";
+        $result['schema_button'] = 'update';
+        $result['schema_message'] = "<p>Schema version is S1".pad3($schema_version)
+            .", but version S1".pad3(expected_schema_version())." would be preferred.</p>\n";
+      }
+    } catch (PDOException $p) {
+      $result['schema_status'] = "trouble";
+      $result['schema_button'] = 'initialize';
+      $result['schema_message'] = "<p>The database needs to be initialized.</p>\n";
+    }
+
+    try {
+      $db->exec('DELETE FROM RaceInfo WHERE itemkey = \'NoSuchKey\'');
+      $result['writable'] = true;
+    } catch (PDOException $p) {
+    }
+    
+    $racer_photo_directory = "";
+    $car_photo_directory = "";
+    try {
+      $racer_photo_directory = read_raceinfo('photo-directory');
+      $car_photo_directory = read_raceinfo('car-photo-directory');
+      $result['settings_details'] = "Racer photos: ".$racer_photo_directory."<br/>\n"
+          ."Car photos: ".$car_photo_directory;
+    } catch (PDOException $p) {
+    }
+
+    if (!is_dir($racer_photo_directory) || !is_readable($racer_photo_directory) ||
+        !is_dir($car_photo_directory) || !is_readable($car_photo_directory)) {
+      $result['settings_icon'] = "trouble";
+    } else if (!is_writable($racer_photo_directory) || !is_writable($car_photo_directory)) {
+      $result['settings_icon'] = "readonly";
+    } else if (get_lane_count() == 0) {
+      $result['settings_icon'] = 'unknown';
+      $result['settings_details'] .= '<br/><span class=\'trouble\'>The number of lanes on the track hasn\'t been set.</span>';
+    } else {
+      $result['settings_icon'] = "ok";
+      $result['settings_details'] .= '<br/>The track has '.get_lane_count().' lanes.';
+    }
+  }
+
+  return $result;
+}
+
+
+// Builds an array of data for populating the (advanced) database setup dialog.
+function build_form_fields_for_advanced_database_dialog($db_connection_string) {
+  // Default values, in case $db_connection string is unparseable:
+  $form_fields = array('drivers' => pdo_drivers(),
+                       'radio' => 'sqlite',
+                       'mysql_host' => 'localhost',
+                       'sqlite_path' => default_database_directory().DIRECTORY_SEPARATOR.date('Ymd-Hi').'.sqlite');
+  $form_fields['connection_string'] = 'sqlite:'.$form_fields['sqlite_path'];
+
+  if (isset($db_connection_string) && $db_connection_string) {
+    $form_fields['connection_string'] = $db_connection_string;
+    $parsed = parse_connection_string($db_connection_string);
+    if ($parsed['scheme'] == 'sqlite') {
+      $form_fields['sqlite_path'] = $parsed['sqlite_path'];
+    } else if ($parsed['scheme'] == 'mysql') {
+      $form_fields['radio'] = 'mysql';
+      $form_fields['mysql_host'] = $parsed['mysql_host'];
+      $form_fields['mysql_dbname'] = $parsed['mysql_dbname'];
+    } else if ($parsed['scheme'] == 'odbc') {
+      $form_fields['radio'] = 'odbc';
+      $form_fields['odbc_dsn_name'] = $parsed['odbc_dsn_name'];
+    }
+  }
+
+  return $form_fields;
+}
+
+function plural($n, $single, $plural) {
+  if ($n == 0) {
+    return "are no ".$plural;
+  } else if ($n == 1) {
+    return "is one ".$single;
+  } else {
+    return "are ".$n." ".$plural;
+  }
+}
+
+
+// If we haven't got a working database, look into why.
+function diagnose_configuration() {
+  global $db_connection_string;
+
+  $config_dir = isset($_SERVER['CONFIG_DIR'])
+      ? $_SERVER['CONFIG_DIR']
+      // dirname 2 levels up, because we're in the /inc subdirectory
+      : (dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'local');
+
+  $config_file = $config_dir.DIRECTORY_SEPARATOR."config-database.inc";
+
+  if (isset($db_connection_string)) {
+    $message = "<p><span class='trouble'>There was a problem opening the database.</span></p>\n";
+  } else if (file_exists($config_file)) {
+    $message = "<p><span class='trouble'>The configuration file could not be read</span></p>\n";
+  } else if (!is_dir($config_dir)) {
+    $message = "<p><span class='trouble'>You need to create a <b>'".$config_dir."'</b> "
+            ."directory, and make it writable.<span></p>\n";
+  } else if (!is_writable($config_dir)) {
+    $message = "<p><span class='trouble'>The <b>'".$config_dir."'</b> directory exists, but isn't writable.</span></p>\n";
+  } else {
+    $message = "<p><span class='trouble'>Schema not available without a database; "
+                 ."configure the database first.</span></p>";
+  }
+
+  return array('db_message' => $message,
+               'schema_status' => 'unknown',  // icon for schema step
+                  // What the button for schema step should say.  The special value 'disabled'
+                  // means the button should be disabled (because the database isn't defined).
+               'schema_button' => 'disabled',
+               'schema_message' => "<p>The database schema isn't available without a database; "
+                                      ."configure the database first.</p>",
+                  'group_label' => 'Den',
+                  'group_label_lc' => 'den',
+                  'nracers' => 0,
+                  'dens' => array(),
+                  'nawards' => 0,
+                  'settings_icon' => 'unknown',
+                  'settings_details' => 'No photo directories defined.',
+                  'writable' => false
+    );
+
+}
+
+// Constructs an array from which the setup page updates its status.  Returns an
+// array with one entry per "step" on the set-up page; each entry is an array of
+// details meaningful to that step's display.
+function build_setup_page_details() {
+  global $db_connection_string;
+  global $db;
+
+  $db_message = connection_string_to_html(isset($db_connection_string)
+                                          ? $db_connection_string : '');
+  $db_ok = isset($db_connection_string) && isset($db);
+  if ($db_ok) {
+    $schema = inspect_database();
+    if ($schema['schema_status'] == 'ok' && !$schema['writable']) {
+      $db_message = "<p>".$db_message."<br/><span class='trouble'>The database is read-only.</span></p>\n";
+    } else {
+      $db_message = "<p>".$db_message."</p>\n";
+    }
+  } else {
+    $schema = diagnose_configuration();
+    $db_message = $schema['db_message'];
+  }
+  return array('locked' => locked_settings(),
+               'database' => array('status' =>  $db_ok ? 'ok' : 'trouble',
+                                   'writable' => $schema['writable'],
+                                   'details' => $db_message),
+               'schema' => array('status' => $schema['schema_status'],
+                                 'button' => $schema['schema_button'],
+                                 'details' => $schema['schema_message']),
+               'roster' => array('status' => $schema['nracers'] == 0 ? "unknown" : "ok",
+                                 'details' =>
+                                 "<p>There ".plural($schema['nracers'], "racer", "racers")." registered."
+                                 ."  (Visit the <a href=\"checkin.php\">Check-In page</a>"
+                                 ." to enter individual racers.)</p>\n"),
+               'classes' => array('status' => count($schema['dens']) == 0 ? "unknown" : "ok",
+                                  'label' => $schema['group_label'],
+                                  'details' =>
+                                  count($schema['dens']) == 0
+                                  ? "<p>There are no ".$schema['group_label_lc']."s defined.</p>\n"
+                                  : "<p>".implode(", ", $schema['dens'])."</p>\n"),
+               'awards' => array('status' => $schema['nawards'] == 0 ? "unknown" : "ok",
+                                 'details' => "<p>There ".plural($schema['nawards'], "award", "awards")." defined."
+                                 ."  (Visit the <a href=\"awards-editor.php\">Awards Editor page</a>"
+                                 ." to enter individual awards.)</p>\n"),
+               'settings' => array('status' => $schema['settings_icon'],
+                                   'details' => "<p>".$schema['settings_details']."</p>\n"),
+               'form_fields' => build_form_fields_for_advanced_database_dialog($db_connection_string)
+    );
+}
+?>

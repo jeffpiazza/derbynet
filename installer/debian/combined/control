@@ -1,8 +1,0 @@
-Package: derbynet
-Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 2.0-1
-Priority: optional
-Architecture: all
-Depends: nginx, php5-fpm, php5-curl, php5-gd, php5-cli, php5-mysql, php5-sqlite, jarwrapper
-Homepage: http://jeffpiazza.github.io/derbynet/
-Description: Pinewood derby race management web server

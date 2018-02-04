@@ -10,7 +10,9 @@ user_login_coordinator
 ## rosters, not making schedules or doing any racing.
 
 # We expect there are no rounds beyond a first round for each of the classes
-curl_post action.php "action=roster.delete&roundid=7" | check_failure
+# Note that test-den-changes.sh created and then deleted TheNotLastClass, which
+# results in one extra initial round, now deleted
+curl_post action.php "action=roster.delete&roundid=8" | check_failure
 
 # Top 3 from roundid=1
 curl_post action.php "action=roster.new&roundid=1&top=3" | check_success

@@ -27,7 +27,8 @@
     <os family="windows"/>
   </condition>
 
-  <target name="clean">
+  <target name="clean"
+          description="Remove generated artifacts for a clean build environment">
     <delete quiet="true">
       <fileset dir="website/inc">
 	<filename name="banner.inc"/>
@@ -40,9 +41,11 @@
     <ant dir="${docs-dir}"  target="clean"/>
   </target>
   
-  <target name="dist" depends="dist.zip, dist.oneclick, dist.mac, dist.debian"/>
+  <target name="dist" depends="dist.zip, dist.oneclick, dist.mac, dist.debian"
+          description="Build complete distribution"/>
 
-  <target name="dist.zip" depends="timer-jar, docs-dist, generated">
+  <target name="dist.zip" depends="timer-jar, docs-dist, generated"
+          description="Build OS-neutral zip-file distribution">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
               <include name="MIT-LICENSE.txt"/>
@@ -80,7 +83,8 @@
 
   <target name="generated" depends="banner, generated-version.inc,
 				    generated-build-date.inc,
-				    release-series, generated-commit-hash.inc">
+				    release-series, generated-commit-hash.inc"
+          description="Build generated files">
   </target>
 
   <target name="generated-version.inc">
@@ -171,10 +175,10 @@
 
   <target name="dist.debian" depends="generated, timer-jar, docs-dist"
 	  description="Build a Debian binary package (.deb) for all of DerbyNet">
-    <ant dir="installer/debian" target="debian-combined"/>
+    <ant dir="installer/debian" target="dist"/>
   </target>
 
-  <target name="docs-dist">
+  <target name="docs-dist" description="Generate documentation PDFs">
       <ant dir="${docs-dir}"/>
   </target>
 
@@ -273,7 +277,7 @@
             </exec>
 </target>
 
-<target name="mac.installer.website" if="is_mac">
+<target name="mac.installer.website" if="is_mac" depends="generated">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">
@@ -446,7 +450,7 @@
 </target>
 
 <target name="dist.oneclick" depends="generated, timer-jar, docs-dist"
-	description="Builds the &quot;one-click&quot; zip file to run Uniform Server on Windows">
+	description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}/Data"/>
@@ -541,7 +545,7 @@
   <delete dir="dist"/>
 </target>
 
-<target name="demo">
+<target name="demo" description="demo">
     <ant dir="demo"/>
 </target>
 

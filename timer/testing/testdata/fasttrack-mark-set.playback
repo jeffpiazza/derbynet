@@ -1,0 +1,34 @@
+## Playback script for FastTrack K3, specifically simulating having the gate
+## already closed when the heat-ready message arrives.
+#on RV
+RV
+Copyright (c) Micro Wizard 2002-2005
+K3 Version 1.05A  Serial Number 15985
+#end
+#on MG
+MG
+#end
+#on ME
+ME
+*
+#end
+#on MF
+MF
+*
+#end
+#on LR
+LR
+*
+#end
+##
+##
+#on RG
+RG1
+#end
+#pause
+##
+#on RG
+RG0
+#end
+#pause
+A=4.009" B=3.261! C=4.129$ D=4.013# E=0.000  F=0.000

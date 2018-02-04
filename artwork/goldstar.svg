@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="240"
+   height="240"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Gold_Star.svg"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/derbynet/website/img/Gold_Star.png"
+   inkscape:export-xdpi="7.5"
+   inkscape:export-ydpi="7.5">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1246"
+     inkscape:window-height="939"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="64.037107"
+     inkscape:cy="259.48467"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     style="fill:#06064e;fill-opacity:1;stroke:none;stroke-opacity:1"
+     d="m 119.28789,12.764551 c -8.63545,26.736546 -17.27237,53.472621 -25.908398,80.208984 -30.175195,0 -60.350391,0 -90.5255861,0 C 27.277456,110.78066 51.69992,128.58927 76.123047,146.39698 66.904931,174.93443 57.688058,203.47228 48.469141,232.00948 72.645153,214.37908 96.823197,196.75147 121,179.12217 c 24.17681,17.6293 48.35484,35.25692 72.53086,52.88731 -9.21893,-28.53719 -18.43578,-57.07506 -27.65391,-85.6125 24.42313,-17.80771 48.84559,-35.61631 73.26915,-53.423445 -30.1752,0 -60.35039,0 -90.52559,0 C 139.41393,64.469351 130.2052,35.965861 121,7.4612307 c -0.5707,1.7677734 -1.14141,3.5355473 -1.71211,5.3033203 z"
+     id="path4142"
+     inkscape:connector-curvature="0" />
+  <path
+     d="M 55.3,222.57354 121,19.173535 186.7,222.57354 13.9,96.573535 l 214.2,0 z"
+     id="path4"
+     style="fill:#f8d64e;stroke:none;stroke-opacity:1"
+     inkscape:connector-curvature="0" />
+</svg>

@@ -2,6 +2,11 @@
 http://blog.stevensanderson.com/2011/10/05/full-height-app-layouts-a-css-trick-to-make-it-easier/
 */
 
+.dz-browser-not-supported .dz-message {
+    height: 0;
+    overflow: hidden;
+}
+
 body { margin: 0; }
 
 .body-wrapper { /* body row */
@@ -25,6 +30,27 @@ body { margin: 0; }
 }
 
 .thumblist li { z-index: 2; }
+
+.thumbnail {
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+}
+
+.thumbnail.hidden {
+   display: none;
+}
+
+
+.thumbnail a img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+ }
+
+.lost_photo {
+  font-style: italic;
+}
 
 .photothumbs {
  position: absolute;

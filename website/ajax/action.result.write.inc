@@ -16,7 +16,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       if (get_racing_state()) {
         send_replay_REPLAY();
         $current = get_running_round();
-        advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
+        advance_heat($current, 'next', /* show failure */ false);
       }
       echo '<success/>';
       require('ajax/query.poll.coordinator.inc');

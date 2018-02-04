@@ -8,20 +8,23 @@ import org.w3c.dom.Element;
 // For exercising a timer device class, this takes the place of a ClientSession
 // to simulate the actions of a web host running races.
 public class SimulatedClientSession extends ClientSession {
+  // TODO That these are static implies there are multiple SimulatedClientSessions ?
   private static int nlanes = 0;
   // Sent after sending a heat-ready, and precludes sending another heat-ready
-  // until the current one is answered.
-  private static String heatReadyString = null;
-  private static boolean racePrepared = false;
+  // until the current one is answered or aborted.
+  private String heatReadyString = null;
+  private int numberOfHeatsPrepared = 0;
+  private LogWriter logWriter;
   private Random random;
+
+  public SimulatedClientSession(LogWriter logWriter) {
+    super("");
+    this.logWriter = logWriter;
+    this.random = new Random();
+  }
 
   public static void setNumberOfLanes(int n) {
     nlanes = n;
-  }
-
-  public SimulatedClientSession() {
-    super("");
-    random = new Random();
   }
 
   @Override
@@ -36,46 +39,58 @@ public class SimulatedClientSession extends ClientSession {
   @Override
   public Element sendTimerMessage(String messageAndParams) throws IOException {
     System.out.println("\t\t\t" + messageAndParams.replace("&", " & "));
-    boolean newHeatReady = false;
+    boolean makeNewHeat = false;
     boolean isStartedMessage = messageAndParams.contains("message=STARTED");
-    if (messageAndParams.contains("message=FINISHED")) {
+
+    if (messageAndParams.contains("message=IDENTIFIED")) {
+      // Do nothing on initial timer identification
+      makeNewHeat = false;
+      heatReadyString = null;
+    } else if (messageAndParams.contains("message=HEARTBEAT")) {
+      // Send a new heat if there's not already one pending
+      makeNewHeat = (heatReadyString == null);
+    } else if (messageAndParams.contains("message=FINISHED")) {
       // Receiving the finish results marks the end of the heat
       heatReadyString = null;
-      racePrepared = false;
-    }
-    if (!racePrepared && (messageAndParams.contains("message=FINISHED")
-                          || messageAndParams.contains("message=HEARTBEAT")
-                          || messageAndParams.contains("message=IDENTIFIED"))
-        && random.nextFloat() < 0.6) {
-      newHeatReady = true;
-    }
-    if (heatReadyString != null) {
-      newHeatReady = false;
+      makeNewHeat = true;
     }
 
-    // TODO Some probability of an abort-heat message
-    if (newHeatReady) {
+    if (makeNewHeat) {
       int laneMask = 0;
       for (int lane = 0; lane < nlanes; ++lane) {
-        if (random.nextFloat() < 0.9) {
-          laneMask |= (1 << lane);
+        laneMask |= (1 << lane);
+      }
+
+      int heats6 = numberOfHeatsPrepared % 6;
+      if (heats6 >= 2) {
+        int firstEmptyLane = random.nextInt(nlanes);
+        laneMask &= ~(1 << firstEmptyLane);
+        if (heats6 >= 4) {
+          int secondEmptyLane = random.nextInt(nlanes);
+          while (secondEmptyLane == firstEmptyLane) {
+            secondEmptyLane = random.nextInt(nlanes);
+          }
+        laneMask &= ~(1 << secondEmptyLane);
         }
       }
+
       heatReadyString = "<heat-ready class=\"Simulated\""
           + " heat=\"" + (1 + random.nextInt(5)) + "\""
           + " lane-mask=\"" + laneMask + "\""
-          + " round=\"1\" "
+          + " round=\"1\""
           + " roundid=\"" + (1 + random.nextInt(9)) + "\"/>\n";
-    }
 
-    if (heatReadyString != null && !isStartedMessage) {
+      logWriter.simulationLog("Simulating heat-ready with " +
+          LogWriter.laneMaskString(laneMask, nlanes));
       System.out.print("\t\t\t\t" + heatReadyString);
+
+      ++numberOfHeatsPrepared;
     }
 
+    // The heatReadyString only gets sent the first time
     String additional = "";
-    if (!newHeatReady) {
+    if (makeNewHeat) {
       additional = heatReadyString;
-      racePrepared = true;
     }
 
     return parseResponse(

@@ -6,12 +6,10 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/award-presentations.css"/>
-<script type="text/javascript" src="js/award-presentations.js"></script>
+<link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
+<script type="text/javascript" src="js/award-presentations-kiosk.js"></script>
 </head>
 <body>
-<?php /* $banner_title = 'Award Presentation'; $no_back_button = true; require('inc/banner.inc');  */ ?>
-
 <div class="award-background">
   <div class="award-trophy" id="awardname"></div>
 

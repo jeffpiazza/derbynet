@@ -32,8 +32,8 @@ require_once('inc/replay.inc');
 
 $message = $_POST['message'];
 
-$racing_state = get_racing_state();
-$timer_state = new TimerState();
+$racing_state = get_racing_state();  // True if we're racing, false if not
+$timer_state = new TimerState();     // An object carrying our idea of the timer's current state
 
 start_response();
 
@@ -66,7 +66,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     } else if (write_heat_results()) {
       send_replay_REPLAY();
       $current = get_running_round();
-      advance_heat($current, @$current['roundid'], 'next', /* show failure */ false);
+      advance_heat($current, 'next', /* show failure */ false);
       echo "\n  <success/>\n";
     }
     // If another heat is teed up, we'll immediately change state to

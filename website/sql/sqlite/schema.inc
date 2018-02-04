@@ -153,9 +153,13 @@ array(
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (4, 'Design Trophy')",
 "INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
+"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (6, 'Ad Hoc')",
 
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-racer-photos', '1')",
+"INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-cars-on-deck', '1')",
+"INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-racer-photos-rr', '1')",
+"INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-car-photos-rr', '1')",
   )
 );
 ?>

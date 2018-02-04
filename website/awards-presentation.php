@@ -1,6 +1,7 @@
 <?php @session_start();
 // Controls the "current award" kiosk display
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
@@ -32,15 +33,16 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/awards-presentation.css"/>
 </head>
 <body>
-<?php $banner_title = 'Awards Presentation'; require('inc/banner.inc');
+<?php make_banner('Awards Presentation');
 
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/awards.inc');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
-$n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
+$n_den_trophies = read_raceinfo('n-den-trophies', 3);
+$n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
@@ -83,8 +85,6 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 // TODO Provide for auto-generating participation awards
 
-// TODO Provide a page for entering/sorting awards.  Also award import.
-
 // TODO Include award export?
 
 $awards = array();
@@ -112,7 +112,7 @@ function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
     $awards[] = array('bin_key' => $key,
                       'classid' => @$classid,
                       'rankid' => @$rankid,
-                      'awardkey' => 'speed-'.$place.(isset($classid) ? '-'.$classid : ''),
+                      'awardkey' => 'speed-'.$place.(isset($classid) ? '-'.$classid : '').(isset($rankid) ? '-'.$rankid : ''),
                       'awardname' => nth_fastest($place, $label),
                       // TODO 'Speed Trophy' and 5 should be user-selectable, not hard wired like this.
                       'awardtype' => 'Speed Trophy',
@@ -133,8 +133,8 @@ foreach (final_standings() as $row) {
   }
   if ($row['for_group']) {
     add_speed_award($row, @$row['classid'], null, $n_den_trophies, $classes[$row['classid']]['class']);
+    add_speed_award($row, @$row['classid'], @$row['rankid'], $n_rank_trophies, $ranks[$row['rankid']]['rank']);
   }
-  // TODO Speed awards by rank, as well as by class?
 }
 
 // TODO Break ties for award sorting according to class and rank ordering
@@ -161,8 +161,16 @@ foreach ($db->query('SELECT awardid, awardname, awardtype,'
 }
 
 function compare_by_sort(&$lhs, &$rhs) {
-  return $lhs['sort'] == $rhs['sort'] ? 0 :
-      $lhs['sort'] < $rhs['sort'] ? -1 : 1;
+  if ($lhs['sort'] != $rhs['sort']) {
+    return $lhs['sort'] < $rhs['sort'] ? -1 : 1;
+  }
+  if ($lhs['lastname'] != $rhs['lastname']) {
+    return $lhs['lastname'] < $rhs['lastname'] ? -1 : 1;
+  }
+  if ($lhs['firstname'] != $rhs['firstname']) {
+    return $lhs['firstname'] < $rhs['firstname'] ? -1 : 1;
+  }
+  return 0;
 }
 
 usort($awards, 'compare_by_sort');
@@ -213,7 +221,7 @@ usort($awards, 'compare_by_sort');
 foreach ($awards as &$row) {
    $classid = isset($row['classid']) ? $row['classid'] : 0;
    $rankid = (isset($row['rankid']) && $use_subgroups) ? $row['rankid'] : 0;
-    echo '<li class="ui-btn ui-btn-icon-right ui-icon-carat-r"'
+   echo '<li class="ui-btn ui-btn-icon-right ui-icon-carat-r'.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
         .' onclick="on_choose_award(this);"'
         .' data-awardkey="'.$row['awardkey'].'"'
         .' data-awardtypeid="'.$row['awardtypeid'].'"'

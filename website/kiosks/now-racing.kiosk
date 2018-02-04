@@ -1,5 +1,6 @@
 <?php @session_start();
 $nlanes = get_lane_count();
+require_once('inc/banner.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -29,7 +30,7 @@ $(function () {
 ?>
 </head>
 <body>
-<?php $banner_title = 'Racing'; $no_back_button = true; require('inc/banner.inc'); ?>
+<?php make_banner('Racing', /* back_button */ false); ?>
 <?php if ($nlanes > 0) { ?>
 <table id="main-table">
 <tr id="table-headers">

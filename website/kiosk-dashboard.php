@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <?php
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><!DOCTYPE html>
@@ -20,20 +21,27 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/kiosk-dashboard.js"></script>
 </head>
 <body>
-<?php $banner_title = 'Kiosk Dashboard'; require('inc/banner.inc'); ?>
+<?php make_banner('Kiosk Dashboard'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
 <div class="standings-control hidden control_group block_buttons">
   <div class="round-select">
     <h3>Display standings for:</h3>
-      <?php
-        $current = read_raceinfo('standings-message');
-        $current_roundid = explode('-', $current)[0];
-      ?>
-
     <select>
       <?php
+        // This <select> elements lets the operator choose what standings should be displayed on
+        // kiosks displaying standings.
+        $current = read_raceinfo('standings-message', '');
+        list($current_roundid, $current_rankid, $current_exposed) = explode('-', $current);
+
+        if ($current_exposed === '') {
+          $current_exposed = 'all';
+        } else {
+          $current_exposed = 'lowest '.$current_exposed;
+        }
+
         require_once('inc/standings.inc');
+        $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
         $sel = ' selected="selected"';
         if ($current == '') {
@@ -42,16 +50,25 @@ require_permission(PRESENT_AWARDS_PERMISSION);
         echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
              .supergroup_label()
              .'</option>';
-        foreach (standings_round_names() as $round) {
-          echo '<option data-roundid="'.$round['roundid'].'"'
-               .($current_roundid == $round['roundid'] ? $sel : '').'>'
+        foreach (rounds_for_standings() as $round) {
+          echo '<option data-roundid="'.$round['roundid'].'" data-rankid=""'
+               .($current_roundid == $round['roundid'] && $current_rankid == '' ? $sel : '').'>'
                .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
                .'</option>'."\n";
+          if ($use_subgroups) {
+            foreach ($round['ranks'] as $rank) {
+              echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'"'
+              .($current_roundid == $round['roundid'] && $current_rankid == $rank['rankid'] ? $sel : '').'>';
+              echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
+              echo "</option>\n";
+            }
+          }
         }
       ?>
     </select>
   </div>
   <div class="reveal block_buttons">
+        <h3 <?php if ($current == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
     <input type="button" data-enhanced="true" value="Reveal One" onclick="handle_reveal1()"/><br/>
     <input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
   </div>

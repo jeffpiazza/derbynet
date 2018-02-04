@@ -47,14 +47,14 @@ $inset_repository = headshots();
 
 $repositories = $inset_imagefile ? array(car_photo_repository(), headshots()) : array(headshots());
 
-$stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname,'
+$stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname, classid,'
                      .($inset_imagefile
                        ? ' imagefile as inset_photo, carphoto as main_photo'
                        : ' imagefile as main_photo')
                      .' FROM RegistrationInfo'
                      .' WHERE racerid > :racerid AND '
+                     .($classids ? 'classid IN ('.$classids.') AND ' : '')
                      .'  ((imagefile IS NOT NULL AND imagefile <> \'\')'
-                     .($classids ? ' AND classid IN ('.$classids.')' : '')
                      .($inset_imagefile
                        ? '       OR (carphoto IS NOT NULL AND carphoto <> \'\')' : '')
                      .')'

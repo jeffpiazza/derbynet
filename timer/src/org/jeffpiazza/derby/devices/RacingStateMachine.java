@@ -1,9 +1,9 @@
 package org.jeffpiazza.derby.devices;
 
-// Despite differences between different timers, the basic state machine to
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 
+// Despite differences between different timers, the basic state machine to
 // model them is essentially the same.
 public class RacingStateMachine {
   public enum State {
@@ -16,7 +16,9 @@ public class RacingStateMachine {
     // When the gate then opens, the race is RUNNING.
     RUNNING,
     // If the race starts but no results received within maxRunningTimeLimit,
-    // then transition to RESULTS_OVERDUE state.
+    // then transition to RESULTS_OVERDUE state.  Depending on the device, there
+    // may or may not be "force results" or similar command to try.  If there
+    // isn't, or it doesn't work, a GIVING_UP event should eventually be posted.
     RESULTS_OVERDUE;
   }
 
@@ -29,10 +31,10 @@ public class RacingStateMachine {
     ABORT_HEAT_RECEIVED,
     GATE_OPENED,
     GATE_CLOSED,
-    // From a state machine perspective, "results overdue" is treated like
-    // RESULTS_RECEIVED, although we likely report different messages to the
-    // server for these cases.
-    RESULTS_RECEIVED;
+    RESULTS_RECEIVED,
+    // Eventually, a "results overdue" condition leads to a GIVING_UP event,
+    // which is roughly treated like another PREPARE_HEAT_RECEIVED.
+    GIVING_UP;
   }
 
   public interface TransitionCallback {
@@ -40,11 +42,27 @@ public class RacingStateMachine {
         throws SerialPortException;
   }
 
+  // The basic state machine assumes it's possible to detect when the start
+  // gate opens or closes, possibly by repeatedly polling the timer to determine
+  // the start gate's state.  For some timers, though, we never know whether the
+  // gate is opened or closed, and so have to modify our behavior accordingly.
+  private boolean gate_state_is_knowable;
+
+  private TransitionCallback transition_callback;
   private LogWriter logWriter;
   private long stateEnteredMillis = 0;
 
-  public RacingStateMachine(LogWriter logWriter) {
+  public RacingStateMachine(boolean gate_state_is_knowable,
+                            TransitionCallback transition_callback,
+                            LogWriter logWriter) {
+    this.gate_state_is_knowable = gate_state_is_knowable;
+    this.transition_callback = transition_callback;
     this.logWriter = logWriter;
+  }
+
+  public RacingStateMachine(TransitionCallback transition_callback,
+                            LogWriter logWriter) {
+    this(true, transition_callback, logWriter);
   }
 
   // Number of milliseconds we've been in the current state
@@ -64,21 +82,26 @@ public class RacingStateMachine {
 
   // Reads the current state.  May advance RUNNING to RESULTS_OVERDUE state
   // if we've been waiting too long.
-  public synchronized State state(TransitionCallback cb)
+  public synchronized State state()
       throws SerialPortException {
     if (currentState == State.RUNNING && maxRunningTimeLimit > 0
         && System.currentTimeMillis() > stateEnteredMillis + maxRunningTimeLimit) {
       currentState = State.RESULTS_OVERDUE;
       stateEnteredMillis = System.currentTimeMillis();
-      if (cb != null) {
-        cb.onTransition(State.RUNNING, currentState);
+      if (transition_callback != null) {
+        transition_callback.onTransition(State.RUNNING, currentState);
       }
     }
     return currentState;
   }
 
-  public synchronized State onEvent(Event e, TransitionCallback cb)
+  public synchronized State onEvent(Event e)
       throws SerialPortException {
+    if (!gate_state_is_knowable) {
+      if (e == Event.GATE_CLOSED || e == Event.GATE_OPENED) {
+        unexpected(e);
+      }
+    }
     State initialState = currentState;
     switch (currentState) {
       case IDLE:
@@ -87,9 +110,8 @@ public class RacingStateMachine {
             currentState = State.MARK;
             break;
           case ABORT_HEAT_RECEIVED:
-            currentState = unexpected(e, State.IDLE);
-            break;
           case RESULTS_RECEIVED:
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
@@ -106,6 +128,12 @@ public class RacingStateMachine {
             currentState = unexpected(e, State.MARK);
             break;
           case RESULTS_RECEIVED:
+            if (!gate_state_is_knowable) {
+              currentState = State.IDLE;
+              break;
+            }
+            // else intentional fall-through
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
@@ -119,20 +147,17 @@ public class RacingStateMachine {
             currentState = State.IDLE;
             break;
           case PREPARE_HEAT_RECEIVED:
-            currentState = unexpected(e, State.SET);
-            break;
           case GATE_CLOSED:
             currentState = unexpected(e, State.SET);
             break;
           case RESULTS_RECEIVED:
+          case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;
         }
         break;
       case RUNNING:
       case RESULTS_OVERDUE:
-        // State machine behavior doesn't distinguish between
-        // RUNNING and RESULTS_OVERDUE, but other entities do.
         switch (e) {
           case RESULTS_RECEIVED:
             currentState = State.IDLE;
@@ -146,24 +171,32 @@ public class RacingStateMachine {
           case GATE_OPENED:
             currentState = unexpected(e, State.RUNNING);
             break;
-          // One could imagine receiving a GATE_CLOSED (affecting the start
-          // gate) while the race is running and the timer is still going.
+          // GIVING_UP takes us back to a MARK state; if the gate is closed,
+          // that should transition immediately to SET.
+          case GIVING_UP:
+            currentState = State.MARK;
+            break;
         }
     }
     if (initialState != currentState) {
       stateEnteredMillis = System.currentTimeMillis();
-      if (cb != null) {
-        cb.onTransition(initialState, currentState);
+      if (transition_callback != null) {
+        transition_callback.onTransition(initialState, currentState);
       }
       System.out.println(initialState + " >--" + e + "--> " + currentState);
-      logWriter.serialPortLogInternal(initialState + " >--" + e + "--> " + currentState);
+      logWriter.serialPortLogInternal(
+          initialState + " >--" + e + "--> " + currentState);
     }
     return currentState;
   }
 
+  private void unexpected(Event e) {
+    logWriter.serialPortLogInternal("Unexpected event: " + e);
+  }
+
   private State unexpected(Event e, State next) {
     logWriter.serialPortLogInternal(
-        "Unexpected event: " + currentState + " >--" + e + "--> " + next);
+        "Unexpected transition: " + currentState + " >--" + e + "--> " + next);
     return next;
   }
 }

@@ -17,6 +17,17 @@ tr.d0 td {
   background-color: #fcf6cf;
 }
 
+/* These borders seem to create unwanted horizontal scroll bars,
+   at least for Chrome */
+.main_table tr td:first-child,
+.main_table tr th:first-child {
+    border-left: 0px;
+}
+.main_table tr td:last-child,
+.main_table tr th:last-child {
+    border-right: 0px;
+}
+
 .group_spacer {
    height: 30px;
 }
@@ -65,31 +76,34 @@ tbody tr:first-child th {
   padding-top: 10px;
 }
 
-/* Yuck.  These really don't do what I want. */
-div.index_background {
-  width: 100%;
+th.nrows1, th.nrows2, th.nrows3, th.nrows4 {
+    vertical-align: top;
+}
+.racer_label {
+    float: right;
+}
+th.nrows1 .racer_label {
+    margin-top: 19px;
+}
+th.nrows2 .racer_label {
+    margin-top: 52px;
+}
+th.nrows2 img {
+    margin-top: 34px;
 }
 
-div.index_column {
-  width: 50%;
-  display: inline-block;
-float: left;
+th.nrows3 .racer_label {
+    margin-top: 86px;
+}
+th.nrows3 img {
+    margin-top: 68px;
 }
 
-/* These are for checkin page */
-.floatform {
-   position: fixed;
-   /* height: 100px; */
-   width:  400px;
-   /* center in viewport: */
-   top: 50%;
-   left: 50%;
-   /* margin-top: -50px; */
-   margin-left: -200px;
-   border: 2px solid black;
-   background-color: white;
-   /* visibility: hidden; */
-   /* visibility: visible; */
+th.nrows4 .racer_label {
+    margin-top: 120px;
+}
+th.nrows4 img {
+    margin-top: 102px;
 }
 
 .clickable {
@@ -102,40 +116,9 @@ float: left;
    text-decoration: none;
 }
 
-/*
-td.clickable {
-	background-color: #00ff00;
-	margin: 2px;
-	padding: 3px;
-}
-
-td.clickable div.inclickable {
-	margin: 3px;
-	background-color: #ffffff;
-}
-*/
-
-/* photo-thumbs: */
-.thumbnail { 
-  display: inline-block;
-  width: 150px;
-  height: 150px;
-}
-
-.thumbnail a img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
- }
-
 .hidden {
   visibility: hidden;
   display: none;
-}
-
-
-.lost_photo {
-  font-style: italic;
 }
 
 /* kiosks */
@@ -168,28 +151,21 @@ td.clickable div.inclickable {
   font-size: 30px;
 }
 
-.award_superlative {
-  text-align: right;
-  width: 6em;
+.heat_link span {
+    font-size: 32px;
+}
+th {
+    font-size: 24px;
 }
 
-.award_primary {
-  text-align: left;
+.ondeck_photo {
+    display: none;
 }
 
-
-.award_racers {
-  float: right;
-  width: 20%;
+.curheat .ondeck_photo.populated,
+.nextheat .ondeck_photo.populated {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
 }
-
-.award_choices {
-  width: 80%;
-}
-
-.index_spacer {
-  height: 50px;
-}
-
-.heat_link span { font-size: xx-large; }
-th { font-size: x-large; }

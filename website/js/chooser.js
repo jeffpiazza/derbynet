@@ -18,7 +18,7 @@ function choosing_file() { return choosing_output_file(); }
 function repopulate_chooser_modal(path) {
     $("#chooser_directories_above").empty();
     $("#chooser_directory_content").empty();
-    $.ajax(g_action_url,
+    $.ajax('action.php',
            {type: 'GET',
             data: {query: 'file.directory.nodata',
                    path: path},
@@ -120,7 +120,7 @@ function chooser_show_add_directory_modal(event) {
     var parent_path = event.data;
     show_tertiary_modal("#chooser_add_directory_modal", function() {
         chooser_close_add_directory_modal();
-        $.ajax(g_action_url,
+        $.ajax('action.php',
                {type: 'POST',
                 data: {action: 'file.directory.new.nodata',
                        directory: parent_path + $("#chooser_new_directory_name").val()},

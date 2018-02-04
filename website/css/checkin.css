@@ -7,7 +7,7 @@
     float: left;
 }
 
-#racer_photo_modal {
+#photo_modal {
     margin-top: 10px;
     width: 720px;
 }
@@ -32,6 +32,11 @@
     margin-right: auto;
     margin-bottom: 30px;
     font-size: x-large;
+}
+
+.centered_flipswitch * {
+    /* Normally the default, but overridden by Dropzone */
+    box-sizing: content-box;
 }
 
 .centered_flipswitch .ui-btn {
@@ -124,4 +129,13 @@ img.checkin-photo {
 #find-racer-message {
   width: 10em;
   visibility: hidden;  /* but still takes up space */
+}
+
+p.warning,
+p.warning a,
+p.warning a.ui-link {
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
 }

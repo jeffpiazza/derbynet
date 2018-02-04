@@ -1,0 +1,10 @@
+Package: derbynet-extras
+Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
+Version: 3.0-1
+Priority: optional
+Architecture: all
+Replaces: derbynet (<= 3.0-1)
+Breaks: derbynet (<= 3.0-1)
+Enhances: derbynet-server
+Homepage: http://jeffpiazza.github.io/derbynet/
+Description: Additional client utilities for pinewood derby race management web server

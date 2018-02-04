@@ -1,6 +1,7 @@
-#new_ranks {
-    float: right;
-    width: 300px;
+/* Undoing stuff from ondeck.css: */
+th, tbody tr:first-child th {
+    padding-right: 0px;
+    padding-top: 0px;
 }
 
 #encoding {
@@ -24,7 +25,7 @@
     width: 500px;
 }
 
-#submit_message {
+#assign_label_message {
     clear: right;
     margin-bottom: 30px;
     text-align: center;
@@ -33,17 +34,46 @@
 }
 
 .file_target input {
-  height: 300px;
-  border: 4px dashed #023882;
-  /* TODO valign: center; */
+    height: 300px;
+    width: 100%;
+    opacity: 0;
+    z-index: 2;
+    position: absolute;
+    cursor: pointer;
+}
+.file_target label {
+    height: 300px;
+    width: 100%;
+    cursor: pointer;
+}
+#please_select_message {
+    margin-top: 30px;
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+}
+#drop_img {
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
+    
+
+.file_target {
+    border: 4px dashed #023882;
+}
+.file_target.draghover {
+    border: 4px solid #023882;
 }
 
-.file_target .draghover {
-  border: 4px solid #023882;
+.fields .target {
+    background-color: #e0e0e0;
+    margin-left: 100px;
 }
 
 .label_target {
-  height: 100px;
+  height: 50px;
   border: 4px dashed #023882;
 }
 
@@ -56,12 +86,20 @@
   border: 4px solid #023882;
 }
 
+.fields .fields_target_hover {
+  background-color: #ffffb4;
+}
+
 .fields_target_hover {
   background-color: #ffffb4;
 }
 
 .field {
-  padding: 10px;
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
   border: 10px solid #023882;
   /* margin: 5px; */
   background-color: #F7D117;
@@ -70,7 +108,12 @@
 }
 
 .field.optional {
-  padding: 15px;
+  /* border is now 5px instead of 10px, 
+     make up the difference in the padding */
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   border: 5px solid #023882;
 }
 
@@ -80,7 +123,7 @@
 }
 
 .fields .target {
-    width: 100%;
+    float: left;
 }
 
 #meta {
@@ -90,12 +133,9 @@
 input[type='button'], input[type='submit'] {
     color:#ffffff;
 	width: 240px;
-	/* margin-left: auto;
-	margin-right: auto; */
     padding:10px 15px;
     margin-top:3px;
 	margin-bottom: 20px;
-    /* display:block; */
     font-size: x-large;
 
     background: #2d2d2d; /* Old browsers */
@@ -112,17 +152,32 @@ input[type='button'], input[type='submit'] {
     cursor: pointer;
 }
 
+.fields {
+    margin-bottom: 13px;
+}
+
 .fields table {
     border: none;
 }
 
 .fields td {
+    padding-top: 1px;
+    padding-bottom: 1px;
     border: none;
 }
 
+div#state-of-play {
+    margin-top: 15px;
+    font-size: 20px;
+    width: 100%;
+    background-color: #e0eaf9;
+}
 
-.controls * {
-    vertical-align: middle;
+div#encoding {
+    background-color: #ffffff;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 15px;
 }
 
 .footer {
@@ -133,21 +188,25 @@ input[type='button'], input[type='submit'] {
   text-align: center;
 }
 
-#import_button_div {
-  display: inline-block;
-  width: 300px;
+#controls {
+    height: 104px;
 }
 
 /* Sometimes all the outcome cells are empty, but we don't want the table to shift */
 .outcome {
     width: 5em;
 }
-
+#csv_content {
+    clear: left;
+}
 #csv_content tr th {
     font-size: 16px;
 }
+
 #csv_content tr th.label_target {
-    font-size: 24px;
+    font-size: 18px;
+    /* TODO color: #808080; But we don't want this to apply to a .field within the label_target */
+    line-height: 1.1;
 }
 #csv_content tr th .ok_outcome {
     font-size: 24px;
@@ -164,8 +223,8 @@ input[type='button'], input[type='submit'] {
 
 .ui-page-theme-a { background-color: #ffffff; }
 div.import_csv {
-    margin-left: 8px;
-    margin-right: 8px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 th .ui-flipswitch {

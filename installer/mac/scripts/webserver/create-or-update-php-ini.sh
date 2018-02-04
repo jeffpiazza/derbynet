@@ -19,10 +19,16 @@ TIMEZONE=`systemsetup -gettimezone | sed -e "s/Time Zone: //"`
 #
 # memory_limit = 128M is insufficient for photo_crop to rotate an 8M image; 256M
 # is.
+#
+# The default session.gc_maxlifetime value can cause a session (including
+# logged-in state of the user) to expire after about 24 minutes of inactivity --
+# inconvenient for humans, and even more serious for headless scripts that don't
+# re-login.
 sed -e "s#^upload_max_filesize = 2M#upload_max_filesize = 8M#" \
     -e "s#^;date.timezone =#date.timezone = $TIMEZONE#" \
     -e "s#^memory_limit = 128M#memory_limit = 256M#" \
     -e "s#^;error_log = syslog#error_log = /var/log/php_errors#" \
+    -e "s#^session.gc_maxlifetime = 1440#session.gc_maxlifetime = 28800#" \
     < $ORIGINAL_INI > /etc/php.ini
 
 # Apache needs to be restarted for these changes to take effect; that happens in 

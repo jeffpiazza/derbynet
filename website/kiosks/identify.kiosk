@@ -16,16 +16,21 @@ $(function () {
 </script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/big-logo.css"/>
 </head>
 <body>
- <p class="kiosk_title">Kiosk identifier:</p>
+<?php
+require_once('inc/banner.inc');
+make_banner('Kiosk Identification', /* back_button */ false);
+?>
+ <p class="kiosk_title">DerbyNet</p>
  <p class="kiosk_title"><?php echo address_for_current_kiosk(); ?></p>
-<p id="kiosk_name" class="kiosk_title"></p>
-<div class="full_page_center">
-<p id="screensize"></p>
-<pre>
-<?php print_r($_SERVER); ?>
-</pre>
-</div>
+ <p id="kiosk_name" class="kiosk_title"></p>
+ <div class="full_page_center">
+   <p id="screensize"></p>
+   <div class="logo-frame">
+     <img class="big-logo" src="img/derbynet-300.png"/>
+   </div>
+ </div>
 </body>
 </html>

@@ -5,9 +5,11 @@
   name
   awardtypeid
   class_and_rank
-  racerid
   sort  
 */
+
+require_once('inc/awards-xml.inc');
+
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
   if ($_POST['awardid'] == 'new') {
@@ -29,17 +31,15 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
         // TODO Confirm that rankid and classid agree
       }
     }
-    if (isset($_POST['racerid'])) {
-      $fields .= ', racerid';
-      $values .= ', :racerid';
-      $params[':racerid'] = $_POST['racerid'];
-    }
     if (isset($_POST['sort'])) {
       $fields .= ', sort';
       $values .= ', :sort';
       $params[':sort'] = $_POST['sort'];
     } else {
-      $max_sort = read_single_value('SELECT MAX(sort) FROM Awards', array());
+      $max_sort = read_single_value("SELECT MAX(sort) FROM Awards"
+                                    ." WHERE awardtypeid <> (SELECT awardtypeid FROM AwardTypes"
+                                    ."                       WHERE awardtype = 'Ad Hoc')",
+                                    array());
       if (!$max_sort) {
         $max_sort = 1;
       }
@@ -75,10 +75,6 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
         // TODO Confirm that rankid and classid agree
       }
     }
-    if (isset($_POST['racerid'])) {
-      $fields .= ', racerid = :racerid';
-      $params[':racerid'] = $_POST['racerid'];
-    }
     if (isset($_POST['sort'])) {
       $fields .= ', sort = :sort';
       $params[':sort'] = $_POST['sort'];
@@ -92,7 +88,7 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
     $stmt = $db->prepare($sql);
     $stmt->execute($params);
     echo "<success/>\n";
-    require('ajax/query.award.list.inc');
+    emit_award_list(/* include_ad_hoc */ false);
   } catch (Exception $e) {
     echo "<failure code='sql'>".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')."</failure>\n";
   }

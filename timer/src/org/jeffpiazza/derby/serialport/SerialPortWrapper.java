@@ -3,6 +3,7 @@ package org.jeffpiazza.derby.serialport;
 import jssc.*;
 import java.util.ArrayList;
 import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.devices.TimerDevice;
 
 // Usage:
 //
@@ -13,7 +14,10 @@ import org.jeffpiazza.derby.LogWriter;
 // wrapper.port().setParams(SerialPort.BAUDRATE_9600, ...);
 // wrapper.write(...), etc.
 //
-// wrapper.write(...), wrapper.writeAndWaitForResponse(...), wrapper.next(deadline), wrapper.next(), ...
+// wrapper.write(...),
+// wrapper.writeAndWaitForResponse(...),
+// wrapper.next(deadline),
+// wrapper.next(), ...
 //
 // finally
 // port.removeEventListener();
@@ -34,6 +38,11 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // port; used to detect lost contact.
   private long last_contact;
 
+  // A Detector looks for asynchronously-provided data in the data stream.
+  // Ordinary Detectors get applied to a complete newly-received line of data
+  // before adding that line to the queue.  SerialPortWrapper also supports a
+  // single "early" detector that runs on an incomplete line, every time data
+  // is added to the line.
   public interface Detector {
     // Return that part of line not handled by this detector
     String apply(String line) throws SerialPortException;
@@ -99,6 +108,12 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return System.currentTimeMillis() - last_contact;
   }
 
+  public void checkConnection() throws TimerDevice.LostConnectionException {
+    if (millisSinceLastContact() > 2000) {
+      throw new TimerDevice.LostConnectionException();
+    }
+  }
+
   public void registerDetector(Detector detector) {
     synchronized (detectors) {
       detectors.add(detector);
@@ -121,14 +136,23 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void serialEvent(SerialPortEvent event) {
     try {
       if (event.isRXCHAR()) {
-        last_contact = System.currentTimeMillis();
+        noticeContact();
         read();
+      } else if (event.isTXEMPTY()) {
+        // Not sure what this means or what causes it, but
+        // it comes up sometimes on Windows
+        noticeContact();
       } else {
-        System.out.println("Event type is " + event.getEventType());
+        System.out.println("\n(Unexpected serialEvent type: " + event.
+            getEventType() + " with value " + event.getEventValue() + ")");
       }
     } catch (Exception e) {
       System.out.println("serialEvent gets an exception: " + e);
     }
+  }
+
+  protected void noticeContact() {
+    last_contact = System.currentTimeMillis();
   }
 
   // Process incoming characters from the device.  Whenever a full
@@ -171,7 +195,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
           s = s.substring(cr + 1);
         }
         leftover = s;
-        // logwriter.serialPortLog(LogWriter.INTERNAL, "leftover = <<" + leftover + ">>");
       }
     } catch (Exception exc) {
       System.out.println("Exception while reading: " + exc);
@@ -269,7 +292,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
       throws SerialPortException {
     clear();
     write(cmd);
-    drain(System.currentTimeMillis() + timeout, expectedLines);
+    if (expectedLines > 0) {
+      drain(System.currentTimeMillis() + timeout, expectedLines);
+    }
   }
 
   public void writeAndDrainResponse(String cmd) throws SerialPortException {

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2016-11-30T23:19:45.569220000</meta:creation-date><meta:editing-duration>PT26M45S</meta:editing-duration><meta:editing-cycles>5</meta:editing-cycles><meta:generator>LibreOffice/5.2.2.2$MacOSX_X86_64 LibreOffice_project/8f96e87c890bf8fa77463cd4b640a2312823f3ad</meta:generator><dc:date>2016-12-29T09:48:49.993948000</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="4" meta:object-count="0" meta:page-count="2" meta:paragraph-count="13" meta:word-count="194" meta:character-count="1318" meta:non-whitespace-character-count="1132"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2016-11-30T23:19:44.589810000"/></office:meta>
+ <office:meta><meta:creation-date>2016-11-30T23:19:45.569220000</meta:creation-date><meta:editing-duration>PT29M4S</meta:editing-duration><meta:editing-cycles>6</meta:editing-cycles><meta:generator>LibreOffice/5.2.4.2$MacOSX_X86_64 LibreOffice_project/3d5603e1122f0f102b62521720ab13a38a4e0eb0</meta:generator><dc:date>2018-01-16T17:38:46.695613873</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="4" meta:object-count="0" meta:page-count="2" meta:paragraph-count="13" meta:word-count="213" meta:character-count="1444" meta:non-whitespace-character-count="1238"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2016-11-30T23:19:44.589810000"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">37906</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">0</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">28286</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">19480</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">29900</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">17445</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">10811</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">6812</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">10553</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">5398</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">37906</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">28284</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">57385</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">0</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">29898</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">17443</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
-     <config:config-item config:name="ZoomFactor" config:type="short">100</config:config-item>
+     <config:config-item config:name="ZoomFactor" config:type="short">90</config:config-item>
      <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
     </config:config-item-map-entry>
    </config:config-item-map-indexed>
@@ -94,7 +94,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2563178</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">2683742</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -320,13 +320,28 @@
    <style:text-properties officeooo:rsid="0024be1a"/>
   </style:style>
   <style:style style:name="T6" style:family="text">
-   <style:text-properties fo:font-weight="normal" officeooo:rsid="0024be1a" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+   <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T7" style:family="text">
-   <style:text-properties fo:font-style="italic" officeooo:rsid="0024be1a" style:font-style-asian="italic" style:font-style-complex="italic"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="0024be1a" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T8" style:family="text">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="0024be1a" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T9" style:family="text">
+   <style:text-properties fo:font-style="italic" fo:font-weight="bold" officeooo:rsid="0028f35e" style:font-style-asian="italic" style:font-weight-asian="bold" style:font-style-complex="italic" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="T10" style:family="text">
+   <style:text-properties fo:font-style="italic" fo:font-weight="normal" officeooo:rsid="0028f35e" style:font-style-asian="italic" style:font-weight-asian="normal" style:font-style-complex="italic" style:font-weight-complex="normal"/>
+  </style:style>
+  <style:style style:name="T11" style:family="text">
    <style:text-properties fo:color="#345a8a" style:font-name="Calibri" fo:font-size="16pt" fo:font-weight="bold" style:font-name-asian="ＭＳ ゴシック" style:font-size-asian="16pt" style:font-weight-asian="bold" style:font-name-complex="Tahoma" style:font-size-complex="16pt" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="T12" style:family="text">
+   <style:text-properties fo:font-style="normal" fo:font-weight="normal" officeooo:rsid="0028f35e" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-style-complex="normal" style:font-weight-complex="normal"/>
+  </style:style>
+  <style:style style:name="T13" style:family="text">
+   <style:text-properties fo:font-style="normal" fo:font-weight="bold" officeooo:rsid="0028f35e" style:font-style-asian="normal" style:font-weight-asian="bold" style:font-style-complex="normal" style:font-weight-complex="bold"/>
   </style:style>
   <style:style style:name="fr1" style:family="graphic" style:parent-style-name="Graphics">
    <style:graphic-properties style:run-through="foreground" style:wrap="none" style:horizontal-pos="center" style:horizontal-rel="paragraph" style:mirror="none" fo:clip="rect(0in, 0in, 0in, 0in)" draw:luminance="0%" draw:contrast="0%" draw:red="0%" draw:green="0%" draw:blue="0%" draw:gamma="100%" draw:color-inversion="false" draw:image-opacity="100%" draw:color-mode="standard"/>
@@ -355,7 +370,7 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
    <text:p text:style-name="P10"><text:span text:style-name="T5">README: One-Click Install for </text:span>Windows</text:p>
-   <text:p text:style-name="P9">The Windows download for DerbyNet is a single .zip file. <text:s/>After downloading, unzip the file in a folder of your choosing.</text:p>
+   <text:p text:style-name="P9">The Windows download for DerbyNet is a single .zip file. <text:s/>After downloading, unzip the file in a folder of your choosing.<text:span text:style-name="T2"> <text:s/></text:span><text:span text:style-name="T9">Note:</text:span><text:span text:style-name="T12"> the directory containing the unzipped content, and all its parent directories, </text:span><text:span text:style-name="T13">must not contain spaces</text:span><text:span text:style-name="T12"> in their names.</text:span></text:p>
    <text:p text:style-name="P9">If desired, the unzipped content can be kept on a removable flash drive and transported from one machine to another. <text:s/>(The DerbyNet Windows download is based on Uniform Server, <text:s text:c="2"/>http://www.uniformserver.com.)</text:p>
    <text:h text:style-name="P3" text:outline-level="1">Launch The DerbyNet Web Server</text:h>
    <text:p text:style-name="P6"><text:span text:style-name="T5">After e</text:span>xtract<text:span text:style-name="T5">ing</text:span> all the files from the downloaded zip file, <text:span text:style-name="T5">o</text:span>pen the <text:span text:style-name="T2">UniServerZ</text:span> folder, and double-click the <text:span text:style-name="T2">UniController</text:span> application. <text:s/>The UniController window <text:span text:style-name="T5">will appear</text:span>:</text:p>
@@ -685,7 +700,7 @@
      </draw:image>
     </draw:frame></text:p>
    <text:p text:style-name="P7">Click on the “Start Apache” button to start the DerbyNet server.</text:p>
-   <text:p text:style-name="P5"><text:span text:style-name="T7">NOTE: </text:span>If you see a system error box about missing VCRUNTIME140.dll, <text:span text:style-name="T5">open the </text:span><text:span text:style-name="T4">installers</text:span><text:span text:style-name="T5"> folder and </text:span>run the <text:span text:style-name="T3">vc_redist.x86.exe</text:span><text:span text:style-name="T1"> executable (or download a copy from </text:span><text:a xlink:type="simple" xlink:href="https://www.microsoft.com/en-us/download/details.aspx?id=48145" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T1">https://www.microsoft.com/en-us/download/details.aspx?id=48145</text:span></text:a><text:span text:style-name="T1">) to install the necessary DLL.</text:span></text:p>
+   <text:p text:style-name="P5"><text:span text:style-name="T8">NOTE: </text:span>If you see a system error box about missing VCRUNTIME140.dll, <text:span text:style-name="T5">open the </text:span><text:span text:style-name="T4">installers</text:span><text:span text:style-name="T5"> folder and </text:span>run the <text:span text:style-name="T3">vc_redist.x86.exe</text:span><text:span text:style-name="T1"> executable (or download a copy from </text:span><text:a xlink:type="simple" xlink:href="https://www.microsoft.com/en-us/download/details.aspx?id=48145" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T1">https://www.microsoft.com/en-us/download/details.aspx?id=48145</text:span></text:a><text:span text:style-name="T1">) to install the necessary DLL.</text:span></text:p>
    <text:p text:style-name="P4"><draw:frame draw:style-name="fr1" draw:name="Image1" text:anchor-type="paragraph" svg:width="3.4965in" svg:height="1.2402in" draw:z-index="0"><draw:image>
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAdEAAAClCAYAAAADB8f4AAAi1UlEQVR4nO3dDXRU5YE38P8k
        IeFrAkoETRBFEkjysghoQclu+66JH4R2YdIjW+zuUXu6YVXeEm04r7g2abKobYl7whZawbNn
@@ -857,7 +872,7 @@
       </office:binary-data>
      </draw:image>
     </draw:frame></text:p>
-   <text:h text:style-name="P3" text:outline-level="1"><text:soft-page-break/>Launch The <text:span text:style-name="T8">Timer</text:span> Interface</text:h>
+   <text:h text:style-name="P3" text:outline-level="1"><text:soft-page-break/>Launch The <text:span text:style-name="T11">Timer</text:span> Interface</text:h>
    <text:p text:style-name="P2"><text:span text:style-name="T5">To interface to the track timer, d</text:span>ouble-click <text:span text:style-name="T2">derby-timer.jar</text:span> <text:span text:style-name="T5">(next to the UniServerZ folder).</text:span></text:p>
    <text:p text:style-name="P2">If you see a dialog like this, you need to install Java:</text:p>
    <text:p text:style-name="P7"><draw:frame draw:style-name="fr2" draw:name="Image3" text:anchor-type="paragraph" svg:width="2.978in" svg:height="2.128in" draw:z-index="2"><draw:image>
@@ -1057,7 +1072,7 @@
        iZUsR6fZvXu369u3b6WLAQA17/8DQBuvVguevpwAAAAASUVORK5CYII=
       </office:binary-data>
      </draw:image>
-    </draw:frame>Either download a Java installer from <text:a xlink:type="simple" xlink:href="http://java.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://java.com</text:a> for the most recent release, or use the Java installer <text:span text:style-name="T5">included in the </text:span><text:span text:style-name="T4">installers</text:span><text:span text:style-name="T6"> folder</text:span>.</text:p>
+    </draw:frame>Either download a Java installer from <text:a xlink:type="simple" xlink:href="http://java.com/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">http://java.com</text:a> for the most recent release, or use the Java installer <text:span text:style-name="T5">included in the </text:span><text:span text:style-name="T4">installers</text:span><text:span text:style-name="T7"> folder</text:span>.</text:p>
    <text:p text:style-name="P8">When derby-timer.jar is successfully launched, its main window will open:</text:p>
    <text:p text:style-name="P8"><draw:frame draw:style-name="fr2" draw:name="Image4" text:anchor-type="paragraph" svg:width="5.2335in" svg:height="3.6992in" draw:z-index="3"><draw:image>
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAArgAAAHsCAYAAAA5N95TAABhKUlEQVR4nO3dC2AU5b338d+G

@@ -5,6 +5,7 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.Random;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 
 // For testing the web server and the derby-timer framework, simulate
@@ -49,9 +50,8 @@ public class SimulatedDevice extends TimerDeviceBase implements TimerDevice {
       throws SerialPortException {
     synchronized (this) {
       if (runningHeat == null) {
-        System.out.println(
-            "STAGING:  heat " + heat + " of roundid " + roundid + ": "
-            + laneMaskString(laneMask));
+        System.out.println("STAGING:  heat " + heat + " of roundid " + roundid + ": "
+            + LogWriter.laneMaskString(laneMask, nlanes));
         runningHeat = new HeatRunner(roundid, heat, laneMask);
         (new Thread(runningHeat)).start();
       } // TODO Confirm roundid/heat match runningHeat
@@ -60,27 +60,6 @@ public class SimulatedDevice extends TimerDeviceBase implements TimerDevice {
 
   private synchronized void endRunningHeat() {
     runningHeat = null;
-  }
-
-  private static String laneMaskString(int laneMask) {
-    int lane_count = nlanes;
-    if (nlanes == 0) {
-      lane_count = 32 - Integer.numberOfLeadingZeros(laneMask);
-    }
-    StringBuilder sb = new StringBuilder();
-    sb.append('[');
-    for (int lane = 0; lane < lane_count; ++lane) {
-      if (lane > 0) {
-        sb.append(' ');
-      }
-      if ((laneMask & (1 << lane)) != 0) {
-        sb.append(1 + lane);
-      } else {
-        sb.append('-');
-      }
-    }
-    sb.append(']');
-    return sb.toString();
   }
 
   @Override

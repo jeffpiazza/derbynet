@@ -51,3 +51,4 @@ window.page = page;
 window.root = root;
 window.scriptName = scriptName;
 
+window.phantom_testing = true;

@@ -2,6 +2,7 @@
 // $_POST['script']
 require_once('inc/sql-script.inc');
 require_once('inc/locked.inc');
+require_once('inc/details-for-setup-page.inc');
 
 start_response();
 
@@ -20,6 +21,10 @@ if (!have_permission(SET_UP_PERMISSION)) {
 } else {
   run_sql_script($_POST['script'], /* write_xml */ true);
 }
+
+echo "<details><![CDATA[\n";
+echo json_encode(build_setup_page_details());
+echo "\n]]></details>\n";
 
 end_response();
 ?>

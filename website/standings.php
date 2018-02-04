@@ -13,6 +13,7 @@ session_start();
 // round.  Note that the roster.new action performs SQL queries directly,
 // without using final_standings(), but performs a similar query.
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
@@ -30,7 +31,7 @@ require_once('inc/standings.inc');
 $(function () {
     // We're initially displaying the "All" case.
     $("tr").not(".headers").addClass('hidden');
-    $(select_standings(false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
+    $(select_standings(false, false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
 
     $("select").on("change", function(event) {
         standings_select_on_change($(this).find("option:selected"),
@@ -54,17 +55,26 @@ $(function () {
 <?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
-<?php $banner_title = 'Race Standings'; require('inc/banner.inc'); ?>
+<?php make_banner('Race Standings'); ?>
 <div class="block_buttons">
 <div class="center-select">
 <h3><?php echo read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time" : "Averaging all heat times"; ?></h3>
 <select>
     <option selected="selected">All</option>
     <?php
-    foreach (standings_round_names() as $round) {
+    $use_subgroups = read_raceinfo_boolean('use-subgroups');
+    $rounds = rounds_for_standings();
+    foreach ($rounds as $round) {
       echo '<option data-roundid="'.$round['roundid'].'">'
           .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
           .'</option>'."\n";
+      if ($use_subgroups) {
+        foreach ($round['ranks'] as $rank) {
+          echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'">';
+          echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
+          echo "</option>\n";
+        }
+      }
     }
     ?>
 </select>

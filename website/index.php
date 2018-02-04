@@ -2,6 +2,8 @@
 // Redirects to setup page if the database hasn't yet been set up
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/banner.inc');
+require_once('inc/authorize.inc');
 
 // This first database access is surrounded by a try/catch in order to catch
 // broken/corrupt databases (e.g., sqlite pointing to a file that's not actually
@@ -11,9 +13,26 @@ try {
   $schema_version = schema_version();
 } catch (PDOException $p) {
   $_SESSION['setting_up'] = 1;
-  header('Location: database-setup.php');
+  header('Location: setup.php');
   exit();
 }
+
+function make_link_button($label, $link, $permission, $button_class) {
+  if (have_permission($permission)) {
+    echo "<a class='button_link ".$button_class."' href='".$link."'>".$label."</a>\n";
+    echo "<br/>\n";
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function make_spacer_if($cond) {
+  if ($cond) {
+    echo "<div class='index_spacer'>&nbsp;</div>\n";
+  }
+}
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -22,178 +41,145 @@ try {
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
+<style type="text/css">
+div.index_spacer {
+  height: 40px;
+}
+
+div.index_background {
+  width: 100%;
+}
+
+div.index_column {
+  width: 50%;
+  display: inline-block;
+  float: left;
+}
+
+.block_buttons a.button_link { 
+  font-size: 24px; /*x-large; */
+
+  /* Unique to button_link: */
+  text-align: center;
+  text-decoration: none;
+  
+  color:#ffffff;
+	width: 238px;
+	margin-left: auto;
+	margin-right: auto;
+    margin-top:3px;
+	margin-bottom: 20px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    display: block;
+    font-size: x-large;
+  font-family: system-ui;
+  /* line-height: normal; */
+  height: 30px;
+
+    background: #2d2d2d; /* Old browsers */
+    background: -moz-linear-gradient(top,  #424242 0%, #2d2d2d 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#424242), color-stop(100%,#2d2d2d)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* IE10+ */
+    background: linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* W3C */
+    border: 1px solid #666666;
+    border-right-width: 1px;
+    border-radius: 0.4em 0.4em 0.4em 0.4em;
+
+    cursor: pointer;
+}
+
+.block_buttons a.button_link.before_button,
+.block_buttons input.before_button[type='submit'] {
+  color: #ffffcc;
+}
+.block_buttons a.button_link.during_button,
+.block_buttons input.during_button[type='submit'] {
+  color: #ddffdd;
+}
+.block_buttons a.button_link.after_button,
+.block_buttons input.after_button[type='submit'] {
+  color: #ddddff;
+}
+.block_buttons a.button_link.other_button,
+.block_buttons input.other_button[type='submit'] {
+  color: #ffddff;
+}
+</style>
 </head>
 <body>
 <?php
- $no_back_button = true;
- require('inc/banner.inc');
- require_once('inc/authorize.inc');
+  make_banner('', /* back_button */ false);
 
  $need_spacer = false;
 
  // This is a heuristic more than a hard rule -- when are there so many buttons that we need a second column?
  $two_columns = have_permission(SET_UP_PERMISSION);
-?>
-<div class="index_background">
 
-<?php if ($two_columns) { ?>
-<div class="index_column">
-<?php } ?>
+echo "<div class='index_background'>\n";
 
-<div class="block_buttons">
-
-<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="coordinator.php">
-  <input type="submit" value="Race Dashboard"/>
-</form>
-<br/>
-<form method="link" action="kiosk-dashboard.php">
-  <input type="submit" value="Kiosk Dashboard"/>
-</form>
-<br/>
-<?php } ?>
-
-<?php if (have_permission(EDIT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards-editor.php">
-  <input type="submit" value="Awards Editor"/>
-</form>
-<br/>
-<?php } ?>
-
-<?php if (have_permission(PRESENT_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="awards-presentation.php">
-  <input type="submit" value="Present Awards"/>
-</form>
-<br/>
-<?php } ?>
- 
-<?php
-if ($need_spacer) {
-  $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+if ($two_columns) {
+  echo "<div class='index_column'>\n";
 }
-?>
 
-<?php if (have_permission(CHECK_IN_RACERS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="checkin.php">
-  <input type="submit" value="Race Check-In"/>
-</form>
-<br/>
-<?php } ?>
+echo "<div class='block_buttons'>\n";
 
-<?php if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) { $need_spacer = true; ?>
-<form method="get" action="photo-thumbs.php">
-  <input type="hidden" name="repo" value="head"/>
-  <input type="submit" value="Edit Racer Photos"/>
-</form>
-<br/>
-
-<?php if ($schema_version > 1) { ?>
-<form method="get" action="photo-thumbs.php">
-  <input type="hidden" name="repo" value="car"/>
-  <input type="submit" value="Edit Car Photos"/>
-</form>
-<br/>
-<?php } ?>
-<?php } ?>
-
-<?php if ($two_columns) { ?>
-</div>
-</div>
-
-<div class="index_column">
-<div class="block_buttons">
-<?php } ?>
-
-<?php if (have_permission(SET_UP_PERMISSION)) { $need_spacer = true; ?>
-<input type="button" value="Set-Up" onclick="show_modal('#setup_modal', function() {})"/>
-
-
-        <div id='setup_modal' class='modal_dialog hidden block_buttons'>
-          <form method="link" action="settings.php">
-            <input type="submit" value="Settings"/>
-          </form>
-          <br/>
-          <form method="link" action="database-setup.php">
-            <input type="submit" value="Database"/>
-          </form>
-          <br/>
-          <form method="link" action="import-roster.php">
-            <input type="submit" value="Import Roster"/>
-          </form>
-          <br/>
-          <form method="link" action="import-awards.php">
-            <input type="submit" value="Import Awards"/>
-          </form>
-          <br/>
-          <form method="link" action="class-editor.php">
-            <input type="submit" value="Edit <?php echo group_label(); ?>s"/>
-          </form>
-          <div class="index_spacer">&nbsp;</div>
-            <input type="button" data-enhanced="true" value="Cancel"
-                   onclick='close_modal("#setup_modal");'/>
-        </div>
-                                                
-<?php } ?>
-
-<?php
-if ($need_spacer) {
-  $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+// *********** Before ***************
+$need_spacer = make_link_button('Set-Up', 'setup.php', SET_UP_PERMISSION, 'before_button');
+$need_spacer = make_link_button('Race Check-In', 'checkin.php', CHECK_IN_RACERS_PERMISSION, 'before_button') || $need_spacer;
+$need_spacer = make_link_button('Edit Racer Photos', 'photo-thumbs.php?repo=head', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
+if ($schema_version > 1) {
+  $need_spacer = make_link_button('Edit Car Photos', 'photo-thumbs.php?repo=car', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
 }
-?>
 
-<form method="link" action="ondeck.php">
-  <input type="submit" value="Racers On Deck"/>
-</form>
-<br/>
+make_spacer_if($need_spacer);
 
- <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
-<form method="link" action="racer-results.php">
-  <input type="submit" value="Results By Racer"/>
-</form>
-<br/>
- <?php } ?>
+// *********** During ***************
+$need_spacer = make_link_button('Race Dashboard', 'coordinator.php', SET_UP_PERMISSION, 'during_button');
+$need_spacer = make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Judging', 'judging.php', JUDGING_PERMISSION, 'during_button') || $need_spacer;
+  
+// end first column default set-up
 
-<div class="index_spacer">&nbsp;</div>
+if ($two_columns) {
+  echo "</div>\n";
+  echo "</div>\n";
 
-<?php if (have_permission(VIEW_AWARDS_PERMISSION)) { $need_spacer = true; ?>
-<form method="link" action="standings.php">
-  <input type="submit" value="Standings"/>
-</form>
-<br/>
-<?php } ?>
-
- <?php if (have_permission(VIEW_RACE_RESULTS_PERMISSION)) { ?>
-<form method="link" action="export.php">
-  <input type="submit" value="Exported Results"/>
-</form>
-<br/>
- <?php } ?>
-
-<?php
-if ($need_spacer) {
-  $need_spacer = false;
-  echo '<div class="index_spacer">&nbsp;</div>'."\n";
+  echo "<div class='index_column'>\n";
+  echo "<div class='block_buttons'>\n";
 }
+
+// *********** During, part 2 ***************
+$need_spacer = make_link_button('Racers On Deck', 'ondeck.php', -1, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Results By Racer', 'racer-results.php', VIEW_RACE_RESULTS_PERMISSION, 'during_button')
+    || $need_spacer;
+
+make_spacer_if($need_spacer);
+
+// *********** After ***************
+$need_spacer = make_link_button('Present Awards', 'awards-presentation.php', PRESENT_AWARDS_PERMISSION, 'after_button');
+$need_spacer = make_link_button('Standings', 'standings.php', VIEW_AWARDS_PERMISSION, 'after_button') || $need_spacer;
+$need_spacer = make_link_button('Exported Results', 'export.php', VIEW_RACE_RESULTS_PERMISSION, 'after_button') || $need_spacer;
+
+make_spacer_if($need_spacer);
+
+// *********** Other ***************
+make_link_button('About', 'about.php', -1, 'other_button');
+
+if (@$_SESSION['role']) {
+  make_link_button('Log out', 'login.php?logout', -1, 'other_button');
+} else {
+  make_link_button('Log in', 'login.php', -1, 'other_button');
+}
+
+echo "</div>\n";
+if (have_permission(SET_UP_PERMISSION)) {
+  echo "</div>\n";
+}
+
+echo "</div>\n";
+echo "</body>\n";
+echo "</html>\n";
 ?>
-
-<form method="link" action="about.php">
-  <input type="submit" value="About"/>
-</form>
-<br/>
-
-<form method="link" action="login.php">
- <?php if (@$_SESSION['role']) { ?>
-  <input type="hidden" name="logout" value=""/>
- <?php } ?>
-  <input type="submit" value="Log <?php echo $_SESSION['role'] ? 'out' : 'in'; ?>"/>
-</form>
-
-</div>
-<?php if (have_permission(SET_UP_PERMISSION)) { ?>
-</div>
-<?php } ?>
-</div>
-</body>
-</html>

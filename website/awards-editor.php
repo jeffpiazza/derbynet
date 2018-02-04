@@ -1,6 +1,7 @@
 <?php @session_start();
 // Add, edit, reorder, and assign awards
 require_once('inc/data.inc');
+require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
@@ -9,9 +10,11 @@ require_permission(EDIT_AWARDS_PERMISSION);
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>Awards Presentation Dashboard</title><?php require('inc/stylesheet.inc'); ?>
+<title>Awards Editor</title>
+<?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+<script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
@@ -21,15 +24,13 @@ require_permission(EDIT_AWARDS_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/awards-editor.css"/>
 </head>
 <body>
-<?php $banner_title = 'Awards Editor'; require('inc/banner.inc');
+<?php make_banner('Awards Editor');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
 require_once('inc/awards.inc');
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-
-$awards = all_awards();
 ?>
 
 <div class="instructions-wrapper" style="position: relative;">
@@ -41,10 +42,6 @@ $awards = all_awards();
 <div class="center-button-up block_buttons">
 <input type="button" value="New Award" data-enhanced="true"
        onclick="handle_new_award();"/>
-</div>
-
-<div class="right">
-<p class="instructions">Drag a racer onto an award to claim.</p>
 </div>
 
 </div>
@@ -60,39 +57,6 @@ $awards = all_awards();
 </ul>
 </div><!-- listview -->
 
-<div id="racers">
-<div id="racers-inset">
-<ul data-role="listview">
-<?php
-// Generate the list of racers:
-
-foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, classid'
-                    .(schema_version() >= 2 ? ', carphoto' : '')
-                    .' FROM RegistrationInfo'
-                    .' ORDER BY lastname, firstname') as $row) {
-  $classid = $row['classid'];
-  $rankid = $row['rankid'];
-  $class = ($classid ? htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8') : '');
-  $rank = ($rankid ? htmlspecialchars($ranks[$rankid]['rank'], ENT_QUOTES, 'UTF-8') : '');
-  echo '<li';
-  echo ' data-racerid="'.$row['racerid'].'"';
-  echo ' data-classid="'.$classid.'"';
-  echo ' data-rankid="'.$rankid.'"';
-  echo '>';
-  if (isset($row['carphoto']) && $row['carphoto']) {
-    echo '<img src="'.car_photo_repository()->url_for_racer($row, RENDER_LISTVIEW).'"/>';
-  }
-  echo '<span>'.$row['carnumber'].' '
-       .htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')
-       .'</span>';
-  echo '<p>'.($use_subgroups ? $rank.', ' : '').$class.'</p>';
-  echo '</li>';
-}
-?>
-</ul>
-</div>
-</div>
-
 </div><!-- block_buttons -->
 
 
@@ -107,9 +71,11 @@ foreach ($db->query('SELECT racerid, firstname, lastname, carnumber, rankid, cla
     <select name="awardtypeid" id="awardtype-select">
         <?php
         foreach ($db->query('SELECT awardtypeid, awardtype FROM AwardTypes ORDER BY awardtype') as $atype) {
-          echo '<option value="'.$atype['awardtypeid'].'">'
-              .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
-              .'</option>'."\n";
+          if ($atype['awardtypeid'] != AD_HOC_AWARDTYPEID) {
+            echo '<option value="'.$atype['awardtypeid'].'">'
+                .htmlspecialchars($atype['awardtype'], ENT_QUOTES, 'UTF-8')
+                .'</option>'."\n";
+          }
         }
         ?>
     </select>

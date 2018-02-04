@@ -6,6 +6,7 @@
 // award-<awardid>
 // speed-<place>
 // speed-<place>-<den>
+// speed-<place>-<den>-<rank>
 
 // If present, $_POST['reveal'] is 0 or 1
 

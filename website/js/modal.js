@@ -63,6 +63,17 @@ function close_modal(modal_selector) {
     do_close_modal(modal_selector, "#modal_background");
 }
 
+// If we want to morph one dialog into another, at the same level; everything's
+// the same except do_close_modal for fading the background.  Because the
+// background's not affected, the level of the modal doesn't matter.
+// hide_modal() should be followed immediately with another show_modal call of
+// some kind.
+function hide_modal(modal_selector) {
+    g_modal_dialogs.pop();
+    $(modal_selector).closest('.modal_frame').addClass('hidden');
+    $(modal_selector).css({'display': 'none'});
+}
+
 // For a modal that's supposed to appear in front of another ("ordinary") modal.
 function show_secondary_modal(modal_selector, submit_handler) {
     do_show_modal(modal_selector, "#second_modal_background", 13000, submit_handler);

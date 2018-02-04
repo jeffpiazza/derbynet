@@ -37,10 +37,17 @@ curl_get "action.php?query=award.list" | grep 'awardid="3" ' | expect_one 'racer
 curl_get "action.php?query=award.list" | grep '<award ' | expect_count 'awardtypeid="4"' 4
 curl_get "action.php?query=award.list" | grep 'awardid="4" ' | expect_one 'racerid="22"'
 
-curl_post action.php "action=award.edit&awardid=1&racerid=2" | check_success
+curl_post action.php "action=racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=1" | check_success
+curl_post action.php "action=award.winner&awardid=1&racerid=11" | check_failure
+curl_post action.php "action=award.winner&awardid=1&racerid=2" | check_success
+curl_post action.php "action=award.winner&awardid=1&racerid=0" | check_success
+curl_post action.php "action=award.winner&awardid=1&racerid=2" | check_success
+
 curl_post action.php "action=award.edit&awardid=2&class_and_rank=3,3" | check_success
 curl_post action.php "action=award.edit&awardid=3&name=Third" | check_success
 curl_post action.php "action=award.edit&awardid=4&awardtypeid=2" | check_success
+
+curl_post action.php "action=award.winner&awardid=2&racerid=2" | check_failure
 
 curl_get "action.php?query=award.list" | expect_count '<award ' 4
 curl_get "action.php?query=award.list" | grep 'awardid="1" ' | expect_one 'racerid="2"'
@@ -65,6 +72,22 @@ curl_post action.php "action=award.order&awardid_1=4&awardid_2=5&awardid_3=2&awa
 curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="2"'
 curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'sort="3"'
 curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="4"'
+
+# Try some ad-hoc awards
+# 21 = Derek Dreier, car 121
+# 12 = Christopher Chauncey, car 212
+curl_post action.php "action=award.adhoc&racerid=21&awardname=Best%20Use%20Of%20Chocolate" | check_success
+curl_post action.php "action=award.adhoc&racerid=12&awardname=Most%20Glittery" | check_success
+curl_post action.php "action=award.adhoc&racerid=21&awardname=" | check_success
+
+curl_get "action.php?query=award.list" | expect_count 'Chocolate' 0
+curl_get "action.php?query=award.list" | expect_count 'racerid=12' 0
+curl_get "action.php?query=award.list" | grep 'Glittery' | expect_one 'racerid="12"'
+curl_get "action.php?query=award.list&adhoc=0" | expect_count 'Glittery' 0
+
+# Ad hoc awards aren't supposed to affect numbering for named awards
+curl_post action.php "action=award.edit&awardid=new&awardtypeid=4&name=NewFourth" | check_success
+curl_get "action.php?query=award.list" | grep NewFourth | expect_one 'sort="5"'
 
 # There's no current award at the very beginning, but we don't want to enforce
 # that this test has to be run at the very beginning.

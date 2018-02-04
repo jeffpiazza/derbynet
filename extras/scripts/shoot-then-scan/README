@@ -1,0 +1,18 @@
+The two scripts in this directory support automated photo upload in response to
+barcode scanning.  While the photostand.sh script takes complete control of the
+camera, causing a photo to be taken in response to reading a barcode, the two
+scripts here allow the camera to be operated by hand, with only the upload step
+triggered by a barcode scan.
+
+To use, BOTH scripts in this directory should be started.
+
+capture-tethered.sh talks to the camera using gphoto2, and stores each photo in
+response to operating the camera.  (chdkptp doesn't provide an equivalent of
+gphoto2's capture-tethered command, and so is not supported in this script.)  It
+also maintains a symbolic link to the most recently downloaded photo, for the
+benefit of upload-on-barcode.sh.
+
+upload-on-barcode.sh continuously polls the barcode scanner, performing an
+upload of the most recently captured photo upon receiving a recognizable
+barcode.  Like photostand.sh, there are options for auto-cropping and/or
+signaling check-in of a racer.

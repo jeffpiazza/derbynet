@@ -1,4 +1,5 @@
 <?php
+require_once('inc/schema_version.inc');
 
 /* Foreign keys:
 
@@ -24,9 +25,7 @@
  */
 
 $schema = array('Classes' => array('classid', 'class'),
-                // TODO: sortorder for Classes, Ranks
                 'Ranks' => array('rankid', 'rank', 'classid'),
-                // TODO: carphoto for RegistrationInfo
                 'RegistrationInfo' => array('racerid', 'carnumber', 'carname',
                                             'lastname', 'firstname', 'classid', 'rankid',
                                             'passedinspection', 'imagefile', 'exclude'),
@@ -40,4 +39,10 @@ $schema = array('Classes' => array('classid', 'class'),
                                      'completed', 'ignoretime', 'masterheat'),
                 'RaceInfo' => array('raceinfoid', 'itemkey', 'itemvalue'),
   );
+
+if (schema_version() >= 2) {
+  $schema['Classes'][] = 'sortorder';
+  $schema['Ranks'][] = 'sortorder';
+  $schema['RegistrationInfo'][] = 'carphoto';
+}
 ?>

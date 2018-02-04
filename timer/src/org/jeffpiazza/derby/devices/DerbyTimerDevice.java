@@ -14,9 +14,8 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   public DerbyTimerDevice(SerialPortWrapper portWrapper) {
     super(portWrapper);
 
-    // Once started, we expect a race result within 10 seconds; we allow an
-    // extra second before considering the results overdue.
-    rsm.setMaxRunningTimeLimit(11000);
+    // Once started, we expect a race result within 10 seconds
+    rsm.setMaxRunningTimeLimit(10000);
   }
 
   public static String toHumanString() {
@@ -36,6 +35,8 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
 
   // Response to a "G" is either "U" (up, or closed) or "D" (down, or open)
   private static final String READ_START_SWITCH = "G";
+
+  private static final String FORCE_RACE_RESULTS = "F";
 
   public boolean probe() throws SerialPortException {
     if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
@@ -78,8 +79,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
         if (line.equals("RACE")) {
           if (getGateIsClosed()) {
             setGateIsClosed(false);
-            rsm.onEvent(RacingStateMachine.Event.GATE_OPENED,
-                        DerbyTimerDevice.this);
+            rsm.onEvent(RacingStateMachine.Event.GATE_OPENED);
           }
           return "";
         } else if (line.equals("FINISH")) {
@@ -101,8 +101,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
             }
             if (!getGateIsClosed()) {
               setGateIsClosed(true);
-              rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED,
-                          DerbyTimerDevice.this);
+              rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED);
             }
             return "";
           }
@@ -122,40 +121,23 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     });
   }
 
-  // TODO synchronized?
-  public synchronized void prepareHeat(int roundid, int heat, int lanemask)
+  // Timer reports overdue results as 0.0000, but we need to report them
+  // as 9.9999.
+  @Override
+  protected void raceFinished(Message.LaneResult[] results)
       throws SerialPortException {
-    RacingStateMachine.State state = rsm.state(this);
-    // TODO This isn't necessary if the server won't send a redundant heat-ready
-    // No need to bother doing anything if we're already prepared for this heat.
-    if (this.roundid == roundid && this.heat == heat
-        && (state == RacingStateMachine.State.MARK
-            || state == RacingStateMachine.State.SET)) {
-      portWrapper.logWriter().traceInternal("Ignoring redundant prepareHeat()");  // TODO
-      return;
-    }
+    super.raceFinished(TimerDeviceUtils.zeroesToNines(results));
+  }
 
-    prepare(roundid, heat);
-    nresults = 0;
-    results = new ArrayList<Message.LaneResult>();
-
+  protected void maskLanes(int lanemask) throws SerialPortException {
     portWrapper.writeAndDrainResponse(CLEAR_LANE_MASK);
 
-    StringBuilder sb = new StringBuilder("Heat prepared: ");
     for (int lane = 0; lane < laneCount; ++lane) {
-      if ((lanemask & (1 << lane)) != 0) {
-        sb.append(lane + 1);
-      } else {
-        sb.append("-");
+      if ((lanemask & (1 << lane)) == 0) {
         // Response is "MASKING LANE <n>"
         portWrapper.writeAndDrainResponse(
             LANE_MASK + (char) ('1' + lane), 1, 500);
       }
-    }
-    portWrapper.logWriter().serialPortLogInternal(sb.toString());
-    rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED, this);
-    if (getGateIsClosed()) {
-      rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
     }
   }
 
@@ -180,14 +162,22 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     throw new NoResponseException();
   }
 
+  @Override
   public int getNumberOfLanes() throws SerialPortException {
     return laneCount;
   }
 
   @Override
   public void onTransition(RacingStateMachine.State oldState,
-                           RacingStateMachine.State newState) {
-    if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
+                           RacingStateMachine.State newState)
+      throws SerialPortException {
+    if (newState == RacingStateMachine.State.MARK) {
+      nresults = 0;
+      results = new ArrayList<Message.LaneResult>();
+    } else if (newState == RacingStateMachine.State.RESULTS_OVERDUE) {
+      // Force results upon entering RESULTS_OVERDUE.  After another second
+      // (in whileInState), give up and revert to idle.
+      portWrapper.write(FORCE_RACE_RESULTS);
       logOverdueResults();
     }
   }
@@ -195,27 +185,10 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   protected void whileInState(RacingStateMachine.State state)
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
-      // A reasonably common scenario is this: if the gate opens accidentally
-      // after the PREPARE_HEAT, the timer starts but there are no cars to
-      // trigger a result.
-      //
-      // updateGateIsClosed() may throw a LostConnectionException if the
-      // timer has become unresponsive; otherwise, we'll deal with an
-      // unexpected gate closure (which has no real effect).
-      if (updateGateIsClosed()) {
-        // It can certainly happen that the gate gets closed while the race
-        // is running.
-        rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED, this);
+      // FORCE_RACE_RESULTS was sent upon entering RESULTS_OVERDUE; see above.
+      if (rsm.millisInCurrentState() > 1000) {
+        giveUpOnOverdueResults();
       }
-      // This forces the state machine back to IDLE.
-      rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED, this);
-      // TODO invokeMalfunctionCallback(false,
-      //                                "No result received from last heat.");
-      // We'd like to alert the operator to intervene manually, but
-      // as currently implemented, a malfunction(false) message would require
-      // unplugging/replugging the timer to reset: too invasive.
-      portWrapper.logWriter().serialPortLogInternal(
-          "No result from timer for the running race; giving up.");
     }
   }
 }

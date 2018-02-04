@@ -1,10 +1,12 @@
 <?php @session_start();
-    require_once('inc/data.inc');
-    require_once('inc/schema_version.inc');
-    require_once('inc/running_round_header.inc');
+require_once('inc/data.inc');
+require_once('inc/banner.inc');
+require_once('inc/photo-config.inc');
+require_once('inc/schema_version.inc');
+require_once('inc/running_round_header.inc');
 
-    $use_master_sched = use_master_sched();
-    $high_water_rounds = high_water_rounds();
+$use_master_sched = use_master_sched();
+$high_water_rounds = high_water_rounds();
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -36,20 +38,23 @@ var g_update_status = {
 </head>
 <body>
 <?php
-$banner_title = 'Results By Racer';
-require('inc/banner.inc');
+make_banner('Results By Racer');
 
 $nlanes = get_lane_count_from_results();
 
 $now_running = get_running_round();
 running_round_header($now_running, /* Use RoundID */ TRUE);
 
+$show_racer_photos = read_raceinfo_boolean('show-racer-photos-rr');
+$show_car_photos = read_raceinfo_boolean('show-car-photos-rr');
+
 require_once('inc/rounds.inc');
 $rounds = all_rounds();
 
 $sql = 'SELECT RegistrationInfo.racerid,'
     .' Classes.class, round, heat, lane, finishtime, resultid,'
-    .' carnumber, RegistrationInfo.firstname, RegistrationInfo.lastname,'
+    .' carnumber, firstname, lastname, imagefile, '
+    .(schema_version() >= 2 ? 'carphoto, ' : '')
     .' Classes.classid, Rounds.roundid'
     .' FROM '.inner_join('RaceChart', 'RegistrationInfo',
                          'RegistrationInfo.racerid = RaceChart.racerid',
@@ -87,7 +92,7 @@ function write_rr($racer_label, $racer_cells, $nrows) {
   global $row;  // read and written
 
   $rrow = '<tr class="d'.($row & 1).'">'
-         .'<th rowspan="'.$nrows.'">'.$racer_label.'</th>';
+         .'<th rowspan="'.$nrows.'" class="nrows'.$nrows.'">'.$racer_label.'</th>';
   ++$row;
   for ($r = 0; $r < $nrows; ++$r) {
     if ($r > 0) {
@@ -141,9 +146,17 @@ foreach ($rounds as $round) {
 		write_rr($racer_label, $racer_cells, $nrows);
       }
       $racerid = $rs['racerid'];
-      $racer_label = '<span class="racer">'
+      $racer_label = '';
+      // 68h images completely fill one row's height
+      if ($rs['imagefile'] && $show_racer_photos) {
+        $racer_label .= '<img src="'.headshots()->url_for_racer($rs, '68h').'" style="float: left;"/>';
+      }
+      if (isset($rs['carphoto']) && $rs['carphoto'] && $show_car_photos) {
+        $racer_label .= '<img src="'.car_photo_repository()->url_for_racer($rs, '68h').'" style="float: left;"/>';
+      }
+      $racer_label .= '<div class="racer_label"><span class="racer">'
         .htmlspecialchars($rs['lastname'].', '.$rs['firstname'], ENT_QUOTES, 'UTF-8').'</span>'
-		.' (<span class="car">'.$rs['carnumber'].'</span>)';
+		.' (<span class="car">'.$rs['carnumber'].'</span>)</div>';
       $racer_cells = array();
       for ($i = 1; $i <= $nlanes; ++$i) {
 		$racer_cells[] = array();
