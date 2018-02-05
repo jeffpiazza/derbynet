@@ -19,6 +19,11 @@ div.screenshots {
     margin-bottom: 20px;
 }
 
+p.attribution {
+  font-weight: bold;
+  font-style: italic;
+}
+
 @media print, screen and (min-width: 1080px) {
     div.screenshot-wrapper {
         position: fixed;
