@@ -7,7 +7,7 @@
 // implies that we're populating a new follow-on round for the same class, based
 // on the top finishers from the identified round.
 //
-// If roundid is empty, then we're generating a "Grand Finals" around, taking
+// If roundid is empty, then we're generating a "Grand Finals" round, taking
 // top finishers across multiple previous rounds.  Those previous rounds are
 // identified by $_POST keys of the form roundid_<nnn>.
 //
@@ -47,6 +47,9 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   }
   // TODO: Handle 0 or 1 roundid's provided
 
+  // A Grand Final round has the same round number as the highest completed
+  // round it draws from.  In other words, if you're picking top finishers from
+  // several Round 1 rounds, you're constructing a Round 1 Grand Final round.
   $old_round = read_single_value('SELECT MAX(round)'
                                  .' FROM RaceChart'
                                  .' INNER JOIN Rounds'

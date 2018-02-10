@@ -52,6 +52,7 @@ function get_next_heat(&$current, $requested) {
       return false;
     }
   } else {
+    // Normal scheduling (not master scheduling)
     if ($requested == 'first') {
       $heat = 1;
     } else if ($requested == 'next') {
@@ -98,15 +99,15 @@ function advance_heat(&$current, $requested, $report_failure) {
                             .' WHERE roundid = :roundid AND heat = :heat',
                             array(':roundid' => $next['roundid'],
                                   ':heat' => $next['heat'])) > 0;
+  }
 
-    if (!$ok) {
-      // If we got here, the requested heat doesn't exist.
-      {
-        set_racing_state(0);
-      }
-      if ($report_failure) {
-        echo '<failure code="nosuchheat">No heat '.@$next['heat'].' scheduled for roundid '.@$next['roundid'].'</failure>';
-      }
+  if (!$ok) {
+    // If we got here, the requested heat doesn't exist.
+    {
+      set_racing_state(0);
+    }
+    if ($report_failure) {
+      echo '<failure code="nosuchheat">No heat '.@$next['heat'].' scheduled for roundid '.@$next['roundid'].'</failure>';
     }
   }
 
