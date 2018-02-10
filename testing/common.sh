@@ -146,14 +146,6 @@ function check_failure() {
 	fi
 }
 
-function check_heat_ready() {
-	# Expecting stdin
-	grep -c "<heat-ready[ />]" $DEBUG_CURL > /dev/null
-	if [ $? -ne 0 ]; then
-        test_fails EXPECTING HEAT-READY
-	fi
-}
-
 function expect_count {
 	# Expecting stdin
 	if [ "`grep -c "$1"`" -ne $2 ]; then
@@ -166,4 +158,23 @@ function expect_one {
         test_fails expecting an occurrence of $1
 	fi
 }
-    
+
+# Confirm what roundid/heat is current and simulate timer interaction for running one heat
+# Usage: run_heat <roundid> <heat> <lane1> <lane2> <lane3> <lane4> ?<skip-check_heat_ready>
+function run_heat() {
+    ROUNDID=$1
+    HEAT=$2
+    LANE1=$3
+    LANE2=$4
+    LANE3=$5
+    LANE4=$6
+    SKIP_CHECK_HEAT_READY=$7
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "now-racing=\"1\""
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "roundid=\"$ROUNDID\""
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "heat=\"$HEAT\""
+    curl_post action.php "action=timer-message&message=STARTED" | check_success
+    curl_post action.php "action=timer-message&message=FINISHED&lane1=$LANE1&lane2=$LANE2&lane3=$LANE3&lane4=$LANE4" | check_success
+    if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
+        cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
+    fi
+}

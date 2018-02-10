@@ -22,16 +22,12 @@ curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.3294268726240133&lane2=3.4179854414310484&lane3=3.818251820275865&lane4=2.240156635057904" | check_success 
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.755459366370065&lane2=2.6205858409266822&lane3=2.380029859598636&lane4=3.2347486741135887" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.079354701980928&lane2=3.6770361146010666&lane3=2.9511089893125515&lane4=2.8799167237857377" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.7412731387211764&lane2=3.405377024315312&lane3=3.341490063448355&lane4=2.804557990229122" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.96617950392236&lane2=3.9673731376083374&lane3=3.56865022781857&lane4=3.8388886921923415" | check_success
+
+run_heat 1 1 3.3294268726240133 3.4179854414310484 3.818251820275865  2.240156635057904
+run_heat 1 2 3.755459366370065  2.6205858409266822 2.380029859598636  3.2347486741135887
+run_heat 1 3 2.079354701980928  3.6770361146010666 2.9511089893125515 2.8799167237857377
+run_heat 1 4 3.7412731387211764 3.405377024315312  3.341490063448355  2.804557990229122
+run_heat 1 5 2.96617950392236   3.9673731376083374 3.56865022781857   3.8388886921923415    x
 
 ### Racing for roundid=2: 5 heats
 user_login_coordinator
@@ -39,16 +35,13 @@ curl_post action.php "action=select-heat&roundid=2&now_racing=1" | check_success
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.614998506472289&lane2=2.073131117194488&lane3=3.0402460662858495&lane4=3.7937815988460155" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.994596587596803&lane2=3.457181283243707&lane3=2.18676227631551&lane4=2.344727543260708" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.490176080549383&lane2=2.083847477663076&lane3=3.646950464934686&lane4=2.1003158107733295" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.940308674460656&lane2=3.4869952774053647&lane3=3.5717918276879654&lane4=3.538643938151412" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.043976595882954&lane2=3.409014449582755&lane3=3.388110311263697&lane4=2.911083015110213" | check_success
+cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
+
+run_heat 2 1 2.614998506472289 2.073131117194488  3.0402460662858495 3.7937815988460155
+run_heat 2 2 2.994596587596803 3.457181283243707  2.18676227631551   2.344727543260708
+run_heat 2 3 2.490176080549383 2.083847477663076  3.646950464934686  2.1003158107733295
+run_heat 2 4 3.940308674460656 3.4869952774053647 3.5717918276879654 3.538643938151412
+run_heat 2 5 3.043976595882954 3.409014449582755  3.388110311263697  2.911083015110213      x
 
 user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
@@ -62,16 +55,12 @@ curl_post action.php "action=select-heat&roundid=3&now_racing=1" | check_success
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
-### Racing for roundid=3: 4 heats among 2 racers
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-## Bye lane times are just ignored
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.7706287330762995&lane2=2.4761577976297398&lane3=2.4508518847836402&lane4=2.441341067637084" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.738401719134787&lane2=3.0321225923338653" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane2=3.4490285448987454&lane3=2.8584802815655985" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane3=2.756576818870377&lane4=3.0264310036127933" | check_success
+### Racing for roundid=3: 4 heats among 3 racers
+
+run_heat 3 1 2.7706287330762995 -                  2.4508518847836402 2.441341067637084
+run_heat 3 2 2.738401719134787  3.0321225923338653 -                  9.9999
+run_heat 3 3 9.9999             3.4490285448987454 2.8584802815655985 -
+run_heat 3 4 -                  9.9999             2.756576818870377  3.0264310036127933   x
 
 user_login_coordinator
 ### Editing racers
@@ -101,36 +90,26 @@ curl_post action.php "action=schedule.generate&roundid=5" | check_success
 curl_post action.php "action=select-heat&roundid=4&now_racing=1" | check_success
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.581933364716356&lane2=3.3400731028218082&lane3=2.739493818706433&lane4=3.917729713673916" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.4442507799131765&lane2=2.4411579340070277&lane3=3.6294505375852366&lane4=2.430947440406351" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.4408039110826882&lane2=3.6778818405759583&lane3=2.976856611632552&lane4=3.7326024055828313" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.48947787221569&lane2=2.047786539033757&lane3=2.4732761668871746&lane4=2.547997653720559" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.4360085953891315&lane2=3.485896541487217&lane3=2.760802966619598&lane4=3.416321869253517" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.626896364989139&lane2=2.5541112570192586&lane3=2.536503418909614&lane4=3.9059625894956485" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.5955033883902923&lane2=3.7658907236550467&lane3=3.7152641900293784&lane4=3.4789389340166657" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.648749488910531&lane2=3.0060133667294835&lane3=3.9589674579465677&lane4=3.617549894590156" | check_success
+
+run_heat 4 1 3.581933364716356  3.3400731028218082 2.739493818706433  3.917729713673916
+run_heat 4 2 3.4442507799131765 2.4411579340070277 3.6294505375852366 2.430947440406351
+run_heat 4 3 3.4408039110826882 3.6778818405759583 2.976856611632552  3.7326024055828313
+run_heat 4 4 3.48947787221569   2.047786539033757  2.4732761668871746 2.547997653720559
+run_heat 4 5 2.4360085953891315 3.485896541487217  2.760802966619598  3.416321869253517
+run_heat 4 6 3.626896364989139  2.5541112570192586 2.536503418909614  3.9059625894956485
+run_heat 4 7 2.5955033883902923 3.7658907236550467 3.7152641900293784 3.4789389340166657
+run_heat 4 8 3.648749488910531  3.0060133667294835 3.9589674579465677 3.617549894590156    x
 
 ### Racing for roundid=5
 user_login_coordinator
 curl_post action.php "action=select-heat&roundid=5&now_racing=1" | check_success
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.9962279925545943&lane2=3.9847459663932026&lane3=2.1091805633909195&lane4=3.2685008030430156" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.4600888959781884&lane2=3.634953062369908&lane3=2.315237412613288&lane4=2.671188533868289" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.884104613683352&lane2=2.824318361529536&lane3=2.7381147675717172&lane4=3.9018944125092982" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.788677259690628&lane2=3.5121727633843625&lane3=3.897900103278687&lane4=2.0171570935608143" | check_success
+
+run_heat 5 1 3.9962279925545943 3.9847459663932026 2.1091805633909195 3.2685008030430156
+run_heat 5 2 2.4600888959781884 3.634953062369908  2.315237412613288  2.671188533868289
+run_heat 5 3 3.884104613683352  2.824318361529536  2.7381147675717172 3.9018944125092982
+run_heat 5 4 2.788677259690628  3.5121727633843625 3.897900103278687  2.0171570935608143   x
 
 user_login_coordinator
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner

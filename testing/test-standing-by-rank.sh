@@ -72,47 +72,29 @@ curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
+cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
 
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.01&lane2=2.503&lane3=1.17&lane4=2.508" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=5.502&lane2=2.504&lane3=5.518&lane4=1.09" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.503&lane2=1.05&lane3=2.519&lane4=5.510" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.504&lane2=5.506&lane3=3.020&lane4=3.011" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.05&lane2=2.507&lane3=1.01&lane4=3.012" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.13&lane2=3.015&lane3=1.09&lane4=3.020" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.012&lane2=5.514&lane3=2.508&lane4=2.519" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.011&lane2=1.13&lane3=2.507&lane4=5.518" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=5.514&lane2=3.016&lane3=5.510&lane4=1.01" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.015&lane2=1.17&lane3=3.011&lane4=5.502" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.016&lane2=5.518&lane3=3.012&lane4=2.503" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=5.506&lane2=2.508&lane3=5.502&lane4=1.13" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.507&lane2=1.09&lane3=2.503&lane4=5.514" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.508&lane2=5.510&lane3=2.504&lane4=3.015" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.09&lane2=3.011&lane3=1.05&lane4=3.016" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=5.510&lane2=3.012&lane3=5.506&lane4=1.17" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=5.518&lane2=3.020&lane3=5.514&lane4=1.05" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.17&lane2=2.519&lane3=1.13&lane4=2.504" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=3.020&lane2=5.502&lane3=3.016&lane4=2.507" | check_success
-check_heat_ready && curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=2.519&lane2=1.01&lane3=3.015&lane4=5.506" | check_success
+run_heat 1  1 1.01  2.503 1.17  2.508
+run_heat 1  2 5.502 2.504 5.518 1.09
+run_heat 1  3 2.503 1.05  2.519 5.510
+run_heat 1  4 2.504 5.506 3.020 3.011
+run_heat 1  5 1.05  2.507 1.01  3.012
+run_heat 1  6 1.13  3.015 1.09  3.020
+run_heat 1  7 3.012 5.514 2.508 2.519
+run_heat 1  8 3.011 1.13  2.507 5.518
+run_heat 1  9 5.514 3.016 5.510 1.01
+run_heat 1 10 3.015 1.17  3.011 5.502
+run_heat 1 11 3.016 5.518 3.012 2.503
+run_heat 1 12 5.506 2.508 5.502 1.13
+run_heat 1 13 2.507 1.09  2.503 5.514
+run_heat 1 14 2.508 5.510 2.504 3.015
+run_heat 1 15 1.09  3.011 1.05  3.016
+run_heat 1 16 5.510 3.012 5.506 1.17
+run_heat 1 17 5.518 3.020 5.514 1.05
+run_heat 1 18 1.17  2.519 1.13  2.504
+run_heat 1 19 3.020 5.502 3.016 2.507
+run_heat 1 20 2.519 1.01  3.015 5.506  x
+
 
 # Standings by times:
 # 101 Jewell Jeansonne
