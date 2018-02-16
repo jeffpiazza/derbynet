@@ -64,8 +64,8 @@ th .aside {
 }
 
 table, td {
-    /* This is a plausible guess, but really needs to adjust with the
-       window size. */
+    /* This is just a placeholder value; the real font size gets set dynamically.
+       See js/now-racing-adjust-fonts.js */
     font-size: 85px;
 }
 
@@ -78,6 +78,39 @@ td {
    for reasons I don't understand (empty anonymous block box?). */
 td.photo img {
     float: left;
+}
+
+@media screen and (max-width: 800px),
+       screen and (max-height: 500px) {
+  td {
+    border: 7px solid black;
+  }
+  th {
+    font-size: 20px;
+    height: 30px;
+  }
+}
+
+@media screen and (max-width: 600px),
+       screen and (max-height: 350px) {
+  td {
+    border: 5px solid black;
+  }
+  th {
+    font-size: 16px;
+    height: 22px;
+  }
+}
+
+@media screen and (max-width: 400px), 
+       screen and (max-height: 250px) {
+  td {
+    border: 2px solid black;
+  }
+  th {
+    font-size: 12px;
+    height: 17px;
+  }
 }
 
 .name .subtitle {
@@ -119,28 +152,3 @@ td.photo img {
 .banner_version { display: none; }
 
 .aside { display: none; }
-
-/* TODO What screen sizes are we trying to support?  Make sure 640x480 works, anyway. */
-/* TODO Work out exactly what font size we can fit, assuming two-line name cells? */
-@media screen and (max-width: 1400px) {
-    td {
-        font-size: 58px;
-        /* color: orange; */
-    }
-}
-
-@media screen and (max-width: 1024px) {
-    td {
-        font-size: 40px;
-        /* color: green; */
-    }
-}
-
-@media screen and (max-width: 800px) {
-    td {
-        font-size: 30px;
-        border: 7px solid black;
-        padding: 7px;
-        /* color: red; */
-    }
-}
