@@ -94,6 +94,11 @@ $locked_settings = locked_settings();
     </div>
     <div class="settings_group_settings">
       <p>
+        <input id="supergroup-label" name="supergroup-label" type="text" data-enhanced="true"
+               value="<?php echo supergroup_label(); ?>"/>
+        <label for="supergroup-label">Super-Group Label</label>
+      </p>
+      <p>
         <input id="group-label" name="group-label" type="text" data-enhanced="true" value="<?php echo group_label(); ?>"/>
         <label for="group-label">Group Label</label>
       </p>
@@ -107,11 +112,6 @@ $locked_settings = locked_settings();
         <input id="subgroup-label" name="subgroup-label" type="text" data-enhanced="true"
                value="<?php echo subgroup_label(); ?>"/>
         <label for="subgroup-label">Subgroup Label</label>
-      </p>
-      <p>
-        <input id="supergroup-label" name="supergroup-label" type="text" data-enhanced="true"
-               value="<?php echo supergroup_label(); ?>"/>
-        <label for="supergroup-label">Super-Group Label</label>
       </p>
     </div>
   </div>
@@ -223,7 +223,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         <input type="hidden" name="use-master-sched-checkbox" value="yes"/>
         <input id="use-master-sched" name="use-master-sched" data-enhanced="true" type="checkbox"<?php
             if ($use_master_sched) echo ' checked="checked"';?>/>
-        <label>Use master schedules</label>
+        <label>Interleave heats from different <?php echo group_label_lc(); ?>s</label>
       </p>
     </div>
   </div>
