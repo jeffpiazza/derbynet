@@ -1,6 +1,3 @@
-// TODO: Window resizing should adjust the font size in some meaningful way.
-// TODO: Test display in 640x480 with the longest names we can find.
-
 var Overlay = {
   overlay_shown: '',
 
@@ -93,6 +90,7 @@ var Lineup = {
         FlyerAnimation.enable_flyers();
         FlyerAnimation.set_number_of_racers(racers.length);
 
+        FontAdjuster.reset();
         // Clear old results
         $('[data-lane] .carnumber').text('');
         $('[data-lane] .photo').empty();
@@ -366,6 +364,8 @@ function resize_table() {
   var btop = parseInt(place.css('border-top'));
   var mtop = parseInt(place.css('margin-top'));
   $('.flying').css({margin: mtop + btop});
+
+  FontAdjuster.table_resized();
 }
 
 $(function () {
