@@ -11,7 +11,7 @@ $("#screensize").text($(window).width() + " x " + $(window).height());
 
 $(function () {
     report_window_size();
-    $(window).resize(function() { report_window_size(); });
+    setInterval(report_window_size, 500);
 });
 </script>
 <?php require('inc/kiosk-poller.inc'); ?>
