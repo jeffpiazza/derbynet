@@ -2,7 +2,9 @@
 # Execute this script to present a full-screen browser using Epiphany.
 #
 # Epiphany is the default browser for Raspbian, but it doesn't seem to support a
-# "full screen" mode that clears the desktop decorations (menu bar, etc.).
+# "full screen" mode that clears the desktop decorations (menu bar, etc.).  The
+# work-around is to install xautomation (which provides the xte command), and
+# simulate an F11 keystroke to put the browser in fullscreen mode.
 
 xset s off
 xset -dpms
@@ -32,5 +34,8 @@ done
 # While loop allows recovery from browser crashes
 while true ; do
     test -x /usr/bin/logger && logger -t kiosk Starting epiphany browser
+    # If xautomation is present, use xte put the browser into fullscreen mode.
+    # The sleep is to allow the browser to get set up.
+    test -x /usr/bin/xte && xte 'sleep 15' 'key F11' &
     epiphany-browser --application-mode --profile /home/pi/.config "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"
 done
