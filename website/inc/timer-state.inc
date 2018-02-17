@@ -24,7 +24,9 @@ class TimerState {
   // and the state is NOT_CONNECTED.
   private $state;
   
-  // The time() value when the derby-timer.jar last contacted the server.
+  // The time() value when the derby-timer.jar last contacted the server;
+  // initially 0.  If set to a value less than zero (for testing), then the
+  // check for recency of contact is disabled.
   private $last_contact;
 
   // malfunction_expiration='' for "no malfunction",
@@ -65,7 +67,7 @@ class TimerState {
       $this->malfunction_message = $cooked[3];
     }
     
-    if ($this->last_contact + 60 < time()) {
+    if ($this->last_contact >= 0 && $this->last_contact + 60 < time()) {
       $this->state = TIMER_NOT_CONNECTED;
     }
     if ($this->malfunction_expiration != '' &&
@@ -83,6 +85,14 @@ class TimerState {
 
   public function last_contact() {
     return $this->last_contact;
+  }
+
+  public function seconds_since_last_contact() {
+    if ($this->last_contact < 0) {
+      return 0;
+    } else {
+      return time() - $this->last_contact;
+    }
   }
   
   // "Unhealthy" implies it might get better on its own, i.e., by getting a good
@@ -118,9 +128,16 @@ class TimerState {
   public function to_state($state) {
     $this->state = $state;
   }
+
+  public function set_assume_connected_for_test() {
+    $this->last_contact = -1;
+    if ($this->unhealthy()) {
+      $this->to_state(TIMER_CONNECTED);
+    }
+  }
   
   public function write($renew) {
-    if ($renew) {
+    if ($renew && $this->last_contact >= 0) {
       $this->last_contact = time();
     }
     write_raceinfo('timer_state', implode('+', array($this->state, $this->last_contact,

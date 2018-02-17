@@ -25,7 +25,7 @@ if ($tstate == TIMER_NOT_CONNECTED) {
   $msg = $timer_state->malfunction();
   $icon = 'img/status/trouble.png';
 } else if ($tstate == TIMER_CONNECTED) {
-  $msg ='CONNECTED ('.(time() - $timer_state->last_contact()).' sec.)';
+  $msg ='CONNECTED ('.($timer_state->seconds_since_last_contact()).' sec.)';
   $icon = 'img/status/ok.png';
 } else if ($tstate == TIMER_STAGING) {
   $msg = 'Staging';
