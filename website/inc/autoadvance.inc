@@ -18,8 +18,8 @@ require_once('inc/replay.inc');
 function get_next_heat(&$current, $requested) {
   global $db;
 
-  if ($current['use_master_sched'] && !is_int($requested)) {
-    if ($requested == 'first') {
+  if ($current['use_master_sched'] && !is_numeric($requested)) {
+    if ($requested == 'next-up') {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = (SELECT MIN(masterheat)'
                                                   .' FROM RaceChart'
@@ -122,7 +122,7 @@ function advance_heat(&$current, $requested, $report_failure) {
     write_raceinfo('RoundID', $roundid);
     write_raceinfo('Heat', $heat);
 
-    if ($requested = 'first' || $roundid != @$current['roundid']) {
+    if ($requested = 'next-up' || $roundid != @$current['roundid']) {
       write_raceinfo('ClassID', read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
                                                   array(':roundid' => $roundid)));
     }
