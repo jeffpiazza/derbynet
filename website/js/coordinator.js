@@ -247,7 +247,6 @@ function handle_new_round_chosen(roundid) {
 function show_new_round_modal(roundid) {
     $(".multi_den_only").addClass("hidden");
     $(".single_den_only").removeClass("hidden");
-    // TODO 
     $("#new_round_modal").removeClass("wide_modal");
     $("#new_round_modal #new_round_roundid").val(roundid);
     show_modal("#new_round_modal", function(event) {
@@ -273,7 +272,6 @@ function handle_grand_final_chosen() {
 function show_grand_final_modal() {
     $(".multi_den_only").removeClass("hidden");
     $(".single_den_only").addClass("hidden");
-    // TODO 
     $("#new_round_modal").addClass("wide_modal");
     // Have to suspend updates to this dialog while it's open
     g_new_round_modal_open = true;
@@ -312,11 +310,11 @@ function handle_replay_settings_submit() {
            });
 }
 
-function handle_master_next_to_race() {
+function handle_master_next_up() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'select-heat',
-                   heat: 'first',
+                   heat: 'next-up',
                    now_racing: 0},
             success: function(data) { process_coordinator_poll_response(data); }
            });
@@ -532,14 +530,14 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     inject_progress_bars(group, round);
 
     var buttons = group.find("[data-name=buttons]");
-    if (round.roundid == current.roundid) {
-        buttons = $("#now-racing-group-buttons");
+    if (round.roundid == current.roundid && round.roundid > 0) {
+      buttons = $("#now-racing-group-buttons");
     }
     buttons.empty();
 
     if (round.roundid == -1) {
         buttons.append('<input type="button" data-enhanced="true"'
-                       + ' onclick="handle_master_next_to_race()" value="Next To Race"/>');
+                       + ' onclick="handle_master_next_up()" value="Next Up"/>');
     } else {
         if (round.racers_unscheduled > 0) {
             if (round.heats_run == 0) {
@@ -782,7 +780,7 @@ function process_coordinator_poll_response(data) {
     $("#master-schedule-group").empty();
     var totals = calculate_totals(rounds);
     totals.roundid = -1;
-    totals.classname = "Master Schedule";
+    totals.classname = "Interleaved Schedule";
     totals.category = "master-schedule";
 
     generate_scheduling_control_group(totals, current, timer_state);
