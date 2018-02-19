@@ -14,6 +14,7 @@ require_once('inc/standings.inc');
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <style type="text/css">
+body { overflow: hidden; }
 /* This draws a divider line above the very first visible row, useful for scrolling */
 .main_table tr.first_visible {
   border-top: 3px solid black;

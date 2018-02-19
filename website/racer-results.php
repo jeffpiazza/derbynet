@@ -12,7 +12,12 @@ $high_water_rounds = high_water_rounds();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php if (isset($as_kiosk)) require_once('inc/kiosk-poller.inc'); ?>
+<?php if (isset($as_kiosk)) {
+  require_once('inc/kiosk-poller.inc');
+  echo "<style type='text/css'>\n";
+  echo "body { overflow: hidden; }\n";
+  echo "</style>\n";
+}?>
 <script type="text/javascript">
 var g_update_status = {
       last_update_time: "", // First refresh is for everything
@@ -38,7 +43,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-make_banner('Results By Racer');
+make_banner('Results By Racer', $as_kiosk ? '' : 'index.php');
 
 $nlanes = get_lane_count_from_results();
 
