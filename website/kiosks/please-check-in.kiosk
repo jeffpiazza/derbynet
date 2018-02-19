@@ -13,6 +13,7 @@
 $(function () { setInterval(function() { location.reload(true); }, 30000); });
 </script>
 <style>
+body { overflow: hidden; }
 li.first {
   border-top: 2px solid black;
 }

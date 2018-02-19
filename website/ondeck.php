@@ -29,7 +29,12 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<?php if (isset($as_kiosk)) require_once('inc/kiosk-poller.inc'); ?>
+<?php if (isset($as_kiosk)) {
+  require_once('inc/kiosk-poller.inc');
+  echo "<style type='text/css'>\n";
+  echo "body { overflow: hidden; }\n";
+  echo "</style>\n";
+}?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript">
 var g_update_status = {
@@ -47,7 +52,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-make_banner('Racing Heats');
+make_banner('Racing Heats', $as_kiosk ? '' : 'index.php');
 running_round_header($now_running);
 
 require_once('inc/rounds.inc');
