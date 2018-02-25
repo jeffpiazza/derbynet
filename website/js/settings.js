@@ -1,3 +1,37 @@
+
+function on_lane_count_change() {
+  $("#lanes-in-use").empty();
+  var nlanes = $("#n-lanes").val();
+  var mask = $("#unused-lane-mask").val();
+  for (var i = 0; i < nlanes; ++i) {
+    var bit = 1 << i;
+    $("#lanes-in-use").append(" " + (i + 1) + ":");
+    if (mask & bit) {
+      $("#lanes-in-use").append("<img data-bit='" + bit + "' src='img/lane_closed.png'/>");
+    } else {
+      $("#lanes-in-use").append("<img data-bit='" + bit + "' src='img/lane_open.png'/>");
+    }
+  }
+  $("#lanes-in-use img").on('click', on_lane_click);
+}
+
+function on_lane_click(event) {
+  var mask = $("#unused-lane-mask").val();
+  var target = $(event.currentTarget);
+  var bit = target.attr('data-bit');
+  if ((mask & bit) == 0) {  // open -> closed
+    target.attr('src', 'img/lane_closed.png');
+    mask |= bit;
+  } else {
+    target.attr('src', 'img/lane_open.png');
+    mask &= ~bit;
+  }
+
+  $("#unused-lane-mask").val(mask);
+  g_form_modified = 1;
+  target.closest(".settings_group").addClass("modified");
+}
+
 function on_form_submission() {
     $.ajax('action.php',
            {type: 'POST',
@@ -65,6 +99,8 @@ var g_form_modified = 0;
 
 $(function() {
 
+$("#n-lanes").on("keyup mouseup", on_lane_count_change);
+on_lane_count_change();  
 $("#settings_form").on("submit", on_form_submission);
 
 $('#settings_form *').on("change", function() {

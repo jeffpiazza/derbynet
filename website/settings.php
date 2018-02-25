@@ -80,6 +80,14 @@ $locked_settings = locked_settings();
                value="<?php echo get_lane_count(); ?>"/>
         <label for="n-lanes">Number of lanes on the track.</label>
       </p>
+<p>
+    <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
+           value="<?php echo read_raceinfo('unused-lane-mask', 0); ?>"/>
+<p>Lanes available for scheduling:</p>
+<p>
+<span id="lanes-in-use">
+</span>
+</p>
       <p>
         <input id="track-length" name="track-length" type="number" data-enhanced="true"
                value="<?php echo read_raceinfo('track-length', 40); ?>"/>

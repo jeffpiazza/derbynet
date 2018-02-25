@@ -30,6 +30,17 @@
   margin: 5px;
 }
 
+#lanes-in-use {
+  font-size: 14px;
+}
+
+#lanes-in-use img {
+  margin-left: 5px;
+  margin-right: 5px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
 /* Fighting with jQuery Mobile: */
 .ui-mobile label {
   display: inline;
