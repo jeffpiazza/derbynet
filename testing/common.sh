@@ -178,3 +178,21 @@ function run_heat() {
         cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
     fi
 }
+
+# Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
+function staged_heat4() {
+    [ "$1" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="1"' | expect_one "carnumber=\"$1\""
+    [ "$2" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="2"' | expect_one "carnumber=\"$2\""
+    [ "$3" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="3"' | expect_one "carnumber=\"$3\""
+    [ "$4" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="4"' | expect_one "carnumber=\"$4\""
+}
+
+# Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno> <lane5-carno> <lane6-carno>
+function staged_heat6() {
+    [ "$1" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="1"' | expect_one "carnumber=\"$1\""
+    [ "$2" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="2"' | expect_one "carnumber=\"$2\""
+    [ "$3" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="3"' | expect_one "carnumber=\"$3\""
+    [ "$4" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="4"' | expect_one "carnumber=\"$4\""
+    [ "$5" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="5"' | expect_one "carnumber=\"$5\""
+    [ "$6" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="6"' | expect_one "carnumber=\"$6\""
+}

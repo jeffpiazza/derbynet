@@ -9,8 +9,6 @@ user_login_coordinator
 curl_post action.php "action=settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_success
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
-## What does the "Next to Race" button actually do?  What action does it send?
-
 # Two racers from Bears & Freres (but 4 heats, with byes)
 curl_post action.php "action=racer.pass&racer=3&value=1" | check_success
 curl_post action.php "action=racer.pass&racer=8&value=1" | check_success
@@ -68,8 +66,15 @@ curl_post action.php "action=schedule.generate&roundid=4" | check_success
 # Can't schedule Arrows, because no one's checked in
 curl_post action.php "action=schedule.generate&roundid=5" | check_failure
 
+curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="0"'
+curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'roundid="-1"'
+
 curl_post action.php "action=select-heat&heat=next-up&now_racing=0" | check_success
 curl_post action.php "action=select-heat&now_racing=1" | check_success
+
+curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="1"'
+curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'roundid="1"'
+curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'heat="1"'
 
 ## This script generated from the output of:
 ## timer/testing/fake-timer -t -l 4 localhost/xsite

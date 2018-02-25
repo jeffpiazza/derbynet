@@ -391,6 +391,30 @@ function form_chart(&$schedule, &$roster) {
   return $heats;
 }
 
+// The track may have more lanes than are actually used.
+function spread_across_unused_lanes(&$chart) {
+  // 1's in the mask mark lanes that will NOT be used.
+  $mask = 0 + read_raceinfo('unused-lane-mask', 0);
+  if ($mask == 0) {
+    return $chart;
+  }
+  $wide = array();
+  foreach ($chart as $narrow_heat) {
+    $p = 0;  // Physical lane index
+    $wide_heat = array();
+    foreach ($narrow_heat as $racer) {
+      while (($mask & (1 << $p)) != 0) {
+        $wide_heat[] = NULL;
+        ++$p;
+      }
+      $wide_heat[] = $racer;
+      ++$p;
+    }
+    $wide[] = $wide_heat;
+  }
+  return $wide;
+}
+
 // Writes the race chart entries into the database.
 function write_chart($roundid, &$heats) {
   global $db;
@@ -433,7 +457,7 @@ function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
     $roster[] = null;
   }
   $sched = make_ordered_schedule($nlanes, count($roster), $nrounds);
-  write_chart($roundid, form_chart($sched, $roster));
+  write_chart($roundid, spread_across_unused_lanes(form_chart($sched, $roster)));
   return true;
 }
 
@@ -476,11 +500,24 @@ function read_race_chart($roundid) {
   return $heats;
 }
 
+function count_one_bits($n) {
+  $onebits = 0;
+  while ($n != 0) {
+    if (($n & 1) != 0) {
+      ++$onebits;
+    }
+    $n = $n >> 1;
+  }
+  return $onebits;
+}
 
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
+  // $nlanes reports the number of physical lanes, even if some won't be used.
   $nlanes = read_raceinfo('lane_count', 0);
+  // For generating the schedule, we care about the number of lanes actually in use.
+  $nlanes -= count_one_bits(read_raceinfo('unused-lane-mask', 0));
   if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
   } else if (!isset($all_generators[$nlanes])) {

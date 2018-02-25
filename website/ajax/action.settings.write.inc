@@ -66,7 +66,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'car-photo-dir' => 'car-photo-directory',
                   'replay-skipback' => 'replay-skipback',
                   'replay-num-showings' => 'replay-num-showings',
-                  'replay-rate' => 'replay-rate')
+                  'replay-rate' => 'replay-rate',
+                  'unused-lane-mask' => 'unused-lane-mask')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key])) {
         ++$num_picked;
