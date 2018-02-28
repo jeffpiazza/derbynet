@@ -68,7 +68,7 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetXY($left, 5.5);
     $this->pdf->SetFont('Arial', '', 16);
     $this->pdf->SetFillColor(200, 200, 255);
-    $img_path = path_to_rank_image($racer);
+    $img_path = $this->path_to_rank_image($racer);
     if ($img_path) {
       list($width, $height) = @getimagesize($img_path);
       if ($height != 0) {
