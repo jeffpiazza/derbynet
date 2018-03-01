@@ -83,7 +83,7 @@ $locked_settings = locked_settings();
 <p>
     <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
            value="<?php echo read_raceinfo('unused-lane-mask', 0); ?>"/>
-<p>Lanes available for scheduling:</p>
+Lanes available for scheduling:</p>
 <p>
 <span id="lanes-in-use">
 </span>
