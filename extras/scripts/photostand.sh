@@ -151,7 +151,7 @@ while true ; do
             if [ $CHECKIN_OK -eq 0 ] ; then
                 echo Check-in failed
                 cat debug-checkin.curl
-                announce check-failed
+                announce checkin-failed
             fi
         else
             CHECKIN_OK=1
