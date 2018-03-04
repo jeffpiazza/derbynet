@@ -38,6 +38,12 @@ var Lineup = {
   // for.
   roundid: 0,
   heat: 0,
+  // Normally we just acquire more heat results for the current heat, as they're
+  // reported by the timer.  If the number of <heat-result> elements decreases
+  // for a heat, we need to clear out the old values by treating the update like
+  // it's a new heat.  previous_heat_results tracks how many <heat-result>
+  // elements were in the previous update.
+  previous_heat_results: 0,
 
   // hold_display_until tells when it's OK to change the display.  Value is a
   // timestamp in milliseconds.
@@ -72,12 +78,23 @@ var Lineup = {
       Overlay.clear();
     }
 
+    // We always need to notice an increase in the number of heat-results, in
+    // case they get cleared before the ok_to_change() test lets us update the
+    // screen.
+    var new_heat_results = now_racing.getElementsByTagName("heat-result").length;
+    if (new_heat_results > this.previous_heat_results) {
+      this.previous_heat_results = new_heat_results;
+    }
+
     if (this.ok_to_change()) {
       var new_roundid = current.getAttribute("roundid");
       var new_heat = current.getAttribute("heat");
-      var is_new_heat = new_roundid != this.roundid || new_heat != this.heat;
+      var is_new_heat = new_roundid != this.roundid || new_heat != this.heat
+          || new_heat_results < this.previous_heat_results;
       this.roundid = new_roundid;
       this.heat = new_heat;
+      this.previous_heat_results = new_heat_results;
+
       if (current.firstChild) {  // The body of the <current-heat>
         // element names the class
         $('.banner_title').text(current.firstChild.data
