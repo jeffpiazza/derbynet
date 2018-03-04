@@ -29,6 +29,15 @@ function database_is_empty() {
   return false;
 }
 
+function parse_ini_size($size) {
+  $size = trim($size);
+  $unit = stripos('KMG', substr($size, -1));
+  if ($unit < 0) {
+    return round($size);
+  }
+  return round(substr($size, 0, -1) * pow(1024, 1 + $unit));
+}
+
 function connection_string_to_html($conn_string) {
   $parsed = parse_connection_string($conn_string);
   if ($parsed['scheme'] == 'sqlite') {
@@ -118,6 +127,12 @@ function inspect_database() {
       $result['settings_details'] = "Racer photos: ".$racer_photo_directory."<br/>\n"
           ."Car photos: ".$car_photo_directory;
     } catch (PDOException $p) {
+    }
+
+    if (parse_ini_size(ini_get('upload_max_filesize')) < 8000 * 1024) {
+      $result['settings_details'] .= '<br/><span class=\'trouble\'>'
+          .'Check your php.ini file if you plan to upload photos: upload_max_filesize='.ini_get('upload_max_filesize')
+          .'</span>';
     }
 
     if (!is_dir($racer_photo_directory) || !is_readable($racer_photo_directory) ||
