@@ -40,7 +40,6 @@ function scroll_one_visible_row_of_standings() {
 }
 
 function stop_scrolling(interval) {
-  console.log("Stop scrolling");
   if (interval) {
     clearInterval(interval);
     // Quickly finish scrolling until normal row order is restored

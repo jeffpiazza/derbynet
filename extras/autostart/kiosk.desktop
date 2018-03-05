@@ -3,5 +3,5 @@ Type=Application
 Version=1.0
 Name=Start kiosk
 Encoding=UTF-8
-Exec=sh -c "/usr/share/derbynet/scripts/kiosk-midori.sh"
+Exec=sh -c "/usr/share/derbynet/scripts/kiosk.sh"
 X-GNOME-Autostart-enabled=true
