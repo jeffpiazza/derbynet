@@ -159,14 +159,9 @@ array(
 
 @include_once(sql_file_path('kiosk-table')),
 
-array(
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (1, 'Design General')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (2, 'Speed General')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (3, 'Other')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (4, 'Design Trophy')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (5, 'Speed Trophy')",
-"INSERT INTO `AwardTypes` (`AwardTypeID`, `AwardType`) VALUES (6, 'Ad Hoc')",
+@include_once(sql_file_path('award-type-values')),
 
+array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (10, 'schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (11, 'show-racer-photos', '1')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (12, 'show-cars-on-deck', '1')",

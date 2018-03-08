@@ -3,6 +3,12 @@
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
+function maybe_populate_award_types() {
+  if (read_single_value('SELECT COUNT(*) FROM AwardTypes') == 0) {
+    run_sql_script('award-type-values');
+  }
+}
+
 define('AD_HOC_AWARDTYPEID', 6);
 
 // list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();

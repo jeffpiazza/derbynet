@@ -17,8 +17,16 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/awards-presentation.js"></script>
 <?php
-    $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
-                                 .' WHERE page LIKE \'%award%present%\'', array());
+    try {
+      $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
+                                   .' WHERE page LIKE \'%award%present%\'', array());
+    } catch (PDOException $p) {
+      if ($p->getCode() == '42S02') {
+        create_kiosk_table();
+      }
+      $nkiosks = 0;
+    }
+
     if ($nkiosks == 0) {
       echo '<script type="text/javascript">'."\n";
       echo '$(window).load(function() {'."\n";
@@ -249,6 +257,7 @@ foreach ($awards as &$row) {
 
 <div id="kiosk-summary">
 <?php
+        // TODO Kiosks table may not exist
     $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
                                  .' WHERE page LIKE \'%award%present%\'', array());
     if ($nkiosks == 0) {

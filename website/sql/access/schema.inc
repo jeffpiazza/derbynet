@@ -295,16 +295,11 @@ array(
 
 @include_once(sql_file_path('kiosk-table')),
 
+@include_once(sql_file_path('award-type-values')),
+
 array(
 
 // --- Populate basic data
-
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (1, 'Design General')",
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (2, 'Speed General')",
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (3, 'Other')",
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (4, 'Design Trophy')",
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (5, 'Speed Trophy')",
-"INSERT INTO AwardTypes (AwardTypeID, AwardType) VALUES (6, 'Ad Hoc')",
 
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (1, 'H1', 'Title1')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (2, 'H2', 'Title2')",
