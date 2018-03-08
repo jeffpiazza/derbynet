@@ -419,8 +419,9 @@ function spread_across_unused_lanes(&$chart) {
 function write_chart($roundid, &$heats) {
   global $db;
   $db->exec('DELETE FROM RaceChart WHERE roundid = '.$roundid);
-  $stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
-                       .' VALUES(:roundid, :heat, :lane, :racerid)');
+  $classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = '.$roundid);
+  $stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid, classid)'
+                       .' VALUES(:roundid, :heat, :lane, :racerid, :classid)');
   $heat_index = 0;
   foreach ($heats as $heat) {
     ++$heat_index;
@@ -431,12 +432,11 @@ function write_chart($roundid, &$heats) {
         $stmt->execute(array(':roundid' => $roundid,
                              ':heat' => $heat_index,
                              ':lane' => $lane_index,
-                             ':racerid' => $racerid));
+                             ':racerid' => $racerid,
+                             ':classid' => $classid));
       }
     }
   }
-  $classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = '.$roundid);
-  $db->exec('UPDATE RaceChart SET classid = '.$classid.' WHERE roundid = '.$roundid);
 }
 
 function results_exist($roundid) {

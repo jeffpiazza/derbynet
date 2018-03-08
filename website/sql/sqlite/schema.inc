@@ -147,14 +147,9 @@ make_index("Rounds", "round"),
 
 @include_once(sql_file_path('kiosk-table')),
 
-array(
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (1, 'Design General')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (2, 'Speed General')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (3, 'Other')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (4, 'Design Trophy')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (5, 'Speed Trophy')",
-"INSERT INTO `AwardTypes` (`awardtypeid`, `awardtype`) VALUES (6, 'Ad Hoc')",
+@include_once(sql_file_path('award-type-values')),
 
+array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-racer-photos', '1')",
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('show-cars-on-deck', '1')",

@@ -29,7 +29,7 @@ $sql = 'SELECT class, lastname, firstname'
 	.' INNER JOIN Classes'
 	.' ON RegistrationInfo.classid = Classes.classid'
 	.' WHERE NOT passedinspection'
-    .(!empty(@$params['classids']) ?
+    .(isset($params['classids']) && !empty($params['classids']) ?
       ' AND RegistrationInfo.classid IN ('.implode(',', $params['classids']).')'
       : '')
 	.' ORDER BY '

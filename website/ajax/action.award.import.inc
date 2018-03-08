@@ -1,11 +1,14 @@
 <?php
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
+require_once('inc/awards.inc');
 
 start_response();
 
 if (have_permission(SET_UP_PERMISSION)) {
 
+  maybe_populate_award_types();
+  
   $fields = array('awardname' => true,
                   'awardtype' => true,
                   'classname' => false,

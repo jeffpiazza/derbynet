@@ -98,7 +98,8 @@ if ($new_roundid) {
   $stmt->execute(array(':roundid' => $new_roundid));
 } else {
   // The usual case: make a whole new round
-  $stmt = $db->prepare('INSERT INTO Rounds(round, classid) VALUES(:round, :classid)');
+  // phase/charttype are for GPRM compatibility only; I really don't know what they mean
+  $stmt = $db->prepare('INSERT INTO Rounds(round, classid, phase, charttype) VALUES(:round, :classid, 0, 0)');
   $stmt->execute(array(':round' => $new_round,
                        ':classid' => $classid));
   $stmt->closeCursor();

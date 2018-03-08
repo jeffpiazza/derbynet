@@ -28,12 +28,14 @@ require_permission(JUDGING_PERMISSION);
 make_banner('Judging');
 
 require_once('inc/standings.inc');
+require_once('inc/schema_version.inc');
 
 $racers = array();
 $awards = array();
 
 $sql = 'SELECT racerid, carnumber, lastname, firstname,'
-      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile, carphoto'
+      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile,'
+      .(schema_version() < 2 ? '\'\' as ' : '').' carphoto'
       .' FROM '.inner_join('RegistrationInfo',
                            'Classes', 'Classes.classid = RegistrationInfo.classid',
                            'Ranks', 'Ranks.rankid = RegistrationInfo.rankid')

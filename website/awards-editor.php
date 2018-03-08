@@ -30,6 +30,7 @@ $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
 require_once('inc/awards.inc');
 
+maybe_populate_award_types();
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 ?>
 
