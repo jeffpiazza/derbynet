@@ -146,10 +146,17 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
           $success = false;
         }
       } else if (isset($_POST['barcode'])) {
-        $racerid = barcode_to_racerid($_POST['barcode']);
-        if (!$racerid) {
-          echo '<failure code="barcode">Barcode not recognized</failure>'."\n";
-          $success = false;
+        if ($_POST['barcode'] == 'PWDuploadtest') {
+          // For an upload test, we delete the photo after uploading, and report success.
+          @unlink($photo_dir.DIRECTORY_SEPARATOR.$target_name);
+          @unlink($cropped_path = $photo_repository->lookup(RENDER_CROPPED)->target_file_path($target_name));
+          echo "<test-ok/>\n";
+        } else {
+          $racerid = barcode_to_racerid($_POST['barcode']);
+          if (!$racerid) {
+            echo '<failure code="barcode">Barcode not recognized</failure>'."\n";
+            $success = false;
+          }
         }
       }
 
