@@ -9,13 +9,48 @@ import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class MiscJunkDevice extends TimerDeviceTypical {
+public class MiscJunkDevice extends TimerDeviceCommon {
   public MiscJunkDevice(SerialPortWrapper portWrapper) {
-    super(portWrapper);
+    super(portWrapper, null);
+
+    // Can't pass to super constructor because of the call to okToPoll()
+    this.gateWatcher = new GateWatcher(portWrapper) {
+      @Override
+      protected boolean interrogateGateIsClosed()
+          throws NoResponseException, SerialPortException,
+                 LostConnectionException {
+        if (!okToPoll()) {
+          return getGateIsClosed();
+        }
+        portWrapper.write(POLL_GATE);
+        long deadline = System.currentTimeMillis() + 500;
+        String s;
+        while ((s = portWrapper.next(deadline)) != null) {
+          if (s.indexOf("O") >= 0) {
+            return false;
+          }
+
+          if (s.indexOf(".") >= 0) {
+            return true;
+          }
+        }
+        throw new NoResponseException();
+      }
+    };
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
     rsm.setMaxRunningTimeLimit(11000);
+  }
+
+  private boolean okToPoll = true;
+
+  public boolean okToPoll() {
+    return okToPoll;
+  }
+
+  public void setOkToPoll(boolean v) {
+    okToPoll = v;
   }
 
   public static String toHumanString() {
@@ -78,9 +113,14 @@ public class MiscJunkDevice extends TimerDeviceTypical {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         if (line.equals("B")) {
-          portWrapper.logWriter().serialPortLogInternal("Detected gate opening");  // TODO
+          // When the timer announces a race start like this, it stops
+          // responding to gate state queries.  Continuing to poll would lead
+          // to perceived connection timeouts.
+          setOkToPoll(false);
           // Sent when the gate opens
+          portWrapper.logWriter().serialPortLogInternal("Detected gate opening");  // TODO
           onGateStateChange(false);
+          // *** Gate change being triggered by prepare-heat ??
           return "";
         }
         Matcher m = resultLine.matcher(line);
@@ -96,6 +136,9 @@ public class MiscJunkDevice extends TimerDeviceTypical {
               raceFinished((Message.LaneResult[]) results.toArray(
                   new Message.LaneResult[results.size()]));
               results = null;
+              // Having received results, timer state should return to an
+              // interrogatable state.
+              setOkToPoll(true);
             }
           } else {
             portWrapper.logWriter().serialPortLogInternal(
@@ -116,31 +159,7 @@ public class MiscJunkDevice extends TimerDeviceTypical {
 
   @Override
   protected void maskLanes(int lanemask) throws SerialPortException {
-    portWrapper.writeAndDrainResponse(UNMASK_ALL_LANES, 2, 100);
-    for (int lane = 0; lane < getSafeNumberOfLanes(); ++lane) {
-      if ((lanemask & (1 << lane)) == 0) {
-        portWrapper.writeAndDrainResponse(MASK_LANE + (char) ('1' + lane), 2, 100);
-      }
-    }
-  }
-
-  @Override
-  protected boolean interrogateGateIsClosed() throws NoResponseException,
-                                                     SerialPortException,
-                                                     LostConnectionException {
-    portWrapper.write(POLL_GATE);
-    long deadline = System.currentTimeMillis() + 500;
-    String s;
-    while ((s = portWrapper.next(deadline)) != null) {
-      if (s.indexOf("O") >= 0) {
-        return false;
-      }
-
-      if (s.indexOf(".") >= 0) {
-        return true;
-      }
-    }
-    throw new NoResponseException();
+    doMaskLanes(lanemask, UNMASK_ALL_LANES, 2, MASK_LANE, '1', 2);
   }
 
   @Override
@@ -150,6 +169,8 @@ public class MiscJunkDevice extends TimerDeviceTypical {
       // Upon entering RESULTS_OVERDUE state, we sent FORCE_END_OF_RACE; see
       // onTransition.
       if (portWrapper.millisSinceLastContact() > 1000) {
+        // OK by virtue of the FORCE_END_OF_RACE:
+        setOkToPoll(true);
         throw new LostConnectionException();
       } else if (rsm.millisInCurrentState() > 1000) {
         giveUpOnOverdueResults();
