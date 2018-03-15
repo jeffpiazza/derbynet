@@ -20,7 +20,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
           throws NoResponseException, SerialPortException,
                  LostConnectionException {
         if (!okToPoll()) {
-          return getGateIsClosed();
+          return getGateIsClosed(); // Reports Gate closed when in RACING and FINISHED states
         }
         portWrapper.write(POLL_GATE);
         long deadline = System.currentTimeMillis() + 500;
@@ -113,14 +113,18 @@ public class MiscJunkDevice extends TimerDeviceCommon {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         if (line.equals("B")) {
-          // When the timer announces a race start like this, it stops
-          // responding to gate state queries.  Continuing to poll would lead
-          // to perceived connection timeouts.
-          setOkToPoll(false);
-          // Sent when the gate opens
-          portWrapper.logWriter().serialPortLogInternal("Detected gate opening");  // TODO
+          // The timer announces a race start with "B" and moves to RACING state.
+          // In RACING state it stops responding to gate state queries.  Continuing to
+          // poll will lead to perceived connection timeouts. TIMER LED=purple
+          setOkToPoll(false); 
           onGateStateChange(false);
-          // *** Gate change being triggered by prepare-heat ??
+          return "";
+        }
+        if (line.equals("K")) {
+          // The timer announces it is ready for the next race with "K" and moves to
+          // READY state.  If the Arduino code does have GATE_RESET=1, the operator must
+          // press a physical reset button on the timer to move to READY. TIMER LED=green
+          setOkToPoll(true);
           return "";
         }
         Matcher m = resultLine.matcher(line);
@@ -136,9 +140,10 @@ public class MiscJunkDevice extends TimerDeviceCommon {
               raceFinished((Message.LaneResult[]) results.toArray(
                   new Message.LaneResult[results.size()]));
               results = null;
-              // Having received results, timer state should return to an
-              // interrogatable state.
-              setOkToPoll(true);
+              // Timer state is FINISHED and results are displaying on the timer.
+              // Having received results, we need to wait for the timer to be reset.
+              // TIMER LED=red
+              //setOkToPoll(true);
             }
           } else {
             portWrapper.logWriter().serialPortLogInternal(
@@ -159,7 +164,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
 
   @Override
   protected void maskLanes(int lanemask) throws SerialPortException {
-    doMaskLanes(lanemask, UNMASK_ALL_LANES, 2, MASK_LANE, '1', 2);
+    doMaskLanes(lanemask, UNMASK_ALL_LANES, 1, MASK_LANE, '1', 1);
   }
 
   @Override
@@ -169,8 +174,8 @@ public class MiscJunkDevice extends TimerDeviceCommon {
       // Upon entering RESULTS_OVERDUE state, we sent FORCE_END_OF_RACE; see
       // onTransition.
       if (portWrapper.millisSinceLastContact() > 1000) {
-        // OK by virtue of the FORCE_END_OF_RACE:
-        setOkToPoll(true);
+	// Track was RACING and we forced the end of race, we need to wait for READY
+        // before we start polling.
         throw new LostConnectionException();
       } else if (rsm.millisInCurrentState() > 1000) {
         giveUpOnOverdueResults();
