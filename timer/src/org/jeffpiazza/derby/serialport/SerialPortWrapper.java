@@ -264,7 +264,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
-  // Waits until deadline (at the latest) for at least one expected input lines
+  // Waits until deadline (at the latest) for at least expectedLines input lines.
   // to appear in the queue, then drains the queue.
   public void drain(long deadline, int expectedLines) {
     while (System.currentTimeMillis() < deadline) {
