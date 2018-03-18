@@ -32,6 +32,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
 
   if (!$failures) {
+    // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
     // $_POST key => RaceInfo.itemkey
     foreach(array('with-gprm' => 'with-gprm',
                   'do-use-subgroups' => 'use-subgroups',
@@ -57,6 +58,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'n-pack-trophies' => 'n-pack-trophies',
                   'n-den-trophies' => 'n-den-trophies',
                   'n-rank-trophies' => 'n-rank-trophies',
+                  'name-style' => 'name-style',
                   'xbs-award' => 'xbs-award',  // @$_POST['use-xbs'] ? $_POST['xbs-award'] : ''
                   'group-label' => 'group-label',
                   'subgroup-label' => 'subgroup-label',

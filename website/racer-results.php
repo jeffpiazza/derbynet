@@ -2,6 +2,7 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/name-mangler.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/running_round_header.inc');
 
@@ -117,6 +118,8 @@ function write_rr($racer_label, $racer_cells, $nrows) {
   echo $rrow;
 }
 
+$name_style = read_raceinfo('name-style', FULL_NAME);
+
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($rounds as $round) {
   // Generate header and tbody
@@ -160,7 +163,7 @@ foreach ($rounds as $round) {
         $racer_label .= '<img src="'.car_photo_repository()->url_for_racer($rs, '68h').'" style="float: left;"/>';
       }
       $racer_label .= '<div class="racer_label"><span class="racer">'
-        .htmlspecialchars($rs['lastname'].', '.$rs['firstname'], ENT_QUOTES, 'UTF-8').'</span>'
+        .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').'</span>'
 		.' (<span class="car">'.$rs['carnumber'].'</span>)</div>';
       $racer_cells = array();
       for ($i = 1; $i <= $nlanes; ++$i) {

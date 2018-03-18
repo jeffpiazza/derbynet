@@ -4,9 +4,11 @@
 
 require_once('inc/data.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/name-mangler.inc');
+
 
 // Pass a photo_render value to include a photo URL for each racer
-function emit_current_racers(&$now_running, $photo_render = false) {
+function emit_current_racers(&$now_running, $name_style, $photo_render) {
   global $db;
 
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
@@ -24,8 +26,7 @@ function emit_current_racers(&$now_running, $photo_render = false) {
                        ':heat' => $now_running['heat']));
   foreach ($stmt as $row) {
     echo '  <racer lane="'.$row['lane'].'"'
-    // TODO: Offer different formats for name
-    .' name="'.htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8').'"'
+    .' name="'.htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8').'"'
     .($use_subgroups ? ' subgroup="'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')
     .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
     .' carnumber="'.$row['carnumber'].'"'

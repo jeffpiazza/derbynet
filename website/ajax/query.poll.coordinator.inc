@@ -7,7 +7,7 @@ require_once('inc/schema_version.inc');
 $now_running = get_running_round();
 $use_master_sched = use_master_sched();
 emit_current_heat($now_running, $use_master_sched);
-emit_current_racers($now_running, /* photos */ false);
+emit_current_racers($now_running, FULL_NAME, /* photos */ false);
 ?>
 <?php /* Timer */
 require_once('inc/timer-state.inc');

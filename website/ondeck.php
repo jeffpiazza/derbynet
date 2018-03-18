@@ -11,6 +11,7 @@ require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/name-mangler.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/running_round_header.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
@@ -127,6 +128,8 @@ function maybe_mark_photos_populated($heat_row, $photo_in_heat) {
   return $heat_row;
 }
 
+$name_style = read_raceinfo('name-style', FULL_NAME);
+
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($groups as $group) {
   // Generate header and tbody
@@ -182,7 +185,7 @@ foreach ($groups as $group) {
       $heat_row .= '<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">'
         .'<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES, 'UTF-8').'</span><br/>'."\n"
         .'<span class="racer">('
-            .htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8').')</span><br/>'."\n"
+        .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').')</span><br/>'."\n"
 		.'<span class="time"></span>' // Javascript will fill in the times, later
       .'</a>';
       $heat_row .= '<div class="ondeck_photo unpopulated">';

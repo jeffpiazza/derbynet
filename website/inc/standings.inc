@@ -1,6 +1,7 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/name-mangler.inc');
 
 // For a given roundid, it's straightforward to calculate standings within the
 // round, provided all the heats have been run.  If not all heats have been run,
@@ -297,6 +298,7 @@ function write_standings_table_headers() {
 
 function write_standings_table_rows(&$standings) {
   list($racer_pack_standing, $racer_class_standing, $racer_subgroup_standing) = collect_standings($standings);
+  $name_style = read_raceinfo('name-style', FULL_NAME);
   $first = true;
   $by_roundid = array();
   foreach ($standings as $row) {
@@ -326,7 +328,7 @@ function write_standings_table_rows(&$standings) {
     echo "</td>";
   
     echo "<td>".$row['carnumber']."</td>";
-    echo "<td>".htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8')."</td>";
+    echo "<td>".htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8')."</td>";
 
     // Racer's (native) class
     echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";

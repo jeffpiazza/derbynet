@@ -5,6 +5,7 @@ require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
+require_once('inc/name-mangler.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -56,6 +57,7 @@ $show_car_photos_on_deck = read_raceinfo_boolean('show-cars-on-deck');
 $show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
+$name_style = read_raceinfo('name-style', FULL_NAME);
 ?>
 
 <div class="block_buttons">
@@ -120,6 +122,16 @@ Lanes available for scheduling:</p>
         <input id="subgroup-label" name="subgroup-label" type="text" data-enhanced="true"
                value="<?php echo subgroup_label(); ?>"/>
         <label for="subgroup-label">Subgroup Label</label>
+      </p>
+
+      <p>Show racer names as:<br/>
+        <input type="radio" name="name-style" value="0" id="name-style-0" data-role="none"<?php
+        echo $name_style == FULL_NAME ? ' checked="checked"' : ''
+        ?>/><label for="name-style-0" data-enhanced="true">First name and last name</label><br/>
+
+        <input type="radio" name="name-style" value="1" id="name-style-1" data-role="none"<?php
+        echo $name_style == FIRST_NAME_LAST_INITIAL ? ' checked="checked"' : ''
+        ?>/><label for="name-style-1">First name and last initial</label>
       </p>
     </div>
   </div>

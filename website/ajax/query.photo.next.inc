@@ -1,6 +1,8 @@
 <slideshow>
 <?php
 
+require_once('inc/name-mangler.inc');
+
 // Returns photo information for the next racer with a photo
 //
 // $_GET['racerid']: racer id for currently-displayed photo; we want the next racer's photo
@@ -37,6 +39,8 @@ function write_main_photo(&$row, $attribute_name, &$repositories) {
   return false;  // Don't also inset the inset
 }
 
+$name_style = read_raceinfo('name-style', FULL_NAME);
+
 // If working with a GPRM database, the 'imagefile' field carries the only photo.
 // If working with a DerbyNet database, 'imagefile' field carries the inset photo, and 'carphoto' is the main photo.
 $inset_imagefile = schema_version() >= 2;
@@ -65,8 +69,7 @@ $row = $stmt->fetch();
 if ($row) {
     echo '<racer';
     echo ' racerid="'.$row['racerid'].'"';
-    echo ' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"';
-    echo ' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"';
+    echo ' name="'.htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8').'"';
     echo ' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"';
     echo ' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"';
 

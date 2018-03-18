@@ -20,7 +20,7 @@ function mainphoto_onload(img) {
                  racer.getAttribute('main_photo') + '"/>');
       div.append('<p class="subtitle">' + 
                  '<span class="carno">' + racer.getAttribute('carnumber') + '</span>: ' +
-                 racer.getAttribute('firstname') + ' ' + racer.getAttribute('lastname') +
+                 racer.getAttribute('name') +
                  (racer.getAttribute('carname') ?
                   '<br/><i>' + racer.getAttribute('carname') + '</i>' : '') +
                  '</p>');

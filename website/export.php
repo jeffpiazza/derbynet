@@ -1,11 +1,20 @@
 <?php @session_start();
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+require_once('inc/name-mangler.inc');
 
 header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename="derbynet-'.date('Y-m-d').'.csv"');
 
-echo "Class,Round,Heat,Lane,FirstName,LastName,CarNumber,FinishTime,FinishPlace,Completed\r\n";
+$name_style = isset($_GET['last_initial']) ? FIRST_NAME_LAST_INITIAL : FULL_NAME;
+
+echo "Class,Round,Heat,Lane,";
+if ($name_style == FULL_NAME) {
+  echo "FirstName,LastName,";
+} else {  // FIRST_NAME_LAST_INITIAL
+  echo "Name,";
+}
+echo "CarNumber,FinishTime,FinishPlace,Completed\r\n";
 
 $stmt = $db->query('SELECT class, round, heat, lane,'
                    .' firstname, lastname, carnumber, finishtime, finishplace, completed'
@@ -23,9 +32,14 @@ if ($stmt === FALSE) {
 $output = fopen("php://output", "w");
 try {
   foreach ($stmt as $row) {
-    fputcsv($output, array($row['class'], $row['round'], $row['heat'], $row['lane'],
-                           $row['firstname'], $row['lastname'], $row['carnumber'],
-                           $row['finishtime'], $row['finishplace'], $row['completed']));
+    $values = array($row['class'], $row['round'], $row['heat'], $row['lane']);
+    if ($name_style == FIRST_NAME_LAST_INITIAL) {
+      array_push($values, mangled_name($row, $name_style));
+    } else {
+      array_push($values, $row['firstname'], $row['lastname']);
+    }
+    array_push($values, $row['carnumber'], $row['finishtime'], $row['finishplace'], $row['completed']);
+    fputcsv($output, $values);
   }
 } catch (Exception $e) {
   echo '<error msg="'.htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8').'"/>'."\n";
