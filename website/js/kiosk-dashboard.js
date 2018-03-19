@@ -64,7 +64,7 @@ var g_kiosk_page_handlers = {
   },
   'kiosks/slideshow.kiosk': {
     configure: function(kiosk, kiosk_select) {
-      configure_class_ids(kiosk, kiosk_select);
+      configure_title_and_class_ids(kiosk, kiosk_select);
     }
   },
 };
@@ -75,17 +75,31 @@ function configure_class_ids(kiosk, kiosk_select) {
     .on("click", /* selector */null, /* data: */kiosk,
         /* handler */ show_config_classes_modal)
     .appendTo(kiosk_select);
+  add_classids_description(kiosk.parameters, kiosk_select);
+}
 
-  // If there are any classids specified, build a <p> element to describe the
-  // current setting.
-  if (kiosk.parameters.classids && kiosk.parameters.classids.length > 0) {
+// If there are any classids specified in the parameter, attach a <p> element to
+// kiosk_select to describe the current setting.
+function add_classids_description(parameters, kiosk_select) {
+  if (parameters.classids && parameters.classids.length > 0) {
     var s = '';
-    var classids = kiosk.parameters.classids;
+    var classids = parameters.classids;
     for (var i = 0; i < classids.length; ++i) {
       s += ', ' + $("label[for='config-class-" + classids[i] + "']").text();
     }
     $('<p class="parameters"/>').text(s.substring(2)).appendTo(kiosk_select);
   }
+}
+
+// Configuration function for parameters of {title:, classids: [...]}
+function configure_title_and_class_ids(kiosk, kiosk_select) {
+  $('<input type="button" data-enhanced="true" value="Configure"/>')
+    .on("click", /* selector */null, /* data: */kiosk,
+        /* handler */ show_config_title_and_classes_modal)
+    .appendTo(kiosk_select);
+
+  // TODO Show title
+  add_classids_description(kiosk.parameters, kiosk_select);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -329,7 +343,30 @@ function handle_reveal_all() {
 //////////////////////////////////////////////////////////////////////////
 function show_config_classes_modal(event) {
   var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
-  var parameters = kiosk.parameters;
+  $("#title_div").addClass('hidden');
+  populate_classids(kiosk.parameters);
+  show_modal("#config_classes_modal", function(event) {
+    close_modal("#config_classes_modal");
+    post_new_params(kiosk, {classids: compute_classids()});
+    return false;
+  });
+}
+
+function show_config_title_and_classes_modal(event) {
+  show_config_classes_modal(event);
+  var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
+  $("#title_div").removeClass('hidden');
+  $("#title_text").val(kiosk.parameters.title);
+  populate_classids(kiosk.parameters);
+  show_modal("#config_classes_modal", function(event) {
+    close_modal("#config_classes_modal");
+    post_new_params(kiosk, {title: $("#title_text").val(), classids: compute_classids()});
+    return false;
+  });
+}
+
+// Update the UI controls to show the current set of classids
+function populate_classids(parameters) {
   if (parameters.classids && parameters.classids.length > 0) {
     $("#config_classes_modal input[type='checkbox']").prop("checked", false);
     var classids = parameters.classids;
@@ -341,31 +378,37 @@ function show_config_classes_modal(event) {
     $("#config_classes_modal input[type='checkbox']").prop("checked", true);
   }
   $("#config_classes_modal input[type='checkbox']").checkboxradio("refresh");
-  show_modal("#config_classes_modal", function(event) {
-    close_modal("#config_classes_modal");
-    var any_unchecked = false;
-    var new_params = {classids: []};
-    $("#config_classes_modal input[type='checkbox']").each(function() {
-      if ($(this).prop("checked")) {
-        new_params.classids.push(parseInt($(this).data("classid")));
-      } else {
-        any_unchecked = true;
-      }
-    });
-    if (!any_unchecked) {
-      new_params.classids = [];
+}
+
+// Extract classids from user's choices in the UI
+function compute_classids() {
+  var any_unchecked = false;
+  var classids = [];
+  $("#config_classes_modal input[type='checkbox']").each(function() {
+    if ($(this).prop("checked")) {
+      classids.push(parseInt($(this).data("classid")));
+    } else {
+      any_unchecked = true;
     }
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'kiosk.assign',
-                   address: kiosk.address,
-                   params: JSON.stringify(new_params)},
-            success: function(data) {
-              generate_kiosk_control_group(parse_kiosk_pages(data),
-                                           parse_kiosks(data));
-              $("#kiosk_control_group").trigger("create");
-            },
-           });
-    return false;
   });
+
+  if (!any_unchecked) {
+    classids = [];
+  }
+  return classids;
+}
+
+function post_new_params(kiosk, new_params) {
+  console.log("post_new_params: new_params = " + JSON.stringify(new_params));  // TODO
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'kiosk.assign',
+                 address: kiosk.address,
+                 params: JSON.stringify(new_params)},
+          success: function(data) {
+            generate_kiosk_control_group(parse_kiosk_pages(data),
+                                         parse_kiosks(data));
+            $("#kiosk_control_group").trigger("create");
+          },
+         });
 }

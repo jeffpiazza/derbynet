@@ -31,10 +31,21 @@ img.inset_photo {
 p.subtitle {
     z-index: 2;
     font-size: xx-large;
-    text-align: center; width: 100%;
+    text-align: center;
+    width: 100%;
     position: absolute;
     bottom: 10px;
     left: 0px;
+}
+
+p.maintitle {
+  z-index: 2;
+  font-size: 65px;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  bottom: 200px;
+  left: 0px;
 }
 
 .carno { font-weight: bold; }

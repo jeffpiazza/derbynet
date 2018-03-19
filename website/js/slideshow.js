@@ -35,6 +35,9 @@ function mainphoto_onload(img) {
       }
     } else {
       div.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="img/derby_car.png"/>');
+      if (kiosk_parameters.title) {
+        $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(div);
+      }
     }
   }
 

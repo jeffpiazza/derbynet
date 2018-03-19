@@ -3,6 +3,9 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+require_once('inc/schema_version.inc');
+require_once('inc/standings.inc');
+
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><!DOCTYPE html>
 <html>
@@ -40,7 +43,6 @@ require_permission(PRESENT_AWARDS_PERMISSION);
           $current_exposed = 'lowest '.$current_exposed;
         }
 
-        require_once('inc/standings.inc');
         $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
         $sel = ' selected="selected"';
@@ -90,9 +92,11 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 
 <div id='config_classes_modal' class="modal_dialog hidden block_buttons">
   <form>
+    <div id="title_div">
+      <label for="title_text">Title text:</label>
+      <input type="text" id="title_text"/>
+    </div>
     <?php
-        require_once('inc/schema_version.inc');
-
         $stmt = $db->prepare('SELECT classid, class'
                              .' FROM Classes'
                              .' WHERE EXISTS(SELECT 1 FROM RegistrationInfo'
