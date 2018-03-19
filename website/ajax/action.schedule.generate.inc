@@ -22,6 +22,7 @@ function make_entry($min, $max, $generators) {
 }
 
 $all_generators = array(
+  1 => array(make_entry(1, 200, array(array(), array(), array(), array(), array(), array()))),
   2 => array(make_entry(2,2, array(array(1), array(1))),
              make_entry(3,3, array(array(2), array(1))),
              make_entry(4,4, array(array(3), array(2))),

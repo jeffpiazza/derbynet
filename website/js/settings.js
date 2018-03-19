@@ -12,6 +12,11 @@ function on_lane_count_change() {
       $("#lanes-in-use").append("<img data-bit='" + bit + "' src='img/lane_open.png'/>");
     }
   }
+
+  // In case the lane count decreased, clear any higher-order bits as they're no
+  // longer meaningful
+  $("#unused-lane-mask").val(mask & ~(-1 << nlanes));
+  
   $("#lanes-in-use img").on('click', on_lane_click);
 }
 
