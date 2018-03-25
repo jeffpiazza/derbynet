@@ -7,6 +7,10 @@ function mainphoto_onload(img) {
 
 (function() {
   var current_racer_id = 0;
+  // This cache breaker value is for the title slide image.  We want that image
+  // to be cached for the duration of the slideshow.  Reloading the slideshow
+  // will pick up any changes to the title slide image.
+  var cachebreaker = Date.now();
   var kiosk_parameters = {};
   KioskPoller.param_callback = function(parameters) {
     kiosk_parameters = parameters;
@@ -34,7 +38,8 @@ function mainphoto_onload(img) {
                    racer.getAttribute('next_photo') + '"/>');
       }
     } else {
-      div.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="img/derby_car.png"/>');
+      var img = "photo.php/info/slideshow-title/" + cachebreaker + "/img/derby_car.png";
+      div.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' + img + '"/>');
       if (kiosk_parameters.title) {
         $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(div);
       }

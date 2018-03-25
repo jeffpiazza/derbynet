@@ -11,7 +11,12 @@ require_once('inc/photo-config.inc');
 //  photo.php/<repository>/racer/<racerid>/<cachebreaker>
 // A racer-based URL requires another database fetch to get the file path, and
 // then returns exactly that file.
+//
+// URL for a file named by a RaceInfo key:
+//  photo.php/info/<key>/<cachebreaker>/<default img path>
 
+// parse_photo_url returns:
+//    { 'repository', 'url_type' }, and, depending, possibly other keys.
 function parse_photo_url($url_path_info) {
   $exploded = explode('/', $url_path_info);
   if ($exploded[2] == 'file') {
@@ -23,6 +28,11 @@ function parse_photo_url($url_path_info) {
     return array('repository' => $exploded[1],
                  'url_type' => $exploded[2], // 'racer'
                  'racerid' => $exploded[3]);
+  } else if ($exploded[1] == 'info') {
+    return array('repository' => 'info',
+                 'url_type' => 'info',
+                 'key' => $exploded[2],
+                 'default' => implode('/', array_slice($exploded, 4)));
   } else {
     return false;
   }
@@ -45,28 +55,33 @@ if (!$parsed) {  // Malformed URL
   exit(1);
 }
 
-$repo = photo_repository($parsed['repository']);
-if (!$repo) {  // No such repository
-  http_response_code(404);
-  exit(1);
+if ($parsed['url_type'] == 'info') {
+  $file_path = read_raceinfo($parsed['key'], $parsed['default']);
+} else {
+  $repo = photo_repository($parsed['repository']);
+  if (!$repo) {  // No such repository
+    http_response_code(404);
+    exit(1);
+  }
+
+  if ($parsed['url_type'] == 'racer') {
+    $file_path = read_single_value('SELECT '.$repo->column_name()
+                                   .' FROM RegistrationInfo'
+                                   .' WHERE racerid = :racerid',
+                                   array(':racerid' => $parsed['racerid']));
+  } else {
+    $render = $repo->lookup($parsed['render']);
+    if (!$render) {  // No such render
+      http_response_code(404);
+      exit(1);
+    }
+    $file_path = $render->find_or_make_image_file($parsed['basename']);
+  }
 }
 
-if ($parsed['url_type'] == 'racer') {
-  $file_path = read_single_value('SELECT '.$repo->column_name()
-                                 .' FROM RegistrationInfo'
-                                 .' WHERE racerid = :racerid',
-                                 array(':racerid' => $parsed['racerid']));
-  if (!$file_path) {  // No such racer
-    http_response_code(404);
-    exit(1);
-  }
-} else {
-  $render = $repo->lookup($parsed['render']);
-  if (!$render) {  // No such render
-    http_response_code(404);
-    exit(1);
-  }
-  $file_path = $render->find_or_make_image_file($parsed['basename']);
+if (!$file_path) {  // No such racer/no such photo
+  http_response_code(404);
+  exit(1);
 }
 
 header('Pragma: public');

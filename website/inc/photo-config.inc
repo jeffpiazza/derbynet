@@ -255,10 +255,10 @@ class PhotoRender {
       $targetpath = $this->file_path($imagefile);
       $breaker = @filemtime($targetpath);
       if (!$breaker) {
-        // If the file doesn't exist, use the current (request) time as a cache
-        // breaker, but negate it to make sure there's no collision with the
-        // filemtime when the file does get created.
-        $breaker = -time();
+        // If the file doesn't exist, just use a zero for the cache breaker.
+        // If/when the database names an actual file, it'll have a non-zero
+        // creation date, and so a different URL.
+        $breaker = 0;
       }
       return 'photo.php/'.$this->repository->name().'/file/'.$this->label().'/'.urlencode($imagefile).'/'.$breaker;
     } else {

@@ -6,10 +6,16 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<style>
+.full_page_center img {
+max-width: 100%;
+max-height: 80%;
+}
+</style>
 </head>
 <body>
 <div class="full_page_center">
-<img src="img/cubscout_emblem_800.png"/>
+<img src="photo.php/info/welcome-image/<?php echo time(); ?>/img/cubscout_emblem_800.png"/>
 </div>
 <p class="kiosk_title">Welcome</p>
 </body>
