@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+// Usage e.g. /derbynet/print.php/racer/car-tags
+
 if (isset($_SERVER['PATH_INFO'])) {
   $path_info = $_SERVER['PATH_INFO'];
 } else if (isset($_SERVER['ORIG_PATH_INFO'])) {

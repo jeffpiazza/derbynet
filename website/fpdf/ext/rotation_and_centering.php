@@ -34,7 +34,7 @@ class PDF_RotationAndCentering extends PDF_Sequencer
 //  }
 
   // $cx describes the horizontal center, $y the vertical text location.
-  function RotatedCenteredText($cx, $y, $txt) {
+  function RotatedCenteredText($cx, $cy, $txt) {
     $this->StartTransform();
     $this->Rotate(90, $cx, $cy);
     $this->CenteredSequence($cx, $cy, array($txt));
