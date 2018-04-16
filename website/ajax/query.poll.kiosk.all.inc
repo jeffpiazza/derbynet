@@ -13,7 +13,7 @@ try {
     echo '  <address>'.htmlspecialchars($row['address'], ENT_QUOTES, 'UTF-8').'</address>'."\n";
     echo '  <last_contact>'.floor((time() - $row['last_contact'])/60)
          .' minute(s) ago</last_contact>'."\n";
-    echo '  <assigned_page>'.htmlspecialchars($row['page'], ENT_QUOTES, 'UTF-8').'</assigned_page>'."\n";
+    echo '  <assigned_page>'.htmlspecialchars(strtr($row['page'], "\\", "/"), ENT_QUOTES, 'UTF-8').'</assigned_page>'."\n";
     echo '  <parameters>'.htmlspecialchars($row['params'], ENT_QUOTES, 'UTF-8').'</parameters>'."\n";
     echo '</kiosk>'."\n";
     }
