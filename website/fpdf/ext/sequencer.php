@@ -38,6 +38,10 @@ class PDF_Sequencer extends PDF_Barcode {
 
     $this->DrawSequence($cx - $len / 2, $y, $sequence);
   }
+
+  function CenteredText($cx, $y, $text) {
+    $this->CenteredSequence($cx, $y, array($text));
+  }
 }
 
 class SetFontTag implements Tag {

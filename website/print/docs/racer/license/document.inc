@@ -35,6 +35,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
     ++$this->count;
   }
 
+  // The "banner" comprises a blue horizontal line, with small lines above and below.
   protected function DrawBanner($x, $y) {
     $this->pdf->SetFillColor(0x02, 0x38, 0x82);
 

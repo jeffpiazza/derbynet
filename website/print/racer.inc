@@ -6,10 +6,11 @@ require_once('inc/action-helpers.inc');
 require_once('inc/printable_racer_documents.inc');
 require_once('fpdf/ext/combined.php');
 
-// TODO $_GET['where']
-// TODO $_GET['order-by']
 // $_GET['options']
 // $_GET['car_nos']
+//
+// $_GET['ids']
+// $_GET['where']
 
 function convert_strings(&$racer) {
   foreach ($racer as $key => $value) {
@@ -50,6 +51,8 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid');
 
+  // Specifying by car numbers means we're making generic printables, not
+  // customized to individual racers.
   if (isset($_GET['car_nos'])) {
     $sql = $base_sql.' WHERE carnumber = :carnumber';
 
@@ -84,7 +87,13 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       }
     }
   } else {
-    $sql = $base_sql.' ORDER BY lastname, firstname, carnumber';
+    $sql = $base_sql;
+    if (isset($_GET['ids'])) {
+      $sql = $sql.' WHERE racerid IN ('.$_GET['ids'].',0)';
+    } else if (isset($_GET['where'])) {
+      $sql = $sql.' WHERE '.$_GET['where'];
+    }
+    $sql = $sql.' ORDER BY lastname, firstname, carnumber';
 
     foreach ($db->query($sql) as $racer) {
       convert_strings($racer);
