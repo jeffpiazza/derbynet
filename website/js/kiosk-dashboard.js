@@ -223,7 +223,7 @@ function generate_kiosk_control(index, kiosk, pages) {
 
   sel.appendTo(kiosk_select);
 
-  var kiosk_config_handler = g_kiosk_page_handlers[kiosk.assigned_page];
+  var kiosk_config_handler = g_kiosk_page_handlers[kiosk.assigned_page.replace("\\", "/")];
   if (kiosk_config_handler) {
     if ('init_found' in kiosk_config_handler) {
       kiosk_config_handler.init_found();
