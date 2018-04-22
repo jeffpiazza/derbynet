@@ -25,7 +25,7 @@
 
 - (void) setUrlAndPoll: (NSString*) urlString
 {
-    if (![urlString hasPrefix:@"http:"]) {
+    if (![urlString hasPrefix:@"http:"] && ![urlString hasPrefix:@"https:"]) {
         urlString = [@"http://" stringByAppendingString: urlString];
     }
 
