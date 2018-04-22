@@ -37,6 +37,8 @@ make_index("Awards", "sort"),
 
 @include_once(sql_file_path('audit-table')),
 
+@include_once(sql_file_path('events-table')),
+
 array(
 
 "DROP TABLE IF EXISTS `Classes`",

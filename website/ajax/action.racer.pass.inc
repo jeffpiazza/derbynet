@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/events.inc');
+
 $value = isset($_POST['value']) ? $_POST['value'] : 1;
 $racerid = @$_POST['racer'];
 if (isset($_POST['barcode'])) {
@@ -22,24 +24,25 @@ if ($ok_to_change) {
                             .' AND finishtime IS NOT NULL',
                             array(':racerid' => $racerid), 0))
 	$ok_to_change = false;
-	$failure = '<failure code="alreadyscheduled">Schedule data already exists for this racer</failure>';
+  $failure = '<failure code="alreadyscheduled">Schedule data already exists for this racer</failure>';
 }
 
 if ($ok_to_change) {
-	if ($value || have_permission(REVERT_CHECK_IN_PERMISSION)) {
-		take_action('UPDATE RegistrationInfo SET PassedInspection = :value'
-					.' WHERE RacerID = :racer',
-					array(':value' => $value,
-						  ':racer' => $racerid));
-	} else {
-		not_authorized();
-	}
+  if ($value || have_permission(REVERT_CHECK_IN_PERMISSION)) {
+    take_action('UPDATE RegistrationInfo SET PassedInspection = :value'
+                .' WHERE RacerID = :racer',
+                array(':value' => $value,
+                      ':racer' => $racerid));
+    record_event(EVENT_CHECKIN, $racerid);
+  } else {
+    not_authorized();
+  }
 } else {
-	// Force reload of the page to show schedule data
-	start_response();
-    echo $failure;
-    echo '<reload/>';
-	end_response();
+  // Force reload of the page to show schedule data
+  start_response();
+  echo $failure;
+  echo '<reload/>';
+  end_response();
 }
 
 ?>

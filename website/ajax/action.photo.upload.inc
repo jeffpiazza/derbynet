@@ -19,6 +19,7 @@
 
 require_once('inc/photo-config.inc');
 require_once('inc/barcode.inc');
+require_once('inc/events.inc');
 
 start_response();
 
@@ -170,7 +171,10 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
                                         .' WHERE racerid = :racerid',
                                         array(':photo' => $path,
                                               ':racerid' => $racerid));
-        $row = array('racerid' => $_POST['racerid'],
+        record_event($photo_repository->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
+                     $racerid);
+
+        $row = array('racerid' => $racerid,
                      $column_name => $path);
         // This is assuming that there's a 'checkin' render, which isn't the case if we're doing car photos
         echo '<photo-url>'.$photo_repository->url_for_racer($row, RENDER_CHECKIN).'</photo-url>'."\n";
