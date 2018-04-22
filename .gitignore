@@ -3,6 +3,7 @@
 # Xcode 6 
 UserInterfaceState.xcuserstate
 xcuserdata/
+IDEWorkspaceChecks.plist
 
 # Project-specific stuff:
 *.dmg
