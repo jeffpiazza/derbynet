@@ -118,7 +118,7 @@ class PhotoRepository {
     if ($v) {
       return $v;
     }
-    // Pick an arbitrary element if we can't find the requested one.
+    // Pick an arbitrary render if we can't find the requested one.
     foreach ($this->all_renders as $k => $v) {
       return $v;
     }
@@ -252,12 +252,10 @@ class PhotoRender {
   public function render_url($imagefile) {
     if ($imagefile != '') {
       $imagefile = basename($imagefile);
-      $targetpath = $this->file_path($imagefile);
-      $breaker = @filemtime($targetpath);
+      $breaker = @filemtime($this->best_available_file_path($imagefile));
+      // If best_available_file_path can't find any suitable version of the file
+      // at all, $breaker will be FALSE from filemtime; use a 0 instead.
       if (!$breaker) {
-        // If the file doesn't exist, just use a zero for the cache breaker.
-        // If/when the database names an actual file, it'll have a non-zero
-        // creation date, and so a different URL.
         $breaker = 0;
       }
       return 'photo.php/'.$this->repository->name().'/file/'.$this->label().'/'.urlencode($imagefile).'/'.$breaker;
