@@ -75,6 +75,7 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 //    firstname
 //    lastname
 //    carnumber
+//    carname
 
 // GPRM views classes and ranks as a hierarchy.  Selecting "none" shows all
 // awards (any class/rank) in the category, selecting a class shows all the
@@ -129,7 +130,8 @@ function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
                       'sort' => $place,
                       'firstname' => $row['firstname'],
                       'lastname' => $row['lastname'],
-                      'carnumber' => $row['carnumber']);
+                      'carnumber' => $row['carnumber'],
+                      'carname' => $row['carname']);
   }
 }
 
@@ -148,7 +150,7 @@ foreach (final_standings() as $row) {
 // TODO Break ties for award sorting according to class and rank ordering
 foreach ($db->query('SELECT awardid, awardname, awardtype,'
                     .' Awards.awardtypeid, Awards.classid, Awards.rankid, sort,'
-                    .' firstname, lastname, carnumber'
+                    .' firstname, lastname, carnumber, carname'
                     .' FROM '.inner_join('Awards', 'AwardTypes',
                                          'Awards.awardtypeid = AwardTypes.awardtypeid',
                                          'RegistrationInfo',
@@ -165,7 +167,8 @@ foreach ($db->query('SELECT awardid, awardname, awardtype,'
             'sort' => $row['sort'],
             'firstname' => $row['firstname'],
             'lastname' => $row['lastname'],
-            'carnumber' => $row['carnumber']);
+            'carnumber' => $row['carnumber'],
+            'carname' => $row['carname']);
 }
 
 function compare_by_sort(&$lhs, &$rhs) {
@@ -238,6 +241,8 @@ foreach ($awards as &$row) {
         .' data-awardname="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
         .' data-recipient="'.htmlspecialchars($row['firstname'].' '.$row['lastname'],
                                               ENT_QUOTES, 'UTF-8').'"'
+        .' data-carnumber="'.$row['carnumber'].'"'
+        .' data-carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
         .' data-class="'.($classid ?
                           htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8') : '').'"'
         .' data-rank="'.($rankid ?
@@ -275,6 +280,8 @@ foreach ($awards as &$row) {
 <h3 id="rankname"></h3>
 
 <h3 id="recipient"></h3>
+<p id="carnumber" class="detail"></p>
+<p id="carname" class="detail"></p>
 
 <div class="presenter-inner hidden">
   <input type="checkbox" data-role="flipswitch"

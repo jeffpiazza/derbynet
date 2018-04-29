@@ -87,6 +87,9 @@ h3#recipient {
   width: 45px;
 }
 
+.presenter .detail {
+  text-align: center;
+}
 
 /*
     // Showing: 100px =~ 4em ("on")

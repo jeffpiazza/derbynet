@@ -35,6 +35,8 @@ function on_choose_award(list_item) {
          });
   $("#awardname").text(item.data('awardname'));
   $("#recipient").text(item.data('recipient'));
+  $("#carnumber").text('Car number ' + item.data('carnumber'));
+  $("#carname").text(item.data('carname'));
   $("#classname").text(item.data('class'));
   $("#rankname").text(item.data('rank'));
   $(".presenter-inner").removeClass('hidden');
@@ -67,6 +69,8 @@ function on_clear_awards() {
          });
   $("#awardname").text('');
   $("#recipient").text('');
+  $("#carnumber").text('');
+  $("#carname").text('');
   $("#classname").text('');
   $("#rankname").text('');
   $(".presenter-inner").addClass('hidden');

@@ -94,7 +94,7 @@ function final_roundids() {
 // Returns summary results for each racer within each race they participated in.
 // Each summary element gives:
 //    roundid, classid -- round information
-//    racerid, firstname, lastname, carnumber, classid, rankid -- racer information
+//    racerid, firstname, lastname, carnumber, carname, classid, rankid -- racer information
 //    class -- name of racer's (native) class (i.e., not "Grand Finals")
 //    rank -- name of racer's rank
 //    base -- number of heats run in round
@@ -125,7 +125,7 @@ function final_standings() {
   $scoring_expr = sql_scoring_expression('finishtime');
 
   $stmt = $db->query('SELECT Rounds.roundid, Rounds.classid as round_classid, '
-                     .' RegistrationInfo.racerid, firstname, lastname, carnumber,'
+                     .' RegistrationInfo.racerid, firstname, lastname, carnumber, carname,'
                      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
                      .' Rounds.roundid IN ('.implode(',', $roundids_for_groups).') AS for_group,'
                      .' Rounds.roundid IN ('.implode(',', $roundids_for_supergroup).') AS for_supergroup,'
@@ -158,6 +158,7 @@ function final_standings() {
                       'firstname' => $row['firstname'],
                       'lastname' => $row['lastname'],
                       'carnumber' => $row['carnumber'],
+                      'carname' => $row['carname'],
                       // The racer's 'native' class, not the round's class (e.g. Grand Finals)
                       'classid' => $row['classid'],
                       'class' => $row['class'],
@@ -283,6 +284,7 @@ function write_standings_table_headers() {
   echo "<th>Place</th>";
   echo "<th>Car Number</th>";
   echo "<th>Name</th>";
+  echo "<th>Car Name</th>";
   echo "<th>".group_label()."</th>";
   echo "<th class='ingroup'>In <span id='per-group-label'>".group_label()."</span></th>";
   echo "<th class='insuper'>In ".supergroup_label()."</th>";
@@ -329,6 +331,7 @@ function write_standings_table_rows(&$standings) {
   
     echo "<td>".$row['carnumber']."</td>";
     echo "<td>".htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8')."</td>";
+    echo "<td>".$row['carname']."</td>";
 
     // Racer's (native) class
     echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
