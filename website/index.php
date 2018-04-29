@@ -140,12 +140,12 @@ make_spacer_if($need_spacer);
 $need_spacer = make_link_button('Race Dashboard', 'coordinator.php', SET_UP_PERMISSION, 'during_button');
 $need_spacer = make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
 $need_spacer = make_link_button('Judging', 'judging.php', JUDGING_PERMISSION, 'during_button') || $need_spacer;
-  
+
 // end first column default set-up
 
 if ($two_columns) {
-  echo "</div>\n";
-  echo "</div>\n";
+  echo "</div>\n";  // block_buttons
+  echo "</div>\n";  // index_column
 
   echo "<div class='index_column'>\n";
   echo "<div class='block_buttons'>\n";
@@ -174,12 +174,12 @@ if (@$_SESSION['role']) {
   make_link_button('Log in', 'login.php', -1, 'other_button');
 }
 
-echo "</div>\n";
-if (have_permission(SET_UP_PERMISSION)) {
-  echo "</div>\n";
+echo "</div>\n";  // block_buttons
+if ($two_columns) {
+  echo "</div>\n";  // index_column
 }
 
-echo "</div>\n";
+echo "</div>\n";  // index_background
 echo "</body>\n";
 echo "</html>\n";
 ?>
