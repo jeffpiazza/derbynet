@@ -34,6 +34,9 @@ announce() {
         success) ;;
         upload-ok-but-checkin-failed) ;;
         upload-failed) ;;
+        speed-good) ;;
+        speed-fair) ;;
+        speed-poor) ;;
         unrecognized-barcode) ;;
     esac
 }

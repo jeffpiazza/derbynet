@@ -87,25 +87,25 @@ check_camera() {
 # Outputs:
 #    CHECKIN_OK (boolean, 1=ok)
 maybe_check_in_racer() {
-        if [ $PHOTO_CHECKIN -ne 0 -a "$BARCODE" != "PWDuploadtest" ] ; then
-            echo Checking in racer $BARCODE
-            # Check in the racer
-            CHECKIN_OK=0
-            curl --silent -F action=racer.pass \
-                 -F barcode=$BARCODE \
-                 -F value=1 \
-                 -b "$COOKIES" -c "$COOKIES" \
-                 "$DERBYNET_SERVER/action.php" \
-                | tee debug-checkin.curl \
-                | grep -q success && CHECKIN_OK=1
-            if [ $CHECKIN_OK -eq 0 ] ; then
-                echo Check-in failed
-                cat debug-checkin.curl
-                announce checkin-failed
-            fi
-        else
-            CHECKIN_OK=1
+    if [ $PHOTO_CHECKIN -ne 0 -a "$BARCODE" != "PWDuploadtest" ] ; then
+        echo Checking in racer $BARCODE at `date` | tee -a checkins.log
+        # Check in the racer
+        CHECKIN_OK=0
+        curl --silent -F action=racer.pass \
+             -F barcode=$BARCODE \
+             -F value=1 \
+             -b "$COOKIES" -c "$COOKIES" \
+             "$DERBYNET_SERVER/action.php" \
+            | tee -a checkins.log \
+            | grep -q success && CHECKIN_OK=1
+        if [ $CHECKIN_OK -eq 0 ] ; then
+            echo Check-in failed | tee -a checkins.log
+            tail checkins.log
+            announce checkin-failed
         fi
+    else
+        CHECKIN_OK=1
+    fi
 }
 
 # Try to upload one photo to the web server.
@@ -121,7 +121,8 @@ maybe_check_in_racer() {
 #    CHECKIN_OK (boolean describing success of check-in attempt, if any; 1=success)
 upload_photo() {
     PHOTO_PATH="$1"
-    echo Uploading $BARCODE
+    echo Uploading $PHOTO_PATH for $BARCODE at `date` | tee -a uploads.log
+    announce sending
     UPLOAD_OK=0
     curl --fail \
          -F action=photo.upload \
@@ -132,7 +133,7 @@ upload_photo() {
          -F "photo=@$PHOTO_PATH;type=image/jpeg" \
          -b "$COOKIES" -c "$COOKIES" \
          "$DERBYNET_SERVER/action.php" \
-        | tee debug-upload.curl \
+        | tee -a uploads.log \
         | grep -q success && UPLOAD_OK=1
 
     if [ $UPLOAD_OK -eq 1 ] ; then
@@ -144,8 +145,76 @@ upload_photo() {
             announce upload-ok-but-checkin-failed
         fi
     else
-        echo Upload failed
-        cat debug-upload.curl
+        echo Upload failed | tee -a uploads.log
+        tail uploads.log
         announce upload-failed
     fi
+}
+
+# Generate progressively larger local files of sorta-random bytes, and time the
+# upload.
+#
+# Inputs from the environment:
+#    COOKIES
+#    DERBYNET_SERVER
+upload_speed_test() {
+    RANDOM_JPG=upload-test.random.jpg
+    COUNT=25
+    BS=2048
+
+    dd if=/dev/urandom of=$RANDOM_JPG bs=$BS count=$COUNT status=none
+
+    echo | tee -a uploads.log
+    echo | tee -a uploads.log
+
+    # The web server is normally configured for 8M uploads; larger will just
+    # give errors.
+    while [ `expr $COUNT \* $BS \* 2` -lt 8000000 ] ; do
+        START=`date +%s`
+        # At larger sizes, /dev/urandom can take several seconds, so we just
+        # reuse the bytes we've already got.
+        dd if=$RANDOM_JPG of=$RANDOM_JPG \
+           seek=$COUNT bs=$BS count=$COUNT status=none
+        END=`date +%s`
+
+        COUNT=`expr $COUNT + $COUNT`
+        [ `expr $END - $START` -ne 0 ] && \
+            echo `expr $END - $START` "second(s) to double file to" $COUNT bytes | tee -a uploads.log
+
+        BARCODE=PWDuploadtest
+        START=`date +%s`
+        curl --fail \
+             -F action=photo.upload \
+             -F MAX_FILE_SIZE=30000000 \
+             -F repo=$PHOTO_REPO \
+             -F barcode=$BARCODE \
+             -F autocrop=0 \
+             -F "photo=@$RANDOM_JPG;type=image/jpeg" \
+             -b "$COOKIES" -c "$COOKIES" \
+             "$DERBYNET_SERVER/action.php"
+        END=`date +%s`
+
+        echo `expr $END - $START` "second(s) to upload" `expr $COUNT \* $BS` bytes | tee -a uploads.log
+        if [ `expr $END - $START` -ne 0 ] ; then
+            SPEED=`expr \( $COUNT \* $BS \) / \( $END - $START \)`
+            KB_SPEED=`expr $SPEED / 1000`
+            echo $SPEED bytes per second | tee -a uploads.log
+            echo $KB_SPEED Kb per second | tee -a uploads.log
+            if [ $KB_SPEED -gt 200 ] ; then
+                announce speed-good
+            elif [ $KB_SPEED -gt 50 ] ; then
+                announce speed-fair
+            else
+                announce speed-poor
+            fi
+            # Abandon the test if the trials are becoming impractical
+            [ `expr $END - $START` -gt 10 ] && return
+        fi
+
+        echo | tee -a uploads.log
+        echo | tee -a uploads.log
+    done
+
+    rm $RANDOM_JPG
+    announce success
 }

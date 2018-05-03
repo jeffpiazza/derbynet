@@ -30,9 +30,11 @@ SELF="$0"
 # readlink -f exists in linux (particularly RPi), but not e.g. Mac
 [ -L "$SELF" ] && SELF=`readlink -f "$SELF"`
 SELF_DIR=`dirname "$SELF"`
-
 . "$SELF_DIR"/lib/photo-preamble.sh
 . "$SELF_DIR"/lib/photo-functions.sh
+
+rm uploads.log > /dev/null
+rm checkins.log > /dev/null
 
 killall_gvfs_volume_monitor
 
@@ -44,10 +46,14 @@ check_camera
 
 while true ; do
     BARCODE=`barcode $BARCODE_SCANNER_DEV`
-    announce barcode-read
     echo Scanned $BARCODE
     CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
-    if [ "$CAR_NO" ] ; then
+    if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
+        announce terminating
+        sudo shutdown -h now
+    elif [ "$BARCODE" = "PWDspeedtest" ] ; then
+        upload_speed_test
+    elif [ "$CAR_NO" ] ; then
 
         maybe_check_in_racer
 
@@ -60,11 +66,10 @@ while true ; do
             echo chdkptp says $?
         fi
 
+        announce capture-ok
+
         upload_photo "$PHOTO_DIR/Car$CAR_NO.jpg"
 
-    elif [ "$BARCODE" = "QUITQUITQUIT" ] ; then
-        announce terminating
-        sudo shutdown -h now
     else
         echo Rejecting scanned barcode $BARCODE
         announce unrecognized-barcode
