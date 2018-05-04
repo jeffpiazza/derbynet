@@ -197,9 +197,11 @@ function makeDroppableLabelTarget(label_target_jq) {
       $(this).addClass('label_target_filled');
       $('.column' + $(this).attr('data-column')).removeClass('dim');
 
-      enableOrDisableImportButton();
-
+      // onDrop may remove some required fields, e.g., for first-last marker, so
+      // it's important to call onDrop before enableOrDisableImportButton.
       onDrop($(ui.draggable[0]), $(this));
+
+      enableOrDisableImportButton();
     }
   });
 }
