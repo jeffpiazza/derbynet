@@ -4,11 +4,16 @@ return array(
 
 "DROP TABLE Events",
 "CREATE TABLE Events ("
-."  seq    COUNTER,"
-."	tstamp DATETIME,"
-."	action INTEGER,"
+."  seq     COUNTER,"
+."	tstamp  DATETIME,"
+."	action  INTEGER,"
 ."  racerid INTEGER,"
-."  other  VARCHAR(250),"
+."  classid INTEGER,"
+."  rankid  INTEGER,"
+."  roundid INTEGER,"
+."  heat    INTEGER,"
+."  lane    INTEGER,"
+."  other   VARCHAR(250),"
 ."	)",
 
 "CREATE UNIQUE INDEX PrimaryKey"

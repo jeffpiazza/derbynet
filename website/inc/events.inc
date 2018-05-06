@@ -4,9 +4,19 @@ require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 
 // The 'Events' table provides a history of important changes in the data.
+// All entries populate seq, tstamp, and action fields.
+// Other fields are populated according to the action:
+
+// A racer was checked in (racerid)
 define('EVENT_CHECKIN', 1);
+// A racer's photo was assigned (racerid)
 define('EVENT_RACER_PHOTO_ASSIGN', 2);
+// A racer's car photo was assigned (racerid)
 define('EVENT_CAR_PHOTO_ASSIGN', 3);
+
+// A racer's heat result was discarded (we record the value that was discarded,
+// in case questions arise later).  (racerid, roundid, heat, lane, other)
+define('EVENT_RESULT_DISCARDED', 100);
 
 function create_events_table() {
   run_sql_script('events-table');
@@ -33,6 +43,41 @@ function record_event($action, $racerid, $other = '') {
     }
   } while ($retry);
 }
+
+// Call this BEFORE rewriting a heat result
+function record_event_for_discarded_result($resultid) {
+  global $db;
+
+  do {
+    $retry = false;
+    try {
+      $stmt = $db->prepare('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
+                           .' FROM RaceChart'
+                           .' WHERE resultid = :resultid');
+      $stmt->execute(array(':resultid' => $resultid));
+      $row = $stmt->fetch();
+      $stmt->closeCursor();
+      if ($row !== false) {
+        $stmt = $db->prepare('INSERT INTO Events(tstamp, action, racerid, roundid, heat, lane, other)'
+                             .' VALUES('.dbnow_expr().', :action, :racerid, :roundid, :heat, :lane, :other)');
+        $stmt->execute(array(':action' => EVENT_RESULT_DISCARDED,
+                             ':racerid' => $row['racerid'],
+                             ':roundid' => $row['roundid'],
+                             ':heat' => $row['heat'],
+                             ':lane' => $row['lane'],
+                             ':other' => $row['finishtime'].' (finish place '.$row['finishplace'].')'));
+      }
+    } catch (PDOException $p) {
+      if ($p->getCode() == '42S02') {
+        create_events_table();
+        $retry = true;
+      } else {
+        echo $p;
+      }
+    }
+  } while ($retry);
+}
+  
 
 // Returns an array of racer records, in the order in which they had the
 // specified event action recorded

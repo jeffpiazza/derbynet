@@ -8,21 +8,40 @@
 require_once('inc/write-heat-results.inc');
 require_once('inc/autoadvance.inc');
 require_once('inc/racing-state.inc');
+require_once('inc/events.inc');
 
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-    if (write_heat_results()) {
-      if (get_racing_state()) {
-        send_replay_REPLAY();
-        $current = get_running_round();
-        advance_heat($current, 'next', /* show failure */ false);
-      }
-      echo '<success/>';
-      require('ajax/query.poll.coordinator.inc');
-	}
+
+  // Capture events for all re-written results
+  $current = get_running_round();
+  $all_resultids = array();
+  $stmt = $db->prepare('SELECT resultid FROM RaceChart'
+                       .' WHERE roundid = :roundid AND heat = :heat'
+                       .' AND completed IS NOT NULL AND completed != \'\''
+                       .' AND finishtime IS NOT NULL AND finishplace IS NOT NULL'
+                       .' ORDER BY lane');
+  $stmt->execute(array(':roundid' => $current['roundid'],
+                       ':heat' => $current['heat']));
+  foreach ($stmt as $resultid) {
+    $all_resultids[] = $resultid['resultid'];
+  }
+  foreach ($all_resultids as $resultid) {
+    record_event_for_discarded_result($resultid);
+  }
+
+  if (write_heat_results()) {
+    if (get_racing_state()) {
+      send_replay_REPLAY();
+      $current = get_running_round();
+      advance_heat($current, 'next', /* show failure */ false);
+    }
+    echo '<success/>';
+    require('ajax/query.poll.coordinator.inc');
+  }
 } else {
-	not_authorized_body();
+  not_authorized_body();
 }
 
 end_response();
