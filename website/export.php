@@ -14,10 +14,10 @@ if ($name_style == FULL_NAME) {
 } else {  // FIRST_NAME_LAST_INITIAL
   echo "Name,";
 }
-echo "CarNumber,FinishTime,FinishPlace,Completed\r\n";
+echo "CarNumber,CarName,FinishTime,FinishPlace,Completed\r\n";
 
 $stmt = $db->query('SELECT class, round, heat, lane,'
-                   .' firstname, lastname, carnumber, finishtime, finishplace, completed'
+                   .' firstname, lastname, carnumber, carname, finishtime, finishplace, completed'
                    .' FROM '.inner_join('RaceChart', 'RegistrationInfo',
                                         'RaceChart.racerid = RegistrationInfo.racerid',
                                         'Rounds', 'RaceChart.roundid = Rounds.roundid',
@@ -38,7 +38,8 @@ try {
     } else {
       array_push($values, $row['firstname'], $row['lastname']);
     }
-    array_push($values, $row['carnumber'], $row['finishtime'], $row['finishplace'], $row['completed']);
+    array_push($values, $row['carnumber'], $row['carname'],
+               $row['finishtime'], $row['finishplace'], $row['completed']);
     fputcsv($output, $values);
   }
 } catch (Exception $e) {
