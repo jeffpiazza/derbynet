@@ -126,11 +126,11 @@ Lanes available for scheduling:</p>
 
       <p>Show racer names as:<br/>
         <input type="radio" name="name-style" value="0" id="name-style-0" data-role="none"<?php
-        echo $name_style == FULL_NAME ? ' checked="checked"' : ''
+        echo $name_style == FULL_NAME ? ' checked="checked"' : '';
         ?>/><label for="name-style-0" data-enhanced="true">First name and last name</label><br/>
 
         <input type="radio" name="name-style" value="1" id="name-style-1" data-role="none"<?php
-        echo $name_style == FIRST_NAME_LAST_INITIAL ? ' checked="checked"' : ''
+        echo $name_style == FIRST_NAME_LAST_INITIAL ? ' checked="checked"' : '';
         ?>/><label for="name-style-1">First name and last initial</label>
       </p>
     </div>
