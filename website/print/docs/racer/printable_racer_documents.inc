@@ -61,6 +61,6 @@ abstract class PrintableRacerDocument {
   }
 }
 
-load_document_files_from(dirname(dirname(__FILE__)).'/print/docs/racer');
+load_document_files_from(dirname(__FILE__));
 
 ?>

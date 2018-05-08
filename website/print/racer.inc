@@ -3,7 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/action-helpers.inc');
-require_once('inc/printable_racer_documents.inc');
+require_once('print/docs/racer/printable_racer_documents.inc');
 require_once('fpdf/ext/combined.php');
 
 // $_GET['options']
