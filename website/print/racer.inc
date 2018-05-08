@@ -39,7 +39,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
   $doc->StartDocument();
 
   if (isset($_GET['options'])) {
-    $doc->set_options(unserialize($_GET['options']));
+    $doc->set_options(json_decode($_GET['options'], true));
   }
 
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '

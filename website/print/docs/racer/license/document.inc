@@ -8,9 +8,11 @@ class DriversLicenseDocument extends PrintableRacerDocument {
 
   function get_available_options() {
     return array(
-      'use_photo' => array('desc' => 'Include racer\'s photo',
+      'use_photo' => array('type' => 'bool',
+                           'desc' => 'Include racer\'s photo',
                            'default' => true),
-      'use_barcode' => array('desc' => 'Include barcode',
+      'use_barcode' => array('type' => 'bool',
+                             'desc' => 'Include barcode',
                              'default' => true),
       );
   }
@@ -74,7 +76,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                              array(new SetFontTag('Times', '', 10), group_label().": ",
                                    new SetFontTag('Times', 'B', 10), $racer['class']));
 
-    if (isset($this->options['use_photo']) && !$this->options['use_photo']) {
+    if (!$this->get_option('use_photo')) {
     } else if ($racer['imagefile']) {
       $this->pdf->Image($racer['imagefile'], $x + 2.35, $y + 0.25, 1.00);
     } else {
@@ -89,7 +91,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                                  array(new SetFontTag('Arial', 'B', 24), $racer['carnumber']));
 
     $this->pdf->SetFillColor(0);
-    if (!isset($this->options['use_barcode']) || $this->options['use_barcode']) {
+    if ($this->get_option('use_barcode')) {
       $this->pdf->HorizontalBarcode($x + 0.90, $y + 1.90, 2.0, 0.20, $racer['barcode']);
     }
     

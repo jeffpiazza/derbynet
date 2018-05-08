@@ -10,7 +10,8 @@ class CarTagsDocument extends PrintableRacerDocument {
   protected $count;
 
   function get_available_options() {
-    return array('rank_image' => array('desc' => 'Draw icon for rank',
+    return array('rank_image' => array('type' => 'bool',
+                                       'desc' => 'Draw icon for rank',
                                        'default' => true));
   }
   
@@ -64,18 +65,21 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetFont('Times', '', 15);
     $this->pdf->RotatedCenteredText($left + 1.1, 2.75,  $racer['carname']);
 
-    // 2-inch rank image
-    $this->pdf->SetXY($left, 5.5);
-    $this->pdf->SetFont('Arial', '', 16);
-    $this->pdf->SetFillColor(200, 200, 255);
-    $img_path = $this->path_to_rank_image($racer);
-    if ($img_path) {
-      list($width, $height) = @getimagesize($img_path);
-      if ($height != 0) {
-        $dx = (2.75 - ($width/$height)*2.0) / 2;
-        $this->pdf->Image($img_path, $left + $dx, 5.5, 0, 2);
+    if ($this->get_option('rank_image')) {
+      // 2-inch rank image
+      $this->pdf->SetXY($left, 5.5);
+      $this->pdf->SetFont('Arial', '', 16);
+      $this->pdf->SetFillColor(200, 200, 255);
+      $img_path = $this->path_to_rank_image($racer);
+      if ($img_path) {
+        list($width, $height) = @getimagesize($img_path);
+        if ($height != 0) {
+          $dx = (2.75 - ($width/$height)*2.0) / 2;
+          $this->pdf->Image($img_path, $left + $dx, 5.5, 0, 2);
+        }
       }
     }
+
     // 1/2-inch letters at the bottom of an 8.5-inch tag.
     // We want to get as close to the edge as we can print.
     $this->pdf->SetFont('Times', 'B', 36);

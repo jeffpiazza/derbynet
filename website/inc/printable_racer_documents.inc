@@ -17,12 +17,21 @@ abstract class PrintableRacerDocument {
   protected $pdf;
   protected $options;  // Contents vary by document type
 
-  // Returns an array of key => {desc:, default:}, with an entry for each option key
-  // understood by the document class.
+  // Returns an array of key => {type:, desc:, default:}, with an entry for each
+  // option key understood by the document class.
+  //
+  // type can be one of 'bool', 'string', 'int'.
   abstract function get_available_options();
 
   function set_options($options) {
     $this->options = $options;
+  }
+
+  function get_option($option) {
+    if (isset($this->options[$option]))
+      return $this->options[$option];
+    $opts = $this->get_available_options();
+    return $opts[$option]['default'];
   }
 
   abstract function StartDocument();
