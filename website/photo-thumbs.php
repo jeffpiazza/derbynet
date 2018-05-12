@@ -1,12 +1,30 @@
 <?php session_start();
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
+require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
 require_once('inc/photo-config.inc');
 
 $photo_repository = photo_repository(isset($_GET['repo']) ? $_GET['repo'] : 'head');
+
+$order = '';
+if (isset($_GET['order']))
+  $order = $_GET['order'];  // Values are: name, class, car
+if (!$order)
+    $order = 'name';
+
+function link_for_ordering($key, $text) {
+  global $order, $photo_repository;
+  echo "<a ";
+  if ($order == $key) {
+    echo 'class="current_sort"';
+  }
+  echo " href='photo-thumbs.php?repo=".$photo_repository->name()."&amp;order=".$key."'>";
+  echo $text;
+  echo "</a>";
+}
 
 function scan_directory($directory, $pattern) {
   $files = array();
@@ -66,17 +84,24 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <?php make_banner(($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'); ?>
 
 <div class="block_buttons">
-  <?php
-  if (!is_writable($photo_repository->directory())) {
-  ?>
+
+<div id="sort_controls">
+Sort racers by
+<?php link_for_ordering('name', "name,"); ?>
+<?php link_for_ordering('class', group_label_lc().","); ?> or
+<?php link_for_ordering('car', "car number"); ?>.
+</div>
+
+<?php if (!is_writable($photo_repository->directory())) { ?>
+
   <div id="upload_target">
     <div class="dz-message">
       <span>Photo directory is not writable; check <a href="settings.php">settings.</a></span>
     </div>
   </div>
-  <?php
-    } else {
-  ?>
+
+<?php } else { ?>
+
   <form id="upload_target" action="action.php" class="dropzone">
     <div class="fallback">
       <input type="file" name="photo" value="Upload Files"/>
@@ -85,8 +110,10 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
     <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
   </form>
-   <?php } ?>
-  <input type="button" value="Refresh" onclick="window.location.reload();"/>
+
+<?php } ?>
+
+    <input type="button" value="Refresh" onclick="window.location.reload();"/>
 </div>
 
 <div class="body-wrapper">
@@ -95,12 +122,19 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <ul data-role="listview" class="ui-listview">
 <?php
 require_once('inc/data.inc');
+
 $racers_by_photo = array();
-$stmt = $db->query('SELECT racerid, lastname, firstname, '.$photo_repository->column_name().', carnumber, class'
+$stmt = $db->query('SELECT racerid, lastname, firstname, '.$photo_repository->column_name().','
+                   .' carnumber, class,'
+                   .' '.(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort '
 				   .' FROM RegistrationInfo'
 				   .' INNER JOIN Classes'
 				   .' ON RegistrationInfo.classid = Classes.classid'
-				   .' ORDER BY lastname, firstname');
+                   .' ORDER BY '
+                   .($order == 'car' ? 'carnumber, lastname, firstname' :
+                     ($order == 'class'  ? 'class_sort, lastname, firstname' :
+                      'lastname, firstname')));
+
 foreach ($stmt as $rs) {
   $raw_imagefile = $rs[$photo_repository->column_name()];
   $racer = array('firstname' => $rs['firstname'],

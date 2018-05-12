@@ -30,17 +30,39 @@ make_banner('Judging');
 require_once('inc/standings.inc');
 require_once('inc/schema_version.inc');
 
+$order = '';
+if (isset($_GET['order']))
+  $order = $_GET['order'];  // Values are: name, class, car
+if (!$order)
+    $order = 'car';
+
+function link_for_ordering($key, $text) {
+  global $order;
+  echo "<a ";
+  if ($order == $key) {
+    echo 'class="current_sort"';
+  }
+  echo " href='judging.php?order=".$key."'>";
+  echo $text;
+  echo "</a>";
+}
+
 $racers = array();
 $awards = array();
 
 $sql = 'SELECT racerid, carnumber, lastname, firstname,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile,'
+      .' '.(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort, '
       .(schema_version() < 2 ? '\'\' as ' : '').' carphoto'
       .' FROM '.inner_join('RegistrationInfo',
                            'Classes', 'Classes.classid = RegistrationInfo.classid',
                            'Ranks', 'Ranks.rankid = RegistrationInfo.rankid')
       .' WHERE passedinspection = 1 AND exclude = 0'
-      .' ORDER BY carnumber';
+      .' ORDER BY '
+      .($order == 'car' ? 'carnumber, lastname, firstname' :
+        ($order == 'class'  ? 'class_sort, lastname, firstname' :
+         'lastname, firstname'));
+
 foreach ($db->query($sql) as $rs) {
   $racerid = $rs['racerid'];
   $racers[$racerid] = array('racerid' => $racerid,
@@ -84,6 +106,12 @@ foreach ($stmt as $rs) {
 }
 ?>
 <div id="top_matter" class="block_buttons">
+  <div id="sort_controls">
+    Sort racers by
+    <?php link_for_ordering('name', "name,"); ?>
+    <?php link_for_ordering('class', group_label_lc().","); ?> or
+    <?php link_for_ordering('car', "car number"); ?>.
+  </div>
   <form method="link" action="awards-editor.php">
     <input type="submit" data-enhanced="true" value="Edit Awards"/>
   </form>

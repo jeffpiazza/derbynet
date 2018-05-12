@@ -39,15 +39,15 @@ $xbs_award_name = read_raceinfo('xbs-award');
 
 $order = '';
 if (isset($_GET['order']))
-  $order = $_GET['order'];  // Values are: name, den, car
+  $order = $_GET['order'];  // Values are: name, class, car
 if (!$order)
     $order = 'name';
 
-// The table of racers can be presented in order by name, car, or
-// den (and then by name within the den).  Each sortable column has
-// a header which is a link to change the ordering, with the
-// exception that the header for the column for ordering currently
-// in use is NOT a link (because it wouldn't do anything).
+// The table of racers can be presented in order by name, car, or class (and
+// then by name within the class).  Each sortable column has a header which is a
+// link to change the ordering, with the exception that the header for the
+// column for ordering currently in use is NOT a link (because it wouldn't do
+// anything).
 function column_header($text, $o) {
     global $order;
 
@@ -128,7 +128,7 @@ require_once('inc/checkin-table.inc');
                          'RegistrationInfo.rankid = Ranks.rankid')
     .' ORDER BY '
           .($order == 'car' ? 'carnumber, lastname, firstname' :
-            ($order == 'den'  ? 'class_sort, lastname, firstname' :
+            ($order == 'class'  ? 'class_sort, lastname, firstname' :
              'lastname, firstname'));
 
 $stmt = $db->query($sql);
