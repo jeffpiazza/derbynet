@@ -26,6 +26,7 @@ run_tests() {
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
+    `dirname $0`/test-permissions.sh $BASE_URL
 
     `dirname $0`/test-basic-racing.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
@@ -35,6 +36,7 @@ run_tests() {
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
+
     # TODO This gives different results depending on library version?
     # `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"

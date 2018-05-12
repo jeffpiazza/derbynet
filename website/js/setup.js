@@ -44,7 +44,7 @@ function populate_details(details) {
       .on('click', function() { show_initialize_schema_modal(); });
   }
 
-  $("#classes_step input[type='submit']").attr('value', "Edit " + details.classes.label + "s");
+  $("#classes_step a.button_link").text("Edit " + details.classes.label + "s");
 
   $("#database_step div.step_details").html(details.database.details);
   $("#schema_step div.step_details").html(details.schema.details);

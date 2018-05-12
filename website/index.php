@@ -56,39 +56,9 @@ div.index_column {
   float: left;
 }
 
-.block_buttons a.button_link { 
-  font-size: 24px; /*x-large; */
-
-  /* Unique to button_link: */
-  text-align: center;
-  text-decoration: none;
-  
-  color:#ffffff;
-	width: 238px;
-	margin-left: auto;
-	margin-right: auto;
-    margin-top:3px;
-	margin-bottom: 20px;
-    padding-top: 9px;
-    padding-bottom: 9px;
-    display: block;
-    font-size: x-large;
-  font-family: system-ui;
-  /* line-height: normal; */
+.block_buttons a.button_link {
+  width: 238px;
   height: 30px;
-
-    background: #2d2d2d; /* Old browsers */
-    background: -moz-linear-gradient(top,  #424242 0%, #2d2d2d 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#424242), color-stop(100%,#2d2d2d)); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* IE10+ */
-    background: linear-gradient(top,  #424242 0%,#2d2d2d 100%); /* W3C */
-    border: 1px solid #666666;
-    border-right-width: 1px;
-    border-radius: 0.4em 0.4em 0.4em 0.4em;
-
-    cursor: pointer;
 }
 
 .block_buttons a.button_link.before_button,

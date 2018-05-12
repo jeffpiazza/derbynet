@@ -202,9 +202,7 @@ $stmt->closeCursor();
 <div class="block_buttons">
 <?php
   if (isset($_GET['racerid'])) {
-    echo '<form method="link" action="racer-results.php">'."\n";
-    echo '<input type="submit" value="View All Racers"/>'."\n";
-    echo '</form>'."\n";
+    echo '<a class="button_link" href="racer-results.php">View All Racers</a>'."\n";
   }
 ?>
 </div>

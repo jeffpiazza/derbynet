@@ -10,7 +10,6 @@ require_permission(JUDGING_PERMISSION);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Award Judging</title>
-<?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
@@ -21,6 +20,7 @@ require_permission(JUDGING_PERMISSION);
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/judging.js"></script>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/judging.css"/>
 </head>
 <body>
@@ -112,9 +112,7 @@ foreach ($stmt as $rs) {
     <?php link_for_ordering('class', group_label_lc().","); ?> or
     <?php link_for_ordering('car', "car number"); ?>.
   </div>
-  <form method="link" action="awards-editor.php">
-    <input type="submit" data-enhanced="true" value="Edit Awards"/>
-  </form>
+  <a class="button_link" href="awards-editor.php">Edit Awards</a>
 </div>
 
 <div id="awards">

@@ -3,41 +3,11 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 cat >anonymous.index.tmp <<EOF
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="export.php">
-        <form method="link" action="about.php">
-        <form method="link" action="login.php">
-EOF
-
-cat >racecrew.index.tmp <<EOF
-          <form method="link" action="checkin.php">
-          <form method="get" action="photo-thumbs.php">
-          <form method="get" action="photo-thumbs.php">
-          <form method="link" action="ondeck.php">
-          <form method="link" action="racer-results.php">
-          <form method="link" action="standings.php">
-          <form method="link" action="export.php">
-          <form method="link" action="about.php">
-          <form method="link" action="login.php">
-EOF
-
-cat >coordinator.index.tmp <<EOF
-        <form method="link" action="coordinator.php">
-        <form method="link" action="awards-presentation.php">
-        <form method="link" action="checkin.php">
-        <form method="get" action="photo-thumbs.php">
-        <form method="get" action="photo-thumbs.php">
-        <form method="link" action="ondeck.php">
-        <form method="link" action="racer-results.php">
-        <form method="link" action="standings.php">
-        <form method="link" action="export.php">
-        <form method="link" action="settings.php">
-        <form method="link" action="setup.php">
-        <form method="link" action="import-roster.php">
-        <form method="link" action="class-editor.php">
-        <form method="link" action="about.php">
-        <form method="link" action="login.php">
+        <a class="button_link during_button" href="ondeck.php">Racers On Deck</a>
+        <a class="button_link during_button" href="racer-results.php">Results By Racer</a>
+        <a class="button_link after_button" href="export.php">Exported Results</a>
+        <a class="button_link other_button" href="about.php">About</a>
+        <a class="button_link other_button" href="login.php">Log in</a>
 EOF
 
 ## Every page, and every action
@@ -45,9 +15,9 @@ EOF
 user_logout
 
 OK=1
-( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+( curl_get index.php | grep '<a' | grep button_link | diff -b - anonymous.index.tmp ) || OK=0
 if [ $OK -eq 0 ]; then
-    curl_get index.php | grep '<form'
+    curl_get index.php | grep '<a' | grep button_link
     test_fails Anonymous index page
 fi
 
@@ -82,30 +52,60 @@ curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=poll.ondeck" > /dev/null
 curl_get "action.php?query=poll.now-racing" > /dev/null
 
+cat >coordinator.index.tmp <<EOF
+          <a class="button_link before_button" href="setup.php">Set-Up</a>
+          <a class="button_link before_button" href="checkin.php">Race Check-In</a>
+          <a class="button_link before_button" href="photo-thumbs.php?repo=head">Edit Racer Photos</a>
+          <a class="button_link before_button" href="photo-thumbs.php?repo=car">Edit Car Photos</a>
+          <a class="button_link during_button" href="coordinator.php">Race Dashboard</a>
+          <a class="button_link during_button" href="kiosk-dashboard.php">Kiosk Dashboard</a>
+          <a class="button_link during_button" href="judging.php">Judging</a>
+          <a class="button_link during_button" href="ondeck.php">Racers On Deck</a>
+          <a class="button_link during_button" href="racer-results.php">Results By Racer</a>
+          <a class="button_link after_button" href="awards-presentation.php">Present Awards</a>
+          <a class="button_link after_button" href="standings.php">Standings</a>
+          <a class="button_link after_button" href="export.php">Exported Results</a>
+          <a class="button_link other_button" href="about.php">About</a>
+          <a class="button_link other_button" href="login.php?logout">Log out</a>
+EOF
+
 user_login_coordinator
-( curl_get index.php | grep '<form' | diff -b - coordinator.index.tmp ) || OK=0
+( curl_get index.php | grep '<a' | grep button_link | diff -b - coordinator.index.tmp ) || OK=0
 if [ $OK -eq 0 ]; then
-    curl_get index.php | grep '<form'
+    curl_get index.php | grep '<a' | grep button_link
     test_fails Coordinator index page
 fi
 user_logout
 
-( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+( curl_get index.php | grep '<a' | grep button_link | diff -b - anonymous.index.tmp ) || OK=0
 if [ $OK -eq 0 ]; then
     test_fails Anonymous index page again
 fi
 
+cat >racecrew.index.tmp <<EOF
+        <a class="button_link before_button" href="checkin.php">Race Check-In</a>
+        <a class="button_link before_button" href="photo-thumbs.php?repo=head">Edit Racer Photos</a>
+        <a class="button_link before_button" href="photo-thumbs.php?repo=car">Edit Car Photos</a>
+        <a class="button_link during_button" href="judging.php">Judging</a>
+        <a class="button_link during_button" href="ondeck.php">Racers On Deck</a>
+        <a class="button_link during_button" href="racer-results.php">Results By Racer</a>
+        <a class="button_link after_button" href="standings.php">Standings</a>
+        <a class="button_link after_button" href="export.php">Exported Results</a>
+        <a class="button_link other_button" href="about.php">About</a>
+        <a class="button_link other_button" href="login.php?logout">Log out</a>
+EOF
+
 user_login_crew
-( curl_get index.php | grep '<form' | diff -b - racecrew.index.tmp ) || OK=0
+( curl_get index.php | grep '<a' | grep button_link | diff -b - racecrew.index.tmp ) || OK=0
 if [ $OK -eq 0 ]; then
-    curl_get index.php | grep '<form'
+    curl_get index.php | grep '<a' | grep button_link
     test_fails Race crew index page
 fi
 user_logout
 
-( curl_get index.php | grep '<form' | diff -b - anonymous.index.tmp ) || OK=0
+( curl_get index.php | grep '<a' | grep button_link | diff -b - anonymous.index.tmp ) || OK=0
 if [ $OK -eq 0 ]; then
-    curl_get index.php | grep '<form'
+    curl_get index.php | grep '<a' | grep button_link
     test_fails Anonymous third time
 fi
 

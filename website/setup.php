@@ -9,11 +9,11 @@ require_permission(SET_UP_PERMISSION);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>DerbyNet Set-Up</title>
-<?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
@@ -86,9 +86,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <form method="link" action="import-roster.php">
-      <input type="submit" data-enhanced="true" value="Import Roster"/>
-    </form>
+    <a class="button_link" href="import-roster.php">Import Roster</a>
   </div>
 
   <div class="step_details"></div>
@@ -99,9 +97,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <form method="link" action="class-editor.php">
-      <input type="submit" data-enhanced="true"/>
-    </form>
+    <a class="button_link" href="class-editor.php"></a>
   </div>
 
   <div class="step_details"></div>
@@ -112,9 +108,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <form method="link" action="import-awards.php">
-      <input type="submit" data-enhanced="true" value="Import Awards"/>
-    </form>
+    <a class="button_link" href="import-awards.php">Import Awards</a>
   </div>
 
   <div class="step_details"></div>
@@ -125,9 +119,7 @@ $(function() { populate_details(<?php echo json_encode($initial_details); ?>); }
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <form method="link" action="settings.php">
-      <input type="submit" data-enhanced="true" value="Settings"/>
-    </form>
+    <a class="button_link" href="settings.php">Settings</a>
   </div>
 
   <div class="step_details"></div>

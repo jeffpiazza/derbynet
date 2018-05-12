@@ -77,16 +77,17 @@ div.banner_version {
 }
 
 .block_buttons input[type='button'],
-.block_buttons input[type='submit'] {
-    color:#ffffff;
+.block_buttons input[type='submit'],
+.block_buttons a.button_link {
+    display: block;
 	width: 240px;
 	margin-left: auto;
 	margin-right: auto;
-    padding:10px 15px;
     margin-top:3px;
 	margin-bottom: 20px;
-    display:block;
+    padding:10px 15px;
     font-size: x-large;
+    color:#ffffff;
 
     background: #2d2d2d; /* Old browsers */
     background: -moz-linear-gradient(top,  #424242 0%, #2d2d2d 100%); /* FF3.6+ */
@@ -100,6 +101,19 @@ div.banner_version {
     border-radius: 0.4em 0.4em 0.4em 0.4em;
 
     cursor: pointer;
+}
+
+.block_buttons a.button_link { 
+  width: 208px;
+  height: 33px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+
+  font-family: system-ui;
+  font-weight: normal;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
 }
 
 .block_buttons input[disabled][type='button'],
