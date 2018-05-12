@@ -6,6 +6,7 @@
 <title>DerbyNet Software</title>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <style>
 p {
     font-size: 40px;

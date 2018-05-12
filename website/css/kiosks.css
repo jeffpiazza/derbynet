@@ -1,0 +1,32 @@
+.full_page_center {
+  width: 100%;
+  text-align: center;
+}
+
+.kiosk_title {
+  font-size: 100px;
+  text-align: center;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-weight: bold;
+}
+
+.kiosk_heading {
+  font-size: 50px;
+  text-align: center;
+  margin: 0px;
+  font-weight: bold;
+}
+
+.kiosk_wanted {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.kiosk_wanted li {
+  font-size: 30px;
+}
+
+.heat_link span {
+    font-size: 32px;
+}

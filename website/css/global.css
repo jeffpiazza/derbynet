@@ -66,6 +66,29 @@ div.banner_version {
   right: 10px;
 }
 
+table { 
+  border-collapse: collapse;
+  border: 2px black;
+}
+
+td {
+  border: 1px solid;
+  text-align: center;
+  padding: 13px;
+}
+
+th {
+  padding-right: 10px;
+  font-size: 24px;
+}
+
+tbody {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
 .block_buttons input,
 .block_buttons select,
 .block_buttons optgroup,

@@ -16,6 +16,7 @@ $(function () {
 </script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/big-logo.css"/>
 </head>
 <body>

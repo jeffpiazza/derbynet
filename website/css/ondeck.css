@@ -1,33 +1,3 @@
-table { 
-  border-collapse: collapse;
-  border: 2px black;
-}
-
-table.main_table { 
-  width: 100%;
-}
-
-td {
-  border: 1px solid;
-  text-align: center;
-  padding: 13px;
-}
-
-tr.d0 td {
-  background-color: #fcf6cf;
-}
-
-/* These borders seem to create unwanted horizontal scroll bars,
-   at least for Chrome */
-.main_table tr td:first-child,
-.main_table tr th:first-child {
-    border-left: 0px;
-}
-.main_table tr td:last-child,
-.main_table tr th:last-child {
-    border-right: 0px;
-}
-
 .group_spacer {
    height: 30px;
 }
@@ -46,9 +16,6 @@ tr.d0 td {
   background-color: #F7D117;
 }
 
-th {
-  padding-right: 10px;
-}
 .curheat {
   border: 10px solid black;
 }
@@ -63,13 +30,6 @@ td .car {
 }
 td .racer {
   font-size: small;
-}
-
-tbody {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  padding-top: 10px;
-  margin-top: 10px;
 }
 
 tbody tr:first-child th {
@@ -106,56 +66,10 @@ th.nrows4 img {
     margin-top: 102px;
 }
 
-.clickable {
-	color: #ff0000;
-}
-
 /* Suppress the underline and coloring for these links. */
 .racer_link {
    color: inherit;
    text-decoration: none;
-}
-
-.hidden {
-  visibility: hidden;
-  display: none;
-}
-
-/* kiosks */
-.full_page_center {
-  width: 100%;
-  text-align: center;
-}
-
-.kiosk_title {
-  font-size: 100px;
-  text-align: center;
-  margin-bottom: 0px;
-  margin-top: 0px;
-  font-weight: bold;
-}
-
-.kiosk_heading {
-  font-size: 50px;
-  text-align: center;
-  margin: 0px;
-  font-weight: bold;
-}
-
-.kiosk_wanted {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.kiosk_wanted li {
-  font-size: 30px;
-}
-
-.heat_link span {
-    font-size: 32px;
-}
-th {
-    font-size: 24px;
 }
 
 .ondeck_photo {

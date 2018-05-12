@@ -61,9 +61,10 @@ function column_header($text, $o) {
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
-<?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>

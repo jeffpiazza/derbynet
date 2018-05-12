@@ -6,10 +6,10 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <style>
 .full_page_center img {
 max-width: 100%;
-/* TODO height isn't limited to the window */
 max-height: 80%;
 }
 </style>

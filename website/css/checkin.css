@@ -1,4 +1,8 @@
 
+tr.d0 td {
+  background-color: #fcf6cf;
+}
+
 #edit_racer_modal {
     width: 400px;
 }

@@ -36,6 +36,9 @@ var g_update_status = {
 ?>
 <title>Results By Racer <?php if (isset($_GET['racerid'])) echo ' for '.$_GET['racerid']; ?></title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/main-table.css"/>
+<link rel="stylesheet" type="text/css" href="css/ondeck.css"/>
 <style>
 .scroll-bounding-rect {
       overflow: hidden;

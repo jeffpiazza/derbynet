@@ -9,6 +9,7 @@ require_once('inc/banner.inc');
 <?php require('inc/kiosk-poller.inc'); ?>
 <title>Derby Racing Main Board</title>
 <link rel="stylesheet" type="text/css" href="css/global.css"/>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/now-racing.js"></script>

@@ -9,6 +9,7 @@ require_once('inc/photo-config.inc');
     <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+    <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
     <link rel="stylesheet" type="text/css" href="css/slideshow.css"/>
     <script type="text/javascript" src="js/slideshow.js"></script>
   </head>

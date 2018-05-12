@@ -6,6 +6,7 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
 <script type="text/javascript" src="js/award-presentations-kiosk.js"></script>
 </head>

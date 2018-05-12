@@ -6,6 +6,7 @@
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <script type="text/javascript" src="js/please-check-in.js"></script>
 <script type="text/javascript">
  // Instead of dynamically tracking check-ins, we just reload the page every 30

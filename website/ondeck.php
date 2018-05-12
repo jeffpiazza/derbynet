@@ -50,6 +50,9 @@ var g_update_status = {
 <script type="text/javascript" src="js/update.js"></script>
 <title>Race Schedule</title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/main-table.css"/>
+<link rel="stylesheet" type="text/css" href="css/ondeck.css"/>
 </head>
 <body>
 <?php

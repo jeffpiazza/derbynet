@@ -41,6 +41,7 @@ $(function () {
 </script>
 <title>Standings</title>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <style type="text/css">
 .center-select {
   width: 400px;
@@ -50,7 +51,6 @@ $(function () {
 .center-select h3 {
   text-align: center;
 }
-
 </style>
 <?php require('inc/stylesheet.inc'); ?>
 </head>
