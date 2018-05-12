@@ -53,7 +53,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-make_banner('Racing Heats', $as_kiosk ? '' : 'index.php');
+make_banner('Racing Heats', isset($as_kiosk) ? '' : 'index.php');
 running_round_header($now_running);
 
 require_once('inc/rounds.inc');

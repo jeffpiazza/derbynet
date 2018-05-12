@@ -44,7 +44,7 @@ var g_update_status = {
 </head>
 <body>
 <?php
-make_banner('Results By Racer', $as_kiosk ? '' : 'index.php');
+make_banner('Results By Racer', isset($as_kiosk) ? '' : 'index.php');
 
 $nlanes = get_lane_count_from_results();
 

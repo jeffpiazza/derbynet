@@ -35,7 +35,8 @@ require_permission(PRESENT_AWARDS_PERMISSION);
         // This <select> elements lets the operator choose what standings should be displayed on
         // kiosks displaying standings.
         $current = read_raceinfo('standings-message', '');
-        list($current_roundid, $current_rankid, $current_exposed) = explode('-', $current);
+        list($current_roundid, $current_rankid, $current_exposed) =
+            array_pad(explode('-', $current), 3, '');
 
         if ($current_exposed === '') {
           $current_exposed = 'all';
