@@ -84,9 +84,6 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     </div>
   </div>
 
-  <div id="kiosk_control_group" class="kiosk_control_group">
-  </div>
-
 </div>
 
 <div class="control_column">
@@ -98,16 +95,6 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
 </div>
 
-</div>
-
-<div id='kiosk_modal' class="modal_dialog hidden block_buttons">
-  <form>
-    <label for="kiosk_name_field">Name for kiosk:</label>
-    <input type="text" id="kiosk_name_field"/>
-    <input type="submit" data-enhanced="true" value="Assign"/>
-    <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#kiosk_modal");'/>
-  </form>
 </div>
 
 <div id='schedule_modal' class="modal_dialog hidden block_buttons">

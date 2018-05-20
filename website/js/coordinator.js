@@ -1,5 +1,53 @@
 // Requires dashboard-ajax.js
 
+// Data structure describing each round:
+//
+// round = { roundid:
+//           classname:
+//           round: (number)
+//           roster_size, racers_passed, racers_unscheduled, racers_scheduled,
+//           heats_scheduled, heats_run
+//           category: one of ("now-racing", "master-schedule",
+//                             "ready-to-race", "not-yet-scheduled",
+//                             "done-racing",)
+//         }
+// (racers_passed = racers_scheduled + racers_unscheduled)
+// (master-schedule is applied to a synthesized 'totals' round.)
+// (now-racing category is applied to the currently-running round.)
+//
+// A layout sorts the roundids into bins that determine the order in which they
+// should be shown.
+//
+// layout = {'now-racing': []
+//           'ready-to-race': [],
+//           'not-yet-scheduled': []
+//           'done-racing': [],
+//          };
+//
+// g_rounds_layout records the last layout used, to determine whether the page
+// really needs updating.
+
+// Page structure is:
+//
+// div.double_control_column
+//   div.scheduling_control_group      #now-racing-group
+// div.control_column_container
+//   div.control_column
+//     div.control_group.heat_control_group
+//       (Controls for racing, including #is-current-racing flipswitch.)
+//     div.control_group               #supplemental-control-group
+//       div                           #add-new-rounds-button
+//       div                           #now-racing-group-buttons
+//     div.control_group.timer_control_group
+//       #timer_status_icon, other stuff
+//     div.control_group.replay_control_group
+//       #replay_status_icon, replay controls
+//   div.control_column
+//     div.master_schedule_group       #master-schedule-group
+//     div.scheduling_control_group    #ready-to-race-group
+//     div.scheduling_control_group    #not-yet-scheduled-group
+//     div.scheduling_control_group    #done-racing-group
+
 // g_current_heat_racers remembers who the racers in the current heat
 // are, so the modal for manual heat results can be populated when
 // displayed.
@@ -10,8 +58,9 @@ g_current_heat_racers = new Array();
 // We only need to rewrite the round controls when this signature changes.
 g_rounds_layout = {'now-racing': ["force a first run"],
                    'ready-to-race': [],
+                   'not-yet-scheduled': [],
                    'done-racing': [],
-                   'not-yet-scheduled': []};
+                  };
 
 // Processing a response from coordinator_poll can force the isracing
 // flipswitch to change state.  We don't want that change to trigger
@@ -151,6 +200,8 @@ function show_schedule_modal(roundid) {
 function mark_clicked(submit_js) {
   $("input[type=submit]", submit_js.parents("form")).removeAttr("clicked");
   submit_js.attr("clicked", "true");
+  return true;  // Control now passes to show_schedule_modal's callback,
+                // and then handle_schedule_submit
 }
 
 function handle_schedule_submit(roundid, rounds, then_race) {
@@ -421,37 +472,41 @@ function generate_replay_state_group(replay_state) {
     }
 }
 
-function emit_progress_bars(elt) {
-    elt.append("<div class='racers progress'>"
-               + "<div class='bar2'>"
-               + "<div class='bar1'></div>"
-               + "</div>"
-               + "</div>");
-    elt.append("<div class='heats progress'>"
-               + "<div class='bar1'></div>"
-               + "</div>");
+// Appends (unpopulated) progress bar structures to the control group.
+function emit_progress_bars(control_group) {
+    control_group.append("<div class='racers progress'>"
+                         + "<div class='bar2'>"
+                         + "<div class='bar1'></div>"
+                         + "</div>"
+                         + "</div>");
+    control_group.append("<div class='heats progress'>"
+                         + "<div class='bar1'></div>"
+                         + "</div>");
 }
 
-function inject_progress_bars(group, round) {
+// Updates progress bars with new progress values
+function inject_progress_bars(control_group, round) {
     if (round.roster_size > 0) {
         // bar2 (yellow) = passed
         // bar1 (blue) = scheduled
         // Trouble here will be scheduled-but-no-longer-passed, i.e., scheduled > passed
         var passed = Math.max(round.racers_passed, round.racers_scheduled);
-        group.find(".racers .bar2").width((100 * passed / round.roster_size) + '%');
+        control_group.find(".racers .bar2").width((100 * passed / round.roster_size) + '%');
         if (passed > 0) {
-            group.find(".racers .bar1").width((100 * round.racers_scheduled / passed) + '%');
+            control_group.find(".racers .bar1").width((100 * round.racers_scheduled / passed) + '%');
         }
     }
 
     if (round.heats_scheduled > 0) {
-        group.find(".heats .bar1").width((100 * round.heats_run / round.heats_scheduled) + '%');
+        control_group.find(".heats .bar1").width((100 * round.heats_run / round.heats_scheduled) + '%');
     }
 }
 
+// Appends unpopulatd progress text structures to the control group.
+//
 // collapsible is a string containing space-separated css class names, possibly empty.
-function emit_progress_text(elt, collapsible) {
-    elt.append('<div class="' + collapsible + '">'
+function emit_progress_text(control_group, collapsible) {
+    control_group.append('<div class="' + collapsible + '">'
                + '<p><span data-name="roster_size"></span> racer(s), '
                + '<span data-name="n_passed"></span> passed, ' 
                + '<span data-name="scheduled"></span> in schedule.<br/>'
@@ -460,14 +515,23 @@ function emit_progress_text(elt, collapsible) {
                + '</div>');
 }
 
-function inject_progress_text(group, round) {
-    group.find("[data-name=roster_size]").text(round.roster_size);
-    group.find("[data-name=n_passed]").text(round.racers_passed);
-    group.find("[data-name=scheduled]").text(round.racers_scheduled);
-    group.find("[data-name=n_heats_scheduled]").text(round.heats_scheduled);
-    group.find("[data-name=n_heats_run]").text(round.heats_run);
+// Injects new progress values into the progress text
+function inject_progress_text(control_group, round) {
+    control_group.find("[data-name=roster_size]").text(round.roster_size);
+    control_group.find("[data-name=n_passed]").text(round.racers_passed);
+    control_group.find("[data-name=scheduled]").text(round.racers_scheduled);
+    control_group.find("[data-name=n_heats_scheduled]").text(round.heats_scheduled);
+    control_group.find("[data-name=n_heats_run]").text(round.heats_run);
 }
 
+// Constructs a control group div for this round:
+//   div.heat-lineup, only for the current heat
+//   div.roundno
+//   h3
+//   (progress text), collapsible
+//   (progress bars)
+//   div.collapsible[data-name='buttons']
+//
 // round = { roundid:
 //           classname:
 //           round: (number)
@@ -476,126 +540,127 @@ function inject_progress_text(group, round) {
 //         }
 // current = { roundid: }
 // timer_state = { lanes: }
+//
 function generate_scheduling_control_group(round, current, timer_state) {
-    var elt = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
-    var collapsible = " collapsible";
-    if (round.roundid == current.roundid) {
-        elt.addClass('current');
-        collapsible = "";
-        elt.append("<div class='heat-lineup'></div>");
-    }
+  var control_group = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
+  var collapsible = " collapsible";
+  if (round.roundid == current.roundid) {
+    control_group.addClass('current');
+    collapsible = "";
+    control_group.append("<div class='heat-lineup'></div>");
+  }
 
-    elt.append('<div class="roundno">' + round.round + '</div>');
-    elt.append('<h3>' + (round.roundid == current.roundid ? '' :
-                         '<img data-name="triangle" src="img/triangle_east.png"/>')
-                      + round.classname + '</h3>');
+  control_group.append('<div class="roundno">' + round.round + '</div>');
+  control_group.append('<h3>' + (round.roundid == current.roundid ? '' :
+                                 '<img data-name="triangle" src="img/triangle_east.png"/>')
+                       + round.classname + '</h3>');
 
-    emit_progress_text(elt, collapsible);
-    emit_progress_bars(elt);
+  emit_progress_text(control_group, collapsible);
+  emit_progress_bars(control_group);
 
-    // Which buttons appear depends on a bunch of the parameters.
-    // It should be OK for inject to just rewrite the buttons every time.
-    var buttons = $("<div data-name=\"buttons\" class=\"block_buttons" + collapsible + "\"/>");
-    buttons.appendTo(elt);
+  // Which buttons appear depends on a bunch of the parameters.
+  // It should be OK for inject to just rewrite the buttons every time.
+  var buttons = $("<div data-name=\"buttons\" class=\"block_buttons" + collapsible + "\"/>");
+  buttons.appendTo(control_group);
 
-    if (round.roundid != current.roundid) {
-        elt.find(".collapsible").hide();
-        elt.click(function() {
-            var closed = elt.find(".collapsible").css("display") == "none";
-            // Don't want the current round to collapse like this...
+  // By this rule, changes to n_heats_run and n_heats_scheduled and
+  // current.roundid would change the order for the rounds.
+  control_group.appendTo("#" + round.category + "-group");
 
-            $("img[data-name=triangle]").attr('src', 'img/triangle_east.png');
-            $(".collapsible").slideUp(200);
+  if (round.roundid != current.roundid) {
+    control_group.find(".collapsible").hide();
+    control_group.on('click', function() {
+      var closed = control_group.find(".collapsible").css("display") == "none";
+      // Don't want the current round to collapse like this...
 
-            if (closed) {
-                elt.find("img[data-name=triangle]").attr('src', 'img/triangle_south.png');
-                elt.find(".collapsible").slideDown(200); 
-            }
-        });
-    }
+      $("img[data-name=triangle]").attr('src', 'img/triangle_east.png');
+      $(".collapsible").slideUp(200);
 
-    // By this rule, changes to n_heats_run and n_heats_scheduled and
-    // current.roundid would change the order for the rounds.
-    elt.appendTo("#" + round.category + "-group");
+      if (closed) {
+        control_group.find("img[data-name=triangle]").attr('src', 'img/triangle_south.png');
+        control_group.find(".collapsible").slideDown(200); 
+      }
+    });
+  }
 
-    inject_into_scheduling_control_group(round, current, timer_state);
+  inject_into_scheduling_control_group(round, current, timer_state);
 }
 
 // Injects new values into an existing scheduling control group.  The
 // available control buttons get rewritten entirely.
 function inject_into_scheduling_control_group(round, current, timer_state) {
-    var group = $("[data-roundid=" + round.roundid + "]");
+  var control_group = $("[data-roundid=" + round.roundid + "]");
 
-    inject_progress_text(group, round);
-    inject_progress_bars(group, round);
+  inject_progress_text(control_group, round);
+  inject_progress_bars(control_group, round);
 
-    var buttons = group.find("[data-name=buttons]");
-    if (round.roundid == current.roundid && round.roundid > 0) {
-      buttons = $("#now-racing-group-buttons");
+  var buttons = control_group.find("[data-name=buttons]");
+  if (round.roundid == current.roundid && round.roundid > 0) {
+    buttons = $("#now-racing-group-buttons");
+  }
+  buttons.empty();
+
+  if (round.roundid == -1) {
+    buttons.append('<input type="button" data-enhanced="true"'
+                   + ' onclick="handle_master_next_up()" value="Next Up"/>');
+  } else {
+    if (round.racers_unscheduled > 0) {
+      if (round.heats_run == 0) {
+        if (timer_state.lanes != '' && timer_state.lanes > 0) {
+          buttons.append('<input type="button" data-enhanced="true"'
+                         + ' onclick="show_schedule_modal(' + round.roundid + ')"'
+                         + ' value="Schedule"/>');
+        } else {
+          buttons.append("<p>Can't schedule heats, because the number of lanes hasn\'t" +
+                         " been determined.<br/>" +
+                         "Enter the number of lanes on the <a href='settings.php'>Settings</a> page.</p>");
+        }
+      } else if (false /* TODO: Reschedule is not ready for prime time */) {
+        buttons.append('<input type="button" data-enhanced="true"' 
+                       + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
+                       + ' value="Reschedule"/>');
+      }
     }
-    buttons.empty();
+    else if (round.heats_scheduled > 0 && round.heats_run == 0) {
+      buttons.append('<input type="button" data-enhanced="true"'
+                     + ' onclick="handle_unschedule_button(' + round.roundid
+                     + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                     + round.round + ')"'
+                     + ' value="Unschedule"/>');
+    }
 
-    if (round.roundid == -1) {
+    if (round.heats_scheduled == 0 && round.heats_run == 0 &&
+        (round.round > 1 || round.classname == "Grand Finals")) {
+      buttons.append('<input type="button" data-enhanced="true"'
+                     + ' onclick="handle_delete_round_button(' + round.roundid
+                     + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                     + round.round + ')"'
+                     + ' value="Delete Round"/>');
+    }
+
+    if (round.roundid != current.roundid) {
+      // TODO: Don't offer 'race' choice for single roundid under master scheduling
+      if (round.heats_run > 0) {
         buttons.append('<input type="button" data-enhanced="true"'
-                       + ' onclick="handle_master_next_up()" value="Next Up"/>');
-    } else {
-        if (round.racers_unscheduled > 0) {
-            if (round.heats_run == 0) {
-                if (timer_state.lanes != '' && timer_state.lanes > 0) {
-                    buttons.append('<input type="button" data-enhanced="true"'
-                                   + ' onclick="show_schedule_modal(' + round.roundid + ')"'
-                                   + ' value="Schedule"/>');
-                } else {
-                    buttons.append("<p>Can't schedule heats, because the number of lanes hasn\'t" +
-                                   " been determined.<br/>" +
-                                   "Enter the number of lanes on the <a href='settings.php'>Settings</a> page.</p>");
-                }
-            } else if (false /* TODO: Reschedule is not ready for prime time */) {
-                buttons.append('<input type="button" data-enhanced="true"' 
-                               + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
-                               + ' value="Reschedule"/>');
-            }
-        }
-        else if (round.heats_scheduled > 0 && round.heats_run == 0) {
-            buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="handle_unschedule_button(' + round.roundid
-                           + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
-                           + round.round + ')"'
-                           + ' value="Unschedule"/>');
-        }
-
-        if (round.heats_scheduled == 0 && round.heats_run == 0 &&
-            (round.round > 1 || round.classname == "Grand Finals")) {
-            buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="handle_delete_round_button(' + round.roundid
-                           + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
-                           + round.round + ')"'
-                           + ' value="Delete Round"/>');
-        }
-
-        if (round.roundid != current.roundid) {
-            // TODO: Don't offer 'race' choice for single roundid under master scheduling
-            if (round.heats_run > 0) {
-                buttons.append('<input type="button" data-enhanced="true"'
-                               + ' onclick="handle_make_changes_button(' + round.roundid + ')"'
-                               + ' value="Make Changes"/>');
-            } else if (round.heats_scheduled > 0 && round.heats_run < round.heats_scheduled) {
-                buttons.append('<input type="button" data-enhanced="true"'
-                               + ' onclick="handle_race_button(' + round.roundid + ')"'
-                               + ' value="Race"/>');
-            }
-        }
-
-        // TODO: AND there isn't already a next round or grand finals with
-        // finishtimes...
-        // TODO: Un-generate a round?  GPRM allows deleting rounds, but
-        // apparently not the first round.
-        if (false && round.heats_scheduled > 0 && round.heats_run == round.heats_scheduled) {
-            buttons.append('<input type="button" data-enhanced="true"'
-                           + ' onclick="show_new_round_modal(' + round.roundid + ')"'
-                           + ' value="New Round"/>');
-        }
+                       + ' onclick="handle_make_changes_button(' + round.roundid + ')"'
+                       + ' value="Make Changes"/>');
+      } else if (round.heats_scheduled > 0 && round.heats_run < round.heats_scheduled) {
+        buttons.append('<input type="button" data-enhanced="true"'
+                       + ' onclick="handle_race_button(' + round.roundid + ')"'
+                       + ' value="Race"/>');
+      }
     }
+
+    // TODO: AND there isn't already a next round or grand finals with
+    // finishtimes...
+    // TODO: Un-generate a round?  GPRM allows deleting rounds, but
+    // apparently not the first round.
+    if (false && round.heats_scheduled > 0 && round.heats_run == round.heats_scheduled) {
+      buttons.append('<input type="button" data-enhanced="true"'
+                     + ' onclick="show_new_round_modal(' + round.roundid + ')"'
+                     + ' value="New Round"/>');
+    }
+  }
 }
 
 function generate_current_heat_racers(racers, current) {
@@ -624,9 +689,9 @@ function generate_current_heat_racers(racers, current) {
     }
 }
 
-// For master scheduling, calculate totals across all the rounds records for the
-// highest round number.  (I.e., if there are round 2 rounds, only total them and
-// exclude the round 1 rounds.)
+// For master scheduling, make a synthetic round data structure by calculating
+// totals across all the rounds records for the highest round number.  (I.e., if
+// there are round 2 rounds, only total them and exclude the round 1 rounds.)
 function calculate_totals(rounds) {
   var max_round = -1;
   for (var i = 0; i < rounds.length; ++i) {
@@ -790,8 +855,9 @@ function process_coordinator_poll_response(data) {
 
   var layout = {'now-racing': [],
                 'ready-to-race': [],
+                'not-yet-scheduled': [],
                 'done-racing': [],
-                'not-yet-scheduled': []};
+               };
   $.each(rounds, function (index, round) {
     if (round.roundid == current.roundid) {
       current.heats_scheduled = round.heats_scheduled;
@@ -841,7 +907,9 @@ function coordinator_poll() {
            {type: 'GET',
             data: {query: 'poll.coordinator'},
             success: function(data) {
-              process_coordinator_poll_response(data);
+              if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
+                process_coordinator_poll_response(data);
+              }
             },
            });
   } else {
