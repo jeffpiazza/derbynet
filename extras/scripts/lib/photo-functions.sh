@@ -217,4 +217,6 @@ upload_speed_test() {
 
     rm $RANDOM_JPG
     announce success
+    wait
+    [ -x /usr/bin/flite ] && flite -t "$KB_SPEED kilobytes per second"
 }
