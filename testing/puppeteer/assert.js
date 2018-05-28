@@ -1,12 +1,5 @@
 // assert module
 
-exports.success = function (status) {
-  if (status != 'success') {
-    console.log('Page load fails: ' + status);
-    process.exit(1);
-  }
-};
-
 function isEqual(expect, actual) {
   if (expect == actual) {
     return true;
