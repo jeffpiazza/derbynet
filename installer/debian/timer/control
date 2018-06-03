@@ -1,10 +1,10 @@
 Package: derbynet-timer
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 3.0-1
+Version: 4.0-1
 Priority: optional
 Architecture: all
 Depends: jarwrapper
-Replaces: derbynet (<= 3.0-1)
+Replaces: derbynet (<= 3.0-1), derbynet-extras (<= 3.0-1)
 Breaks: derbynet (<= 3.0-1)
 Enhances: derbynet-server
 Homepage: http://jeffpiazza.github.io/derbynet/

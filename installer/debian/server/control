@@ -1,6 +1,6 @@
 Package: derbynet-server
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 3.0-1
+Version: 4.0-1
 Priority: optional
 Architecture: all
 Depends: nginx, php-fpm | php5-fpm, php-curl | php5-curl, php-gd | php5-gd, php-sqlite3 | php5-sqlite

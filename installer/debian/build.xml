@@ -62,7 +62,7 @@
         </copy>
     </target>
 
-    <target name="debian-stage-timer-jar">
+    <target name="debian-stage-timer">
         <mkdir dir="${debian-root}/usr/bin"/>
         <copy todir="${debian-root}/usr/bin">
             <fileset dir="${timer-dist}">
@@ -93,10 +93,7 @@
         <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
         <copy todir="${debian-root}/usr/share/derbynet/extras">
             <fileset dir="${extras}">
-	            <include name="**"/>
-                <exclude name="derbynet.conf"/>
-                <exclude name="autostart/**"/>
-                <exclude name="scripts/**"/>
+	            <include name="rpi/**"/>
             </fileset>
         </copy>
     </target>
@@ -126,6 +123,8 @@
                 <exclude name="usr/share/derbynet/docs/Timer Operation.pdf"/>
             </tarfileset>
         </tar>
+        <!-- copy file="${debian-stage}/data.tar.gz"
+             tofile="content-server.tar.gz"/ -->
 
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
             <tarfileset file="./server/conffiles"/>
@@ -148,14 +147,16 @@
         <delete dir="${debian-stage}"/>
     </target>
 
-    <target name="debian-timer" depends="debian-stage-timer-jar,
-                                         debian-stage-docs">
+    <target name="debian-timer"
+            depends="debian-stage-timer, debian-stage-extras, debian-stage-docs">
         <mkdir dir="${debian-stage}"/>
         <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
             <tarfileset dir="${debian-root}">
                 <!-- /usr/share reliably exists on the target, but
                      usr/share/derbynet has to be created explicitly.  -->
                 <include name="usr/share/derbynet"/>
+                <include name="usr/share/derbynet/autostart"/>
+                <include name="usr/share/derbynet/autostart/derby-timer.desktop"/>
                 <include name="usr/share/derbynet/docs"/>
                 <include name="usr/share/derbynet/docs/Timer Operation.pdf"/>
             </tarfileset>
@@ -165,6 +166,8 @@
                 <include name="usr/bin/**"/>
             </tarfileset>
         </tar>
+        <!-- copy file="${debian-stage}/data.tar.gz"
+             tofile="content-timer.tar.gz"/ -->
 
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
             <tarfileset file="./timer/conffiles"/>
@@ -191,6 +194,7 @@
                 <include name="etc/*"/>
                 <include name="usr/share/derbynet"/>
                 <include name="usr/share/derbynet/autostart/**"/>
+                <exclude name="usr/share/derbynet/autostart/derby-timer.desktop"/>
                 <include name="usr/share/derbynet/extras/**"/>
             </tarfileset>
             <!-- This second tarfileset sets executable permissions for these
@@ -199,6 +203,8 @@
                 <include name="usr/share/derbynet/scripts/**"/>
             </tarfileset>
         </tar>
+        <!-- copy file="${debian-stage}/data.tar.gz"
+             tofile="content-extras.tar.gz"/ -->
 
         <tar destfile="${debian-stage}/control.tar.gz" compression="gzip">
             <tarfileset file="./extras/conffiles"/>
