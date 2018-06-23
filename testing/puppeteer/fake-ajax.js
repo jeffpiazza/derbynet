@@ -6,7 +6,10 @@ var fakeAjax = {
   _expected_config: {},
   _return_value: false,
   _pending: false,  // A Promise that resolves when expectation is met.
-  _resolve: false,
+  _resolve: false,  // The resolve function for the _pending promise
+  _reject: false,   // The reject function for the _pending promise
+  _timeout_id: false,  // The id for a pending timeout that will
+                       // fail the promise if not fulfilled in time
 
   _debugging: false,
   setDebugging: function(d) { this._debugging = d; },
@@ -16,6 +19,7 @@ var fakeAjax = {
       console.log("onAjax fires with " + JSON.stringify(config));
     }
     assert.equal(this._expected_config, config);
+    clearTimeout(this._timeout_id);
     this._resolve(true);
     return this._return_value;
   },
@@ -25,7 +29,12 @@ var fakeAjax = {
     this._return_value = ret_value;
     this._pending = new Promise(function(resolve, reject) {
       fakeAjax._resolve = resolve;
+      fakeAjax._reject = reject;
     });
+    this._timeout_id = setTimeout(() => {
+      fakeAjax._reject('fakeAjax timed out waiting for ' + JSON.stringify(ex_config));
+    },
+                                  30000);
   },
 
   completion: function() {

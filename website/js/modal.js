@@ -16,10 +16,16 @@ $(function() {
 var g_modal_dialogs = []
 
 function do_show_modal(modal_selector, background_selector, z_index, submit_handler) {
-  var modal_background = $(background_selector);
-  modal_background.css({'display': 'block',
-                        'opacity': 0});
-  modal_background.fadeTo(200, 0.5);
+  if (background_selector) {
+    // background_selector == false leaves the background in place, if we're
+    // going to display another modal immediately after closing this one.
+    // Otherwise there's a race between fading in the background for the new
+    // modal and fading out the background for the closing modal.
+    var modal_background = $(background_selector);
+    modal_background.css({'display': 'block',
+                          'opacity': 0});
+    modal_background.fadeTo(200, 0.5);
+  }
 
     var modal_div = $(modal_selector);
     if (typeof submit_handler != 'undefined' && submit_handler) {
@@ -61,6 +67,10 @@ function show_modal(modal_selector, submit_handler) {
 
 function close_modal(modal_selector) {
     do_close_modal(modal_selector, "#modal_background");
+}
+
+function close_modal_leave_background(modal_selector) {
+  do_close_modal(modal_selector, false);
 }
 
 // If we want to morph one dialog into another, at the same level; everything's

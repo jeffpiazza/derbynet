@@ -291,7 +291,7 @@ function show_choose_new_round_modal() {
 }
 
 function handle_new_round_chosen(roundid) {
-    close_modal("#choose_new_round_modal");
+    close_modal_leave_background("#choose_new_round_modal");
     show_new_round_modal(roundid);
 }
 
@@ -316,7 +316,7 @@ function handle_new_round_submit(roundid) {
 }
 
 function handle_grand_final_chosen() {
-    close_modal("#choose_new_round_modal");
+    close_modal_leave_background("#choose_new_round_modal");
     show_grand_final_modal();
 }
 

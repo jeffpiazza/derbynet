@@ -53,6 +53,16 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     await page.waitFor((selector) => { return $(selector).height() > 200; }, {}, selector);
   }
 
+  async function modal_open(selector) {
+    await page.waitFor((selector) => { return !$(selector).closest(".modal_frame").hasClass('hidden'); },
+                       {}, selector);
+    await page.waitFor(() => { return $("#modal_background").css('display') == 'block'; });
+  }
+  async function all_modals_closed() {
+    await page.waitFor(() => { return $(".modal_frame").not(".hidden").length == 0; });
+    await page.waitFor(() => { return $("#modal_background").css('display') == 'none'; });
+  }
+  
   // =================================================== First simulated poll =====================================
   await page.evaluate(function(xml) { process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
                 '<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -271,7 +281,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
 
     // Cancel button dismisses #manual_results_modal
     await page.evaluate(() => { $("#manual_results_modal input[type='button'][value='Cancel']").click(); });
-    await page.waitFor(() => { return $(".modal_frame").hasClass('hidden'); });
+    await all_modals_closed();
 
 
     // Re-open the #manual_results_modal
@@ -317,7 +327,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
                        '</coordinator_poll>');
 
   // Check manual results dialog dismissed
-  await page.waitFor(() => { return $(".modal_frame").hasClass('hidden'); });
+  await all_modals_closed();
 
   await page.waitFor(() => {
     var row1 = $("#now-racing-group table tr")[1];
@@ -336,7 +346,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
 
   await fakeAjax.testForAjax(async () => {
     await page.evaluate(() => { $("#discard-results").click(); });
-    await page.waitFor(() => { return $(".modal_frame").hasClass('hidden'); });
+    await all_modals_closed();
   },
                        {'type': 'POST',
                         'data': {"action": "result.delete",
@@ -375,7 +385,72 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     return $(cell1_3).text() == "" && $(cell2_3).text() == "";
   });
 
-  // TODO input[type='button'][value='Add New Rounds']
+  // Click "Add New Rounds" button, see the dialog, dismiss it.
+  await page.evaluate(() => { $("input[type='button'][value='Add New Rounds']").click(); });
+  await modal_open("#choose_new_round_modal");
+  await page.evaluate(() => { $("#choose_new_round_modal input[type='button'][value='Cancel'").click(); });
+  await all_modals_closed();
+
+  // Click "Add New Rounds" button, see the dialog, choose a den, see #new_round_modal, dismiss it.
+  await page.evaluate(() => { $("input[type='button'][value='Add New Rounds']").click(); });
+  await modal_open("#choose_new_round_modal");
+  await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
+  await modal_open("#new_round_modal");
+  await page.evaluate(() => { $("#new_round_modal input[type='button'][value='Cancel']").click(); });
+  await all_modals_closed();
+
+  await fakeAjax.testForAjax(async () => {
+    await page.evaluate(() => { $("input[type='button'][value='Add New Rounds']").click(); });
+    await modal_open("#choose_new_round_modal");
+
+    // Buttons in the "Add New Rounds" modal:
+    //  Lions & Tigers
+    //  White's Wolves [1]
+    //  Grand Finals
+    //  Cancel
+    await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
+    await modal_open("#new_round_modal");
+    await page.evaluate(() => { $("#new_round_modal input[type='number'][name='top']").val('4'); });
+    await page.waitFor(() => { return $(".multi_den_only").hasClass('hidden') && !$(".single_den_only").hasClass('hidden'); });
+    await page.evaluate(() => { $("#new_round_modal input[type='submit']").click(); });
+  },
+                             {'type': 'POST',
+                              'data': 'action=roster.new&roundid=2&roundid_1=on&roundid_2=on&top=4'},
+                             '<?xml version="1.0" encoding="UTF-8"?>\n' +
+                             '<action-response action="roster.new" roundid="2" roundid_1="on" roundid_2="on" top="4">\n' +
+                             '  <finalist racerid="7" bucket_number="1"/>\n' +
+                             '  <finalist racerid="17" bucket_number="1"/>\n' +
+                             '  <finalist racerid="27" bucket_number="1"/>\n' +
+                             '  <finalist racerid="37" bucket_number="1"/>\n' +
+                             '  <non-finalist racerid="47" bucket_number="1"/>\n' +
+                             '  <new-round roundid="8"/>\n' +
+                             '  <success/>\n' +
+                             '  <coordinator_poll>\n' +
+                             '    <current-heat now-racing="0" use-master-sched="0" classid="2" roundid="2"' +
+                             '                  round="1" tbodyid="2" heat="5" number-of-heats="5">White\'s Wolves</current-heat>\n' +
+                             '    <racer lane="1" name="Kelvin Knapp" carname="" carnumber="247" photo="" finishtime=""/>\n' +
+                             '    <racer lane="3" name="Darrell &amp; Darrell Delaughter" carname="" carnumber="217" photo="" finishtime=""/>\n' +
+                             '    <racer lane="5" name="Ian Ives" carname="" carnumber="237" photo="" finishtime=""/>\n' +
+                             '    <timer-state lanes="6" last_contact="0" state="1" icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
+                             '    <replay-state last_contact="0" state="1" icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
+                             '    <round roundid="8" classid="2" class="White\'s Wolves" round="2" roster_size="4"' +
+                             '           passed="4" unscheduled="4" heats_scheduled="0" heats_run="0"/>\n' +
+                             '    <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"' +
+                             '           passed="5" unscheduled="0" heats_scheduled="5" heats_run="0"/>\n' +
+                             '    <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"' +
+                             '           passed="5" unscheduled="0" heats_scheduled="5" heats_run="0"/>\n' +
+                             '    <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"' +
+                             '           passed="6" unscheduled="6" heats_scheduled="0" heats_run="0"/>\n' +
+                             '    <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"' +
+                             '           passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
+                             '    <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"' +
+                             '           passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
+                             '    <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"' +
+                             '           passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
+                             '  </coordinator_poll>\n' +
+                             '</action-response>');
+
+  // TODO Try creating a new Grand Finals round
 
   // TODO input[type='button'][value='Replay Settings']
   
