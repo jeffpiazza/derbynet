@@ -51,6 +51,7 @@ class ImportRoster extends ImportCsvGenerator {
 <?php make_head_matter_for_import_page(); ?>
 <link rel="stylesheet" type="text/css" href="css/import-roster.css"/>
 <script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/plurals.js"></script>
 <script type="text/javascript" src="js/import-roster.js"></script>
 </head>
 <script type="text/javascript">

@@ -65,31 +65,54 @@ function countNewRacers() {
 }
 
 function onDropClassnameLabel(droppable) {
-  var classnames = collectClassNames(droppable.attr('data-column'));
+  // classnames_to_import is an object, with class names from the csv as properties
+  // existing_classes is an array
+  var column_number = droppable.attr('data-column');
+  var classnames_to_import = collectClassNames(column_number);
   var existing_classes = all_classes();
-  var nclasses = Object.keys(classnames).length;  // Before removing any existing names
+  var n_existing_classes = existing_classes.length;
 
+  var canonicalized = {};
+  var combined_classes = existing_classes.slice();  // Copy the array
+  for (var cl in existing_classes) {
+    canonicalized[existing_classes[cl]] = existing_classes[cl];
+  }
+  for (var new_cl in classnames_to_import) {
+    var canon = likelyCanonicalized(new_cl, combined_classes);
+    // TODO if new_cl != canon then we need to ask the user what to do.
+    canonicalized[new_cl] = canon;
+    if (new_cl == canon) {
+      combined_classes.push(new_cl);
+    } else {
+      classnames_to_import[new_cl] = 0;  // Name changed
+    }
+  }
+  rewriteClassnames(column_number, canonicalized);
+    
   $('#existing_ranks').empty();
   if (existing_classes.length > 0) {
     $('#existing_ranks').append('<h4>Existing ' + $('[data-field="classname"]:first').text() + 's:</h4>');
     for (var cl in existing_classes) {
       var name = existing_classes[cl].name;
       $('#existing_ranks').append(document.createTextNode(name), '<br/>');
-      delete classnames[name];
+      delete classnames_to_import[name];
     }
   }
 
-  var n_new_classes = Object.keys(classnames).length;
+  var n_new_classes = 0;
 
   $('#new_ranks').empty();
-  if (n_new_classes > 0) {
-    $('#new_ranks').append('<h4>New ' + $('[data-field="classname"]:first').text() + 's:</h4>');
-    for (var cl in classnames) {
-      $('#new_ranks').append(document.createTextNode(cl), '<br/>');
+    for (var cl in classnames_to_import) {
+      if (classnames_to_import[cl] == 1) {
+        $('#new_ranks').append(document.createTextNode(cl), '<br/>');
+        ++n_new_classes;
+      }
     }
-  }
 
-  $('#file-class-count').text(nclasses);
+  if (n_new_classes > 0) {
+    $('#new_ranks').prepend('<h4>New ' + $('[data-field="classname"]:first').text() + 's:</h4>');
+  }
+  $('#file-class-count').text(n_existing_classes + n_new_classes);
   $('#file-class-new-count').text(n_new_classes);
   $('#file-class-count-and-label').removeClass('hidden');
 }
@@ -98,6 +121,8 @@ function onUndropClassnameLabel() {
   $("#new_ranks").empty();
 }
 
+// Maybe not what you think: returns an object with class name *properties*!
+//
 // TODO: Something similar for ranks/subgroups
 function collectClassNames(columnNumber) {
   var classnames = {};
@@ -105,10 +130,19 @@ function collectClassNames(columnNumber) {
     // Don't count a header_row value
     if ($(elt).closest('.header_row').length == 0 &&
         $(elt).text().trim().length > 0) {
-      classnames[$(elt).text()] = 1;
+      classnames[$(elt).text().trim()] = 1;
     }
   });
   return classnames;
+}
+
+function rewriteClassnames(columnNumber, canonicalized) {
+  $('td.column' + columnNumber).each(function(index, elt) {
+    if ($(elt).closest('.header_row').length == 0 &&
+        $(elt).text().trim().length > 0) {
+      $(elt).text(canonicalized[$(elt).text().trim()]);
+    }
+  });
 }
 
 $(function() {
