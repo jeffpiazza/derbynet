@@ -78,11 +78,15 @@ foreach ($db->query($sql) as $rs) {
 							'awards' => array());
 }
 
+// TODO Do we need these?
+if (true) {
 $n_den_trophies = read_raceinfo('n-den-trophies', 3);
 $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
+$n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
+
 require_once('inc/ordinals.inc');
 
-$speed_trophies = top_finishers_by_class($n_den_trophies);
+$speed_trophies = top_finishers_by_class($n_den_trophies, /* completed only */ true);
 foreach ($speed_trophies as $classid => $den_trophies) {
   for ($place = 0; $place < count($den_trophies); ++$place) {
 	$racerid = $den_trophies[$place];
@@ -90,12 +94,20 @@ foreach ($speed_trophies as $classid => $den_trophies) {
   }
 }
 
-$pack_trophies = top_finishers_overall($n_pack_trophies);
+$speed_trophies = top_finishers_by_rank($n_rank_trophies, /* completed only */ true);
+foreach ($speed_trophies as $rankid => $rank_trophies) {
+  for ($place = 0; $place < count($rank_trophies); ++$place) {
+	$racerid = $rank_trophies[$place];
+	$racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.subgroup_label_lc();
+  }
+}
+
+$pack_trophies = top_finishers_overall($n_pack_trophies, /* completed only */ true);
 for ($place = 0; $place < count($pack_trophies); ++$place) {
   $racerid = $pack_trophies[$place];
   $racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.supergroup_label_lc();
 }
-
+}
 $stmt = $db->query('SELECT awardname, racerid'
   .' FROM Awards'
   .' ORDER BY sort');

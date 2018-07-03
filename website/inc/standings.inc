@@ -59,6 +59,26 @@ function final_native_roundids() {
   return $roundids;
 }
 
+// Filters $roundids (an array of roundids) to just those rounds that have been
+// completed (i.e., that have no uncompleted heats).
+function completed_roundids($roundids) {
+  global $db;
+  if (count($roundids) == 0) {
+    return $roundids;
+  }
+  $stmt = $db->query('SELECT roundid FROM Rounds'
+                     .' WHERE roundid IN ('.implode(',', $roundids).')'
+                     .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
+                     .'                WHERE RaceChart.roundid = Rounds.roundid'
+                     .'                  AND finishtime IS NULL'
+                     .'                  AND finishplace IS NULL)');
+  $roundids = array();
+  foreach ($stmt as $row) {
+	$roundids[] = $row['roundid'];
+  }
+  return $roundids;
+}
+
 // Returns false if there are no grand final rounds, otherwise the roundid of the
 // grand-final round with the highest round number.
 //
@@ -92,7 +112,7 @@ function final_roundids() {
   return final_native_roundids();
 }
 
-// Returns summary results for each racer within each race they participated in.
+// Returns summary results for each racer within each round they participated in.
 // Each summary element gives round information (roundid, classid), racer
 // information (racerid, name, carnumber), and outcome information (number of
 // heats the racer has run in the round so far, best time, worst time, scoring
@@ -110,7 +130,7 @@ function final_roundids() {
 //    best, worst -- fastest and slowest time in this round
 //    for_group -- 1 if this round determines group standings (i.e. is final round for group)
 //    for_supergroup -- 1 if this entry determines full-field standing for this racer
-function final_standings() {
+function final_standings($completed_only = false) {
   global $db;
   
   $roundids_for_groups = final_native_roundids();
@@ -120,6 +140,16 @@ function final_standings() {
   } else {
     $roundids_for_supergroup = array($roundids_for_supergroup);
   }
+
+  if ($completed_only) {
+    $roundids_for_groups = completed_roundids($roundids_for_groups);
+    // supergroup standings aren't known until ALL rounds have completed.
+    if (read_single_value('SELECT COUNT(*) FROM RaceChart'
+                          .' WHERE finishtime IS NULL AND finishplace IS NULL') > 0) {
+      $roundids_for_supergroup = [];
+    }
+  }
+  
   // It's invalid SQL to test for ' IN () ', so make sure there's at least one
   // (invalid) roundid.
   $roundids_for_groups[] = 0;
@@ -194,9 +224,9 @@ function final_standings() {
 
 // Collect the top N racer ids according to overall standings (doesn't account
 // for Grand Finals rounds)
-function top_finishers_overall($n_trophies) {
+function top_finishers_overall($n_trophies, $completed_only = false) {
   $results = array();
-  foreach (final_standings() as $row) {
+  foreach (final_standings($completed_only) as $row) {
     if ($row['for_supergroup']) {
       $results[] = $row['racerid'];
       if (count($results) >= $n_trophies) {
@@ -210,9 +240,9 @@ function top_finishers_overall($n_trophies) {
 
 // Collect the top N racer IDs in each (native) class: returns
 // { classid => [first, second, ...] }
-function top_finishers_by_class($n_per_class) {
+function top_finishers_by_class($n_per_class, $completed_only = false) {
   $top_finishers = array();
-  foreach (final_standings() as $row) {
+  foreach (final_standings($completed_only) as $row) {
     if ($row['for_group']) {
       $racerid = $row['racerid'];
       $classid = $row['classid'];
@@ -229,16 +259,16 @@ function top_finishers_by_class($n_per_class) {
 
 // Collect the top N racer IDs in each (native) rank: returns
 // { rankid => [first, second, ...] }
-function top_finishers_by_rank($n_per_rank) {
+function top_finishers_by_rank($n_per_rank, $completed_only = false) {
   $top_finishers = array();
-  foreach (final_standings() as $row) {
+  foreach (final_standings($completed_only) as $row) {
     if ($row['for_group']) {
       $racerid = $row['racerid'];
       $rankid = $row['rankid'];
       if (!isset($top_finishers[$rankid])) {
         $top_finishers[$rankid] = array();
       }
-      if (count($top_finihsers[$rankid]) < $n_per_rank) {
+      if (count($top_finishers[$rankid]) < $n_per_rank) {
         $top_finishers[$rankid][] = $racerid;
       }
     }

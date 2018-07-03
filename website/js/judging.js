@@ -105,7 +105,8 @@ function update_awards(dataxml) {
   var awards = dataxml.getElementsByTagName('award');
 
   $(".award_marker, .adhoc_marker").addClass('hidden');  // Hide all the award markers, unhide as needed below
-  $(".judging_racer").removeAttr('data-adhoc');
+  $(".judging_racer").removeAttr('data-adhoc')
+                     .css('background-image', 'none');
 
   var adhoc_count = 0;
   for (var i = 0; i < awards.length; ++i) {
@@ -117,6 +118,13 @@ function update_awards(dataxml) {
     }
   }
 
+  var speed_awards = dataxml.getElementsByTagName('speed-award');
+  for (var i = 0; i < speed_awards.length; ++i) {
+    var racerid = speed_awards[i].getAttribute("racerid");
+    console.log("Marking speed award for " + racerid);  // TODO
+    $(".judging_racer[data-racerid='" + racerid + "']").css("background-image", "url('img/laurel.png')");
+  }
+  
   // Add more empty list items, as necessary
   if ($("#awards li").length < awards.length - adhoc_count) {
     while ($("#awards li").length < awards.length - adhoc_count) {
