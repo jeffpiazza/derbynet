@@ -264,7 +264,7 @@ function rewrite_chart($roundid, $ncommitted, &$heats) {
 
 	$db->exec('DELETE FROM RaceChart WHERE roundid = '.$roundid
 			  .' AND heat > '.$ncommitted  // 1-based heats here
-			  .' AND finishtime IS NULL');
+			  .' AND finishtime IS NULL AND finishplace IS NULL');
 
 	$stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
 						 .' VALUES(:roundid, :heat, :lane, :racerid)');
@@ -297,7 +297,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   $ncommitted = read_single_value('SELECT MAX(heat) FROM RaceChart'
                                   .' WHERE roundid = :roundid'
-                                  .' AND finishtime IS NOT NULL',
+                                  .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                                   array(':roundid' => $roundid),
                                   0);
 

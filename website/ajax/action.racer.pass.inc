@@ -21,7 +21,7 @@ if ($ok_to_change) {
   if (0 + read_single_value('SELECT COUNT(*) FROM RaceChart'
                             .' WHERE roundid IN (SELECT DISTINCT roundid FROM RaceChart'
                             .'                   WHERE racerid = :racerid)'
-                            .' AND finishtime IS NOT NULL',
+                            .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                             array(':racerid' => $racerid), 0))
 	$ok_to_change = false;
   $failure = '<failure code="alreadyscheduled">Schedule data already exists for this racer</failure>';

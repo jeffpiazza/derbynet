@@ -43,7 +43,7 @@ $stmt = $db->prepare('SELECT lane, finishtime, finishplace, completed'
                      .' WHERE roundid = :roundid'
                      .' AND heat = :heat'
                      //.' AND completed IS NOT NULL AND completed != \'\''
-                     .' AND finishtime IS NOT NULL'
+                     .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
                      .' ORDER BY lane');
 $stmt->execute(array(':roundid' => $roundid,
                      ':heat' => $heat));

@@ -23,7 +23,7 @@ function get_next_heat(&$current, $requested) {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = (SELECT MIN(masterheat)'
                                                   .' FROM RaceChart'
-                                                  .' WHERE finishtime IS NULL)');
+                                                  .' WHERE (finishtime IS NULL AND finishplace IS NULL))');
       $stmt->execute(array());
     } else if (isset($current['roundid']) && isset($current['heat'])) {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'

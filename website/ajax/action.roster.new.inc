@@ -54,7 +54,7 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
                                  .' FROM RaceChart'
                                  .' INNER JOIN Rounds'
                                  .' ON RaceChart.roundid = Rounds.roundid'
-                                 .' WHERE finishtime IS NOT NULL'
+                                 .' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
                                  .' AND Rounds.roundid IN ('.$all_roundids.')',
                                  array());
   $new_round = $old_round;

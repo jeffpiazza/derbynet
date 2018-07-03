@@ -26,7 +26,7 @@ function assign_master_heats($round) {
                        .' WHERE roundid IN'
                        .'  (SELECT roundid FROM Rounds'
                        .'   WHERE round = :round)'
-                       .' AND finishtime IS NULL'
+                       .' AND finishtime IS NULL AND finishplace IS NULL'
                        .' ORDER BY roundid, heat');
   $stmt->execute(array(':round' => $round));
   foreach ($stmt as $row) {
@@ -53,7 +53,8 @@ function assign_master_heats($round) {
                         .' WHERE roundid IN'
                         .'  (SELECT roundid FROM Rounds'
                         .'   WHERE round < :round)'
-                        .' OR (roundid IN (SELECT roundid FROM Rounds WHERE round = :round2) AND finishtime IS NOT NULL)',
+                        .' OR (roundid IN (SELECT roundid FROM Rounds WHERE round = :round2)'
+                        .'     AND (finishtime IS NOT NULL OR finishplace IS NOT NULL))',
                         array(':round' => $round,
                               ':round2' => $round),
                         /* default */ 0);

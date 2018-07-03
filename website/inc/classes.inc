@@ -14,7 +14,7 @@ function all_classes() {
                        .'     WHERE Rounds.classid = Classes.classid'
                        .'       AND (SELECT COUNT(*) FROM RaceChart'
                        .'             WHERE RaceChart.roundid = Rounds.roundid'
-                       .'               AND finishtime IS NOT NULL) > 0) AS nrounds'
+                       .'               AND (finishtime IS NOT NULL OR finishplace IS NOT NULL) > 0)) AS nrounds'
                        .' FROM Classes'
                        .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
                        .' ORDER BY '.(schema_version() >= 2

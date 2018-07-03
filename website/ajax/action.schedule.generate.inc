@@ -442,7 +442,8 @@ function write_chart($roundid, &$heats) {
 
 function results_exist($roundid) {
   global $db;
-  return read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid AND finishtime IS NOT NULL',
+  return read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid'
+                           .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                            array(':roundid' => $roundid));
 }
 

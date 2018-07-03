@@ -125,7 +125,7 @@ foreach ($rounds as $round) {
 										  .' (SELECT DISTINCT heat'
 										  .'   FROM RaceChart'
 										  .'   WHERE roundid = :roundid'
-										  .'   AND finishtime IS NOT NULL) AS tmp',
+										  .'   AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)) AS tmp',
 										  array(':roundid' => $roundid)).'"';
     echo '/>'."\n";
 }

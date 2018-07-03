@@ -35,7 +35,7 @@ function racing_state_allowed(&$current) {
   $finished = read_single_value('SELECT COUNT(*) FROM RaceChart'
                                 .' WHERE roundid = :roundid'
                                 .'  AND  heat = :heat'
-                                .'  AND  finishtime IS NOT NULL',
+                                .'  AND  (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                                 array(':roundid' => $current['roundid'],
                                       ':heat' => $current['heat']));
   if ($finished > 0) {
@@ -44,7 +44,7 @@ function racing_state_allowed(&$current) {
   $ready = read_single_value('SELECT COUNT(*) FROM RaceChart'
                              .' WHERE roundid = :roundid'
                              .'  AND  heat = :heat'
-                             .'  AND  finishtime IS NULL',
+                             .'  AND  finishtime IS NULL AND finishplace IS NULL',
                              array(':roundid' => $current['roundid'],
                                    ':heat' => $current['heat']));
   if ($ready == 0) {
