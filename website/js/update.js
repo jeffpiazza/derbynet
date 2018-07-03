@@ -39,7 +39,7 @@ function process_update_elements(updates) {
     if (time_span.length == 0) {
       console.log("Can't find <span> element to receive time for resultid " + upd.getAttribute("resultid"));
     }
-    time_span.html(upd.getAttribute("time"));
+    time_span.html(upd.getAttribute("result"));
   }
 }
 

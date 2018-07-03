@@ -45,6 +45,9 @@ run_tests() {
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
     
     `dirname $0`/test-each-role.sh "$BASE_URL"
+ 
+    `dirname $0`/test-points-racing.sh "$BASE_URL"
+ 
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"

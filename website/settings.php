@@ -245,6 +245,12 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
             if ($use_master_sched) echo ' checked="checked"';?>/>
         <label>Interleave heats from different <?php echo group_label_lc(); ?>s</label>
       </p>
+      <p>
+        <input type="hidden" name="use-points-checkbox" value="yes"/>
+        <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php 
+            if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
+        <label>Race by points (place) instead of by times?</label>
+      </p>
     </div>
   </div>
 

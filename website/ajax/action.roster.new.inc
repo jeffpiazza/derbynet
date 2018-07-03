@@ -138,7 +138,7 @@ if ($grand_finals) {
 // RegistrationInfo(racerid, ..., classid, rankid)
 $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, total'
                      .' FROM (SELECT racerid, Rounds.classid, '
-                     .sql_scoring_expression('finishtime').' AS total'
+                     .sql_scoring_expression('finishtime', 'finishplace').' AS total'
                      .'       FROM RaceChart'
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'

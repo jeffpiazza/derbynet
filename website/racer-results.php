@@ -5,6 +5,7 @@ require_once('inc/photo-config.inc');
 require_once('inc/name-mangler.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/running_round_header.inc');
+require_once('inc/ordinals.inc');
 
 $use_master_sched = use_master_sched();
 $high_water_rounds = high_water_rounds();
@@ -56,12 +57,13 @@ running_round_header($now_running, /* Use RoundID */ TRUE);
 
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos = read_raceinfo_boolean('show-car-photos-rr');
+$use_points = read_raceinfo_boolean('use-points');
 
 require_once('inc/rounds.inc');
 $rounds = all_rounds();
 
 $sql = 'SELECT RegistrationInfo.racerid,'
-    .' Classes.class, round, heat, lane, finishtime, resultid,'
+    .' Classes.class, round, heat, lane, finishtime, finishplace, resultid,'
     .' carnumber, firstname, lastname, imagefile, '
     .(schema_version() >= 2 ? 'carphoto, ' : '')
     .' Classes.classid, Rounds.roundid'
@@ -179,10 +181,12 @@ foreach ($rounds as $round) {
 
     $lane = $rs['lane'];
 
-    $ft = $rs['finishtime'];
+    $ft = $use_points ? (isset($rs['finishplace']) ? ordinal($rs['finishplace']) : '--')
+                      : (isset($rs['finishtime']) ? number_format($rs['finishtime'], 3) : '--');
+
     $racer_cells[$lane - 1][] = '<td class="resultid_'.$rs['resultid'].'">'
                  .'<a class="heat_link" href="ondeck.php#heat_'.$roundid.'_'.$rs['heat'].'">'
-                 .'<span class="time">'.($ft ? number_format($ft, 3) : '--').'</span>'
+                 .'<span class="time">'.$ft.'</span>'
                  .'</a>'
                  .'</td>'."\n";
     if (count($racer_cells[$lane - 1]) > $nrows) {

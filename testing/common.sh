@@ -179,6 +179,25 @@ function run_heat() {
     fi
 }
 
+# Usage: run_heat_place <roundid> <heat> <place1> <place2> <place3> <place4> ?<skip-check_heat_ready>
+function run_heat_place() {
+    ROUNDID=$1
+    HEAT=$2
+    PLACE1=$3
+    PLACE2=$4
+    PLACE3=$5
+    PLACE4=$6
+    SKIP_CHECK_HEAT_READY=$7
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "now-racing=\"1\""
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "roundid=\"$ROUNDID\""
+    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "heat=\"$HEAT\""
+    curl_post action.php "action=timer-message&message=STARTED" | check_success
+    curl_post action.php "action=timer-message&message=FINISHED&place1=$PLACE1&place2=$PLACE2&place3=$PLACE3&place4=$PLACE4" | check_success
+    if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
+        cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
+    fi
+}
+
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
 function staged_heat4() {
     [ "$1" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="1"' | expect_one "carnumber=\"$1\""

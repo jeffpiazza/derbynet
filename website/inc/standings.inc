@@ -2,6 +2,7 @@
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/name-mangler.inc');
+require_once('inc/ordinals.inc');
 
 // For a given roundid, it's straightforward to calculate standings within the
 // round, provided all the heats have been run.  If not all heats have been run,
@@ -22,11 +23,18 @@ require_once('inc/name-mangler.inc');
 //    round from each class, and combine into an aggregate standing.  Some
 //    classes may have more rounds than others.
 
-function sql_scoring_expression($finishtime = 'finishtime') {
-  // Assumes we're in the context of a GROUP BY for one racer and one roundid.
+// Assumes we're in the context of a GROUP BY for one racer and one roundid.
+// $finishtime and $finishplace are, respectively, the sql expressions for
+// accessing the finish time and finish place for the one race result.
+//
+// For place-based races, instead of scoring by (lowest) finish time, we score
+// by finish place, exactly as if it were a time.  E.g., treat 1st place like it
+// was 1.00 seconds, 2nd place as 2.00 seconds, and so on.
+function sql_scoring_expression($finishtime, $finishplace) {
+  $finish = read_raceinfo_boolean('use-points') ? $finishplace : $finishtime;
   return read_raceinfo_boolean('drop-slowest') 
-      ? '(SUM('.$finishtime.') - MAX('.$finishtime.'))/(COUNT(*) - 1)'
-      : 'SUM('.$finishtime.')/COUNT(*)';
+      ? '(SUM('.$finish.') - MAX('.$finish.'))/(COUNT(*) - 1)'
+      : 'SUM('.$finish.')/COUNT(*)';
 }
 
 // Returns a list of roundids for the highest-numbered round for each native
@@ -122,15 +130,18 @@ function final_standings() {
   // the values in a separate map by roundid.
   // 
 
-  $scoring_expr = sql_scoring_expression('finishtime');
-
+  $scoring_expr = sql_scoring_expression('finishtime', 'finishplace');
+  $raw_expr = read_raceinfo_boolean('use-points') ? 'finishplace' : 'finishtime';
+  $avg_expr = read_raceinfo_boolean('use-points')
+          ? (1 + get_lane_count()).' * COUNT(*) - SUM(finishplace)'
+          : $scoring_expr;
   $stmt = $db->query('SELECT Rounds.roundid, Rounds.classid as round_classid, '
                      .' RegistrationInfo.racerid, firstname, lastname, carnumber, carname,'
                      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
                      .' Rounds.roundid IN ('.implode(',', $roundids_for_groups).') AS for_group,'
                      .' Rounds.roundid IN ('.implode(',', $roundids_for_supergroup).') AS for_supergroup,'
-                     .' COUNT(*) AS base, '.$scoring_expr.' AS avg,'
-                     .' MIN(finishtime) AS best, MAX(finishtime) AS worst'
+                     .' COUNT(*) AS base, '.$avg_expr.' AS avg,'
+                     .' MIN('.$raw_expr.') AS best, MAX('.$raw_expr.') AS worst'
                      .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
                                           'RaceChart.racerid = RegistrationInfo.racerid',
                                           'Rounds',
@@ -140,7 +151,7 @@ function final_standings() {
                                           'Ranks',
                                           'RegistrationInfo.rankid = Ranks.rankid')
                      .' WHERE passedinspection = 1 AND exclude = 0'
-                     .' AND finishtime IS NOT NULL'
+                     .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
                      // Of these, only the roundid and racerid are meaningful grouping keys; each of the other
                      // values is uniquely determined by the racerid.
                      .' GROUP BY Rounds.roundid, RegistrationInfo.racerid, RegistrationInfo.classid, '
@@ -168,7 +179,14 @@ function final_standings() {
                       'base' => $row['base'],  // Number of heats run in round
                       'time' => $row['avg'],
                       'best' => $row['best'],
-                      'worst' => $row['worst']);
+                      'worst' => $row['worst'],
+
+                      // TODO Add # heats in 1st place, etc., e.g.
+                      // 'placings' => [3, 0, 0, 1]
+                      // means 3 heats in 1st place, 1 heat in 4th place.
+                      // roundid, racerid =>
+                      'placings' => [ 3, 0, 2, 4 ]
+      );
   }
 
   return $result;
@@ -292,7 +310,12 @@ function write_standings_table_headers() {
     echo "<th class='ingroup'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
   }
   echo "<th>Heats</th>";
-  echo "<th>Average</th>";
+
+  if (read_raceinfo_boolean('use-points')) {
+    echo "<th>Total Points (1st = ".get_lane_count().")</th>";
+  } else {
+    echo "<th>Average</th>";
+  }
   echo "<th>Best</th>";
   echo "<th>Worst</th>";
   echo "</tr>\n";
@@ -354,9 +377,16 @@ function write_standings_table_rows(&$standings) {
     }
   
     echo "<td>".$row['base']."</td>";
-    echo "<td>".sprintf('%5.3f', $row['time'])."</td>";
-    echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
-    echo "<td>".sprintf('%5.3f', $row['worst'])."</td>";
+
+    if (read_raceinfo_boolean('use-points')) {
+      echo "<td>".$row['time']."</td>";
+      echo "<td>".ordinal($row['best'])."</td>";
+      echo "<td>".ordinal($row['worst'])."</td>";
+    } else {
+      echo "<td>".sprintf('%5.3f', $row['time'])."</td>";
+      echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
+      echo "<td>".sprintf('%5.3f', $row['worst'])."</td>";
+    }
     echo "</tr>\n";
   }
 }

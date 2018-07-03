@@ -32,11 +32,13 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
 
   if (!$failures) {
+    // ===========================================================================
     // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
     // $_POST key => RaceInfo.itemkey
     foreach(array('with-gprm' => 'with-gprm',
                   'do-use-subgroups' => 'use-subgroups',
                   'use-master-sched' => 'use-master-sched',
+                  'use-points' => 'use-points',
                   'show-racer-photos' => 'show-racer-photos',
                   'show-car-photos-on-deck' => 'show-cars-on-deck',
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
@@ -52,6 +54,8 @@ if (have_permission(SET_UP_PERMISSION)) {
       }
     }
 
+    // ===========================================================================
+    // Non-checkbox settings
     // $_POST key => RaceInfo.itemkey
     foreach(array('n-lanes' => 'lane_count',
                   'track-length' => 'track-length',

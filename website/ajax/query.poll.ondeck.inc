@@ -2,6 +2,7 @@
 <?php
 require_once('inc/current-heat.inc');
 require_once('inc/autoadvance.inc');
+require_once('inc/ordinals.inc');
 
 // This script produces XML in response to a request from a page that wants to 
 // update itself as the race progresses.  In particular, it supports ondeck.php (showing 
@@ -32,8 +33,8 @@ require_once('inc/autoadvance.inc');
 //   <lanes n="{nlanes}"/>
 //   <options update-period="{period in ms}" use-master-sched="(0 or 1)"/>
 //
-//   <update resultid="{resultid}" time="{finishtime, as n.nnn}"/>
-//   <update resultid="{resultid}" time="{finishtime, as n.nnn}"/>
+//   <update resultid="{resultid}" result="{finishtime, as n.nnn}"/>
+//   <update resultid="{resultid}" result="{finishtime, as n.nnn}"/>
 //   ...
 //
 //   <has_new_schedule tbodyid="{tbodyid}"/>
@@ -82,11 +83,11 @@ if ($next !== false) {
            use-master-sched="<?php echo $use_master_sched; ?>"/>
 <?php
   $sql = 'SELECT'
-    .' lane, resultid, finishtime, completed'
+    .' lane, resultid, finishtime, finishplace, completed'
     .' FROM Rounds'
     .' INNER JOIN RaceChart'
     .' ON RaceChart.roundid = Rounds.roundid'
-    .' WHERE finishtime IS NOT NULL'
+    .' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
     .($since
 	    ? ' AND completed > '
 	      .($dbtype == 'access'
@@ -106,11 +107,16 @@ if ($next !== false) {
 
   // <update> elements for heats recorded since the ['since']
   $max_time = $since;
+  $use_points = read_raceinfo_boolean('use-points');
   foreach ($stmt as $rs) {
-    echo "<update resultid='".$rs['resultid']."'"
+    if ($use_points) {
+      $val = ordinal($rs['finishplace']);
+    } else {
       // TODO: Adjustable number of decimals?
-	  ." time='".number_format($rs['finishtime'], 3)
-      ."'/>\n";
+      $val = number_format($rs['finishtime'], 3);
+    }
+    echo "<update resultid='".$rs['resultid']."'"
+	  ." result='".$val."'/>\n";
     if ($rs['completed'] > $max_time)
       $max_time = $rs['completed'];
   }

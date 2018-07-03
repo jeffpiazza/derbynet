@@ -58,7 +58,11 @@ $(function () {
 <?php make_banner('Race Standings'); ?>
 <div class="block_buttons">
 <div class="center-select">
-<h3><?php echo read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time" : "Averaging all heat times"; ?></h3>
+<h3><?php
+echo read_raceinfo_boolean('use-points') ? "Scoring by points"
+: (read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time"
+                                         : "Averaging all heat times");
+?></h3>
 <select>
     <option selected="selected">All</option>
     <?php
