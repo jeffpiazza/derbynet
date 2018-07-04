@@ -100,6 +100,10 @@ $awards = array();
 // $speed_awards_in_bin maps bin_key to a count of speed awards in that bin
 $speed_awards_in_bin = array();
 
+// The highest 'sort' value for speed awards; used as an offset for the
+// non-speed awards.
+$max_speed_sort = 0;
+
 function bin_key($classid, $rankid) {
   if (!isset($classid)) {
     return 'p';
@@ -111,12 +115,19 @@ function bin_key($classid, $rankid) {
 }
 
 function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
-  global $awards, $speed_awards_in_bin;
+  global $awards, $speed_awards_in_bin, $max_speed_sort;
   $key = bin_key(@$classid, @$rankid);
   if (!isset($speed_awards_in_bin[$key])) {
     $speed_awards_in_bin[$key] = 0;
   }
   $place = ++$speed_awards_in_bin[$key];
+  // This is an approximation, assumes no more than 9 ranks per class, no more
+  // than 10 speed trophies per rank, and no more than 10 speed trophies per
+  // class.
+  $sort = (isset($classid) ? $classid : 0) * 100 + (isset($rankid) ? $rankid : 0) * 10;
+  if ($sort > $max_speed_sort) {
+    $max_speed_sort = $sort;
+  }
   if ($place <= $limit) {
     $awards[] = array('bin_key' => $key,
                       'classid' => @$classid,
@@ -126,7 +137,7 @@ function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
                       // TODO 'Speed Trophy' and 5 should be user-selectable, not hard wired like this.
                       'awardtype' => 'Speed Trophy',
                       'awardtypeid' => 5,
-                      // TODO Sort order for speed awards needs user control?
+                      // Sort order for speed awards 
                       'sort' => $place,
                       'firstname' => $row['firstname'],
                       'lastname' => $row['lastname'],
@@ -164,7 +175,7 @@ foreach ($db->query('SELECT awardid, awardname, awardtype,'
             'awardname' => $row['awardname'],
             'awardtype' => $row['awardtype'],
             'awardtypeid' => $row['awardtypeid'],
-            'sort' => $row['sort'],
+            'sort' => $max_speed_sort + $row['sort'],
             'firstname' => $row['firstname'],
             'lastname' => $row['lastname'],
             'carnumber' => $row['carnumber'],
@@ -204,7 +215,8 @@ usort($awards, 'compare_by_sort');
 
 <div class="center-select">
     <select id="group-select">
-      <option selected="Selected"><?php echo supergroup_label(); ?></option>
+      <option selected="Selected">All</option>
+      <option data-supergroup="1"><?php echo supergroup_label(); ?></option>
         <?php
         $classid = -1;
         foreach ($rankseq as $rankid) {

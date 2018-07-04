@@ -6,6 +6,8 @@ function update_awards_selection() {
 
   var awardtypeid = $("#awardtype-select").find("option:selected").data('awardtypeid');
   var group = $("#group-select").find("option:selected");
+  // data-supergroup is present on the supergroup choice; its value is irrelevant
+  var supergroup = group.data('supergroup');
   var classid = group.data('classid');
   var rankid = group.data('rankid');
 
@@ -13,11 +15,15 @@ function update_awards_selection() {
   if (awardtypeid != null) {
     selector += "[data-awardtypeid='" + awardtypeid + "']";
   }
-  if (classid != null) {
-    selector += "[data-classid='" + classid + "']";
-  }
-  if (rankid != null) {
-    selector += "[data-rankid='" + rankid + "']";
+  if (supergroup != null) {
+    selector += "[data-classid='0'][data-rankid='0']";
+  } else {
+    if (classid != null) {
+      selector += "[data-classid='" + classid + "']";
+    }
+    if (rankid != null) {
+      selector += "[data-rankid='" + rankid + "']";
+    }
   }
 
   $(selector).removeClass("hidden");
