@@ -48,7 +48,6 @@ function link_for_ordering($key, $text) {
 }
 
 $racers = array();
-$awards = array();
 
 $sql = 'SELECT racerid, carnumber, lastname, firstname,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile,'
@@ -74,48 +73,9 @@ foreach ($db->query($sql) as $rs) {
                             'rankid' => $rs['rankid'],
                             'rank' => $rs['rank'],
                             'imagefile' => $rs['imagefile'],
-                            'carphoto' => $rs['carphoto'],
-							'awards' => array());
+                            'carphoto' => $rs['carphoto']);
 }
 
-// TODO Do we need these?
-if (true) {
-$n_den_trophies = read_raceinfo('n-den-trophies', 3);
-$n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
-$n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
-
-require_once('inc/ordinals.inc');
-
-$speed_trophies = top_finishers_by_class($n_den_trophies, /* completed only */ true);
-foreach ($speed_trophies as $classid => $den_trophies) {
-  for ($place = 0; $place < count($den_trophies); ++$place) {
-	$racerid = $den_trophies[$place];
-	$racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.group_label_lc();
-  }
-}
-
-$speed_trophies = top_finishers_by_rank($n_rank_trophies, /* completed only */ true);
-foreach ($speed_trophies as $rankid => $rank_trophies) {
-  for ($place = 0; $place < count($rank_trophies); ++$place) {
-	$racerid = $rank_trophies[$place];
-	$racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.subgroup_label_lc();
-  }
-}
-
-$pack_trophies = top_finishers_overall($n_pack_trophies, /* completed only */ true);
-for ($place = 0; $place < count($pack_trophies); ++$place) {
-  $racerid = $pack_trophies[$place];
-  $racers[$racerid]['awards'][] = ordinal(1 + $place).' in '.supergroup_label_lc();
-}
-}
-$stmt = $db->query('SELECT awardname, racerid'
-  .' FROM Awards'
-  .' ORDER BY sort');
-foreach ($stmt as $rs) {
-  $racerid = $rs['racerid'];
-  if (isset($racers[$racerid]))
-	$racers[$racerid]['awards'][] = $rs['awardname'];
-}
 ?>
 <div id="top_matter" class="block_buttons">
   <div id="sort_controls">

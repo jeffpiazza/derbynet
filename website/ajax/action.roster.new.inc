@@ -110,7 +110,7 @@ if ($new_roundid) {
                                          ':classid' => $classid));
 }
 
-$buckets = array();  // bucketno => array of racerids
+$buckets = array();  // bucketno => array of { racerid , score }
 
 // If top n across the whole unit or den, bucketno is a constant (1)
 // If bucketed, bucketno is rankid (for a den) or classid (for grand finals).
@@ -136,9 +136,9 @@ if ($grand_finals) {
 // Roster(rosterid, roundid, classid, racerid)
 // RaceChart(resultid, classid, roundid, heat, lane, racerid, finishtime, completed)
 // RegistrationInfo(racerid, ..., classid, rankid)
-$stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, total'
+$stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, score'
                      .' FROM (SELECT racerid, Rounds.classid, '
-                     .sql_scoring_expression('finishtime', 'finishplace').' AS total'
+                     .sql_scoring_expression('finishtime', 'finishplace').' AS score'
                      .'       FROM RaceChart'
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
@@ -149,18 +149,19 @@ $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, tot
                      .'       GROUP BY racerid, Rounds.classid) AS Result'
                      .' INNER JOIN RegistrationInfo'
                      .'  ON Result.racerid = RegistrationInfo.racerid'
-                     .' ORDER BY total');
+                     .' ORDER BY score');
 $stmt->execute(array(':key' => $key));
 foreach ($stmt as $row) {
   $bucketno = $row['bucketno'];
   if (!isset($buckets[$bucketno])) {
     $buckets[$bucketno] = array();
   }
-  if (count($buckets[$bucketno]) < $bucket_limit) {
+  $n_in_bucket = count($buckets[$bucketno]);
+  if ($n_in_bucket < $bucket_limit ||
+      // If there's a tie for third when picking top 3, include additional finalists
+      $buckets[$bucketno][$n_in_bucket - 1]['score'] >= $row['score']) {
     echo "<finalist racerid=\"".$row['racerid']."\" bucket_number=\"".$bucketno."\"/>\n";
-    $buckets[$bucketno][] = $row['racerid'];
-  } else {
-    echo "<non-finalist racerid=\"".$row['racerid']."\" bucket_number=\"".$bucketno."\"/>\n";
+    $buckets[$bucketno][] = array('racerid' => $row['racerid'], 'score' => $row['score']);
   }
 }
 $stmt->closeCursor();
@@ -168,10 +169,10 @@ $stmt->closeCursor();
 $stmt = $db->prepare('INSERT INTO Roster(roundid, classid, racerid)'
                      .' VALUES(:roundid, :classid, :racerid)');
 foreach ($buckets as $bucket) {
-  foreach ($bucket as $racerid) {
+  foreach ($bucket as $racer) {
     $stmt->execute(array(':roundid' => $new_roundid,
                          ':classid' => $classid,
-                         ':racerid' => $racerid));
+                         ':racerid' => $racer['racerid']));
   }
 }
 

@@ -54,8 +54,6 @@ $n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
-// $bins to a bin.
-
 // A bin_key is a string:
 //  'p' (overall group)
 //  'c' + classid
@@ -67,7 +65,8 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 //    bin_key?
 //    classid
 //    rankid
-//    awardkey => string for presentation
+//    awardkey => string that award.current action understands, for presentation
+//    score (e.g., the average time or average place), for detecting ties
 //    awardname
 //    awardtype
 //    awardtypeid
@@ -77,27 +76,15 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 //    carnumber
 //    carname
 
-// GPRM views classes and ranks as a hierarchy.  Selecting "none" shows all
-// awards (any class/rank) in the category, selecting a class shows all the
-// awards in the class (any rank), selecting a rank shows just the awards in
-// that rank.
-
 // Not sure what's going on with Speed Trophy awardtype in GPRM; it's not
 // offered as a choice for explicit awards.  "Speed Standings" is a choice for
 // the Awards page, though.
 
-// Future TODO: Allow the race coordinator to map speed results to awards, e.g.,
-// "top 3 finishers get Speed Trophy awards"?
-
-// TODO If using subgroups, capture speed standings by rank, in addition to
-// capturing by class
-
-// TODO Provide for auto-generating participation awards
-
-// TODO Include award export?
-
 $awards = array();
-// $speed_awards_in_bin maps bin_key to a count of speed awards in that bin
+// $speed_awards_in_bin maps bin_key to { score, place },
+// 'count'
+// 'score' is the score of the most recent award, and
+// 'place' is 
 $speed_awards_in_bin = array();
 
 // The highest 'sort' value for speed awards; used as an offset for the
@@ -114,51 +101,63 @@ function bin_key($classid, $rankid) {
   }
 }
 
-function add_speed_award(&$row, $classid, $rankid, $limit, $label) {
-  global $awards, $speed_awards_in_bin, $max_speed_sort;
-  $key = bin_key(@$classid, @$rankid);
-  if (!isset($speed_awards_in_bin[$key])) {
-    $speed_awards_in_bin[$key] = 0;
-  }
-  $place = ++$speed_awards_in_bin[$key];
-  // This is an approximation, assumes no more than 9 ranks per class, no more
-  // than 10 speed trophies per rank, and no more than 10 speed trophies per
-  // class.
-  $sort = (isset($classid) ? $classid : 0) * 100 + (isset($rankid) ? $rankid : 0) * 10;
-  if ($sort > $max_speed_sort) {
-    $max_speed_sort = $sort;
-  }
-  if ($place <= $limit) {
-    $awards[] = array('bin_key' => $key,
-                      'classid' => @$classid,
-                      'rankid' => @$rankid,
-                      'awardkey' => 'speed-'.$place.(isset($classid) ? '-'.$classid : '').(isset($rankid) ? '-'.$rankid : ''),
-                      'awardname' => nth_fastest($place, $label),
-                      // TODO 'Speed Trophy' and 5 should be user-selectable, not hard wired like this.
-                      'awardtype' => 'Speed Trophy',
-                      'awardtypeid' => 5,
-                      // Sort order for speed awards 
-                      'sort' => $place,
-                      'firstname' => $row['firstname'],
-                      'lastname' => $row['lastname'],
-                      'carnumber' => $row['carnumber'],
-                      'carname' => $row['carname']);
+function get_racer_details($racerid) {
+  // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
+  global $db;
+  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, carname'
+                     .' FROM RegistrationInfo'
+                     .' WHERE racerid = :racerid');
+  $rs->execute(array(':racerid' => $racerid));
+  $row = $rs->fetch(PDO::FETCH_ASSOC);
+  $rs->closeCursor();
+  return $row;
+}
+
+function add_speed_group($n, $classid, $rankid, $label, &$standings) {
+  global $awards, $max_speed_sort;
+  $finishers = top_finishers(@$classid, @$rankid, $standings);
+  for ($p = 0; $p < $n; ++$p) {
+    for ($i = 0; $i < count($finishers[$p]); ++$i) {
+      $racerid = $finishers[$p][$i];
+      // This is an approximation, assumes no more than 9 ranks per class, no more
+      // than 10 speed trophies per rank, and no more than 10 speed trophies per
+      // class.
+      $sort = (isset($classid) ? $classid : 0) * 100 + (isset($rankid) ? $rankid : 0) * 10 + $p;
+      if ($sort > $max_speed_sort) {
+        $max_speed_sort = $sort;
+      }
+      $row = get_racer_details($racerid);
+      $awards[] = array('bin_key' => bin_key(@$classid, @$rankid),
+                        'classid' => @$classid,
+                        'rankid' => @$rankid,
+                        'awardkey' => 'speed-'.(1 + $p)
+                            .(count($finishers[$p]) > 1 ? chr(ord('a') + $i) : '')
+                            .(isset($classid) ? '-'.$classid : '')
+                            .(isset($rankid) ? '-'.$rankid : ''),
+                        'awardname' => nth_fastest(1 + $p, $label),
+                        // TODO Hard-wired constants, ugh
+                        'awardtype' => 'Speed Trophy',
+                        'awardtypeid' => 5,
+                        'sort' => $sort,
+                        'firstname' => $row['firstname'],
+                        'lastname' => $row['lastname'],
+                        'carnumber' => $row['carnumber'],
+                        'carname' => $row['carname']);
+    }
   }
 }
 
-// Collect speed awards
-foreach (final_standings() as $row) {
-  // Can be BOTH for_group and for_supergroup
-  if ($row['for_supergroup']) {
-    add_speed_award($row, null, null, $n_pack_trophies, supergroup_label());
-  }
-  if ($row['for_group']) {
-    add_speed_award($row, @$row['classid'], null, $n_den_trophies, $classes[$row['classid']]['class']);
-    add_speed_award($row, @$row['classid'], @$row['rankid'], $n_rank_trophies, $ranks[$row['rankid']]['rank']);
-  }
+$standings = final_standings();
+add_speed_group($n_pack_trophies, null, null, supergroup_label(), $standings);
+
+foreach ($classseq as $c) {
+  add_speed_group($n_den_trophies, $c, null, $classes[$c]['class'], $standings);
+}
+foreach ($rankseq as $r) {
+  add_speed_group($n_rank_trophies, $c, $r, $ranks[$r]['rank'], $standings);
 }
 
-// TODO Break ties for award sorting according to class and rank ordering
+
 foreach ($db->query('SELECT awardid, awardname, awardtype,'
                     .' Awards.awardtypeid, Awards.classid, Awards.rankid, sort,'
                     .' firstname, lastname, carnumber, carname'

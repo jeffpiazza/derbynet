@@ -29,29 +29,36 @@ if (count($keys) >= 2) {
                          .' WHERE awardid = :awardid');
     $stmt->execute(array(':awardid' => $awardid));
   } else if ($keys[0] == 'speed') {
+    
     // 1st place is 1, 2nd place is 2, etc.
+    // In case of ties, 1a means first first-place award, 1b second first-place award, etc.
     $place = $keys[1];
+    $place_last_char = $place[strlen($place) - 1];
+    if ('a' <= $place_last_char && $place_last_char <= 'z') {
+      $place_index = ord($place_last_char) - ord('a');
+      $place = intval(substr($place, 0, strlen($place) - 1));
+    } else {
+      $place_index = 0;
+    }
+
     if (count($keys) == 4) {
       $classid = $keys[2];
       $rankid = $keys[3];
-      $by_rank = top_finishers_by_rank($place);
-      $racerid = $by_rank[$rankid][$place - 1];
-      // TODO classname isn't used
-      $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
-                                     array(':classid' => $classid));
+      $by_rank = top_finishers($classid, $rankid, final_standings());
+      $racerid = $by_rank[$place - 1][$place_index];
       $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
                                     array(':rankid' => $rankid));
       $awardname = nth_fastest($place, $rankname);
     } else if (count($keys) == 3) {
       $classid = $keys[2];
-      $by_class = top_finishers_by_class($place);
-      $racerid = $by_class[$classid][$place - 1];
+      $by_class = top_finishers($classid, null, final_standings());
+      $racerid = intval($by_class[$place - 1][$place_index]);
       $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                      array(':classid' => $classid));
       $awardname = nth_fastest($place, $classname);
     } else {
-      $finishers = top_finishers_overall($place);
-      $racerid = $finishers[$place - 1];
+      $finishers = top_finishers(null, null, final_standings());
+      $racerid = $finishers[$place - 1][$place_index];
       $awardname = nth_fastest_in_pack($place);
     }
 
