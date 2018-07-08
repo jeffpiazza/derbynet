@@ -19,19 +19,20 @@ prepare_for_setup() {
 }
 
 run_tests() {
+############################## Basic Racing ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
+
     `dirname $0`/photo-setup.sh "$BASE_URL"
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
+
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-permissions.sh $BASE_URL
 
     `dirname $0`/test-basic-racing.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
-#    echo NOW RACING SIZING
-#    `dirname $0`/test-now-racing-sizing.sh "$BASE_URL"
     `dirname $0`/test-awards.sh "$BASE_URL" basic
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
@@ -42,12 +43,16 @@ run_tests() {
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
     `dirname $0`/test-photo-next.sh "$BASE_URL"
 
+    `dirname $0`/test-racer-query.sh "$BASE_URL"
+
+############################## Standings by Rank ##############################
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
-    
     `dirname $0`/test-each-role.sh "$BASE_URL"
- 
+
+############################## Points Racing ##############################
     `dirname $0`/test-points-racing.sh "$BASE_URL"
- 
+
+############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
@@ -61,6 +66,7 @@ run_tests() {
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
+############################## Snapshot Export and Import ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
