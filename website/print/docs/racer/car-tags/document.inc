@@ -9,6 +9,8 @@
 class CarTagsDocument extends PrintableRacerDocument {
   protected $count;
 
+  function name() { return "Car Tag"; }
+
   function get_available_options() {
     return array('rank_image' => array('type' => 'bool',
                                        'desc' => 'Draw icon for rank',

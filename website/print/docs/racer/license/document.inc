@@ -6,6 +6,8 @@ require_once('inc/photo-config.inc');
 class DriversLicenseDocument extends PrintableRacerDocument {
   protected $count;
 
+  function name() { return "Driver's License"; }
+
   function get_available_options() {
     return array(
       'use_photo' => array('type' => 'bool',

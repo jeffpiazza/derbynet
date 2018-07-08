@@ -23,6 +23,9 @@ abstract class PrintableRacerDocument {
   // type can be one of 'bool', 'string', 'int'.
   abstract function get_available_options();
 
+  // Returns a name for the document class
+  abstract function name();
+
   function set_options($options) {
     $this->options = $options;
   }

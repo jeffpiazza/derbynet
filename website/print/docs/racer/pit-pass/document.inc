@@ -3,6 +3,10 @@
 class PitPassDocument extends PrintableRacerDocument {
   protected $count;
 
+  function name() {
+    return "Pit Pass";
+  }
+
   function get_available_options() {
     return array(
       'with_logo' => array('type' => 'bool',
@@ -134,6 +138,8 @@ class PitPassDocument extends PrintableRacerDocument {
 }
 
 class PitPass4x6 extends PitPassDocument {
+
+  function name() { return "Pit Pass 4x6"; }
 
   protected $y_coords = array(
     'title-rect' => 0.10,
