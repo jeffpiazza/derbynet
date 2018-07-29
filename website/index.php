@@ -136,6 +136,7 @@ $need_spacer = make_link_button('Exported Results', 'export.php', VIEW_RACE_RESU
 make_spacer_if($need_spacer);
 
 // *********** Other ***************
+make_link_button('Printables', 'print.php', ASSIGN_RACER_IMAGE_PERMISSION, 'other_button');
 make_link_button('About', 'about.php', -1, 'other_button');
 
 if (@$_SESSION['role']) {

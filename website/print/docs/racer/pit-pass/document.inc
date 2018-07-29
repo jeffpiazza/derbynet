@@ -26,9 +26,11 @@ class PitPassDocument extends PrintableRacerDocument {
     'title1' => 0.22,
     'title2' => 0.36,
     'imagefile' => 0.6,
-    'namebox' => 2.5,
-    'carname' => 3.02,
-    'carnumber' => 3.35,
+    'namebox' => 0.50,
+    // Not really enough height to fit in the car name
+    // on this version.
+    'carname' => 0,
+    'carnumber' => 3.82,
     'yellow-car' => 3.125,
     'date-rect' => 4.62,
     'date' => 4.82,
@@ -107,7 +109,9 @@ class PitPassDocument extends PrintableRacerDocument {
 
     $this->pdf->SetFont('Times', '', 16);
     $this->pdf->SetTextColor(0, 0, 64);
-    $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carname'], $racer['carname']);
+    if ($this->y_coords['carname']) {
+      $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carname'], $racer['carname']);
+    }
 
     $this->pdf->SetFont('Helvetica', 'BI', 20);
     $this->pdf->SetTextColor(0, 0, 0);

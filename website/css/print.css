@@ -1,0 +1,42 @@
+td.photo-column {
+  padding: 0px;
+}
+
+div#racers table tr:hover {
+  cursor: pointer;
+}
+div.sub-options {
+  margin-top: 50px;
+}
+
+div#page-controls {
+  float: left;
+  width: 20%;
+  min-width: 260px;
+  height: 100%;
+}
+
+#sortorder-paragraph {
+  margin-left: 10px;
+  margin-right: 10px; 
+}
+
+div#racers-context {
+  float: left;
+  width: 420px;
+  height: 1000px;
+}
+div#racers-scroll {
+  position: absolute;
+  top: 130px;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+div#racers-context table {
+  width: 100%;
+}
+
+div#document-controls {
+  float: left;
+}
