@@ -130,9 +130,14 @@ if ($ok) {
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
   $exclude = isset($_POST['exclude']) ? as_boolean($_POST['exclude']) : false;
-   
-  insert_new_racer_rankid_and_classid($_POST['firstname'], $_POST['lastname'], $carnumber, $carname,
-                                      $rankid, $classid, $exclude);
+
+  insert_new_racer(array('firstname' => $_POST['firstname'],
+                         'lastname' => $_POST['lastname'],
+                         'carnumber' => $carnumber,
+                         'carname' => $carname,
+                         'rankid' => $rankid,
+                         'classid' => $classid,
+                         'exclude' => $exclude));
 
   echo '<success/>';
 }
