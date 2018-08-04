@@ -117,6 +117,9 @@ function add_speed_group($n, $classid, $rankid, $label, &$standings) {
   global $awards, $max_speed_sort;
   $finishers = top_finishers(@$classid, @$rankid, $standings);
   for ($p = 0; $p < $n; ++$p) {
+    if (!isset($finishers[$p])) {
+      continue;
+    }
     for ($i = 0; $i < count($finishers[$p]); ++$i) {
       $racerid = $finishers[$p][$i];
       // This is an approximation, assumes no more than 9 ranks per class, no more
