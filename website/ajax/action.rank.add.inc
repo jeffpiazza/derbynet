@@ -5,6 +5,7 @@
 
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
+require_once('inc/classes-xml.inc');
 require_once(sql_file_path('column-widths'));
 
 start_response();
@@ -38,6 +39,7 @@ if (have_permission(SET_UP_PERMISSION)) {
       }
 
       echo "<success/>\n";
+      emit_all_classes();
     }
   } else {
     echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";

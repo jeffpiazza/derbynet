@@ -3,6 +3,8 @@
 // $_POST['rankid']
 // $_POST['name']
 
+require_once('inc/classes-xml.inc');
+
 start_response();
 
 if (have_permission(SET_UP_PERMISSION)) {
@@ -11,6 +13,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     $stmt->execute(array(':rankid' => $_POST['rankid'],
                          ':name' => trim($_POST['name'])));
     echo "<success/>\n";
+    emit_all_classes();
   } else {
     echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";
   }
