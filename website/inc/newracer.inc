@@ -10,10 +10,27 @@ function insert_new_racer($values) {
                                            array(':rankid' => $values['rankid']));
   }
 
+  if (!isset($values['carnumber']) || $values['carnumber'] == '') {
+    $max_carnumber = read_single_value('SELECT MAX(carnumber) FROM RegistrationInfo'
+                                       .' WHERE rankid = :rankid',
+                                       array(':rankid' => $values['rankid']));
+    if (!$max_carnumber) {
+      $max_carnumber = $values['rankid'] * 100;
+    }
+    $values['carnumber'] = $max_carnumber + 1;
+    echo "<chosen-carnumber>".$values['carnumber']."</chosen-carnumber>\n";
+  }
+
+  if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
+                        .' WHERE carnumber = :carnumber',
+                        array(':carnumber' => $values['carnumber'])) > 0) {
+    echo "<warning>Duplicate car number ".$values['carnumber']."</warning>\n";
+  }
+
   $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, carname,'
                        .'                             rankid, classid, exclude)'
-                       .' VALUES(:carno, :lastname, :firstname, :carname, :rankid, :classid, :exclude)');
-  $stmt->execute(array(':carno' => trim($values['carnumber']),
+                       .' VALUES(:carnumber, :lastname, :firstname, :carname, :rankid, :classid, :exclude)');
+  $stmt->execute(array(':carnumber' => trim($values['carnumber']),
                        ':carname' => trim($values['carname']),
                        ':firstname' => trim($values['firstname']),
                        ':lastname' => trim($values['lastname']),

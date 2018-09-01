@@ -24,14 +24,6 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
 
   echo "<success/>\n";
 
-  $stmt = $db->prepare('SELECT rank, classid FROM Ranks WHERE rankid = :rankid');
-  $stmt->execute(array(':rankid' => $rankid));
-  $result = $stmt->fetch();
-  $rankname = $result[0];
-  $classid = $result[1];
-  $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
-                                 array(':classid' => $classid));
-
   $racer_id = read_single_value('SELECT racerid FROM RegistrationInfo'
                                 .' WHERE firstname = :firstname'
                                 .' AND lastname = :lastname'

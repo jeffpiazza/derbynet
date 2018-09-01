@@ -55,7 +55,7 @@ $ez_configs = list_standard_configs(default_database_directory());
 ?>
 <script type="text/javascript">
 //<![CDATA[
-$(function() { populate_details(<?php echo json_encode($initial_details); ?>); });
+$(function() { populate_details(<?php echo json_encode($initial_details, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>); });
 //]]>
 </script>
 

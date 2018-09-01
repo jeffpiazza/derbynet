@@ -126,7 +126,7 @@ if ($ok) {
     }
   }
 
-  $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : 0;
+  $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
   $exclude = isset($_POST['exclude']) ? as_boolean($_POST['exclude']) : false;
