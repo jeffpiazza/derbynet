@@ -12,13 +12,25 @@ function make_head_matter_for_import_page() {
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-    <script type="text/javascript" src="js/jquery.csv.js"></script>
+    <script type="text/javascript" src="js/xlsx.full.min.js"></script>
     <script type="text/javascript" src="js/import-csv.js"></script>
 <?php
 }
 
-
-
+// Imports of roster, awards, or results.
+//
+// The import page layout is:
+//    div.import_csv
+//      div#top_matter
+//        (state-of-play div)
+//        div#variations (encoding and worksheet)
+//        div#controls (including import button)
+//        div.file_target
+//      (column labels)
+//      table#csv_content
+//
+// State-of-play div gives e.g. file stats (number of rows),
+//    number of existing groups, number of new groups, etc.
 class ImportCsvGenerator {
   // Override as needed
   protected function make_state_of_play_div() {}
@@ -26,34 +38,12 @@ class ImportCsvGenerator {
   // Override to null if no encoding section to be shown.
   protected function make_encoding_section() {
 ?>
-
-  <div id="encoding">
-    <div id="encoding-guidance">
-
-      <p>The choice of encoding primarily affects the treatment of accented
-      or other &quot;special&quot; characters.  Comma-separated value (CSV) files produced
-      by Microsoft Excel typically use Windows or Macintosh encoding, depending
-      on platform.</p>
-
-      <p>If you have a CSV file that contains only ASCII characters, then it won&#39;t
-      matter which of these encodings you choose.  Also, trial and error is a
-      perfectly acceptable method of figuring out what encoding renders your file
-      correctly.</p>
-
+  <div id="variations">
+    &nbsp;
+    <div id="encoding">
     </div>
 
-    <div class="encoding-div">
-      <label for="encoding-select" id="encoding_message">
-      Please select encoding (BEFORE selecting file to import):
-      </label>
-      <br/>    <input type="radio" name="encoding-select" data-enhanced="true" checked="checked"
-                      value="utf-8">UTF-8</input>
-      <br/>    <input type="radio" name="encoding-select" data-enhanced="true"
-                      value="macintosh">Macintosh</input>
-      <br/>    <input type="radio" name="encoding-select" data-enhanced="true"
-                      value="cp1252">Windows (cp1252)</input>
-      <br/>    <input type="radio" name="encoding-select" data-enhanced="true"
-                      value="cp437">MS-DOS (cp437)</input>
+    <div id="sheet">
     </div>
   </div>
 <?php
@@ -66,7 +56,7 @@ class ImportCsvGenerator {
            value="<?php echo htmlspecialchars($button_label, ENT_QUOTES, 'UTF-8'); ?>"/>
   </div>
 <?php
-    }
+  }
 
   // $labels is an array of field => {name:, required:, (span:)}
   //
@@ -128,10 +118,10 @@ class ImportCsvGenerator {
     <div class="file_target">
       <input type="file" id="csv_file" name="csv_file" data-enhanced="true"/>
       <label for="csv_file">
-      <div id="drop_img"><img src="img/drop.png"/></div>
-      <div id="please_select_message">
-         Please select a file to import<br/>or drag it here.
-     </div>
+        <div id="drop_img"><img src="img/drop.png"/></div>
+        <div id="please_select_message">
+         Please select a spreadsheet to import<br/>or drag it here.
+        </div>
       </label>
     </div>
 

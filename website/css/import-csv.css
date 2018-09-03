@@ -1,28 +1,27 @@
 /* Undoing stuff from ondeck.css: */
 th, tbody tr:first-child th {
-    padding-right: 0px;
+    padding-right: 12px;
     padding-top: 0px;
 }
 
-#encoding {
-   margin-top: 20px;
-   margin-bottom: 20px;
+div#variations {
+  height: 51px;
+    background-color: #ffffff;
+    margin-right: 10px;
+    margin-left: 10px;
+   margin-top: 5px;
+   margin-bottom: 5px;
+
 }
 
-#encoding_message {
-    font-size: large;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 15px;
+#variations #encoding {
+  float: right;
+  display: inline-block;
 }
-
-#encoding input {
-    margin-bottom: 15px;
-}
-
-#encoding-guidance {
-    float: right;
-    width: 500px;
+#variations #sheet {
+  float: right;
+  display: inline-block;
+  padding-right: 10px;
 }
 
 #assign_label_message {
@@ -31,6 +30,13 @@ th, tbody tr:first-child th {
     text-align: center;
     font-size: x-large;
     font-weight: bold;
+}
+
+.upload_complete_message {
+  color: #008000;
+}
+.upload_failure_message {
+  color: #800000;
 }
 
 .file_target input {
@@ -171,13 +177,6 @@ div#state-of-play {
     font-size: 20px;
     width: 100%;
     background-color: #e0eaf9;
-}
-
-div#encoding {
-    background-color: #ffffff;
-    margin-right: 10px;
-    margin-left: 10px;
-    padding: 15px;
 }
 
 .footer {
