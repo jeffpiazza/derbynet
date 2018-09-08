@@ -424,12 +424,13 @@ function rounds_for_standings($roundid = false) {
   }
 
   foreach ($result as &$round) {
-    $stmt = $db->prepare('SELECT DISTINCT Ranks.rankid, rank'
+    $sort = (schema_version() >= 2 ? 'Ranks.sortorder, ' : '').'rank';
+    $stmt = $db->prepare('SELECT DISTINCT Ranks.rankid, '.$sort
                          .' FROM '.inner_join('RaceChart', 'RegistrationInfo',
                                               'RaceChart.racerid = RegistrationInfo.racerid',
                                               'Ranks', 'RegistrationInfo.rankid = Ranks.rankid')
                          .' WHERE roundid = :roundid'
-                         .' ORDER BY '.(schema_version() >= 2 ? 'Ranks.sortorder, ' : '').'rank');
+                         .' ORDER BY '.$sort);
     $stmt->execute(array(':roundid' => $round['roundid']));
     $round['ranks'] = array();
     foreach ($stmt as $rank) {
