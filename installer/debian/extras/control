@@ -6,6 +6,16 @@ Architecture: all
 Replaces: derbynet (<= 3.0-1)
 Breaks: derbynet (<= 3.0-1)
 Enhances: derbynet-server
+# bsdutils for logger
+# xautomation for xte (for epiphany)
+# x11-utils for xmessage
+Recommends: bsdutils, chromium | chromium-browser, xautomation, x11-utils
 Suggests: xbitmaps
 Homepage: http://jeffpiazza.github.io/derbynet/
-Description: Additional client utilities for pinewood derby race management web server
+Description: Additional client utilities for pinewood derby race management web server.
+ DerbyNet extras include:
+ .
+ - Scripts and autostart for running a turn-key kiosk.
+ .
+ - Scripts, autostart, and barcode images for running an automated photo capture
+ station.

@@ -47,9 +47,11 @@ test -x /usr/bin/xmessage && xmessage -fn "$XFONT" -buttons '' -center -timeout 
 
 EOF
 
-# Default browser; other recognized value is epiphany
+# Default browser; last one wins
 BROWSER=epiphany
 test -x /usr/bin/midori && BROWSER=midori
+test -x /usr/bin/chromium && BROWSER=/chromium
+test -x /usr/bin/chromium-browser && BROWSER=chromium-browser
 
 test -f /etc/derbynet.conf  && . /etc/derbynet.conf
 test -f /boot/derbynet.conf && . /boot/derbynet.conf
@@ -89,12 +91,17 @@ while true ; do
     if [ "$BROWSER" = "midori" ] ; then
         midori --execute Fullscreen --app "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"
     elif [ "$BROWSER" = "epiphany" ] ; then
-        # If xautomation is present, use xte put the browser into fullscreen mode.
+        # If xautomation is present, use xte to put the browser into fullscreen mode.
         # The sleep is to allow the browser to get set up.
         test -x /usr/bin/xte && xte 'sleep 15' 'key F11' &
         epiphany-browser --application-mode --profile /home/pi/.config "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"
+    elif [ "$BROWSER" = "chromium"  -o "$BROWSER" = "chromium-browser" ] ; then
+        # From https://www.danpurdy.co.uk/wp-content/cache/page_enhanced/www.danpurdy.co.uk/web-development/raspberry-pi-kiosk-screen-tutorial/_index.html
+        sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
+            ~/.config/chromium/Default/Preferences
+        "$BROWSER" --noerrdialogs --kiosk "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS" –incognito
     else
         # Arbitrary browser command:
-        "$BROWSER"
+        "$BROWSER" "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"
     fi
 done
