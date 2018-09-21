@@ -1,3 +1,12 @@
+
+/*
+    select_standings (js) currently:
+        if roundid == false ("All" standings), hide inround, show insuper
+            hide insuper columns (?), show for-supergroup rows.
+        otherwise: show inround, hide insuper text, show insuper columns
+     Nothing seems to select on ingroup (or insubgroup)
+ */
+
 // Pass roundid = false to show standings for the whole pack.
 // Returns a string that selects the rows remaining to be revealed for the
 // selected round.

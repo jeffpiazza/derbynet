@@ -296,18 +296,32 @@ function top_finishers($classid, $rankid, &$standings) {
   return $result;
 }
 
+function show_group_standings() {
+  return read_single_value('SELECT COUNT(*) FROM Classes') > 1;
+}
+function show_car_name_in_standings() {
+  return read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
+                           .' WHERE carname IS NOT NULL AND carname > \'\'');
+}
+
 function write_standings_table_headers() {
   echo "<tr class='headers'>";
   echo "<th>Place</th>";
   echo "<th>Car Number</th>";
   echo "<th>Name</th>";
-  echo "<th>Car Name</th>";
-  echo "<th>".group_label()."</th>";
-  echo "<th class='ingroup'>In <span id='per-group-label'>".group_label()."</span></th>";
-  echo "<th class='insuper'>In ".supergroup_label()."</th>";
-  if (read_raceinfo_boolean('use-subgroups')) {
-    echo "<th class='ingroup'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
+  if (show_car_name_in_standings()) {
+    echo "<th>Car Name</th>";
   }
+  if (show_group_standings()) {
+    echo "<th>".group_label()."</th>";
+    echo "<th class='ingroup'>In <span id='per-group-label'>".group_label()."</span></th>";
+  }
+  if (read_raceinfo_boolean('use-subgroups')) {
+    echo "<th>".subgroup_label()."</th>";
+    echo "<th class='insubgroup'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
+  }
+  echo "<th class='insuper'>In ".supergroup_label()."</th>";
+
   echo "<th>Heats</th>";
 
   if (read_raceinfo_boolean('use-points')) {
@@ -323,6 +337,9 @@ function write_standings_table_headers() {
 function write_standings_table_rows(&$standings) {
   $standings_by_racer = collect_standings($standings);
   $name_style = read_raceinfo('name-style', FULL_NAME);
+  $use_groups = show_group_standings();
+  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $show_car_name = show_car_name_in_standings();
   $first = true;
   $by_roundid = array();
   foreach ($standings as &$row) {
@@ -358,30 +375,35 @@ function write_standings_table_rows(&$standings) {
   
     echo "<td>".$row['carnumber']."</td>";
     echo "<td>".htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8')."</td>";
-    echo "<td>".$row['carname']."</td>";
+    if ($show_car_name) {
+      echo "<td>".$row['carname']."</td>";
+    }
 
-    // Racer's (native) class
-    echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
+    // Racer's (native) class and place in class/group
+    if ($use_groups) {
+      echo "<td>".htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')."</td>";
+      echo "<td class='ingroup'>";
+      if ($row['for_group'] && isset($this_racer_standings['c'.$classid]))
+        echo $this_racer_standings['c'.$classid];
+      echo "</td>";
+    }
 
-    // Place in class
-    echo "<td class='ingroup'>";
-    if ($row['for_group'] && isset($this_racer_standings['c'.$classid]))
-      echo $this_racer_standings['c'.$classid];
-    echo "</td>";
+    // Rank/subgroup and place in rank/subgroup
+    if ($use_subgroups) {
+      echo "<td>".htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8')."</td>";
+
+      echo "<td class='insubgroup'>";
+      if ($row['for_group'] && isset($this_racer_standings['r'.$rankid])) {
+        echo $this_racer_standings['r'.$rankid];
+      }
+      echo "</td>";
+    }
 
     // Place in pack
     echo "<td class='insuper'>";
     if ($row['for_supergroup'] && isset($this_racer_standings['supergroup']))
       echo $this_racer_standings['supergroup'];
     echo "</td>";
-
-    // Place in rank
-    if (read_raceinfo_boolean('use-subgroups')) {
-      echo "<td class='insubgroup'>";
-      if ($row['for_group'] && isset($this_racer_standings['r'.$rankid]))
-        echo $this_racer_standings['r'.$rankid];
-      echo "</td>";
-    }
   
     echo "<td>".$row['base']."</td>";
 
