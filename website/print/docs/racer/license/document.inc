@@ -1,11 +1,8 @@
 <?php
 
-
 require_once('inc/photo-config.inc');
 
 class DriversLicenseDocument extends PrintableRacerDocument {
-  protected $count;
-
   function name() { return "Driver's License"; }
 
   function get_available_options() {
@@ -21,45 +18,12 @@ class DriversLicenseDocument extends PrintableRacerDocument {
 
   function StartDocument() {
     $this->initialize_pdf('L', 'in', 'Letter');
-    $this->count = 0;
+    $this->initialize_layout(3.5, 2.5);
+    $this->layout->SetHorizontalGap(0.1);
+    $this->layout->SetVerticalGap(0.1);
   }
 
-  public function DrawOne(&$racer) {
-    $on_page = $this->count % 9;
-    if ($on_page == 0) {
-      $this->pdf->AddPage();
-      $this->pdf->SetMargins(0, 0, 0);
-      $this->pdf->SetAutoPageBreak(false);
-    }
-
-    $row = floor($on_page / 3);
-    $col = $on_page % 3;
-    
-    $this->DrawOneAt(0.25 + $col * 3.6, 0.25 + $row * 2.6, $racer);
-    ++$this->count;
-  }
-
-  // The "banner" comprises a blue horizontal line, with small lines above and below.
-  protected function DrawBanner($x, $y) {
-    $this->pdf->SetFillColor(0x02, 0x38, 0x82);
-
-    $this->pdf->Rect($x + 0.125, $y + 0.125, 3.25, 0.010, 'F');
-    $this->pdf->Rect($x + 0.125, $y + 0.150, 3.25, 0.010, 'F');
-
-    $this->pdf->Rect($x + 0.125, $y + 0.175, 3.25, 0.180, 'F');
-
-    $this->pdf->Rect($x + 0.125, $y + 0.375, 3.25, 0.010, 'F');
-    $this->pdf->Rect($x + 0.125, $y + 0.400, 3.25, 0.010, 'F');
-  }
-
-  protected function DrawBannerText($x, $y) {
-    $this->pdf->SetFont('Arial', 'B', 10);
-    $this->pdf->SetTextColor(0xf7, 0xd1, 0x17);
-    $this->pdf->Text($x + 0.175, $y + 0.305, 'Pinewood Derby Racing License');
-    $this->pdf->SetTextColor(0);
-  }
-
-  protected function DrawOneAt($x, $y, &$racer) {
+  function DrawOneAt($x, $y, &$racer) {
     $this->pdf->RoundedRect($x, $y, 3.5, 2.5, 0.125);
 
     $this->DrawBanner($x, $y);
@@ -120,5 +84,25 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                       $x + 0.125, $y + 0.125, 3.25);
     $this->pdf->SetAlpha(1);
     $this->DrawBannerText($x, $y);
+  }
+
+  // The "banner" comprises a blue horizontal line, with small lines above and below.
+  protected function DrawBanner($x, $y) {
+    $this->pdf->SetFillColor(0x02, 0x38, 0x82);
+
+    $this->pdf->Rect($x + 0.125, $y + 0.125, 3.25, 0.010, 'F');
+    $this->pdf->Rect($x + 0.125, $y + 0.150, 3.25, 0.010, 'F');
+
+    $this->pdf->Rect($x + 0.125, $y + 0.175, 3.25, 0.180, 'F');
+
+    $this->pdf->Rect($x + 0.125, $y + 0.375, 3.25, 0.010, 'F');
+    $this->pdf->Rect($x + 0.125, $y + 0.400, 3.25, 0.010, 'F');
+  }
+
+  protected function DrawBannerText($x, $y) {
+    $this->pdf->SetFont('Arial', 'B', 10);
+    $this->pdf->SetTextColor(0xf7, 0xd1, 0x17);
+    $this->pdf->Text($x + 0.175, $y + 0.305, 'Pinewood Derby Racing License');
+    $this->pdf->SetTextColor(0);
   }
 }

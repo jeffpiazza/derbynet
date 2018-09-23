@@ -1,11 +1,7 @@
 <?php
 
 class PitPassDocument extends PrintableRacerDocument {
-  protected $count;
-
-  function name() {
-    return "Pit Pass";
-  }
+  function name() { return "Pit Pass"; }
 
   function get_available_options() {
     return array(
@@ -38,57 +34,10 @@ class PitPassDocument extends PrintableRacerDocument {
 
   function StartDocument() {
     $this->initialize_pdf('P', 'in', 'Letter');
-    $this->count = 0;
+    $this->initialize_layout(3.825, 5.000);
   }
 
-  public function DrawOne(&$racer) {
-    $on_page = $this->count % 4;
-    if ($on_page == 0) {
-      $this->pdf->AddPage();
-      $this->pdf->SetMargins(0, 0, 0);
-      $this->pdf->SetAutoPageBreak(false);
-    }
-
-    $row = floor($on_page / 2);
-    $col = $on_page % 2;
-
-    // Each pass is 3.825 x 5.000
-    $this->DrawOneAt(0.25 + $col * 4.25, 0.25 + $row * 5.5, $racer);
-    ++$this->count;
-  }
-
-  // $y is the top of the background box.
-  protected function DrawNameBox($x, $y, &$racer) {
-    $w = 0;
-    $this->pdf->SetFont('Times', 'I', 18);
-    $w += $this->pdf->GetStringWidth($racer['firstname']."m");
-    $this->pdf->SetFont('Times', 'BI', 18);
-    $w += $this->pdf->GetStringWidth($racer['lastname']);
-    $w = $w + 0.1;
-    // Cub Scout yellow background
-    $this->pdf->SetFillColor(0xf7, 0xd1, 0x17);
-
-    $this->pdf->Rect($x + (3.825 - $w) / 2, $y, $w, 20 / 72, 'F');
-
-    // Cub Scout blue text
-    $this->pdf->SetTextColor(0x02, 0x38, 0x82);
-    $this->pdf->CenteredSequence($x + 3.825 / 2, $y + 0.22,
-                                 array(new SetFontTag('Times', 'I', 18), $racer['firstname']." ",
-                                       new SetFontTag('Times', 'BI', 18), $racer['lastname']));
-
-  }
-
-  protected function DrawBorder($x, $y) {
-    if ($this->get_option('with_logo')) {
-      $file_path = '/pit-pass-frame-logo.png';
-    } else {
-      $file_path = '/pit-pass-frame.png';
-    }
-
-    $this->pdf->Image(dirname(__FILE__).$file_path, $x, $y, 3.825, 5.000);
-  }
-
-  protected function DrawOneAt($x, $y, &$racer) {
+ function DrawOneAt($x, $y, &$racer) {
     // Race car image goes underneath
     $this->pdf->SetAlpha(0.25);
     $this->pdf->Image(dirname(__FILE__).'/yellow_racing_car.png',
@@ -139,10 +88,40 @@ class PitPassDocument extends PrintableRacerDocument {
     $this->pdf->SetTextColor(128, 0, 0);
     $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['date'], date('F j, Y'));
   }
+
+  // $y is the top of the background box.
+  protected function DrawNameBox($x, $y, &$racer) {
+    $w = 0;
+    $this->pdf->SetFont('Times', 'I', 18);
+    $w += $this->pdf->GetStringWidth($racer['firstname']."m");
+    $this->pdf->SetFont('Times', 'BI', 18);
+    $w += $this->pdf->GetStringWidth($racer['lastname']);
+    $w = $w + 0.1;
+    // Cub Scout yellow background
+    $this->pdf->SetFillColor(0xf7, 0xd1, 0x17);
+
+    $this->pdf->Rect($x + (3.825 - $w) / 2, $y, $w, 20 / 72, 'F');
+
+    // Cub Scout blue text
+    $this->pdf->SetTextColor(0x02, 0x38, 0x82);
+    $this->pdf->CenteredSequence($x + 3.825 / 2, $y + 0.22,
+                                 array(new SetFontTag('Times', 'I', 18), $racer['firstname']." ",
+                                       new SetFontTag('Times', 'BI', 18), $racer['lastname']));
+
+  }
+
+  protected function DrawBorder($x, $y) {
+    if ($this->get_option('with_logo')) {
+      $file_path = '/pit-pass-frame-logo.png';
+    } else {
+      $file_path = '/pit-pass-frame.png';
+    }
+
+    $this->pdf->Image(dirname(__FILE__).$file_path, $x, $y, 3.825, 5.000);
+  }
 }
 
 class PitPass4x6 extends PitPassDocument {
-
   function name() { return "Pit Pass 4x6"; }
 
   protected $y_coords = array(
@@ -160,7 +139,7 @@ class PitPass4x6 extends PitPassDocument {
 
   public function StartDocument() {
     $this->initialize_pdf('P', 'in', array(4, 6));
-    $this->count = 0;
+    $this->initialize_layout(3.825, 6);
   }
 
   protected function DrawBorder($x, $y) {
@@ -171,16 +150,6 @@ class PitPass4x6 extends PitPassDocument {
     }
 
     $this->pdf->Image(dirname(__FILE__).$file_path, $x, $y, 3.825, 6.000);
-  }
-
-  public function DrawOne(&$racer) {
-    $this->pdf->AddPage();
-    $this->pdf->SetMargins(0, 0, 0);
-    $this->pdf->SetAutoPageBreak(false);
-
-    // Each pass is 3.825 x 5.000
-    $this->DrawOneAt(0.0875, 0, $racer);
-    ++$this->count;
   }
 }
 

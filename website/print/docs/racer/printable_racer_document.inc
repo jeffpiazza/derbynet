@@ -1,7 +1,10 @@
 <?php
 
+require_once('print/inc/layout.inc');
+
 abstract class PrintableRacerDocument {
   protected $pdf;
+  protected $layout;
   protected $options;  // Contents vary by document type
 
   // Returns an array of key => {type:, desc:, default:}, with an entry for each
@@ -26,7 +29,7 @@ abstract class PrintableRacerDocument {
 
   abstract function StartDocument();
 
-  // Argument contains these keys:
+  // $racer argument contains these keys:
   //
   // racerid
   // firstname
@@ -40,7 +43,12 @@ abstract class PrintableRacerDocument {
   // imagefile
   // carphoto
   // barcode
-  abstract public function DrawOne(&$racer);
+  abstract function DrawOneAt($left, $top, &$racer);
+
+  public function DrawOne(&$racer) {
+    $xy = $this->layout->NextTopLeft();
+    $this->DrawOneAt($xy['x'], $xy['y'], $racer);
+  }
 
   public function Output() {
     $this->pdf->Output();
@@ -48,6 +56,10 @@ abstract class PrintableRacerDocument {
 
   protected function initialize_pdf($orientation, $unit, $size) {
     $this->pdf = new PDF_Combined($orientation, $unit, $size);
+  }
+
+  protected function initialize_layout($doc_width, $doc_height) {
+    $this->layout = new DocumentLayout($this->pdf, $doc_width, $doc_height);
   }
 }
 

@@ -7,8 +7,6 @@
 // - optionally show a group-specific image
 
 class CarTagsDocument extends PrintableRacerDocument {
-  protected $count;
-
   function name() { return "Car Tag"; }
 
   function get_available_options() {
@@ -19,39 +17,10 @@ class CarTagsDocument extends PrintableRacerDocument {
   
   function StartDocument() {
     $this->initialize_pdf('L', 'in', 'Letter');
-    $this->count = 0;
+    $this->initialize_layout(2.75, 8.5);
   }
 
-  public function DrawOne(&$racer) {
-    $col = $this->count % 4;
-    if ($col == 0) {
-      $this->pdf->AddPage();
-      $this->pdf->SetMargins(0, 0, 0);
-      $this->pdf->SetAutoPageBreak(false);
-    }
-    $this->DrawOneAt($col * 2.75, $racer);
-    ++$this->count;
-  }
-
-  // Group (class) names may vary from one event to another, and the assignment of
-  // classid to name is definitely unstable.  This is using the car number
-  // instead, and assuming that the hundreds digit identifies which image is
-  // desired.
-  static protected function path_to_rank_image(&$racer) {
-    $grade = min(5, intval($racer['carnumber'] / 100));
-    return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
-  }
-
-  protected function RotatedCenteredName($cx, $cy, &$racer) {
-    $this->pdf->StartTransform();
-    $this->pdf->Rotate(90, $cx, $cy);
-    $this->pdf->CenteredSequence($cx, $cy,
-                                 array(new SetFontTag('Times', '', 30), $racer['firstname']." ",
-                                       new SetFontTag('Times', 'B', 30), $racer['lastname']));
-    $this->pdf->StopTransform();
-  }
-  
-  protected function DrawOneAt($left, &$racer) {
+  function DrawOneAt($left, $top, &$racer) {
     // This Rect would draw dividing lines between the tags, but it's difficult
     // to cut precisely on the line for every page in a stack, so better not to
     // highlight the problem by showing the lines.
@@ -88,6 +57,24 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetXY($left, 7.75);
     $this->pdf->SetFillColor(255, 255, 200);
     $this->pdf->Cell(2.75, 0.5, $racer['carnumber'], /* border */ 0, /* ln */ 0, "C");
+  }
+
+  // Group (class) names may vary from one event to another, and the assignment of
+  // classid to name is definitely unstable.  This is using the car number
+  // instead, and assuming that the hundreds digit identifies which image is
+  // desired.
+  static protected function path_to_rank_image(&$racer) {
+    $grade = min(5, intval($racer['carnumber'] / 100));
+    return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
+  }
+
+  protected function RotatedCenteredName($cx, $cy, &$racer) {
+    $this->pdf->StartTransform();
+    $this->pdf->Rotate(90, $cx, $cy);
+    $this->pdf->CenteredSequence($cx, $cy,
+                                 array(new SetFontTag('Times', '', 30), $racer['firstname']." ",
+                                       new SetFontTag('Times', 'B', 30), $racer['lastname']));
+    $this->pdf->StopTransform();
   }
 }
 ?>
