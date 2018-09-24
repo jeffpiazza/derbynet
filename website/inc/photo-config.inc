@@ -1,6 +1,10 @@
 <?php
 require_once('inc/data.inc');
 
+// Render labels are:
+//  width 'x' height  or
+//  height 'h'
+
 define('RENDER_ORIGINAL', 'original');
 define('RENDER_CROPPED', 'cropped');
 // "Working size" images: big enough to edit, but small enough to fit on screen

@@ -63,8 +63,9 @@ $use_master_sched = use_master_sched();
 emit_current_heat($now_running, $use_master_sched);
 
 emit_current_racers($now_running, read_raceinfo('name-style', FULL_NAME),
-                    read_raceinfo_boolean('show-racer-photos') && isset($_GET['row-height']) && $_GET['row-height'] > 0
-                    ? $_GET['row-height'].'h'
+                    read_raceinfo_boolean('show-racer-photos') &&
+                        isset($_GET['row-height']) && $_GET['row-height'] > 0
+                    ? (2 * $_GET['row-height']).'x'.$_GET['row-height']
                     : false);
 
 if (read_raceinfo('replay_just_finished')) {
