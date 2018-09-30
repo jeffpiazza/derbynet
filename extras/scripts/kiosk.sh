@@ -94,12 +94,21 @@ while true ; do
         # If xautomation is present, use xte to put the browser into fullscreen mode.
         # The sleep is to allow the browser to get set up.
         test -x /usr/bin/xte && xte 'sleep 15' 'key F11' &
+        # From https://www.raspberrypi.org/forums/viewtopic.php?f=66&t=118118 :
+        WEBKIT_DISABLE_TBS=1 \
         epiphany-browser --application-mode --profile /home/pi/.config "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"
     elif [ "$BROWSER" = "chromium"  -o "$BROWSER" = "chromium-browser" ] ; then
-        # From https://www.danpurdy.co.uk/wp-content/cache/page_enhanced/www.danpurdy.co.uk/web-development/raspberry-pi-kiosk-screen-tutorial/_index.html
-        sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' \
+        # Update preferences file to disable warnings about bad shutdown/restoring sessions
+        sed -i \
+            -e 's/"exited_cleanly": *false/"exited_cleanly": true/' \
+            -e 's/"exit_type": *"[^"]*"/"exit_type": "Normal"/' \
             ~/.config/chromium/Default/Preferences
-        "$BROWSER" --noerrdialogs --kiosk "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS" –incognito
+        "$BROWSER" --noerrdialogs \
+                   --no-default-browser-check \
+                   --disable-session-crashed-bubble \
+                   --disable-infobars \
+                   --kiosk "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS" \
+                   –incognito
     else
         # Arbitrary browser command:
         "$BROWSER" "$DERBYNET_SERVER/kiosk.php?address=$ADDRESS"

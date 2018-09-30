@@ -54,6 +54,10 @@ tr.d0 td {
     font-weight: bold;
 }
 
+#edit_racer_modal {
+  top: 0px;
+}
+
 .trophy-eligible-flipswitch.ui-flipswitch {
     width: 7.5em;
     padding: 5px;
