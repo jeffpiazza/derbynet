@@ -70,6 +70,7 @@
      <make-pdf file="Timer Operation.fodt"/>
      <make-pdf file="Running a Race with DerbyNet.fodt"/>
      <make-pdf file="Photo Upload Options.fodt"/>
+     <make-pdf file="Webcams and Secure Contexts.fodt"/>
  </target>
 
  <target name="advanced-topics" depends="make-dist-dir">
