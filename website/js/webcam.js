@@ -1,4 +1,4 @@
-// WebcamJS v1.0.23
+// WebcamJS v1.0.25
 // Webcam library for capturing JPEG/PNG images in JavaScript
 // Attempts getUserMedia, falls back to Flash
 // Author: Joseph Huckaby: http://github.com/jhuckaby
@@ -27,14 +27,14 @@ function WebcamError() {
 	this.message = temp.message;
 }
 
-IntermediateInheritor = function() {};
+var IntermediateInheritor = function() {};
 IntermediateInheritor.prototype = Error.prototype;
 
 FlashError.prototype = new IntermediateInheritor();
 WebcamError.prototype = new IntermediateInheritor();
 
 var Webcam = {
-	version: '1.0.23',
+	version: '1.0.25',
 	
 	// globals
 	protocol: location.protocol.match(/https/i) ? 'https' : 'http',
@@ -316,7 +316,15 @@ var Webcam = {
 					self.dispatch('live');
 					self.flip();
 				};
-				video.src = window.URL.createObjectURL( stream ) || stream;
+				// as window.URL.createObjectURL() is deprecated, adding a check so that it works in Safari.
+				// older browsers may not have srcObject
+				if ("srcObject" in video) {
+				  	video.srcObject = stream;
+				}
+				else {
+				  	// using URL.createObjectURL() as fallback for old browsers
+				  	video.src = window.URL.createObjectURL(stream);
+				}
 			})
 			.catch( function(err) {
 				// JH 2016-07-31 Instead of dispatching error, now falling back to Flash if userMedia fails (thx @john2014)
@@ -561,6 +569,7 @@ var Webcam = {
 			return true;
 		}
 		else if (name == 'error') {
+			var message;
 			if ((args[0] instanceof FlashError) || (args[0] instanceof WebcamError)) {
 				message = args[0].message;
 			} else {
