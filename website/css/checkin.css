@@ -12,6 +12,7 @@ tr.d0 td {
 }
 
 #photo_modal {
+    top: 0px;
     margin-top: 10px;
     width: 720px;
 }
