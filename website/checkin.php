@@ -96,7 +96,7 @@ require_once('inc/checkin-table.inc');
 <thead>
   <tr>
     <th/>
-    <th><?php echo column_header(group_label(), 'den'); ?></th>
+    <th><?php echo column_header(group_label(), 'class'); ?></th>
     <?php if ($use_subgroups) {
         echo '<th>'.subgroup_label().'</th>';
     } ?>

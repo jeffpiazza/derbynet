@@ -339,7 +339,7 @@ function compare_first(a, b) {
 
 
 function sorting_key(row) {
-  if (g_order == 'den') {
+  if (g_order == 'class') {
       // class, lastname, firstname
       return [row.getElementsByClassName('sort-class')[0].innerHTML,
               row.getElementsByClassName('sort-lastname')[0].innerHTML,
