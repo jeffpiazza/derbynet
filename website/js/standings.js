@@ -36,11 +36,18 @@ function standings_select_on_change(selection, supergroup_label) {
   $("tr").not(".headers").addClass('hidden');
   if (typeof selection.attr('data-roundid') == typeof undefined ||
       selection.attr('data-roundid') === false) {
+    // Show "All" standings
     $(select_standings(false, false, supergroup_label)).removeClass('hidden');
+    $("#download-button").attr('href', 'export-standings.php');
   } else if (typeof selection.attr('data-rankid') == typeof undefined ||
              selection.attr('data-rankid') === false) {
+    // One round (and class standings)
     $(select_standings(selection.attr('data-roundid'), false, selection.text())).removeClass('hidden');
+    $("#download-button").attr('href', 'export-standings.php?roundid=' + selection.attr('data-roundid'));
   } else {
+    // One rank within one roundid
     $(select_standings(selection.attr('data-roundid'), selection.attr('data-rankid'), selection.text())).removeClass('hidden');
+    $("#download-button").attr('href', 'export-standings.php?roundid=' + selection.attr('data-roundid')
+                                       + '&rankid='  + selection.attr('data-rankid'));
   }
 }

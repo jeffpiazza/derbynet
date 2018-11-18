@@ -124,6 +124,17 @@ curl_get "standings.php" | grep '<tr' | expect_count "data-rankid=.3." 5
 # Because Harold is ineligible, only 4 show up
 curl_get "standings.php" | grep '<tr' | expect_count "data-rankid=.2." 4
 
+curl_text "export-standings.php" | head -n 2 | tail -n 1 | \
+    expect_eq '"Place","Car Number","Name","Subgroup","In Subgroup","Heats","Average","Best","Worst"'
+curl_text "export-standings.php" | head -n 3 | tail -n 1 | \
+    expect_eq '1,101,"Jewell Jeansonne",Lions,1,4,1.010,1.010,1.010'
+curl_text "export-standings.php" | head -n 18 | tail -n 1 | \
+    expect_eq '16,206,"Ernest Edelman",Tigers,2,4,5.506,5.506,5.506'
+curl_text "export-standings.php" | head -n 19 | tail -n 1 | \
+    expect_eq '17,214,"Thanh Turner",Tigers,3,4,5.514,5.514,5.514'
+curl_text "export-standings.php" | tail -n 1 | \
+    expect_eq '18,218,"Sterling Spalla",Tigers,4,4,5.518,5.518,5.518'
+
 # curl_get would parse the HTML and leave one tag per line
 # Thanh came in 4th by time, but with Harold ineligible, he becomes 3rd, and Sterling is 4th
 curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "insubgroup.>4<" | expect_one "Sterling Spalla"

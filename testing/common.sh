@@ -159,6 +159,12 @@ function expect_one {
 	fi
 }
 
+function expect_eq {
+    if [ "`cat`" != "$1" ]; then
+        test_fails expecting string "$1"
+    fi
+}
+
 # Confirm what roundid/heat is current and simulate timer interaction for running one heat
 # Usage: run_heat <roundid> <heat> <lane1> <lane2> <lane3> <lane4> ?<skip-check_heat_ready>
 function run_heat() {

@@ -341,7 +341,6 @@ function write_standings_table_rows(&$standings) {
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
   $show_car_name = show_car_name_in_standings();
   $first = true;
-  $by_roundid = array();
   foreach ($standings as &$row) {
     $racerid = $row['racerid'];
     $roundid = $row['roundid'];

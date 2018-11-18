@@ -43,6 +43,11 @@ $(function () {
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <style type="text/css">
+.download_div {
+  float: right;
+  margin-right: 10px;
+}
+
 .center-select {
   width: 400px;
   margin-left: auto;
@@ -57,12 +62,20 @@ $(function () {
 <body>
 <?php make_banner('Race Standings'); ?>
 <div class="block_buttons">
+
 <div class="center-select">
 <h3><?php
 echo read_raceinfo_boolean('use-points') ? "Scoring by points"
 : (read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time"
                                          : "Averaging all heat times");
 ?></h3>
+</div>
+
+<div class="download_div">
+  <a id="download-button" class='button_link' href='export-standings.php'>Download</a>
+</div>
+
+<div class="center-select">
 <select>
     <option selected="selected">All</option>
     <?php
