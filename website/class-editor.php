@@ -110,7 +110,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
     <input type="submit" data-enhanced="true"/>
     <input type="button" value="Cancel" data-enhanced="true"
-           onclick="close_add_class_modal();"/>
+           onclick="close_add_rank_modal();"/>
   </form>
 </div>
 
