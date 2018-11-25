@@ -1,3 +1,7 @@
+/*
+    Print page structure is three main columns:
+    div#page-controls div#document-controls  div#subjects-context
+*/
 td.photo-column {
   padding: 0px;
 }
@@ -9,11 +13,21 @@ div.sub-options {
   margin-top: 50px;
 }
 
+div.sub-options .param-string {
+  width: 100%;
+}
+
+div.sub-options .param {
+  margin-top: 10px;
+}
+
 div#page-controls {
   float: left;
   width: 20%;
   min-width: 260px;
   height: 100%;
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 #sortorder-paragraph {
@@ -21,22 +35,28 @@ div#page-controls {
   margin-right: 10px; 
 }
 
-div#racers-context {
+div#subjects-context {
   float: left;
   width: 420px;
-  height: 1000px;
+  height: 100%;
 }
-div#racers-scroll {
+div#subjects-scroll {
   position: absolute;
   top: 130px;
   bottom: 0;
   overflow-y: auto;
 }
 
-div#racers-context table {
+div#subjects-context table {
   width: 100%;
 }
 
 div#document-controls {
   float: left;
+  width: 300px;
+  margin-left: 15px;
+}
+
+div#document-controls div.radio-spacer {
+  height: 10px;
 }

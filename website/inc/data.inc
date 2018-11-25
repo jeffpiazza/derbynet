@@ -54,11 +54,12 @@ function inner_join() {
 }
 
 // Returns row with only numbered array elements
-function read_single_row($sql, $params = array()) {
+// (Use PDO::FETCH_ASSOC for named array elements)
+function read_single_row($sql, $params = array(), $fetch = PDO::FETCH_NUM) {
   global $db;
   $rs = $db->prepare($sql);
   $rs->execute($params);
-  $row = $rs->fetch(PDO::FETCH_NUM);
+  $row = $rs->fetch($fetch);
   $rs->closeCursor();
   return $row;
 }

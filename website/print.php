@@ -7,22 +7,34 @@ require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 
 require_once('print/docs/racer/printable_racer_document.inc');
+require_once('print/docs/award/printable_award_document.inc');
 
 require_once('print/inc/load_document_files.inc');
 load_document_files_from(dirname(__FILE__)
                          . DIRECTORY_SEPARATOR . 'print'
                          . DIRECTORY_SEPARATOR . 'docs'
                          . DIRECTORY_SEPARATOR . 'racer');
+load_document_files_from(dirname(__FILE__)
+                         . DIRECTORY_SEPARATOR . 'print'
+                         . DIRECTORY_SEPARATOR . 'docs'
+                         . DIRECTORY_SEPARATOR . 'award');
 
 // TODO Printables should really have their own permission, but we need a
 // migration path for updating existing user config files.
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
+// $doc_classes keys are document class names, values are { type:, options: }
 $doc_classes = array();
 foreach (get_declared_classes() as $c) {
   if (is_subclass_of($c, 'PrintableRacerDocument') && !(new ReflectionClass($c))->isAbstract()) {
     $doc = new $c();
-    $doc_classes[$c] = $doc->get_available_options();
+    $doc_classes[$c] = array('type' => 'racer',
+                             'options' => $doc->get_available_options());
+  }
+  if (is_subclass_of($c, 'PrintableAwardDocument') && !(new ReflectionClass($c))->isAbstract()) {
+    $doc = new $c();
+    $doc_classes[$c] = array('type' => 'award',
+                             'options' => $doc->get_available_options());
   }
 }
 ?><!DOCTYPE html>
@@ -45,49 +57,29 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
 </head>
 <body>
 <?php make_banner('Printables'); ?>
+
+
 <div class="block_buttons">
     <input type="button" data-enhanced="true" id="print-selected"
            value="Print Selected" onclick="print_selected();"/>
 </div>
 
-<div id="page-controls">
-<div class="block_buttons">
-
-<p id="sortorder-paragraph"><label for="sortorder">Choose sort order:</label>
-   <select id="sortorder" onchange="handle_sortorder_change()">
-      <option value="checkin">Check-In Order</option>
-      <option value="name">Last Name</option>
-      <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
-      <?php
-      if (read_raceinfo_boolean('use-subgroups')) {
-        echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
-      } ?>
-      <option value="car" selected="selected">Car Number</option>
-    </select>
-</p>
-
-    <input type="button" data-enhanced="true" value="Select All" onclick="select_all(true)"/>
-    <input type="button" data-enhanced="true" value="Deselect All" onclick="select_all(false)"/>
-</div>
-</div>
-
-<div id="racers-context">
-<div id="racers-scroll">
-<div id="racers" class="block_buttons">
-<table></table>
-</div>
-</div>
-&nbsp;
-</div>
 
 <div id="document-controls">
 <?php
 
 $radio_count = 0;
+$last_type = '';
 echo "<div data-role='controlgroup'>\n";
-foreach ($doc_classes as $c => $options) {
+foreach ($doc_classes as $c => $details) {
   ++$radio_count;
+  $options = $details['options'];
   $doc = new $c();
+
+  if ($radio_count > 0 && $details['type'] != $last_type) {
+    echo "<div class='radio-spacer'>&nbsp;</div>\n";
+  }
+  $last_type = $details['type'];
 
   echo "<label for='doc-class-".$c."'>";
   echo "<b>".$doc->name()."</b>";
@@ -101,13 +93,15 @@ foreach ($doc_classes as $c => $options) {
 }
 echo "</div>\n";  // controlgroup
 
-foreach ($doc_classes as $c => $options) {
+// Options for each document type are in a div[data-docname='...'], and so can
+// be switched on and off depending on which document type is chosen.
+foreach ($doc_classes as $c => $details) {
   echo "<div data-docname=\"".$c."\" class=\"sub-options hidden\">";
   $doc = new $c();
   echo "<p>Options for <b>".$doc->name()."</b></p>";
-  foreach ($options as $opt => $opt_data) {
+  foreach ($details['options'] as $opt => $opt_data) {
     $ctrl_name = $c.'-'.$opt;
-    echo "&nbsp;";
+    echo "<div class='param'>\n";
     if ($opt_data['type'] == 'bool') {
       echo "<input type='checkbox' name='".$ctrl_name."'";
       if ($opt_data['default']) {
@@ -116,12 +110,57 @@ foreach ($doc_classes as $c => $options) {
       echo "/><label for='".$ctrl_name."'>".$opt_data['desc']."</label><br/>\n";
     } else if ($opt_data['type'] == 'string') {
       echo "<label for='".$ctrl_name."'>".$opt_data['desc']."</label>";
-      echo "<input type='text' name='".$ctrl_name."' value='".$opt_data['default']."'/><br/>\n";
+      echo "<input type='text' name='".$ctrl_name."' value='".$opt_data['default']."' class='param-string'/><br/>\n";
     }
+    echo "</div>\n";
   }
   echo "</div>\n";
 }
 ?>
+</div>
+
+
+<div id="page-controls">
+<div class="block_buttons">
+
+   <div id="sortorder-racers-div">
+   <p id="sortorder-paragraph"><label for="sortorder-racers">Choose sort order:</label>
+
+   <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
+      <option value="checkin">Check-In Order</option>
+      <option value="name">Last Name</option>
+      <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
+      <?php
+      if (read_raceinfo_boolean('use-subgroups')) {
+        echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
+      } ?>
+      <option value="car" selected="selected">Car Number</option>
+    </select>
+    </div>
+
+    <div id="sortorder-awards-div">
+
+    </div>
+
+</p>
+
+    <input type="button" data-enhanced="true" value="Select All" onclick="select_all(true)"/>
+    <input type="button" data-enhanced="true" value="Deselect All" onclick="select_all(false)"/>
+</div>
+</div>
+
+
+
+<div id="subjects-context">
+  <div id="subjects-scroll">
+    <div id="subject-racers" class="block_buttons">
+      <table></table>
+    </div>
+    <div id="subject-awards" class="block_buttons hidden">
+      <table></table>
+    </div>
+  </div>
+  &nbsp;
 </div>
 
 </body>
