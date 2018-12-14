@@ -10,6 +10,11 @@ var g_check_in;
 var g_autocrop_head = true;
 var g_autocrop_car = false;
 
+var g_cameras = new Array();
+var g_cameraIndex = 0;
+var g_width = 640;
+var g_height = 480;
+
 function set_autocrop_state(repo) {
   $("#autocrop").prop('checked', repo == 'head' ? g_autocrop_head : g_autocrop_car);
   $("#autocrop").flipswitch("refresh");
@@ -227,6 +232,27 @@ Dropzone.options.photoDrop = {
 };
 
 
+function switch_camera_modal() {
+  g_cameraIndex++;
+  if ( g_cameraIndex >= g_cameras.length ) {
+    g_cameraIndex = 0;
+  }
+
+  Webcam.reset();
+  Webcam.set({
+	  width: g_width,
+	  height: g_height,
+	  dest_width: g_width,
+	  dest_height: g_height,
+	  crop_width: g_width,
+	  crop_height: g_height,
+	  constraints: {
+		  deviceId: g_cameras[g_cameraIndex]
+	  }
+  });
+  Webcam.attach('#preview');
+}
+
 function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
@@ -247,14 +273,61 @@ function show_photo_modal(racerid, repo) {
       return false;
   });
 
+  if( screen.width < screen.height ) {
+    g_width = 480;
+    g_height = 640;
+  }
+
+  var i = 0;
+
+  navigator.mediaDevices.enumerateDevices()
+  .then(function(devices) {
+    devices.forEach(function(device) {
+      if( device.kind=== "videoinput") {
+        g_cameras[i]= device.deviceId;
+        i++;
+      }
+    });
+  });
+
   arm_webcam_dialog();
   Webcam.set({
-	  width: 320,
-	  height: 240,
-	  dest_width: 640,
-	  dest_height: 480});
+	  width: g_width,
+	  height: g_height,
+	  dest_width: g_width,
+	  dest_height: g_height,
+	  crop_width: g_width,
+	  crop_height: g_height,
+	  constraints: {
+		  deviceId: g_cameras[g_cameraIndex]
+	  }
+  });
   Webcam.attach('#preview');
 }
+
+window.addEventListener('orientationchange', function() {
+  if( screen.width < screen.height ) {
+    g_width = 480;
+    g_height = 640;
+  } else {
+    g_width = 640;
+    g_height = 480;
+  }
+
+  Webcam.reset();
+  Webcam.set({
+	  width: g_width,
+	  height: g_height,
+	  dest_width: g_width,
+	  dest_height: g_height,
+	  crop_width: g_width,
+	  crop_height: g_height,
+	  constraints: {
+		  deviceId: g_cameras[g_cameraIndex]
+	  }
+  });
+  Webcam.attach('#preview');
+});
 
 function show_racer_photo_modal(racerid) {
   show_photo_modal(racerid, 'head');
