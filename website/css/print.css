@@ -60,3 +60,16 @@ div#document-controls {
 div#document-controls div.radio-spacer {
   height: 10px;
 }
+
+div#subject-awards td p {
+  font-size: 16px;
+  padding-bottom: 0px;
+  margin: 0px;
+}
+
+div#subjects-context td p.awardname {
+  font-weight: bold;
+}
+div#subjects-context td .awardtype {
+  font-style: italic;
+}

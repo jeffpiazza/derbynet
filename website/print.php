@@ -124,25 +124,25 @@ foreach ($doc_classes as $c => $details) {
 <div class="block_buttons">
 
    <div id="sortorder-racers-div">
-   <p id="sortorder-paragraph"><label for="sortorder-racers">Choose sort order:</label>
+     <p id="sortorder-paragraph">
+       <label for="sortorder-racers">Choose sort order:</label>
 
-   <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
-      <option value="checkin">Check-In Order</option>
-      <option value="name">Last Name</option>
-      <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
+       <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
+         <option value="checkin">Check-In Order</option>
+          <option value="name">Last Name</option>
+          <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
       <?php
       if (read_raceinfo_boolean('use-subgroups')) {
         echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
       } ?>
-      <option value="car" selected="selected">Car Number</option>
-    </select>
+          <option value="car" selected="selected">Car Number</option>
+        </select>
+      </p>
     </div>
 
     <div id="sortorder-awards-div">
 
     </div>
-
-</p>
 
     <input type="button" data-enhanced="true" value="Select All" onclick="select_all(true)"/>
     <input type="button" data-enhanced="true" value="Deselect All" onclick="select_all(false)"/>
