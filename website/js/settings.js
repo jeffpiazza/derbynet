@@ -37,6 +37,11 @@ function on_lane_click(event) {
   target.closest(".settings_group").addClass("modified");
 }
 
+function on_max_runs_change() {
+  $("#max-runs-per-car").val(document.getElementById('max-runs').checked ? 1 : 0);
+  return false;
+}
+
 function on_form_submission() {
     $.ajax('action.php',
            {type: 'POST',

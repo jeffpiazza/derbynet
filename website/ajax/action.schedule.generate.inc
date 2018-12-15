@@ -1,11 +1,19 @@
 <?php
-// Action to schedule heats for a round.
+// Action to schedule heats for a round, with each car running once in each lane.
+// (An exception is if max-runs-per-car is non-zero; see below.)
+//
 // $_POST: roundid, nrounds(=1)
 // nrounds here is the number of times each racer should race in each lane.
-
-// Add tests for no (checked-in) racers, one, two, ..., nlanes-1
-
-// Action to set number of lanes (by interrogating timer)
+//
+// Normally we use max-runs-per-car = 0, so that each car runs once per lane.
+// For some unusual situations, we want to limit to just 1 run per car (no
+// matter which lane).  In that case, we first pad out the roster with BYEs so
+// each car can get one run before we would start running anyone's second run.
+// Then we form the rough schedule as a simple rotation chart (because the
+// normal chart generators may put a given car only in heats that include a
+// second run for some other car).  Finally, in make_ordered_schedule, we
+// abandon those heats from the rough schedule that would cause any car to have
+// second run.
 
 
 require_once('inc/data.inc');
@@ -79,6 +87,7 @@ function make_ordered_schedule($nlanes, $ncars, $nrounds) {
   for ($i = 0; $i < $ncars; ++$i) {
     $appearances[] = 0;
   }
+  $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
 
   $ordered = array();
   $prev_heat = array();
@@ -100,7 +109,12 @@ function make_ordered_schedule($nlanes, $ncars, $nrounds) {
       $rough[$best_heat_index] = NULL;
       foreach ($prev_heat as $car) {
         ++$appearances[$car];
+        if ($max_runs_per_car > 0 && $appearances[$car] > $max_runs_per_car) {
+          // Exit early, without adding this new heat
+          return $ordered;
+        }
       }
+
       $ordered[] = $prev_heat;
     }
   }
@@ -204,6 +218,10 @@ function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
     return false;
   }
   while (count($roster) < $nlanes) {
+    $roster[] = null;
+  }
+  $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
+  while (count($roster) * $max_runs_per_car % $nlanes != 0) {
     $roster[] = null;
   }
   $sched = make_ordered_schedule($nlanes, count($roster), $nrounds);

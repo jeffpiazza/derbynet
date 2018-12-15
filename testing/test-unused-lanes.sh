@@ -14,7 +14,8 @@ curl_post action.php "action=settings.write&n-lanes=6" | check_success
 
 
 # Make six lanes down to 4, 100001 = 33
-curl_post action.php "action=settings.write&unused-lane-mask=33" | check_success
+#  (Also confirm that max-runs-per-car=0, as opposed to unset, works as expected.)
+curl_post action.php "action=settings.write&unused-lane-mask=33&max-runs-per-car=0" | check_success
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 curl_post action.php "action=select-heat&roundid=1&now_racing=0" | check_success
 curl_get "action.php?query=poll.coordinator" | expect_count 'racer lane="[16]"' 0

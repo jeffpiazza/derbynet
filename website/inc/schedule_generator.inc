@@ -222,6 +222,15 @@ $all_generators = array(
 // Returns an array of generators, appropriate for $nlanes and $ncars.
 function get_generators($nlanes, $ncars) {  
   global $all_generators;
+  // If there's a non-zero max-runs-per-car value, then we adopt a simple rotation schedule,
+  // which means a generator of 1 for each lane.
+  if (read_raceinfo("max-runs-per-car", 0) != 0) {
+    $generators = array();
+    for ($i = 0; $i < $nlanes - 1; ++$i) {
+      $generators[] = 1;
+    }
+    return array($generators);
+  }
   foreach ($all_generators[$nlanes] as $entry) {
     if ($entry['min'] <= $ncars && $ncars <= $entry['max']) {
       return $entry['generators'];
@@ -249,7 +258,15 @@ function make_rough_schedule($nlanes, $ncars, $nrounds) {
       $heats[] = $heat;
     }
   }
-  // echo "<rough-schedule>\n"; var_dump($heats); echo "</rough-schedule>\n";
+  if (false) {  // For debugging:
+    echo "<rough-schedule>\n";
+    $hi = 0;
+    foreach ($heats as $h) {
+      ++$hi;
+      echo "<heat heat='".$hi."'>".json_encode($h)."</heat>\n";
+    }
+    echo "</rough-schedule>\n";
+  }
 
   return $heats;
 }

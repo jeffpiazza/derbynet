@@ -73,7 +73,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'replay-skipback' => 'replay-skipback',
                   'replay-num-showings' => 'replay-num-showings',
                   'replay-rate' => 'replay-rate',
-                  'unused-lane-mask' => 'unused-lane-mask')
+                  'unused-lane-mask' => 'unused-lane-mask',
+                  'max-runs-per-car' => 'max-runs-per-car')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key])) {
         ++$num_picked;

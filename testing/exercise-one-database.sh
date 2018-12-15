@@ -52,6 +52,9 @@ run_tests() {
 ############################## Points Racing ##############################
     `dirname $0`/test-points-racing.sh "$BASE_URL"
 
+############################## One-Run-Per-Car Racing ##############################
+    `dirname $0`/test-model-a-club.sh "$BASE_URL"
+
 ############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"

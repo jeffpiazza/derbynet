@@ -251,6 +251,13 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
             if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
         <label>Race by points (place) instead of by times?</label>
       </p>
+      <p>
+        <input type="hidden" name="max-runs-per-car" id="max-runs-per-car" value="0"/>
+        <input type="checkbox" id="max-runs" data-enhanced="true"<?php
+          if (read_raceinfo("max-runs-per-car", 0) != 0) echo ' checked="checked"'; ?>
+          onchange="on_max_runs_change();"/>
+        <label>Abbreviated single-run-per-car schedule?</label>
+      </p>
     </div>
   </div>
 
