@@ -17,6 +17,7 @@ require_once('inc/photo-config.inc');
   <body>
 
   <div id="photo-background" class="photo-background">
+    <div class="next"></div>
   </div>
 
   </body>

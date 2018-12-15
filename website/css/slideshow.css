@@ -49,3 +49,8 @@ p.maintitle {
 }
 
 .carno { font-weight: bold; }
+
+.next {
+  visibility: hidden;
+  display: none;
+}

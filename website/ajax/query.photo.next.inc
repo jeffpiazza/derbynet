@@ -23,8 +23,8 @@ require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
 
 // TODO Any special order we prefer to racerid?
-// TODO Slideshows by subset, e.g., by den?
 
+// Emits a url as the value for an xml attribute
 function write_photo(&$row, $attribute_name, $column_name, &$repository) {
   echo ' '.$attribute_name.'="'.$repository->url_for_file($row[$column_name], $row['racerid'], RENDER_CROPPED).'"';
 }
@@ -45,7 +45,6 @@ $name_style = read_raceinfo('name-style', FULL_NAME);
 // If working with a DerbyNet database, 'imagefile' field carries the inset photo, and 'carphoto' is the main photo.
 $inset_imagefile = schema_version() >= 2;
 
-// TODO
 $main_repository = $inset_imagefile ? car_photo_repository() : headshots();
 $inset_repository = headshots();
 
@@ -81,7 +80,11 @@ if ($row) {
 
     $row = $stmt->fetch();
     if ($row) {
-      write_main_photo($row, 'next_photo', $repositories);
+      if (write_main_photo($row, 'next_photo', $repositories)) {
+        if (isset($row['inset_photo']) && $row['inset_photo']) {
+          write_photo($row, 'next_inset', 'inset_photo', $repositories[1]);
+        }
+      }
     }
     echo '/>'."\n";
 }
