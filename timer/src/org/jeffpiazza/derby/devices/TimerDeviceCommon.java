@@ -8,6 +8,15 @@ import org.jeffpiazza.derby.Timestamp;
 public abstract class TimerDeviceCommon
     extends TimerDeviceBase
     implements TimerDevice, RacingStateMachine.TransitionCallback {
+
+  // Issue #35: Reject gate state changes that don't last "reasonably" long.
+  // To do that, don't record a gate state change until it's aged a bit.
+  //
+  static protected int minimum_gate_time_millis = 500;
+  static public void setMinimumGateTimeMillis(int mgt) {
+    minimum_gate_time_millis = mgt;
+  }
+
   protected RacingStateMachine rsm;
 
   protected TimerDeviceCommon(SerialPortWrapper portWrapper,
@@ -112,6 +121,10 @@ public abstract class TimerDeviceCommon
     protected boolean gateIsClosed;
     protected SerialPortWrapper portWrapper;
 
+    // Tracks the clock time when the state first appeared to change, or 0 if
+    // the interrogated gate state hasn't changed.
+    protected long timeOfFirstChange = 0;
+
     public GateWatcher(SerialPortWrapper portWrapper) {
       this.portWrapper = portWrapper;
     }
@@ -134,7 +147,23 @@ public abstract class TimerDeviceCommon
     protected boolean updateGateIsClosed()
         throws SerialPortException, LostConnectionException {
       try {
-        setGateIsClosed(interrogateGateIsClosed());
+        boolean isClosedNow = interrogateGateIsClosed();
+        synchronized (this) {
+          if (isClosedNow == gateIsClosed) {
+            timeOfFirstChange = 0;
+          } else {
+            // Issue #35: If we have an apparent state change, don't record it
+            // until it's stayed in the new state for a minimum length of time.
+            // (Original issue report involved a SmartLine timer.)
+            long now = System.currentTimeMillis();
+            if (timeOfFirstChange == 0) {
+              timeOfFirstChange = now;
+            } else if (now - timeOfFirstChange > minimum_gate_time_millis) {
+              gateIsClosed = isClosedNow;
+              timeOfFirstChange = 0;
+            }
+          }
+        }
       } catch (NoResponseException ex) {
         portWrapper.checkConnection();
 
@@ -146,6 +175,7 @@ public abstract class TimerDeviceCommon
       return getGateIsClosed();
     }
   }
+
   protected GateWatcher gateWatcher = null;
 
   public void poll() throws SerialPortException, LostConnectionException {

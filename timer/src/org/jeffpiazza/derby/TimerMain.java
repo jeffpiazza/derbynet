@@ -9,6 +9,7 @@ import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
+import org.jeffpiazza.derby.devices.TimerDeviceCommon;
 import org.jeffpiazza.derby.devices.TimerTask;
 import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
 
@@ -33,6 +34,8 @@ public class TimerMain {
         "   -p <password>: Specify password for authenticating to web server");
     System.err.println(
         "   -n <port name>: Use specified port name instead of searching");
+    System.err.println(
+            "   -min-gate-time <milliseconds>: Ignore gate transitions shorter than <milliseconds>");
     System.err.println(
         "   -d <device name>: Use specified device instead of trying to identify");
     System.err.println("      Known devices:");
@@ -157,6 +160,10 @@ public class TimerMain {
         NewBoldDevice.setPostRaceDisplayDurationMillis(
             1000 * Integer.parseInt(args[consumed_args + 1]));
         consumed_args += 2;
+      } else if (arg.equals("-min-gate-time") && has_value) {
+        TimerDeviceCommon.setMinimumGateTimeMillis(
+            Integer.parseInt(args[consumed_args + 1]));
+        consumed_args += 2;
       } else if (arg.equals("-record")) {
         recording = true;
         ++consumed_args;
@@ -205,9 +212,9 @@ public class TimerMain {
                                  connector, base_url,
                                  username, password, simulatedSession);
       } else {
-        final ClientSession clientSession =
-            simulatedSession == null ? new ClientSession(base_url)
-            : simulatedSession;
+        final ClientSession clientSession
+            = simulatedSession == null ? new ClientSession(base_url)
+              : simulatedSession;
         HttpTask.start(username, password, clientSession,
                        traceMessages, traceHeartbeats, connector,
                        new HttpTask.LoginCallback() {
