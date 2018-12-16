@@ -4,6 +4,18 @@ require_once('inc/schema_version.inc');
 
 return array_merge(
   array(
+
+    // Table constraints prevent deletions from working in alphabetical order.
+    'DROP TABLE Awards',
+    'DROP TABLE AwardTypes',
+    'DROP TABLE RaceInfo',
+    'DROP TABLE RaceChart',
+    'DROP TABLE Roster',
+    'DROP TABLE Rounds',
+    'DROP TABLE RegistrationInfo',
+    'DROP TABLE Classes',
+    'DROP TABLE Ranks',
+
 'DROP TABLE Awards',
 
 'CREATE TABLE Awards'
