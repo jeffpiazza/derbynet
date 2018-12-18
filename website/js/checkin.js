@@ -147,6 +147,10 @@ function handle_edit_racer() {
                  rankid: new_rankid,
                  exclude: exclude},
             success: function(data) {
+                var warnings = data.getElementsByTagName('warning');
+                if (warnings && warnings.length > 0) {
+                  window.alert("WARNING: " + warnings[0].childNodes[0].nodeValue);
+                }
                 var new_row_elements = data.getElementsByTagName('new-row');
                 if (new_row_elements.length > 0) {
 	                tb = $(".main_table tbody");

@@ -391,6 +391,11 @@ function uploadTableRowsFrom(row, action, parameter_names, failures) {
               var ok = xmldoc.documentElement.getElementsByTagName("success");
               if (ok && ok.length > 0) {
                 $('[data-row="' + row + '"] th').append('<span class="ok_outcome">OK</span>');
+                var warning = xmldoc.documentElement.getElementsByTagName("warning");
+                if (warning && warning.length > 0) {
+                  $('<span class="warning"></span>').appendTo('[data-row="' + row + '"] th')
+                    .text(warning[0].childNodes[0].nodeValue);
+                }
               } else {
                 ++failures;
                 $('[data-row="' + row + '"] th').append('<span class="failed_outcome">FAILED </span>');
