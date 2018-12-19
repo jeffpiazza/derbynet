@@ -74,6 +74,7 @@
  </target>
 
  <target name="advanced-topics" depends="make-dist-dir">
+     <make-pdf file="Developers- Timer Messages.fodt"/>
      <make-pdf file="Developers- Replay Messages.fodt"/>
  </target>
 
