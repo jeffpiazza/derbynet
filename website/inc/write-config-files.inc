@@ -7,8 +7,9 @@ function local_file_name($filename) {
 
 function write_config_file($filename, $content) {
   global $g_errstr;
-  if (@file_put_contents(local_file_name($filename), $content, FILE_USE_INCLUDE_PATH) === false) {
-    echo "<failure code='cant_write_config'>Can't write config file: $g_errstr</failure>";
+  $where = local_file_name($filename);
+  if (@file_put_contents($where, $content, FILE_USE_INCLUDE_PATH) === false) {
+    echo "<failure code='cant_write_config'>Can't write config file $where: $g_errstr</failure>";
     return false;
   }
 
@@ -18,20 +19,25 @@ function write_config_file($filename, $content) {
 // Returns true if successful
 // ====================================================================
 function write_database_config_file($connection_string, $dbuser, $dbpass, $options) {
-    // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but other databases
-    // should just ignore it.
-    $exported_options = var_export($options, /* return */ true);
-    $exported_connection = var_export($connection_string, true);
-    $exported_dbuser = var_export($dbuser, true);
-    $exported_dbpass = var_export($dbpass, true);
-    $content = <<<END
+  // The MYSQL_ATTR_INIT_COMMAND command is, of course, MySQL-specific, but
+  // other databases should just ignore it.
+  //
+  // The setAttribute for ATTR_CASE allows interoperation with GPRM SQLite
+  // databases.
+  $exported_options = var_export($options, /* return */ true);
+  $exported_connection = var_export($connection_string, true);
+  $exported_dbuser = var_export($dbuser, true);
+  $exported_dbpass = var_export($dbpass, true);
+  $content = <<<END
 <?php
 \$db_connection_string = $exported_connection;
 \$db = new PDO(\$db_connection_string, $exported_dbuser, $exported_dbpass,
                $exported_options);
+
+\$db->setAttribute(PDO::ATTR_CASE, PDO::CASE_LOWER);
 ?>
 END;
-    return write_config_file('config-database.inc', $content);
+  return write_config_file('config-database.inc', $content);
 }
 // ====================================================================
 
