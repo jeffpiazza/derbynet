@@ -191,7 +191,6 @@ function final_standings($completed_only = false) {
                      .' GROUP BY Rounds.roundid, RegistrationInfo.racerid, RegistrationInfo.classid, '
                      .'  Rounds.classid, class, RegistrationInfo.rankid, rank, firstname, lastname, carnumber'
                      //.' HAVING COUNT(*) = '.$nlanes -- racers who finished all their heats
-                     .' HAVING COUNT(*) > 1'
                      // lastname, firstname for reproducible ordering in the event of a tie
                      .' ORDER BY '.$scoring_expr.', lastname, firstname');
   $result = array();
