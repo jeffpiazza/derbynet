@@ -38,7 +38,7 @@ function pass_racer($racerid, $value) {
       record_event(EVENT_CHECKIN, $racerid);
       return true;
     } else {
-      not_authorized();
+      not_authorized_body();
       return false;
     }
   } else {
@@ -52,7 +52,6 @@ function pass_racer($racerid, $value) {
 start_response();
 
 if ($racerid == 'all') {
-  echo "<value>".$value."</value>\n";  // TODO
   $maxid = read_single_value('SELECT MAX(racerid) FROM RegistrationInfo');
   $ok_so_far = true;
   for ($i = 1; $i <= $maxid && $ok_so_far; ++$i) {

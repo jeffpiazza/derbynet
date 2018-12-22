@@ -25,7 +25,7 @@ curl_post action.php "action=racer.pass&racer=35&value=1" | check_success
 ##curl_post action.php "action=racer.pass&racer=37&value=1" | check_success
 curl_post action.php "action=racer.pass&barcode=PWD237&value=1" | check_success
 ##curl_post action.php "action=racer.pass&racer=39&value=1" | check_success
-curl_post action.php "action=racer.pass&barcode=PWD539&value=1" | check_success
+curl_post action.php "action=racer.pass&barcode=PWD508&value=1" | check_success
 curl_post action.php "action=racer.pass&racer=41&value=1" | check_success
 curl_post action.php "action=racer.pass&racer=43&value=1" | check_success
 curl_post action.php "action=racer.pass&racer=45&value=1" | check_success

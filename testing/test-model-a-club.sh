@@ -15,10 +15,12 @@ user_login_coordinator
 
 for i in $(seq 1 100) ; do
     curl_post action.php \
-              "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class&carnumber=$i" | check_success
+              "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class" | check_success
 done
 
-curl_post action.php "action=racer.pass&racer=all&value=1" | check_success
+curl_post action.php "action=racer.bulk&what=checkin&who=all&value=1" | check_success
+
+curl_post action.php "action=racer.bulk&what=number&who=all&start=101" | check_success
 
 curl_post action.php "action=settings.write&n-lanes=3&max-runs-per-car=1" | check_success
 curl_post action.php "action=schedule.generate&roundid=1" | check_success

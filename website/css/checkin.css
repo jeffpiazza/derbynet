@@ -31,9 +31,10 @@ tr.d0 td {
     margin-right: auto;
 }
 
-.block_buttons input.advanced_button {
+.block_buttons input.bulk_button {
   position: absolute;
-  right: 3px;
+  right: 90px;
+  width: 120px;
   margin-top: 0px;
 }
 
@@ -70,8 +71,14 @@ tr.d0 td {
     padding: 5px;
 }
 
+#edit_racer_modal .trophy-eligible-flipswitch {
+  margin-left: 103px;
+}
+#bulk_details_modal .trophy-eligible-flipswitch {
+  margin-left: 54px;
+}
+
 .trophy-eligible-flipswitch {
-    margin-left: 103px;
     margin-bottom: 30px;
     font-size: x-large;
 }
@@ -90,6 +97,8 @@ tr.d0 td {
 
 .trophy-eligible-flipswitch.ui-flipswitch.ui-flipswitch-active {
   padding-left: 5.775em;
+}
+.trophy-eligible-flipswitch.ui-flipswitch.ui-flipswitch-active {
   width: 1.875em;
 }
 

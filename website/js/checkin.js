@@ -183,22 +183,72 @@ function handle_edit_racer() {
 }
 
 
-function show_advanced_form() {
-  show_modal("#advanced_modal", function(event) {
+function show_bulk_form() {
+  show_modal("#bulk_modal", function(event) {
       return false;
   });
 }
 
-function check_in_all(value) {
-  close_modal("#advanced_modal");
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: 'racer.pass',
-                 racer: 'all',
-                 value: value ? 1 : 0},
+function bulk_check_in(value) {
+  close_modal("#bulk_modal");
+  $("#bulk_details_title").text(value ? "Bulk Check-In" : "Bulk Check-In Undo");
+  $("#who_label").text(value ? "Check in racers in" : "Undo check-in of racers in");
+  $("#bulk_details div.hidable").addClass("hidden");
 
-          // TODO failure?
-         });
+  show_secondary_modal("#bulk_details_modal", function(event) {
+    close_secondary_modal("#bulk_details_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'racer.bulk',
+                   what: 'checkin',
+                   who: $("#bulk_who").val(),
+                   value: value ? 1 : 0},
+           });
+    return false;
+  });
+}
+
+function bulk_numbering() {
+  close_modal("#bulk_modal");
+  $("#bulk_details_title").text("Bulk Numbering");
+  $("#who_label").text("Assign car numbers to");
+  $("#bulk_details div.hidable").addClass("hidden");
+  $("#numbering_controls").removeClass("hidden");
+
+  show_secondary_modal("#bulk_details_modal", function(event) {
+    close_secondary_modal("#bulk_details_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'racer.bulk',
+                   what: 'number',
+                   who: $("#bulk_who").val(),
+                   start: $("#bulk_numbering_start").val(),
+                   renumber: $("#renumber").is(':checked') ? 1 : 0},
+           });
+                  
+    return false;
+  });
+}
+  
+function bulk_eligibility() {
+  close_modal("#bulk_modal");
+  $("#bulk_details_title").text("Bulk Eligibility");
+  $("#who_label").text("Change eligibility for");
+  $("#bulk_details div.hidable").addClass("hidden");
+  $("#elibility_controls").removeClass("hidden");
+
+  show_secondary_modal("#bulk_details_modal", function(event) {
+    close_secondary_modal("#bulk_details_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'racer.bulk',
+                   what: 'eligibility',
+                   who: $("#bulk_who").val(),
+                   value: $("#bulk_eligible").is(':checked') ? 1 : 0},
+           });
+                  
+    return false;
+  });
 }
 
 function disable_preview(msg) {

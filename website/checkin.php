@@ -86,9 +86,9 @@ require_once('inc/checkin-table.inc');
 ?>
 
 <div class="block_buttons">
-  <input class="advanced_button"
-        type="button" value="Advanced" data-enhanced="true"
-        onclick='show_advanced_form();'/>
+  <input class="bulk_button"
+        type="button" value="Bulk" data-enhanced="true"
+        onclick='show_bulk_form();'/>
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
       <input type="button" value="New Racer" data-enhanced="true"
         onclick='show_new_racer_form();'/>
@@ -172,8 +172,16 @@ foreach ($stmt as $rs) {
   <br/>
 
 <?php
+// $rank_options is a string of <option> elements, one per rank.
+//    $rank_options is used to pick a rank for a new or modified racer.
+//
+// $ranks_and_classes is a string of <option> elements, one for each rank and each class.
+//    $ranks_and_classes is used for picking groups of racers to which a bulk operation
+//    might apply.
 
     $rank_options = "";
+    $ranks_and_classes = "";
+    $last_classid = 0;
     $sql = 'SELECT rankid, rank, Ranks.classid, class'
            .' FROM Ranks INNER JOIN Classes'
            .' ON Ranks.classid = Classes.classid'
@@ -189,6 +197,17 @@ foreach ($stmt as $rs) {
            .htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8')
           .' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
 	       .'</option>';
+      if ($rs['classid'] != $last_classid) {
+        $ranks_and_classes .= "\n".'<option value="c'.$rs['classid'].'">'
+                .htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8')
+                .'</option>';
+      }
+      if ($use_subgroups) {
+        $ranks_and_classes .= "\n".'<option value="r'.$rs['rankid'].'">'
+                .htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
+                .'</option>';
+      }
+      $last_classid = $rs['classid'];
     }
 
     if (!$rank_options) {
@@ -256,14 +275,57 @@ foreach ($stmt as $rs) {
 </div>
 
     
-<div id='advanced_modal' class="modal_dialog hidden block_buttons">
-  <input type="submit" value="Check-In All" data-enhanced="true"
-    onclick="check_in_all(true);"/>
-  <input type="submit" value="Check-In None" data-enhanced="true"
-    onclick="check_in_all(false);"/>
+<div id='bulk_modal' class="modal_dialog hidden block_buttons">
+  <input type="button" value="Bulk Check-In" data-enhanced="true"
+    onclick="bulk_check_in(true);"/>
+  <input type="button" value="Bulk Check-In Undo" data-enhanced="true"
+    onclick="bulk_check_in(false);"/>
+  <br/>
+  <input type="button" value="Bulk Numbering" data-enhanced="true"
+    onclick="bulk_numbering();"/>
+  <input type="button" value="Bulk Eligibility" data-enhanced="true"
+    onclick="bulk_eligibility();"/>
   <br/>
   <input type="button" value="Cancel" data-enhanced="true"
-    onclick='close_modal("#advanced_modal");'/>
+    onclick='close_modal("#bulk_modal");'/>
+</div>
+
+<div id="bulk_details_modal" class="modal_dialog hidden block_buttons">
+    <form id="bulk_details">
+      <h2 id="bulk_details_title"></h2>
+
+      <label id="who_label" for="bulk_who">Assign car numbers to</label>
+      <select id="bulk_who">
+        <option value="all">All</option>
+        <?php echo $ranks_and_classes; ?>
+      </select>
+
+      <div id="numbering_controls" class="hidable">
+        <label for="bulk_numbering_start">Starting from:</label>
+        <input type="number" id="bulk_numbering_start" name="bulk_numbering_start"
+               value="101"/>
+
+        <label for="renumber">Renumber cars that already have numbers?</label>
+        <div class="centered_flipswitch">
+          <input type="checkbox" data-role="flipswitch" name="renumber" id="renumber"
+                 data-on-text="Yes" data-off-text="No"    />
+        </div>
+      </div>
+
+      <div id="elibility_controls" class="hidable">
+        <label for="bulk_eligible">Trophy eligibility:</label>
+        <input type="checkbox" data-role="flipswitch"
+               checked="checked"
+               name="bulk_eligible" id="bulk_eligible"
+               data-wrapper-class="trophy-eligible-flipswitch"
+               data-off-text="Excluded"
+               data-on-text="Eligible"/>
+      </div>
+    
+      <input type="submit" data-enhanced="true"/>
+      <input type="button" value="Cancel" data-enhanced="true"
+        onclick='close_secondary_modal("#bulk_details_modal");'/>
+    </form>
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>

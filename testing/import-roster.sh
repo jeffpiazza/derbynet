@@ -94,3 +94,5 @@ curl_post action.php "action=racer.import&firstname=Weston&lastname=Whigham&clas
 curl_post action.php "action=racer.import&firstname=Willard&lastname=Wile&classname=Lions %26 Tigers&carnumber=181" | check_success
 curl_post action.php "action=racer.import&firstname=Willard&lastname=Woolfolk&classname=White's Wolves&carnumber=282" | check_success
 
+curl_post action.php "action=racer.bulk&what=number&who=c4&start=501&renumber=1" | check_success
+
