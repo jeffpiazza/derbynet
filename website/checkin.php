@@ -85,12 +85,15 @@ make_banner('Racer Check-In');
 require_once('inc/checkin-table.inc');
 ?>
 
+<div class="block_buttons">
+  <input class="advanced_button"
+        type="button" value="Advanced" data-enhanced="true"
+        onclick='show_advanced_form();'/>
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
-    <div class="block_buttons">
       <input type="button" value="New Racer" data-enhanced="true"
         onclick='show_new_racer_form();'/>
-	</div>
 <?php } ?>
+</div>
 
 <table id="main_checkin_table" class="main_table">
 <thead>
@@ -142,12 +145,12 @@ foreach ($stmt as $rs) {
 ?>
 </tbody>
 </table>
+<div class="block_buttons">
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
-    <div class="block_buttons">
       <input type="button" value="New Racer" data-enhanced="true"
         onclick='show_new_racer_form();'/>
-	</div>
 <?php } ?>
+</div>
 
 
 <div id='edit_racer_modal' class="modal_dialog hidden block_buttons">
@@ -250,6 +253,17 @@ foreach ($stmt as $rs) {
     </div>
     <div class="dz-message"><span>NOTE: You can drop a photo here to upload instead</span></div>
   </form>
+</div>
+
+    
+<div id='advanced_modal' class="modal_dialog hidden block_buttons">
+  <input type="submit" value="Check-In All" data-enhanced="true"
+    onclick="check_in_all(true);"/>
+  <input type="submit" value="Check-In None" data-enhanced="true"
+    onclick="check_in_all(false);"/>
+  <br/>
+  <input type="button" value="Cancel" data-enhanced="true"
+    onclick='close_modal("#advanced_modal");'/>
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>

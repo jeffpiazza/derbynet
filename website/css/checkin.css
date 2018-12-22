@@ -31,6 +31,12 @@ tr.d0 td {
     margin-right: auto;
 }
 
+.block_buttons input.advanced_button {
+  position: absolute;
+  right: 3px;
+  margin-top: 0px;
+}
+
 .centered_flipswitch {
     width: 143px;
     margin-left: auto;

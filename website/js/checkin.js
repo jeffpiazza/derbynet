@@ -182,6 +182,25 @@ function handle_edit_racer() {
            });
 }
 
+
+function show_advanced_form() {
+  show_modal("#advanced_modal", function(event) {
+      return false;
+  });
+}
+
+function check_in_all(value) {
+  close_modal("#advanced_modal");
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'racer.pass',
+                 racer: 'all',
+                 value: value ? 1 : 0},
+
+          // TODO failure?
+         });
+}
+
 function disable_preview(msg) {
   $("#preview").html('<h2>Webcam Disabled</h2>')
     .append('<p></p>')
