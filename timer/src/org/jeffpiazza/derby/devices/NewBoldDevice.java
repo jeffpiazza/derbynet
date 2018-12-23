@@ -88,17 +88,23 @@ public class NewBoldDevice extends TimerDeviceBase {
         if (m.find()) {
           int lane = Integer.parseInt(m.group(1));
           String time = m.group(2);
-          TimerDeviceUtils.addOneLaneResult(lane, time, nresults, results);
+          if (lane != 0) {
+            // For DNF lanes, DerbyStick reports lane 0 and 0.0000 result.
+            TimerDeviceUtils.addOneLaneResult(lane, time, nresults, results);
+            portWrapper.logWriter().traceInternal(
+                "Lane " + lane + ": " + time + " seconds");
+          } else {
+            portWrapper.logWriter().traceInternal("DNF result");
+          }
           nresults++;
           line = m.group(3).trim();
-          portWrapper.logWriter().traceInternal(
-              "Lane " + lane + ": " + m.group(2) + " seconds");
         } else {
           portWrapper.logWriter().traceInternal(
               "* Unrecognized: [[" + line + "]]");
           break;
         }
       }
+      // If there are only DNFs, then the race is
       if (nresults > 0) {
         invokeRaceFinishedCallback(roundid, heat,
                                    (Message.LaneResult[]) results.toArray(
