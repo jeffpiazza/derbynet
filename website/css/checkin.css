@@ -107,6 +107,10 @@ tr.exclude-racer td.checkin-status {
   background-repeat: no-repeat;
 }
 
+#delete_racer_extension {
+    padding-top: 40px;
+}
+
 img.checkin-photo {
     max-height: 60px;
     max-width: 60px;

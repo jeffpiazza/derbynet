@@ -89,6 +89,8 @@ function show_edit_racer_form(racerid) {
   $("#eligible").prop("checked", $('#lastname-' + racerid).attr("data-exclude") == 0);
   $("#eligible").trigger("change", true);
 
+  $("#delete_racer_extension").removeClass('hidden');
+
   show_modal("#edit_racer_modal", function(event) {
       handle_edit_racer();
       return false;
@@ -111,6 +113,8 @@ function show_new_racer_form() {
   $("#eligible").prop("checked", true);
   $("#eligible").trigger("change", true);
 
+  $("#delete_racer_extension").addClass('hidden');
+  
   show_modal("#edit_racer_modal", function(event) {
       handle_edit_racer();
       return false;
@@ -180,6 +184,26 @@ function handle_edit_racer() {
                 sort_checkin_table();
             },
            });
+}
+
+function handle_delete_racer() {
+  close_modal("#edit_racer_modal");
+
+  var racerid = $("#edit_racer").val();
+
+  var first_name = $('#firstname-' + racerid).text();
+  var last_name = $('#lastname-' + racerid).text();
+  var car_no = $('#car-number-' + racerid).text();
+
+  if (confirm("Really delete car #" + car_no + ": " + first_name + " " + last_name + "?")) {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'racer.delete',
+                   racer: racerid}
+           });
+  }
+
+  return false;
 }
 
 

@@ -233,6 +233,11 @@ foreach ($stmt as $rs) {
   <input type="button" value="Cancel" data-enhanced="true"
     onclick='close_modal("#edit_racer_modal");'/>
 
+  <div id="delete_racer_extension">
+    <input type="button" value="Delete Racer"
+           class="delete_button" data-enhanced="true"
+           onclick="handle_delete_racer();"/>
+  </div>
 </form>
 </div>
 

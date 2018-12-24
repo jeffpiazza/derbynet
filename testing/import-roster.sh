@@ -6,6 +6,9 @@ source `dirname $0`/common.sh
 
 # Data produced by: http://listofrandomnames.com
 
+# racerid's are assigned in order, starting with 1 (assuming an empty database).
+# The car numbers in this data set are constructed so that car number mod 100 gives the racerid.
+
 curl_post action.php "action=racer.import&firstname=Adolfo \"Dolf\"&lastname=Asher&classname=Lions %26 Tigers&carnumber=101" | check_success
 curl_post action.php "action=racer.import&firstname=Angelo&lastname=Alas&classname=White's Wolves&carnumber=202" | check_success
 curl_post action.php "action=racer.import&firstname=Antoine&lastname=Akiyama&classname=Bears%20and%20Fr%C3%A8res&carnumber=303" | check_success
@@ -93,6 +96,13 @@ curl_post action.php "action=racer.import&firstname=Vincent&lastname=Vinci&class
 curl_post action.php "action=racer.import&firstname=Weston&lastname=Whigham&classname=Arrows %3C%3C--%3C%3C&carnumber=480" | check_success
 curl_post action.php "action=racer.import&firstname=Willard&lastname=Wile&classname=Lions %26 Tigers&carnumber=181" | check_success
 curl_post action.php "action=racer.import&firstname=Willard&lastname=Woolfolk&classname=White's Wolves&carnumber=282" | check_success
+
+# Import one last entry and then immediately delete
+curl_post action.php "action=racer.import&firstname=Soon&lastname=ToGo&classname=White's Wolves&carnumber=283" | check_success
+
+curl_get "action.php?query=racer.list" | expect_one 'ToGo'
+curl_post action.php "action=racer.delete&racer=83" | check_success
+curl_get "action.php?query=racer.list" | expect_count 'ToGo' 0
 
 curl_post action.php "action=racer.bulk&what=number&who=c4&start=501&renumber=1" | check_success
 

@@ -16,6 +16,9 @@ curl_post action.php "action=schedule.generate&roundid=1" | check_success
 curl_post action.php "action=schedule.generate&roundid=2" | check_success
 curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
+# Can't delete a racer who's in a schedule
+curl_post action.php "action=racer.delete&racer=21" | check_failure
+
 ### Racing for roundid=1: 5 heats
 curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
 
