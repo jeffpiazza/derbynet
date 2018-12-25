@@ -52,10 +52,16 @@ if (isset($db) && $db) {
 $initial_details = build_setup_page_details();
 
 $ez_configs = list_standard_configs(default_database_directory());
+
+if (defined('JSON_PARTIAL_OUTPUT_ON_ERROR')) {
+  $initial_details = json_encode($initial_details, JSON_PARTIAL_OUTPUT_ON_ERROR);
+} else {
+  $initial_details = json_encode($initial_details);
+}
 ?>
 <script type="text/javascript">
 //<![CDATA[
-$(function() { populate_details(<?php echo json_encode($initial_details, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>); });
+$(function() { populate_details(<?php echo $initial_details; ?>); });
 //]]>
 </script>
 
