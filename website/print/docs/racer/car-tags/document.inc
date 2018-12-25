@@ -11,7 +11,8 @@ class CarTagsDocument extends PrintableRacerDocument {
 
   function get_available_options() {
     return array('rank_image' => array('type' => 'bool',
-                                       'desc' => 'Draw icon for rank',
+                                       'desc' => 'Draw icon for rank'
+                                               .' (based on car number, 100-199=Tiger, etc.)',
                                        'default' => true));
   }
   

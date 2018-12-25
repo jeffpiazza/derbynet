@@ -130,7 +130,7 @@ if (have_permission(SET_UP_PERMISSION)) {
           }
         }
         echo '  <table-summary rows-received="'.$row_count.'" rows-inserted="'.$insertion_count.'"'
-            .' columns-updated="'.$difference_count.'"/>'."\n";
+            .' rows-updated="'.$difference_count.'"/>'."\n";
         echo "</table>\n";
       }
     }
