@@ -1,4 +1,7 @@
 #! /bin/bash
+#
+# This exercises the rescheduler extensively.  It's not part of the regular test
+# suite.
 
 BASE_URL=$1
 shift
@@ -7,7 +10,6 @@ shift
 
 set -e -E -o pipefail
 source `dirname $0`/common.sh
-
 
 
 user_login_coordinator
@@ -75,7 +77,7 @@ function test_with_completions() {
     cleanup
 }
 
-if false ; then
+if true ; then
     for NRACERS in $(seq 2 5) ; do
         for NLANES in $(seq 2 6) ; do
             setup_schedule $NLANES $NRACERS
@@ -105,7 +107,5 @@ if false ; then
     test_with_completions 4 3
     test_with_completions 4 4
 
-    # How does car 5 end up alone in the last heat?  With empty $skip_lanes,
-    # how does 102 swap in for 5 but create a new heat?
     test_with_completions 5 4
 fi

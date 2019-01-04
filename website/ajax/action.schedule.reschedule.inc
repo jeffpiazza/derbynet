@@ -1,15 +1,22 @@
 <?php
 // $_POST['roundid']
 
+// TODO Strongly assumes 1 run per car per lane.  Enforce this constraint if it
+// can't be removed.
+
 // TODO intval(read_raceinfo('unused-lane-mask', 0)) -- apply when reading or
 // writing to the database; continue to use a "dense" race_chart.
 
 // TODO score of 0 for injections that create an extra heat when none is really
 // needed.  (Esp. k racers with k-1 heats.)
 
+// TODO master schedule
+
+require_once('inc/schedule_generate.inc');
+
 define('DEBUG', true);
-define('DEBUG_SEARCH', false);
-define('DEBUG_SCORING', false);
+define('DEBUG_SEARCH', true);
+define('DEBUG_SCORING', true);
 
 class ScheduleAdjuster {
   private $roundid;
@@ -54,6 +61,15 @@ class ScheduleAdjuster {
     $this->nlanes = get_lane_count();
     $this->compute_completed_heats();
     $this->reload_from_database();
+  }
+
+  public function number_of_completed_heats() {
+    return count($this->completed_heats);
+  }
+
+  public function number_of_usable_lanes() {
+    // TODO lane mask
+    return $this->nlanes;
   }
 
   private function reload_from_database() {
@@ -354,8 +370,10 @@ class ScheduleAdjuster {
             !in_array($heat, $proposal, true)) {
           $racer = $this->race_chart[$heat][$lane];
           // We have to make sure we don't have the same car showing up twice in
-          // the new heat.
-          if ($racer === null || !in_array($racer, $proposed_new_heat)) {
+          // the new heat.  There isn't supposed to be a new heat if
+          // count($skip_lanes) == 0.
+          if ($racer === null ||
+              (count($skip_lanes) > 0 && !in_array($racer, $proposed_new_heat))) {
             $proposal[$lane] = $heat;
             $proposed_new_heat[$lane] = $racer;
             $this->generate_injection_proposals_recur($lane + 1, $skip_lanes,
@@ -365,58 +383,6 @@ class ScheduleAdjuster {
           }
         }
       }
-    }
-  }
-
-  // TODO clean this up
-  private function old_apply_proposal(&$proposal, &$skip_lanes, $new_racer) {
-    global $db;
-    $stmt = $db->prepare('UPDATE RaceChart SET racerid = :racerid'
-                         .' WHERE roundid = :roundid'
-                         .' AND heat = :heat'
-                         .' AND lane = :lane');
-    // Replace existing racers in the proposal with the new racer
-    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-      if (!in_array($lane, $skip_lanes, true)) {
-        $stmt->execute(array(':racerid' => $new_racer,
-                             ':roundid' => $this->roundid,
-                             ':heat' => $proposal[$lane] + 1,
-                             ':lane' => $this->lane_number($lane)));
-      }
-    }
-
-    $stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
-                         .' VALUES(:roundid, :heat, :lane, :racerid)');
-
-    // Replace byes in the proposal with the new racer, by inserting RaceChart entries
-    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-      if ($proposal[$lane] !== null &&
-          $this->race_chart[$proposal[$lane]][$lane] === null &&
-          !in_array($lane, $skip_lanes, true)) {
-        $stmt->execute(array(':racerid' => $new_racer,
-                             ':roundid' => $this->roundid,
-                             ':heat' => $proposal[$lane] + 1,
-                             ':lane' => $this->lane_number($lane)));
-
-      }
-    }
-
-    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-      if ($this->race_chart[$proposal[$lane]][$lane] !== null &&
-          !in_array($lane, $skip_lanes, true)) {
-        $stmt->execute(array(':racerid' => $this->race_chart[$proposal[$lane]][$lane],
-                             ':roundid' => $this->roundid,
-                             ':heat' => $this->nheats + 1,
-                             ':lane' => $this->lane_number($lane)));
-      }
-    }
-    
-    for ($skip_i = 0; $skip_i < count($skip_lanes); ++$skip_i) {
-      $lane = $skip_lanes[$skip_i];
-      $stmt->execute(array(':racerid' => $new_racer,
-                           ':roundid' => $this->roundid,
-                           ':heat' => $this->nheats + $skip_i + 1,
-                           ':lane' => $this->lane_number($lane)));
     }
   }
 
@@ -530,9 +496,25 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     $ok = false;
   }
   
-  // TODO if adjuster has no committed heats, then just drop the schedule and redo
+  if ($adjuster->number_of_completed_heats() == 0) {
+    echo "<regenerating/>\n";
+    read_single_row('DELETE FROM RaceChart WHERE roundid = :roundid',
+                    array(':roundid' => $roundid));
+
+	if (schedule_one_round($roundid, $adjuster->number_of_usable_lanes(),
+                           /* nrounds */ 1)) {
+      echo "<success/>\n";
+    } else {
+      echo '<failure code="too-few-racers">'
+      .'There need to be at least two racers checked in'
+      .' to generate a schedule.'
+      .'</failure>'."\n";
+    }
+
+    $ok = false;
+  }
   
-  if (count($deleted) > 0) {
+  if ($ok && count($deleted) > 0) {
     echo "<failure code='deleted'>Not yet implemented: deleted racers</failure>\n";
     $ok = false;
   }
