@@ -108,6 +108,9 @@ foreach ($doc_classes as $c => $details) {
         echo " checked='checked'";
       }
       echo "/><label for='".$ctrl_name."'>".$opt_data['desc']."</label><br/>\n";
+    } else if ($opt_data['type'] == 'int') {
+      echo "<input type='number' name='".$ctrl_name."' value='".$opt_data['default']."'/>";
+      echo "<label for='".$ctrl_name."'>".$opt_data['desc']."</label><br/>\n";
     } else if ($opt_data['type'] == 'string') {
       echo "<label for='".$ctrl_name."'>".$opt_data['desc']."</label>";
       echo "<input type='text' name='".$ctrl_name."' value='".$opt_data['default']."' class='param-string'/><br/>\n";

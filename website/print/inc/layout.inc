@@ -14,6 +14,8 @@
 // coordinates for the top left corner of successive documents.  NextTopLeft
 // takes care of allocating physical pages in the pdf, as needed.
 class DocumentLayout {
+  // The layout's constructor takes an fpdf object, plus the dimensions of a
+  // single document we're rendering on that page.
   function __construct($pdf, $doc_width, $doc_height) {
     $this->pdf = $pdf;
     $this->doc_width = $doc_width;
@@ -32,15 +34,20 @@ class DocumentLayout {
   }
 
   protected function CalculateMargins() {
+    $horizontal_gap = $this->alloc_width - $this->doc_width;
+    // printed width accounts for n_per_row documents and n_per_row - 1 gaps.
+    $printed_width = $this->n_per_row * $this->alloc_width - $horizontal_gap;
+    $this->left_margin = ($this->pdf->GetPageWidth() - $printed_width) / 2;
+
     $n_per_column = $this->n_up / $this->n_per_row;
-    $this->left_margin = (($this->pdf->GetPageWidth() - $this->n_per_row * $this->alloc_width)
-                          + ($this->alloc_width - $this->doc_width)) / 2;
-    $this->top_margin = (($this->pdf->GetPageHeight() - $n_per_column * $this->alloc_height)
-                         + ($this->alloc_height - $this->doc_height)) / 2;
+    $vertical_gap = $this->alloc_height - $this->doc_height;
+    $printed_height = $n_per_column * $this->alloc_height - $vertical_gap;
+    $this->top_margin = ($this->pdf->GetPageHeight() - $printed_height) / 2;
   }
   
   protected $pdf;
 
+  // Dimensions of a single document on the page.
   protected $doc_width;
   protected $doc_height;
 
@@ -60,15 +67,50 @@ class DocumentLayout {
 
   protected $count;
 
-  // Do we need these?  In some cases, shrinking the gaps (to zero) may make it
-  // easier to cut out documents.
   public function SetHorizontalGap($gap) {
     $this->alloc_width = $this->doc_width + $gap;
     $this->CalculateMargins();
   }
+
   public function SetVerticalGap($gap) {
     $this->alloc_height = $this->doc_height + $gap;
     $this->CalculateMargins();
+  }
+
+  public function SetLeftMargin($left) {
+    $this->left_margin = $left;
+
+    $n_per_column = $this->n_up / $this->n_per_row;  // Must be an int
+
+    $printable_width = $this->pdf->GetPageWidth() - 2 * $left;
+    $this->n_per_row = floor($printable_width / $this->doc_width);
+    $gap = ($printable_width - $this->n_per_row * $this->doc_width)
+        / ($this->n_per_row - 1);
+    $this->alloc_width = $this->doc_width + $gap;
+
+    $this->n_up = $this->n_per_row * $n_per_column;
+  }
+
+  public function SetTopMargin($top) {
+    $this->top_margin = $top;
+
+    $printable_height = $this->pdf->GetPageHeight() - 2 * $top;
+    $n_per_column = floor($printable_height / $this->doc_height);
+    $gap = ($printable_height - $n_per_column * $this->doc_height) / ($n_per_column - 1);
+    $this->alloc_height = $this->doc_height + $gap;
+
+    $this->n_up = $this->n_per_row * $n_per_column;
+  }
+
+  // For diagnosing layout problems
+  public function GetParameters() {
+    return array('alloc' => array('width' => $this->alloc_width,
+                                  'height' => $this->alloc_height),
+                 'margins' => array('left' => $this->left_margin,
+                                    'top' => $this->top_margin),
+                 'gap' => array('h' => $this->alloc_width - $this->doc_width,
+                                'v' => $this->alloc_height - $this->doc_height),
+                  );
   }
 
   // Returns array{ x=>, y=> } of top left corner coordinators for the next document

@@ -24,6 +24,8 @@ function print_selected() {
     var control = $("input[name^='" + doc_class + "-" + opt + "']");
     if (opt_data.type == 'bool') {
       options[opt] = control.is(':checked');
+    } else if (opt_data.type == 'int') {
+      options[opt] = parseInt(control.val());
     } else if (opt_data.type == 'string') {
       options[opt] = control.val();
     } else {

@@ -41,11 +41,11 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
 
   $doc = new_document();
 
-  $doc->StartDocument();
-
   if (isset($_GET['options'])) {
     $doc->set_options(json_decode($_GET['options'], true));
   }
+
+  $doc->StartDocument();
 
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
