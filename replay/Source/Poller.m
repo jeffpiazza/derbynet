@@ -34,8 +34,7 @@
             urlString = [urlString stringByAppendingString: @"/"];
         }
         urlString = [urlString stringByAppendingString: @"action.php"];
-    }
-    url = [NSURL URLWithString:urlString];
+    }    url = [NSURL URLWithString:urlString];
     [self poll];
 }
 

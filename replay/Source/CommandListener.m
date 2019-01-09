@@ -49,8 +49,9 @@
             @try {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                succeeded = [[self performSelector:NSSelectorFromString(selector)
-                                        withObject:scanner] boolValue];
+                SEL sel = NSSelectorFromString(selector);
+                id result = [self performSelector:sel withObject:scanner];
+                succeeded = [result boolValue];
 #pragma clang diagnostic pop
             }
             @catch (NSException * e) {
@@ -63,41 +64,41 @@
     }
 }
 
-- (BOOL) docommand_hello: (NSScanner*) scanner
+- (NSNumber*) docommand_hello: (NSScanner*) scanner
 {
     [[self appDelegate] setStatusMessage:@"Poller connected"];
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 
 // TEST <skipback_seconds> <repeat> <rate>
 // Plays the "film leader" clip built in to the app
-- (BOOL) docommand_test: (NSScanner*) scanner
+- (NSNumber*) docommand_test: (NSScanner*) scanner
 {
     int num_secs;
-    if (![scanner scanInt: &num_secs]) return NO;
+    if (![scanner scanInt: &num_secs]) return [NSNumber numberWithBool: NO];
     int num_times;
-    if (![scanner scanInt: &num_times]) return NO;
+    if (![scanner scanInt: &num_times]) return [NSNumber numberWithBool: NO];
     float rate;
-    if (![scanner scanFloat:&rate]) return NO;
+    if (![scanner scanFloat:&rate]) return [NSNumber numberWithBool: NO];
     
     NSLog(@"docommand_test num_secs=%i, num_times=%i, rate=%f", num_secs, num_times, rate);  // TODO
     
     // doPlaybackOf opens the asset file and does the rest asynchronously
     [[self appDelegate] doPlaybackOf: [[NSBundle mainBundle] URLForResource:@"FilmLeader" withExtension:@"mp4"]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 
 // DEMO <skipback_seconds> <repeat> <rate>
 // Plays DEMO.mov from the current recording folder.  This is for demonstrating the operation of the app.
-- (BOOL) docommand_demo: (NSScanner*) scanner
+- (NSNumber*) docommand_demo: (NSScanner*) scanner
 {
     int num_secs;
-    if (![scanner scanInt: &num_secs]) return NO;
+    if (![scanner scanInt: &num_secs]) return [NSNumber numberWithBool: NO];
     int num_times;
-    if (![scanner scanInt: &num_times]) return NO;
+    if (![scanner scanInt: &num_times]) return [NSNumber numberWithBool: NO];
     float rate;
-    if (![scanner scanFloat:&rate]) return NO;
+    if (![scanner scanFloat:&rate]) return [NSNumber numberWithBool: NO];
 
     NSLog(@"docommand_demo num_secs=%i, num_times=%i, rate=%f", num_secs, num_times, rate);  // TODO
     
@@ -107,46 +108,46 @@
     NSLog(@"Demo movie file: %@", [directory URLByAppendingPathComponent:@"Demo.m4v"]);
     [[self appDelegate] doPlaybackOf: [directory URLByAppendingPathComponent:@"Demo.m4v"]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 
 // "START video_name_root  -- start recording video"
-- (BOOL) docommand_start: (NSScanner*) scanner
+- (NSNumber*) docommand_start: (NSScanner*) scanner
 {
     // We want to consume all of the rest of the line as the filename root.  There's no "empty" character set, but this is close enough.
     [scanner setCharactersToBeSkipped:[NSCharacterSet illegalCharacterSet]];
     NSString* filename = NULL;
-    if (![scanner scanUpToCharactersFromSet:[NSCharacterSet illegalCharacterSet] intoString:&filename]) return NO;
+    if (![scanner scanUpToCharactersFromSet:[NSCharacterSet illegalCharacterSet] intoString:&filename]) return [NSNumber numberWithBool: NO];
 
     [[self appDelegate] setMovieFileName:[filename stringByTrimmingCharactersInSet:
                                           [NSCharacterSet whitespaceCharacterSet]]];
 
     [[self appDelegate] startRecording];
 
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 
 // "CANCEL  -- cancel recording"
-- (BOOL) docommand_cancel: (NSScanner*) scanner
+- (NSNumber*) docommand_cancel: (NSScanner*) scanner
 {
     [[self appDelegate] cancelRecording];
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 
 // "REPLAY skipback showings rate  -- stop recording if recording; playback"
-- (BOOL) docommand_replay: (NSScanner*) scanner
+- (NSNumber*) docommand_replay: (NSScanner*) scanner
 {
     int num_secs;
-    if (![scanner scanInt: &num_secs]) return NO;
+    if (![scanner scanInt: &num_secs]) return [NSNumber numberWithBool: NO];
     int num_times;
-    if (![scanner scanInt: &num_times]) return NO;
+    if (![scanner scanInt: &num_times]) return [NSNumber numberWithBool: NO];
     float rate;
-    if (![scanner scanFloat:&rate]) return NO;
+    if (![scanner scanFloat:&rate]) return [NSNumber numberWithBool: NO];
     
     [[self appDelegate] cancelRecording];
 
     [[self appDelegate] doPlaybackOf: [[self appDelegate] moviePath]
                             skipback: num_secs duration: num_secs showings: num_times rate: rate];
-    return YES;
+    return [NSNumber numberWithBool: YES];
 }
 @end
