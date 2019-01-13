@@ -51,20 +51,8 @@ function pass_racer($racerid, $value) {
 
 start_response();
 
-if ($racerid == 'all') {
-  $maxid = read_single_value('SELECT MAX(racerid) FROM RegistrationInfo');
-  $ok_so_far = true;
-  for ($i = 1; $i <= $maxid && $ok_so_far; ++$i) {
-    $ok_so_far = pass_racer($i, $value);
-  }
-  if ($ok_so_far) {
-    echo "<success/>\n";
-  }
-  echo "<reload/>\n";
-} else {
-  if (pass_racer($racerid, $value)) {
-    echo "<success/>\n";
-  }
+if (pass_racer($racerid, $value)) {
+  echo "<success/>\n";
 }
 
 end_response();
