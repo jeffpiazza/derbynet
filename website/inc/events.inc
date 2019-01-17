@@ -14,25 +14,31 @@ define('EVENT_RACER_PHOTO_ASSIGN', 2);
 // A racer's car photo was assigned (racerid)
 define('EVENT_CAR_PHOTO_ASSIGN', 3);
 
+
 // A racer's heat result was discarded (we record the value that was discarded,
 // in case questions arise later).  (racerid, roundid, heat, lane, other)
 define('EVENT_RESULT_DISCARDED', 100);
+// RaceChart has its own 'completed' timestamp field, and usually that's enough.
+// Only if we discard results do we add a HEAT_COMPLETED event, after the fact,
+// for the heat.  The HEAT_COMPLETED event captures roundid, heat, and tstamp
+// only, the tstamp being for the previous value of the RaceChart 'completed'
+// field.
+define('EVENT_HEAT_COMPLETED', 101);
+define('EVENT_HEAT_MANUALLY_ENTERED', 102);
+
 
 function create_events_table() {
   run_sql_script('events-table');
 }
 
-function record_event($action, $racerid, $other = '') {
+function record_event_sql($sql, $params) {
   global $db;
 
   do {
     $retry = false;
     try {
-      $stmt = $db->prepare('INSERT INTO Events(tstamp, action, racerid, other)'
-                           .' VALUES('.dbnow_expr().', :action, :racerid, :other)');
-      $stmt->execute(array(':action' => $action,
-                           ':racerid' => $racerid,
-                           ':other' => $other));
+      $stmt = $db->prepare($sql);
+      $stmt->execute($params);
     } catch (PDOException $p) {
       if ($p->getCode() == '42S02') {
         create_events_table();
@@ -42,42 +48,36 @@ function record_event($action, $racerid, $other = '') {
       }
     }
   } while ($retry);
+}
+
+function record_event($action, $racerid, $other = '') {
+  record_event_sql('INSERT INTO Events(tstamp, action, racerid, other)'
+                   .' VALUES('.dbnow_expr().', :action, :racerid, :other)',
+                   array(':action' => $action,
+                         ':racerid' => $racerid,
+                         ':other' => $other));
 }
 
 // Call this BEFORE rewriting a heat result
 function record_event_for_discarded_result($resultid) {
-  global $db;
-
-  do {
-    $retry = false;
-    try {
-      $stmt = $db->prepare('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
-                           .' FROM RaceChart'
-                           .' WHERE resultid = :resultid');
-      $stmt->execute(array(':resultid' => $resultid));
-      $row = $stmt->fetch();
-      $stmt->closeCursor();
-      if ($row !== false) {
-        $stmt = $db->prepare('INSERT INTO Events(tstamp, action, racerid, roundid, heat, lane, other)'
-                             .' VALUES('.dbnow_expr().', :action, :racerid, :roundid, :heat, :lane, :other)');
-        $stmt->execute(array(':action' => EVENT_RESULT_DISCARDED,
-                             ':racerid' => $row['racerid'],
-                             ':roundid' => $row['roundid'],
-                             ':heat' => $row['heat'],
-                             ':lane' => $row['lane'],
-                             ':other' => $row['finishtime'].' (finish place '.$row['finishplace'].')'));
-      }
-    } catch (PDOException $p) {
-      if ($p->getCode() == '42S02') {
-        create_events_table();
-        $retry = true;
-      } else {
-        echo $p;
-      }
-    }
-  } while ($retry);
+  $old_result = read_single_row('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
+                                .' FROM RaceChart'
+                                .' WHERE resultid = :resultid',
+                                array(':resultid' => $resultid),
+                                PDO::FETCH_ASSOC);
+  if ($old_result !== false) {
+    record_event_sql('INSERT INTO Events(tstamp, action, racerid, roundid, heat, lane, other)'
+                     .' VALUES('.dbnow_expr().', :action, :racerid, :roundid, :heat, :lane, :other)',
+                     array(':action' => EVENT_RESULT_DISCARDED,
+                           ':racerid' => $old_result['racerid'],
+                           ':roundid' => $old_result['roundid'],
+                           ':heat' => $old_result['heat'],
+                           ':lane' => $old_result['lane'],
+                           ':other' => $old_result['finishtime'].' ('.$old_result['finishplace'].')'));
+  }
 }
-  
+
+
 
 // Returns an array of racer records, in the order in which they had the
 // specified event action recorded

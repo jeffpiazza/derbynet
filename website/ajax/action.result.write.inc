@@ -13,11 +13,11 @@ require_once('inc/events.inc');
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-
   // Capture events for all re-written results
   $current = get_running_round();
   $all_resultids = array();
-  $stmt = $db->prepare('SELECT resultid FROM RaceChart'
+  $completed = '';  // We expect only one distinct 'completed' value
+  $stmt = $db->prepare('SELECT resultid, completed FROM RaceChart'
                        .' WHERE roundid = :roundid AND heat = :heat'
                        .' AND completed IS NOT NULL AND completed != \'\''
                        .' AND finishtime IS NOT NULL AND finishplace IS NOT NULL'
@@ -26,7 +26,17 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
                        ':heat' => $current['heat']));
   foreach ($stmt as $resultid) {
     $all_resultids[] = $resultid['resultid'];
+    $completed = $resultid['completed'];
   }
+  if ($completed) {
+    record_event_sql('INSERT INTO Events(tstamp, action, roundid, heat)'
+                     .' VALUES(:tstamp, :action, :roundid, :heat)',
+                     array(':tstamp' => $completed,
+                           ':action' => EVENT_HEAT_COMPLETED,
+                           ':roundid' => $current['roundid'],
+                           ':heat' => $current['heat']));
+  }
+
   foreach ($all_resultids as $resultid) {
     record_event_for_discarded_result($resultid);
   }
