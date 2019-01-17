@@ -17,6 +17,10 @@ $role = $roles[$name];
 if ($role) {
   if ($password == $role['password']) {
     $_SESSION['permissions'] = $role['permissions'];
+    // Some clients are scripts running from RPi's or similar devices that may
+    // not have an accurate clock.  The timecheck element allows the device to
+    // be set reasonably close to the date.
+    echo "\n<timecheck>".date(DATE_ISO8601)."</timecheck>\n";
     if ($password) {
       $_SESSION['role'] = $name;
 	  echo '<success>'.$_SESSION['role'].'</success>'."\n";

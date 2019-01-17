@@ -26,6 +26,7 @@ announce() {
         idle) ;;
         barcode-read) ;;
         sending) ;;
+        no-network) ;;
         login-ok) ;;
         no-scanner) ;;
         no-camera) ;;
@@ -60,6 +61,13 @@ PHOTO_PASSWORD=flashbulb
 
 # If set to 1, the barcode scan will also check-in the racer
 PHOTO_CHECKIN=0
+
+# Raspberry Pi and similar devices don't keep time while they're unplugged.  For
+# these cases, the derbynet server reports the current time in a login response.
+# If this variable is set, the do_login function will attempt to adjust the
+# system clock to match the server-reported time.
+ADJUST_CLOCK=0
+# ADJUST_CLOCK=1
 
 # Command invoked just before running chdkptp to capture a photo.
 # Override to adjust zoom, etc., if desired
