@@ -8,7 +8,8 @@ import java.util.regex.Matcher;
 
 public class FastTrackDevice extends TimerDeviceCommon {
   public FastTrackDevice(SerialPortWrapper portWrapper) {
-    super(portWrapper, new GateWatcher(portWrapper) {
+    super(portWrapper, null);
+    gateWatcher = new GateWatcher(portWrapper) {
         // Interrogates the starting gate's state.  CAUTION: polling while a
         // race is running may cause the race results, sent asynchronously, to
         // be mixed with the RG response, making them unintelligible.
@@ -24,16 +25,25 @@ public class FastTrackDevice extends TimerDeviceCommon {
               if (s.length() >= 3) {
                 return s.charAt(2) == '1';
               }
-              // K1 timer seems to respond "RG" followed by separate "X" response
+              // K1 timer seems to respond "RG" followed by separate "X"
+              // response, but it doesn't otherwise appear to show the gate
+              // state.
+              // Per Stuart Ferguson (18 Jan 2019):
+              // The "X" indicates that the option is disabled. We will need
+              // the serial number of your timer to generate a code that will
+              // enable this feature.  You can then purchase the unlock code for
+              // $20 at http://microwizard.com/orderform.php
               s = portWrapper.next(deadline);
               if (s != null) {
-                return s.equals("X");
+                if (s.equals("X")) {
+                  setGateStateNotKnowable();
+                }
               }
             }
           }
           throw new NoResponseException();
         }
-      });
+      };
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
@@ -150,11 +160,15 @@ public class FastTrackDevice extends TimerDeviceCommon {
       throws SerialPortException, LostConnectionException {
     if (state == RacingStateMachine.State.RESULTS_OVERDUE) {
       giveUpOnOverdueResults();
-    } else if (state == RacingStateMachine.State.MARK) {
+    } else if (state == RacingStateMachine.State.MARK && gateWatcher != null) {
       // prepareHeat() called; waiting for gate to close.
       // Detecting "gate closed" and getting to SET depends on
       // resetting the laser if a laser start gate; we do that continuously
       // until detecting the gate "closed" (laser hits sensor).
+      //
+      // If the gate state option is disabled, then we don't want to be
+      // continuously resetting the laser gate, because we could receive results
+      // at any instant, and they'd be disrupted by the reset dialog.
       portWrapper.writeAndDrainResponse(RESET_LASER_GATE, 2, 2000);
       checkConnection();
     }

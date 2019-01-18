@@ -47,6 +47,10 @@ public class RacingStateMachine {
   // the start gate's state.  For some timers, though, we never know whether the
   // gate is opened or closed, and so have to modify our behavior accordingly.
   private boolean gate_state_is_knowable;
+  // If the gate state is not knowable, then GATE_OPENED and GATE_CLOSED events
+  // are not expected, and the state machine effectively alternates between IDLE
+  // and MARK states.  GIVING_UP event doesn't happen, either, because it
+  // can arise only from a RESULTS_OVERDUE state.
 
   private TransitionCallback transition_callback;
   private LogWriter logWriter;
@@ -198,5 +202,9 @@ public class RacingStateMachine {
     logWriter.serialPortLogInternal(
         "Unexpected transition: " + currentState + " >--" + e + "--> " + next);
     return next;
+  }
+
+  public void setGateStateNotKnowable() {
+    gate_state_is_knowable = false;
   }
 }

@@ -240,6 +240,10 @@ public abstract class TimerDeviceCommon
                                     RacingStateMachine.State newState)
       throws SerialPortException;
 
+  protected void setGateStateNotKnowable() {
+    rsm.setGateStateNotKnowable();
+    gateWatcher = null;
+  }
   // A reasonably common scenario is this: if the gate opens accidentally
   // after the PREPARE_HEAT, the timer starts but there are no cars to
   // trigger a result.  When that happens, some timers support a "force output"

@@ -6,6 +6,8 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
+
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
 public class DerbyMagicDevice extends TimerDeviceCommon {
