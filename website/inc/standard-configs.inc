@@ -30,6 +30,29 @@ function has_subdirectory($path, $subdirs) {
   return false;
 }
 
+// $lhs and $rhs are expected to be strings of the form {year}/{group}.  Order
+// by decreasing year, increasing group.  Otherwise just compare as strings.
+function compare_by_relpath($lhs_config, $rhs_config) {
+  $lhs_string = $lhs_config['relpath'];
+  $rhs_string = $rhs_config['relpath'];
+  $lhs = explode(DIRECTORY_SEPARATOR, $lhs_string);
+  $rhs = explode(DIRECTORY_SEPARATOR, $rhs_string);
+  $n = count($lhs);
+  if ($n >= 2 && $n == count($rhs)) {
+    if ($lhs[$n - 2] == $rhs[$n - 2]) { // Same year, compare by group name
+      return strcmp($lhs[$n - 1], $rhs[$n - 1]);
+    } else {
+      return -strcmp($lhs[$n - 2], $rhs[$n - 2]);
+    }
+  } else {
+    return strcmp($lhs_string, $rhs_string);
+  }
+}
+
+// Tests whether basepath + relpath represents a standard configuration
+// directory containing a database and folders for racer and car photos.
+// Returns {relpath, database, racers, cars} if a standard configuration; false
+// if not.
 function is_standard_config($basepath, $relpath) {
   $path = /*realpath*/($basepath . DIRECTORY_SEPARATOR . $relpath);
   if (is_dir($path)) {
@@ -81,6 +104,7 @@ function list_standard_configs($basepath) {
       closedir($dh);
     }
   }
+  usort($results, compare_by_relpath);
   return $results;
 }
 
