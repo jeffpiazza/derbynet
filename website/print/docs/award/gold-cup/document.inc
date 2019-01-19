@@ -2,8 +2,8 @@
 
 require_once('inc/photo-config.inc');
 
-class SimpleAwardDocument extends PrintableAwardDocument {
-  function name() { return "Simple Award Certificate"; }
+class GoldCupAwardDocument extends PrintableAwardDocument {
+  function name() { return "Gold Cup Award Certificate"; }
   function get_available_options() {
     return array(
       'event_title' => array('type' => 'string',
@@ -23,9 +23,21 @@ class SimpleAwardDocument extends PrintableAwardDocument {
 
   function StartDocument() {
     $this->initialize_pdf('L', 'in', 'Letter');
-    $this->initialize_layout(10.0, 7.5);
+    $this->initialize_layout(11.0, 8.5);
   }
 
+  protected function DrawUnderlay($x, $y, $w, $h) {
+    $this->pdf->SetAlpha(0.75);
+    $this->pdf->SetFillColor(255, 255, 255);
+    $this->pdf->RoundedRect($x, $y, $w, $h, 0.125, 'F');
+    $this->pdf->SetAlpha(1);
+  }
+
+  // Horizontally-centered underlay
+  protected function DrawCenteredUnderlay($cx, $y, $w, $h) {
+    $this->DrawUnderlay($cx - $w / 2, $y, $w, $h);
+  }
+  
   // $award argument contains these keys:
   //
   // awardid
@@ -43,29 +55,30 @@ class SimpleAwardDocument extends PrintableAwardDocument {
 
     $this->pdf->AddFont('BlackChancery', '', 'black-chancery.php');
 
-    $this->pdf->SetLineWidth(0.05);
-    $this->pdf->SetDrawColor(2, 56, 130);  // blue
-    $this->pdf->RoundedRect($left + 0.125, $top + 0.125, 9.75, 7.25, 0.125);
-    $this->pdf->RoundedRect($left, $top, 10.0, 7.5, 0.25);
-    $this->pdf->SetDrawColor(247, 209, 23);  // gold
-    $this->pdf->RoundedRect($left + 0.0625, $top + 0.0625, 9.875, 7.375, 0.1875);
-
-    $this->pdf->Image(dirname(__FILE__).'/rachel-davis-logo.png',
-                      $cx - 3.0/2, $top + 0.200, 3.0);
+    $this->pdf->Image(dirname(__FILE__).'/gold-cup-certificate.png',
+                      $left, $top, $params['width']);
 
     $this->pdf->SetFont('BlackChancery', '', 30);
 
     // Award name
+    $award_name_width = $this->pdf->GetStringWidth($award['awardname']);
+    $this->DrawCenteredUnderlay($cx, $top + 2.0, $award_name_width + 1.0, 0.75);
     $this->pdf->CenteredSequence($cx, $top + 2.5, array($award['awardname']));
 
+    $this->pdf->SetLineWidth(0.01);
     // Recipient
     if (isset($award['firstname'])) {
       $this->pdf->SetFont('BlackChancery', '', 50);
-      $this->pdf->CenteredSequence($cx, $cy, array($award['firstname'].' '.$award['lastname']));
+      $recip = $award['firstname'].' '.$award['lastname'];
+      $recip_width = $this->pdf->GetStringWidth($recip);
+      $recip_width += 1.0;
+      $this->DrawCenteredUnderlay($cx, $cy - 0.5, $recip_width, 1.0);
+      $this->pdf->CenteredSequence($cx, $cy, array($recip));
     } else {
-      $this->pdf->SetLineWidth(0.01);
       $this->pdf->SetDrawColor(0);
-      $this->pdf->Line($cx - 3.0, $cy, $cx + 3.0, $cy);
+      $recip_width = 6.0;
+      $this->DrawCenteredUnderlay($cx, $cy - 0.75, $recip_width + 1.0, 1.0);
+      $this->pdf->Line($cx - $recip_width / 2, $cy, $cx + $recip_width / 2, $cy);
     }
 
     $this->pdf->SetFont('Times', '', 15);
@@ -74,11 +87,11 @@ class SimpleAwardDocument extends PrintableAwardDocument {
 
     // Signature lines:
     $sig_width = 3.0;   // Length of each signature line
-    $sig_margin = 0.1875;  // Margin from signature line to the nearest horizontal edge
+    $sig_margin = 0.85;  // Margin from signature line to the nearest horizontal edge
     
     if ($this->get_option('signatory1')) {
-      $this->pdf->CenteredSequence($left + $sig_margin + $sig_width / 2, $top + 6.0,
-                                   array($this->get_option('signatory1')));
+      $this->pdf->CenteredSequence($left + $sig_margin + $sig_width / 2,
+                                   $top + 6.0, array($this->get_option('signatory1')));
       $this->pdf->Line($left + $sig_margin, $top + 6.5,
                        $left + $sig_margin + $sig_width, $top + 6.5);
     }
@@ -91,8 +104,8 @@ class SimpleAwardDocument extends PrintableAwardDocument {
 
     // Event Title
     if ($this->get_option('event_title')) {
-      $this->pdf->SetFont('Helvetica', '', 16);
-      $this->pdf->CenteredSequence($cx, $top + 7.2, array($this->get_option('event_title')));
+      $this->pdf->SetFont('Helvetica', '', 20);
+      $this->pdf->CenteredSequence($cx, $top + 7.5, array($this->get_option('event_title')));
     }
   }
 }

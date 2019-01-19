@@ -104,7 +104,9 @@ class DocumentLayout {
 
   // For diagnosing layout problems
   public function GetParameters() {
-    return array('alloc' => array('width' => $this->alloc_width,
+    return array('doc' => array('width' => $this->doc_width,
+                                'height' => $this->doc_height),
+                 'alloc' => array('width' => $this->alloc_width,
                                   'height' => $this->alloc_height),
                  'margins' => array('left' => $this->left_margin,
                                     'top' => $this->top_margin),
