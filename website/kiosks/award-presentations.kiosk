@@ -12,6 +12,10 @@
 </head>
 <body>
 <div class="award-background">
+  <video class="confetti"muted="true" loop="true">
+    <source src="confetti.webm" type="video/webm"/>
+    <source src="confetti.mov" type="video/quicktime"/>
+  </video>
   <div class="award-trophy" id="awardname"></div>
 
   <div class="reveal" id="award-racer-text">
