@@ -24,16 +24,12 @@ cleanup() {
 }
 trap cleanup 2 3 6
 
-CUR_DIR="`pwd`"
-PHOTO_DIR="$CUR_DIR/photos-`date +%Y-%m-%d`"
-mkdir "$PHOTO_DIR" >/dev/null 2>&1
-
 rm uploads.log > /dev/null 2>&1
 rm checkins.log > /dev/null 2>&1
 
 BARCODE_SCANNER_DEV=/dev/input/by-id/usb-13ba_Barcode_Reader-event-kbd
 
-# Depends on $PHOTO_DIR being defined.
+# Depends on $PHOTO_DIR being defined when executed.
 loop_to_capture_tethered() {
     HOOK_SCRIPT="`mktemp`"
     cat <<EOF >"$HOOK_SCRIPT"
@@ -71,6 +67,8 @@ EOF
 }
 
 do_login
+
+define_photo_directory
 
 check_scanner
 

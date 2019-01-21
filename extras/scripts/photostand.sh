@@ -40,6 +40,8 @@ killall_gvfs_volume_monitor
 
 do_login
 
+define_photo_directory
+
 check_scanner
 
 check_camera

@@ -71,6 +71,14 @@ do_login() {
     announce login-ok
 }
 
+# This should follow the do_login if we want the login's ADJUST_CLOCK behavior
+# to affect the choice of photo directory.
+define_photo_directory() {
+    CUR_DIR="`pwd`"
+    test -z "$PHOTO_DIR" && PHOTO_DIR="$CUR_DIR/photos-`date '+%Y-%m-%d'`"
+    test ! -d "$PHOTO_DIR" && mkdir "$PHOTO_DIR"
+}
+
 # Verifies that the barcode scanner device is connected; loops until successful.
 #
 # Input from the environment:

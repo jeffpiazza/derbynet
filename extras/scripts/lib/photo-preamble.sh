@@ -86,10 +86,6 @@ test -n "$1" && DERBYNET_SERVER="$1"
 
 test -z "$DERBYNET_SERVER" && echo "No server specified" && exit 1
 
-CUR_DIR="`pwd`"
-test -z "$PHOTO_DIR" && PHOTO_DIR="$CUR_DIR/photos-`date '+%Y-%m-%d'`"
-test ! -d "$PHOTO_DIR" && mkdir "$PHOTO_DIR"
-
 COOKIES=`mktemp`
 
 # Ignore error failures
