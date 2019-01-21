@@ -92,7 +92,8 @@ function populateContentTable(sheetname) {
 
   var sheet = g_workbook.Sheets[sheetname];
 
-  var arrays = XLSX.utils.sheet_to_json(sheet, {header: 1});
+  var default_value = "default-value-hopefully-unlikely-to-occur-in-a-real-spreadsheet";
+  var arrays = XLSX.utils.sheet_to_json(sheet, {header: 1, defval: default_value});
 
   var first = true;
   for (var row in arrays) {
@@ -108,11 +109,8 @@ function populateContentTable(sheetname) {
     var table_row = $('<tr/>').attr("data-row", 1 + parseInt(row)).appendTo(csv_content);
     if (first) {
       table_row.addClass("header_row");
-    }
-
-    // First column shows the outcome of each row's upload attempt.
-    // First row also includes flipswitch for header row.
-    if (first) {
+      // First column shows the outcome of each row's upload attempt.
+      // First row also includes flipswitch for header row.
       $('<th/>').append(
         '<label for="header-row-present">Header row?</label>',
         '<input type="checkbox" name="header-row-present" id="header-row-present"' +
@@ -124,6 +122,7 @@ function populateContentTable(sheetname) {
       table_row.append('<th class="outcome"/>');
     }
     for (var item in arrays[row]) {
+      if (arrays[row][item] == default_value) arrays[row][item] = "";
       $('<td class="dim"/>').addClass('column' + item).text(arrays[row][item]).appendTo(table_row);
     }
     first = false;
