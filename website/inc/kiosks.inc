@@ -86,6 +86,7 @@ function kiosk_page($addr) {
         create_kiosk_table();
         $retry = true;
       } else {
+        echo "SQL error code ".$p->getCode()."\n";
         echo $p;
       }
     }
