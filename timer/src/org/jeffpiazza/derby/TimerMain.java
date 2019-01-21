@@ -38,7 +38,10 @@ public class TimerMain {
             "   -min-gate-time <milliseconds>: Ignore gate transitions shorter than <milliseconds>");
     System.err.println(
         "   -d <device name>: Use specified device instead of trying to identify");
+    System.err.println(
+        "   -heat-pace <nsec>: Seconds between heats");
     System.err.println("      Known devices:");
+
     AllDeviceTypes.listDeviceClassNames();
     System.err.
         println("   -simulate-timer: Simulate timer device (for testing)");
@@ -134,6 +137,9 @@ public class TimerMain {
         consumed_args += 2;
       } else if (arg.equals("-d") && has_value) {
         devicename = args[consumed_args + 1];
+        consumed_args += 2;
+      } else if (arg.equals("-heat-pace") && has_value){
+        TimerDeviceCommon.setHeatPaceSeconds(Integer.parseInt(args[consumed_args + 1]));
         consumed_args += 2;
       } else if (arg.equals("-simulate-timer")) {
         simulateTimer = true;

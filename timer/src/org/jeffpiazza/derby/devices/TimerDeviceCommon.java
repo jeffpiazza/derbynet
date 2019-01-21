@@ -16,6 +16,9 @@ public abstract class TimerDeviceCommon
   static public void setMinimumGateTimeMillis(int mgt) {
     minimum_gate_time_millis = mgt;
   }
+  // Issue #63: Pause heat prep so display retains last heat's results for a bit
+  static protected int heat_pace_seconds = 0;
+  static public void setHeatPaceSeconds(int nsec) { heat_pace_seconds = nsec; }
 
   protected RacingStateMachine rsm;
 
@@ -74,10 +77,23 @@ public abstract class TimerDeviceCommon
       return;
     }
 
+    pause(heat_pace_seconds);
     prepare(roundid, heat);
     describeLaneMask(lanemask);
     maskLanes(lanemask);
     rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED);
+  }
+
+  private void pause(int nsec) {
+    try {
+
+      if (nsec <= 0) return;
+
+      String message = "Pausing for " + String.valueOf(nsec) + " seconds";
+      System.out.println(Timestamp.string() + ": " + message);
+      Thread.sleep(nsec * 1000);
+    } catch (Throwable t) {
+    }
   }
 
   // Returns a non-zero lane count: either the actual number of lanes, if known,
