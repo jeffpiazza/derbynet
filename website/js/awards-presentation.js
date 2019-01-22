@@ -83,6 +83,54 @@ function on_clear_awards() {
   $("#kiosk-summary").addClass('hidden');
 }
 
+function parse_award(data) {
+  var award_xml = data.getElementsByTagName('award')[0];
+  if (!award_xml) {
+    return false;
+  }
+  return {key: award_xml.getAttribute('key'),
+          reveal: award_xml.getAttribute('reveal') == 'true',
+          awardname: award_xml.getAttribute('awardname'),
+          carnumber: award_xml.getAttribute('carnumber'),
+          carname: award_xml.getAttribute('carname'),
+          firstname: award_xml.getAttribute('firstname'),
+          lastname: award_xml.getAttribute('lastname'),
+          classname: award_xml.getAttribute('classname'),
+          subgroup: award_xml.getAttribute('subgroup'),
+          headphoto: award_xml.getAttribute('headphoto'),
+          carphoto: award_xml.getAttribute('carphoto')};
+}
+
+function initialize_award_controls() {
+  $.ajax(g_action_url,
+         {type: 'GET',
+          data: {query: 'award.current'},
+          success: function(data) {
+            var award = parse_award(data);
+            if (!award) {
+              return;
+            }
+            $("#awardname").text(award['awardname']);
+            $("#recipient").text(award['firstname'] + ' ' + award['lastname']);
+            $("#carnumber").text('Car number ' + award['carnumber']);
+            $("#carname").text(award['carname']);
+            $("#classname").text(award['classname']);
+            if (award['subgroup'] && award['subgroup'].length > 0) {
+              $("#rankname").text(award['subgroup']);
+            }
+            $(".presenter-inner").removeClass('hidden');
+            $("#kiosk-summary").addClass('hidden');
+            $("#reveal-checkbox").prop('checked', award['reveal']);
+            g_changing_awards = true;
+            try {
+              $("#reveal-checkbox").trigger("change", true);
+            } finally {
+              g_changing_awards = false;
+            }
+          },
+         });
+}
+
 $(function () {
     $("#awardtype-select").on("change", function(event) {
         update_awards_selection();
@@ -93,4 +141,6 @@ $(function () {
   $("input[name='now-presenting'][type='radio']").on("change", function(event) {
     // 'this' will be the now-selected radio element
     AwardRadio.onchange(this); });
+
+  initialize_award_controls();
 });

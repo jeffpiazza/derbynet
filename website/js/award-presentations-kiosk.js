@@ -26,7 +26,6 @@ var AwardPoller = {
     if (!award_xml) {
       return false;
     }
-    console.log("Reveal = " + award_xml.getAttribute('reveal'));
     return {key: award_xml.getAttribute('key'),
             reveal: award_xml.getAttribute('reveal') == 'true',
             awardname: award_xml.getAttribute('awardname'),

@@ -102,15 +102,11 @@ function bin_key($classid, $rankid) {
 }
 
 function get_racer_details($racerid) {
-  // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
-  global $db;
-  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, carname'
-                     .' FROM RegistrationInfo'
-                     .' WHERE racerid = :racerid');
-  $rs->execute(array(':racerid' => $racerid));
-  $row = $rs->fetch(PDO::FETCH_ASSOC);
-  $rs->closeCursor();
-  return $row;
+  return read_single_row('SELECT racerid, carnumber, lastname, firstname, carname'
+                         .' FROM RegistrationInfo'
+                         .' WHERE racerid = :racerid',
+                         array(':racerid' => $racerid),
+                         PDO::FETCH_ASSOC);
 }
 
 function add_speed_group($n, $classid, $rankid, $label, &$standings) {
