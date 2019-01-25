@@ -110,6 +110,8 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
     return 0;
   }
 
+  public String getTimerIdentifier() { return null; }
+
   public void poll() throws SerialPortException, LostConnectionException {
     String line;
     while ((line = portWrapper.nextNoWait()) != null) {

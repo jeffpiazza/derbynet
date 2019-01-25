@@ -63,6 +63,9 @@ public class NewBoldDevice extends TimerDeviceBase {
   }
 
   @Override
+  public String getTimerIdentifier() { return null; }
+
+  @Override
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
     // if (this.roundid == 0 && this.heat == 0) { ... }

@@ -46,6 +46,9 @@ public class SimulatedDevice extends TimerDeviceBase implements TimerDevice {
   }
 
   @Override
+  public String getTimerIdentifier() { return null; }
+
+  @Override
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
     synchronized (this) {

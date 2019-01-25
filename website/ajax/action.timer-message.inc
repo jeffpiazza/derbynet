@@ -11,8 +11,12 @@ require_once('inc/replay.inc');
 // message="HELLO"
 // Initial message from timer controller
 //
-// message="IDENTIFIED"& lane_count=
-// Sent when timer controller discovers timer
+// message="IDENTIFIED" & lane_count= & timer= & ident= & options=
+// Sent when timer controller discovers/identifies the timer.
+// timer= is the Java class name of the TimerDevice class that recognizes the
+//     timer.
+// ident= is the identifier string (if any) from the timer.
+// options= is any extra detail about this particular timer.
 //
 // message="STARTED"
 // Sent when gate opens
@@ -51,6 +55,15 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       // TODO: If the timer disagrees with the user as to lane
       // count, who should prevail?
       write_raceinfo('lane_count', $_POST['lane_count']);
+    }
+    if (isset($_POST['timer'])) {
+      write_raceinfo('timer-type', $_POST['timer']);
+    }
+    if (isset($_POST['ident'])) {
+      write_raceinfo('timer-ident', $_POST['ident']);
+    }
+    if (isset($_POST['options'])) {
+      write_raceinfo('timer-options', $_POST['options']);
     }
     $timer_state->to_state(TIMER_CONNECTED);
     echo "\n  <success/>\n";

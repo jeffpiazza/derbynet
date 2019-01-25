@@ -98,6 +98,7 @@ public class FastTrackDevice extends TimerDeviceCommon {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Micro Wizard") >= 0) {
+        timerIdentifier = s;
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
           // Clean up the timer state and capture some details into the log

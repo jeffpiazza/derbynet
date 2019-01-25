@@ -102,9 +102,9 @@ public class HttpTask implements Runnable {
     }
   }
 
-  public void sendIdentified(int nlanes) {
+  public void sendIdentified(int nlanes, String timer, String identifier) {
     synchronized (queue) {
-      queueMessage(new Message.Identified(nlanes));
+      queueMessage(new Message.Identified(nlanes, timer, identifier));
     }
   }
 

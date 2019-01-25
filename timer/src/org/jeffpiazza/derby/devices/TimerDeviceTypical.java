@@ -23,6 +23,8 @@ public abstract class TimerDeviceTypical
   // Keeps track of last known state of the gate
   protected boolean gateIsClosed;
 
+  protected String timerIdentifier;
+
   protected TimerDeviceTypical(SerialPortWrapper portWrapper) {
     super(portWrapper);
     this.rsm = new RacingStateMachine(this, portWrapper.logWriter());
@@ -52,6 +54,8 @@ public abstract class TimerDeviceTypical
   public int getSafeNumberOfLanes() throws SerialPortException {
     return getNumberOfLanes();
   }
+
+  public String getTimerIdentifier() { return timerIdentifier; }
 
   public String describeLaneMask(int lanemask) throws SerialPortException {
     StringBuilder sb = new StringBuilder("Heat prepared: ");

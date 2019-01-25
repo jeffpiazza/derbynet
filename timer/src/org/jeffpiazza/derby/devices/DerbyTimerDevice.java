@@ -23,6 +23,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
   }
 
   private int laneCount = 0;
+
   // These get initialized upon the start of each new race.
   private int nresults = 0;
   private ArrayList<Message.LaneResult> results;
@@ -57,6 +58,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
         Matcher m = readyNLanesPattern.matcher(s);
         if (m.find()) {
           laneCount = Integer.parseInt(m.group(1));
+          timerIdentifier = s;
         }
 
         setUp();

@@ -305,7 +305,9 @@ public class TimerMain {
         } catch (SerialPortException e) {
           e.printStackTrace();
         }
-        httpTask.sendIdentified(nlanes);
+        httpTask.sendIdentified(
+            nlanes, timerTask.device().getClass().getSimpleName(),
+            timerTask.device().getTimerIdentifier());
       }
     }
 

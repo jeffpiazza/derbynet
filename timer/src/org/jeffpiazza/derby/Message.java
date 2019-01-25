@@ -2,10 +2,11 @@ package org.jeffpiazza.derby;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    // TODO: Heartbeat should supply whatever ancillary information
-    // the timer supports (reset button pressed, lane blocked, etc.)
-
+// TODO: Heartbeat should supply whatever ancillary information
+// the timer supports (reset button pressed, lane blocked, etc.)
 public interface Message {
 
   public String asParameters();
@@ -23,13 +24,30 @@ public interface Message {
   // received.
   public static class Identified implements Message {
     private int nlanes;
-    public Identified(int nlanes) {
+    private String timer;
+    private String identifier;
+
+    public Identified(int nlanes, String timer, String identifier) {
       this.nlanes = nlanes;
+      this.timer = timer;
+      this.identifier = identifier;
     }
 
     public String asParameters() {
       System.out.println("   Sending IDENTIFIED");
-      return "message=IDENTIFIED&lane_count=" + nlanes;
+      StringBuilder sb = new StringBuilder();
+      sb.append("message=IDENTIFIED");
+      sb.append("&lane_count=").append(nlanes);
+      sb.append("&timer=").append(timer);
+      if (identifier != null) {
+        try {
+          sb.append("&ident=").append(URLEncoder.encode(identifier, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+          // Won't happen, and we don't much care anyway
+        }
+      }
+
+      return sb.toString();
     }
   }
 
@@ -43,10 +61,12 @@ public interface Message {
     public String time;
     public int place;  // 0 if not known/stated
   }
+
   public static class Finished implements Message {
     private int roundid;
     private int heat;
     private LaneResult[] results;
+
     public Finished(int roundid, int heat, LaneResult[] results) {
       this.roundid = roundid;
       this.heat = heat;
@@ -66,7 +86,8 @@ public interface Message {
           }
           sb.append("&lane").append(i + 1).append("=").append(time);
           if (results[i].place != 0) {
-            sb.append("&place").append(i + 1).append("=").append(results[i].place);
+            sb.append("&place").append(i + 1).append("=").append(
+                results[i].place);
           }
         }
       }
@@ -77,6 +98,7 @@ public interface Message {
   public static class Malfunction implements Message {
     private boolean detectable;
     private String errorMsg;
+
     public Malfunction(boolean detectable, String errorMsg) {
       this.detectable = detectable;
       this.errorMsg = errorMsg;
@@ -85,8 +107,8 @@ public interface Message {
     public String asParameters() {
       try {
         return "message=MALFUNCTION"
-        + "&detectable=" + (detectable ? "1" : "0")
-        + "&error=" + URLEncoder.encode(errorMsg, "UTF-8");
+            + "&detectable=" + (detectable ? "1" : "0")
+            + "&error=" + URLEncoder.encode(errorMsg, "UTF-8");
       } catch (UnsupportedEncodingException e) {  // Won't happen
         return null;
       }

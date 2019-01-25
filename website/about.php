@@ -161,6 +161,46 @@ if (isset($db)) {
   }
 }
 ?>
+<?php
+  if (isset($db)) {
+    function read_single_row($sql, $params = array(), $fetch = PDO::FETCH_NUM) {
+      global $db;
+      $rs = $db->prepare($sql);
+      $rs->execute($params);
+      $row = $rs->fetch($fetch);
+      $rs->closeCursor();
+      return $row;
+    }
+
+    function read_single_value($sql, $params = array(), $def = false) {
+      $row = read_single_row($sql, $params);
+      if ($row === false || $row[0] === null) {
+        return $def;
+      }
+
+      return $row[0];
+    }
+
+    function read_raceinfo($key, $def = false) {
+      return read_single_value('SELECT itemvalue FROM RaceInfo WHERE itemkey = :key',
+                               array(':key' => $key), $def);
+    }
+
+
+    $timer = read_raceinfo('timer-type');
+    if ($timer) {
+      echo "<h4>Timer</h4>\n";
+      echo "<p>";
+      echo htmlspecialchars($timer, ENT_QUOTES, 'UTF-8');
+
+      $timer_ident = read_raceinfo('timer-ident');
+      if ($timer_ident) {
+        echo " (".$timer_ident.")";
+      }
+      echo "</p>\n";
+    }
+  }
+?>
 <h4>PHP Configuration Information</h4>
 </div>
 

@@ -40,6 +40,8 @@ public class TheJudgeDevice extends TimerDeviceBase {
   private static boolean resetOnReady = false;
   private static boolean resetOnRaceOver = false;
 
+  private String timerIdentifier;
+
   // If true,
   public static void setResetOnReady(boolean v) {
     resetOnReady = v;
@@ -67,6 +69,7 @@ public class TheJudgeDevice extends TimerDeviceBase {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Checking Valid Lanes") >= 0) {
+        timerIdentifier = s;
         portWrapper.logWriter().traceInternal("* 'The Judge' detected.");
         setUp();
         return true;
@@ -96,6 +99,9 @@ public class TheJudgeDevice extends TimerDeviceBase {
   public int getNumberOfLanes() throws SerialPortException {
     return numberOfLanes;
   }
+
+  @Override
+  public String getTimerIdentifier() { return timerIdentifier; }
 
   @Override
   public void prepareHeat(int roundid, int heat, int laneMask)

@@ -18,6 +18,7 @@ public abstract class TimerDeviceCommon
   }
 
   protected RacingStateMachine rsm;
+  protected String timerIdentifier;
 
   protected TimerDeviceCommon(SerialPortWrapper portWrapper,
                               GateWatcher gateWatcher) {
@@ -85,6 +86,8 @@ public abstract class TimerDeviceCommon
   public int getSafeNumberOfLanes() throws SerialPortException {
     return getNumberOfLanes();
   }
+
+  public String getTimerIdentifier() { return timerIdentifier; }
 
   public String describeLaneMask(int lanemask) throws SerialPortException {
     StringBuilder sb = new StringBuilder("Heat prepared: ");
