@@ -130,6 +130,11 @@ public class FastTrackDevice extends TimerDeviceCommon {
         }
       }
     });
+
+    // Unlike some timers, the FastTrack timers don't reset their display when
+    // a lane mask is sent, so there's no need to wait after a heat-ready
+    // message is received.
+    setPostRaceDisplayDurationMillis(0);
   }
 
   @Override

@@ -8,6 +8,7 @@ import javax.swing.*;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
+import org.jeffpiazza.derby.devices.SmartLineDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceCommon;
 import org.jeffpiazza.derby.devices.TimerTask;
@@ -35,11 +36,17 @@ public class TimerMain {
     System.err.println(
         "   -n <port name>: Use specified port name instead of searching");
     System.err.println(
-            "   -min-gate-time <milliseconds>: Ignore gate transitions shorter than <milliseconds>");
+        "   -min-gate-time <milliseconds>: Ignore gate transitions shorter than <milliseconds>");
     System.err.println(
         "   -d <device name>: Use specified device instead of trying to identify");
     System.err.println("      Known devices:");
     AllDeviceTypes.listDeviceClassNames();
+    System.out.println(
+        "   -delay-reset-after-race <nsec>: how long after race over");
+    System.out.println(
+        "                            before timer will be reset, default 10,");
+    System.out.println(
+        "                            for SmartLine, DerbyMagic, and NewBold");
     System.err.
         println("   -simulate-timer: Simulate timer device (for testing)");
     System.err.println("     -lanes <n>: Specify number of lanes to report");
@@ -55,9 +62,6 @@ public class TimerMain {
     System.out.println(
         "   -reset-on-race-over: reset timer immediately after Race Over from timer");
     System.out.println();
-    System.out.println("For NewBold only:");
-    System.out.println(
-        "   -reset-delay-on-race-over <nsec>: how long after race over before reset");
   }
 
   private static LogWriter makeLogWriter() {
@@ -156,9 +160,11 @@ public class TimerMain {
       } else if (arg.equals("-reset-on-race-over")) {
         TheJudgeDevice.setResetOnRaceOver(true);
         ++consumed_args;
-      } else if (arg.equals("-reset-delay-on-race-over")) {
-        NewBoldDevice.setPostRaceDisplayDurationMillis(
-            1000 * Integer.parseInt(args[consumed_args + 1]));
+      } else if (arg.equals("-delay-reset-after-race") ||
+                 arg.equals("-reset-delay-on-race-over")) {
+        long millis = 1000 * Integer.parseInt(args[consumed_args + 1]);
+        NewBoldDevice.setPostRaceDisplayDurationMillis(millis);
+        TimerDeviceCommon.setPostRaceDisplayDurationMillis(millis);
         consumed_args += 2;
       } else if (arg.equals("-min-gate-time") && has_value) {
         TimerDeviceCommon.setMinimumGateTimeMillis(

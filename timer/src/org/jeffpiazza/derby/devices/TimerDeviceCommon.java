@@ -62,6 +62,31 @@ public abstract class TimerDeviceCommon
     }
   }
 
+  // How long to wait after a race before responding to a heat-ready message?
+  // For some timers (e.g., The Champ), masking the lanes causes the timer's
+  // display to go blank, which isn't ideal.
+  private static long postRaceDisplayDurationMillis = 10000;
+  // System time at which raceFinished was last called.
+  private long lastFinishTime = 0;
+  private int pendingLaneMask = 0;
+  private boolean laneMaskIsPending = false;
+
+  public static void setPostRaceDisplayDurationMillis(long millis) {
+    postRaceDisplayDurationMillis = millis;
+  }
+
+  protected void maybeProcessPendingLaneMask() throws SerialPortException {
+    if (laneMaskIsPending) {
+      if (lastFinishTime == 0 ||
+          System.currentTimeMillis() >=
+            lastFinishTime + postRaceDisplayDurationMillis) {
+        describeLaneMask(pendingLaneMask);
+        maskLanes(pendingLaneMask);
+        laneMaskIsPending = false;
+      }
+    }
+  }
+
   public void prepareHeat(int roundid, int heat, int lanemask)
       throws SerialPortException {
     RacingStateMachine.State state = rsm.state();
@@ -76,8 +101,11 @@ public abstract class TimerDeviceCommon
     }
 
     prepare(roundid, heat);
-    describeLaneMask(lanemask);
-    maskLanes(lanemask);
+
+    pendingLaneMask = lanemask;
+    laneMaskIsPending = true;
+    maybeProcessPendingLaneMask();
+
     rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED);
   }
 
@@ -103,6 +131,7 @@ public abstract class TimerDeviceCommon
 
   protected void raceFinished(Message.LaneResult[] results)
       throws SerialPortException {
+    lastFinishTime = System.currentTimeMillis();
     rsm.onEvent(RacingStateMachine.Event.RESULTS_RECEIVED);
     invokeRaceFinishedCallback(roundid, heat, results);
     roundid = heat = 0;
@@ -110,6 +139,7 @@ public abstract class TimerDeviceCommon
 
   public void abortHeat() throws SerialPortException {
     rsm.onEvent(RacingStateMachine.Event.ABORT_HEAT_RECEIVED);
+    lastFinishTime = 0;
     roundid = heat = 0;
   }
 
@@ -182,6 +212,8 @@ public abstract class TimerDeviceCommon
   protected GateWatcher gateWatcher = null;
 
   public void poll() throws SerialPortException, LostConnectionException {
+    maybeProcessPendingLaneMask();
+
     RacingStateMachine.State state = rsm.state();
     // If the gate is already closed when a PREPARE_HEAT message was delivered,
     // the PREPARE_HEAT will have left us in a MARK state, but we need to
