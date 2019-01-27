@@ -339,6 +339,7 @@ function write_standings_table_rows(&$standings) {
   $use_groups = show_group_standings();
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
   $show_car_name = show_car_name_in_standings();
+  $time_format = get_finishtime_formatting_string();
   $first = true;
   foreach ($standings as &$row) {
     $racerid = $row['racerid'];
@@ -410,9 +411,9 @@ function write_standings_table_rows(&$standings) {
       echo "<td>".ordinal($row['best'])."</td>";
       echo "<td>".ordinal($row['worst'])."</td>";
     } else {
-      echo "<td>".sprintf('%5.3f', $row['avg'])."</td>";
-      echo "<td>".sprintf('%5.3f', $row['best'])."</td>";
-      echo "<td>".sprintf('%5.3f', $row['worst'])."</td>";
+      echo "<td>".sprintf($time_format, $row['avg'])."</td>";
+      echo "<td>".sprintf($time_format, $row['best'])."</td>";
+      echo "<td>".sprintf($time_format, $row['worst'])."</td>";
     }
     echo "</tr>\n";
   }

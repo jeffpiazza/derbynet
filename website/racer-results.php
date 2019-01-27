@@ -124,6 +124,7 @@ function write_rr($racer_label, $racer_cells, $nrows) {
 }
 
 $name_style = read_raceinfo('name-style', FULL_NAME);
+$time_format = get_finishtime_formatting_string();
 
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($rounds as $round) {
@@ -182,7 +183,7 @@ foreach ($rounds as $round) {
     $lane = $rs['lane'];
 
     $ft = $use_points ? (isset($rs['finishplace']) ? ordinal($rs['finishplace']) : '--')
-                      : (isset($rs['finishtime']) ? number_format($rs['finishtime'], 3) : '--');
+                      : (isset($rs['finishtime']) ? sprintf($time_format, $rs['finishtime']) : '--');
 
     $racer_cells[$lane - 1][] = '<td class="resultid_'.$rs['resultid'].'">'
                  .'<a class="heat_link" href="ondeck.php#heat_'.$roundid.'_'.$rs['heat'].'">'

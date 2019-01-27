@@ -66,6 +66,7 @@ if (!$hwresultid) {
 // rounds with the same round number.  We identify everything by round number in
 // that case, instead of roundid.
 $merge_rounds = @$_GET['merge_rounds'];
+$time_format = get_finishtime_formatting_string();
 
 $use_master_sched = use_master_sched();
 $now_running = get_running_round();
@@ -112,8 +113,7 @@ if ($next !== false) {
     if ($use_points) {
       $val = ordinal($rs['finishplace']);
     } else {
-      // TODO: Adjustable number of decimals?
-      $val = number_format($rs['finishtime'], 3);
+      $val = sprintf($time_format, $rs['finishtime']);
     }
     echo "<update resultid='".$rs['resultid']."'"
 	  ." result='".$val."'/>\n";

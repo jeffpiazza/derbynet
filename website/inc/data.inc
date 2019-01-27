@@ -152,6 +152,10 @@ function get_lane_count_from_results() {
   }
 }
 
+function get_finishtime_formatting_string() {
+  return read_raceinfo('finish_formatting', '%5.3f');
+}
+
 
 // Returns the highest ResultID from the RaceChart table.
 // Assuming this increases monotonically, a newly scheduled

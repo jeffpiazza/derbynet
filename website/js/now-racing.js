@@ -339,7 +339,7 @@ function process_polling_result(now_racing) {
 
       $('[data-lane="' + lane + '"] .time')
         .css({opacity: 100})
-        .text(hr.getAttribute('time').substring(0,5));
+        .text(hr.getAttribute('time'));
       if (FlyerAnimation.ok_to_animate) {
         $('[data-lane="' + lane + '"] .place').css({opacity: 0});
       }

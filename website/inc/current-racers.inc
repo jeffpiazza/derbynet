@@ -12,6 +12,7 @@ function emit_current_racers(&$now_running, $name_style, $photo_render) {
   global $db;
 
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $time_format = get_finishtime_formatting_string();
 
   $stmt = $db->prepare('SELECT lane, carnumber, lastname, firstname, carname, rank, imagefile, finishtime'
                        .' FROM '
@@ -31,7 +32,7 @@ function emit_current_racers(&$now_running, $name_style, $photo_render) {
     .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
     .' carnumber="'.$row['carnumber'].'"'
     .' photo="'.($photo_render ? headshots()->url_for_racer($row, $photo_render) : '').'"'
-    .' finishtime="'.($row['finishtime'] ? sprintf('%5.3f', $row['finishtime']) : '').'"'
+    .' finishtime="'.($row['finishtime'] ? sprintf($time_format, $row['finishtime']) : '').'"'
     .'/>'."\n";
   }
 }

@@ -31,6 +31,7 @@ require_once('inc/current-heat.inc');
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
 $track_length = read_raceinfo('track-length', 40);  // in feet
+$time_format = get_finishtime_formatting_string();
 
 // $track_length / $finishtime gives feet per second.
 //  * 3600 gives feet per hour
@@ -51,8 +52,7 @@ foreach ($stmt as $row) {
   $finishtime = $row['finishtime'];
   $speed = $finishtime == 0 ? "--" : sprintf("%4.1f", $track_length / $finishtime * $fps_to_scale_mph);
   echo '  <heat-result lane="'.$row['lane'].'"';
-  // TODO: Controllable number of decimal places?
-  echo ' time="'.sprintf('%5.3f', $finishtime).'"';
+  echo ' time="'.sprintf($time_format, $finishtime).'"';
   echo ' place="'.$row['finishplace'].'"';
   echo ' speed="'.$speed.'"';
   echo "/>\n";

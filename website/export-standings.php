@@ -46,6 +46,7 @@ $use_groups = show_group_standings();
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $show_car_name = show_car_name_in_standings();
 $use_points = read_raceinfo_boolean('use-points');
+$time_format = get_finishtime_formatting_string();
 
 echo $use_points ? "Scoring by points"
 : (read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time"
@@ -138,9 +139,9 @@ try {
         $values[] = ordinal($row['best']);
         $values[] = ordinal($row['worst']);
       } else {
-        $values[] = sprintf('%5.3f', $row['avg']);
-        $values[] = sprintf('%5.3f', $row['best']);
-        $values[] = sprintf('%5.3f', $row['worst']);
+        $values[] = sprintf($time_format, $row['avg']);
+        $values[] = sprintf($time_format, $row['best']);
+        $values[] = sprintf($time_format, $row['worst']);
       }
 
       fputcsv($output, $values);
