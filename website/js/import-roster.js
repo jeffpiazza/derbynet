@@ -69,8 +69,12 @@ function onDropClassnameLabel(droppable) {
   // existing_classes is an array
   var column_number = droppable.attr('data-column');
   var classnames_to_import = collectClassNames(column_number);
-  var existing_classes = all_classes();
-  var n_existing_classes = existing_classes.length;
+  var all = all_classes();
+  var n_existing_classes = all.length;
+  var existing_classes = [];
+  for (i = 0; i < n_existing_classes; ++i) {
+    existing_classes[i] = all[i].name;
+  }
 
   var canonicalized = {};
   var combined_classes = existing_classes.slice();  // Copy the array
