@@ -28,7 +28,7 @@ public class NewBoldDevice extends TimerDeviceBase {
   private long timerResetMillis = -1;
 
   // How long to wait after a race before sending the reset?
-  private static long postRaceDisplayDurationMillis = 5000;
+  private static long postRaceDisplayDurationMillis = 10000;
 
   public static void setPostRaceDisplayDurationMillis(long v) {
     postRaceDisplayDurationMillis = v;

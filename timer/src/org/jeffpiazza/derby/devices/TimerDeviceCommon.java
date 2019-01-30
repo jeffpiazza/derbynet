@@ -13,6 +13,7 @@ public abstract class TimerDeviceCommon
   // To do that, don't record a gate state change until it's aged a bit.
   //
   static protected int minimum_gate_time_millis = 500;
+
   static public void setMinimumGateTimeMillis(int mgt) {
     minimum_gate_time_millis = mgt;
   }
@@ -75,11 +76,12 @@ public abstract class TimerDeviceCommon
     postRaceDisplayDurationMillis = millis;
   }
 
-  protected void maybeProcessPendingLaneMask() throws SerialPortException {
+  protected synchronized void maybeProcessPendingLaneMask()
+      throws SerialPortException {
     if (laneMaskIsPending) {
-      if (lastFinishTime == 0 ||
-          System.currentTimeMillis() >=
-            lastFinishTime + postRaceDisplayDurationMillis) {
+      if (lastFinishTime == 0
+          || System.currentTimeMillis()
+          >= lastFinishTime + postRaceDisplayDurationMillis) {
         describeLaneMask(pendingLaneMask);
         maskLanes(pendingLaneMask);
         laneMaskIsPending = false;
@@ -102,9 +104,11 @@ public abstract class TimerDeviceCommon
 
     prepare(roundid, heat);
 
-    pendingLaneMask = lanemask;
-    laneMaskIsPending = true;
-    maybeProcessPendingLaneMask();
+    synchronized (this) {
+      pendingLaneMask = lanemask;
+      laneMaskIsPending = true;
+      maybeProcessPendingLaneMask();
+    }
 
     rsm.onEvent(RacingStateMachine.Event.PREPARE_HEAT_RECEIVED);
   }
@@ -115,7 +119,9 @@ public abstract class TimerDeviceCommon
     return getNumberOfLanes();
   }
 
-  public String getTimerIdentifier() { return timerIdentifier; }
+  public String getTimerIdentifier() {
+    return timerIdentifier;
+  }
 
   public String describeLaneMask(int lanemask) throws SerialPortException {
     StringBuilder sb = new StringBuilder("Heat prepared: ");
@@ -279,6 +285,7 @@ public abstract class TimerDeviceCommon
     rsm.setGateStateNotKnowable();
     gateWatcher = null;
   }
+
   // A reasonably common scenario is this: if the gate opens accidentally
   // after the PREPARE_HEAT, the timer starts but there are no cars to
   // trigger a result.  When that happens, some timers support a "force output"
