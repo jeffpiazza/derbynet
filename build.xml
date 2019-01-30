@@ -30,12 +30,12 @@
   <target name="clean"
           description="Remove generated artifacts for a clean build environment">
     <delete quiet="true">
-      <fileset dir="website/inc">
-	<filename name="banner.inc"/>
-	<filename name="generated-version.inc"/>
-	<filename name="generated-build-date.inc"/>
-	<filename name="generated-commit-hash.inc"/>
-      </fileset>
+        <fileset dir="website/inc">
+            <filename name="banner.inc"/>
+            <filename name="generated-version.inc"/>
+            <filename name="generated-build-date.inc"/>
+            <filename name="generated-commit-hash.inc"/>
+        </fileset>
     </delete>
     <ant dir="${timer-dir}" target="clean"/>
     <ant dir="${docs-dir}"  target="clean"/>
@@ -82,8 +82,8 @@
   </target>
 
   <target name="generated" depends="banner, generated-version.inc,
-				    generated-build-date.inc,
-				    release-series, generated-commit-hash.inc"
+                    generated-build-date.inc,
+                    release-series, generated-commit-hash.inc"
           description="Build generated files">
   </target>
 
@@ -174,7 +174,7 @@
   </target>
 
   <target name="dist.debian" depends="generated, timer-jar, docs-dist"
-	  description="Build a Debian binary package (.deb) for all of DerbyNet">
+      description="Build a Debian binary package (.deb) for all of DerbyNet">
     <ant dir="installer/debian" target="dist"/>
   </target>
 
@@ -395,7 +395,7 @@
 </target>
 
 <target name="dist.mac" if="is_mac" description="Full Macintosh installer package"
-	depends="mac.installer.website,
+    depends="mac.installer.website,
                  mac.installer.replay, mac.installer.timer,
                  mac.installer.docs, mac.installer.extras,
                  generated-version.inc,
@@ -414,7 +414,7 @@
 </target>
 
 <target name="unpack-uniserver" if="is_windows"
-	description="Runs the self-extracting archives from ${uniserver-resources} to build ${uniserver-unpacked}">
+    description="Runs the self-extracting archives from ${uniserver-resources} to build ${uniserver-unpacked}">
   <delete dir="${uniserver-unpacked}"/>
   <mkdir dir="${uniserver-unpacked}"/>
 
@@ -450,7 +450,7 @@
 </target>
 
 <target name="dist.oneclick" depends="generated, timer-jar, docs-dist"
-	description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
+    description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}/Data"/>
@@ -471,33 +471,33 @@
       <propertyresource name="php-core-dir"/>
       <filterchain>
           <tokenfilter>
-	          <filetokenizer/>
-	          <replaceregex pattern=".*\\" flags="g"/>
-	          <replaceregex pattern=".*/" flags="g"/>
+              <filetokenizer/>
+              <replaceregex pattern=".*\\" flags="g"/>
+              <replaceregex pattern=".*/" flags="g"/>
           </tokenfilter>
       </filterchain>
   </loadresource>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
-		 match="PHP_SELECT=php[0-9]*"
-		 replace="PHP_SELECT=${php-version}"/>
+         match="PHP_SELECT=php[0-9]*"
+         replace="PHP_SELECT=${php-version}"/>
   
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
-		 match="DISPLAY_PAGE_2=yes"
-		 replace="DISPLAY_PAGE_2=no"/>
+         match="DISPLAY_PAGE_2=yes"
+         replace="DISPLAY_PAGE_2=no"/>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
-		 match=";(extension=php_pdo_odbc.dll)"
-		 replace="\1"/>
+         match=";(extension=php_pdo_odbc.dll)"
+         replace="\1"/>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
-		 match=";(extension=php_pdo_sqlite.dll)"
-		 replace="\1"/>
+         match=";(extension=php_pdo_sqlite.dll)"
+         replace="\1"/>
 
   <delete>
     <!-- Delete .htaccess, favicon.ico, and other cruft -->
     <fileset dir="${uniserver-target}\UniServerZ\www"
-	     includes="**"/>
+         includes="**"/>
   </delete>
   <copy todir="${uniserver-target}\UniServerZ\www">
     <fileset dir="website">
