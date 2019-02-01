@@ -7,6 +7,10 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import java.util.regex.Matcher;
 
 public class FastTrackDevice extends TimerDeviceCommon {
+  // A FastTrack timer that doesn't understand the N2 ("enhanced format")
+  // command should just ignore it, but in case there are more severe
+  // consequences, this variable lets the attempt be skipped.
+  public static boolean attempt_enhanced_format = true;
   public FastTrackDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
@@ -104,6 +108,9 @@ public class FastTrackDevice extends TimerDeviceCommon {
           // Clean up the timer state and capture some details into the log
           portWrapper.writeAndDrainResponse(RESET_ELIMINATOR_MODE, 2, 1000);
           portWrapper.writeAndDrainResponse(NEW_FORMAT, 2, 1000);
+          if (attempt_enhanced_format) {
+            portWrapper.writeAndDrainResponse(ENHANCED_FORMAT, 2, 1000);
+          }
           // This "RM" command seems to silence the K1 timer.
           // TODO portWrapper.writeAndDrainResponse(READ_MODE);
           setUp();
