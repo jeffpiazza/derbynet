@@ -152,6 +152,8 @@ var Lineup = {
             if (r.getAttribute('photo') != $('[data-lane="' + lane + '"] .photo img').attr('src')) {
               $('[data-lane="' + lane + '"] .photo img').attr('src', r.getAttribute('photo'));
             }
+          } else {
+            $('[data-lane="' + lane + '"] .photo').empty();
           }
         }
       }

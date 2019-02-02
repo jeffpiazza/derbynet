@@ -12,7 +12,7 @@ user_login_coordinator
 while true ; do
   curl_post action.php "action=database.execute&script=schema" | check_success
   curl_post action.php "action=database.execute&script=update-schema" | check_success
-  curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
+  curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
 
   # kiosk page will re-poll every 5s
   sleep 6s

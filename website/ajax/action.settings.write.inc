@@ -39,7 +39,6 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'do-use-subgroups' => 'use-subgroups',
                   'use-master-sched' => 'use-master-sched',
                   'use-points' => 'use-points',
-                  'show-racer-photos' => 'show-racer-photos',
                   'show-car-photos-on-deck' => 'show-cars-on-deck',
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
@@ -65,6 +64,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'name-style' => 'name-style',
                   'xbs-award' => 'xbs-award',  // @$_POST['use-xbs'] ? $_POST['xbs-award'] : ''
                   'group-label' => 'group-label',
+                  'photos-on-now-racing' => 'photos-on-now-racing',
                   'subgroup-label' => 'subgroup-label',
                   'supergroup-label' => 'supergroup-label',
                   'update-period' => 'update-period',

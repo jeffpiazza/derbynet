@@ -40,7 +40,7 @@ if [ `echo "$BASE_URL" | grep -i localhost` ]; then
 
     curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success
     curl_post action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_success
-    curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
+    curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
 else
     # For the remote case, assume that directories have been set up, and upload each photo
     echo Headshot uploads begin

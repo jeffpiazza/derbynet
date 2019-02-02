@@ -32,7 +32,7 @@ while true ; do
   curl_post action.php "action=kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_success
 
   # Tedious set-up
-  curl_post action.php "action=settings.write&show-racer-photos=1&show-racer-photos-checkbox=1" | check_success
+  curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
   curl_post action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_success
 
   `dirname $0`/import-roster.sh "$BASE_URL"

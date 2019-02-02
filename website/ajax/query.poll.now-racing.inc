@@ -27,6 +27,7 @@ if (!with_gprm()) {
 require_once('inc/replay.inc');
 require_once('inc/current-racers.inc');
 require_once('inc/current-heat.inc');
+require_once('inc/photos-on-now-racing.inc');
 
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
@@ -62,11 +63,16 @@ $now_running = get_running_round();
 $use_master_sched = use_master_sched();
 emit_current_heat($now_running, $use_master_sched);
 
-emit_current_racers($now_running, read_raceinfo('name-style', FULL_NAME),
-                    read_raceinfo_boolean('show-racer-photos') &&
-                        isset($_GET['row-height']) && $_GET['row-height'] > 0
-                    ? (2 * $_GET['row-height']).'x'.$_GET['row-height']
-                    : false);
+$render = false;
+if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
+  $photos = read_photos_on_now_racing();
+  if ($photos) {
+    $render_name = (2 * $_GET['row-height']).'x'.$_GET['row-height'];
+    $render = photo_repository($photos)->lookup_or_any($render_name);
+  }
+}
+
+emit_current_racers($now_running, read_raceinfo('name-style', FULL_NAME), $render);
 
 if (read_raceinfo('replay_just_finished')) {
   write_raceinfo('replay_just_finished', 0);

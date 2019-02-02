@@ -6,6 +6,7 @@ require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/name-mangler.inc');
+require_once('inc/photos-on-now-racing.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -52,7 +53,8 @@ $use_xbs = read_raceinfo_boolean('xbs-award');
 $xbs_award = read_raceinfo('xbs-award');
 if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
-$show_racer_photos = read_raceinfo_boolean('show-racer-photos');
+
+$photos_on_now_racing = read_photos_on_now_racing();
 $show_car_photos_on_deck = read_raceinfo_boolean('show-cars-on-deck');
 $show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
@@ -198,29 +200,36 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
     </div>
 
     <div class="settings_group_settings">
-      <p>
-        <input type="hidden" name="show-racer-photos-checkbox" value="yes"/>
-        <input id="show-racer-photos" name="show-racer-photos" data-enhanced="true"
-               type="checkbox"<?php if ($show_racer_photos) echo ' checked="checked"';?>/>
-        <label>Show racer photos on main racing board</label>
+      <p><b>Now Racing</b> display:<br/>&nbsp;&nbsp;
+        <input type="radio" name="photos-on-now-racing" value="0"
+                    id="now-racing-photos-0" data-role="none"<?php
+        echo $photos_on_now_racing ? '' : ' checked="checked"';
+        ?>/><label for="now-racing-photos-0" data-enhanced="true">No photos</label>&nbsp;
+        <input type="radio" name="photos-on-now-racing" value="head"
+                    id="now-racing-photos-head" data-role="none"<?php
+        echo $photos_on_now_racing == "head" ? ' checked="checked"' : '';
+        ?>/><label for="now-racing-photos-head" data-enhanced="true">Racer photos</label>&nbsp;
+        <input type="radio" name="photos-on-now-racing" value="car"
+                    id="now-racing-photos-car" data-role="none"<?php
+        echo $photos_on_now_racing == "car" ? ' checked="checked"' : '';
+        ?>/><label for="now-racing-photos-car" data-enhanced="true">Car photos</label>
       </p>
-      <p>
+      <p><b>On Deck</b> display:<br/>&nbsp;&nbsp;
         <input type="hidden" name="show-car-photos-on-deck-checkbox" value="yes"/>
         <input id="show-car-photos-on-deck" name="show-car-photos-on-deck" data-enhanced="true"
                type="checkbox"<?php if ($show_car_photos_on_deck) echo ' checked="checked"';?>/>
-        <label>Show car photos in on-deck display</label>
+        <label>Car photos</label>
       </p>
-      <p>
+      <p><b>Racer Results</b> display:<br/>&nbsp;&nbsp;
         <input type="hidden" name="show-racer-photos-rr-checkbox" value="yes"/>
         <input id="show-racer-photos-rr" name="show-racer-photos-rr" data-enhanced="true"
                type="checkbox"<?php if ($show_racer_photos_rr) echo ' checked="checked"';?>/>
-        <label>Show racer photos in racer-results display</label>
-      </p>
-      <p>
+        <label>Racer photos</label>&nbsp;
+
         <input type="hidden" name="show-car-photos-rr-checkbox" value="yes"/>
         <input id="show-car-photos-rr" name="show-car-photos-rr" data-enhanced="true"
                type="checkbox"<?php if ($show_car_photos_rr) echo ' checked="checked"';?>/>
-        <label>Show car photos in racer-results display</label>
+        <label>Car photos</label>
       </p>
 
       <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo'); ?>

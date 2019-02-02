@@ -76,23 +76,12 @@ class PhotoRepository {
   }
 
   // $row has to have racerid and the repository's column_name, at least
-  public function url_for_racer(&$row, $render) {
-    return $this->url_for_file($row[$this->column_name()], $row['racerid'], $render);
+  public function url_for_racer(&$row, $render_name) {
+    return $this->url_for_file($row[$this->column_name()], $row['racerid'], $render_name);
   }
 
-  public function url_for_file($imagefile, $racerid, $render) {
-    if ($this->recognized_path($imagefile)) {
-      return $this->lookup_or_any($render)->render_url(basename($imagefile));
-    } else if (!file_exists($imagefile) &&
-               file_exists($this->lookup_or_any(RENDER_ORIGINAL)->file_path(basename($imagefile)))) {
-      // If the field points to a non-existent file, but the image IS present in
-      // the repository, then assume that it's a case of having moved the
-      // repository, and treat as a recognized path
-      return $this->lookup_or_any($render)->render_url(basename($imagefile));
-    } else {
-      // A racer URL
-      return 'photo.php/'.$this->name().'/racer/'.$racerid.'/'.time();
-    }
+  public function url_for_file($imagefile, $racerid, $render_name) {
+    return $this->lookup_or_any($render_name)->url_for_file($imagefile, $racerid);
   }
 
   public function all_renders() {
@@ -267,6 +256,29 @@ class PhotoRender {
       return '';
     }
   }
+
+  // render_url takes a base name; url_for_file takes a full path name
+  public function url_for_file($imagefile, $racerid) {
+    if ($this->repository->recognized_path($imagefile)) {
+      return $this->render_url(basename($imagefile));
+    } else if (!file_exists($imagefile) &&
+               file_exists($this->repository->lookup_or_any(RENDER_ORIGINAL)
+                           ->file_path(basename($imagefile)))) {
+      // If the field points to a non-existent file, but the image IS present in
+      // the repository, then assume that it's a case of having moved the
+      // repository, and treat as a recognized path
+      return $this->render_url(basename($imagefile));
+    } else {
+      // A racer URL
+      return 'photo.php/'.$this->repository->name().'/racer/'.$racerid.'/'.time();
+    }
+  }
+
+  // $row has to have racerid and the repository's column_name, at least
+  public function url_for_row(&$row) {
+    return $this->url_for_file($row[$this->repository->column_name()], $row['racerid']);
+  }
+
 
   public function find_or_make_image_file($image_name) {
     $target_file_path = $this->target_file_path($image_name);
