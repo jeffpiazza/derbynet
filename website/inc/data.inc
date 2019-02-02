@@ -153,7 +153,7 @@ function get_lane_count_from_results() {
 }
 
 function get_finishtime_formatting_string() {
-  return read_raceinfo('finish_formatting', '%5.3f');
+  return read_raceinfo('finish-formatting', '%5.3f');
 }
 
 

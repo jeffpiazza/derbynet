@@ -60,6 +60,7 @@ $show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
 $name_style = read_raceinfo('name-style', FULL_NAME);
+$finish_formatting = get_finishtime_formatting_string();
 ?>
 
 <div class="block_buttons">
@@ -93,9 +94,20 @@ Lanes available for scheduling:</p>
 </span>
 </p>
       <p>
-        <input id="track-length" name="track-length" type="number" data-enhanced="true"
+        <input id="track-length" name="track-length" type="number" min="0" max="999"
+               data-enhanced="true"
                value="<?php echo read_raceinfo('track-length', 40); ?>"/>
         <label for="track-length">Track length (in feet)</label>
+      </p>
+      <p>Displayed time precision:
+        <input type="radio" name="finish-formatting" value="%5.3f" id="finish-formatting-3"
+          data-role="none"<?php
+        echo $finish_formatting == "%5.3f" ? ' checked="checked"' : '';
+        ?>/><label for="finish-formatting-3" data-enhanced="true">4 digits (0.001)</label>&nbsp;
+        <input type="radio" name="finish-formatting" value="%6.4f" id="finish-formatting-4"
+          data-role="none"<?php
+        echo $finish_formatting == "%6.4f" ? ' checked="checked"' : '';
+        ?>/><label for="finish-formatting-4">5 digits (0.0001)</label>
       </p>
     </div>
   </div>

@@ -59,6 +59,9 @@ foreach ($stmt as $row) {
   echo "/>\n";
 }
 
+// This lets the js reserve room for the right number of digits
+echo "<zero zero='".sprintf($time_format, 0.0)."'/>\n";
+
 $now_running = get_running_round();
 $use_master_sched = use_master_sched();
 emit_current_heat($now_running, $use_master_sched);
