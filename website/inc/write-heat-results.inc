@@ -43,7 +43,9 @@ function write_heat_results() {
       // If $_POST doesn't include a new value for finishtime, then leave
       // the old one (if there was one).
       if (isset($_POST['lane'.$lane])) {
-        $all_times[count($all_times) - 1]['finishtime'] = $_POST['lane'.$lane];
+        $result = $_POST['lane'.$lane];
+        if ($result == '') $result = 0.0;
+        $all_times[count($all_times) - 1]['finishtime'] = $result;
       }
       if (isset($_POST['place'.$lane])) {
         $all_times[count($all_times) - 1]['finishplace'] = $_POST['place'.$lane];
