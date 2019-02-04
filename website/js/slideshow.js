@@ -26,11 +26,10 @@ function mainphoto_onload(img) {
     // div.current gets removed, div.next becomes div.current, and we create a
     // new div.next.
     $("#photo-background div.current").remove();
+    var current = $("#photo-background div.next");
+    current.removeClass("next").addClass("current");
+    var next = $("<div class='next'></div>").appendTo("#photo-background");
     if (racer) {
-      var current = $("#photo-background div.next");
-      current.removeClass("next").addClass("current");
-      var next = $("<div class='next'></div>").appendTo("#photo-background");
-
       if (current.find("img.mainphoto").length == 0) {
         current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
                        racer.getAttribute('main_photo') + '"/>');
