@@ -159,17 +159,20 @@ Lanes available for scheduling:</p>
       <p>
         <input id="n-pack" name="n-pack-trophies" type="number" min="0" max="20" data-enhanced="true"
                value="<?php echo read_raceinfo('n-pack-trophies', 3); ?>"/>
-        <label for="n-pack">Number of speed trophies at the <?php echo supergroup_label_lc(); ?> level</label>
+        <label for="n-pack">Number of speed trophies at the
+               <span class="supergroup-label"><?php echo supergroup_label_lc(); ?></span> level</label>
       </p>
       <p>
         <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" data-enhanced="true"
                value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
-        <label for="n-den">Number of speed trophies per <?php echo group_label_lc(); ?></label>
+        <label for="n-den">Number of speed trophies per
+               <span class="group-label"><?php echo group_label_lc(); ?></span></label>
       </p>
       <p>
         <input id="n-rank" name="n-rank-trophies" type="number" min="0" max="20" data-enhanced="true"
                value="<?php echo read_raceinfo('n-rank-trophies', 0); ?>"/>
-        <label for="n-pack">Number of speed trophies per <?php echo subgroup_label_lc(); ?></label>
+        <label for="n-pack">Number of speed trophies per
+               <span class="subgroup-label"><?php echo subgroup_label_lc(); ?></span></label>
       </p>
       <p>
         <input type="hidden" name="use-xbs-checkbox" value="yes"/>

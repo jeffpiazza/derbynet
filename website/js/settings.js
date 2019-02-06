@@ -105,29 +105,41 @@ function browse_for_photo_directory(photo_dir_selector) {
   });
 }
 
+// Respond to changes in group, supergroup, or subgroup label
+function on_label_change() {
+  $("span.supergroup-label").text($("#supergroup-label").val().toLowerCase());
+  $("span.group-label").text($("#group-label").val().toLowerCase());
+  $("span.subgroup-label").text($("#subgroup-label").val().toLowerCase());
+}
+
 var g_form_modified = 0;
 
 $(function() {
 
-$("#n-lanes").on("keyup mouseup", on_lane_count_change);
-on_lane_count_change();  
-$("#settings_form").on("submit", on_form_submission);
+  $("#n-lanes").on("keyup mouseup", on_lane_count_change);
+  on_lane_count_change();
 
-$('#settings_form *').on("change", function() {
+  $("#supergroup-label").on("keyup mouseup", on_label_change);
+  $("#group-label").on("keyup mouseup", on_label_change);
+  $("#subgroup-label").on("keyup mouseup", on_label_change);
+
+  $("#settings_form").on("submit", on_form_submission);
+
+  $('#settings_form *').on("change", function() {
     g_form_modified = 1;
     $(this).closest(".settings_group").addClass("modified");
-});
+  });
 
-window.onbeforeunload = function() {
+  window.onbeforeunload = function() {
     if (g_form_modified == 1) {
-        return "You have unsaved changes.";
+      return "You have unsaved changes.";
     }
-}
+  }
 
-render_directory_status_icon("#photo-dir");
-render_directory_status_icon("#car-photo-dir");
+  render_directory_status_icon("#photo-dir");
+  render_directory_status_icon("#car-photo-dir");
 
-$("#photo-dir").on("change", function() { render_directory_status_icon("#photo-dir"); });
-$("#car-photo-dir").on("change", function() { render_directory_status_icon("#car-photo-dir"); });
+  $("#photo-dir").on("change", function() { render_directory_status_icon("#photo-dir"); });
+  $("#car-photo-dir").on("change", function() { render_directory_status_icon("#car-photo-dir"); });
 
 });

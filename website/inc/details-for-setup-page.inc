@@ -3,6 +3,7 @@
 require_once('inc/parse-connection-string.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/locked.inc');
+require_once('inc/plural.inc');
 
 // Tests whether there are any tables defined in the database, for those
 // database types that we know how to test.
@@ -180,7 +181,7 @@ function build_form_fields_for_advanced_database_dialog($db_connection_string) {
   return $form_fields;
 }
 
-function plural($n, $single, $plural) {
+function plural_to_be($n, $single, $plural) {
   if ($n == 0) {
     return "are no ".$plural;
   } else if ($n == 1) {
@@ -265,17 +266,18 @@ function build_setup_page_details() {
                                  'details' => $schema['schema_message']),
                'roster' => array('status' => $schema['nracers'] == 0 ? "unknown" : "ok",
                                  'details' =>
-                                 "<p>There ".plural($schema['nracers'], "racer", "racers")." registered."
+                                 "<p>There ".plural_to_be($schema['nracers'], "racer", "racers")." registered."
                                  ."  (Visit the <a href=\"checkin.php\">Check-In page</a>"
                                  ." to enter individual racers.)</p>\n"),
                'classes' => array('status' => count($schema['dens']) == 0 ? "unknown" : "ok",
                                   'label' => $schema['group_label'],
+                                  'plural' => plural($schema['group_label']),
                                   'details' =>
                                   count($schema['dens']) == 0
-                                  ? "<p>There are no ".$schema['group_label_lc']."s defined.</p>\n"
+                                  ? "<p>There are no ".plural($schema['group_label_lc'])." defined.</p>\n"
                                   : "<p>".implode(", ", $schema['dens'])."</p>\n"),
                'awards' => array('status' => $schema['nawards'] == 0 ? "unknown" : "ok",
-                                 'details' => "<p>There ".plural($schema['nawards'], "award", "awards")." defined."
+                                 'details' => "<p>There ".plural_to_be($schema['nawards'], "award", "awards")." defined."
                                  ."  (Visit the <a href=\"awards-editor.php\">Awards Editor page</a>"
                                  ." to enter individual awards.)</p>\n"),
                'settings' => array('status' => $schema['settings_icon'],
