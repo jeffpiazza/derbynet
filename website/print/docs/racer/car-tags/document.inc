@@ -65,7 +65,7 @@ class CarTagsDocument extends PrintableRacerDocument {
   // instead, and assuming that the hundreds digit identifies which image is
   // desired.
   static protected function path_to_rank_image(&$racer) {
-    $grade = min(5, intval($racer['carnumber'] / 100));
+    $grade = min(6, intval($racer['carnumber'] / 100));
     return dirname(__FILE__) . '/cub-scout-ranks/' . $grade . '00-series.jpg';
   }
 
