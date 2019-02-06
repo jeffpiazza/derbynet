@@ -89,6 +89,11 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <copy todir="${debian-root}/usr/share/derbynet/sounds">
+            <fileset dir="${extras}/sounds">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <!-- Execute permissions for scripts are set in tarfileset -->
         <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
         <copy todir="${debian-root}/usr/share/derbynet/extras">
@@ -208,6 +213,7 @@
                 <include name="usr/share/derbynet/autostart/**"/>
                 <exclude name="usr/share/derbynet/autostart/derby-timer.desktop"/>
                 <include name="usr/share/derbynet/extras/**"/>
+                <include name="usr/share/derbynet/sounds/**"/>
             </tarfileset>
             <!-- This second tarfileset sets executable permissions for these
                  files. -->

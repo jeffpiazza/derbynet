@@ -20,25 +20,63 @@
 #
 announce() {
     echo Announce: $1
+    test -x /usr/bin/mpg123 && PLAYER=/usr/bin/mpg123
+    test -x /usr/bin/omxplayer && PLAYER=/usr/bin/omxplayer
     case $1 in
-        initializing) ;;
-        terminating) ;;
-        idle) ;;
-        barcode-read) ;;
-        sending) ;;
-        no-network) ;;
-        login-ok) ;;
-        no-scanner) ;;
-        no-camera) ;;
-        capture-ok) ;;
-        checkin-failed) ;;
-        success) ;;
-        upload-ok-but-checkin-failed) ;;
-        upload-failed) ;;
-        speed-good) ;;
-        speed-fair) ;;
-        speed-poor) ;;
-        unrecognized-barcode) ;;
+    case $1 in
+        initializing)
+            test -x /usr/bin/flite && flite -t "Initializing"
+            ;;
+        no-network)
+            test -x /usr/bin/flite && flite -t "No network connection"
+            ;;
+        terminating)
+            ;;
+        idle)
+            ;;
+        barcode-read)
+            # Intentional phonetic spelling for "read":
+            test -x /usr/bin/flite && flite -t "Bar code red" &
+            ;;
+        sending)
+            test -x /usr/bin/flite && flite -t "sending data" &
+            ;;
+        login-ok)
+            test -x /usr/bin/flite && flite -t "Logged in okay" &
+            ;;
+        no-scanner)
+            test -x /usr/bin/flite && flite -t "No bar code scanner found" &
+            ;;
+        no-camera)
+            test -x /usr/bin/flite && flite -t "No camera found" &
+            ;;
+        checkin-failed)
+            test -x /usr/bin/flite && flite -t "Check-in failed" &
+            ;;
+        capture-ok)
+            test -x /usr/bin/flite && flite -t "Photo captured okay" &
+            [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/magic-wand.mp3
+            ;;
+        success)
+            [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/tada-fanfare-f.mp3
+            test -x /usr/bin/flite && flite -t "Upload complete." &
+            ;;
+        upload-ok-but-checkin-failed)
+            test -x /usr/bin/flite && flite -t "Upload okay but check-in failed" &
+            ;;
+        upload-failed)
+            [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/dundundunnn.mp3
+            test -x /usr/bin/flite && flite -t "Upload failed" &
+            ;;
+        speed-good)
+            ;;
+        speed-fair)
+            ;;
+        speed-poor)
+            ;;
+        unrecognized-barcode)
+            test -x /usr/bin/flite && flite -t "Unrecognized bar code" &
+            ;;
     esac
 }
 
