@@ -3,6 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/classes.inc');
+require_once('inc/plural.inc');
 require_permission(SET_UP_PERMISSION);
 
 require_once('inc/import-csv.inc');
@@ -30,13 +31,15 @@ class ImportRoster extends ImportCsvGenerator {
         racers<span id='file-class-count-and-label'>,
         <a id="class-counts-button">
           <span id="file-class-count"></span>
-          <?php echo group_label_lc(); ?>s
+          <?php echo plural(group_label_lc()); ?>
           (<span id='file-class-new-count'></span> new)</a></span>.
       </div>
       <?php
          if ($nracers > 0) {
-           echo "There are already ".$nracers." racer(s) and ".count($classes)." ".group_label_lc()."(s) "
-               ."in the database.";
+           $n_classes = count($classes);
+           $label = $n_classes == 1 ? group_label_lc() : plural(group_label_lc());
+           echo "There are already ".$nracers." racer(s) and ".$n_classes." ".$label
+               ." in the database.";
          }
       ?>
    </div><!--- state-of-play -->

@@ -3,6 +3,7 @@ require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
+require_once('inc/plural.inc');
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
 <html>
@@ -23,8 +24,10 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript">
 function use_subgroups() { return <?php echo json_encode(read_raceinfo_boolean('use-subgroups')); ?>; }
 function group_label() { return <?php echo json_encode(group_label()); ?>; }
+function group_label_plural() { return <?php echo json_encode(plural(group_label())); ?>; }
 function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>; }
 function subgroup_label() { return <?php echo json_encode(subgroup_label()); ?>; }
+function subgroup_label_plural() { return <?php echo json_encode(plural(subgroup_label())); ?>; }
 function subgroup_label_lc() { return <?php echo json_encode(subgroup_label_lc()); ?>; }
 $(function() { show_edit_all_classes_modal(); });
 </script>
@@ -37,7 +40,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
 <div id="edit_all_classes_modal" class="modal_dialog hidden block_buttons">
   <form>
-    <h3>Drag to Re-order <?php echo group_label(); ?>s</h3>
+    <h3>Drag to Re-order <?php echo plural(group_label()); ?></h3>
 
     <div id="groups_container">
       <ul id="groups" data-role="listview" data-split-icon="gear">
@@ -80,7 +83,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     </div>
 
     <div id="edit_ranks_extension" class="hidden">
-      <h3>Drag to Re-order <?php echo subgroup_label(); ?>s</h3>
+      <h3>Drag to Re-order <?php echo plural(subgroup_label()); ?></h3>
       <div id="ranks_container">
       </div>
       <br/>
