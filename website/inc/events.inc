@@ -14,16 +14,18 @@ define('EVENT_RACER_PHOTO_ASSIGN', 2);
 // A racer's car photo was assigned (racerid)
 define('EVENT_CAR_PHOTO_ASSIGN', 3);
 
+define('EVENT_TIMER_MALFUNCTION', 20);
 
 // A racer's heat result was discarded (we record the value that was discarded,
 // in case questions arise later).  (racerid, roundid, heat, lane, other)
-define('EVENT_RESULT_DISCARDED', 100);
+define('EVENT_RESULT_DISCARDED', 100);  // racerid, roundid, heat, lane, other(place)
+
 // RaceChart has its own 'completed' timestamp field, and usually that's enough.
 // Only if we discard results do we add a HEAT_COMPLETED event, after the fact,
 // for the heat.  The HEAT_COMPLETED event captures roundid, heat, and tstamp
 // only, the tstamp being for the previous value of the RaceChart 'completed'
 // field.
-define('EVENT_HEAT_COMPLETED', 101);
+define('EVENT_HEAT_COMPLETED', 101);  // roundid, heat
 define('EVENT_HEAT_MANUALLY_ENTERED', 102);
 
 

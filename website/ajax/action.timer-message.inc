@@ -5,6 +5,7 @@ require_once('inc/timer-state.inc');
 require_once('inc/write-heat-results.inc');
 require_once('inc/autoadvance.inc');
 require_once('inc/replay.inc');
+require_once('inc/events.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -92,13 +93,20 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       $timer_state->to_state(TIMER_CONNECTED);
     }
   } else if ($message == 'MALFUNCTION') {
+    $error_string = isset($_POST['error']) ? $_POST['error'] : "Malfunction";
+    if (!$timer_state->troubled()) {
+      record_event_sql('INSERT INTO Events(tstamp, action, other)'
+                       .' VALUES('.dbnow_expr().', :action, :other)',
+                       array(':action' => EVENT_TIMER_MALFUNCTION,
+                             ':other' => $error_string));
+    }
     echo "\n  <success/>\n";
     if ($timer_state->state() == TIMER_NOT_CONNECTED) {
       $timer_state->to_state(TIMER_CONNECTED);
     }
     if (isset($_POST['detectable']) && $_POST['detectable'] == 0) {
       // TODO Duration should maybe come from the malfunction message?
-      $timer_state->set_malfunction(60, isset($_POST['error']) ? $_POST['error'] : "Malfunction");
+      $timer_state->set_malfunction(60, $error_string);
     } else {
       $timer_state->set_unhealthy(isset($_POST['error']) ? $_POST['error'] : "Malfunction");
     }
