@@ -25,7 +25,7 @@ public class RoleFinder {
     this.session = new ClientSession(serverAddress);
   }
 
-  public String getServerAddress() {
+  public synchronized String getServerAddress() {
     return serverAddress;
   }
 
@@ -43,10 +43,14 @@ public class RoleFinder {
   public void findRoles() {
     boolean succeeded = false;
     try {
-      Element roles_result = session.doQuery("roles");
+      Element roles_result = session.doQueryWithVariations("roles");
       if (roles_result == null) {
         gui.roleFinderFailed("No response, or response not understood (likely wrong URL)");
       } else {
+        synchronized (this) {
+          serverAddress = session.getBaseUrl();
+          gui.setUrl(serverAddress);
+        }
         NodeList roles = roles_result.getElementsByTagName("role");
         if (roles.getLength() == 0) {
           gui.roleFinderFailed("No roles provided in roles query");
