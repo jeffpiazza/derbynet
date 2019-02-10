@@ -20,6 +20,10 @@ require_once('inc/authorize.inc');
     margin-left: auto;
     margin-right: auto;
 }
+
+#banner_link {
+    cursor: default;
+}
 </style>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
@@ -27,7 +31,9 @@ require_once('inc/authorize.inc');
 </head>
 <body<?php if (isset($_GET['logout'])) echo ' onload="handle_logout()"'; ?>>
 
-<?php make_banner(''); ?>
+<a id="banner_link" href="<?php echo isset($_GET['all']) ? '?' : '?all'; ?>">
+  <?php make_banner(''); ?>
+</a>
 
 <div class="index_background">
 <div class="block_buttons">
@@ -35,9 +41,9 @@ require_once('inc/authorize.inc');
 
 <?php
 foreach ($roles as $name => $details) {
-  if (!$details['password']) {
-    $logout = $name;
-  } else if (isset($details['interactive']) && !$details['interactive']) {
+  if (empty($name)) {
+    // "Logged out" role: no name, no password
+  } else if (isset($details['interactive']) && !$details['interactive'] && !isset($_GET['all'])) {
     // Ignore logins intended for robots
   } else {
     echo '<input type="button" value="'.$name.'" onclick=\'show_password_form("'.$name.'");\'/>'."\n";
