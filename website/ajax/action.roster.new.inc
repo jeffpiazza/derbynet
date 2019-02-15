@@ -149,6 +149,7 @@ $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, sco
                      .'       GROUP BY racerid, Rounds.classid) AS Result'
                      .' INNER JOIN RegistrationInfo'
                      .'  ON Result.racerid = RegistrationInfo.racerid'
+                     .'  WHERE passedinspection = 1 AND exclude = 0'
                      .' ORDER BY score');
 $stmt->execute(array(':key' => $key));
 foreach ($stmt as $row) {
