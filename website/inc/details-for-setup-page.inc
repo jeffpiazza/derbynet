@@ -101,7 +101,10 @@ function inspect_database() {
       if ($schema_version == expected_schema_version()) {
         $result['schema_status'] = "ok";
         $result['schema_button'] = 're-initialize';
-        $result['schema_message'] = "<p>Schema version is S1".pad3($schema_version).", as expected.</p>\n";
+        $result['schema_message'] =
+            "<p>Schema version is S1".pad3($schema_version).", as expected.  "
+            ."(If you have a previously-captured database snapshot, you can <a href='import-snapshot.php'>import it here.</a>)"
+            ."</p>\n";
       } else {
         $result['schema_status'] = "unknown";
         $result['schema_button'] = 'update';

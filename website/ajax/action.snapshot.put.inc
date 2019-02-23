@@ -21,7 +21,7 @@ echo "\n";
 
 function remove_bookends($xml, $start, $stop) {
   $start_pos = strpos($xml, $start);
-  $stop_pos = strpos($xml, $stop);
+  $stop_pos = strrpos($xml, $stop);
   if ($start_pos !== false && $stop_pos !== false) {
     $start_pos += strlen($start);
     return substr($xml, $start_pos, $stop_pos - $start_pos);
@@ -63,8 +63,6 @@ if (have_permission(SET_UP_PERMISSION)) {
             .' idcolumn="'.$id_column_name.'"'
             .'>'."\n";
         $row_count = 0;
-        $difference_count = 0;
-        $insertion_count = 0;
         $fetch_stmt = $db->prepare('SELECT * FROM '.$tablename.' WHERE '.$id_column_name.' = :id');
         foreach ($table_entry["rows"] as $json_row) {
           ++$row_count;
@@ -73,39 +71,27 @@ if (have_permission(SET_UP_PERMISSION)) {
           $fetch_stmt->closeCursor();
 
           if ($row) {
-            $need_update = false;
-            foreach ($json_row as $column_name => $value) {
-              // TODO nulls and other special values
-              if ($row[$column_name] !== $value) {
-                $need_update = true;
-                ++$difference_count;
-                break;
-              }
+            $usql = 'UPDATE '.$tablename;
+            $uparams = array();
+            $first = true;
+            foreach ($json_row as $c => $v) {
+              $usql .= ($first ? ' SET ' : ', ').$c.' = :'.$c;
+              $uparams[':'.$c] = $v;
+              $first = false;
             }
-            if ($need_update) {
-              $usql = 'UPDATE '.$tablename;
-              $uparams = array();
-              $first = true;
-              foreach ($json_row as $c => $v) {
-                $usql .= ($first ? ' SET ' : ', ').$c.' = :'.$c;
-                $uparams[':'.$c] = $v;
-                $first = false;
+            $usql .= ' WHERE '.$id_column_name.' = :id';
+            $uparams[':id'] = $json_row[$id_column_name];
+            $stmt = $db->prepare($usql);
+            try {
+              if (!$stmt->execute($uparams)) {
+                echo "<failure code='update'>Can't update ".$tablename
+                ." for id=".$json_row[$id_column_name]."</failure>\n";
               }
-              $usql .= ' WHERE '.$id_column_name.' = :id';
-              $uparams[':id'] = $json_row[$id_column_name];
-              $stmt = $db->prepare($usql);
-              try {
-                if (!$stmt->execute($uparams)) {
-                  echo "<failure code='update'>Can't update ".$tablename
-                  ." for id=".$json_row[$id_column_name]."</failure>\n";
-                }
-              } catch (Exception $e) {
-                echo "  <exception>".$e->getMessage()."</exception>\n";
-                $try_again = true;
-              }
+            } catch (Exception $e) {
+              echo "  <exception>".$e->getMessage()."</exception>\n";
+              $try_again = true;
             }
           } else {
-            ++$insertion_count;
             $write_sql = 'INSERT INTO '.$tablename;
             $first = true;
             $write_values = '';
@@ -129,8 +115,7 @@ if (have_permission(SET_UP_PERMISSION)) {
             }
           }
         }
-        echo '  <table-summary rows-received="'.$row_count.'" rows-inserted="'.$insertion_count.'"'
-            .' rows-updated="'.$difference_count.'"/>'."\n";
+        echo '  <table-summary rows-received="'.$row_count.'"/>'."\n";
         echo "</table>\n";
       }
     }
