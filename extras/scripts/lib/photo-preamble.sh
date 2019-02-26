@@ -23,7 +23,6 @@ announce() {
     test -x /usr/bin/mpg123 && PLAYER=/usr/bin/mpg123
     test -x /usr/bin/omxplayer && PLAYER=/usr/bin/omxplayer
     case $1 in
-    case $1 in
         initializing)
             test -x /usr/bin/flite && flite -t "Initializing"
             ;;
@@ -54,8 +53,8 @@ announce() {
             test -x /usr/bin/flite && flite -t "Check-in failed" &
             ;;
         capture-ok)
-            test -x /usr/bin/flite && flite -t "Photo captured okay" &
             [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/magic-wand.mp3
+            test -x /usr/bin/flite && flite -t "Photo captured okay" &
             ;;
         success)
             [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/tada-fanfare-f.mp3
@@ -69,10 +68,13 @@ announce() {
             test -x /usr/bin/flite && flite -t "Upload failed" &
             ;;
         speed-good)
+            # [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/tada-fanfare-f.mp3
             ;;
         speed-fair)
+            [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/saddertrombones.mp3
             ;;
         speed-poor)
+            [ -n "$PLAYER" ] && $PLAYER /usr/share/derbynet/sounds/dundundunnn.mp3
             ;;
         unrecognized-barcode)
             test -x /usr/bin/flite && flite -t "Unrecognized bar code" &
