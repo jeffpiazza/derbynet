@@ -6,9 +6,8 @@ session_start();
 if (isset($_SERVER['PATH_INFO'])) {
   $path_info = $_SERVER['PATH_INFO'];
 } else if (isset($_SERVER['ORIG_PATH_INFO'])) {
-  // TODO Obsolete?
-  // Rewrite rules in Apache 2.2 may leave ORIG_PATH_INFO instead of PATH_INFO
-  $path_info = 'print.php'.$_SERVER['ORIG_PATH_INFO'];
+  // Rewrite rules e.g. for hosted DerbyNet may leave ORIG_PATH_INFO instead of PATH_INFO
+  $path_info = $_SERVER['ORIG_PATH_INFO'];
 } else {
   echo "Debugging \$_SERVER:\n";
   var_export($_SERVER);
