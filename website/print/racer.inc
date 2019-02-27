@@ -92,20 +92,31 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       }
     }
   } else {
-    $sql = $base_sql;
-    if (isset($_GET['ids'])) {
-      $sql = $sql.' WHERE racerid IN ('.$_GET['ids'].',0)';
-    } else if (isset($_GET['where'])) {
-      $sql = $sql.' WHERE '.$_GET['where'];
-    }
-    $sql = $sql.' ORDER BY lastname, firstname, carnumber';
-
-    foreach ($db->query($sql) as $racer) {
+    function draw_one_racer(&$racer) {
+      global $doc;
       convert_strings($racer);
-
       $racer['barcode'] = 'PWDid'.sprintf('%03d', $racer['racerid']);
-
       $doc->DrawOne($racer);
+    }
+
+    if (isset($_GET['ids'])) {
+      $sql = $base_sql.' WHERE racerid = :racerid';
+      $stmt = $db->prepare($sql);
+      foreach (explode(',', $_GET['ids']) as $racerid) {
+        $stmt->execute(array(':racerid' => $racerid));
+        $racer = $stmt->fetch(PDO::FETCH_ASSOC);
+        draw_one_racer($racer);
+      }
+    } else {
+      $sql = $base_sql;
+      if (isset($_GET['where'])) {
+        $sql = $sql.' WHERE '.$_GET['where'];
+      }
+      $sql = $sql.' ORDER BY lastname, firstname, carnumber';
+
+      foreach ($db->query($sql) as $racer) {
+        draw_one_racer($racer);
+      }
     }
   }
 

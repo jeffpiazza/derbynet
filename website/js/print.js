@@ -168,7 +168,7 @@ function handle_sortorder_racers_change() {
   $.ajax("action.php",
          {type: 'GET',
           data: {query: "racer.list",
-                 order: $("#sortorder-racers option").val()},
+                 order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
             process_racer_list(data);
           },
