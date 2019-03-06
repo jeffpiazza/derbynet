@@ -44,7 +44,9 @@ define_photo_directory
 
 check_scanner
 
-check_camera
+# Even if camera is missing, allow barcode loop to proceed, so at least QUIT
+# command can be recognized.
+check_camera &
 
 while true ; do
     BARCODE=`barcode $BARCODE_SCANNER_DEV`

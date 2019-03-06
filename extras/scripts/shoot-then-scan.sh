@@ -49,7 +49,6 @@ EOF
     chmod +x "$HOOK_SCRIPT"
 
     while true ; do
-        echo Top of loop
         GPHOTO2_OK=0
         # stdout gets flooded with a ton of messages like
         #     UNKNOWN PTP Property d1d3 changed
@@ -92,7 +91,10 @@ while true ; do
         # We'd like something more specific
         announce upload-failed
     elif [ "$CAR_NO" ] ; then
-
+        # When the photo was captured, it had whatever name the camera assigned
+        # it.  Now that we have a barcode value, we can rename the photo to
+        # match the barcode value, in case the upload fails and manual
+        # intervention is required later.
         LINK="`readlink last-photo.jpg`"
         DIRNAME="`dirname "$LINK"`"
         FILENAME=Car$CAR_NO.jpg
