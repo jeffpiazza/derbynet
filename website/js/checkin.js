@@ -31,7 +31,7 @@ function preserve_autocrop_state() {
 
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
-    // cb is the checkbox element, with name "pased-" plus the racer id, e.g., passed-1234
+    // cb is the checkbox element, with name "passed-" plus the racer id, e.g., passed-1234
     if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
 	    cb.checked = true;
 	    return;

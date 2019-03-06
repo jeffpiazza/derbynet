@@ -16,17 +16,18 @@ function close_edit_all_classes_modal() {
 }
 
 function show_add_class_modal() {
-    show_secondary_modal("#add_class_modal", function () {
-        close_add_class_modal();
-        $.ajax(g_action_url,
-               {type: 'POST',
-                data: $('#add_class_modal form').serialize(),
-                success: function (data) {
-                    reload_class_list();
-                }});
-        
-        return false;
-    });
+  $("#add_class_modal input[name='name']").val("");
+  show_secondary_modal("#add_class_modal", function () {
+    close_add_class_modal();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $('#add_class_modal form').serialize(),
+            success: function (data) {
+              reload_class_list();
+            }});
+
+    return false;
+  });
 }
 
 function close_add_class_modal() {
@@ -103,7 +104,9 @@ function handle_delete_class() {
 
 function show_add_rank_modal() {
   var classid = $("#edit_class_name").attr('data-classid');
-  $("#add_rank_modal input[name='classid']").val(classid);
+  $("#add_rank_modal input[name='classid']").val(classid);    
+  $("#add_rank_modal input[name='name']").val("");
+
   show_tertiary_modal("#add_rank_modal", function() {
     close_add_rank_modal();
     $.ajax(g_action_url,
