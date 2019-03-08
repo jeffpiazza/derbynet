@@ -1,4 +1,5 @@
 function onFormSubmit(e) {
+  console.log("onFormSubmit");
   e.preventDefault();
   $.ajax({
     url: "action.php",
@@ -8,7 +9,7 @@ function onFormSubmit(e) {
          cache: false,
    processData:false,
     success: function(data) {
-      var succ = xmldoc.documentElement.getElementsByTagName("success");
+      var succ = data.documentElement.getElementsByTagName("success");
       if (succ && succ.length > 0) {
         window.location = "setup.php";
       }

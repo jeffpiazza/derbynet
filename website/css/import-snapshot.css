@@ -41,11 +41,12 @@ div.warning .red {
     border: 4px dashed #023882;
 }
 .file_target.draghover {
-    border: 4px solid #023882;
+  border: 4px solid #023882;
+  height: 300px;
 }
 
 #filepath {
-  margin-top: 50px;
+  margin-top: 150px;
   margin-bottom: 50px;
   font-size: x-large;
   font-weight: bold;
