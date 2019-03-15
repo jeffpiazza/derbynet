@@ -97,11 +97,17 @@ public class FastTrackDevice extends TimerDeviceCommon {
 
     // We're looking for a response that matches these:
     // Copyright (c) Micro Wizard 2002-2005
-    // K3 Version 1.05A  Serial Number 15985
+    // K3 Version 1.05A  Serial Number <nnnnn>
+    //
+    // Copyright (C) 2004 Micro Wizard
+    // K1 Version 1.09D Serial Number <nnnnn>
+    //
+    // COPYRIGHT (c) MICRO WIZARD 2002
+    // K2 Version 1.05a  Serial Number <nnnnn>
     long deadline = System.currentTimeMillis() + 2000;
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
-      if (s.indexOf("Micro Wizard") >= 0) {
+      if (s.indexOf("Micro Wizard") >= 0 || s.indexOf("MICRO WIZARD") >= 0) {
         timerIdentifier = s;
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
