@@ -229,3 +229,5 @@ div.import_csv {
 th .ui-flipswitch {
     font-size: 16px;
 }
+
+.ui-mobile .ui-page-active { overflow-x: auto; }

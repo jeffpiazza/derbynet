@@ -104,7 +104,7 @@ function list_standard_configs($basepath) {
       closedir($dh);
     }
   }
-  usort($results, compare_by_relpath);
+  usort($results, 'compare_by_relpath');
   return $results;
 }
 

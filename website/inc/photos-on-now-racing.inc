@@ -1,7 +1,7 @@
 <?php
 require_once('inc/data.inc');
 
-define(PHOTOS_ON_NOW_RACING, 'photos-on-now-racing');
+define('PHOTOS_ON_NOW_RACING', 'photos-on-now-racing');
 
 function read_photos_on_now_racing() {
   global $db;
