@@ -46,7 +46,6 @@ imagedestroy($im);
 
 $cropped->delete_dependents($image_name);
 
-// TODO echo "<success/>\n";
 take_action('UPDATE RegistrationInfo'
             .' SET '.$photo_repository->column_name().' = :photo'
             .' WHERE '.$photo_repository->column_name().' = :original',

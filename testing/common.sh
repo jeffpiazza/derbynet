@@ -70,7 +70,25 @@ function curl_photo() {
     if [ $OK -eq 0 ]; then
         test_fails Wrong photo result: $PHOTO_MD5
     fi
- }   
+}
+
+# curl_photo checks the MD5 digest of the photo that's returned, but for many photo manipulations,
+# the digest depends on the exact PHP and library versions used.  curl_photo_any just tests that
+# we get some kind of picture and not a failure.
+#
+# curl_photo_any $1=url_tail
+function curl_photo_any() {
+    echo ' ' ' ' ' ' photo_any $1 >&2
+    echo    >> $OUTPUT_CURL
+    echo photo $1 >> $OUTPUT_CURL
+    echo    >> $OUTPUT_CURL
+
+    COUNT=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/$1 | wc -c`
+    echo curl_photo_any says $COUNT
+    if [ $COUNT -eq 0 ]; then
+        test_fails No photo result for $1
+    fi
+}
 
 function curl_put_snapshot() {
     echo ' ' ' ' ' ' snapshot.put $1 >&2
