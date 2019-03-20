@@ -500,13 +500,12 @@ function close_photo_modal() {
 }
 
 function compare_first(a, b) {
-  if (a[0] == b[0])
-      return 0;
-  if (a[0] < b[0])
-      return -1;
-   return 1;
+  for (var i = 0; i < a[0].length; ++i) {
+    if (a[0][i] < b[0][i]) return -1;
+    if (a[0][i] > b[0][i]) return 1;
+  }
+  return 0;
 }
-
 
 function sorting_key(row) {
   if (g_order == 'class') {
