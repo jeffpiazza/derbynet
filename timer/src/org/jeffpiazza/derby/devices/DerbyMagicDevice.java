@@ -5,6 +5,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jeffpiazza.derby.Message;
 
 // TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
 
@@ -116,9 +117,12 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
   }
 
   protected void raceFinished() throws SerialPortException {
-    raceFinished(result.toArray());
+    Message.LaneResult[] resultArray = result.toArray();
     result = null;
     timeOfFirstResult = 0;
+    // raceFinished(LaneResult[]) may synchronously prepare a new heat,
+    // overwriting result member, so clear that before calling
+    raceFinished(resultArray);
     // Not sure what triggers it (possibly timer reset by switch?), but timer
     // sometimes sends a <n>=9.9999 for DNFs.  These don't have place info,
     // so don't match the early detector; instead they get put on the queue,

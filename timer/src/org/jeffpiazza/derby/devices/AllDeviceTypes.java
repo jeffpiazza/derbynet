@@ -15,7 +15,8 @@ public class AllDeviceTypes {
         DerbyTimerDevice.class,
         MiscJunkDevice.class,
         DerbyMagicDevice.class,
-        DerbyMagic9600.class
+        DerbyMagic9600.class,
+        BertDrakeDevice.class
       };
 
   public static String toHumanString(Class<? extends TimerDevice> type) {

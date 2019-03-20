@@ -47,7 +47,7 @@ public class TimerMain {
     System.out.println(
         "                            before timer will be reset, default 10,");
     System.out.println(
-        "                            for SmartLine, DerbyMagic, and NewBold");
+        "                            for SmartLine, DerbyMagic, NewBold, and BertDrake");
     System.err.
         println("   -simulate-timer: Simulate timer device (for testing)");
     System.err.println("     -lanes <n>: Specify number of lanes to report");

@@ -61,9 +61,11 @@ public class TimerDeviceUtils {
 
   public static Message.LaneResult[] zeroesToNines(Message.LaneResult[] results) {
     for (Message.LaneResult r : results) {
-      Matcher m = zeroesPattern.matcher(r.time);
-      if (m.find()) {
-        r.time = r.time.replace('0', '9');
+      if (r != null && r.time != null) {
+        Matcher m = zeroesPattern.matcher(r.time);
+        if (m.find()) {
+          r.time = r.time.replace('0', '9');
+        }
       }
     }
     return results;
