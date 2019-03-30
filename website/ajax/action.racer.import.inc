@@ -71,60 +71,13 @@ if (have_permission(SET_UP_PERMISSION)) {
   not_authorized_body();
   $ok = false;
 }
-    
+
 if ($ok) {
-
   $classname = substr(trim($_POST['classname']), 0, CLASS_COLUMN_WIDTH);
-  // We're failing to find the existing record, but trying to write a
-  // new one gives a uniqueness violation against the truncated name.
-  $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
-                               array(':classname' => $classname));
-  if ($classid === false) {
-    $stmt = $db->prepare('INSERT INTO Classes(class) VALUES(:classname)');
-    $stmt->execute(array(':classname' => $classname));
-    $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
-                                 array(':classname' => $classname));
-    if (schema_version() >= 2) {
-      $nclasses = read_single_value('SELECT COUNT(*) FROM Classes');
-      $stmt = $db->prepare('UPDATE Classes'
-                           .' SET sortorder = :nclasses'
-                           .' WHERE classid = :classid');
-      $stmt->execute(array(':classid' => $classid,
-                           ':nclasses' => $nclasses));
-    }
-
-    // Creating a class usually requires creating a corresponding 1st racing round
-    $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
-                         .' SELECT 1, classid'
-                         .' FROM Classes'
-                         .' WHERE classid = :classid'
-                         .' AND NOT EXISTS(SELECT 1 FROM Rounds'
-                         .'  WHERE Rounds.classid = Classes.classid'
-                         .'    AND Rounds.round = 1)');
-    $stmt->execute(array(':classid' => $classid));
-  }
+  $classid = find_or_create_class($classname);
 
   $rankname = isset($_POST['subgroup']) ? trim($_POST['subgroup']) : $classname;
-  $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname AND classid = :classid',
-                              array(':rankname' => $rankname,
-                                    ':classid' => $classid));
-  if ($rankid === false) {
-    $stmt = $db->prepare('INSERT INTO Ranks(rank, classid) VALUES(:rankname, :classid)');
-    $stmt->execute(array(':rankname' => $rankname,
-                         ':classid' => $classid));
-    $rankid = read_single_value('SELECT rankid FROM Ranks WHERE rank = :rankname AND classid = :classid',
-                                array(':rankname' => $rankname,
-                                      ':classid' => $classid));
-    if (schema_version() >= 2) {
-      $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
-                                  array(':classid' => $classid));
-      $stmt = $db->prepare('UPDATE Ranks'
-                           .' SET sortorder = :nranks'
-                           .' WHERE rankid = :rankid');
-      $stmt->execute(array(':nranks' => $nranks,
-                           ':rankid' => $rankid));
-    }
-  }
+  $rankid = find_or_create_rank($rankname, $classid);
 
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';

@@ -11,7 +11,7 @@
 // top finishers across multiple previous rounds.  Those previous rounds are
 // identified by $_POST keys of the form roundid_<nnn>.
 //
-// "top" identifies the how many racers to select for the new round, but its interpretation also
+// "top" identifies how many racers to select for the new round, but its interpretation also
 // depends on "bucketed".
 //
 // For a Grand Finals round, if "bucketed" is true, then "top" tells how many
@@ -25,6 +25,7 @@
 start_response();
 
 require_once('inc/standings.inc');
+require_once('inc/newracer.inc');
 
 $bucket_limit = $_POST['top'];
 $bucketed = isset($_POST['bucketed']) && $_POST['bucketed'];
@@ -59,23 +60,7 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
                                  array());
   $new_round = $old_round;
 
-  // Get or insert a 'Grand Finals' class.
-  $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
-                               array(), 0);
-  if (!$classid) {
-    $db->exec("INSERT INTO Classes(class) VALUES('Grand Finals')");
-    $classid = read_single_value("SELECT classid FROM Classes WHERE class = 'Grand Finals'",
-                                 array(), 0);
-    if (expected_schema_version() >= 2) {
-      // Apparently mysql can't support an embedded select from the same table
-      // that's being updated, so this has to be done in two queries.
-      $max = read_single_value('SELECT MAX(sortorder) FROM Classes');
-      $stmt = $db->prepare("UPDATE Classes SET sortorder = 1 + :max"
-                           ." WHERE classid = :classid");
-      $stmt->execute(array(':classid' => $classid,
-                           ':max' => $max));
-    }
-  }
+  $classid = find_or_create_class('Grand Finals', /* without first round */ false);
 }
 
 // With $new_round and $classid settled, make the new round (unless it
