@@ -4,7 +4,7 @@
 }
 
 .kiosk_title {
-  font-size: 100px;
+  font-size: 9vh;
   text-align: center;
   margin-bottom: 0px;
   margin-top: 0px;
@@ -12,7 +12,7 @@
 }
 
 .kiosk_heading {
-  font-size: 50px;
+  font-size: 4.5vh;
   text-align: center;
   margin: 0px;
   font-weight: bold;
@@ -24,9 +24,9 @@
 }
 
 .kiosk_wanted li {
-  font-size: 30px;
+  font-size: 3vh;
 }
 
 .heat_link span {
-    font-size: 32px;
+  font-size: 3vh;
 }

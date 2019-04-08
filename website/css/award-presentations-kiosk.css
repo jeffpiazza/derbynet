@@ -1,6 +1,6 @@
 
 p.award-racer {
-    line-height: 0.4;
+    line-height: 0.4; /* times font-size */
 }
 
 .award-racer .firstname,
@@ -33,20 +33,21 @@ p.award-racer {
 
 .award-background {
     color: #003882;
-    font-size: 80px;
+    font-size: 7vh;
     text-align: center;
     clear: both;
 }
 
 .award-trophy {
-    margin-top: 80px;
-    font-size: 100px;
+    margin-top: 7vh;
+    font-size: 9vh;
     font-weight: bold;
-    max-height: 156px;
+    max-height: 14vh;
 }
 
 #carname {
     font-style: italic;
+    font-size: 5vh;
 }
 
 .fade-in {  display: none;  }
