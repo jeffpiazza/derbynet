@@ -119,7 +119,7 @@ check_camera() {
 # Outputs:
 #    CHECKIN_OK (boolean, 1=ok)
 maybe_check_in_racer() {
-    if [ $PHOTO_CHECKIN -ne 0 -a "$BARCODE" != "PWDuploadtest" ] ; then
+    if [ $PHOTO_CHECKIN -ne 0 -a "$BARCODE" != "PWDuploadtest" -a "$BARCODE" != "PWDuploadonly" ] ; then
         echo Checking in racer $BARCODE at `date` | tee -a checkins.log
         # Check in the racer
         CHECKIN_OK=0
@@ -194,6 +194,7 @@ upload_photo() {
 #    COOKIES
 #    DERBYNET_SERVER
 upload_speed_test() {
+    [ -x /usr/bin/flite ] && flite -t "Beginning speed test"
     RANDOM_JPG=upload-test.random.jpg
     COUNT=25
     BS=2048
