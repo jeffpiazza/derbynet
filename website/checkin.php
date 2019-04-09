@@ -279,7 +279,7 @@ foreach ($stmt as $rs) {
   </form>
 </div>
 
-    
+
 <div id='bulk_modal' class="modal_dialog hidden block_buttons">
   <input type="button" value="Bulk Check-In" data-enhanced="true"
     onclick="bulk_check_in(true);"/>
