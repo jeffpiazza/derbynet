@@ -15,9 +15,6 @@ class SimpleAwardDocument extends PrintableAwardDocument {
       'signatory2' => array('type' => 'string',
                              'desc' => 'Second Signatory',
                             'default' => 'Pinewood Derby Chair'),
-      'rounded' => array('type' => 'bool',
-                         'desc' => 'Use rounded corners',
-                         'default' => true),
         );
   }
 
