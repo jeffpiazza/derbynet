@@ -58,8 +58,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   </div>
 
   <div class="control_group timer_control_group">
-  <?php if (with_gprm()) { ?>
-    <p>Using Grand Prix Race Manager</p>
+  <?php if (!warn_no_timer()) { ?>
+    <p>Not monitoring timer state</p>
    <?php } else { ?>
     <div class="status_icon">
       <img id="timer_status_icon" src="img/status/unknown.png"/>

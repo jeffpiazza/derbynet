@@ -228,9 +228,16 @@ function get_running_round() {
 // Prix Race Manager, but GPRM is actually running the race.
 //
 // By default, if using an Access (ODBC) database, we assume we're running with GPRM.
-function with_gprm() {
+function warn_no_timer() {
   global $dbtype;
-  return read_raceinfo('with-gprm', $dbtype == 'access');
+  $count = read_single_value('SELECT COUNT(*) FROM RaceInfo WHERE itemkey = :key',
+                             array(':key' => 'warn-no-timer'));
+  if ($count > 0) {
+    return read_raceinfo('warn-no-timer', true);
+  } else {
+    // This used to be stored as 'with-gprm', with the opposite sense
+    return ! read_raceinfo('with-gprm', $dbtype == 'access');
+  }
 }
 
 function is_windows_server() {

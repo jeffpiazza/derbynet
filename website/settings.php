@@ -73,11 +73,11 @@ $finish_formatting = get_finishtime_formatting_string();
     </div>
 
     <div class="settings_group_settings">
-    <input type="hidden" name="with-gprm-checkbox" value="yes"/>
+    <input type="hidden" name="warn-no-timer-checkbox" value="yes"/>
       <p>
-        <input id="with-gprm" name="with-gprm" data-enhanced="true"
-                type="checkbox"<?php if (with_gprm()) echo ' checked="checked"';?>/>
-        <label>Using Grand Prix Race Manager (for timer control, etc.)?</label>
+        <input id="warn-no-timer" name="warn-no-timer" data-enhanced="true"
+                type="checkbox"<?php if (warn_no_timer()) echo ' checked="checked"';?>/>
+        <label>Warn when timer not connected</label>
       </p>
       <p>
         <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"

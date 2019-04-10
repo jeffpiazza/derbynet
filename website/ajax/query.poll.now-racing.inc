@@ -16,7 +16,7 @@
 //     <repeat-animation/>
 //   </now-racing>
 
-if (!with_gprm()) {
+if (warn_no_timer()) {
   require_once('inc/timer-state.inc');
   $timer_state = new TimerState();
   if ($timer_state->troubled()) {
