@@ -56,13 +56,10 @@
               <include name="README.txt"/>
           </fileset>
 
-          <mappedresources>
-              <fileset dir=".">
-                  <include name="website/**/*"/>
-                  <exclude name="website/local/**"/>
-              </fileset>
-              <globmapper from="website/*" to="racemgr/*"/>
-          </mappedresources>
+          <fileset dir=".">
+              <include name="website/**/*"/>
+              <exclude name="website/local/**"/>
+          </fileset>
 
           <fileset dir=".">
               <include name="*.dmg"/>

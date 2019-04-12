@@ -52,14 +52,10 @@
               <include name="README.txt"/>
           </fileset>
 
-          <mappedresources>
-              <fileset dir=".">
-                  <include name="website/**/*"/>
-                  <exclude name="website/local/**"/>
-              </fileset>
-              <!-- TODO name change to derbynet -->
-              <globmapper from="website/*" to="racemgr/*"/>
-          </mappedresources>
+          <fileset dir=".">
+              <include name="website/**/*"/>
+              <exclude name="website/local/**"/>
+          </fileset>
 
           <mappedresources>
               <fileset dir="docs/dist">
