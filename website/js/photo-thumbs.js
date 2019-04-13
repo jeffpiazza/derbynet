@@ -135,11 +135,24 @@ function removeRacerPhoto(previous) {
 }
 
 
-function setupPhotoCrop(repo_name, basename, time) {
-  // RENDER_WORKING
-  $("#work_image").html('<img src="photo.php/' + repo_name + '/file/work/' + basename + '/' + time + '"/>');
+var g_crop;
+function updateCrop(c) {
+  g_crop = c;
+}
 
-  // TODO: Figure out how to center the image
+function setupPhotoCrop(repo_name, basename, time) {
+  $("#photo_basename").text(basename);
+  // 'work' = RENDER_WORK; based on the original photo, not cropped
+  $("#work_image").html('<img src="photo.php/' + repo_name + '/file/work/' + basename + '/' + time + '"/>');
+  $("#work_image img").on('load', function() { on_work_image_loaded(this); });
+}
+
+function on_work_image_loaded(img) {
+  var m = ($("#work_image").parent().width() - $(img).width()) / 2;
+  $("#work_image").css('margin-left', m).css('margin-right', m);
+  // jcrop seems to copy the img element, and we don't want to fire when the
+  // copy img loads.
+  $("#work_image img").off('load');
 
   g_crop = null;
 
@@ -158,10 +171,6 @@ function showPhotoCropModal(img, repo_name, basename, time) {
   show_modal('#photo_crop_modal');
 }
 
-var g_crop;
-function updateCrop(c) {
-  g_crop = c;
-}
 
 // Updates the url for an <img/> element to include a new cache-breaker
 // timestamp, which effectively causes the image to be reloaded from the server.

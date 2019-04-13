@@ -7,7 +7,10 @@ require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
 require_once('inc/photo-config.inc');
 
-$photo_repository = photo_repository(isset($_GET['repo']) ? $_GET['repo'] : 'head');
+$repo = isset($_GET['repo']) ? $_GET['repo'] : 'head';
+$photo_repository = photo_repository($repo);
+$other_repo =  $repo == 'car' ? 'head' : 'car';
+
 
 $order = '';
 if (isset($_GET['order']))
@@ -17,13 +20,17 @@ if (!$order)
 
 function link_for_ordering($key, $text) {
   global $order, $photo_repository;
-  echo "<a ";
+  echo "<div class='sort_div'>";
+  echo "<a class='sort_button button_link";
   if ($order == $key) {
-    echo 'class="current_sort"';
+    echo ' current_sort';
   }
-  echo " href='photo-thumbs.php?repo=".$photo_repository->name()."&amp;order=".$key."'>";
+  echo "' href='photo-thumbs.php?repo=".$photo_repository->name()."&amp;order=".$key."'>";
+  //echo "<span class='sort_by'>Sort by</span>";
+  //echo "<br/>";
   echo $text;
   echo "</a>";
+  echo "</div>";
 }
 
 function scan_directory($directory, $pattern) {
@@ -81,15 +88,15 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
 <body>
-<?php make_banner(($photo_repository->name() == 'head' ? 'Racer' : 'Car').' Photos'); ?>
+<?php make_banner(($repo == 'head' ? 'Racer' : 'Car').' Photos'); ?>
 
 <div class="block_buttons">
 
 <div id="sort_controls">
-Sort racers by
-<?php link_for_ordering('name', "name,"); ?>
-<?php link_for_ordering('class', group_label_lc().","); ?> or
-<?php link_for_ordering('car', "car number"); ?>.
+<?php link_for_ordering('name', "Name"); ?>
+<?php link_for_ordering('class', group_label()); ?>
+<?php link_for_ordering('car', "Car#"); ?>.
+
 </div>
 
 <?php if (!is_writable($photo_repository->directory())) { ?>
@@ -113,8 +120,15 @@ Sort racers by
 
 <?php } ?>
 
-    <input type="button" value="Refresh" onclick="window.location.reload();"/>
-</div>
+   <div id="center_buttons">
+    <?php
+        echo "<a class='button_link' id='refresh-button' onclick='window.location.reload();'>Refresh</a>";
+        echo "<a class='button_link' id='other-button'"
+             ." href='photo-thumbs.php?repo=".$other_repo."&amp;order=".$order."'>";
+        echo $other_repo == 'head' ? 'Racers' : 'Cars';
+        echo "</a>";
+    ?>
+    </div>
 
 <div class="body-wrapper">
 
@@ -208,9 +222,10 @@ if (empty($allfiles)) {
 </div>
 
 <div id="photo_crop_modal" class="modal_dialog hidden block_buttons">
+<p id='photo_basename'></p>
 <div id="work_image"></div>
 
-<p>Indicate new crop boundary, <i>then</i> press Crop.</p>
+<p id="crop_instructions">Indicate new crop boundary, <i>then</i> press Crop.</p>
 <input data-enhanced="true" type="button" value="Crop" onclick="cropPhoto(); return false;"/>
 <input data-enhanced="true" type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
 <input data-enhanced="true" type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
