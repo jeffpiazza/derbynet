@@ -77,7 +77,8 @@ $finish_formatting = get_finishtime_formatting_string();
       <p>
         <input id="with-gprm" name="with-gprm" data-enhanced="true"
                 type="checkbox"<?php if (with_gprm()) echo ' checked="checked"';?>/>
-        <label>Using Grand Prix Race Manager (for timer control, etc.)?</label>
+        <label title="Enable this if you plan to enter times manually. It will also remove the warning from the 'now racing' dashboard regarding the timer not being connected.">
+            Using Grand Prix Race Manager (for manual time entry, etc.)?</label>
       </p>
       <p>
         <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
@@ -259,7 +260,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
     <div class="settings_group_settings">
       <p>
         <input type="hidden" name="drop-slowest-checkbox" value="yes"/>
-        <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php 
+        <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('drop-slowest')) echo ' checked="checked"';?>/>
         <label>Drop each racer's slowest heat?</label>
       </p>
@@ -271,7 +272,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
       </p>
       <p>
         <input type="hidden" name="use-points-checkbox" value="yes"/>
-        <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php 
+        <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
         <label>Race by points (place) instead of by times?</label>
       </p>
