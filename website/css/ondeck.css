@@ -77,9 +77,19 @@ th.nrows4 img {
 }
 
 .curheat .ondeck_photo.populated,
-.nextheat .ondeck_photo.populated {
+.nextheat .ondeck_photo.populated,
+.exposed .ondeck_photo.populated {
     display: block;
     margin-left: auto;
     margin-right: auto;
     height: 100px;
+}
+
+.heat_row {
+  cursor: pointer;
+}
+
+#photo_view_modal {
+  width: 650px;
+  text-align: center;
 }

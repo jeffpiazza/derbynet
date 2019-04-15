@@ -63,8 +63,6 @@ body { margin: 0; }
  z-index: 1;
 }
 
-img { z-index: 30; }
-
 .droppableHover {
   background-color: #ffffb4;
 }
@@ -73,11 +71,14 @@ img { z-index: 30; }
     top: 0px;
     width: 650px;
 }
+#photo_basename,
+#crop_instructions {
+  text-align: center;
+}
 
-#photo_crop_modal img {
-/* TODO: Trying to center the photo in the dialog */
-    margin-left: auto;
-    margin-right: auto;
+#photo_basename {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .trouble {
@@ -85,6 +86,63 @@ img { z-index: 30; }
 }
 .trouble img {
     vertical-align: middle;
+}
+
+#sort_controls {
+  position: absolute;
+  left: 2px; 
+  font-size: 16px;
+}
+
+#sort_controls .sort_div {
+  display: inline-block;
+  width: 100px;
+  height: 30px;
+}
+
+#sort_controls .sort_button {
+  position: absolute;
+  top: 0px;
+  width: 60px;
+  height: 30px;
+}
+
+#sort_controls a {
+  display: inline-block;
+  text-align: center;
+  font-size: 20px;
+  min-width: 60px;
+  top: 0px;
+}
+
+#sort_controls a.current_sort {
+  color: #dddd88;
+  text-decoration: none;
+}
+
+#center_buttons {
+  width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#center_buttons a {
+  width: 88px;
+  height: 30px;
+  font-size: 20px;
+}
+
+#center_buttons #refresh-button {
+  float: left;
+  font-size: 20px;
+  margin-left: 0px;
+  margin-top: 0px;
+}
+
+#center_buttons #other-button {
+  width: 88px;
+  font-size: 20px;
+  margin-left: 130px;
 }
 
 #upload_target {
@@ -113,23 +171,4 @@ img { z-index: 30; }
 #upload_target,
 #upload_target * {
   box-sizing: border-box;
-}
-
-#sort_controls {
-  position: absolute;
-  left: 2px; 
-  margin-top: 10px;
-  font-size: 16px;
-}
-
-#sort_controls a {
-  display: inline-block;
-  text-align: center;
-  font-size: 20px;
-  min-width: 60px;
-}
-
-#sort_controls a.current_sort {
-  color: #000000;
-  text-decoration: none;
 }

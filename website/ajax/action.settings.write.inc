@@ -17,9 +17,10 @@ if (have_permission(SET_UP_PERMISSION)) {
   // For checkbox controls, no parameter is passed if the checkbox is unchecked.
   // To avoid accidentally reseting values by forgetting to pass them, we adopt
   // a convention of sending a hidden field, named with a '-checkbox' suffix,
-  // for each checkbox Boolean field.  E.g., only if a 'with-gprm-checkbox'
-  // parameter is passed will the presence or absence of a 'with-gprm' parameter
-  // be used to control the 'with-gprm' setting.
+  // for each checkbox Boolean field.  E.g., only if a
+  // 'do-use-subgroups-checkbox' parameter is passed will the presence or
+  // absence of a 'do-use-subgroups' parameter be used to control the
+  // 'use-subgroups' setting.
   $failures = false;
 
   if (locked_settings()) {
@@ -35,7 +36,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     // ===========================================================================
     // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
     // $_POST key => RaceInfo.itemkey
-    foreach(array('with-gprm' => 'with-gprm',
+    foreach(array('warn-no-timer' => 'warn-no-timer',
                   'do-use-subgroups' => 'use-subgroups',
                   'use-master-sched' => 'use-master-sched',
                   'use-points' => 'use-points',

@@ -152,6 +152,8 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
           @unlink($photo_dir.DIRECTORY_SEPARATOR.$target_name);
           @unlink($cropped_path = $photo_repository->lookup(RENDER_CROPPED)->target_file_path($target_name));
           echo "<test-ok/>\n";
+        } else if ($_POST['barcode'] == 'PWDuploadonly') {
+          // Upload photo without associating with a racer
         } else {
           $racerid = barcode_to_racerid($_POST['barcode']);
           if (!$racerid) {

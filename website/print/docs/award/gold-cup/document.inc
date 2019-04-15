@@ -15,9 +15,9 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
       'signatory2' => array('type' => 'string',
                              'desc' => 'Second Signatory',
                             'default' => 'Pinewood Derby Chair'),
-      'rounded' => array('type' => 'bool',
-                         'desc' => 'Use rounded corners',
-                         'default' => true),
+      'cub_scout' => array('type' => 'bool',
+                          'desc' => 'Include Cub Scout logo in corner',
+                          'default' => true),
         );
   }
 
@@ -100,6 +100,11 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
                                    array($this->get_option('signatory2')));
       $this->pdf->Line($left + $params['width'] - $sig_margin - $sig_width, $top + 6.5,
                        $left + $params['width'] - $sig_margin,              $top + 6.5);
+    }
+
+    if ($this->get_option('cub_scout')) {
+      $path = dirname(__FILE__).'/Cub_Scout_emblem_600.png';
+      $this->pdf->Image($path, $left + 0.25, 6.75, 1.5,1.5);
     }
 
     // Event Title

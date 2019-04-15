@@ -17,6 +17,7 @@ try {
   exit();
 }
 
+// Returns true if we actually showed a button
 function make_link_button($label, $link, $permission, $button_class) {
   if (have_permission($permission)) {
     echo "<a class='button_link ".$button_class."' href='".$link."'>".$label."</a>\n";
@@ -77,6 +78,29 @@ div.index_column {
 .block_buttons input.other_button[type='submit'] {
   color: #ffddff;
 }
+
+.block_buttons .double {
+  width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.block_buttons .double a.button_link {
+  width: 95px;
+  font-size: 15px;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 5px;
+  /* top and bottom padding are normally 9px */
+  padding-top: 5px;
+  padding-bottom: 13px;
+}
+.block_buttons .double .left {
+  float: left;
+}
+.block_buttons .double a.right {
+  /* margin-left: 150px; */
+  margin-left: 11px;
+}
 </style>
 </head>
 <body>
@@ -99,9 +123,15 @@ echo "<div class='block_buttons'>\n";
 // *********** Before ***************
 $need_spacer = make_link_button('Set-Up', 'setup.php', SET_UP_PERMISSION, 'before_button');
 $need_spacer = make_link_button('Race Check-In', 'checkin.php', CHECK_IN_RACERS_PERMISSION, 'before_button') || $need_spacer;
-$need_spacer = make_link_button('Edit Racer Photos', 'photo-thumbs.php?repo=head', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
-if ($schema_version > 1) {
-  $need_spacer = make_link_button('Edit Car Photos', 'photo-thumbs.php?repo=car', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
+if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
+  if ($schema_version > 1) {
+    echo "<div class='double'>";
+    echo "<a class='button_link left before_button' href='photo-thumbs.php?repo=head'><b>Racer</b><br/>Photos</a>\n";
+    echo "<a class='button_link right before_button' href='photo-thumbs.php?repo=head'><b>Car</b><br/>Photos</a>\n";
+    echo "</div>";
+  } else {
+    $need_spacer = make_link_button('Edit Racer Photos', 'photo-thumbs.php?repo=head', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
+  }
 }
 
 make_spacer_if($need_spacer);
@@ -110,6 +140,11 @@ make_spacer_if($need_spacer);
 $need_spacer = make_link_button('Race Dashboard', 'coordinator.php', SET_UP_PERMISSION, 'during_button');
 $need_spacer = make_link_button('Kiosk Dashboard', 'kiosk-dashboard.php', SET_UP_PERMISSION, 'during_button') || $need_spacer;
 $need_spacer = make_link_button('Judging', 'judging.php', JUDGING_PERMISSION, 'during_button') || $need_spacer;
+
+// *********** During, part 2 ***************
+$need_spacer = make_link_button('Racers On Deck', 'ondeck.php', -1, 'during_button') || $need_spacer;
+$need_spacer = make_link_button('Results By Racer', 'racer-results.php', VIEW_RACE_RESULTS_PERMISSION, 'during_button')
+    || $need_spacer;
 
 // end first column default set-up
 
@@ -121,17 +156,12 @@ if ($two_columns) {
   echo "<div class='block_buttons'>\n";
 }
 
-// *********** During, part 2 ***************
-$need_spacer = make_link_button('Racers On Deck', 'ondeck.php', -1, 'during_button') || $need_spacer;
-$need_spacer = make_link_button('Results By Racer', 'racer-results.php', VIEW_RACE_RESULTS_PERMISSION, 'during_button')
-    || $need_spacer;
-
-make_spacer_if($need_spacer);
-
 // *********** After ***************
 $need_spacer = make_link_button('Present Awards', 'awards-presentation.php', PRESENT_AWARDS_PERMISSION, 'after_button');
 $need_spacer = make_link_button('Standings', 'standings.php', VIEW_AWARDS_PERMISSION, 'after_button') || $need_spacer;
 $need_spacer = make_link_button('Exported Results', 'export-results.php', VIEW_RACE_RESULTS_PERMISSION, 'after_button') || $need_spacer;
+
+$need_spacer = make_link_button('History', 'history.php', SET_UP_PERMISSION, 'after_button') || $need_spacer;
 
 make_spacer_if($need_spacer);
 

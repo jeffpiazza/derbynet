@@ -42,6 +42,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   if (write_heat_results()) {
+    record_event_sql('INSERT INTO Events(action, roundid, heat) VALUES(:action, :roundid, :heat)',
+                     array(':action' => EVENT_HEAT_MANUALLY_ENTERED,
+                           ':roundid' => $current['roundid'],
+                           ':heat' => $current['heat']));
     if (get_racing_state()) {
       send_replay_REPLAY();
       $current = get_running_round();

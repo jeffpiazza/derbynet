@@ -237,6 +237,9 @@ public class TimerGui {
   // been added to the role combobox
   public synchronized void rolesComplete() {
     setRolesPopulated(true);
+    // Try logging in to the first role with an empty password -- almost always
+    // works, and makes for one less thing for the operator to have to do.
+    onConnectButtonClick();
     setHttpStatus("Please log in", black, icon_unknown);
     components.roleComboBox.setEnabled(true);
     components.passwordField.setEnabled(true);

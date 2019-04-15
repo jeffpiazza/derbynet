@@ -73,12 +73,12 @@ $finish_formatting = get_finishtime_formatting_string();
     </div>
 
     <div class="settings_group_settings">
-    <input type="hidden" name="with-gprm-checkbox" value="yes"/>
+    <input type="hidden" name="warn-no-timer-checkbox" value="yes"/>
       <p>
-        <input id="with-gprm" name="with-gprm" data-enhanced="true"
-                type="checkbox"<?php if (with_gprm()) echo ' checked="checked"';?>/>
-        <label title="Enable this if you plan to enter times manually. It will also remove the warning from the 'now racing' dashboard regarding the timer not being connected.">
-            Using Grand Prix Race Manager (for manual time entry, etc.)?</label>
+        <input id="warn-no-timer" name="warn-no-timer" data-enhanced="true"
+                type="checkbox"<?php if (warn_no_timer()) echo ' checked="checked"';?>/>
+        <label title="Enable this if you plan to enter times manually or use with GPRM. It will remove the warning from the 'now racing' dashboard regarding the timer not being connected.">
+               Warn when timer not connected</label>
       </p>
       <p>
         <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"

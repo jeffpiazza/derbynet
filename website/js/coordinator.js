@@ -604,7 +604,13 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     buttons.append('<input type="button" data-enhanced="true"'
                    + ' onclick="handle_master_next_up()" value="Next Up"/>');
   } else {
-    if (round.racers_unscheduled > 0) {
+    if (round.heats_scheduled > 0 && round.heats_run == 0) {
+      buttons.append('<input type="button" data-enhanced="true"'
+                     + ' onclick="handle_unschedule_button(' + round.roundid
+                     + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                     + round.round + ')"'
+                     + ' value="Unschedule"/>');
+    } else if (round.racers_unscheduled > 0) {
       if (round.heats_run == 0) {
         if (timer_state.lanes != '' && timer_state.lanes > 0) {
           buttons.append('<input type="button" data-enhanced="true"'
@@ -620,13 +626,6 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                        + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
                        + ' value="Reschedule"/>');
       }
-    }
-    else if (round.heats_scheduled > 0 && round.heats_run == 0) {
-      buttons.append('<input type="button" data-enhanced="true"'
-                     + ' onclick="handle_unschedule_button(' + round.roundid
-                     + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
-                     + round.round + ')"'
-                     + ' value="Unschedule"/>');
     }
 
     if (round.heats_scheduled == 0 && round.heats_run == 0 &&

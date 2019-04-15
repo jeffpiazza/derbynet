@@ -17,8 +17,8 @@ public class ClientSession {
 
   public ClientSession(String base_url) {
     String lowercase_url = base_url.toLowerCase();
-    if (!lowercase_url.startsWith("http://") &&
-        !lowercase_url.startsWith("https://")) {
+    if (!lowercase_url.startsWith("http://")
+        && !lowercase_url.startsWith("https://")) {
       base_url = "http://" + base_url;
     }
     if (!base_url.endsWith("/")) {
@@ -54,7 +54,7 @@ public class ClientSession {
 
   public Element login(String username, String password) throws IOException {
     return doPostWithVariations("action.php",
-                  "action=login&name=" + username + "&password=" + password);
+                                "action=login&name=" + username + "&password=" + password);
   }
 
   public Element sendTimerMessage(String messageAndParams) throws IOException {
@@ -71,8 +71,7 @@ public class ClientSession {
 
     do {
       result = doPost(url_path, params);
-    }
-    while (result == null && makeUrlVariation());
+    } while (result == null && makeUrlVariation());
 
     return result;
   }
@@ -85,10 +84,12 @@ public class ClientSession {
     // TODO Sun Security Validator failed
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("POST");
+    connection.addRequestProperty("User-Agent",
+                                  "derby-timer.jar/" + Version.get());
 
     connection.setDoOutput(true);
-    OutputStreamWriter writer = new OutputStreamWriter(connection.
-        getOutputStream());
+    OutputStreamWriter writer =
+        new OutputStreamWriter(connection.getOutputStream());
     writer.write(params);
     writer.flush();
     writer.close(); // writer.close() may block.
@@ -101,8 +102,7 @@ public class ClientSession {
 
     do {
       result = doQuery(q);
-    }
-    while (result == null && makeUrlVariation());
+    } while (result == null && makeUrlVariation());
 
     return result;
   }
@@ -119,6 +119,8 @@ public class ClientSession {
   protected Element doQuery(URL url) throws IOException {
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("GET");
+    connection.addRequestProperty("User-Agent",
+                                  "derby-timer.jar/" + Version.get());
     return getResponse(connection);
   }
 

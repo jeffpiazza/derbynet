@@ -1,6 +1,6 @@
 #! /bin/sh
 
-MAX_UPLOAD_SIZE=8M
+MAX_UPLOAD_SIZE=16M
 
 if [ -f /etc/os-release ] ; then
     . /etc/os-release
@@ -34,11 +34,14 @@ EOF
 ######## PHP config
 
 if [ -e /etc/php5 ] ; then
-    sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" /etc/php5/fpm/php.ini
+    sed -i.pre-derbynet -e "s/^upload_max_filesize = [28]M/upload_max_filesize = $MAX_UPLOAD_SIZE/" \
+        -e "s#^post_max_size = [2-8]M#post_max_size = $MAX_UPLOAD_SIZE#" \
+        /etc/php5/fpm/php.ini
     echo Restarting php5-fpm
     service php5-fpm restart
 else
-    sed -i.pre-derbynet -e "s/^upload_max_filesize = 2M/upload_max_filesize = $MAX_UPLOAD_SIZE/" \
+    sed -i.pre-derbynet -e "s/^upload_max_filesize = [28]M/upload_max_filesize = $MAX_UPLOAD_SIZE/" \
+        -e "s#^post_max_size = [2-8]M#post_max_size = $MAX_UPLOAD_SIZE#" \
         `find /etc/php -name php.ini`
     for SVC in  `find /etc/init.d -name php\* -exec basename {} \;` ; do
         echo Restarting $SVC
