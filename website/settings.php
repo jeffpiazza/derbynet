@@ -77,7 +77,8 @@ $finish_formatting = get_finishtime_formatting_string();
       <p>
         <input id="warn-no-timer" name="warn-no-timer" data-enhanced="true"
                 type="checkbox"<?php if (warn_no_timer()) echo ' checked="checked"';?>/>
-        <label>Warn when timer not connected</label>
+        <label title="Enable this if you plan to enter times manually or use with GPRM. It will remove the warning from the 'now racing' dashboard regarding the timer not being connected.">
+               Warn when timer not connected</label>
       </p>
       <p>
         <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
@@ -259,7 +260,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
     <div class="settings_group_settings">
       <p>
         <input type="hidden" name="drop-slowest-checkbox" value="yes"/>
-        <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php 
+        <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('drop-slowest')) echo ' checked="checked"';?>/>
         <label>Drop each racer's slowest heat?</label>
       </p>
@@ -271,7 +272,7 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
       </p>
       <p>
         <input type="hidden" name="use-points-checkbox" value="yes"/>
-        <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php 
+        <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
         <label>Race by points (place) instead of by times?</label>
       </p>
