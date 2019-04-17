@@ -94,6 +94,11 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <copy todir="${debian-root}/usr/share/derbynet/tools">
+            <fileset dir="${extras}/tools">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <!-- Execute permissions for scripts are set in tarfileset -->
         <mkdir dir="${debian-root}/usr/share/derbynet/extras"/>
         <copy todir="${debian-root}/usr/share/derbynet/extras">
