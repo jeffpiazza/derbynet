@@ -78,7 +78,10 @@ public class MiscJunkDevice extends TimerDeviceCommon {
                                    /* dtr */ false)) {
       return false;
     }
-
+    // We just reset the timer, give it 2s to startup
+    try {
+       Thread.sleep(2000); // ms.
+    } catch (Exception exc) { }
     portWrapper.write(READ_VERSION);
     long deadline = System.currentTimeMillis() + 500;
     String s;
