@@ -54,8 +54,8 @@ curl_get "action.php?query=poll.now-racing" > /dev/null
 cat >coordinator.index.tmp <<EOF
           <a class="button_link before_button" href="setup.php">Set-Up</a>
           <a class="button_link before_button" href="checkin.php">Race Check-In</a>
-          <a class="button_link before_button" href="photo-thumbs.php?repo=head">Edit Racer Photos</a>
-          <a class="button_link before_button" href="photo-thumbs.php?repo=car">Edit Car Photos</a>
+          <a class="button_link left before_button" href="photo-thumbs.php?repo=head"><b>Racer</b><br/>Photos</a>
+          <a class="button_link right before_button" href="photo-thumbs.php?repo=head"><b>Car</b><br/>Photos</a>
           <a class="button_link during_button" href="coordinator.php">Race Dashboard</a>
           <a class="button_link during_button" href="kiosk-dashboard.php">Kiosk Dashboard</a>
           <a class="button_link during_button" href="judging.php">Judging</a>
@@ -64,6 +64,7 @@ cat >coordinator.index.tmp <<EOF
           <a class="button_link after_button" href="awards-presentation.php">Present Awards</a>
           <a class="button_link after_button" href="standings.php">Standings</a>
           <a class="button_link after_button" href="export-results.php">Exported Results</a>
+          <a class="button_link after_button" href="history.php">History</a>
           <a class="button_link other_button" href="print.php">Printables</a>
           <a class="button_link other_button" href="about.php">About</a>
           <a class="button_link other_button" href="login.php?logout">Log out</a>
@@ -84,8 +85,8 @@ fi
 
 cat >racecrew.index.tmp <<EOF
         <a class="button_link before_button" href="checkin.php">Race Check-In</a>
-        <a class="button_link before_button" href="photo-thumbs.php?repo=head">Edit Racer Photos</a>
-        <a class="button_link before_button" href="photo-thumbs.php?repo=car">Edit Car Photos</a>
+          <a class="button_link left before_button" href="photo-thumbs.php?repo=head"><b>Racer</b><br/>Photos</a>
+          <a class="button_link right before_button" href="photo-thumbs.php?repo=head"><b>Car</b><br/>Photos</a>
         <a class="button_link during_button" href="judging.php">Judging</a>
         <a class="button_link during_button" href="ondeck.php">Racers On Deck</a>
         <a class="button_link during_button" href="racer-results.php">Results By Racer</a>
