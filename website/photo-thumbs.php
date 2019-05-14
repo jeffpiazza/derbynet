@@ -129,6 +129,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
         echo "</a>";
     ?>
     </div>
+  </div>
 
 <div class="body-wrapper">
 
