@@ -127,7 +127,7 @@ function write_heat_row($entry, $heat_row, $lane) {
     $heat_row .= byes($nlanes - $lane + 1);
     $heat = $entry['heat'];
     $heat_label = 'heat_'.$entry['roundid'].'_'.$heat;
-    echo '<tr id="heat_row '.$heat_label.'" class="d'.($row_counter & 1).'"'
+    echo '<tr id="'.$heat_label.'" class="heat_row d'.($row_counter & 1).'"'
             .' onclick="handle_row_click(this);">'
       .'<th>'
       .htmlspecialchars(($use_master_sched ? $entry['class'].' ' : '')
