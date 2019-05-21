@@ -58,4 +58,55 @@ function all_schedule_groups() {
   }
 }
 
+// Returns an array mapping roundid to a string that encodes the state of the
+// schedule for that roundid.  The string is treated as an opaque signature to
+// detect when a schedule changes.
+function schedule_signature() {
+  global $db;
+  $result = array();
+
+  // This won't handle a completely deleted round
+  $stmt = $db->prepare('SELECT roundid FROM Rounds'
+                       .' WHERE NOT EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.roundid = Rounds.roundid)');
+  $stmt->execute(array());
+  foreach($stmt as $row) {
+    $result[$row['roundid']] = "";
+  }
+
+  // Signature comprises resultid and racerid pairs, in heat-lane order.
+  // There's a remote chance that two different schedules with byes could
+  // somehow have the same signature.
+  $stmt = $db->prepare('SELECT Rounds.roundid, round, heat, lane, resultid, racerid'
+                       .' FROM Rounds'
+                       .' INNER JOIN RaceChart'
+                       .' ON RaceChart.roundid = Rounds.roundid'
+                       .' ORDER BY Rounds.roundid, Rounds.classid, heat, lane');
+  $stmt->execute(array());
+  $last_roundid = -1;
+  foreach ($stmt as $row) {
+    if ($row['roundid'] != $last_roundid) {
+      if ($last_roundid >= 0) {
+        $result[$last_roundid] = $signature;
+      }
+      $signature = "";
+      $last_roundid = $row['roundid'];
+    }
+    if (strlen($signature) > 0) {
+      $signature .= "/";
+    }
+    $signature .= $row['resultid']."-".$row['racerid'];
+  }
+  if ($last_roundid >= 0) {
+    $result[$last_roundid] = $signature;
+  }
+
+  return $result;
+}
+
+function write_signatures() {
+  foreach (schedule_signature() as $roundid => $signature) {
+    echo "<round roundid='".$roundid."'>".$signature."</round>\n";
+  }
+}
+
 ?>

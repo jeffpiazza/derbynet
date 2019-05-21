@@ -31,6 +31,20 @@ function dbnow_expr() {
   }
 }
 
+// Returns an expression suitable for comparing with 'completed' in RaceChart
+// $expr is an SQL expression that produces a value like '2013-11-14 14:57:14'
+// (PHP format 'Y-m-d H:i:s')
+function db_compare_completed($expr) {
+  global $dbtype;
+  if ($dbtype == 'sqlite') {
+    return "datetime($expr)";
+  } else if ($dbtype == 'mysql') {
+    return "timestamp($expr)";
+  } else if ($dbtype == 'access') {
+    return "CDate($expr)";
+  }
+}
+
 // inner_join('Classes', 'Rounds', on, 'Roster', on, ...)
 function inner_join() {
   global $dbtype;

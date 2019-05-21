@@ -48,6 +48,7 @@ var g_update_status = {
       merge_rounds: <?php echo $use_master_sched ? 1 : 0; ?>,
 };
 </script>
+<script type="text/javascript" src="js/common-update.js"></script>
 <script type="text/javascript" src="js/update.js"></script>
 <script type="text/javascript">
 

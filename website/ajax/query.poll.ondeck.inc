@@ -90,12 +90,7 @@ if ($next !== false) {
     .' ON RaceChart.roundid = Rounds.roundid'
     .' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
     .($since
-	    ? ' AND completed > '
-	      .($dbtype == 'access'
-			  ? 'CDate(:since)' 
-            : ($dbtype == 'sqlite'
-               ? 'datetime(:since)'
-               : 'TIMESTAMP(:since)'))
+	    ? ' AND completed > '.db_compare_completed(':since')
 	    : "") 
     .' ORDER BY completed, resultid, lane';
   $stmt = $db->prepare($sql);
