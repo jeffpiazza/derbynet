@@ -3,10 +3,18 @@
 // photo so it's vertically centered.  (If the image is taller than its
 // container, margin can be zero and the image will be scaled down to fit.)
 function mainphoto_onload(img) {
-  if (img.height < $("#photo-background").height()) {
-    var top_margin = ($("#photo-background").height() - img.height) / 2;
+  var height = img.height;
+  if (img.width > $("#photo-background").width()) {
+    // img.height and width give the "true" image size, but the photo will
+    // actually render at a scaled size
+    height = height * $("#photo-background").width() / img.width;
+  }
+  if (height < $("#photo-background").height()) {
+    var top_margin = ($("#photo-background").height() - height) / 2;
     $(img).css('margin-top', top_margin);
   }
+  $(img).css({'max-height': $("#photo-background").height(),
+             'max-width': $("#photo-background").width()});
 }
 
 (function() {
