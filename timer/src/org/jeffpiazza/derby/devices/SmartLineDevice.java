@@ -1,5 +1,7 @@
 package org.jeffpiazza.derby.devices;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jssc.*;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
@@ -159,6 +161,8 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
 
     for (int lane = 0; lane < getSafeNumberOfLanes(); ++lane) {
       if ((lanemask & (1 << lane)) == 0) {
+        // 100ms. sleep between mask commands
+        try { Thread.sleep(100); } catch (InterruptedException ex) { }
         portWrapper.write(MASK_LANE + (char) ('1' + lane) + "\r");
       }
     }
