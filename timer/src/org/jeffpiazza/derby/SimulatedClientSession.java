@@ -56,21 +56,38 @@ public class SimulatedClientSession extends ClientSession {
     }
 
     if (makeNewHeat) {
-      int laneMask = 0;
-      for (int lane = 0; lane < nlanes; ++lane) {
-        laneMask |= (1 << lane);
-      }
+      int fullMask = (1 << nlanes) - 1;
+      int laneMask = fullMask;
 
-      int heats6 = numberOfHeatsPrepared % 6;
-      if (heats6 >= 2) {
-        int firstEmptyLane = random.nextInt(nlanes);
-        laneMask &= ~(1 << firstEmptyLane);
-        if (heats6 >= 4) {
-          int secondEmptyLane = random.nextInt(nlanes);
-          while (secondEmptyLane == firstEmptyLane) {
-            secondEmptyLane = random.nextInt(nlanes);
+      // nlanes fully populated heat, then:
+      //
+      // for firstBye = 0 to n
+      //   heat with just firstBye (1)
+      //   for secondBye = firstBye + 1 to n
+      //     heat with 2 byes
+      //
+      // Whole cycle is n(n-1)/2 + n + n heats,
+      // or n(n+3)/2
+      int cycle = nlanes * (nlanes + 3) / 2;
+      int index = numberOfHeatsPrepared % cycle;
+      if (index >= nlanes) {
+        int k = nlanes - 1;
+        for (int bye1 = 0; bye1 < nlanes; ++bye1) {
+          laneMask = fullMask & ~(1 << bye1);
+          ++k;
+          if (index == k) {
+            break;
           }
-        laneMask &= ~(1 << secondEmptyLane);
+          for (int bye2 = bye1 + 1; bye2 < nlanes; ++bye2) {
+            laneMask = fullMask & ~(1 << bye1) & ~(1 << bye2);
+            ++k;
+            if (index == k) {
+              break;
+            }
+          }
+          if (index == k) {
+            break;
+          }
         }
       }
 
