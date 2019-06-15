@@ -53,6 +53,21 @@ start_response();
 
 if (pass_racer($racerid, $value)) {
   echo "<success/>\n";
+  if ($value) {
+    $details = read_single_row('SELECT class, firstname, lastname'
+                               .' FROM RegistrationInfo'
+                               .' INNER JOIN Classes ON Classes.classid = RegistrationInfo.classid'
+                               .' WHERE racerid = :racerid',
+                               array(':racerid' => $racerid),
+                               PDO::FETCH_ASSOC);
+    if ($details) {
+      echo "<details>\n";
+      echo "CLASSNAME=".htmlspecialchars($details['class'], ENT_QUOTES, 'UTF-8')."\n";
+      echo "FIRSTNAME=".htmlspecialchars($details['firstname'], ENT_QUOTES, 'UTF-8')."\n";
+      echo "LASTNAME=".htmlspecialchars($details['lastname'], ENT_QUOTES, 'UTF-8')."\n";
+      echo "</details>\n";
+    }
+  }
 }
 
 end_response();

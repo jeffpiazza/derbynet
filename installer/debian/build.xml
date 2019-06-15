@@ -79,8 +79,14 @@
                 <include name="derbynet.conf"/>
             </fileset>
         </copy>
+        <touch mkdirs="true" file="${debian-root}/etc/derbynet.d/.placeholder"/>
         <copy todir="${debian-root}/usr/share/derbynet/autostart">
             <fileset dir="${extras}/autostart">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <copy todir="${debian-root}/usr/share/derbynet/conf">
+            <fileset dir="${extras}/conf">
                 <include name="**"/>
             </fileset>
         </copy>
@@ -214,9 +220,11 @@
         <tar destfile="${debian-stage}/data.tar.gz" compression="gzip">
             <tarfileset dir="${debian-root}">
                 <include name="etc/*"/>
+                <include name="etc/derbynet.d/**"/>
                 <include name="usr/share/derbynet"/>
                 <include name="usr/share/derbynet/autostart/**"/>
                 <exclude name="usr/share/derbynet/autostart/derby-timer.desktop"/>
+                <include name="usr/share/derbynet/conf/**"/>
                 <include name="usr/share/derbynet/extras/**"/>
                 <include name="usr/share/derbynet/sounds/**"/>
             </tarfileset>

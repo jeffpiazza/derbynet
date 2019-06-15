@@ -6,7 +6,4 @@ if [ "$ID" = "raspbian" ] ; then
   if [ ! -f /boot/derbynet.conf ] ; then
     cp /etc/derbynet.conf /boot
   fi
-  if [ ! -f /boot/join-network.sh ] ; then
-    cp /usr/share/derbynet/scripts/join-network.sh /boot
-  fi
 fi

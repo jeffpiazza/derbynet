@@ -24,7 +24,12 @@
 # sudo cp barcode /usr/local/bin
 #
 
+# Establish default values; photo-preamble will override from user config files
 BARCODE_SCANNER_DEV=/dev/input/by-id/usb-Megawin_Technology_Inc._USB_Keyboard-event-kbd
+# One of: "chdkptp", "fswebcam", or "gphoto2"; an empty string is interpreted as gphoto2.
+PHOTO_CAPTURE=
+
+FSWEBCAM_ARGS="--config /usr/share/derbynet/conf/fswebcam.conf"
 
 SELF="$0"
 # readlink -f exists in linux (particularly RPi), but not e.g. Mac
@@ -62,18 +67,28 @@ while true ; do
         maybe_check_in_racer
 
         echo Capturing photo Car$CAR_NO.jpg
-        if [ $USE_CHDKPTP -eq 0 ] ; then
-            gphoto2 --filename "$PHOTO_DIR/Car$CAR_NO" --capture-image-and-download
-        else
+        CAPTURE_OK=0
+        if [ "$PHOTO_CAPTURE" = "chdkptp" ] ; then
             prepare_camera_before_shot
-            chdkptp -c -e"rec" -e"remoteshoot $PHOTO_DIR/Car$CAR_NO"
-            echo chdkptp says $?
+            # remoteshoot takes a file name without extension
+            chdkptp -c -e"rec" -e"remoteshoot $PHOTO_DIR/Car$CAR_NO" \
+                    && CAPTURE_OK=1
+        elif [ "$PHOTO_CAPTURE" = "fswebcam" ] ; then
+            fswebcam $FSWEBCAM_ARGS "$PHOTO_DIR/Car$CAR_NO.jpg"
+            # fswebcam always returns 0, whether successful or not
+            CAPTURE_OK=1
+        else
+            gphoto2 --filename "$PHOTO_DIR/Car$CAR_NO.jpg"  --force-overwrite \
+                    --capture-image-and-download \
+                && CAPTURE_OK=1
         fi
 
-        announce capture-ok
-
-        upload_photo "$PHOTO_DIR/Car$CAR_NO.jpg"
-
+        if [ $CAPTURE_OK -eq 1 ] ; then
+            announce capture-ok
+            upload_photo "$PHOTO_DIR/Car$CAR_NO.jpg"
+        else
+            announce capture-failed
+        fi
     else
         echo Rejecting scanned barcode $BARCODE
         announce unrecognized-barcode

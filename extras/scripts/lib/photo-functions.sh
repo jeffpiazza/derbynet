@@ -87,22 +87,24 @@ check_scanner() {
     while [ ! -e "$BARCODE_SCANNER_DEV" ] ; do
         echo Scanner not connected
         announce no-scanner
+        sleep 5s
     done
 }
 
 # If using chdkptp, loop until there is a camera connected.
 #
 # Input from the environment:
-#    USE_CHDKPTP
+#    PHOTO_CAPTURE
 check_camera() {
     # Connect to camera, set to picture-taking mode.  (This lets operator adjust
     # photo composition.)
     #
     # Assumes there's only one camera attached
-    if [ $USE_CHDKPTP -ne 0 ] ; then
+    if [ "$PHOTO_CAPTURE" = "chdkptp" ] ; then
         echo Checking for camera
         while [ -z  "`chdkptp -elist`" ] ; do
             announce no-camera
+            sleep 5s
         done
         echo Activating camera
         chdkptp -c -e"rec"
@@ -120,6 +122,7 @@ check_camera() {
 #    CHECKIN_OK (boolean, 1=ok)
 maybe_check_in_racer() {
     if [ $PHOTO_CHECKIN -ne 0 -a "$BARCODE" != "PWDuploadtest" -a "$BARCODE" != "PWDuploadonly" ] ; then
+        TMPFILE=`mktemp`
         echo Checking in racer $BARCODE at `date` | tee -a checkins.log
         # Check in the racer
         CHECKIN_OK=0
@@ -131,12 +134,20 @@ maybe_check_in_racer() {
              -b "$COOKIES" -c "$COOKIES" \
              "$DERBYNET_SERVER/action.php" \
             | tee -a checkins.log \
+            | tee "$TMPFILE" \
             | grep -q success && CHECKIN_OK=1
         if [ $CHECKIN_OK -eq 0 ] ; then
             echo Check-in failed | tee -a checkins.log
             tail checkins.log
             announce checkin-failed
+        else
+            if [ -x /usr/bin/flite ] ; then
+                FIRSTNAME=`grep FIRSTNAME "$TMPFILE" | cut -d= -f 2`
+                LASTNAME=`grep LASTNAME "$TMPFILE" | cut -d= -f 2`
+                flite -t "Successful check in for $FIRSTNAME $LASTNAME"
+            fi
         fi
+        rm "$TMPFILE"
     else
         CHECKIN_OK=1
     fi

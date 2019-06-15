@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Version=1.0
-Name=Join WiFi Network
-Encoding=UTF-8
-Exec=sh -c "/boot/join-network.sh"
-X-GNOME-Autostart-enabled=true

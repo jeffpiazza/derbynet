@@ -6,7 +6,7 @@ Architecture: all
 Replaces: derbynet (<= 3.0-1)
 Breaks: derbynet (<= 3.0-1)
 Enhances: derbynet-server
-Recommends: bsdutils, chromium | chromium-browser, unclutter, xautomation, xbitmaps, x11-utils
+Recommends: bsdutils, chromium | chromium-browser, fswebcam, unclutter, xautomation, xbitmaps, x11-utils
 Homepage: http://jeffpiazza.github.io/derbynet/
 Description: Additional client utilities for pinewood derby race management web server.
  DerbyNet extras include:
