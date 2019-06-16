@@ -127,7 +127,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
   if ($schema_version > 1) {
     echo "<div class='double'>";
     echo "<a class='button_link left before_button' href='photo-thumbs.php?repo=head'><b>Racer</b><br/>Photos</a>\n";
-    echo "<a class='button_link right before_button' href='photo-thumbs.php?repo=head'><b>Car</b><br/>Photos</a>\n";
+    echo "<a class='button_link right before_button' href='photo-thumbs.php?repo=car'><b>Car</b><br/>Photos</a>\n";
     echo "</div>";
   } else {
     $need_spacer = make_link_button('Edit Racer Photos', 'photo-thumbs.php?repo=head', ASSIGN_RACER_IMAGE_PERMISSION, 'before_button') || $need_spacer;
