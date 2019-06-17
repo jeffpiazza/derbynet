@@ -16,9 +16,9 @@
    id="svg4148"
    version="1.1"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
-   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/Animated GIF/derbynet-13.png"
-   inkscape:export-xdpi="30"
-   inkscape:export-ydpi="30"
+   inkscape:export-filename="/Users/jeffpiazza/Cub Scouts/Pinewood Derby/Software Development/Animated GIF/1080x1080/derbynet-13.png"
+   inkscape:export-xdpi="540"
+   inkscape:export-ydpi="540"
    sodipodi:docname="derbynet.svg">
   <defs
      id="defs4150">
@@ -100,11 +100,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.171875"
-     inkscape:cx="83.092408"
-     inkscape:cy="77.185414"
+     inkscape:zoom="3.5570268"
+     inkscape:cx="64.803588"
+     inkscape:cy="111.04724"
      inkscape:document-units="px"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="g942"
      showgrid="false"
      units="in"
      inkscape:window-width="1642"
@@ -199,7 +199,7 @@
   </g>
   <g
      style="display:none"
-     inkscape:label="Car-1"
+     inkscape:label="Car-08"
      id="g942"
      inkscape:groupmode="layer">
     <g
@@ -252,7 +252,7 @@
   <g
      inkscape:groupmode="layer"
      id="g960"
-     inkscape:label="Car-2"
+     inkscape:label="Car-07"
      style="display:none">
     <g
        transform="translate(-37.5)"
@@ -303,7 +303,7 @@
   </g>
   <g
      style="display:none"
-     inkscape:label="Car-3"
+     inkscape:label="Car-06"
      id="g978"
      inkscape:groupmode="layer">
     <g
@@ -356,7 +356,7 @@
   <g
      inkscape:groupmode="layer"
      id="g996"
-     inkscape:label="Car-4"
+     inkscape:label="Car-05"
      style="display:none">
     <g
        transform="translate(-75)"
@@ -407,7 +407,7 @@
   </g>
   <g
      style="display:none"
-     inkscape:label="Car-5"
+     inkscape:label="Car-04"
      id="g1014"
      inkscape:groupmode="layer">
     <g
@@ -460,7 +460,7 @@
   <g
      inkscape:groupmode="layer"
      id="g1032"
-     inkscape:label="Car-6"
+     inkscape:label="Car-03"
      style="display:none">
     <g
        transform="translate(-112.5)"
@@ -511,7 +511,7 @@
   </g>
   <g
      style="display:none"
-     inkscape:label="Car-7"
+     inkscape:label="Car-02"
      id="g1050"
      inkscape:groupmode="layer">
     <g
@@ -564,7 +564,7 @@
   <g
      inkscape:groupmode="layer"
      id="g1068"
-     inkscape:label="Car-8"
+     inkscape:label="Car-01"
      style="display:none">
     <g
        transform="translate(-150)"
