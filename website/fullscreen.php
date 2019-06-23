@@ -40,7 +40,9 @@ $last = strrpos($url, '/');
 if ($last === false) {
   $last = -1;
 }
-$kiosk_url = 'http://'.substr($url, 0, $last + 1).'kiosk.php';
+
+// Don't force http !
+$kiosk_url = '//'.substr($url, 0, $last + 1).'kiosk.php';
 ?>
 
 <form onsubmit="go_fullscreen(); return false;" style="margin-top: 100px; margin-left: auto; margin-right: auto;">
