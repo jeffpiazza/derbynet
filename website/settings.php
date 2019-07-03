@@ -65,15 +65,12 @@ $finish_formatting = get_finishtime_formatting_string();
 
 <div class="block_buttons">
 <form id="settings_form">
-  <input type="hidden" name="action" value="settings.write"/>
-
   <div class="settings_group">
     <div class="settings_group_image">
       <img src="img/settings-timer.png"/>
     </div>
 
     <div class="settings_group_settings">
-    <input type="hidden" name="warn-no-timer-checkbox" value="yes"/>
       <p>
         <input id="warn-no-timer" name="warn-no-timer" data-enhanced="true"
                 type="checkbox"<?php if (warn_no_timer()) echo ' checked="checked"';?>/>
@@ -128,7 +125,6 @@ Lanes available for scheduling:</p>
         <label for="group-label">Group Label</label>
       </p>
       <p>
-        <input type="hidden" name="do-use-subgroups-checkbox" value="yes"/>
         <input id="use-subgroups" name="do-use-subgroups" data-enhanced="true" type="checkbox"<?php
             if ($use_subgroups) echo ' checked="checked"';?>/>
         <label>Use subgroups?</label>
@@ -176,7 +172,6 @@ Lanes available for scheduling:</p>
                <span class="subgroup-label"><?php echo subgroup_label_lc(); ?></span></label>
       </p>
       <p>
-        <input type="hidden" name="use-xbs-checkbox" value="yes"/>
         <input id="use-xbs" name="use-xbs" data-enhanced="true"
                 type="checkbox"<?php if ($use_xbs) echo ' checked="checked"';?>/>
         <label>Offer "Exclusively By Scout" award?</label>
@@ -231,18 +226,15 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         ?>/><label for="now-racing-photos-car" data-enhanced="true">Car photos</label>
       </p>
       <p><b>On Deck</b> display:<br/>&nbsp;&nbsp;
-        <input type="hidden" name="show-car-photos-on-deck-checkbox" value="yes"/>
         <input id="show-car-photos-on-deck" name="show-car-photos-on-deck" data-enhanced="true"
                type="checkbox"<?php if ($show_car_photos_on_deck) echo ' checked="checked"';?>/>
         <label>Car photos</label>
       </p>
       <p><b>Racer Results</b> display:<br/>&nbsp;&nbsp;
-        <input type="hidden" name="show-racer-photos-rr-checkbox" value="yes"/>
         <input id="show-racer-photos-rr" name="show-racer-photos-rr" data-enhanced="true"
                type="checkbox"<?php if ($show_racer_photos_rr) echo ' checked="checked"';?>/>
         <label>Racer photos</label>&nbsp;
 
-        <input type="hidden" name="show-car-photos-rr-checkbox" value="yes"/>
         <input id="show-car-photos-rr" name="show-car-photos-rr" data-enhanced="true"
                type="checkbox"<?php if ($show_car_photos_rr) echo ' checked="checked"';?>/>
         <label>Car photos</label>
@@ -259,19 +251,16 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
     </div>
     <div class="settings_group_settings">
       <p>
-        <input type="hidden" name="drop-slowest-checkbox" value="yes"/>
         <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('drop-slowest')) echo ' checked="checked"';?>/>
         <label>Drop each racer's slowest heat?</label>
       </p>
       <p>
-        <input type="hidden" name="use-master-sched-checkbox" value="yes"/>
         <input id="use-master-sched" name="use-master-sched" data-enhanced="true" type="checkbox"<?php
             if ($use_master_sched) echo ' checked="checked"';?>/>
         <label>Interleave heats from different <?php echo group_label_lc(); ?>s</label>
       </p>
       <p>
-        <input type="hidden" name="use-points-checkbox" value="yes"/>
         <input id="use-points" name="use-points" data-enhanced="true" type="checkbox"<?php
             if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
         <label>Race by points (place) instead of by times?</label>
@@ -286,8 +275,6 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
       </p>
     </div>
   </div>
-
-  <input data-enhanced="true" type="submit"/>
 </form>
 </div>
 
