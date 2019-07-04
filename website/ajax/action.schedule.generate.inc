@@ -4,7 +4,7 @@
 //
 
 $roundid = $_POST['roundid'];
-$n_times_per_lane = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
+$n_times_per_lane = isset($_POST['n_times_per_lane']) ? $_POST['n_times_per_lane'] : 1;
 
 $trace = !isset($_POST['trace']) ? 0 : ($_POST['trace'] == 'v' ? 2 : 1);
 

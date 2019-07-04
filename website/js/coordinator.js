@@ -204,13 +204,13 @@ function mark_clicked(submit_js) {
                 // and then handle_schedule_submit
 }
 
-function handle_schedule_submit(roundid, rounds, then_race) {
+function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
     close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'schedule.generate',
                    roundid: roundid,
-                   nrounds: rounds},
+                   n_times_per_lane: n_times_per_lane},
             success: function(data) {
               process_coordinator_poll_response(data);
               if (then_race && data.getElementsByTagName('success').length > 0) {

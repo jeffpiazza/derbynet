@@ -28,11 +28,11 @@ function contests(&$heats, $ncars) {
 }
 
 // TODO: Don't pass $ncars, calculate a concentrator instead
-// TODO: $nrounds
+// TODO: $n_times_per_lane
 function exhaustive_late_checkin($heats, $ncars, $ncommitted) {
 	$new_racer = $ncars;
 	$nlanes = count($heats[0]);
-	// $nrounds = count($heats) /$ncars
+	// $n_times_per_lane = count($heats) /$ncars
 	$new_heat = array_fill(0, $nlanes, null);
 	$heats[] = &$new_heat;
 	$new_heat[0] = $new_racer;
@@ -88,13 +88,13 @@ function exhaustive_lane_checkin_recur(&$heats, $ncars, $ncommitted, $new_racer,
 // A perfect schedule should have a score of 0.
 // A partial perfect schedule should have a score of $ncars * ($ncars - 1) / 2 or less.
 
-function score_heats(&$heats, $nrounds = 1) {
+function score_heats(&$heats, $n_times_per_lane = 1) {
 	$nlanes = count($heats[0]);
 
 	$inv_roster = construct_inverted_roster($heats);
 	$ncars = count($inv_roster);
 
-	$goal = $nrounds * $nlanes * ($nlanes - 1) / ($ncars - 1);
+	$goal = $n_times_per_lane * $nlanes * ($nlanes - 1) / ($ncars - 1);
 	$contests = contests($heats, $ncars);
 	//print_contests($contests);
 
@@ -111,7 +111,7 @@ function score_heats(&$heats, $nrounds = 1) {
 	return $score;
 }
 
-function print_heat_score(&$heats, $nrounds = 1) {
+function print_heat_score(&$heats, $n_times_per_lane = 1) {
 	$s = score_heats($heats);
 	$nlanes = count($heats[0]);
 
@@ -120,7 +120,7 @@ function print_heat_score(&$heats, $nrounds = 1) {
 
 	print_contests(contests($heats, $ncars));
 
-	$goal = $nrounds * $nlanes * ($nlanes - 1) / ($ncars - 1);
+	$goal = $n_times_per_lane * $nlanes * ($nlanes - 1) / ($ncars - 1);
 	$limit = $ncars * ($ncars - 1) / 2;
 	echo '<p>Deviation of '.$s.' from a goal of '.$goal.': ';
 	if ($s == 0) {
