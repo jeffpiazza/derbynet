@@ -44,6 +44,8 @@ run_tests() {
 
     `dirname $0`/test-racer-query.sh "$BASE_URL"
 
+    `dirname $0`/test-extended-scheduling.sh "$BASE_URL"
+
 ############################## Standings by Rank ##############################
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"

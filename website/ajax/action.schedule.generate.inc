@@ -2,8 +2,12 @@
 // Action to schedule heats for a round, with each car running once in each lane.
 // (An exception is if max-runs-per-car is non-zero; see below.)
 //
-// $_POST: roundid, nrounds(=1)
-// nrounds here is the number of times each racer should race in each lane.
+
+$roundid = $_POST['roundid'];
+$n_times_per_lane = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
+
+$trace = !isset($_POST['trace']) ? 0 : ($_POST['trace'] == 'v' ? 2 : 1);
+
 //
 // Normally we use max-runs-per-car = 0, so that each car runs once per lane.
 // For some unusual situations, we want to limit to just 1 run per car (no
@@ -14,7 +18,6 @@
 // second run for some other car).  Finally, in make_ordered_schedule, we
 // abandon those heats from the rough schedule that would cause any car to have
 // second run.
-
 
 require_once('inc/data.inc');
 require_once('inc/masterheat.inc');
@@ -71,33 +74,43 @@ function rate_consecutive(&$prev_heat, &$next_heat) {
 }
 
 function rate_next_heat(&$prev_heat, $n_prev_heats, &$next_heat, &$appearances) {
-  if ($n_prev_heats == 0) {
-    return rate_race_counts($next_heat, $n_prev_heats, $appearances);
-  } else {
-    return rate_race_counts($next_heat, $n_prev_heats, $appearances) + rate_consecutive($prev_heat, $next_heat);
+  $rating = rate_race_counts($next_heat, $n_prev_heats, $appearances);
+  if ($n_prev_heats > 0) {
+    $rating += rate_consecutive($prev_heat, $next_heat);
   }
+  return $rating;
 }
 
 // Starts with the rough schedule (as produced by generator(s)), and then
 // reorders the heats to optimize goals of keeping even race counts, and
 // avoiding consecutive races for the same racer.
-function make_ordered_schedule($nlanes, $ncars, $nrounds) {
-  $rough = make_rough_schedule($nlanes, $ncars, $nrounds);
+function make_ordered_schedule($nlanes, $ncars, $n_times_per_lane,
+                               $max_runs_per_car, $trace) {
+  $rough = make_rough_schedule($nlanes, $ncars, $n_times_per_lane,
+                               $max_runs_per_car, $trace);
+  if (empty($rough)) {
+    return $rough;
+  }
+
+  // $appearances[$car] tells how many times $car has appeared in the ordered schedule
   $appearances = array();
   for ($i = 0; $i < $ncars; ++$i) {
     $appearances[] = 0;
   }
-  $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
 
   $ordered = array();
   $prev_heat = array();
-  for ($round = 0; $round < $nrounds; ++$round) {
+  for ($round = 0; $round < $n_times_per_lane; ++$round) {
     for ($car_index = 0; $car_index < $ncars; ++$car_index) {
       $best_heat_index = count($rough) - 1;
       $best_heat_score = 10000;
       for ($rough_i = 0; $rough_i < count($rough); ++$rough_i) {
         if ($rough[$rough_i]) {
-          $score = rate_next_heat($prev_heat, count($ordered), $rough[$rough_i], $appearances);
+          $score = rate_next_heat($prev_heat, count($ordered), $rough[$rough_i],
+                                  $appearances);
+          if ($trace > 1) {
+            echo "<rating score='".$score."' index='".$rough_i."'/>";
+          }
           if ($score < $best_heat_score - 0.00001) {
             $best_heat_score = $score;
             $best_heat_index = $rough_i;
@@ -105,6 +118,12 @@ function make_ordered_schedule($nlanes, $ncars, $nrounds) {
         }
       }
 
+      if ($trace) {
+        echo "<ordered rough_index='".$best_heat_index."' score='".$best_heat_score."'>";
+        echo json_encode($rough[$best_heat_index]);
+        echo "</ordered>\n";
+      }
+      
       $prev_heat = $rough[$best_heat_index];
       $rough[$best_heat_index] = NULL;
       foreach ($prev_heat as $car) {
@@ -212,19 +231,20 @@ function results_exist($roundid) {
 
 // The top-level scheduling function.  Constructs a schedule, converts to a race
 // chart, and writes the race chart into the database.
-function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
+function schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace) {
   $roster = read_roster($roundid);
   if (count($roster) < 2) {
     return false;
   }
   while (count($roster) < $nlanes) {
-    $roster[] = null;
+    $roster[] = null;  // Byes to bring up the roster count to at least the number of lanes
   }
   $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
   while (count($roster) * $max_runs_per_car % $nlanes != 0) {
     $roster[] = null;
   }
-  $sched = make_ordered_schedule($nlanes, count($roster), $nrounds);
+  $sched = make_ordered_schedule($nlanes, count($roster), $n_times_per_lane,
+                                 $max_runs_per_car, $trace);
   write_chart($roundid, spread_across_unused_lanes(form_chart($sched, $roster)));
   return true;
 }
@@ -288,14 +308,14 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   $nlanes -= count_one_bits(read_raceinfo('unused-lane-mask', 0));
   if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
-  } else if (!isset($all_generators[$nlanes])) {
-    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
-    .max(array_keys($all_generators)).' lanes.</failure>';
-  } else if (results_exist($_POST['roundid'])) {
+// TODO
+//  } else if (!isset($all_generators[$nlanes])) {
+//    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
+//    .max(array_keys($all_generators)).' lanes.</failure>';
+  } else if (results_exist($roundid)) {
 	echo '<failure code="results-exist">Race results already exist for this round</failure>';
   } else {
-	$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
-	if (schedule_one_round($_POST['roundid'], $nlanes, $nrounds)) {
+	if (schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace)) {
       echo '<success/>';
       require('ajax/query.poll.coordinator.inc');
     } else {
@@ -305,7 +325,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
-                                        array(':roundid' => $_POST['roundid'])));
+                                        array(':roundid' => $roundid)));
 } else {
   not_authorized_body();
 }
