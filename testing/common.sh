@@ -16,6 +16,11 @@ OUTPUT_CURL="`dirname $0`/output.curl"
 DEBUG_CURL="`dirname $0`/debug.curl"
 COOKIES_CURL="`dirname $0`/cookies.curl"
 
+function header() {
+    echo '###################### ' `caller 1 | cut -f3 -d\ ` ' #######################'
+}
+header
+
 function stacktrace() {
     while caller $((n++)); do :; done;
 }
