@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
 
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
@@ -90,7 +90,7 @@ curl_post action.php "action=select-heat&roundid=1&heat=4" | check_success
 curl_post action.php "action=result.write&lane3=8.888" | check_success
 
 # For roundid 4, schedule two appearances per lane per racer
-curl_post action.php "action=schedule.generate&roundid=4&nrounds=2" | check_success
+curl_post action.php "action=schedule.generate&roundid=4&n_times_per_lane=2" | check_success
 # Schedule for roundid 5
 curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
