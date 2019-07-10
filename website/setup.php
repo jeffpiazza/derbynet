@@ -80,11 +80,24 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 <div id="schema_step" class="step_div">
   <div class="status_icon"><img/></div>
 
-  <div class="step_button block_buttons">
-    <input type="button" data-enhanced="true"/>
+  <div class="upper">
+    <div class="step_button block_buttons">
+      <input id="schema_button" type="button" data-enhanced="true"/>
+    </div>
+    <div id="schema_details" class="step_details"></div>
   </div>
 
-  <div class="step_details"></div>
+  <div class="lower">
+    <div class="step_button block_buttons">
+      <input type="button" data-enhanced="true" value="Purge Data" onclick="show_purge_modal()"/>
+    </div>
+
+    <div class="step_details">
+      <p>After testing or experimentation, you may wish to delete
+      some or all of the data in the database.</p>
+    </div>
+  </div>
+
 </div>
 
 <!-- Roster -->
@@ -238,7 +251,7 @@ if (count($ez_configs) > 0) {
 
     <input type="submit" data-enhanced="true" value="Initialize"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#initialize_schema_modal");'/>
+      onclick='close_secondary_modal("#initialize_schema_modal");'/>
   </form>
 </div>
 
@@ -252,6 +265,57 @@ if (count($ez_configs) > 0) {
     <input type="button" data-enhanced="true" value="Cancel"
       onclick='close_modal("#update_schema_modal");'/>
   </form>
+</div>
+
+<div id="purge_modal" class="modal_dialog wide_modal block_buttons hidden">
+<form>
+  <div id="purge_modal_inner">
+
+    <div class="purge_div">
+      <div class="purge_button block_buttons">
+        <input type="button" data-enhanced="true" id="delete_race_results" value="Delete Race Results"
+                onclick="handle_purge('results');"/>
+      </div>
+      <p><span id="purge_nresults_span"></span> completed heat(s).</p>
+    </div>
+
+    <div class="purge_div">
+      <div class="purge_button block_buttons">
+        <input type="button" data-enhanced="true" id="delete_schedules" value="Delete Schedules"
+                onclick="handle_purge('schedules');"/>
+      </div>
+      <p><span id="purge_nschedules_span"></span> scheduled heat(s).</p>
+    </div>
+
+    <div class="purge_div">
+      <div class="purge_button block_buttons">
+        <input type="button" data-enhanced="true" id="delete_racers" value="Delete Racers"
+                onclick="handle_purge('racers');"/>
+      </div>
+      <p><span id="purge_nracers_span"></span> registered racer(s).</p>
+    </div>
+                                                <!-- TODO delete classes/ranks? -->
+    <div class="purge_div">
+      <div class="purge_button block_buttons">
+        <input type="button" data-enhanced="true" id="delete_awards" value="Delete Awards"
+                onclick="handle_purge('awards');"/>
+      </div>
+      <p><span id="purge_nawards_span"></span> award(s).</p>
+    </div>
+
+    <div class="purge_div">
+      <div class="purge_button block_buttons">
+        <input type="button" data-enhanced="true" value="Re-Initialize"
+               onclick="show_initialize_schema_modal();"/>
+      </div>
+      <p>Delete everything in the database</p>
+    </div>
+                                                
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_modal("#purge_modal");'/>
+
+  </div>
+</form>
 </div>
 
 <div id="reporting_box" class="hidden">

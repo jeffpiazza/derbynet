@@ -148,7 +148,8 @@ tbody {
 }
 
 .block_buttons input[disabled][type='button'],
-.block_buttons input[disabled][type='submit'] {
+.block_buttons input[disabled][type='submit'],
+.block_buttons a.button_link.disabled {
     background: #a0a0a0;
 }
 

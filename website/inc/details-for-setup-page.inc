@@ -74,6 +74,8 @@ function inspect_database() {
                   'nracers' => 0,
                   'dens' => array(),
                   'nawards' => 0,
+                  'nheats' => 0,
+                  'nresults' => 0,
                   'settings_icon' => 'unknown',
                   'settings_details' => 'No photo directories defined.',
                   'writable' => false
@@ -88,6 +90,10 @@ function inspect_database() {
       
       $result['nracers'] = read_single_value('SELECT COUNT(*) FROM RegistrationInfo', array());
       $result['nawards'] = read_single_value('SELECT COUNT(*) FROM Awards', array());
+      $result['nheats'] = read_single_value('SELECT COUNT(DISTINCT heat) FROM RaceChart');
+      $result['nresults'] = read_single_value('SELECT COUNT(DISTINCT heat) FROM RaceChart'
+                                              .' WHERE finishtime IS NOT NULL'
+                                              .'  OR finishplace IS NOT NULL');
 
       $sorting_field = 'sortorder';
       if ($schema_version < 2) { $sorting_field = 'class'; }
@@ -102,7 +108,7 @@ function inspect_database() {
         $result['schema_status'] = "ok";
         $result['schema_button'] = 're-initialize';
         $result['schema_message'] =
-            "<p>Schema version is S1".pad3($schema_version).", as expected.  "
+            "<p>Schema version is S1".pad3($schema_version).", as expected.<br/>"
             ."(If you have a previously-captured database snapshot, you can <a href='import-snapshot.php'>import it here.</a>)"
             ."</p>\n";
       } else {
@@ -222,21 +228,22 @@ function diagnose_configuration() {
 
   return array('db_message' => $message,
                'schema_status' => 'unknown',  // icon for schema step
-                  // What the button for schema step should say.  The special value 'disabled'
-                  // means the button should be disabled (because the database isn't defined).
+               // What the button for schema step should say.  The special value 'disabled'
+               // means the button should be disabled (because the database isn't defined).
                'schema_button' => 'disabled',
                'schema_message' => "<p>The database schema isn't available without a database; "
-                                      ."configure the database first.</p>",
-                  'group_label' => 'Den',
-                  'group_label_lc' => 'den',
-                  'nracers' => 0,
-                  'dens' => array(),
-                  'nawards' => 0,
-                  'settings_icon' => 'unknown',
-                  'settings_details' => 'No photo directories defined.',
-                  'writable' => false
+               ."configure the database first.</p>",
+               'group_label' => 'Den',
+               'group_label_lc' => 'den',
+               'nracers' => 0,
+               'dens' => array(),
+               'nawards' => 0,
+               'nheats' => 0,
+               'nresults' => 0,
+               'settings_icon' => 'unknown',
+               'settings_details' => 'No photo directories defined.',
+               'writable' => false
     );
-
 }
 
 // Constructs an array from which the setup page updates its status.  Returns an
@@ -267,6 +274,10 @@ function build_setup_page_details() {
                'schema' => array('status' => $schema['schema_status'],
                                  'button' => $schema['schema_button'],
                                  'details' => $schema['schema_message']),
+               'purge' => array('nracers' => $schema['nracers'],
+                                'nawards' => $schema['nawards'],
+                                'nheats' => $schema['nheats'],
+                                'nresults' => $schema['nresults']),
                'roster' => array('status' => $schema['nracers'] == 0 ? "unknown" : "ok",
                                  'details' =>
                                  "<p>There ".plural_to_be($schema['nracers'], "racer", "racers")." registered."

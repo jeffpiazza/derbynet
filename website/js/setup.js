@@ -6,6 +6,7 @@
 //            locked: true/false
 //            database: {status:, details:},
 //            schema: {status:, details:, button:}
+//            purge: {nracers:, nawards:, nheats:, nresults:}
 //            roster:
 //            classes:
 //            awards:
@@ -19,35 +20,34 @@ function populate_details(details) {
   $("#awards_step div.status_icon img").attr('src', 'img/status/' + details.awards.status + '.png');
   $("#settings_step div.status_icon img").attr('src', 'img/status/' + details.settings.status + '.png');
 
-  $("#roster_step input[type='submit'], "
-    + "#classes_step input[type='submit'], "
-    + "#awards_step input[type='submit'], "
-    + "#settings_step input[type='submit']")
-    .prop('disabled', (details.schema.button == 'disabled') || !details.database.writable);
+  var disabled = (details.schema.button == 'disabled') || !details.database.writable 
+  // $("#settings_step input[type='submit']").prop('disabled', disabled);
+  $("#roster_step a.button_link, "
+    + "#classes_step a.button_link, "
+    + "#awards_step a.button_link, "
+    + "#settings_step a.button_link").toggleClass('disabled', disabled);
+  $("#purge_step input[type='button']")
+    .prop('disabled', details.purge.nracers == 0 && details.purge.nawards == 0);
 
   $("#database_step").toggleClass('hidden', details.locked);
   
   if (details.schema.button == 'disabled' || !details.database.writable) {
-    $("#schema_step input[type='button']")
-      .prop('disabled', true).attr('value', 'Initialize');
+    $("#schema_button").prop('disabled', true).attr('value', 'Initialize');
   } else if (details.schema.button == 'initialize') {
-    $("#schema_step input[type='button']")
-      .prop('disabled', false).attr('value', 'Initialize')
+    $("#schema_button").prop('disabled', false).attr('value', 'Initialize')
       .on('click', function() { show_initialize_schema_modal(); });
   } else if (details.schema.button == 'update') {
-    $("#schema_step input[type='button']")
-      .prop('disabled', false).attr('value', 'Update Schema')
+    $("#schema_button").prop('disabled', false).attr('value', 'Update Schema')
       .on('click', function() { show_update_schema_modal(); });
   } else /* 're-initialize' */ {
-    $("#schema_step input[type='button']")
-      .prop('disabled', false).attr('value', 'Re-Initialize')
+    $("#schema_button").prop('disabled', false).attr('value', 'Re-Initialize')
       .on('click', function() { show_initialize_schema_modal(); });
   }
 
   $("#classes_step a.button_link").text("Edit " + details.classes.plural);
 
   $("#database_step div.step_details").html(details.database.details);
-  $("#schema_step div.step_details").html(details.schema.details);
+  $("#schema_details").html(details.schema.details);
   $("#roster_step div.step_details").html(details.roster.details);
   $("#classes_step div.step_details").html(details.classes.details);
   $("#awards_step div.step_details").html(details.awards.details);
@@ -79,6 +79,18 @@ function populate_details(details) {
   $("#mysql_dbname").val(details.form_fields.mysql_dbname);
   $("#sqlite_path").val(details.form_fields.sqlite_path);
   $("#connection_string").val(details.form_fields.connection_string);
+
+  $("#delete_race_results").prop('disabled', details.purge.nresults == 0);
+  $("#delete_schedules").prop('disabled', details.purge.nheats == 0);
+  $("#delete_racers").prop('disabled', details.purge.nracers == 0);
+  $("#delete_awards").prop('disabled', details.purge.nawards == 0);
+
+  console.log(details.purge);
+
+  $("#purge_nresults_span").text(details.purge.nresults);
+  $("#purge_nschedules_span").text(details.purge.nheats);
+  $("#purge_nracers_span").text(details.purge.nracers);
+  $("#purge_nawards_span").text(details.purge.nawards);
 }
 
 function populate_details_from_xml(data) {
@@ -217,15 +229,21 @@ function handle_advanced_database_modal_submit() {
          });
 }
 
+function show_purge_modal() {
+  show_modal("#purge_modal", function(event) {
+    close_modal("#purge_modal");
+  });
+}
+
 function show_initialize_schema_modal() {
-  show_modal("#initialize_schema_modal", function(event) {
+  show_secondary_modal("#initialize_schema_modal", function(event) {
     handle_initialize_schema();
     return false;
   });
 }
 
 function handle_initialize_schema() {
-  close_modal("#initialize_schema_modal");
+  close_secondary_modal("#initialize_schema_modal");
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
@@ -254,6 +272,22 @@ function handle_update_schema() {
          {type: 'POST',
           data: {action: 'database.execute',
                  script: 'update-schema'},
+          success: function(data) {
+            report_success_xml(data);
+          },
+          error: function(event, jqXHR, ajaxSettings, thrownError) {
+            report_failure(thrownError);
+          }
+         });
+}
+
+function handle_purge(purge) {
+  // results, schedules, racers, awards
+  close_modal("#purge_modal");
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'database.purge',
+                 purge: purge},
           success: function(data) {
             report_success_xml(data);
           },

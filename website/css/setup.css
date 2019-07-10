@@ -1,7 +1,8 @@
 .step_div {
+  clear: left;
     width: 100%;
     margin-top: 20px;
-    min-height: 100px;
+    min-height: 70px;
 }
 
 .status_icon {
@@ -24,8 +25,31 @@
     padding-top: 15px;
 }
 
+#schema_step {
+  min-height: 130px;
+}
+
+#schema_step .step_details p,
 #settings_step .step_details p {
     padding-top: 5px;
+}
+
+#schema_button {
+  margin-bottom: 0px;
+}
+
+#schema_step .lower .step_button {
+  clear: left;
+  margin-left: 70px;
+  margin-top: 0px;
+}
+
+#schema_step .lower .step_button input {
+  margin-top: 0px;
+}
+
+#schema_step .lower .step_details p {
+  margin-top: 0px;
 }
 
 span.trouble {
@@ -116,4 +140,49 @@ span.trouble {
     margin-bottom: 0px;
     margin-top: 14px;
     padding:5px 5px;
+}
+
+#purge_modal_inner {
+  position: relative;
+  height: 100%;
+}
+#purge_modal::before,
+#purge_modal::after {
+  content: '';
+  position: absolute;
+  display: block;
+  height: 12px;
+  width: 100%;
+  background: #cb5a5e;
+  background: repeating-linear-gradient(
+    -45deg,
+    #cb5a5e,
+    #cb5a5e 12px,
+    transparent 10px,
+    transparent 23px
+  );
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-bottom: 0;
+  left: 0px;
+}
+#purge_modal::before {
+  top: 0;
+}
+#purge_modal::after {
+  bottom: 0;
+}
+  
+.purge_div {
+  width: 100%;
+  min-height: 70px;
+}
+.purge_div p,
+.purge_div span {
+  padding-top: 15px;
+  font-size: 16px;
+}
+.purge_button {
+    width: 260px;
+    float: left;
 }
