@@ -31,7 +31,7 @@
 
 #schema_step .step_details p,
 #settings_step .step_details p {
-    padding-top: 5px;
+    padding-top: 2px;
 }
 
 #schema_button {
@@ -50,6 +50,11 @@
 
 #schema_step .lower .step_details p {
   margin-top: 0px;
+}
+
+#purge_operation {
+  text-align: center;
+  font-weight: bold;
 }
 
 span.trouble {

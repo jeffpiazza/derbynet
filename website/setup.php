@@ -89,7 +89,8 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 
   <div class="lower">
     <div class="step_button block_buttons">
-      <input type="button" data-enhanced="true" value="Purge Data" onclick="show_purge_modal()"/>
+      <input id="purge_data_button" type="button" data-enhanced="true"
+             value="Purge Data" onclick="show_purge_modal()"/>
     </div>
 
     <div class="step_details">
@@ -274,33 +275,33 @@ if (count($ez_configs) > 0) {
     <div class="purge_div">
       <div class="purge_button block_buttons">
         <input type="button" data-enhanced="true" id="delete_race_results" value="Delete Race Results"
-                onclick="handle_purge('results');"/>
+                onclick="confirm_purge('results');"/>
       </div>
-      <p><span id="purge_nresults_span"></span> completed heat(s).</p>
+      <p id="purge_results_para"><span id="purge_nresults_span"></span> completed heat(s)</p>
     </div>
 
     <div class="purge_div">
       <div class="purge_button block_buttons">
         <input type="button" data-enhanced="true" id="delete_schedules" value="Delete Schedules"
-                onclick="handle_purge('schedules');"/>
+                onclick="confirm_purge('schedules');"/>
       </div>
-      <p><span id="purge_nschedules_span"></span> scheduled heat(s).</p>
+      <p id="purge_schedules_para"><span id="purge_nschedules_span"></span> scheduled heat(s)</p>
     </div>
 
     <div class="purge_div">
       <div class="purge_button block_buttons">
         <input type="button" data-enhanced="true" id="delete_racers" value="Delete Racers"
-                onclick="handle_purge('racers');"/>
+                onclick="confirm_purge('racers');"/>
       </div>
-      <p><span id="purge_nracers_span"></span> registered racer(s).</p>
+      <p id="purge_racers_para"><span id="purge_nracers_span"></span> registered racer(s)</p>
     </div>
                                                 <!-- TODO delete classes/ranks? -->
     <div class="purge_div">
       <div class="purge_button block_buttons">
         <input type="button" data-enhanced="true" id="delete_awards" value="Delete Awards"
-                onclick="handle_purge('awards');"/>
+                onclick="confirm_purge('awards');"/>
       </div>
-      <p><span id="purge_nawards_span"></span> award(s).</p>
+      <p id="purge_awards_para"><span id="purge_nawards_span"></span> award(s)</p>
     </div>
 
     <div class="purge_div">
@@ -316,6 +317,19 @@ if (count($ez_configs) > 0) {
 
   </div>
 </form>
+</div>
+
+<div id="purge_confirmation_modal" class="modal_dialog hidden block_buttons"> <form>
+
+  <p>You are about to purge</p>
+  <p id="purge_operation"></p>
+  <p>from the database.  This operation cannot be undone.
+     Are you sure that's what you want to do?</p>
+
+    <input type="submit" data-enhanced="true" value="Purge"/>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_secondary_modal("#purge_confirmation_modal");'/>
+  </form>
 </div>
 
 <div id="reporting_box" class="hidden">

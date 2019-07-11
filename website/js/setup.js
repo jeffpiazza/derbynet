@@ -26,7 +26,7 @@ function populate_details(details) {
     + "#classes_step a.button_link, "
     + "#awards_step a.button_link, "
     + "#settings_step a.button_link").toggleClass('disabled', disabled);
-  $("#purge_step input[type='button']")
+  $("#purge_data_button")
     .prop('disabled', details.purge.nracers == 0 && details.purge.nawards == 0);
 
   $("#database_step").toggleClass('hidden', details.locked);
@@ -84,8 +84,6 @@ function populate_details(details) {
   $("#delete_schedules").prop('disabled', details.purge.nheats == 0);
   $("#delete_racers").prop('disabled', details.purge.nracers == 0);
   $("#delete_awards").prop('disabled', details.purge.nawards == 0);
-
-  console.log(details.purge);
 
   $("#purge_nresults_span").text(details.purge.nresults);
   $("#purge_nschedules_span").text(details.purge.nheats);
@@ -235,6 +233,36 @@ function show_purge_modal() {
   });
 }
 
+function confirm_purge(purge) {
+  var text = "some data";
+  if (purge == 'results') {
+    text = $("#purge_results_para").text();
+  } else if (purge == 'schedules') {
+    text = $("#purge_schedules_para").text();
+  } else if (purge == 'racers') {
+    text = $("#purge_racers_para").text();
+  } else if (purge == 'awards') {
+    text = $("#purge_awards_para").text();
+  }
+  
+  $("#purge_operation").text(text);
+
+  show_secondary_modal("#purge_confirmation_modal", function(event) {
+    close_secondary_modal("#purge_confirmation_modal");
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'database.purge',
+                   purge: purge},
+            success: function(data) {
+              report_success_xml(data);
+            },
+            error: function(event, jqXHR, ajaxSettings, thrownError) {
+              report_failure(thrownError);
+            }
+           });
+  });
+}
+
 function show_initialize_schema_modal() {
   show_secondary_modal("#initialize_schema_modal", function(event) {
     handle_initialize_schema();
@@ -244,6 +272,7 @@ function show_initialize_schema_modal() {
 
 function handle_initialize_schema() {
   close_secondary_modal("#initialize_schema_modal");
+  close_modal("#purge_modal");
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
@@ -280,23 +309,6 @@ function handle_update_schema() {
           }
          });
 }
-
-function handle_purge(purge) {
-  // results, schedules, racers, awards
-  close_modal("#purge_modal");
-  $.ajax('action.php',
-         {type: 'POST',
-          data: {action: 'database.purge',
-                 purge: purge},
-          success: function(data) {
-            report_success_xml(data);
-          },
-          error: function(event, jqXHR, ajaxSettings, thrownError) {
-            report_failure(thrownError);
-          }
-         });
-}
-
 
 
 $(function () {
