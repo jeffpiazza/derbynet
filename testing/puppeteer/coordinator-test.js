@@ -130,8 +130,8 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     "5", 1, "Schedule",
     "7", 0,  // No passed racers
     // Done racing
-    "1", 1, "Make Changes",
-    "2", 1, "Make Changes"],
+    "1", 2, "Make Changes", "Purge Results",
+    "2", 2, "Make Changes", "Purge Results"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("div.control_group[data-roundid]").each(function() {
@@ -144,7 +144,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds"],
+  assert.equal(["Add New Rounds", "Purge Results"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {
@@ -476,7 +476,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
                        {'type': 'POST',
                         'data': {'action': 'schedule.generate',
                                  'roundid': 5,
-                                 'nrounds': '1' } },
+                                 'n_times_per_lane': '1' } },
                          false);  // No xml response
 
   // ================================= Simulated poll =============================================================
@@ -565,9 +565,9 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     "6", 0,
     "8", 2,"Schedule","Delete Round",
     // Done racing
-    "1", 1,"Make Changes",
-    "3", 1,"Make Changes",
-    "4", 1,"Make Changes"],
+    "1", 2,"Make Changes","Purge Results",
+    "3", 2,"Make Changes","Purge Results",
+    "4", 2,"Make Changes","Purge Results"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("div.control_group[data-roundid]").each(function() {
@@ -580,7 +580,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds"],
+  assert.equal(["Add New Rounds","Purge Results"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {

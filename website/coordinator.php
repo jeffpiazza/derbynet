@@ -228,7 +228,35 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   </form>
 </div>
 
+                                                                                            
+<div id="purge_modal" class="modal_dialog wide_modal block_buttons hidden">
+    <div id="purge_modal_inner">
+  <form>
+    <h3><span id="purge_round_name"></span> Round <span id="purge_round_no"></span></h3>
+    <p>This round has <span id="purge_results_count"></span> heat(s) with results.</p>
+    <input type="submit" data-enhanced="true" value="Purge Results"/>
 
+    <p>&nbsp;</p>
+    <input type="button" data-enhanced="true" value="Cancel"
+        onclick='close_modal("#purge_modal");'/>
+  </form>
+    </div>
+</div>
+
+<div id="purge_confirmation_modal" class="modal_dialog block_buttons hidden">
+  <form>
+    <p>You are about to purge all the race results for this round.
+       This operation cannot be undone.
+       Are you sure that's what you want to do?</p>
+
+    <input type="submit" data-enhanced="true" value="Purge Results"/>
+
+    <p>&nbsp;</p>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_secondary_modal("#purge_confirmation_modal");'/>
+  </form>
+</div>
+                                                                                            
 <div id='delete_round_modal' class="modal_dialog hidden block_buttons">
   <p>Round <span id="delete_round_round"></span> for <span id="delete_round_class"></span>
        has no schedule, and no heats have been run.  To choose different racers for this round,

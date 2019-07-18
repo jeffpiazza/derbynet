@@ -147,37 +147,28 @@ span.trouble {
     padding:5px 5px;
 }
 
-#purge_modal_inner {
-  position: relative;
-  height: 100%;
-}
-#purge_modal::before,
-#purge_modal::after {
-  content: '';
-  position: absolute;
-  display: block;
-  height: 12px;
-  width: 100%;
+#purge_modal {
   background: #cb5a5e;
   background: repeating-linear-gradient(
     -45deg,
     #cb5a5e,
     #cb5a5e 12px,
-    transparent 10px,
-    transparent 23px
+    #ffffff 10px,
+    #ffffff 23px
   );
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border-bottom: 0;
-  left: 0px;
+
+  padding: 10px;
 }
-#purge_modal::before {
-  top: 0;
+
+#purge_modal_inner {
+  position: relative;
+  margin: 0px;
+  padding: 10px;
+  background: #ffffff;
 }
-#purge_modal::after {
-  bottom: 0;
-}
-  
+
 .purge_div {
   width: 100%;
   min-height: 70px;

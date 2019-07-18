@@ -210,3 +210,33 @@ p.last_contact {
 .master_schedule_group .block_buttons input {
     margin-top: 13px;
 }
+
+#purge_modal {
+  background: #cb5a5e;
+  background: repeating-linear-gradient(
+    -45deg,
+    #cb5a5e,
+    #cb5a5e 12px,
+    #ffffff 10px,
+    #ffffff 23px
+  );
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+
+  padding: 10px;
+}
+
+#purge_modal p {
+  text-align: center;
+}
+
+#purge_modal h3 {
+  text-align: center;
+  font-size: 24px
+}
+#purge_modal_inner {
+  position: relative;
+  margin: 0px;
+  padding: 10px;
+  background: #ffffff;
+}
