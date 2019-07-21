@@ -161,6 +161,8 @@ array(
 
 @include_once(sql_file_path('events-table')),
 
+@include_once(sql_file_path('message-queue-table')),
+
 @include_once(sql_file_path('award-type-values')),
 
 array(

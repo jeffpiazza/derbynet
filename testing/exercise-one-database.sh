@@ -38,6 +38,7 @@ run_tests() {
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
+
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
     `dirname $0`/test-photo-next.sh "$BASE_URL"
@@ -55,6 +56,8 @@ run_tests() {
 
 ############################## One-Run-Per-Car Racing ##############################
     `dirname $0`/test-model-a-club.sh "$BASE_URL"
+
+    `dirname $0`/test-messaging.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
