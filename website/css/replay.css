@@ -1,0 +1,25 @@
+h3#reject {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.full-window {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0;
+  width: 100%;
+}
+
+#device-picker-div {
+  min-height: 50px;
+  width: 50%;
+  margin-left: 25%;
+}
+
+video#preview {
+  border: 1px solid green;
+  width: 50%;
+  max-height: 60%;
+  margin-left: 25%;
+}
