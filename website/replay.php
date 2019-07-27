@@ -8,6 +8,7 @@ require_once('inc/banner.inc');
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/replay.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/screenfull.min.js"></script>
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 <script type="text/javascript" src="js/message-poller.js"></script>
@@ -86,19 +87,15 @@ $(function() {
     }
 
     $("#playback").on('ended', function(event) {
-        $("#interior").removeClass('hidden');
-        $("#playback").addClass('hidden');
+        $("#playback").hide('slide');
       });
 });
 
 function on_replay() {
-  $("#replay-setup").addClass('hidden');  // Should already be hidden
-
   g_recorder.stop(function(blob) {
       if (blob) {
         document.querySelector("#playback").src = URL.createObjectURL(blob);
-        $("#interior").addClass('hidden');
-        $("#playback").removeClass('hidden');
+        $("#playback").show('slide');
       } else {
         console.log("No blob!");
       }
@@ -114,9 +111,13 @@ function on_proceed() {
     }
   }
 
-  $("#replay-setup").addClass('hidden');
-  $("#playback").addClass('hidden');
+  $("#replay-setup").hide('slide', {direction: 'down'});
+  $("#playback").hide('slide').removeClass('hidden');
   $("#interior").removeClass('hidden');
+}
+
+function on_setup() {
+  $("#replay-setup").show('slide', {direction: 'down'});
 }
 
 </script>

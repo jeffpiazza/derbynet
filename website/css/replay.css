@@ -23,3 +23,7 @@ video#preview {
   max-height: 60%;
   margin-left: 25%;
 }
+
+#replay-setup {
+  background: white;
+}
