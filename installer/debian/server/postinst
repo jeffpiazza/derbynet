@@ -63,6 +63,14 @@ sed -i -e '/^[ \t]*location \/ {/ i\
 
 ' /etc/nginx/sites-available/default
 
+######## Enable SSL with self-signed ("snakeoil") certificates provided by ssl-cert package
+
+sed -i \
+    -e 's!# *\(listen 443 ssl .*\)!\1!' \
+	-e 's!# *\(listen [::]:443 ssl .*\)!\1!' \
+    -e 's!# *\(include snippets/snakeoil.conf;\)!\1!' \
+    /etc/nginx/sites-available/default
+
 ######## Restart
 
 nginx -s reload
