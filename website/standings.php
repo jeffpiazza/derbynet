@@ -65,9 +65,17 @@ $(function () {
 
 <div class="center-select">
 <h3><?php
-echo read_raceinfo_boolean('use-points') ? "Scoring by points"
-: (read_raceinfo_boolean('drop-slowest') ? "Dropping each racer's slowest time"
-                                         : "Averaging all heat times");
+if (read_raceinfo_boolean('use-points')) {
+  if (read_raceinfo_boolean('drop-slowest')) {
+    echo "Scoring by points,<br/>dropping each racer's worst heat";
+  } else {
+    echo "Scoring by points";
+  }
+} else if (read_raceinfo_boolean('drop-slowest')) {
+  echo "Dropping each racer's worst heat";
+} else {
+  echo "Averaging all heat times";
+}
 ?></h3>
 </div>
 

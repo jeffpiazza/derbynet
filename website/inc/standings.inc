@@ -162,10 +162,16 @@ function final_standings($completed_only = false) {
 
   $scoring_expr = sql_scoring_expression('finishtime', 'finishplace');
   $raw_expr = read_raceinfo_boolean('use-points') ? 'finishplace' : 'finishtime';
-  // TODO Drop slowest for points racing?  This expression doesn't account for that, if it's meaningful.
-  $avg_expr = read_raceinfo_boolean('use-points')
-          ? (1 + get_lane_count()).' * COUNT(*) - SUM(finishplace)'
-          : $scoring_expr;
+  if (read_raceinfo_boolean('use-points')) {
+    if (read_raceinfo_boolean('drop-slowest')) {
+      $avg_expr = (1 + get_lane_count()).' * (COUNT(*) - 1) - (SUM(finishplace) - MAX(finishplace))';
+    } else {
+      $avg_expr = (1 + get_lane_count()).' * COUNT(*) - SUM(finishplace)';
+    }
+  } else {
+    $avg_expr = $scoring_expr;
+  }
+
   $stmt = $db->query('SELECT Rounds.roundid, Rounds.classid as round_classid, '
                      .' RegistrationInfo.racerid, firstname, lastname, carnumber, carname,'
                      // classid is the racer's 'native' class, not the round's class (e.g. Grand Finals)
@@ -324,7 +330,7 @@ function write_standings_table_headers() {
   echo "<th>Heats</th>";
 
   if (read_raceinfo_boolean('use-points')) {
-    echo "<th>Total Points (1st = ".get_lane_count().")</th>";
+    echo "<th>Points (1st = ".get_lane_count().")</th>";
   } else {
     echo "<th>Average</th>";
   }
