@@ -6,12 +6,22 @@
 # server, identified by the barcode.
 #
 
+# Establish default values; photo-preamble will override from user config files.
+#  Looks in /dev/input/by-id for any of the scanner devs, or just any device at all.
+BARCODE_SCANNER_DEVS=""
+
 SELF="$0"
 # readlink -f exists in linux (particularly RPi), but not e.g. Mac
 [ -L "$SELF" ] && SELF=`readlink -f "$SELF"`
 SELF_DIR=`dirname "$SELF"`
-. "$SELF_DIR"/lib/photo-preamble.sh
-. "$SELF_DIR"/lib/photo-functions.sh
+LIB_DIR="$SELF_DIR/lib"
+
+. "$LIB_DIR"/photo-preamble.sh
+. "$LIB_DIR"/photo-functions.sh
+READ_BARCODE="$LIB_DIR"/read_barcode.py
+
+rm uploads.log > /dev/null 2>&1
+rm checkins.log > /dev/null 2>&1
 
 killall_gvfs_volume_monitor
 
@@ -23,11 +33,6 @@ cleanup() {
     exit 0
 }
 trap cleanup 2 3 6
-
-rm uploads.log > /dev/null 2>&1
-rm checkins.log > /dev/null 2>&1
-
-BARCODE_SCANNER_DEV=/dev/input/by-id/usb-13ba_Barcode_Reader-event-kbd
 
 # Depends on $PHOTO_DIR being defined when executed.
 loop_to_capture_tethered() {
@@ -78,7 +83,13 @@ announce idle
 loop_to_capture_tethered &
 
 while true ; do
-    BARCODE=`barcode $BARCODE_SCANNER_DEV`
+    DEV="`find_barcode_scanner`"
+    if [ -z "$DEV" ] ; then
+        announce no-scanner
+        sleep 5s
+        continue
+    fi
+    BARCODE=`$READ_BARCODE "$DEV"`
     echo Scanned $BARCODE
     CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
 

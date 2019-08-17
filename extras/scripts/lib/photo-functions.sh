@@ -79,12 +79,31 @@ define_photo_directory() {
     test ! -d "$PHOTO_DIR" && mkdir "$PHOTO_DIR"
 }
 
+# Echoes to stdout the full path of the barcode scanner input device, in /dev/input/by-id.
+#
+# If none of the names in $BARCODE_SCANNER_DEVS is found under /dev/input/by-id, this
+# method falls back to ANY file under /dev/input/by-id, which is likely to include any
+# attached keyboards or mice.
+#
+# Echoes an empty string to stdout if NO candidate devices are found.
+#
+# Input from the environment:
+#    BARCODE_SCANNER_DEVS -- space-separated list of possible file names in /dev/input/by-id
+find_barcode_scanner() {
+    for DEV in $BARCODE_SCANNER_DEVS `ls /dev/input/by-id` ; do
+        if [ -e "/dev/input/by-id/$DEV" ] ; then
+            echo /dev/input/by-id/$DEV
+            return
+        fi
+    done
+}
+
 # Verifies that the barcode scanner device is connected; loops until successful.
 #
 # Input from the environment:
-#    BARCODE_SCANNER_DEV   (a /dev path to the expected device)
+#    BARCODE_SCANNER_DEVS
 check_scanner() {
-    while [ ! -e "$BARCODE_SCANNER_DEV" ] ; do
+    while [ -z "`find_barcode_scanner`" ] ; do
         echo Scanner not connected
         announce no-scanner
         sleep 5s
