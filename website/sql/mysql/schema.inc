@@ -171,6 +171,7 @@ array(
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (12, 'show-cars-on-deck', '1')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (13, 'show-racer-photos-rr', '1')",
 "INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (14, 'show-car-photos-rr', '1')",
+"INSERT INTO RaceInfo (RaceInfoID, ItemKey, ItemValue) VALUES (15, 'upload-videos', '1')",
   )
 );
 ?>

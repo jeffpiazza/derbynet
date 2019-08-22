@@ -170,8 +170,10 @@ $(function() {
 
   render_directory_status_icon("#photo-dir");
   render_directory_status_icon("#car-photo-dir");
+  render_directory_status_icon("#video-dir");
 
   $("#photo-dir").on("change", function() { render_directory_status_icon("#photo-dir"); });
   $("#car-photo-dir").on("change", function() { render_directory_status_icon("#car-photo-dir"); });
+  $("#video-dir").on("change", function() { render_directory_status_icon("#video-dir"); });
 
 });

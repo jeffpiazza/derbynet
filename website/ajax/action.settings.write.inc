@@ -24,7 +24,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   $failures = false;
 
   if (locked_settings()) {
-    foreach(array('photo-dir', 'car-photo-dir') as $post_key) {
+    foreach(array('photo-dir', 'car-photo-dir', 'video-dir') as $post_key) {
       if (isset($_POST[$post_key])) {
         echo "<failure code='locked'>Directory settings are locked and cannot be changed.</failure>\n";
         $failures = true;
@@ -43,6 +43,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'show-car-photos-on-deck' => 'show-cars-on-deck',
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
+                  'upload-videos' => 'upload-videos',
                   'drop-slowest' => 'drop-slowest')
             // See also use-xbs, below
             as $post_key => $raceinfo_key) {
@@ -71,6 +72,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'update-period' => 'update-period',
                   'photo-dir' => 'photo-directory',
                   'car-photo-dir' => 'car-photo-directory',
+                  'video-dir' => 'video-directory',
                   'replay-skipback' => 'replay-skipback',
                   'replay-num-showings' => 'replay-num-showings',
                   'replay-rate' => 'replay-rate',

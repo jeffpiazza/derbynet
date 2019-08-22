@@ -53,6 +53,7 @@ $use_xbs = read_raceinfo_boolean('xbs-award');
 $xbs_award = read_raceinfo('xbs-award');
 if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
+$upload_videos = read_raceinfo_boolean('upload-videos');
 
 $photos_on_now_racing = read_photos_on_now_racing();
 $show_car_photos_on_deck = read_raceinfo_boolean('show-cars-on-deck');
@@ -185,10 +186,10 @@ Lanes available for scheduling:</p>
   </div>
 
 <?php
-function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_prefix) {
+function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
     if (!locked_settings()) {
       echo "<p>\n";
-      echo '<label for="'.$photo_dir_id.'">Directory for '.$category.' photos:</label>'."\n";
+      echo '<label for="'.$photo_dir_id.'">Directory for '.$purpose.':</label>'."\n";
       echo '<input id="'.$photo_dir_id.'" name="'.$photo_dir_id.'" type="text" data-enhanced="true"'
            .' size="50"'
 		   .' value="'.htmlspecialchars($photo_dir_value, ENT_QUOTES, 'UTF-8').'"/>'."\n";
@@ -240,8 +241,14 @@ function photo_settings($category, $photo_dir_id, $photo_dir_value, $photo_size_
         <label>Car photos</label>
       </p>
 
-      <?php photo_settings('racer', 'photo-dir', photo_directory(), 'photo'); ?>
-      <?php photo_settings('car', 'car-photo-dir', car_photo_directory(), 'car-photo'); ?>
+      <?php photo_settings('racer photos', 'photo-dir', photo_directory()); ?>
+      <?php photo_settings('car photos', 'car-photo-dir', car_photo_directory()); ?>
+      <p>
+        <input id="upload-videos" name="upload-videos" data-enhanced="true"
+                type="checkbox"<?php if ($upload_videos) echo ' checked="checked"';?>/>
+        <label>Upload replay videos?</label>
+      </p>
+      <?php photo_settings('videos', 'video-dir', read_raceinfo('video-directory')); ?>
     </div>
   </div>
 
