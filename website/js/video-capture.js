@@ -18,7 +18,9 @@ function VideoCapture(stream) {
 
   recorder.ondataavailable = (event) => {
     // event.data.type: video/x-matroska;codecs=avc1
-    recordedChunks.push(event.data);
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
   };
 
   recorder.start();
@@ -50,7 +52,13 @@ function VideoCapture(stream) {
 function VideoCaptureFlight(stream, n, spacing_ms) {
   let captures = [];
   let interval = setInterval(function() {
-    let new_capture = new VideoCapture(stream);
+    let new_capture;
+    try {
+        new_capture = new VideoCapture(stream);
+    } catch (error) {
+      console.log("Failed to create VideoCapture: " + error);
+      clearInterval(interval);
+    }
     if (captures.length >= n) {
       captures[0].stop();
       for (let i = 0; i < captures.length; ++i) {

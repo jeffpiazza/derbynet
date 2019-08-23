@@ -58,6 +58,9 @@ function RemoteCamera(viewer_id, stream_cb) {
                           sdp: pc.localDescription});
           });
       } else if (msg.type == 'ice-candidate') {
+        if (!pc) {
+          pc = new RTCPeerConnection(null);
+        }
         viewer_received('ice-candidate');
         if (msg.from != 'replay-camera') {
           console.log('ICE candidate from unknown sender ' + msg.from + '');

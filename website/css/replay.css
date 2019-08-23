@@ -27,3 +27,7 @@ video#preview {
 #replay-setup {
   background: white;
 }
+
+#playback-background {
+  background-color: black;
+}

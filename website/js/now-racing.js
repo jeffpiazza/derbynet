@@ -258,6 +258,10 @@ var Poller = {
   // if no request is queued.
   id_of_timeout: 0,
 
+  // If we're being shown within a replay iframe, suspend polling while a replay
+  // is showing and we're not visible; resume when we have the display again.
+  suspended: false,
+
   // Queues the next poll request when processing of the current request has
   // completed, including animations, if any.  Because animations are handled
   // asynchronously, with completion callbacks, we can't just start the next
@@ -276,6 +280,8 @@ var Poller = {
   poll_for_update: function(roundid, heat) {
     if (typeof(simulated_poll_for_update) == "function") {
       simulated_poll_for_update();
+    } else if (this.suspended) {
+      Poller.queue_next_request(roundid, heat);
     } else {
       var row_height = 0;
       var photo_cells = $('td.photo');
@@ -388,9 +394,22 @@ function resize_table() {
   FontAdjuster.table_resized();
 }
 
+function on_message(msg) {
+  if (msg == 'replay-started') {
+    Poller.suspended = true;
+    Lineup.hold_display();
+  } else if (msg == 'replay-ended') {
+    Poller.suspended = false;
+    FlyerAnimation.enable_flyers();
+  }
+}
+
 $(function () {
   resize_table();
   $(window).resize(function() { resize_table(); });
+
+  window.onmessage = function(e) { on_message(e.data); };
+
   // This 1-second delay is to let the initial resizing take effect
   setTimeout(function() { Poller.poll_for_update(0, 0); }, 1000);
   // Run the watchdog every couple seconds
