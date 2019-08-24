@@ -83,6 +83,7 @@ if (@$_SESSION['role']) {
 
 <input type="button" value="Be a Kiosk" onclick="window.location='kiosk.php'"/>
 <input type="button" value="Fullscreen Kiosk" onclick="window.location='fullscreen.php'"/>
+<input type="button" value="Replay Kiosk" onclick="window.location='replay.php'"/>
 <br/>
 <input type="button" value="Cancel" onclick='close_modal("#kiosk_modal");'/>
 

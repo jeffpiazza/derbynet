@@ -2,12 +2,21 @@
 <html lang="en" itemscope itemtype="http://schema.org/Product">
 <head>
 <title>Fullscreen Kiosk</title>
-<script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/screenfull.min.js"></script>
-</head>
+<?php require('inc/stylesheet.inc'); ?>
+<style type="text/css">
 
-<body>
+.full-window {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0;
+  width: 100%;
+}
 
+#setup {
+margin-top: 100px;
+}
+</style>
 <?php
 if (isset($_SERVER['SERVER_NAME'])) {
   $server = $_SERVER['SERVER_NAME'];
@@ -44,48 +53,34 @@ if ($last === false) {
 // Don't force http !
 $kiosk_url = '//'.substr($url, 0, $last + 1).'kiosk.php';
 ?>
-
-<form onsubmit="go_fullscreen(); return false;" style="margin-top: 100px; margin-left: auto; margin-right: auto;">
-  <input type="text" size="100" id="url" value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
-<input type="submit"/>
-</form>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/screenfull.min.js"></script>
 
 <script type="text/javascript">
-function go_fullscreen() {
-   if (screenfull.enabled) {
-     screenfull.request();
-   }
+function on_proceed() {
+  $("#interior").attr('src', $("#inner_url").val());
+  $("#setup").addClass('hidden');
+  $("#interior").removeClass('hidden');
 
-   // We create an iframe and fill the window with it
-   var iframe = document.createElement('iframe');
-   iframe.setAttribute('id', 'external-iframe');
-   iframe.setAttribute('src', $('#url').val());
-   iframe.setAttribute('frameborder', 'no');
-
-   iframe.style.position = 'absolute';
-   iframe.style.top = '0';
-   iframe.style.right = '0';
-   iframe.style.bottom = '0';
-   iframe.style.left = '0';
-   iframe.style.width = '100%';
-   iframe.style.height = '100%';
-
-   $('body form').remove();
-
-   // In case the user exits fullscreen, a click restores it.  (Fullscreen has
-   // to be associated with a user gesture.)
-   $(iframe).load(function() {
-       $(this).contents().find("body").on('click', function() {
-           if (screenfull.enabled) {
-             screenfull.request();
-           }
-         });
-     });
-
-   $('body').prepend(iframe);
-
-   document.body.style.overflow = 'hidden';
+  if (screenfull.enabled) {
+    screenfull.request();
+  }
 }
 </script>
+</head>
+
+<body>
+
+<iframe id="interior" class="hidden full-window">
+</iframe>
+
+<div id="setup" class ="full-window block_buttons">
+
+  <label for="inner_url">URL:</label>
+  <input type="text" name="inner_url" id="inner_url" size="100"
+         value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
+  <input type="button" data-enhanced="true" value="Proceed"
+         onclick="on_proceed();"/>
+</div>
 </body>
 </html>
