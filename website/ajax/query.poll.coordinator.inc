@@ -3,6 +3,7 @@
 require_once('inc/current-heat.inc');
 require_once('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/aggregate_round.inc');
 
 $now_running = get_running_round();
 $use_master_sched = use_master_sched();
@@ -89,6 +90,9 @@ foreach ($rounds as $round) {
             .' classid="'.$round['classid'].'"'
             .' class="'.htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').'"'
             .' round="'.$round['round'].'"';
+    if (is_aggregate_class($round['classid'])) {
+      echo ' aggregate="1"';
+    }
 
     // Number of racers in the roster for the round
     echo ' roster_size="'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',

@@ -195,7 +195,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <?php if (read_raceinfo('use-subgroups')) { ?>
       <p>racers from</p>
       <div class="centered_flipswitch">
-        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_single"
                data-on-text="Each <?php echo subgroup_label(); ?>" data-off-text="Overall"/>
       </div>
     <?php } else { ?>
@@ -206,9 +206,11 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <div class="multi_den_only">
       <p>racers from</p>
       <div class="centered_flipswitch">
-        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed"
+        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_multi"
                data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
       </div>
+       <p>Name for new round:</p>
+       <input type="text" name="classname" id="agg_classname" value="Grand Finals"/>
     </div>
 
     <input type="submit" data-enhanced="true" value="Submit"/>

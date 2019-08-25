@@ -5,12 +5,13 @@ session_start();
 // choose to view standings by individual rounds, or for the final standings of
 // the pack.
 //
-// If Grand Final rounds are used, the "All" settings is exactly equivalent to
-// viewing the results for the last Grand Final round.
+// If rounds are present for a single aggregate class, the "All" settings is
+// exactly equivalent to viewing the results for the last round of the aggregate
+// class.
 //
-// TODO We'd like to be able to see how the members of a Grand Final round were
-// selected, and what the pack standings were/would have been without the GF
-// round.  Note that the roster.new action performs SQL queries directly,
+// TODO We'd like to be able to see how the members of an aggregate class were
+// selected, and what the pack standings were/would have been without the agg
+// round(s).  Note that the roster.new action performs SQL queries directly,
 // without using final_standings(), but performs a similar query.
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
@@ -29,14 +30,15 @@ require_once('inc/standings.inc');
 <script type="text/javascript">
 // This bit of javascript has to be here and not standings.js because of the PHP portions
 $(function () {
-    // We're initially displaying the "All" case.
     $("tr").not(".headers").addClass('hidden');
-    $(select_standings(false, false, <?php echo json_encode(supergroup_label()); ?>)).removeClass('hidden');
 
     $("select").on("change", function(event) {
         standings_select_on_change($(this).find("option:selected"),
                                    <?php echo json_encode(supergroup_label()); ?>);
       });
+
+    standings_select_on_change($("#view-selector").find("option:selected"),
+                               <?php echo json_encode(supergroup_label()); ?>);
 });
 </script>
 <title>Standings</title>
@@ -82,11 +84,15 @@ if (read_raceinfo_boolean('use-points')) {
 <div class="download_div">
   <a id="download-button" class='button_link' href='export-standings.php'>Download</a>
 </div>
-
+<?php
+$standings = final_standings();
+?>
 <div class="center-select">
-<select>
-    <option selected="selected">All</option>
+<select id="view-selector">
     <?php
+    if (last_aggregate_roundid() !== 0) {
+      echo "<option selected=\"selected\">All</option>\n";
+    }
     $use_subgroups = read_raceinfo_boolean('use-subgroups');
     $rounds = rounds_for_standings();
     foreach ($rounds as $round) {
@@ -108,7 +114,6 @@ if (read_raceinfo_boolean('use-points')) {
 <table class="main_table">
 <?php
 write_standings_table_headers();
-$standings = final_standings();
 write_standings_table_rows($standings);
 ?>
 </table>

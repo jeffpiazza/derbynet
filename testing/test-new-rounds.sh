@@ -33,18 +33,26 @@ if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 3 ]; then
     test_fails Expecting 3 finalists
 fi
 
-# Grand final round, 4 from each den
+# Grand Finals round, 4 from each den
 # In test-basic-checkins, Bears & Freres only have 2 racers, so it's a total of 14 racers
 # In test-master-schedule, Bears & Freres have 2 racers, and Webelos only 3, so it's a total of 13 finalists
-curl_post action.php "action=roster.new&roundid=&top=4&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1" \
+curl_post action.php "action=roster.new&roundid=&top=4&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
  | check_success
 if [ "`grep -c '<finalist' $DEBUG_CURL`" -lt 13 -o \
      "`grep -c '<finalist' $DEBUG_CURL`" -gt 14 ]; then
     test_fails Expecting 13 or 14 finalists, not `grep -c '<finalist' $DEBUG_CURL`
 fi
 
-# Grand final round, top 5 overall
-curl_post action.php "action=roster.new&roundid=&top=5&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1" | check_success
+# <new-round roundid="xxx"/>
+ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
+
+curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
+
+# Grand Finals round, top 5 overall
+curl_post action.php "action=roster.new&roundid=&top=5&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals-2" | check_success
 if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 5 ]; then
     test_fails Expecting 5 finalists
 fi
+
+ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
+curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success

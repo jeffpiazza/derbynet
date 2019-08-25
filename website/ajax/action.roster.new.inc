@@ -1,5 +1,5 @@
 <?php
-// $_POST roundid, roundid_<nnn>, top, bucketed
+// $_POST roundid, roundid_<nnn>, classname, top, bucketed
 
 // Populates a new round by selecting top finishers from a previous round or rounds.
 
@@ -7,17 +7,19 @@
 // implies that we're populating a new follow-on round for the same class, based
 // on the top finishers from the identified round.
 //
-// If roundid is empty, then we're generating a "Grand Finals" round, taking
-// top finishers across multiple previous rounds.  Those previous rounds are
-// identified by $_POST keys of the form roundid_<nnn>.
+// If roundid is empty, then we're generating an aggregate round, taking top
+// finishers across multiple previous rounds.  Those previous rounds are
+// identified by $_POST keys of the form roundid_<nnn>.  A new class will be
+// created for the round; $_POST['classname'] will be taken as the name of the
+// new class.
 //
 // "top" identifies how many racers to select for the new round, but its interpretation also
 // depends on "bucketed".
 //
-// For a Grand Finals round, if "bucketed" is true, then "top" tells how many
+// For an aggregate round, if "bucketed" is true, then "top" tells how many
 // racers to choose from each of the prior rounds feeding in to the new round.
 //
-// For a non-Grand Finals round, if "bucketed" is true, then "top" tells how
+// For a non-aggreate round, if "bucketed" is true, then "top" tells how
 // many racers to choose from each subgroup.
 //
 // TODO: If racing isn't complete, selection of top finishers is likely to be wrong.
@@ -26,12 +28,13 @@ start_response();
 
 require_once('inc/standings.inc');
 require_once('inc/newracer.inc');
+require_once('inc/aggregate_round.inc');
 
 $bucket_limit = $_POST['top'];
 $bucketed = isset($_POST['bucketed']) && $_POST['bucketed'];
 
 if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
-  $grand_finals = false;
+  $aggregate = false;
   $roundid = $_POST['roundid'];
   list($classid, $old_round) = read_single_row('SELECT classid, round FROM Rounds'
                                                .' WHERE roundid = :roundid',
@@ -39,7 +42,7 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   // TODO: Handle not-found case
   $new_round = 1 + $old_round;
 } else {
-  $grand_finals = true;
+  $aggregate = true;
   $all_roundids = '0';
   foreach ($_POST as $key => $value) {
     if (substr($key, 0, strlen('roundid_')) == 'roundid_') {
@@ -48,28 +51,16 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   }
   // TODO: Handle 0 or 1 roundid's provided
 
-  // A Grand Final round has the same round number as the highest completed
-  // round it draws from.  In other words, if you're picking top finishers from
-  // several Round 1 rounds, you're constructing a Round 1 Grand Final round.
-  $old_round = read_single_value('SELECT MAX(round)'
-                                 .' FROM RaceChart'
-                                 .' INNER JOIN Rounds'
-                                 .' ON RaceChart.roundid = Rounds.roundid'
-                                 .' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
-                                 .' AND Rounds.roundid IN ('.$all_roundids.')',
-                                 array());
-  $new_round = $old_round;
+  // A new aggregate round creates a new pseudo-class for the aggregate, and
+  // starts at round 1
+  $new_round = 1;
 
-  $classid = find_or_create_class('Grand Finals', /* without first round */ false);
+  $classid = create_aggregate_class($_POST['classname']);
 }
 
 // With $new_round and $classid settled, make the new round (unless it
 // already exists)
 
-// TODO: This won't work in general if there's just one "Grand Finals"
-// class and potentially multiple desired rounds at a particular round
-// level.  Probably need to keep incrementing new round numbers until
-// we get one that hasn't already been used.
 $new_roundid = read_single_value('SELECT roundid FROM Rounds'
                                  .' WHERE round = :round'
                                  .'  AND classid = :classid',
@@ -98,20 +89,15 @@ if ($new_roundid) {
 $buckets = array();  // bucketno => array of { racerid , score }
 
 // If top n across the whole unit or den, bucketno is a constant (1)
-// If bucketed, bucketno is rankid (for a den) or classid (for grand finals).
+// If bucketed, bucketno is rankid (for a den) or classid (for aggreate).
 $bucketno_expr = '1';
 
-if ($grand_finals) {
-  $and_roundid_ok = ' AND RaceChart.roundid IN ('.$all_roundids.')';
-  $keyfield = 'Rounds.round';
-  $key = $old_round;
+if ($aggregate) {
   if ($bucketed) {
-    $bucketno_expr = 'Result.classid';
+    $bucketno_expr = 'Result.roundid';
   }
 } else {
-  $and_roundid_ok = '';
-  $keyfield = 'RaceChart.roundid';
-  $key = $roundid;
+  $all_roundids = $roundid;
   if ($bucketed) {
     $bucketno_expr = 'RegistrationInfo.rankid';
   }
@@ -122,21 +108,22 @@ if ($grand_finals) {
 // RaceChart(resultid, classid, roundid, heat, lane, racerid, finishtime, completed)
 // RegistrationInfo(racerid, ..., classid, rankid)
 $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, score'
-                     .' FROM (SELECT racerid, Rounds.classid, '
+                     .' FROM (SELECT racerid, Rounds.roundid, '
                      .sql_scoring_expression('finishtime', 'finishplace').' AS score'
                      .'       FROM RaceChart'
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
-                     .'       WHERE '.$keyfield.' = :key'
-                     .$and_roundid_ok
-					 // This is basically "GROUP BY racerid"; racerid
-					 // (should) determine Rounds.classid uniquely.
-                     .'       GROUP BY racerid, Rounds.classid) AS Result'
+                     .'       WHERE RaceChart.roundid IN ('.$all_roundids.')'
+					 // This is basically "GROUP BY racerid"; racerid will
+					 // determine Rounds.roundid uniquely, unless a racer is
+					 // part of two different constituent rounds; in that case,
+					 // we'll treat that racer like two different racers.
+                     .'       GROUP BY racerid, Rounds.roundid) AS Result'
                      .' INNER JOIN RegistrationInfo'
                      .'  ON Result.racerid = RegistrationInfo.racerid'
-                     .'  WHERE passedinspection = 1 AND exclude = 0'
+                     .' WHERE passedinspection = 1 AND exclude = 0'
                      .' ORDER BY score');
-$stmt->execute(array(':key' => $key));
+$stmt->execute(array());
 foreach ($stmt as $row) {
   $bucketno = $row['bucketno'];
   if (!isset($buckets[$bucketno])) {

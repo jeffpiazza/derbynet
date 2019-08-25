@@ -3,6 +3,7 @@ require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/name-mangler.inc');
 require_once('inc/ordinals.inc');
+require_once('inc/aggregate_round.inc');
 
 // For a given roundid, it's straightforward to calculate standings within the
 // round, provided all the heats have been run.  If not all heats have been run,
@@ -16,10 +17,13 @@ require_once('inc/ordinals.inc');
 //
 // For the whole field, define standings as:
 //
-//  - If there are any Grand Final rounds, then the round standings for the
-//    highest-numbered Grand Final round.  (Define Grand Final round.)
+//  - If there is a single aggregate class, then the round standings for the
+//    highest-numbered aggregate round.
 //
-//  - In the absence of any Grand Final rounds, then take the highest-numbered
+//  - If there is more than one aggregate class, then there is no overall
+//    standing.
+//
+//  - In the absence of any aggregate rounds, then take the highest-numbered
 //    round from each class, and combine into an aggregate standing.  Some
 //    classes may have more rounds than others.
 
@@ -45,7 +49,7 @@ function final_native_roundids() {
                      .' FROM (SELECT Rounds.classid, MAX(round) AS max_round'
                      .'       FROM Rounds'
                      // The join with RegistrationInfo is to filter out the
-                     // Grand Finals class, which has no registered members.
+                     // aggregate classes, which have no registered members.
                      .'       INNER JOIN RegistrationInfo'
                      .'       ON Rounds.classid = RegistrationInfo.classid'
                      .'       GROUP BY Rounds.classid) AS R1'
@@ -79,18 +83,28 @@ function completed_roundids($roundids) {
   return $roundids;
 }
 
-// Returns false if there are no grand final rounds, otherwise the roundid of the
-// grand-final round with the highest round number.
+// If there are no aggregate classes, returns false.
 //
-// Note that we're identifying the grand final rounds in part by the class name,
-// which has to match that from the roster.new action.
-function last_grand_final_roundid() {
+// If there's just one aggregate class, chooses the roundid of its highest
+// round.  We're assuming that the single aggregate class is the Grand Finals
+// round that determines overall standings.
+//
+// If there's more than one aggregate class, returns 0 (which means there's no
+// round for determining overall standings).
+
+function last_aggregate_roundid() {
+  $agg_classes = aggregate_classes();
+  if (count($agg_classes) == 0) {
+    return false;
+  }
+  if (count($agg_classes) > 1) {
+    // We decline to pick a roundid that establishes overall results
+    return 0;
+  }
   return read_single_value('SELECT R2.roundid AS roundid'
                            .' FROM (SELECT classid, MAX(round) AS max_round'
                            .'       FROM Rounds'
-                           .'       WHERE classid IN '
-                           .'            (SELECT classid FROM Classes'
-                           .'             WHERE class = \'Grand Finals\')'
+                           .'       WHERE classid = :classid'
                            .'       AND NOT EXISTS('
                            .'            SELECT 1 FROM RegistrationInfo'
                            .'            WHERE RegistrationInfo.classid = Rounds.classid)'
@@ -98,18 +112,7 @@ function last_grand_final_roundid() {
                            .' INNER JOIN Rounds AS R2'
                            .' ON R1.classid = R2.classid'
                            .' AND R1.max_round = R2.round',
-                           array());
-}
-
-// Returns the list of roundids from which the field's overall standings should
-// be assessed.  Returns an array of roundid values for "final" rounds, i.e.,
-// the highest-numbered round for each class.
-function final_roundids() {
-  $last_grand = last_grand_final_roundid();
-  if ($last_grand) {
-    return array($last_grand);
-  }
-  return final_native_roundids();
+                           array(':classid' => $agg_classes[0]));
 }
 
 // Returns summary results for each racer within each round they participated in.
@@ -134,7 +137,7 @@ function final_standings($completed_only = false) {
   global $db;
   
   $roundids_for_groups = final_native_roundids();
-  $roundids_for_supergroup = last_grand_final_roundid();
+  $roundids_for_supergroup = last_aggregate_roundid();
   if ($roundids_for_supergroup === false) {
     $roundids_for_supergroup = $roundids_for_groups;
   } else {

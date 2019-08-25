@@ -4,7 +4,7 @@
 // yet been run.
 //
 // There may already be completed heats in the round (especially if we're
-// assigning master heats due to the creation of a Grand Finals round); we want
+// assigning master heats due to the creation of an aggregate round); we want
 // to be sure not to change masterheat values for those RaceChart entries.
 function assign_master_heats($round) {
   global $db;

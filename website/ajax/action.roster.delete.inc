@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/aggregate_round.inc');
+
 start_response();
 
 if (!have_permission(CONTROL_RACE_PERMISSION)) {
@@ -21,10 +23,14 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
                                array(':roundid' => $_POST['roundid'])) > 0) {
     echo "<failure code='scheduled'>Heats are scheduled for this round; remove before proceeding</failure>\n";
   } else {
+    $roundid = $_POST['roundid'];
     $stmt = $db->prepare('DELETE FROM Roster WHERE roundid = :roundid');
-    $stmt->execute(array(':roundid' => $_POST['roundid']));
+    $stmt->execute(array(':roundid' => $roundid));
+
+    maybe_clean_up_aggregate_class_for_round($roundid);
+
     $stmt = $db->prepare('DELETE FROM Rounds WHERE roundid = :roundid');
-    $stmt->execute(array(':roundid' => $_POST['roundid']));
+    $stmt->execute(array(':roundid' => $roundid));
     echo "<success/>\n";
     require('ajax/query.poll.coordinator.inc');
   }

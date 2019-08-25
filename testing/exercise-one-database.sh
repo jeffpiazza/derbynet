@@ -73,6 +73,8 @@ run_tests() {
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
+    `dirname $0`/test-aggregate-rounds.sh "$BASE_URL"
+    
 ############################## Snapshot Export and Import ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"

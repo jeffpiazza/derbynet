@@ -128,9 +128,9 @@ cat $DEBUG_CURL | expect_count "<heat-ready[ />]" 0
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="0"'
 
 user_login_coordinator
-# Now create a Grand Finals round, 3 from each den.
+# Now create a aggregate round, 3 from each den.
 # (Bears/Freres have only 2 racers and Webelos only 3.)
-curl_post action.php "action=roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1" \
+curl_post action.php "action=roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
  | check_success
 
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="0"'

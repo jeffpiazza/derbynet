@@ -33,9 +33,11 @@ function all_classes() {
                        'ranks' => []);
       $current = &$classes[count($classes) - 1];
     }
-    $current['ranks'][] = array('rankid' => $row['rankid'],
-                                'name' => $row['rank'],
-                                'count' => $row['nrank']);
+    if ($row['rankid']) {
+      $current['ranks'][] = array('rankid' => $row['rankid'],
+                                  'name' => $row['rank'],
+                                  'count' => $row['nrank']);
+    }
   }
 
   return $classes;

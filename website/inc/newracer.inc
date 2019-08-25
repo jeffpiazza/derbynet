@@ -65,36 +65,48 @@ function insert_new_racer($values) {
   
 }
 
+function create_class($classname, $with_first_round = true) {
+  global $db;
+  if (schema_version() >= 2) {
+    $sortorder = read_single_value('SELECT 1 + MAX(sortorder) FROM Classes');
+    if (!$sortorder) {
+      $sortorder = read_single_value('SELECT 1 + COUNT(*) FROM Classes');
+    }
+  }
+  $stmt = $db->prepare('INSERT INTO Classes(class) VALUES(:classname)');
+  $stmt->execute(array(':classname' => $classname));
+  $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
+                               array(':classname' => $classname));
+  if (schema_version() >= 2) {
+    $stmt = $db->prepare('UPDATE Classes'
+                         .' SET sortorder = :sortorder'
+                         .' WHERE classid = :classid');
+    $stmt->execute(array(':classid' => $classid,
+                         ':sortorder' => $sortorder));
+  }
+
+  // Creating a class usually requires creating a corresponding 1st racing round
+  if ($with_first_round) {
+    $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
+                         .' SELECT 1, classid'
+                         .' FROM Classes'
+                         .' WHERE classid = :classid'
+                         .' AND NOT EXISTS(SELECT 1 FROM Rounds'
+                         .'  WHERE Rounds.classid = Classes.classid'
+                         .'    AND Rounds.round = 1)');
+    $stmt->execute(array(':classid' => $classid));
+  }
+
+  return $classid;
+}
+
 function find_or_create_class($classname, $with_first_round = true) {
   global $db;
   $classname = substr(trim($classname), 0, CLASS_COLUMN_WIDTH);
   $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
                                array(':classname' => $classname));
   if ($classid === false) {
-    $stmt = $db->prepare('INSERT INTO Classes(class) VALUES(:classname)');
-    $stmt->execute(array(':classname' => $classname));
-    $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
-                                 array(':classname' => $classname));
-    if (schema_version() >= 2) {
-      $nclasses = read_single_value('SELECT COUNT(*) FROM Classes');
-      $stmt = $db->prepare('UPDATE Classes'
-                           .' SET sortorder = :nclasses'
-                           .' WHERE classid = :classid');
-      $stmt->execute(array(':classid' => $classid,
-                           ':nclasses' => $nclasses));
-    }
-
-    // Creating a class usually requires creating a corresponding 1st racing round
-    if ($with_first_round) {
-      $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
-                           .' SELECT 1, classid'
-                           .' FROM Classes'
-                           .' WHERE classid = :classid'
-                           .' AND NOT EXISTS(SELECT 1 FROM Rounds'
-                           .'  WHERE Rounds.classid = Classes.classid'
-                           .'    AND Rounds.round = 1)');
-      $stmt->execute(array(':classid' => $classid));
-    }
+    $classid = create_class($classname, $with_first_round);
   }
 
   return $classid;

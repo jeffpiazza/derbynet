@@ -406,7 +406,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     // Buttons in the "Add New Rounds" modal:
     //  Lions & Tigers
     //  White's Wolves [1]
-    //  Grand Finals
+    //  Aggregate Round
     //  Cancel
     await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
     await modal_open("#new_round_modal");
@@ -415,9 +415,9 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
     await page.evaluate(() => { $("#new_round_modal input[type='submit']").click(); });
   },
                              {'type': 'POST',
-                              'data': 'action=roster.new&roundid=2&roundid_1=on&roundid_2=on&top=4'},
+                              'data': 'action=roster.new&roundid=2&roundid_1=on&roundid_2=on&top=4&classname=Grand+Finals'},
                              '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                             '<action-response action="roster.new" roundid="2" roundid_1="on" roundid_2="on" top="4">\n' +
+                             '<action-response action="roster.new" roundid="2" roundid_1="on" roundid_2="on" top="4" classname="Grand Finals">\n' +
                              '  <finalist racerid="7" bucket_number="1"/>\n' +
                              '  <finalist racerid="17" bucket_number="1"/>\n' +
                              '  <finalist racerid="27" bucket_number="1"/>\n' +
@@ -450,7 +450,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
                              '  </coordinator_poll>\n' +
                              '</action-response>');
 
-  // TODO Try creating a new Grand Finals round
+  // TODO Try creating a new aggregate round
 
   // TODO input[type='button'][value='Replay Settings']
   
@@ -511,7 +511,7 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
       '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
       '  <round roundid="6" classid="6" class="TheLastClass" round="1" roster_size="0"' +
       '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-      '  <round roundid="8" classid="7" class="Grand Finals" round="1" roster_size="5"' +
+      '  <round roundid="8" classid="7" class="Grand Finals" aggregate="1" round="1" roster_size="5"' +
       '     passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
       '</coordinator_poll>';
 

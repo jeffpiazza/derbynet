@@ -15,7 +15,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     if ($classname == '') {
       echo "<failure code='noname'>No name provided for the new ".group_label()."</failure>\n";
     } else {
-      $classid = find_or_create_class($classname);
+      $classid = create_class($classname);
       // Manufacture a "generic" rank name for this class.  It isn't really
       // well-defined to be creating a class without a rank if we're actually
       // using rank names.
