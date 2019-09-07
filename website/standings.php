@@ -43,6 +43,7 @@ $(function () {
 </script>
 <title>Standings</title>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <style type="text/css">
 .download_div {
@@ -59,7 +60,6 @@ $(function () {
   text-align: center;
 }
 </style>
-<?php require('inc/stylesheet.inc'); ?>
 </head>
 <body>
 <?php make_banner('Race Standings'); ?>
