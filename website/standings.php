@@ -46,10 +46,6 @@ $(function () {
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <style type="text/css">
-.download_div {
-  float: right;
-  margin-right: 10px;
-}
 
 .center-select {
   width: 400px;
@@ -79,10 +75,6 @@ if (read_raceinfo_boolean('use-points')) {
   echo "Averaging all heat times";
 }
 ?></h3>
-</div>
-
-<div class="download_div">
-  <a id="download-button" class='button_link' href='export-standings.php'>Download</a>
 </div>
 <?php
 $standings = final_standings();
