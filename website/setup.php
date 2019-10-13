@@ -188,9 +188,6 @@ if (count($ez_configs) > 0) {
     <input id="sqlite_connection" type="radio" name="connection_type" value="sqlite"/>
     <label for="sqlite_connection">SQLite data source<span class="missing_driver"></span></label>
 
-    <input id="mysql_connection" type="radio" name="connection_type" value="mysql"/>
-    <label for="mysql_connection">MySQL data source<span class="missing_driver"></span></label>
-
     <input id="odbc_connection" type="radio" name="connection_type" value="odbc"/>
     <label for="odbc_connection">ODBC data source<span class="missing_driver"></span></label>
 
@@ -200,13 +197,6 @@ if (count($ez_configs) > 0) {
     <div id="for_odbc_connection" class="hidden connection_details">
         <label for="odbc_dsn_name">ODBC data source name (DSN):</label>
         <input type="text" name="odbc_dsn_name" id="odbc_dsn_name"/>
-    </div>
-
-    <div id="for_mysql_connection" class="hidden connection_details">
-        <label for="mysql_host">MySQL Host:</label>
-        <input type="text" name="mysql_host" id="mysql_host"/>
-        <label for="mysql_dbname">MySQL database name:</label>
-        <input type="text" name="mysql_dbname" id="mysql_dbname"/>
     </div>
 
     <div id="for_sqlite_connection" class="hidden connection_details">
@@ -222,11 +212,6 @@ if (count($ez_configs) > 0) {
         <input type="text" name="sqlite_path" id="sqlite_path"/>
       </div>
     </div>
-
-    <label for="dbuser">Database user name:</label>
-    <input type="text" name="dbuser" id="username_field"/>
-    <label for="dbpass">Database password:</label>
-    <input type="text" name="dbpass" id="password_field"/>
 
     <div id="for_string_connection">
         <label for="connection_string">Database connection string:</label>

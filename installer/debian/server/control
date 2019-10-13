@@ -9,7 +9,6 @@ Depends: nginx,
         php-gd | php5-gd,
         php-sqlite3 | php5-sqlite,
         ssl-cert
-Suggests: php-mysql | php5-mysql
 Replaces: derbynet (<= 3.0-1)
 Breaks: derbynet (<= 3.0-1)
 Homepage: http://jeffpiazza.github.io/derbynet/

@@ -34,10 +34,7 @@ function attempt_to_connect_to_database($connection_string, $dbuser, $dbpass, $o
     $result['pdo'] = new PDO($connection_string, $dbuser, $dbpass, $options);
   } catch (PDOException $p) {
     $result['exception'] = $p;
-    if ($p->getCode() == "1045") {
-      // MySQL SQLSTATE[HY000] [1045] Access denied for user ''@'localhost' (using password: NO)"
-      $result['error'] = 'access_denied';
-    } else if ($p->getCode() == 14) {
+    if ($p->getCode() == 14) {
       // TODO For sqlite, a bad path (non-existent directory)
       //   SQLSTATE[HY000] [14] unable to open database file
       $result['error'] = 'no_such_directory';
@@ -175,9 +172,6 @@ if (locked_settings()) {
 
   if ($ok) {
     $options = array();
-    if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
-      $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES utf8";
-    }
 
     $trial = attempt_to_connect_to_database($connection_string, $dbuser, $dbpass, $options);
     if ($trial['pdo']) {

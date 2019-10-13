@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2017-12-30T16:27:05.156721643</meta:creation-date><meta:editing-duration>PT27M32S</meta:editing-duration><meta:editing-cycles>4</meta:editing-cycles><meta:generator>LibreOffice/5.2.4.2$MacOSX_X86_64 LibreOffice_project/3d5603e1122f0f102b62521720ab13a38a4e0eb0</meta:generator><dc:date>2017-12-30T17:57:30.095315938</dc:date><meta:document-statistic meta:table-count="1" meta:image-count="3" meta:object-count="0" meta:page-count="3" meta:paragraph-count="24" meta:word-count="560" meta:character-count="3403" meta:non-whitespace-character-count="2855"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-12-30T16:27:03.960171566"/></office:meta>
+ <office:meta><meta:creation-date>2017-12-30T16:27:05.156721643</meta:creation-date><meta:editing-duration>PT29M49S</meta:editing-duration><meta:editing-cycles>5</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2019-10-13T10:28:59.228158768</dc:date><meta:document-statistic meta:table-count="1" meta:image-count="3" meta:object-count="0" meta:page-count="3" meta:paragraph-count="21" meta:word-count="471" meta:character-count="2796" meta:non-whitespace-character-count="2337"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-12-30T16:27:03.960171566"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">60607</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">4</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">26910</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">15700</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">23200</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">14125</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">4660</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">66925</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">11516</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">59870</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">60607</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">26908</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">76306</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">4</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">23199</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">14127</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
-     <config:config-item config:name="ZoomFactor" config:type="short">100</config:config-item>
+     <config:config-item config:name="ZoomFactor" config:type="short">110</config:config-item>
      <config:config-item config:name="IsSelectedFrame" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
     </config:config-item-map-entry>
    </config:config-item-map-indexed>
   </config:config-item-set>
@@ -38,6 +39,7 @@
    <config:config-item config:name="PrintFaxName" config:type="string"/>
    <config:config-item config:name="PrintPaperFromSetup" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrintTextPlaceholder" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="DisableOffPagePositioning" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ApplyParagraphMarkFormatToNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrintReversed" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TabOverMargin" config:type="boolean">false</config:config-item>
@@ -53,7 +55,6 @@
    <config:config-item config:name="PrintSingleJobs" config:type="boolean">false</config:config-item>
    <config:config-item config:name="SmallCapsPercentage66" config:type="boolean">false</config:config-item>
    <config:config-item config:name="CollapseEmptyCellPara" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UseFormerLineSpacing" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ProtectForm" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterSetup" config:type="base64Binary"/>
@@ -85,6 +86,7 @@
    <config:config-item config:name="MathBaselineAlignment" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AddFrameOffsets" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IsLabelDocument" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="MsWordCompTrailingBlanks" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreFirstLineIndentInNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="OutlineLevelYieldsNumbering" config:type="boolean">false</config:config-item>
    <config:config-item config:name="PrinterName" config:type="string"/>
@@ -94,7 +96,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2357747</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">2405859</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -137,7 +139,7 @@
  <office:styles>
   <style:default-style style:family="graphic">
    <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.1181in" draw:shadow-offset-y="0.1181in" draw:start-line-spacing-horizontal="0.1114in" draw:start-line-spacing-vertical="0.1114in" draw:end-line-spacing-horizontal="0.1114in" draw:end-line-spacing-vertical="0.1114in" style:flow-with-text="false"/>
-   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:writing-mode="lr-tb" style:font-independent-line-spacing="false">
+   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:font-independent-line-spacing="false">
     <style:tab-stops/>
    </style:paragraph-properties>
    <style:text-properties style:use-window-font-color="true" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="SimSun" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lucida Sans" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
@@ -299,54 +301,76 @@
   <style:style style:name="P4" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020777a"/>
   </style:style>
-  <style:style style:name="P5" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020777a"/>
-  </style:style>
-  <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P5" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020fc13"/>
   </style:style>
-  <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
+  <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="005811eb" officeooo:paragraph-rsid="0020777a"/>
   </style:style>
-  <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00125798" officeooo:paragraph-rsid="0020fc13"/>
   </style:style>
-  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00125798" officeooo:paragraph-rsid="0023f9f3"/>
   </style:style>
-  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L2">
+  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:paragraph-rsid="0020fc13"/>
   </style:style>
-  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0022b5b2" officeooo:paragraph-rsid="0022b5b2"/>
   </style:style>
-  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00130539" officeooo:paragraph-rsid="0023f9f3"/>
   </style:style>
-  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00185341" officeooo:paragraph-rsid="0022b5b2"/>
   </style:style>
-  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties fo:color="#000000" style:font-name="Monaco" fo:font-size="10pt" officeooo:rsid="00144175" officeooo:paragraph-rsid="0022b5b2" style:font-size-asian="10pt"/>
   </style:style>
-  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00144175" officeooo:paragraph-rsid="0023f9f3"/>
   </style:style>
-  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0023f9f3" officeooo:paragraph-rsid="0023f9f3"/>
   </style:style>
-  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Heading_20_2">
+  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Heading_20_2">
    <style:text-properties officeooo:rsid="00185341" officeooo:paragraph-rsid="0023f9f3"/>
   </style:style>
-  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Heading_20_2">
+  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Heading_20_2">
    <style:text-properties fo:font-weight="bold" officeooo:paragraph-rsid="0023f9f3" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
-  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020777a"/>
   </style:style>
-  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Table_20_Contents">
+  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Table_20_Contents">
    <style:text-properties officeooo:paragraph-rsid="0020777a"/>
+  </style:style>
+  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020777a"/>
+  </style:style>
+  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0007745b" officeooo:paragraph-rsid="0020fc13"/>
+  </style:style>
+  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="00185341" officeooo:paragraph-rsid="0020fc13"/>
+  </style:style>
+  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L2">
+   <style:text-properties officeooo:paragraph-rsid="0020fc13"/>
+  </style:style>
+  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L2">
+   <style:text-properties officeooo:rsid="0020fc13" officeooo:paragraph-rsid="0020fc13"/>
+  </style:style>
+  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0018de59" officeooo:paragraph-rsid="0023f9f3"/>
+  </style:style>
+  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0022b5b2" officeooo:paragraph-rsid="0023f9f3"/>
+  </style:style>
+  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+   <style:paragraph-properties style:page-number="auto"/>
+   <style:text-properties officeooo:rsid="0020777a" officeooo:paragraph-rsid="0020777a"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties fo:font-style="normal" fo:font-weight="normal" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-style-complex="normal" style:font-weight-complex="normal"/>
@@ -513,7 +537,7 @@
    </text:list-level-style-bullet>
   </text:list-style>
   <style:page-layout style:name="pm1">
-   <style:page-layout-properties fo:page-width="8.5in" fo:page-height="11in" style:num-format="1" style:print-orientation="portrait" fo:margin-top="0.7874in" fo:margin-bottom="0.7874in" fo:margin-left="0.7874in" fo:margin-right="0.7874in" style:writing-mode="lr-tb" style:footnote-max-height="0in">
+   <style:page-layout-properties fo:page-width="8.5in" fo:page-height="11in" style:num-format="1" style:print-orientation="portrait" fo:margin-top="0.7874in" fo:margin-bottom="0.7874in" fo:margin-left="0.7874in" fo:margin-right="0.7874in" style:writing-mode="lr-tb" style:layout-grid-color="#c0c0c0" style:layout-grid-lines="20" style:layout-grid-base-height="0.278in" style:layout-grid-ruby-height="0.139in" style:layout-grid-mode="none" style:layout-grid-ruby-below="false" style:layout-grid-print="false" style:layout-grid-display="false" style:footnote-max-height="0in">
     <style:footnote-sep style:width="0.0071in" style:distance-before-sep="0.0398in" style:distance-after-sep="0.0398in" style:line-style="solid" style:adjustment="left" style:rel-width="25%" style:color="#000000"/>
    </style:page-layout-properties>
    <style:header-style/>
@@ -532,21 +556,21 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
-   <text:p text:style-name="P19">Advanced Database Set-Up for DerbyNet</text:p>
+   <text:p text:style-name="P27">Advanced Database Set-Up for DerbyNet</text:p>
    <text:p text:style-name="P4">DerbyNet uses a database to store all the data for each event. <text:s/>In most situations, you should<text:span text:style-name="T7"> </text:span>use the normal database set-up dialog, <text:span text:style-name="T7">and just enter or select a database name, </text:span>as described in the “Running a Race with DerbyNet” document. <text:s/>However, in some situations you may require more choices in using or creating your database. <text:s/>This document describes the use of these “advanced” database set-up options.</text:p>
    <table:table table:name="Table1" table:style-name="Table1">
     <table:table-column table:style-name="Table1.A"/>
     <table:table-column table:style-name="Table1.B"/>
     <table:table-row>
      <table:table-cell table:style-name="Table1.A1" office:value-type="string">
-      <text:list xml:id="list7197472810788992702" text:style-name="L1">
+      <text:list xml:id="list1624315369" text:style-name="L1">
        <text:list-item>
-        <text:p text:style-name="P7"><text:span text:style-name="T4">Begin by following the set-up steps described in the “Running a Race with DerbyNet” document, until you get to the dialog for choosing or creating a database. <text:s/>Click the “Advanced” button.</text:span></text:p>
+        <text:p text:style-name="P20">Begin by following the set-up steps described in the “Running a Race with DerbyNet” document, until you get to the dialog for choosing or creating a database. <text:s/>Click the “Advanced” button.</text:p>
        </text:list-item>
       </text:list>
      </table:table-cell>
      <table:table-cell table:style-name="Table1.A1" office:value-type="string">
-      <text:p text:style-name="P20"><draw:frame draw:style-name="fr1" draw:name="Image4" text:anchor-type="paragraph" svg:x="0in" svg:y="0in" svg:width="1.9862in" svg:height="3.0339in" draw:z-index="0"><draw:image>
+      <text:p text:style-name="P19"><draw:frame draw:style-name="fr1" draw:name="Image4" text:anchor-type="paragraph" svg:x="0in" svg:y="0in" svg:width="1.9862in" svg:height="3.0339in" draw:z-index="0"><draw:image loext:mime-type="image/png">
          <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAVkAAAIPCAYAAADZza2sAABQRklEQVR4nO3dBZwU5f8H8O91
           0B1Hd5ekgHQpikkjpYKgCOpfxPwJKiohmCiogIqChUmnhNJISAoHHN1wd3Bc/OfzHLPM7e1e
           7nO3DJ+3r5Xbmp2N+cx3nueZGf+XXnopQQwJCeof9a/1b+u/RESUyMfHJ9m/zreBv3O44hIf
@@ -936,14 +960,14 @@
     </table:table-row>
     <table:table-row>
      <table:table-cell table:style-name="Table1.A1" office:value-type="string">
-      <text:list xml:id="list175730754131390" text:continue-numbering="true" text:style-name="L1">
+      <text:list xml:id="list102861463136414" text:continue-numbering="true" text:style-name="L1">
        <text:list-item>
-        <text:p text:style-name="P5">The new dialog that appears offers several choices of database technology to use. <text:s/>The use of each choice is described in a separate section, below.</text:p>
+        <text:p text:style-name="P20">The new dialog that appears offers several choices of database technology to use. <text:s/>The use of each choice is described in a separate section, below.</text:p>
        </text:list-item>
       </text:list>
      </table:table-cell>
      <table:table-cell table:style-name="Table1.A1" office:value-type="string">
-      <text:p text:style-name="P20"><draw:frame draw:style-name="fr2" draw:name="Image1" text:anchor-type="paragraph" svg:width="1.9862in" svg:height="2.3236in" draw:z-index="1"><draw:image>
+      <text:p text:style-name="P19"><draw:frame draw:style-name="fr2" draw:name="Image1" text:anchor-type="paragraph" svg:width="1.9862in" svg:height="2.3236in" draw:z-index="1"><draw:image loext:mime-type="image/png">
          <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAiMAAAKACAYAAABOonjxAADrrklEQVR4nOydCUAUZf/Hv3vB
           Agu7ICqnBwqIJ95iWaEd0uWZR2lWWnlUWlYe2Wt2WFZemVqm5dWbdCiWhpWJ79+SylTMUvFW
           UFGRc4GFXXb/zzOzNwssKIL2+9TI7Oxzz+z8vvN7jpFLQu8wwQGT3R+nryp8JgiCIAiCqAxJ
@@ -2071,20 +2095,20 @@
    </table:table>
    <text:h text:style-name="P1" text:outline-level="1">Using a SQLite Data Source</text:h>
    <text:p text:style-name="P4">The most likely reason to choose this option is to gain access to a previously-created database file that happens not to have been stored in the expected location.</text:p>
-   <text:p text:style-name="P8"><text:span text:style-name="T6">Choose “SQLite data source,” and enter the full path name (on the server) of your database file. <text:s/>For a SQLite database, you don&apos;t need a user name or password. <text:s/>Click the “Browse” button to choose a file location interactively.</text:span></text:p>
-   <text:p text:style-name="P6"><text:soft-page-break/><text:span text:style-name="T5">The database file can be named anything you like, but it must be stored:</text:span></text:p>
-   <text:list xml:id="list8744776468719915045" text:style-name="L2">
+   <text:p text:style-name="P21">Choose “SQLite data source,” and enter the full path name (on the server) of your database file. <text:s/>For a SQLite database, you don&apos;t need a user name or password. <text:s/>Click the “Browse” button to choose a file location interactively.</text:p>
+   <text:p text:style-name="P22"><text:soft-page-break/>The database file can be named anything you like, but it must be stored:</text:p>
+   <text:list xml:id="list1388838658" text:style-name="L2">
     <text:list-item>
-     <text:p text:style-name="P10"><text:span text:style-name="T7">On the same machine that hosts the DerbyNet web server.</text:span></text:p>
+     <text:p text:style-name="P24">On the same machine that hosts the DerbyNet web server.</text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P10"><text:span text:style-name="T7">In a folder offering read and </text:span><text:span text:style-name="T8">write access</text:span><text:span text:style-name="T9"> for the web server “user.” <text:s/>(Typically the web server runs as its own user, with the user name being something like “_www” or “www_data” or similar.)</text:span></text:p>
+     <text:p text:style-name="P23"><text:span text:style-name="T7">In a folder offering read and </text:span><text:span text:style-name="T8">write access</text:span><text:span text:style-name="T9"> for the web server “user.” <text:s/>(Typically the web server runs as its own user, with the user name being something like “_www” or “www_data” or similar.)</text:span></text:p>
     </text:list-item>
    </text:list>
    <text:h text:style-name="P2" text:outline-level="1">Using an ODBC Data Source</text:h>
-   <text:p text:style-name="P11">The most likely reason to choose this option is to share a database with the Grand Prix Race Manager (GPRM) product by Lisano Enterprises. <text:s/>See the “<text:span text:style-name="T13">Sharing a Database with GPRM” document for additional steps you must complete in order to make the GPRM database accessible as an ODBC data source.</text:span></text:p>
-   <text:p text:style-name="P11">From the “Advanced” database set-up dialog, choose “ODBC Data Source,” and enter the data source name (e.g., “GPRM”) in the space provided.</text:p>
-   <text:p text:style-name="P13"><draw:frame draw:style-name="fr3" draw:name="Image2" text:anchor-type="paragraph" svg:width="2.2in" svg:height="3.2402in" draw:z-index="2"><draw:image>
+   <text:p text:style-name="P10">The most likely reason to choose this option is to share a database with the Grand Prix Race Manager (GPRM) product by Lisano Enterprises. <text:s/>See the “<text:span text:style-name="T13">Sharing a Database with GPRM” document for additional steps you must complete in order to make the GPRM database accessible as an ODBC data source.</text:span></text:p>
+   <text:p text:style-name="P10">From the “Advanced” database set-up dialog, choose “ODBC Data Source,” and enter the data source name (e.g., “GPRM”) in the space provided.</text:p>
+   <text:p text:style-name="P12"><draw:frame draw:style-name="fr3" draw:name="Image2" text:anchor-type="paragraph" svg:width="2.2in" svg:height="3.2402in" draw:z-index="2"><draw:image loext:mime-type="image/png">
       <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAkgAAANfCAYAAAAiuiI4AADluElEQVR4nOydB3wUVRfF76b3
        Agmd0HvvigjYKIogCiggCKKCvVfsvX/2ThELoqiICtIUVKpIR3rvvaa3b87bvGUy2d1sCmST
        PX9+Q3anvHnzZnbumXvvexMQUrVrthBCCCGEEAcBJV0BQgghhBBvgwKJEEIIIcQCBRIhhBBC
@@ -3179,17 +3203,13 @@
       </office:binary-data>
      </draw:image>
     </draw:frame><text:span text:style-name="T12">T</text:span>he connection string <text:span text:style-name="T12">will get constructed as you type, and should</text:span> look like:</text:p>
-   <text:p text:style-name="P14">odbc:DSN=<text:span text:style-name="T10">GPRM</text:span>;Exclusive=NO</text:p>
-   <text:p text:style-name="P12">where &apos;<text:span text:style-name="T10">GPRM</text:span>&apos; is the name of the <text:span text:style-name="T11">ODBC data source name</text:span> you created.</text:p>
-   <text:p text:style-name="P12"><text:span text:style-name="T12">You can leave the user name and password fields blank.</text:span></text:p>
-   <text:h text:style-name="P17" text:outline-level="2"><text:span text:style-name="T11">Do Not </text:span>Initialize the Database Schema</text:h>
-   <text:p text:style-name="P15">Assuming your ODBC data source is an existing GPRM database, you should probably <text:span text:style-name="T14">not</text:span><text:span text:style-name="T1"> initialize the schema – doing so will erase all the data that&apos;s in the database. <text:s/>If you haven&apos;t yet put any data in the database, then the schema initialization should have no effect.</text:span></text:p>
-   <text:h text:style-name="P18" text:outline-level="2"><text:soft-page-break/><text:span text:style-name="T2">Maybe Update</text:span><text:span text:style-name="T3"> the Database Schema</text:span></text:h>
-   <text:p text:style-name="P15"><text:span text:style-name="T1">Similarly, the DerbyNet software should work well without the need to update the schema. <text:s/>(A schema update, as opposed to schema initialization, </text:span><text:span text:style-name="T15">should </text:span><text:span text:style-name="T1">preserve existing data in the database. <text:s/>However, DerbyNet </text:span><text:span text:style-name="T15">should</text:span><text:span text:style-name="T1"> also function without the update.)</text:span></text:p>
-   <text:h text:style-name="P3" text:outline-level="1">Using a MySQL Data Source</text:h>
-   <text:p text:style-name="P16">MariaDB (<text:a xlink:type="simple" xlink:href="https://mariadb.org/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://mariadb.org</text:a>) and MySQL are popular open-source databases that can be considered interchangeable for all practical purposes. <text:s/>(See <text:a xlink:type="simple" xlink:href="https://mariadb.org/about/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://mariadb.org/about/</text:a> for a discussion of compatibility.) <text:s/>DerbyNet supports the use of MariaDB and MySQL databases if desired. <text:s/>Note that a MySQL or MariaDB database will normally require a user name and password, in addition to the name of the database itself.</text:p>
-   <text:p text:style-name="P9"><text:span text:style-name="T10">From the “Advanced” database set-up dialog, choose “MySQL data source,” and enter the database name, user name, and password for the MySQL/MariaDB database you created.</text:span></text:p>
-   <text:p text:style-name="P9"/>
+   <text:p text:style-name="P13">odbc:DSN=<text:span text:style-name="T10">GPRM</text:span>;Exclusive=NO</text:p>
+   <text:p text:style-name="P11">where &apos;<text:span text:style-name="T10">GPRM</text:span>&apos; is the name of the <text:span text:style-name="T11">ODBC data source name</text:span> you created.</text:p>
+   <text:p text:style-name="P25">You can leave the user name and password fields blank.</text:p>
+   <text:h text:style-name="P16" text:outline-level="2"><text:span text:style-name="T11">Do Not </text:span>Initialize the Database Schema</text:h>
+   <text:p text:style-name="P14">Assuming your ODBC data source is an existing GPRM database, you should probably <text:span text:style-name="T14">not</text:span><text:span text:style-name="T1"> initialize the schema – doing so will erase all the data that&apos;s in the database. <text:s/>If you haven&apos;t yet put any data in the database, then the schema initialization should have no effect.</text:span></text:p>
+   <text:h text:style-name="P17" text:outline-level="2"><text:span text:style-name="T2">Maybe Update</text:span><text:span text:style-name="T3"> the Database Schema</text:span></text:h>
+   <text:p text:style-name="P14"><text:span text:style-name="T1">Similarly, the DerbyNet software should work well without the need to update the schema. <text:s/>(A schema </text:span><text:soft-page-break/><text:span text:style-name="T1">update, as opposed to schema initialization, </text:span><text:span text:style-name="T15">should </text:span><text:span text:style-name="T1">preserve existing data in the database. <text:s/>However, DerbyNet </text:span><text:span text:style-name="T15">should</text:span><text:span text:style-name="T1"> also function without the update.)</text:span></text:p>
   </office:text>
  </office:body>
 </office:document>

@@ -11,7 +11,7 @@
 //            classes:
 //            awards:
 //            settings:
-//            form_fields: {drivers:, radio:, sqlite_path:, mysql_host:, mysql_dbname:, odbc_dsn_name:}
+//            form_fields: {drivers:, radio:, sqlite_path:, odbc_dsn_name:}
 function populate_details(details) {
   $("#database_step div.status_icon img").attr('src', 'img/status/' + details.database.status + '.png');
   $("#schema_step div.status_icon img").attr('src', 'img/status/' + details.schema.status + '.png');
@@ -65,7 +65,6 @@ function populate_details(details) {
   }
   
   maybe_mark_driver_missing('sqlite', 'sqlite_connection');
-  maybe_mark_driver_missing('mysql', 'mysql_connection');
   maybe_mark_driver_missing('odbc', 'odbc_connection');
   
   $("#advanced_database_modal input[type='radio']").prop('checked', false);
@@ -75,8 +74,6 @@ function populate_details(details) {
   $("#for_" + details.form_fields.radio + "_connection").removeClass("hidden");
 
   $("#odbc_dsn_name").val(details.form_fields.odbc_dsn_name);
-  $("#mysql_host").val(details.form_fields.mysql_host);
-  $("#mysql_dbname").val(details.form_fields.mysql_dbname);
   $("#sqlite_path").val(details.form_fields.sqlite_path);
   $("#connection_string").val(details.form_fields.connection_string);
 
@@ -168,13 +165,6 @@ function handle_ezsetup_modal_submit() {
             report_failure(thrownError);
           }
          });
-}
-
-// Pulled out as a separate function because it uses two fields
-function write_mysql_connection_string() {
-  $('#connection_string').val('mysql:' + 
-                              'host=' + $('#mysql_host').val() + ';' +
-                              'dbname=' + $('#mysql_dbname').val());
 }
 
 function hide_or_show_connection(jq, show) {
@@ -317,13 +307,10 @@ $(function () {
     // $('#for_string_connection').toggleClass('hidden', val != 'string');
     $('#connection_string').prop('disabled', val != 'string');
     hide_or_show_connection($('#for_odbc_connection'), val == 'odbc');
-    hide_or_show_connection($('#for_mysql_connection'), val == 'mysql');
     hide_or_show_connection($('#for_sqlite_connection'), val == 'sqlite');
   });
   $('#odbc_dsn_name').on('keyup', function() {
     $('#connection_string').val('odbc:DSN=' + $(this).val() + ';Exclusive=NO');
   });
-  $('#mysql_host').on('keyup', write_mysql_connection_string);
-  $('#mysql_dbname').on('keyup', write_mysql_connection_string);
   $('#sqlite_path').on('keyup', update_sqlite_path);
 });

@@ -17,11 +17,6 @@ function database_is_empty() {
                               ." WHERE type='table'", array()) == 0) {
           return true;
         }
-      } else if ($dbtype == 'mysql') {
-        if (read_single_value("SELECT COUNT(DISTINCT table_name) FROM information_schema.columns"
-                              ." WHERE table_schema = database()", array()) == 0) {
-          return true;
-        }
       }
     } catch (PDOException $p) {
     }
@@ -43,9 +38,6 @@ function connection_string_to_html($conn_string) {
   $parsed = parse_connection_string($conn_string);
   if ($parsed['scheme'] == 'sqlite') {
     return "SQLITE: ".htmlspecialchars($parsed['sqlite_path'], ENT_QUOTES, 'UTF-8');
-  } else if ($parsed['scheme'] == 'mysql') {
-    return "MYSQL: Database <b>".htmlspecialchars($parsed['mysql_dbname'], ENT_QUOTES, 'UTF-8')."</b>"
-           ." on ".htmlspecialchars($parsed['mysql_host'], ENT_QUOTES, 'UTF-8');
   } else if ($parsed['scheme'] == 'odbc') {
     return "ODBC: ".htmlspecialchars($parsed['odbc_dsn_name'], ENT_QUOTES, 'UTF-8');
   } else {
@@ -168,7 +160,6 @@ function build_form_fields_for_advanced_database_dialog($db_connection_string) {
   // Default values, in case $db_connection string is unparseable:
   $form_fields = array('drivers' => pdo_drivers(),
                        'radio' => 'sqlite',
-                       'mysql_host' => 'localhost',
                        'sqlite_path' => default_database_directory().DIRECTORY_SEPARATOR.date('Ymd-Hi').'.sqlite');
   $form_fields['connection_string'] = 'sqlite:'.$form_fields['sqlite_path'];
 
@@ -177,10 +168,6 @@ function build_form_fields_for_advanced_database_dialog($db_connection_string) {
     $parsed = parse_connection_string($db_connection_string);
     if ($parsed['scheme'] == 'sqlite') {
       $form_fields['sqlite_path'] = $parsed['sqlite_path'];
-    } else if ($parsed['scheme'] == 'mysql') {
-      $form_fields['radio'] = 'mysql';
-      $form_fields['mysql_host'] = $parsed['mysql_host'];
-      $form_fields['mysql_dbname'] = $parsed['mysql_dbname'];
     } else if ($parsed['scheme'] == 'odbc') {
       $form_fields['radio'] = 'odbc';
       $form_fields['odbc_dsn_name'] = $parsed['odbc_dsn_name'];
