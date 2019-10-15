@@ -38,10 +38,13 @@
   margin-bottom: 0px;
 }
 
+#schema_step div.status_icon img {
+  margin-top: 32px;
+}
+
 #schema_step .lower .step_button {
-  clear: left;
-  margin-left: 70px;
-  margin-top: 0px;
+  /* margin-left: 70px; */
+  margin-top: 5px;
 }
 
 #schema_step .lower .step_button input {
