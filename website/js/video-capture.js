@@ -61,7 +61,7 @@ function VideoCaptureFlight(stream, n, spacing_ms) {
     }
     if (captures.length >= n) {
       captures[0].stop();
-      for (let i = 0; i < captures.length; ++i) {
+      for (let i = 0; i < captures.length - 1; ++i) {
         captures[i] = captures[i + 1];
       }
       captures[captures.length - 1] = new_capture;
