@@ -1,6 +1,16 @@
-var g_count = 0;
+// Whether or not to show confetti is a kiosk parameter.
+var g_confetti = false;
+$(function() {
+  KioskPoller.param_callback = function(parameters) {
+    g_confetti = parameters.confetti;
+  };
+});
+
 var AwardPoller = {
   current_award_key: null,
+  // revealed tells whether the previous poll result said to reveal the
+  // recipient -- we trigger fade-in and video on the transition from
+  // not-revealed to revealed.
   revealed: true,
 
   query_for_current_award: function() {
@@ -46,7 +56,7 @@ var AwardPoller = {
       return;
     }
 
-    if (award.key != this.current_award_key) {
+    if (this.current_award_key != award.key) {
       $(".reveal").hide();
 
       $("#awardname").text(award.awardname);
@@ -102,7 +112,8 @@ var AwardPoller = {
         // If there's no car photo, center the head photo
         $("#headphoto").css('margin-left', $(window).width() / 4);
       }
-      this.current_award_key = award.key;
+      // Changing awards: prime revealed=false so next reveal (or current one)
+      // will trigger fade-in and video.
       this.revealed = false;
     }
 
@@ -114,26 +125,26 @@ var AwardPoller = {
       video.get(0).pause();
       video.get(0).currentTime = 0;
       video.show();
-
-      if (g_count == 0) {
-        console.log("Hiding!");
-        console.log(award);
-        ++g_count;
-      }
     } else if (!this.revealed) {
       $(".reveal").fadeIn(1000);
-      setTimeout(function() { $("video.confetti").get(0).play(); }, 500);
-      setTimeout(function() {
-        $("video.confetti").fadeOut(
-          500, function() {
-            var video = $("video.confetti");
-            video.get(0).pause();
-            video.get(0).currentTime = 0;
-            video.show();
-          }); },
-                 20500);
+      if (g_confetti && this.current_award_key != null) {
+        setTimeout(function() {
+          $("video.confetti").get(0).play(); }, 500);
+        // Confetti is a 10-second video, and <video> element says loop="true";
+        // fade out after 20 seconds to play video twice.
+        setTimeout(function() {
+          $("video.confetti").fadeOut(
+            500, function() {
+              var video = $("video.confetti");
+              video.get(0).pause();
+              video.get(0).currentTime = 0;
+              video.show();
+            }); },
+                   20500);
+      }
     }
     this.revealed = award.reveal;
+    this.current_award_key = award.key;
   }
 }
 

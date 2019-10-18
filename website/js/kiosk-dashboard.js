@@ -67,6 +67,24 @@ var g_kiosk_page_handlers = {
       configure_title_and_class_ids(kiosk, kiosk_select);
     }
   },
+  'kiosks/award-presentations.kiosk': {
+    configure: function(kiosk, kiosk_select) {
+      let k_id = 'k-' + kiosk.address.replace(/[:+]/g, '_');
+      if (!kiosk.parameters.hasOwnProperty('confetti')) {
+        kiosk.parameters.confetti = true;
+      }
+      $('<input type="checkbox" id="' + k_id + '" />')
+        .prop('checked',  kiosk.parameters.confetti)
+        .on("change", /*selector*/null, /*data*/kiosk,
+            /*handler*/function (event) {
+              var checked = $(event.target).is(':checked');
+              var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
+              post_new_params(kiosk, {confetti: checked});
+            })
+        .appendTo(kiosk_select);
+      $('<label for="' + k_id + '">Confetti</label>').appendTo(kiosk_select);
+    }
+  },
 };
 
 // Configuration function for parameters of {classids: [...]}
