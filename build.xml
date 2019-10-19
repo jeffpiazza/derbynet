@@ -41,7 +41,7 @@
     <ant dir="${docs-dir}"  target="clean"/>
   </target>
   
-  <target name="dist" depends="dist.zip, dist.oneclick, dist.mac, dist.debian"
+  <target name="dist" depends="dist.oneclick, dist.mac, dist.debian"
           description="Build complete distribution"/>
 
   <target name="dist.zip" depends="timer-jar, docs-dist, generated"
