@@ -12,9 +12,9 @@ function maybe_populate_award_types() {
 define('AD_HOC_AWARDTYPEID', 6);
 
 // list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-//   $classes:  classid => {'class'}
+//   $classes:  classid => {'class', 'seq'}
 //   $classseq: ordered classids
-//   $ranks:    rankid => {'class', 'classid', 'rank', 'rankid'}
+//   $ranks:    rankid => {'class', 'classid', 'rank', 'rankid', 'seq'}
 //   $rankseq:  ordered rankids
 function classes_and_ranks() {
   global $db;
@@ -22,7 +22,7 @@ function classes_and_ranks() {
   $n_den_trophies = read_raceinfo('n-den-trophies', 3);
   $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
-  $classes = array();  // classid => {'class'}
+  $classes = array();  // classid => {'class', 'seq'}
   $classseq = array(); // ordered classids
   $ranks = array();    // rankid => {'class', 'rank'}
   $rankseq = array();  // ordered rankids
@@ -35,13 +35,15 @@ function classes_and_ranks() {
                       .'class, rank') as $row) {
     if (!isset($classes[$row['classid']])) {
       $classseq[] = $row['classid'];
-      $classes[$row['classid']] = array('class' => $row['class']);
+      $classes[$row['classid']] = array('class' => $row['class'],
+                                        'seq' => count($classseq));
     }
     $rankseq[] = $row['rankid'];
     $ranks[$row['rankid']] = array('class' => $row['class'],
                                    'classid' => $row['classid'],
                                    'rank' => $row['rank'],
-                                   'rankid' => $row['rankid']);
+                                   'rankid' => $row['rankid'],
+                                   'seq' => count($rankseq));
   }
   return array($classes, $classseq, $ranks, $rankseq);
 }

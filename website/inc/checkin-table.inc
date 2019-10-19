@@ -2,6 +2,7 @@
 
 require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/awards.inc');  // For classes_and_ranks
 
 // These functions construct each row of the main table on the check-in page.
 
@@ -17,9 +18,8 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
 }
 
 function checkin_table_row_for_id($racerid) {
-  // TODO: read_single_row uses PDO::ASSOC_NUM, but we need column names here
-  global $db;
-  $rs = $db->prepare('SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+  $row = read_single_row(
+    'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
       .(schema_version() < 2 ? "" : " carphoto,")
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
@@ -30,15 +30,19 @@ function checkin_table_row_for_id($racerid) {
                          'RegistrationInfo.classid = Classes.classid',
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid')
-    .' WHERE RegistrationInfo.racerid = :racerid');
-  $rs->execute(array(':racerid' => $racerid));
-  $row = $rs->fetch(PDO::FETCH_ASSOC);
-  $rs->closeCursor();
+    .' WHERE RegistrationInfo.racerid = :racerid',
+    array(':racerid' => $racerid),
+    PDO::FETCH_ASSOC);
+
+  list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+  $row['rankseq'] = $ranks[$row['rankid']]['seq'];
 
   checkin_table_row($row, read_raceinfo_boolean('xbs-award'), read_raceinfo_boolean('use-subgroups'));
 }
 
-// $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, passedinspection, imagefile, exclude
+// $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, rankseq,
+//             passedinspection, imagefile, exclude
+//             (rankseq comes from classes_and_ranks' ordering of ranks)
 //         xbs - whether this racer has an exclusively-by-scout award
 //         scheduled - whether this racer has any RaceChart entries
 //         denscheduled - whether any racer in this racer's class have any RaceChart entries
@@ -52,7 +56,8 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     // TODO: Button formatting; data-enhanced="true", but that's pretty unattractive in this table
     echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
 
-    echo '<td id="class-'.$row['racerid'].'" class="sort-class" data-rankid="'.$row['rankid'].'">'
+    echo '<td id="class-'.$row['racerid'].'"  data-rankid="'.$row['rankid'].'"'
+        .' data-rankseq="'.$row['rankseq'].'">'
         .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>';
 
     if ($use_subgroups)

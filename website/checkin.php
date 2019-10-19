@@ -49,17 +49,14 @@ if (!$order)
 // column for ordering currently in use is NOT a link (because it wouldn't do
 // anything).
 function column_header($text, $o) {
-    global $order;
-
-    if ($o == $order)
-        return '<b>'.$text.'</b>';
-    return '<a href="?order='.$o.'">'.$text.'</a>';
+  global $order;
+  return "<a data-order='".$o."' "
+      .($o == $order ? "" : " href='#'").">".$text."</a>";
 }
 ?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<meta http-equiv="refresh" content="300"/>
 <title>Check-In</title>
 <link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
@@ -69,7 +66,7 @@ function column_header($text, $o) {
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript">
-g_order = '<?php echo $order; ?>';
+var g_order = '<?php echo $order; ?>';
 </script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -82,6 +79,7 @@ g_order = '<?php echo $order; ?>';
 <?php
 make_banner('Racer Check-In');
 
+require_once('inc/awards.inc');
 require_once('inc/checkin-table.inc');
 ?>
 
@@ -118,27 +116,32 @@ require_once('inc/checkin-table.inc');
 <tbody>
 <?php
 
-    $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+  list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+
+  $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
       .(schema_version() < 2 ? "" : " carphoto,")
       .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
+      .(schema_version() < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
       .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
       .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
-    .' FROM '.inner_join('RegistrationInfo', 'Classes',
-                         'RegistrationInfo.classid = Classes.classid',
-                         'Ranks',
-                         'RegistrationInfo.rankid = Ranks.rankid')
-    .' ORDER BY '
+      .' FROM '.inner_join('RegistrationInfo', 'Classes',
+                           'RegistrationInfo.classid = Classes.classid',
+                           'Ranks',
+                           'RegistrationInfo.rankid = Ranks.rankid')
+      .' ORDER BY '
           .($order == 'car' ? 'carnumber, lastname, firstname' :
-            ($order == 'class'  ? 'class_sort, lastname, firstname' :
+            ($order == 'class'  ? 'class_sort, rank_sort, lastname, firstname' :
              'lastname, firstname'));
 
 $stmt = $db->query($sql);
 
 $n = 1;
 foreach ($stmt as $rs) {
+  // TODO
+  $rs['rankseq'] = $ranks[$rs['rankid']]['seq'];
   checkin_table_row($rs, $xbs, $use_subgroups, $n);
   ++$n;
 }
@@ -186,7 +189,7 @@ foreach ($stmt as $rs) {
            .' FROM Ranks INNER JOIN Classes'
            .' ON Ranks.classid = Classes.classid'
            .' ORDER BY '
-           .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+           .(schema_version() >= 2 ? 'Classes.sortorder, Ranks.sortorder, ' : '')
            .'class, rank';
     $stmt = $db->query($sql);
     foreach ($stmt as $rs) {

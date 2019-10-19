@@ -31,6 +31,7 @@ if (have_permission(REGISTER_NEW_RACER_PERMISSION)) {
                                 array(':firstname' => $firstname,
                                       ':lastname' => $lastname,
                                       ':rankid' => $rankid));
+
   echo "<new-row>\n";
   checkin_table_row_for_id($racer_id);
   echo "\n</new-row>\n";

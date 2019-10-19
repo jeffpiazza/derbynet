@@ -1,6 +1,8 @@
 // Requires dashboard-ajax.js
 // Requires modal.js
 
+// var g_order specified in checkin.php
+
 // For the photo_modal dialog, this boolean controls whether the racer gets
 // checked in as a side-effect of uploading a photo.
 var g_check_in;
@@ -126,10 +128,10 @@ function handle_edit_racer() {
 
   var racerid = $("#edit_racer").val();
 
-  var new_firstname = $("#edit_firstname").val();
-  var new_lastname = $("#edit_lastname").val();
-  var new_carno = $("#edit_carno").val();
-  var new_carname = $("#edit_carname").val();
+  var new_firstname = $("#edit_firstname").val().trim();
+  var new_lastname = $("#edit_lastname").val().trim();
+  var new_carno = $("#edit_carno").val().trim();
+  var new_carname = $("#edit_carname").val().trim();
 
   var rank_picker = $("#edit_rank");
   var new_rankid = rank_picker.val();
@@ -507,12 +509,21 @@ function compare_first(a, b) {
   return 0;
 }
 
+function handle_sorting_event(event) {
+  g_order = $(event.target).attr('data-order');
+  $("thead a[data-order]").prop('href', '#');
+  $(event.target).removeAttr('href');
+  console.log("Setting g_order = " + g_order);  // TODO
+  sort_checkin_table();
+  return false;
+}
+
 function sorting_key(row) {
   if (g_order == 'class') {
-      // class, lastname, firstname
-      return [row.getElementsByClassName('sort-class')[0].innerHTML,
-              row.getElementsByClassName('sort-lastname')[0].innerHTML,
-              row.getElementsByClassName('sort-firstname')[0].innerHTML]
+    // rankseq, lastname, firstname
+    return [parseInt(row.querySelector('[data-rankseq]').getAttribute('data-rankseq')),
+            row.getElementsByClassName('sort-lastname')[0].innerHTML,
+            row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else if (g_order == 'car') {
       // carnumber (numeric), lastname, firstname
       return [parseInt(row.getElementsByClassName('sort-car-number')[0].innerHTML),
@@ -653,5 +664,7 @@ $(function() {
                          .on("keydown", intercept_arrow_key);
     // jquery mobile would add a distracting "blue glow" around the input form
     // after the text input receives focus.  Ugh.
-    $("#find-racer-text").off('focus');
+  $("#find-racer-text").off('focus');
+
+  $("thead a[data-order]").on('click', handle_sorting_event);
 });
