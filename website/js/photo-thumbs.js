@@ -255,9 +255,11 @@ Dropzone.options.uploadTarget = {
                                 '<img class="unassigned-photo"/>' +
                                 '</div>');
               new_thumb.find('img')
-                  .attr('data-image-filename', uploaded)
-                  .attr('src', thumb)
-                  .on('click', function() { photo_crop_expression(uploaded); });
+                .attr('data-image-filename', uploaded)
+                .attr('src', thumb)
+                .attr('onclick', 'showPhotoCropModal(this, ' +
+                                      '\'' + g_photo_repo_name + '\', ' +
+                                      '\'' + uploaded + '\', 0)');
               new_thumb.insertBefore($(this).parent());
               make_draggable_photo(new_thumb.find('img'));
               return false;  // exit the loop

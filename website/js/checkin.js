@@ -472,7 +472,8 @@ function take_snapshot(racerid, repo, photo_base_name) {
 	  form_data.append('action', 'photo.upload');
       form_data.append('racerid', racerid);
       form_data.append('repo', repo);
-	  form_data.append('photo', blob, photo_base_name + "."+image_fmt.replace(/e/, '') );
+      // image_fmt.replace is for jpeg -> jpg
+	  form_data.append('photo', blob, photo_base_name + "." + image_fmt.replace(/e/, ''));
       if ($("#autocrop").prop('checked')) {
         form_data.append('autocrop', '1');
       }
