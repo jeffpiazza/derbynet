@@ -5,6 +5,8 @@ require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/events.inc');
+require_once('inc/lane-bias.inc');
+
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 ?><!DOCTYPE html>
@@ -14,6 +16,22 @@ require_permission(CHECK_IN_RACERS_PERMISSION);
 <title>Race History</title>
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#lane-bias").on('click', function() {
+        let details = $("#lane-bias-details");
+        if (details.css("display") == "none") {
+          // Opening
+          $("#lane-bias-triangle").attr('src', 'img/triangle_south.png');
+          details.slideDown(200);
+        } else {
+          // Closing
+          $("#lane-bias-triangle").attr('src', 'img/triangle_east.png');
+          details.slideUp(200);
+        }
+      });
+  });
+</script>
 <style type="text/css">
 div.content {
   margin-left: 50px;
@@ -45,14 +63,47 @@ table.event-history tr.event td:last-child {
   border-right-width: 2px;
 }
 
+#lane-bias-details {
+  display: none;
+}
 </style>
 </head>
 <body>
 <?php
-make_banner('Race History');
+make_banner('Retrospective');
+$bias = lane_bias_analysis();
 ?>
 <div class="content">
+
+<h3>Lane Bias Analysis</h3>
+
+  <div id="lane-bias">
+
+    <p id="lane-bias-summary">
+    <img id="lane-bias-triangle" src="img/triangle_east.png"/>
+    &nbsp;
+<?php
+if ($bias['biased']) {
+  echo "<b>The track lanes appear to be biased, with 90% confidence.</b>";
+} else {
+  echo "There is no evidence of significant lane bias.";
+}
+?>
+    </p>
+
+    <div id="lane-bias-details">
+
+      <table><?php lane_bias_analysis(true); ?></table>
+
+      <?php
+        echo "<p>F statistic is ".sprintf("%5.3f", $bias['f-statistic'])." with df1=".$bias['df1']." and df2=".$bias['df2']."</p>\n";
+        echo "<p>Critical value for F statistic is ".sprintf("%5.3f", $bias['critical-value'])."</p>\n";
+      ?>
+</div>
+</div>
+
 <p>&nbsp;</p>
+<h3>Events Timeline</h3>
 
 <table class="event-history">
 <?php
@@ -77,7 +128,7 @@ class EventFormatter {
       break;
     case EVENT_RESULT_DISCARDED: {
       return 'Discarded result for lane '.$event['lane']
-              .': car '.$this->RacerName($event);
+             .': car '.htmlspecialchars($this->RacerName($event), ENT_QUOTES, 'UTF-8');
       break;
     }
     case EVENT_HEAT_COMPLETED: {
@@ -123,11 +174,11 @@ $event_stmt = $db->prepare('SELECT action, tstamp, roundid, heat, racerid, lane,
 $event_stmt->execute();
 $event = $event_stmt->fetch();
 
-$heat_stmt = $db->prepare('SELECT roundid, class, heat, completed, strftime(\'%s\', completed) as unix'
+$heat_stmt = $db->prepare('SELECT roundid, class, heat, completed'
                           .' FROM RaceChart'
                           .' INNER JOIN Classes ON RaceChart.classid = Classes.classid'
                           .' GROUP BY roundid, heat'
-                          .' ORDER BY unix');
+                          .' ORDER BY completed');
 $heat_stmt->execute();
 $heat = $heat_stmt->fetch();
 
@@ -136,12 +187,14 @@ $roundid = 0;  // Current roundid
 
 while ($event !== false || $heat !== false) {
   if ($heat !== false && ($event === false || $heat['completed'] < $event['tstamp'])) {
+    $unix = strtotime($heat['completed']);
+
     echo "<tr class='heat'>";
-    echo "<td>".$heat['class'].' heat '.$heat['heat']."</td>";
+    echo "<td>".htmlspecialchars($heat['class'].' heat '.$heat['heat'], ENT_QUOTES, 'UTF-8')."</td>";
     echo "<td>".$heat['completed']."</td>";
 
     if ($heat['roundid'] == $roundid) {
-      $diff = $heat['unix'] - $last_unix;
+      $diff = $unix - $last_unix;
       $min = floor($diff / 60);
       $sec = $diff % 60;
       echo "<td>".sprintf("%dm%02ds", $min, $sec)."</td>";
@@ -149,7 +202,7 @@ while ($event !== false || $heat !== false) {
       echo "<td></td>";
       $roundid = $heat['roundid'];
     }
-    $last_unix = $heat['unix'];
+    $last_unix = $unix;
     echo "</tr>";
 
     $heat = $heat_stmt->fetch();
@@ -157,7 +210,7 @@ while ($event !== false || $heat !== false) {
 
   if ($event !== false && ($heat === false || $event['tstamp'] <= $heat['completed'])) {
     echo "<tr class='event event-identifier'>";
-    echo "<td>".$event_formatter->HeatIdentifier($event)."</td>";
+    echo "<td>".htmlspecialchars($event_formatter->HeatIdentifier($event), ENT_QUOTES, 'UTF-8')."</td>";
     echo "<td>".$event['tstamp']."</td>";
     echo "<td></td>";
     echo "</tr>\n";

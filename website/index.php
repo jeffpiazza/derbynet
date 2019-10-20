@@ -161,7 +161,7 @@ $need_spacer = make_link_button('Present Awards', 'awards-presentation.php', PRE
 $need_spacer = make_link_button('Standings', 'standings.php', VIEW_AWARDS_PERMISSION, 'after_button') || $need_spacer;
 $need_spacer = make_link_button('Export Results', 'export.php', VIEW_RACE_RESULTS_PERMISSION, 'after_button') || $need_spacer;
 
-$need_spacer = make_link_button('History', 'history.php', SET_UP_PERMISSION, 'after_button') || $need_spacer;
+$need_spacer = make_link_button('Retrospective', 'history.php', SET_UP_PERMISSION, 'after_button') || $need_spacer;
 
 make_spacer_if($need_spacer);
 

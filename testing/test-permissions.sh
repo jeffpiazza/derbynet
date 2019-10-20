@@ -64,7 +64,7 @@ cat >coordinator.index.tmp <<EOF
           <a class="button_link after_button" href="awards-presentation.php">Present Awards</a>
           <a class="button_link after_button" href="standings.php">Standings</a>
           <a class="button_link after_button" href="export.php">Export Results</a>
-          <a class="button_link after_button" href="history.php">History</a>
+          <a class="button_link after_button" href="history.php">Retrospective</a>
           <a class="button_link other_button" href="print.php">Printables</a>
           <a class="button_link other_button" href="about.php">About</a>
           <a class="button_link other_button" href="login.php?logout">Log out</a>
