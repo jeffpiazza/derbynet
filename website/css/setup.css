@@ -42,6 +42,10 @@
   margin-top: 32px;
 }
 
+#schema_step .upper {
+  min-height: 42px;
+}
+
 #schema_step .lower .step_button {
   /* margin-left: 70px; */
   margin-top: 5px;
