@@ -4,6 +4,11 @@ require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/standings.inc');
+require_once('inc/ordinals.inc');
+require_once('inc/awards.inc');
+require_once('inc/aggregate_round.inc');
+
 require_permission(PRESENT_AWARDS_PERMISSION);
 ?><!DOCTYPE html>
 <html>
@@ -43,17 +48,37 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <body>
 <?php make_banner('Awards Presentation');
 
-require_once('inc/standings.inc');
-require_once('inc/ordinals.inc');
-require_once('inc/awards.inc');
-
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 $awards = array();
-$reserved_overall = add_speed_awards($awards);
-$awards = array_merge($awards, all_awards(/* include_ad_hoc */ true, $reserved_overall));
+$bias_overall = add_speed_awards($awards);
+$awards = array_merge($awards,
+                      all_awards(/* include_ad_hoc */ true,
+                                 $bias_overall));
+
+$awards_per_class = array();
+$awards_per_rank = array();
+$supergroup_awards = 0;
+foreach ($awards as $aw) {
+  if (isset($aw['rankid'])) {
+    $r = @$awards_per_rank[$aw['rankid']];
+    if (!isset($r)) {
+      $r = 0;
+    }
+    $awards_per_rank[$aw['rankid']] = $r + 1;
+  }
+  if (isset($aw['classid'])) {
+    $c = @$awards_per_class[$aw['classid']];
+    if (!isset($c)) {
+      $c = 0;
+    }
+    $awards_per_class[$aw['classid']] = $c + 1;
+  } else {
+    ++$supergroup_awards;
+  }
+}
 
 function compare_by_sort(&$lhs, &$rhs) {
   if ($lhs['sort'] != $rhs['sort']) {
@@ -90,22 +115,32 @@ usort($awards, 'compare_by_sort');
 <div class="center-select">
     <select id="group-select">
       <option selected="Selected">All</option>
-      <option data-supergroup="1"><?php echo supergroup_label(); ?></option>
-        <?php
-        $classid = -1;
-        foreach ($rankseq as $rankid) {
-          $rank = $ranks[$rankid];
-          if ($rank['classid'] != $classid) {
-              $classid = $rank['classid'];
-              echo '<option data-classid="'.$classid.'">'
-               .htmlspecialchars($rank['class'], ENT_QUOTES, 'UTF-8')
-               .'</option>'."\n";
+      <?php
+        if ($supergroup_awards != 0) {
+          echo "<option data-supergroup=\"1\">".supergroup_label()."</option>\n";
+        }
+
+        $rankseq_index = 0;
+        foreach ($classseq as $classid) {
+          $cl = $classes[$classid];
+          if (@$awards_per_class[$classid] > 0) {
+             echo '<option data-classid="'.$classid.'"> '
+                .htmlspecialchars($cl['class'], ENT_QUOTES, 'UTF-8')
+              .'</option>'."\n";
           }
           if ($use_subgroups) {
-            echo '<option data-rankid="'.$rank['rankid'].'">'
-            .'&nbsp;&nbsp;'  // TODO
-                 .htmlspecialchars($rank['rank'], ENT_QUOTES, 'UTF-8')
-                 .'</option>'."\n";
+            for (; $rankseq_index < count($rankseq); ++$rankseq_index) {
+              $rank = $ranks[$rankseq[$rankseq_index]];
+              if ($rank['classid'] != $classid) {
+                break;
+              }
+              if (@$awards_per_rank[$rank['rankid']] > 0) {
+                echo '<option data-rankid="'.$rank['rankid'].'">'
+                    .'&nbsp;&nbsp;'
+                    .htmlspecialchars($rank['rank'], ENT_QUOTES, 'UTF-8')
+                    .'</option>'."\n";
+              }
+            }
           }
         }
         ?>

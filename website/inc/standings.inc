@@ -63,6 +63,24 @@ function final_native_roundids() {
   return $roundids;
 }
 
+// Returns the roundids that determine standings for all classes, either native
+// classes or aggregate classes.
+function final_roundids_for_all_classes() {
+  global $db;
+  $stmt = $db->query('SELECT R2.roundid AS roundid'
+                     .' FROM (SELECT Rounds.classid, MAX(round) AS max_round'
+                     .'       FROM Rounds'
+                     .'       GROUP BY Rounds.classid) AS R1'
+                     .' INNER JOIN Rounds AS R2'
+                     .' ON R1.classid = R2.classid'
+                     .' AND R1.max_round = R2.round');
+  $roundids = array();
+  foreach ($stmt as $row) {
+	$roundids[] = $row['roundid'];
+  }
+  return $roundids;
+}
+
 // Filters $roundids (an array of roundids) to just those rounds that have been
 // completed (i.e., that have no uncompleted heats).
 function completed_roundids($roundids) {
@@ -115,6 +133,11 @@ function last_aggregate_roundid() {
                            array(':classid' => $agg_classes[0]));
 }
 
+function has_supergroup_standings() {
+  $last_aggr = last_aggregate_roundid();
+  return $last_aggr !== false && $last_aggr !== 0;
+}
+
 // Returns summary results for each racer within each round they participated in.
 // Each summary element gives round information (roundid, classid), racer
 // information (racerid, name, carnumber), and outcome information (number of
@@ -136,10 +159,10 @@ function last_aggregate_roundid() {
 function final_standings($completed_only = false) {
   global $db;
   
-  $roundids_for_groups = final_native_roundids();
+  $roundids_for_groups = final_roundids_for_all_classes();
   $roundids_for_supergroup = last_aggregate_roundid();
   if ($roundids_for_supergroup === false) {
-    $roundids_for_supergroup = $roundids_for_groups;
+    $roundids_for_supergroup = final_native_roundids();
   } else {
     $roundids_for_supergroup = array($roundids_for_supergroup);
   }
@@ -280,7 +303,7 @@ function top_finishers($classid, $rankid, &$standings) {
       $ok = $ok && $row['rankid'] == $rankid;
     }
     if (isset($classid)) {
-      $ok = $ok && $row['classid'] == $classid;
+      $ok = $ok && $row['round_classid'] == $classid;
     }
     if (isset($classid) || isset($rankid)) {
       $ok = $ok && $row['for_group'];
