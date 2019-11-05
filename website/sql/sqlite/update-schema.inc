@@ -26,7 +26,17 @@ if (schema_version() < 2) {
 
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN carphoto VARCHAR(255)";
 
-  $updates[] = "INSERT OR REPLACE INTO RaceInfo(ItemKey, ItemValue) VALUES('schema', '2')";
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '2')";
+}
+
+if (schema_version() < 3) {
+  $updates[] = "ALTER TABLE Classes ADD COLUMN constituents VARCHAR(100) DEFAULT ''";
+  $updates[] = "ALTER TABLE Classes ADD COLUMN durable INTEGER";
+  $updates[] = "ALTER TABLE Classes ADD COLUMN ntrophies INTEGER DEFAULT -1";
+
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '3')";
 }
 
 return $updates;

@@ -13,7 +13,7 @@ function maybe_populate_award_types() {
 define('AD_HOC_AWARDTYPEID', 6);
 
 // list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-//   $classes:  classid => {'class', 'seq'}
+//   $classes:  classid => {'class', 'constituents', 'ntrophies', 'seq'}
 //   $classseq: ordered classids
 //   $ranks:    rankid => {'class', 'classid', 'rank', 'rankid', 'seq'}
 //   $rankseq:  ordered rankids
@@ -30,7 +30,10 @@ function classes_and_ranks() {
   $classseq = array(); // ordered classids
   $ranks = array();    // rankid => {'class', 'rank'}
   $rankseq = array();  // ordered rankids
-  foreach ($db->query('SELECT Classes.classid, class, rankid, rank'
+  foreach ($db->query('SELECT Classes.classid, class, rankid, rank,'
+                      .(schema_version() >= 3
+                        ? 'constituents, ntrophies'
+                        : '\'\' AS constituents, -1 AS ntrophies')
                       .' FROM Classes'
                       .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
                       .' ORDER BY '.(schema_version() >= 2
@@ -40,6 +43,8 @@ function classes_and_ranks() {
     if (!isset($classes[$row['classid']])) {
       $classseq[] = $row['classid'];
       $classes[$row['classid']] = array('class' => $row['class'],
+                                        'constituents' => explode(',', $row['constituents']),
+                                        'ntrophies' => $row['ntrophies'],
                                         'seq' => count($classseq));
     }
     if (isset($row['rankid'])) {
@@ -153,13 +158,12 @@ function add_speed_awards(&$awards) {
   $n_den_trophies = read_raceinfo('n-den-trophies', 3);
   $n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
 
-  $trophies_per_class = trophies_per_class();
-  $max_den_trophies = $n_den_trophies;
-  foreach ($trophies_per_class as $n_trophies) {
-    $max_den_trophies = max($max_den_trophies, $n_trophies);
-  }
-
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+
+  $max_den_trophies = $n_den_trophies;
+  foreach ($classes as $classid => $cl) {
+    $max_den_trophies = max($max_den_trophies, $cl['ntrophies']);
+  }
 
   $max_ranks_per_den = read_single_value(
     'SELECT COUNT(*) FROM Ranks GROUP BY classid ORDER BY COUNT(*) desc');
@@ -177,11 +181,9 @@ function add_speed_awards(&$awards) {
   foreach (aggregate_classes() as $agg_class) {
     ++$ordinal_class;
     $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
-    $n_trophies = @$trophies_per_class[$agg_class['classid']];
-    if (!isset($n_trophies)) {
-      $n_trophies = $n_den_trophies;
-    }
-    add_speed_group($n_trophies, $bias_for_den, $agg_class['classid'], null,
+    $ntrophies = $agg_class['ntrophies'];
+    if ($ntrophies < 0) $ntrophies = $n_den_trophies;
+    add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
                     $agg_class['class'], $standings, $awards);
   }
 

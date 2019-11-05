@@ -52,7 +52,6 @@ function emit_speed_award_group($n, $category, &$finishers) {
 function emit_speed_awards() {
   $n_per_den = read_raceinfo('n-den-trophies', 3);
   $n_per_rank = read_raceinfo('n-rank-trophies', 0);
-  $trophies_per_class = trophies_per_class();
 
   $standings = final_standings(/* completed only */ true);
 
@@ -61,11 +60,10 @@ function emit_speed_awards() {
   
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
   foreach ($classseq as $c) {
-    $n_trophies = @$trophies_per_class[$c];
-    if (!isset($n_trophies)) {
-      $n_trophies = $n_per_den;
-    }
-    emit_speed_award_group($n_trophies, 'group', top_finishers($c, null, $standings));
+    $ntrophies = $classes[$c]['ntrophies'];
+    if ($ntrophies < 0) $ntrophies = $n_per_den;
+    emit_speed_award_group($ntrophies, 'group',
+                           top_finishers($c, null, $standings));
   }
   foreach ($rankseq as $r) {
     emit_speed_award_group($n_per_rank, 'subgroup', top_finishers(null, $r, $standings));

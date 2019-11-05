@@ -55,7 +55,7 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   // starts at round 1
   $new_round = 1;
 
-  $classid = create_aggregate_class($_POST['classname']);
+  $classid = create_aggregate_class($_POST['classname'], $all_roundids, false);
 }
 
 // With $new_round and $classid settled, make the new round (unless it

@@ -46,6 +46,15 @@ array(
 "CREATE TABLE `Classes` ("
 ."  `classid` INTEGER PRIMARY KEY, "
 ."  `class` VARCHAR(15) NOT NULL UNIQUE"
+.(expected_schema_version() < 3 ? "" :
+  // For aggregate classes, constituents is a comma-separated list of classids, and
+  // durable is true if the aggregate class was created explicitly by the user, otherwise
+  // false if created while creating an aggregate round.
+  (",  `constituents` VARCHAR(100) DEFAULT ''"
+   .", `durable` INTEGER"
+  // ntrophies is the number of trophies to award for this class, or -1 to use
+  // the standard value from settings.
+   .", `ntrophies` INTEGER DEFAULT -1"))
 .(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER")
 .")",
 

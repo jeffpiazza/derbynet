@@ -2,6 +2,7 @@
 
 require_once('inc/data.inc');
 require_once('inc/newracer.inc');
+require_once('inc/schema_version.inc');
 
 // An aggregate round is one which draws from multiple prior rounds.  An
 // aggregate class is created by scheduling an aggregate round.  "Grand Finals"
@@ -12,46 +13,52 @@ require_once('inc/newracer.inc');
 // characters.  (First and last characters of the value are '/'.)
 
 function is_aggregate_class($classid) {
-  return strpos(read_raceinfo('aggregate-classes', '/'), '/'.$classid.'/') !== false;
+  return schema_version() >= 3 &&
+         strlen(read_single_value('SELECT constituents FROM Classes'
+                                  .' WHERE classid = :classid',
+                                  array(':classid' => $classid))) > 0;
 }
 
-// Returns array of {classid, class} elements
+// Returns array of {classid, class, constituent, durable, ntrophies} elements
 function aggregate_classes() {
   global $db;
-  $agg_classes = read_raceinfo('aggregate-classes', '/');
   $results = array();
-  if ($agg_classes !== false) {
-    $stmt = $db->prepare('SELECT classid, class FROM Classes'
-                         .' WHERE classid IN (0'.str_replace('/', ',', $agg_classes).'0)');
+  if (schema_version() >= 3) {
+    $stmt = $db->prepare('SELECT classid, class, constituents, durable, ntrophies FROM Classes'
+                         .' WHERE constituents > \'\''
+                         .' ORDER BY sortorder');
     $stmt->execute(array());
     foreach ($stmt as $cl) {
       $results[] = array('classid' => $cl['classid'],
-                         'class' => $cl['class']);
+                         'class' => $cl['class'],
+                         'constituents' => explode(',', $cl['constituents']),
+                         'durable' => $cl['durable'],
+                         'ntrophies' => $cl['ntrophies']);
     }
   }
 
   return $results;
 }
 
-// Returns an array mapping classid to trophy count for that class.  If a
-// classid doesn't appear in the array, it should should the default number of
-// trophies per class.
-//
-// 'trophies-per-class' is a sequence of <classid1>,<count1>,<classid2>,<count2>,...
-function trophies_per_class() {
-  $entries = explode(',', read_raceinfo('trophies-per-class', ''));
-  $result = array();
-  for ($i = 0; $i < count($entries); $i += 2) {
-    $result[$entries[$i]] = $entries[$i + 1];
-  }
-  return $result;
-}
-
-function create_aggregate_class($classname) {
+function create_aggregate_class($classname, $all_roundids, $durable) {
+  global $db;
   $classid = create_class($classname, /* with_first_round= */ false);
 
-  $agg_keys = read_raceinfo('aggregate-classes', '/');
-  write_raceinfo('aggregate-classes', $agg_keys.$classid.'/');
+  $constituents = array();
+  $stmt = $db->prepare('SELECT DISTINCT classid FROM Rounds'
+                       .'      WHERE roundid IN ('.$all_roundids.')');
+  $stmt->execute(array());
+  foreach ($stmt as $row) {
+    $constituents[] = $row['classid'];
+  }
+
+  $stmt = $db->prepare('UPDATE Classes'
+                       .' SET constituents = :constituents,'
+                       .' durable = :durable'
+                       .' WHERE classid = :classid');
+  $stmt->execute(array(':constituents' => implode(',', $constituents),
+                       ':durable' => $durable,
+                       ':classid' => $classid));
   
   return $classid;
 }
@@ -61,6 +68,10 @@ function create_aggregate_class($classname) {
 // rounds.
 function maybe_clean_up_aggregate_class_for_round($roundid) {
   global $db;
+  if (schema_version() < 3) {
+    return;
+  }
+
   $classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
                                array(':roundid' => $roundid));
 
@@ -68,15 +79,13 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                         array(':classid' => $classid)) > 1) {
     return;
   }
-  
-  $agg_classes = read_raceinfo('aggregate-classes', '/');
-  $pos = strpos($agg_classes, '/'.$classid.'/');
-  if ($pos !== false) {
-    $stmt = $db->prepare('DELETE FROM Classes WHERE classid = :classid');
-    $stmt->execute(array(':classid' => $classid));
 
-    write_raceinfo('aggregate-classes',
-                   substr($agg_classes, 0, $pos).substr($agg_classes, $pos + strlen($classid.'/')));
-  }
+  $stmt = $db->prepare('DELETE FROM Classes'
+                       .' WHERE classid = :classid'
+                       .' AND constituents > \'\''
+                       .' AND NOT durable'
+                       .' AND (SELECT COUNT(*) FROM Rounds'
+                       .'      WHERE classid = Classes.classid) <= 1');
+  $stmt->execute(array(':classid' => $classid));
 }
 ?>
