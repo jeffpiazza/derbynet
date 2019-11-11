@@ -40,6 +40,21 @@ function aggregate_classes() {
   return $results;
 }
 
+function nonracing_aggregate_classids() {
+  global $db;
+  $results = array();
+  if (schema_version() >= 3) {
+    $stmt = $db->prepare('SELECT classid FROM Classes'
+                         .' WHERE NOT EXISTS(SELECT 1 FROM Rounds'
+                         .'                   WHERE Rounds.classid = Classes.classid)');
+    $stmt->execute(array());
+    foreach ($stmt as $cl) {
+      $results[] = $cl['classid'];
+    }
+  }
+  return $results;
+}
+
 function create_aggregate_class($classname, $all_roundids, $durable) {
   global $db;
   $classid = create_class($classname, /* with_first_round= */ false);

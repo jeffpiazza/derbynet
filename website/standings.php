@@ -19,6 +19,8 @@ require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 require_once('inc/standings.inc');
+// For classes_and_ranks
+require_once('inc/awards.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +34,7 @@ require_once('inc/standings.inc');
 $(function () {
     $("tr").not(".headers").addClass('hidden');
 
-    $("select").on("change", function(event) {
+    $("#view-selector").on("change", function(event) {
         standings_select_on_change($(this).find("option:selected"),
                                    <?php echo json_encode(supergroup_label()); ?>);
       });
@@ -78,6 +80,7 @@ if (read_raceinfo_boolean('use-points')) {
 </div>
 <?php
 $standings = final_standings();
+list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 ?>
 <div class="center-select">
 <select id="view-selector">
@@ -87,6 +90,16 @@ $standings = final_standings();
     }
     $use_subgroups = read_raceinfo_boolean('use-subgroups');
     $rounds = rounds_for_standings();
+
+    $nonracing = nonracing_aggregate_classids();
+    foreach (array_reverse($classseq) as $classid) {
+      if (in_array($classid, $nonracing)) {
+        echo '<option data-aggregate="'.$classid.'">'
+            .htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8')
+            .'</option>'."\n";
+      }
+    }
+
     foreach ($rounds as $round) {
       echo '<option data-roundid="'.$round['roundid'].'">'
           .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')

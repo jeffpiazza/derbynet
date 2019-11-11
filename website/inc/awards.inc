@@ -178,7 +178,7 @@ function add_speed_awards(&$awards) {
 
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
-  foreach (aggregate_classes() as $agg_class) {
+  foreach (array_reverse(aggregate_classes()) as $agg_class) {
     ++$ordinal_class;
     $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
     $ntrophies = $agg_class['ntrophies'];
