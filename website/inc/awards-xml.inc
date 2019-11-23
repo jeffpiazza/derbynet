@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/awards.inc');
+require_once('inc/classes.inc');
 require_once('inc/classes-xml.inc');
 require_once('inc/standings.inc');
 
@@ -53,20 +54,19 @@ function emit_speed_awards() {
   $n_per_den = read_raceinfo('n-den-trophies', 3);
   $n_per_rank = read_raceinfo('n-rank-trophies', 0);
 
-  $standings = final_standings(/* completed only */ true);
+  list($finishers, $parallel) = compute_all_standings(result_summary(), /* finalized_only */ true);
 
   emit_speed_award_group(read_raceinfo('n-pack-trophies', 3), 'supergroup',
-                         top_finishers(null, null, $standings));
+                         $finishers['supergroup']);
   
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
   foreach ($classseq as $c) {
     $ntrophies = $classes[$c]['ntrophies'];
     if ($ntrophies < 0) $ntrophies = $n_per_den;
-    emit_speed_award_group($ntrophies, 'group',
-                           top_finishers($c, null, $standings));
+    emit_speed_award_group($ntrophies, 'group', $finishers['c'.$c]);
   }
   foreach ($rankseq as $r) {
-    emit_speed_award_group($n_per_rank, 'subgroup', top_finishers(null, $r, $standings));
+    emit_speed_award_group($n_per_rank, 'subgroup', $finishers['r'.$r]);
   }
 }
 

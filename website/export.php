@@ -15,44 +15,66 @@ require_once('inc/export-awards.inc');
 
 $workbook = array();
 
+////////////// Roster
 $roster = array();
 export_roster(function($row) { global $roster; $roster[] = $row; });
 $workbook[] = array('Roster', $roster);
 
+
+////////////// Results
 $results = array();
 export_results(function($row) { global $results; $results[] = $row; });
 $workbook[] = array('Results', $results);
 
 
-function AddStandings($roundid, $rankid, $title) {
-  global $workbook;
-  global $standings;
-  $standings = array();
-  export_standings(function($row) { global $standings; $standings[] = $row; },
-                   $roundid, $rankid);
-  $workbook[] = array($title, $standings);
-}
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
-$rounds = rounds_for_standings();
+////////////// Standings
+$result_summary = result_summary();
+list($finishers, $parallel) = compute_all_standings($result_summary);
 
-if (last_aggregate_roundid() !== 0) {
-  AddStandings(false, false, 'Standings');
+function AddStandings(callable $choose, $entry, $title) {
+  global $workbook;
+  global $result_summary;
+  global $parallel;
+  $sheet = array();
+  $sheet[] = array('Standings for '.$entry['name']);
+  export_standings(function($row) use (&$sheet) { $sheet[] = $row; },
+                   $choose, $entry['key'], $result_summary, $parallel);
+  $workbook[] = array($title, $sheet);
 }
-foreach ($rounds as $round) {
-  AddStandings($round['roundid'], false, 'Standings '.$round['name']);
-  if ($use_subgroups) {
-    foreach ($round['ranks'] as $rank) {
-      AddStandings($round['roundid'], $rank['rankid'],
-                   'Standings '.$round['name'].' / '.$rank['name']);
-    }
+
+$use_subgroups = read_raceinfo_boolean('use-subgroups');
+
+foreach (standings_catalog() as $entry) {
+  $name = 'Standings '.preg_replace('+[/]+', '-', $entry['name']);
+  // XLSX won't allow sheet name to exceed 31 characters
+  if (strlen($name) > 31) {
+    $name = 'Standings '.$entry['key'];
+  }
+  if ($entry['kind'] == 'supergroup') {
+    AddStandings(function(&$row, &$p) {
+        return isset($p['supergroup']); },
+      $entry, 'Standings');
+  } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
+    AddStandings(function(&$row, &$p) use (&$entry) {
+        return $entry['roundid'] == $row['roundid']; },
+      $entry, $name);
+  } else if ($entry['kind'] == 'rank') {
+    AddStandings(function(&$row, &$p) use (&$entry) {
+        return $entry['roundid'] == $row['roundid'] &&
+               $entry['rankid'] == $row['rankid']; },
+      $entry, $name);
+  } else if ($entry['kind'] == 'agg-class') {
+    AddStandings(function(&$row, &$p) use (&$entry) {
+        return isset($p[$entry['key']]); },
+      $entry, $name);
   }
 }
 
 
+////////////// Awards
 $awards = array();
 export_awards(function($row) { global $awards; $awards[] = $row; });
 $workbook[] = array('Awards', $awards);
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -72,6 +94,7 @@ $workbook[] = array('Awards', $awards);
 var workbook;
 
 $(function() {
+    console.log('On page load');
     workbook = XLSX.utils.book_new();
     var wb_json = workbook_json();
     for (var sh in wb_json) {
@@ -90,12 +113,11 @@ function write_workbook(extension) {
 </script>
 <script type="text/javascript">
 function workbook_json() {
-   return
    // START_JSON
-   <?php echo json_encode($workbook, JSON_HEX_TAG | JSON_HEX_AMP); ?>
-
+   return   <?php
+       // Tests depend on the export JSON being on one line, so don't use JSON_PRETTY_PRINT
+       echo json_encode($workbook, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
    // END_JSON
-   ;
 }
 </script>
 </head>
@@ -109,4 +131,3 @@ function workbook_json() {
 </div>
 </body>
 </html>
-

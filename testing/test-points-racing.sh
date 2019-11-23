@@ -118,7 +118,7 @@ run_heat_place 6 4   1 2 3 4
 
 # Usage: curl_text standings.php | for_roundid 1 | ...
 function for_roundid() {
-    grep "<tr data-roundid=.$1. "
+    grep "<tr.* data-roundid=.$1. "
 }
 
 ROUND1_TMP=`mktemp`

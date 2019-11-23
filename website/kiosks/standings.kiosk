@@ -29,8 +29,7 @@ body { overflow: hidden; }
 <table class="main_table">
 <?php
 write_standings_table_headers();
-$standings = final_standings();
-write_standings_table_rows($standings);
+write_standings_table_rows(result_summary());
 ?>
 
 </table>

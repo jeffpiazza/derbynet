@@ -1,8 +1,8 @@
 <?php
 
+require_once('inc/classes.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
-require_once('inc/awards.inc');  // For classes_and_ranks
 
 // These functions construct each row of the main table on the check-in page.
 

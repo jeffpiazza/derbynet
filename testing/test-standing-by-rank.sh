@@ -137,13 +137,15 @@ curl_text "export.php" | sed -n -e '/START_JSON/,/END_JSON/ p' | tail -2 | head 
 # Thanh came in 4th by time, but with Harold ineligible, he becomes 3rd, and Sterling is 4th
 curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "insubgroup.>4<" | expect_one "Sterling Spalla"
 
-curl_get "action.php?query=standings.reveal" | expect_count round 0
-curl_post action.php "action=standings.reveal&roundid=" | check_success
-curl_get "action.php?query=standings.reveal" | expect_one '<round roundid=.. rankid=..>Pack</round>'
-curl_post action.php "action=standings.reveal&roundid=1" | check_success
-curl_get "action.php?query=standings.reveal" | expect_one '<round roundid=.1. rankid=..>ThePack</round>'
-curl_post action.php "action=standings.reveal&roundid=1&rankid=2" | check_success
-curl_get "action.php?query=standings.reveal" | expect_one '<round roundid=.1. rankid=.2.>Tigers</round>'
+curl_get "action.php?query=standings.reveal" | expect_count catalog-entry 0
+# javascript: encodeURIComponent(JSON.stringify({kind: 'supergroup', key: 'supergroup', name: 'Pack'}))
+curl_post action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22supergroup%22%2C%22key%22%3A%22supergroup%22%2C%22name%22%3A%22Pack%22%7D" | check_success
+curl_get "action.php?query=standings.reveal" | expect_one '<catalog-entry json="{&quot;kind&quot;:&quot;supergroup&quot;,&quot;key&quot;:&quot;supergroup&quot;,&quot;name&quot;:&quot;Pack&quot;}"/>'
+
+curl_post action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22ThePack%22%7D" | check_success
+curl_get "action.php?query=standings.reveal" | expect_one '<catalog-entry json="{&quot;kind&quot;:&quot;class&quot;,&quot;key&quot;:&quot;c1&quot;,&quot;name&quot;:&quot;ThePack&quot;}"/>'
+curl_post action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | check_success
+curl_get "action.php?query=standings.reveal" | expect_one '<catalog-entry json="{&quot;kind&quot;:&quot;rank&quot;,&quot;key&quot;:&quot;r2&quot;,&quot;name&quot;:&quot;Tigers&quot;}"/>'
 
 # Rank-specific awards:
 

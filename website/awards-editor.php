@@ -1,6 +1,7 @@
 <?php @session_start();
 // Add, edit, reorder, and assign awards
 require_once('inc/data.inc');
+require_once('inc/classes.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');

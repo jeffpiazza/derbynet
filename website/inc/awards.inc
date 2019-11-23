@@ -1,5 +1,5 @@
 <?php
-
+require_once('inc/classes.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/aggregate_round.inc');
@@ -11,53 +11,6 @@ function maybe_populate_award_types() {
 }
 
 define('AD_HOC_AWARDTYPEID', 6);
-
-// list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-//   $classes:  classid => {'class', 'constituents', 'ntrophies', 'seq'}
-//   $classseq: ordered classids
-//   $ranks:    rankid => {'class', 'classid', 'rank', 'rankid', 'seq'}
-//   $rankseq:  ordered rankids
-//
-// Note that (of course) $ranks and $rankseq won't account for aggregate
-// classes, which don't have any ranks.
-function classes_and_ranks() {
-  global $db;
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
-  $n_den_trophies = read_raceinfo('n-den-trophies', 3);
-  $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
-
-  $classes = array();  // classid => {'class', 'seq'}
-  $classseq = array(); // ordered classids
-  $ranks = array();    // rankid => {'class', 'rank'}
-  $rankseq = array();  // ordered rankids
-  foreach ($db->query('SELECT Classes.classid, class, rankid, rank,'
-                      .(schema_version() >= 3
-                        ? 'constituents, ntrophies'
-                        : '\'\' AS constituents, -1 AS ntrophies')
-                      .' FROM Classes'
-                      .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
-                      .' ORDER BY '.(schema_version() >= 2
-                                     ? 'Classes.sortorder, Ranks.sortorder, '
-                                     : '')
-                      .'class, rank') as $row) {
-    if (!isset($classes[$row['classid']])) {
-      $classseq[] = $row['classid'];
-      $classes[$row['classid']] = array('class' => $row['class'],
-                                        'constituents' => explode(',', $row['constituents']),
-                                        'ntrophies' => $row['ntrophies'],
-                                        'seq' => count($classseq));
-    }
-    if (isset($row['rankid'])) {
-      $rankseq[] = $row['rankid'];
-      $ranks[$row['rankid']] = array('class' => $row['class'],
-                                     'classid' => $row['classid'],
-                                     'rank' => $row['rank'],
-                                     'rankid' => $row['rankid'],
-                                     'seq' => count($rankseq));
-    }
-  }
-  return array($classes, $classseq, $ranks, $rankseq);
-}
 
 // Returns all the awards in the Awards table, whether or not it has an assigned
 // recipient.  Note that this does NOT include speed awards.  Each entry in the
@@ -118,9 +71,8 @@ function get_racer_details($racerid) {
 // neither $classid nor $rankid), add to the argument $awards list entries for
 // the top $n speed trophies.  Returns the highest award sort value of the speed
 // awards added.
-function add_speed_group($n, $bias, $classid, $rankid, $label, &$standings, &$awards) {
-  $finishers = top_finishers(@$classid, @$rankid, $standings);
-  for ($p = 0; $p < $n; ++$p) {
+function add_speed_group($n, $bias, $classid, $rankid, $label, &$finishers) {
+  for ($p = 0; $p < $n; ++$p) {  // $p = 0 for 1st place, etc.
     if (!isset($finishers[$p])) {
       continue;
     }
@@ -153,7 +105,9 @@ function add_speed_group($n, $bias, $classid, $rankid, $label, &$standings, &$aw
 // TODO -- Maybe make one pass for top finishers in each rank/class/overall, and
 // do away with add_speed_group entirely.
 function add_speed_awards(&$awards) {
-  $standings = final_standings();
+  $result_summary = result_summary();
+  list($finishers, $parallel) = compute_all_standings(result_summary());
+
   $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
   $n_den_trophies = read_raceinfo('n-den-trophies', 3);
   $n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
@@ -174,7 +128,7 @@ function add_speed_awards(&$awards) {
 
   $bias_for_pack = 0;
   add_speed_group($n_pack_trophies, $bias_for_pack, null, null,
-                  supergroup_label(), $standings, $awards);
+                  supergroup_label(), $finishers['supergroup']);
 
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
@@ -184,7 +138,7 @@ function add_speed_awards(&$awards) {
     $ntrophies = $agg_class['ntrophies'];
     if ($ntrophies < 0) $ntrophies = $n_den_trophies;
     add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
-                    $agg_class['class'], $standings, $awards);
+                    $agg_class['class'], $finishers['c'.$agg_class['classid']]);
   }
 
   $classid = -1;
@@ -198,13 +152,14 @@ function add_speed_awards(&$awards) {
       ++$ordinal_class;
       $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
       $rank_within_den = 0;
-      add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'], $standings,
-                      $awards);
+      add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'],
+                      $finishers['c'.$classid]);
     }
 
     ++$rank_within_den;
     $bias_for_rank = $bias_for_den + $n_den_trophies + $rank_within_den * $reserved_per_rank;
-    add_speed_group($n_rank_trophies, $bias_for_rank, null, $r, $rank['rank'], $standings, $awards);
+    add_speed_group($n_rank_trophies, $bias_for_rank, null, $r, $rank['rank'],
+                    $finishers['r'.$r]);
   }
 
   return $reserved_overall;

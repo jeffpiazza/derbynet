@@ -314,7 +314,7 @@ function process_standings_reveal_result(data) {
 
 $(function () {
   // TODO Disable buttons if there's no current roundid selection.
-  $("select").on("change", function(event) {
+  $("select#standings-catalog").on("change", function(event) {
     // The initial prompt, if present, is shown as a disabled option which
     // we can now remove.
     $(this).find("option:disabled").remove();
@@ -323,6 +323,7 @@ $(function () {
            {type: 'POST',
             data: {
               action: 'standings.reveal',
+              'catalog-entry': selection.attr('data-catalog-entry'),
               roundid: selection.attr('data-roundid'),
               rankid: selection.attr('data-rankid'),
             },
@@ -417,7 +418,6 @@ function compute_classids() {
 }
 
 function post_new_params(kiosk, new_params) {
-  console.log("post_new_params: new_params = " + JSON.stringify(new_params));  // TODO
   $.ajax(g_action_url,
          {type: 'POST',
           data: {action: 'kiosk.assign',

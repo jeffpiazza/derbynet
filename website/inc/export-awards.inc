@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/data.inc');
+require_once('inc/classes.inc');
 require_once('inc/authorize.inc');
 require_once('inc/name-mangler.inc');
 require_once('inc/awards.inc');
@@ -33,8 +34,8 @@ function export_awards(callable $out) {
     if ($a['rankid'] == 0) $a['rankid'] = '';
     $out(array($a['awardname'],
                $a['awardtype'],
-               $classes[$a['classid']]['class'],
-               $ranks[$a['rankid']]['rank'],
+               @$classes[$a['classid']]['class'],
+               @$ranks[$a['rankid']]['rank'],
                $a['firstname'],
                $a['lastname'],
                $a['carnumber'],

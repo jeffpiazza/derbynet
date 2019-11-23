@@ -1,7 +1,7 @@
 <?php
 session_start();
 // This page contains a table of all the "standings" entries, as produced by the
-// final_standings() function.  There's a control at the top that lets the user
+// result_summary() function.  There's a control at the top that lets the user
 // choose to view standings by individual rounds, or for the final standings of
 // the pack.
 //
@@ -12,15 +12,13 @@ session_start();
 // TODO We'd like to be able to see how the members of an aggregate class were
 // selected, and what the pack standings were/would have been without the agg
 // round(s).  Note that the roster.new action performs SQL queries directly,
-// without using final_standings(), but performs a similar query.
+// without using result_summary(), but performs a similar query.
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 require_once('inc/standings.inc');
-// For classes_and_ranks
-require_once('inc/awards.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -78,40 +76,30 @@ if (read_raceinfo_boolean('use-points')) {
 }
 ?></h3>
 </div>
-<?php
-$standings = final_standings();
-list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-?>
+
 <div class="center-select">
 <select id="view-selector">
-    <?php
-    if (last_aggregate_roundid() !== 0) {
-      echo "<option selected=\"selected\">All</option>\n";
-    }
-    $use_subgroups = read_raceinfo_boolean('use-subgroups');
-    $rounds = rounds_for_standings();
+<?php
 
-    $nonracing = nonracing_aggregate_classids();
-    foreach (array_reverse($classseq) as $classid) {
-      if (in_array($classid, $nonracing)) {
-        echo '<option data-aggregate="'.$classid.'">'
-            .htmlspecialchars($classes[$classid]['class'], ENT_QUOTES, 'UTF-8')
-            .'</option>'."\n";
-      }
-    }
-
-    foreach ($rounds as $round) {
-      echo '<option data-roundid="'.$round['roundid'].'">'
-          .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
+foreach (standings_catalog() as $entry) {
+  if ($entry['kind'] == 'supergroup') {
+    echo "<option selected=\"selected\">"
+         .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
+         ."</option>\n";
+  } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
+    echo '<option data-roundid="'.$entry['roundid'].'">'
+          .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
           .'</option>'."\n";
-      if ($use_subgroups) {
-        foreach ($round['ranks'] as $rank) {
-          echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'">';
-          echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
-          echo "</option>\n";
-        }
-      }
-    }
+  } else if ($entry['kind'] == 'rank') {
+    echo '<option data-roundid="'.$entry['roundid'].'" data-rankid="'.$entry['rankid'].'">';
+    echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
+    echo "</option>\n";
+  } else if ($entry['kind'] == 'agg-class') {
+    echo '<option data-aggregate="'.$entry['classid'].'">'
+        .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
+        .'</option>'."\n";
+  }
+}
     ?>
 </select>
 </div>
@@ -119,7 +107,8 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 <table class="main_table">
 <?php
 write_standings_table_headers();
-write_standings_table_rows($standings);
+  $result_summary = result_summary();
+write_standings_table_rows($result_summary);
 ?>
 </table>
 </body>

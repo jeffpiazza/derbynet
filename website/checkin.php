@@ -5,6 +5,9 @@ require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/classes.inc');
+require_once('inc/checkin-table.inc');
+
 require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // This is the racer check-in page.  It appears as a table of all the
@@ -78,9 +81,6 @@ var g_order = '<?php echo $order; ?>';
 <body>
 <?php
 make_banner('Racer Check-In');
-
-require_once('inc/awards.inc');
-require_once('inc/checkin-table.inc');
 ?>
 
 <div class="block_buttons">

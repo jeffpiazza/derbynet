@@ -43,4 +43,51 @@ function all_classes() {
   return $classes;
 }
 
+// list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+//   $classes:  classid => {'class', 'constituents', 'ntrophies', 'seq'}
+//   $classseq: ordered classids
+//   $ranks:    rankid => {'class', 'classid', 'rank', 'rankid', 'seq'}
+//   $rankseq:  ordered rankids
+//
+// Note that (of course) $ranks and $rankseq won't account for aggregate
+// classes, which don't have any ranks.
+function classes_and_ranks() {
+  global $db;
+  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $n_den_trophies = read_raceinfo('n-den-trophies', 3);
+  $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
+
+  $classes = array();  // classid => {'class', 'seq'}
+  $classseq = array(); // ordered classids
+  $ranks = array();    // rankid => {'class', 'rank'}
+  $rankseq = array();  // ordered rankids
+  foreach ($db->query('SELECT Classes.classid, class, rankid, rank,'
+                      .(schema_version() >= 3
+                        ? 'constituents, ntrophies'
+                        : '\'\' AS constituents, -1 AS ntrophies')
+                      .' FROM Classes'
+                      .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
+                      .' ORDER BY '.(schema_version() >= 2
+                                     ? 'Classes.sortorder, Ranks.sortorder, '
+                                     : '')
+                      .'class, rank') as $row) {
+    if (!isset($classes[$row['classid']])) {
+      $classseq[] = $row['classid'];
+      $classes[$row['classid']] = array('class' => $row['class'],
+                                        'constituents' => explode(',', $row['constituents']),
+                                        'ntrophies' => $row['ntrophies'],
+                                        'seq' => count($classseq));
+    }
+    if (isset($row['rankid'])) {
+      $rankseq[] = $row['rankid'];
+      $ranks[$row['rankid']] = array('class' => $row['class'],
+                                     'classid' => $row['classid'],
+                                     'rank' => $row['rank'],
+                                     'rankid' => $row['rankid'],
+                                     'seq' => count($rankseq));
+    }
+  }
+  return array($classes, $classseq, $ranks, $rankseq);
+}
+
 ?>

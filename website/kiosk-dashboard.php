@@ -30,7 +30,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <div class="standings-control hidden control_group block_buttons">
   <div class="round-select">
     <h3>Display standings for:</h3>
-    <select>
+    <select id='standings-catalog'>
       <?php
         // This <select> elements lets the operator choose what standings should be displayed on
         // kiosks displaying standings.
@@ -50,23 +50,30 @@ require_permission(PRESENT_AWARDS_PERMISSION);
         if ($current == '') {
           echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
         }
-        echo '<option data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>'
-             .supergroup_label()
-             .'</option>';
-        foreach (rounds_for_standings() as $round) {
-          echo '<option data-roundid="'.$round['roundid'].'" data-rankid=""'
-               .($current_roundid == $round['roundid'] && $current_rankid == '' ? $sel : '').'>'
-               .htmlspecialchars($round['name'], ENT_QUOTES, 'UTF-8')
-               .'</option>'."\n";
-          if ($use_subgroups) {
-            foreach ($round['ranks'] as $rank) {
-              echo '<option data-roundid="'.$round['roundid'].'" data-rankid="'.$rank['rankid'].'"'
-              .($current_roundid == $round['roundid'] && $current_rankid == $rank['rankid'] ? $sel : '').'>';
-              echo htmlspecialchars($round['name'].' / '.$rank['name'], ENT_QUOTES, 'UTF-8');
-              echo "</option>\n";
-            }
-          }
+    {
+      foreach (standings_catalog() as $entry) {
+        // TODO catalog entry subsumes the other attributes.
+        // TODO Test for "currently selected" based on kind+key
+        echo '<option data-catalog-entry="'.htmlspecialchars(json_encode($entry), ENT_QUOTES, 'UTF-8').'" ';
+        if ($entry['kind'] == 'supergroup') {
+          echo 'data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>';
+          echo supergroup_label();
+        } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
+          echo 'data-roundid="'.$entry['roundid'].'" data-rankid=""'
+              .($current_roundid == $entry['roundid'] && $current_rankid == '' ? $sel : '').'>';
+          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
+        } else if ($entry['kind'] == 'rank') {
+          echo 'data-roundid="'.$entry['roundid'].'" data-rankid="'.$entry['rankid'].'"'
+              .($current_roundid == $entry['roundid'] && $current_rankid == $entry['rankid'] ? $sel : '').'>';
+          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
+        } else if ($entry['kind'] == 'agg-class') {
+          // TODO !!!
+          echo "disabled='1'>";
+          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
         }
+        echo "</option>\n";
+      }
+    }
       ?>
     </select>
   </div>

@@ -1,10 +1,10 @@
-// row_selector is a string that selects the rows for the round and/or rank
+// rows is a jquery of the rows for the round and/or rank
 // we're trying to display.  Some of the selected rows may be hidden.  goal says
 // how many rows we want not to be hidden, or false if we're trying to display
 // all.  Returns true if it actually reveals a row.
-function maybe_reveal_one_row(row_selector, goal) {
-  if (goal === false || $(row_selector).not(".hidden").length < goal) {
-    var next = $(row_selector + ".hidden:last");
+function maybe_reveal_one_row(rows, goal) {
+  if (goal === false || rows.not(".hidden").length < goal) {
+    var next = rows.filter(".hidden:last");
     if (next.length > 0) {
       reveal_one_row(next.removeClass('hidden'));
       return true;
@@ -49,9 +49,9 @@ function stop_scrolling(interval) {
   }
 }
 
-function need_scrolling(selector) {
+function need_scrolling(rows) {
   var offscreen = false;
-  $(selector).each(function(index, element) {
+  rows.each(function(index, element) {
     if (element.getBoundingClientRect().top > $(window).height()) {
       offscreen = true;
     }
@@ -68,25 +68,24 @@ $(function() {
   $("tr").not(".headers").addClass('hidden');
   
   var poller = {
-    roundid: -1,
-    rankid: -1,
     exposed: 0,
-    group_name: "",
+    catalog_entry: {},
+    group_name: "",  // TODO: supergroup name needs to be in catalog entry
 
     // If scrolling is taking place, this holds the interval object
     scrolling_interval: false,
     reveal_timeout: false,
 
     autoreveal: function() {
-      var selector = select_standings(poller.roundid, poller.rankid, poller.group_name);
-      if (maybe_reveal_one_row(selector, poller.exposed)) {
+      var rows = select_standings_by_catalog_entry(poller.catalog_entry);
+      if (maybe_reveal_one_row(rows, poller.exposed)) {
         poller.reveal_timeout = setTimeout(function() { poller.autoreveal() }, 1500);
       } else {
         // If there are no more hidden rows for selection, then maybe start
         // scrolling if the exposed list is long enough.
-        if ($(selector).filter(".hidden").length == 0) {
-          $(selector).first().addClass("first_visible");
-          if (!poller.scrolling_interval && need_scrolling(selector)) {
+        if (rows.filter(".hidden").length == 0) {
+          rows.first().addClass("first_visible");
+          if (!poller.scrolling_interval && need_scrolling(rows)) {
             poller.scrolling_interval = setInterval(scroll_one_visible_row_of_standings, 2000);
           }
         }
@@ -103,23 +102,14 @@ $(function() {
               success: function(data) {
                 var changed = false;
 
-                var round_element = data.getElementsByTagName('round');
-                if (round_element.length > 0) {
-                  var roundid = round_element[0].getAttribute('roundid');
-                  var rankid = round_element[0].getAttribute('rankid');
-                  if (roundid != poller.roundid) {
+                var catalog_entry_element = data.getElementsByTagName("catalog-entry");
+                if (catalog_entry_element.length > 0) {
+                  var entry = JSON.parse(catalog_entry_element[0].getAttribute("json"));
+                  if (entry.kind == poller.catalog_entry.kind && entry.key == poller.catalog_entry.key) {
+                    // No change, nothing to do
+                  } else {
+                    poller.catalog_entry = entry;
                     changed = true;
-                    poller.roundid = empty_is_false(roundid);
-                    poller.group_name = round_element[0].textContent;
-                  }
-
-                  if (rankid != poller.rankid) {
-                    changed = true;
-                    poller.rankid = empty_is_false(rankid);
-                    poller.group_name = round_element[0].textContent;
-                  }
-
-                  if (changed) {
                     stop_scrolling(poller.scrolling_interval);
                     poller.scrolling_interval = false;
                     $("tr").not(".headers").addClass('hidden');
