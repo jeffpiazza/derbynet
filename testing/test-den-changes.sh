@@ -35,23 +35,23 @@ GOLDEN=$(mktemp /tmp/derby-golden-class.list.XXXXX)
 cat >$GOLDEN <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <classes_and_ranks>
-  <class classid="1" count="17" nrounds="0" name="Lions &amp; Tigers">
+  <class classid="1" count="17" nrounds="0" ntrophies="-1" name="Lions &amp; Tigers">
     <rank rankid="1" count="17" name="Lions &amp; Tigers"/>
   </class>
-  <class classid="2" count="17" nrounds="0" name="White's Wolves">
+  <class classid="2" count="17" nrounds="0" ntrophies="-1" name="White's Wolves">
     <rank rankid="2" count="17" name="White's Wolves"/>
   </class>
-  <class classid="3" count="16" nrounds="0" name="Bears and Frèr">
+  <class classid="3" count="16" nrounds="0" ntrophies="-1" name="Bears and Frèr">
     <rank rankid="8" count="0" name="New Rank Name"/>
     <rank rankid="3" count="16" name="Bears and Frèr"/>
   </class>
-  <class classid="4" count="16" nrounds="0" name="Webelos (&quot;Webes">
+  <class classid="4" count="16" nrounds="0" ntrophies="-1" name="Webelos (&quot;Webes">
     <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>
   </class>
-  <class classid="5" count="16" nrounds="0" name="Arrows &lt;&lt;--&lt;&lt;">
+  <class classid="5" count="16" nrounds="0" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">
     <rank rankid="5" count="16" name="Arrows &lt;&lt;--&lt;&lt;"/>
   </class>
-  <class classid="7" count="0" nrounds="0" name="TheLastClass">
+  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">
     <rank rankid="7" count="0" name="TheLastClass"/>
   </class>
 </classes_and_ranks>

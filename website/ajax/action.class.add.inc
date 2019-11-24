@@ -2,11 +2,13 @@
 // Adding a class:
 // $_POST['name']
 // Optional $_POST['constituent_' + classid] for each constituent classid
+// Optional $_POST['ntrophies']
 
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/newracer.inc');
+require_once('inc/classes.inc');
 
 start_response();
 
@@ -28,7 +30,6 @@ if (have_permission(SET_UP_PERMISSION)) {
         // well-defined to be creating a class without a rank if we're actually
         // using rank names.
         $rankid = find_or_create_rank($classname, $classid);
-        echo "<success/>\n";
       } else {  // Aggregate class
         $classid = create_class($classname, /*with_first_round=*/false);
         $stmt = $db->prepare('UPDATE Classes'
@@ -37,8 +38,11 @@ if (have_permission(SET_UP_PERMISSION)) {
                              .' WHERE classid = :classid');
         $stmt->execute(array(':constituents' => implode(',', $constituents),
                              ':classid' => $classid));
-        echo "<success/>\n";
       }
+      if (isset($_POST['ntrophies'])) {
+        update_ntrophies($classid, $_POST['ntrophies']);
+      }
+      echo "<success/>\n";
     }
   } else {
     echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";

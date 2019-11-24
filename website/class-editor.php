@@ -61,10 +61,26 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
 
 <div id="add_class_modal" class="modal_dialog hidden block_buttons">
-  <h3>Add New <?php echo group_label(); ?></h3>
   <form>
     <input type="hidden" name="action" value="class.add"/>
+    <h3>Add New <?php echo group_label(); ?></h3>
     <input name="name" type="text"/>
+    <h3>Number of speed trophies:</h3>
+    <select name="ntrophies">
+      <option value="-1" selected="selected">Default</option>
+      <option>0</option>
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+    </select>
+    <h3>&nbsp;</h3>
 
     <input type="submit" data-enhanced="true"/>
     <input type="button" value="Cancel" data-enhanced="true"
@@ -74,9 +90,26 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
 
 <div id="edit_one_class_modal" class="modal_dialog hidden block_buttons">
-  <h3>New <?php echo group_label(); ?> Name</h3>
   <form>
+    <h3><?php echo group_label(); ?> Name</h3>
     <input id="edit_class_name" name="name" type="text"/>
+
+    <h3>Number of speed trophies:</h3>
+    <select id="edit_class_ntrophies" name="ntrophies">
+      <option value="-1">Default</option>
+      <option>0</option>
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>7</option>
+      <option>8</option>
+      <option>9</option>
+      <option>10</option>
+    </select>
+    <h3>&nbsp;</h3>
 
     <div id="completed_rounds_extension">
       <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>

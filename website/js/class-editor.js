@@ -50,6 +50,16 @@ function edit_one_class(who) {
   
   $("#edit_class_name").val(list_item.find('.class-name').text());
   $("#edit_class_name").attr('data-classid', classid);
+  var ntrophies = list_item.attr('data-ntrophies');
+  $("#edit_class_ntrophies option").prop('selected', false);
+  if (ntrophies < 0) {
+    $("#edit_class_ntrophies option[value='-1']").prop('selected', true)
+  } else {
+    $('#edit_class_ntrophies option')
+      .filter(function () { return $(this).text() == ntrophies; })
+      .prop('selected', true);
+  }
+  $('#edit_class_ntrophies').selectmenu('refresh')
 
   hide_ranks_except(classid);
 
@@ -61,6 +71,7 @@ function edit_one_class(who) {
   $("#completed_rounds_extension").toggleClass('hidden', !(count == 0 && nrounds != 0));
   $("#completed_rounds_count").text(nrounds);
 
+  // TODO Don't allow a class deletion if an aggregate class depends on the class.
   $("#delete_class_extension").toggleClass('hidden', !(count == 0 && nrounds == 0));
   show_edit_one_class_modal(list_item);
 }
@@ -71,7 +82,8 @@ function show_edit_one_class_modal(list_item) {
                {type: 'POST',
                 data: {action: 'class.edit',
                        classid: list_item.attr('data-classid'),
-                       name: $("#edit_class_name").val()},
+                       name: $("#edit_class_name").val(),
+                       ntrophies: $("#edit_class_ntrophies").val()},
                 success: function () {
                     reload_class_list();
                 }});
@@ -232,6 +244,7 @@ function repopulate_class_list(data) {
 
       var group_li = $("<li class='ui-li-has-alt'"
                        + " data-classid='" + cl.getAttribute('classid') + "'"
+                       + " data-ntrophies='" + cl.getAttribute('ntrophies') + "'"
                        + " data-count='" + cl.getAttribute('count') + "'"
                        + " data-nrounds='" + cl.getAttribute('nrounds') + "'"
                        + ">"

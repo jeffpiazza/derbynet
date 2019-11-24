@@ -8,6 +8,7 @@ require_once('inc/schema_version.inc');
 function all_classes() {
   global $db;
   $stmt = $db->prepare('SELECT Classes.classid, class, rankid, rank, '
+                       .(schema_version() >= 3 ? 'ntrophies, ' : '-1 as ntrophies, ')
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.classid = Classes.classid) AS nclass,'
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.rankid = Ranks.rankid) AS nrank,'
                        .' (SELECT COUNT(*) FROM Rounds'
@@ -27,10 +28,11 @@ function all_classes() {
   foreach ($stmt as $row) {
     if ($row['classid'] != $current['classid']) {
       $classes[] = array('classid' => $row['classid'],
-                       'name' => $row['class'],
-                       'count' => $row['nclass'],
-                       'nrounds_with_results' => $row['nrounds'],
-                       'ranks' => []);
+                         'name' => $row['class'],
+                         'ntrophies' => $row['ntrophies'],
+                         'count' => $row['nclass'],
+                         'nrounds_with_results' => $row['nrounds'],
+                         'ranks' => []);
       $current = &$classes[count($classes) - 1];
     }
     if ($row['rankid']) {
@@ -90,4 +92,13 @@ function classes_and_ranks() {
   return array($classes, $classseq, $ranks, $rankseq);
 }
 
+function update_ntrophies($classid, $ntrophies) {
+  global $db;
+  if (schema_version() >= 3) {
+    $stmt = $db->prepare('UPDATE Classes SET ntrophies = :ntrophies'
+                         .' WHERE classid = :classid');
+    $stmt->execute(array(':classid' => $classid,
+                         ':ntrophies' => $ntrophies));
+  }
+}
 ?>

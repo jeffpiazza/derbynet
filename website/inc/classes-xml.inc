@@ -7,6 +7,7 @@ function emit_all_classes() {
     echo '<class classid="'.$class['classid'].'"'
         .' count="'.$class['count'].'"'
         .' nrounds="'.$class['nrounds_with_results'].'"'
+        .' ntrophies="'.$class['ntrophies'].'"'
         .' name="'.htmlspecialchars($class['name'], ENT_QUOTES, 'UTF-8').'">'."\n";
     foreach ($class['ranks'] as $rank) {
       echo '  <rank rankid="'.$rank['rankid'].'"'
