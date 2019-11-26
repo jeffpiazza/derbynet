@@ -55,3 +55,28 @@ z-index: 2;
 #delete_button_extension {
     padding-top: 40px;
 }
+
+#aggregate-constituents .ui-flipswitch {
+  /* width: 200px; */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+    width: 6.875em;
+}
+#aggregate-constituents .ui-flipswitch span {
+  font-size: 16px;
+}
+
+#aggregate-constituents .ui-flipswitch.ui-flipswitch-active {
+    padding-left: 5em;
+    width: 1.875em;
+    background-color: #023882; /* JEP */
+}
+
+#aggregate-constituents label {
+    display: inline-block;
+    width: 300px;
+    margin-right: 1em;
+    text-align: right;
+    font-weight: bold;
+}

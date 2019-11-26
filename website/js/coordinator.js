@@ -762,77 +762,63 @@ function calculate_totals(rounds) {
 }
 
 function populate_new_round_modals() {
-    var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
+  var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
 
-    var add_aggregate = completed_rounds.length > 1;
-    var modal = $("#choose_new_round_modal");
-    modal.empty();
-    var multi_flipswitches = $("#multi_flipswitches");
-    multi_flipswitches.empty();
-    while (completed_rounds.length > 0) {
-        var roundno = completed_rounds[0].round;
-        modal.append('<h3>Add Round ' + (roundno + 1) + '</h3>');
-        var i = 0;
-        while (i < completed_rounds.length) {
-            if (completed_rounds[i].round == roundno) {
-                var round = completed_rounds[i];
-                var button = $('<input type="button" data-enhanced="true"/>');
-                button.prop('value', round.classname);
-                // Although syntactically it looks like a new round variable is created
-                // each time through the loop, it's actually just one variable that's
-                // reused/assigned each time.  Capturing that reused variable in the on-click
-                // function won't work, so, we need to record the current roundid on
-                // the button itself.
-                button.prop('data-roundid', round.roundid);
-                button.on('click', function(event) {
-                  handle_new_round_chosen($(this).prop('data-roundid'));
-                });
-                modal.append(button);
-
-                var flipswitch_div = $('<div class="flipswitch-div"></div>');
-                var label = $('<label for="roundid_' + round.roundid + '"' 
-                              + ' class="aggregate-label"'
-                              + '></label>');
-                label.text(round.classname);
-                flipswitch_div.append(label);
-                // Writing just the checkbox and then triggering the "create"
-                // event seems to work the first time, but subsequent
-                // appearances of the modal don't show the jquery-mobile
-                // embellishments.
-                flipswitch_div.append('<div class="ui-flipswitch ui-shadow-inset' 
-                                          + ' ui-bar-inherit ui-flipswitch-active ui-corner-all' 
-                                          + ' aggregate-flipswitch">'
-                                          + '<a href="#" class="ui-flipswitch-on ui-btn' 
-                                          + ' ui-shadow ui-btn-inherit">On</a>'
-                                          + '<span class="ui-flipswitch-off">Off</span>'
-                                          + '<input type="checkbox"'
-                                          + ' data-role="flipswitch"'
-                                          + ' id="roundid_' + round.roundid + '"' 
-                                          + ' name="roundid_' + round.roundid + '"' 
-                                          + ' data-enhanced="true"'
-                                          + ' class="ui-flipswitch-input"'
-                                          + ' checked="checked"/>'
-                                      + '</div>');
-                multi_flipswitches.append(flipswitch_div);
-                completed_rounds.splice(i, 1);
-            } else {
-                ++i;
-            }
-        }
-    }
-    if (add_aggregate) {
-        modal.append('<h3>Add Aggregate Round</h3>');
-        var button = $('<input type="button" data-enhanced="true" value="Aggregate Round"/>');
-        button.on('click', function(event) { handle_aggregate_chosen(); });
+  var add_aggregate = completed_rounds.length > 1;
+  var modal = $("#choose_new_round_modal");
+  modal.empty();
+  var multi_flipswitches = $("#multi_flipswitches");
+  multi_flipswitches.empty();
+  while (completed_rounds.length > 0) {
+    var roundno = completed_rounds[0].round;
+    modal.append('<h3>Add Round ' + (roundno + 1) + '</h3>');
+    var i = 0;
+    while (i < completed_rounds.length) {
+      if (completed_rounds[i].round == roundno) {
+        var round = completed_rounds[i];
+        var button = $('<input type="button" data-enhanced="true"/>');
+        button.prop('value', round.classname);
+        // Although syntactically it looks like a new round variable is created
+        // each time through the loop, it's actually just one variable that's
+        // reused/assigned each time.  Capturing that reused variable in the on-click
+        // function won't work, so, we need to record the current roundid on
+        // the button itself.
+        button.prop('data-roundid', round.roundid);
+        button.on('click', function(event) {
+          handle_new_round_chosen($(this).prop('data-roundid'));
+        });
         modal.append(button);
-        // Even though we're doing the embellishment explicitly, the create
-        // trigger is still needed to make the flipswitches actually do
-        // anything.
-        multi_flipswitches.trigger("create");
+
+        var flipswitch_div = $('<div class="flipswitch-div"></div>');
+        var label = $('<label for="roundid_' + round.roundid + '"'
+                      + ' class="aggregate-label"'
+                      + '></label>');
+        label.text(round.classname);
+        flipswitch_div.append(label);
+        flipswitch_div.append(wrap_flipswitch($('<input type="checkbox"'
+                                                + ' id="roundid_' + round.roundid + '"'
+                                                + ' name="roundid_' + round.roundid + '"'
+                                                + ' checked="checked"/>')));
+        multi_flipswitches.append(flipswitch_div);
+        completed_rounds.splice(i, 1);
+      } else {
+        ++i;
+      }
     }
-    modal.append('<h3>&nbsp;</h3>');
-    modal.append('<input type="button" data-enhanced="true" value="Cancel"'
-                 + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');
+  }
+  if (add_aggregate) {
+    modal.append('<h3>Add Aggregate Round</h3>');
+    var button = $('<input type="button" data-enhanced="true" value="Aggregate Round"/>');
+    button.on('click', function(event) { handle_aggregate_chosen(); });
+    modal.append(button);
+    // Even though we're doing the embellishment explicitly, the create
+    // trigger is still needed to make the flipswitches actually do
+    // anything.
+    multi_flipswitches.trigger("create");
+  }
+  modal.append('<h3>&nbsp;</h3>');
+  modal.append('<input type="button" data-enhanced="true" value="Cancel"'
+               + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');
 }
 
 function offer_new_rounds(rounds) {

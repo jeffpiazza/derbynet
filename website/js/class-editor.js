@@ -17,6 +17,25 @@ function close_edit_all_classes_modal() {
 
 function show_add_class_modal() {
   $("#add_class_modal input[name='name']").val("");
+  $("#add_class_modal").removeClass("wide_modal");
+  $("#aggregate-only").addClass("hidden");
+  show_secondary_modal("#add_class_modal", function () {
+    close_add_class_modal();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $('#add_class_modal form input').not('#aggregate-constituents input').serialize(),
+            success: function (data) {
+              reload_class_list();
+            }});
+
+    return false;
+  });
+}
+
+function show_add_aggregate_modal() {
+  $("#add_class_modal input[name='name']").val("");
+  $("#add_class_modal").addClass("wide_modal");
+  $("#aggregate-only").removeClass("hidden");
   show_secondary_modal("#add_class_modal", function () {
     close_add_class_modal();
     $.ajax(g_action_url,
@@ -239,6 +258,7 @@ function repopulate_class_list(data) {
   if (classes.length > 0) {
     $("#ranks_container").empty();
     $("#groups").empty();
+    $("#aggregate-constituents").empty();
     for (var i = 0; i < classes.length; ++i) {
       var cl = classes[i];
 
@@ -258,7 +278,20 @@ function repopulate_class_list(data) {
       if (use_subgroups()) {
         populate_rank_list(cl);
       }
+
+      var flipswitch_div = $('<div class="flipswitch-div"></div>');
+      var label = $('<label for="constituent_' + cl.getAttribute('classid') + '"'
+                    + ' class="constituent-label"'
+                    + '></label>');
+      label.text(cl.getAttribute('name'));
+      flipswitch_div.append(label);
+      flipswitch_div.append(wrap_flipswitch($('<input type="checkbox"'
+                                              + ' id="constituent_' + cl.getAttribute('classid') + '"'
+                                              + ' name="constituent_' + cl.getAttribute('classid') + '"'
+                                              + '/>')));
+      $("#aggregate-constituents").append(flipswitch_div);
     }
+    $("#aggregate-constituents").trigger("create");
   }
 }
 

@@ -20,6 +20,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
+<script type="text/javascript" src="js/wrap-flipswitch.js"></script>
 <script type="text/javascript" src="js/class-editor.js"></script>
 <script type="text/javascript">
 function use_subgroups() { return <?php echo json_encode(read_raceinfo_boolean('use-subgroups')); ?>; }
@@ -52,6 +53,9 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     <input type="button" value="Add <?php echo group_label(); ?>" data-enhanced="true"
            onclick="show_add_class_modal();" />
 
+    <input type="button" value="Add Aggregate" data-enhanced="true"
+           onclick="show_add_aggregate_modal();" />
+
     <br/>
 
     <input type="button" value="Close" data-enhanced="true"
@@ -62,6 +66,11 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
 <div id="add_class_modal" class="modal_dialog hidden block_buttons">
   <form>
+    <div id="aggregate-only">
+      <h3>Choose 2 or more constituents:</h3>
+      <div id="aggregate-constituents">
+      </div>
+    </div>
     <input type="hidden" name="action" value="class.add"/>
     <h3>Add New <?php echo group_label(); ?></h3>
     <input name="name" type="text"/>

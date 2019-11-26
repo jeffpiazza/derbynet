@@ -88,6 +88,10 @@ p.last_contact {
     padding: 5px;
 }
 
+#multi_flipswitches .ui-flipswitch span {
+  font-size: 16px;
+}
+
 .centered_flipswitch {
     width: 225px;
     margin-left: auto;

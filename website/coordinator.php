@@ -19,6 +19,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/wrap-flipswitch.js"></script>
 <script type="text/javascript" src="js/coordinator.js"></script>
 </head>
 <body>
