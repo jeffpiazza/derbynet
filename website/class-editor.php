@@ -124,6 +124,10 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
       <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>
     </div>
 
+    <div id="constituent_extension">
+      <p>Constituent of <span id="constituent_owner"></span>, possibly other aggregates.</p>
+    </div>
+
     <div id="edit_ranks_extension" class="hidden">
       <h3>Drag to Re-order <?php echo plural(subgroup_label()); ?></h3>
       <div id="ranks_container">

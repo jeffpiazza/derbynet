@@ -106,8 +106,13 @@ function edit_one_class(who) {
   $("#completed_rounds_extension").toggleClass('hidden', !(count == 0 && nrounds != 0));
   $("#completed_rounds_count").text(nrounds);
 
+  var constituent_of = list_item.attr('data-constituent-of');
+  console.log(list_item.find('.class-name').text() + ': constituent-of ' + constituent_of);
+  $("#constituent_extension").toggleClass('hidden', constituent_of == '');
+  $("#constituent_owner").text(constituent_of);
+
   // TODO Don't allow a class deletion if an aggregate class depends on the class.
-  $("#delete_class_extension").toggleClass('hidden', !(count == 0 && nrounds == 0));
+  $("#delete_class_extension").toggleClass('hidden', !(count == 0 && nrounds == 0 && constituent_of == ''));
   show_edit_one_class_modal(list_item);
 }
 
@@ -283,6 +288,7 @@ function repopulate_class_list(data) {
                        + " data-ntrophies='" + cl.getAttribute('ntrophies') + "'"
                        + " data-count='" + cl.getAttribute('count') + "'"
                        + " data-nrounds='" + cl.getAttribute('nrounds') + "'"
+                       + " data-constituent-of=''"  // Possibly rewritten below
                        + ">"
                        + "<p></p>"
                        + "<a class='ui-btn ui-btn-icon-notext ui-icon-gear' onclick='edit_one_class(this);'></a>"
@@ -318,6 +324,16 @@ function repopulate_class_list(data) {
     }
     $("#aggregate-constituents input[type='checkbox']").on('change', maybe_enable_aggregate_create);
     $("#aggregate-constituents").trigger("create");
+
+    // Mark up constituents so they can't be deleted
+    for (var i = 0; i < classes.length; ++i) {
+      var cl = classes[i];
+      var constituents = cl.getElementsByTagName('constituent');
+      for (var ii = 0; ii < constituents.length; ++ii) {
+        $("#groups li[data-classid=" + constituents[ii].getAttribute('classid') + "]")
+          .attr('data-constituent-of', cl.getAttribute('name'));
+      }
+    }
   }
 }
 
