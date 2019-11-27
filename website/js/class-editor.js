@@ -32,10 +32,26 @@ function show_add_class_modal() {
   });
 }
 
+// Don't allow creating an aggregate class when there are fewer than two
+// constituents selected.  This gets attached as an on('changed') function to
+// each of the checkboxes for constituents.
+function maybe_enable_aggregate_create() {
+  $("#add_class_modal input[type='submit']")
+    .prop('disabled',
+          $("#aggregate-constituents input[type='checkbox']:checked").length < 2);
+}
+
 function show_add_aggregate_modal() {
   $("#add_class_modal input[name='name']").val("");
   $("#add_class_modal").addClass("wide_modal");
   $("#aggregate-only").removeClass("hidden");
+
+  $("#aggregate-constituents input[type='checkbox']")
+    .prop('checked', false)
+    .flipswitch('refresh');
+
+  maybe_enable_aggregate_create();
+
   show_secondary_modal("#add_class_modal", function () {
     close_add_class_modal();
     $.ajax(g_action_url,
@@ -278,7 +294,16 @@ function repopulate_class_list(data) {
       if (use_subgroups()) {
         populate_rank_list(cl);
       }
+      var constituents = cl.getElementsByTagName('constituent');
+      if (constituents.length > 0) {
+        var constituents_ul = $('<ul data-role="listview" data-inset="true"></ul>').appendTo(group_li);
+        for (var ii = 0; ii < constituents.length; ++ii) {
+          $('<li></li>').text(constituents[ii].getAttribute('name')).appendTo(constituents_ul);
+        }
+      }
 
+      // For the Create Aggregate modal, add a flipswitch for each existing
+      // class to the list of potential constituents.
       var flipswitch_div = $('<div class="flipswitch-div"></div>');
       var label = $('<label for="constituent_' + cl.getAttribute('classid') + '"'
                     + ' class="constituent-label"'
@@ -291,6 +316,7 @@ function repopulate_class_list(data) {
                                               + '/>')));
       $("#aggregate-constituents").append(flipswitch_div);
     }
+    $("#aggregate-constituents input[type='checkbox']").on('change', maybe_enable_aggregate_create);
     $("#aggregate-constituents").trigger("create");
   }
 }

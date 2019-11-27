@@ -9,6 +9,7 @@ function all_classes() {
   global $db;
   $stmt = $db->prepare('SELECT Classes.classid, class, rankid, rank, '
                        .(schema_version() >= 3 ? 'ntrophies, ' : '-1 as ntrophies, ')
+                       .(schema_version() >= 3 ? 'constituents, ' : '\'\' as constituents, ')
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.classid = Classes.classid) AS nclass,'
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.rankid = Ranks.rankid) AS nrank,'
                        .' (SELECT COUNT(*) FROM Rounds'
@@ -30,6 +31,7 @@ function all_classes() {
       $classes[] = array('classid' => $row['classid'],
                          'name' => $row['class'],
                          'ntrophies' => $row['ntrophies'],
+                         'constituents' => $row['constituents'],
                          'count' => $row['nclass'],
                          'nrounds_with_results' => $row['nrounds'],
                          'ranks' => []);
