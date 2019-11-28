@@ -75,7 +75,13 @@ if (have_permission(SET_UP_PERMISSION)) {
 if ($ok) {
   $classname = substr(trim($_POST['classname']), 0, CLASS_COLUMN_WIDTH);
   $classid = find_or_create_class($classname);
-
+  if (!empty(read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
+                               array(':classid' => $classid)))) {
+    echo '<failure code="aggregate">Aggregate classes cannot contain direct members</failure>';
+    $ok = false;
+  }
+}
+if ($ok) {
   $rankname = isset($_POST['subgroup']) ? trim($_POST['subgroup']) : $classname;
   $rankid = find_or_create_rank($rankname, $classid);
 
