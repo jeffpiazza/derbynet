@@ -96,33 +96,27 @@ function kiosk_page($addr) {
                'params' => '');
 }
 
-function scan_kiosk_pages($prefix, $kiosk_page) {
+function xml_for_kiosk_pages($prefix) {
+  $entries = array();
   $dh = opendir(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.$prefix);
   if ($dh !== false) {
     while (($entry = readdir($dh)) !== FALSE) {
       if (substr($entry, -6) == ".kiosk") {
-        $value = $prefix.DIRECTORY_SEPARATOR.$entry;
-        echo '<option '.($kiosk_page == $value ? 'selected="1" ' : '')
-        .'value="'.$value.'">'.$entry.'</option>'."\n";
+        $entries[] = substr($entry, 0, -6);
       }
     }
-    closedir($dh);
+  }
+  closedir($dh);
+
+  sort($entries);
+
+  foreach ($entries as $entry) {
+    $value = $prefix.DIRECTORY_SEPARATOR.$entry;
+    echo '<kiosk-page brief="'.htmlspecialchars($entry, ENT_QUOTES, 'UTF-8').'">'
+        .htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'.kiosk</kiosk-page>'."\n";
   }
 }
 
-function xml_for_kiosk_pages($prefix) {
-  $dh = opendir(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.$prefix);
-  if ($dh !== false) {
-    while (($entry = readdir($dh)) !== FALSE) {
-      if (substr($entry, -6) == ".kiosk") {
-        $value = $prefix.DIRECTORY_SEPARATOR.$entry;
-        echo '<kiosk-page brief="'.htmlspecialchars(substr($entry, 0, -6), ENT_QUOTES, 'UTF-8').'">'
-        .htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</kiosk-page>'."\n";
-      }
-    }
-    closedir($dh);
-  }
-}
 
 // "old" kiosks are those that haven't made contact in five minutes --
 // mainly this would be kiosks from testing that we don't want to

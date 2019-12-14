@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>US Flag</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
+<style type="text/css">
+html {
+  background-color: rgb(230, 230, 230);
+}
+
+#flag {
+  margin-top: 50px;
+  display: block;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 8px solid #efc100;
+}
+</style>
+</head>
+<body>
+<?php
+require_once('inc/banner.inc');
+make_banner('U.S. Flag', /* back_button */ false);
+?>
+
+<img id="flag" src="img/Flag_of_the_United_States.svg"/>
+
+</body>
+</html>
