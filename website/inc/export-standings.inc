@@ -6,9 +6,11 @@ require_once('inc/name-mangler.inc');
 
 require_once('inc/standings.inc');
 
-function export_standings(callable $out, callable $choose, $key,
+function export_standings(callable $out, callable $choose, $entry,
                           &$result_summary, &$parallel) {
-  $showing_supergroup = $key == 'supergroup';
+  $key = $entry['key'];
+  $show_supergroup_column = $key != 'supergroup';
+  $show_inround_column = $entry['kind'] == 'rank-round';
   $name_style = read_raceinfo('name-style', FULL_NAME);
   $use_groups = show_group_standings();
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
@@ -35,11 +37,16 @@ function export_standings(callable $out, callable $choose, $key,
     $headers[] = "In ".subgroup_label();
   }
 
-  if (!$showing_supergroup) {
+  if ($show_supergroup_column) {
     // If we're showing overall standings, then the standing in the pack is given
     // in the first column, and this would be redundant.
     $headers[] = "In ".supergroup_label();
   }
+  if ($show_inround_column) {
+    $headers[] = "In Round";
+  }
+  
+
   $headers[] = "Heats";
   if (read_raceinfo_boolean('use-points')) {
     $headers[] = "Total Points (1st = ".get_lane_count().")";
@@ -71,15 +78,18 @@ function export_standings(callable $out, callable $choose, $key,
       }
       if ($use_groups) {
         $values[] = $row['class'];
-        $values[] = isset($p['c'.$classid]) ? $p['c'.$classid] : '';
+        $values[] = isset($p[standings_key_class($classid)]) ? $p[standings_key_class($classid)] : '';
       }
       if ($use_subgroups) {
         $values[] = $row['rank'];
-        $values[] = isset($p['r'.$rankid]) ? $p['r'.$rankid] : '';
+        $values[] = isset($p[standings_key_subgroup($rankid)]) ? $p[standings_key_subgroup($rankid)] : '';
       }
 
-      if (!$showing_supergroup) {
+      if ($show_supergroup_column) {
         $values[] = isset($p['supergroup']) ? $p['supergroup'] : '';
+      }
+      if ($show_inround_column) {
+        $values[] = $p[standings_key_round($roundid)];
       }
 
       $values[] = $row['base'];  // Number of heats

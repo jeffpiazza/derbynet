@@ -63,10 +63,10 @@ function emit_speed_awards() {
   foreach ($classseq as $c) {
     $ntrophies = $classes[$c]['ntrophies'];
     if ($ntrophies < 0) $ntrophies = $n_per_den;
-    emit_speed_award_group($ntrophies, 'group', $finishers['c'.$c]);
+    emit_speed_award_group($ntrophies, 'group', $finishers[standings_key_class($c)]);
   }
   foreach ($rankseq as $r) {
-    emit_speed_award_group($n_per_rank, 'subgroup', $finishers['r'.$r]);
+    emit_speed_award_group($n_per_rank, 'subgroup', $finishers[standings_key_subgroup($r)]);
   }
 }
 

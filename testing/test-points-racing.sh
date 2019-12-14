@@ -65,11 +65,11 @@ curl_get "action.php?query=poll.ondeck" | grep 'resultid="4"' | expect_one 'resu
 #
 # These are a little fragile in that they depend on each table row comprising
 # exactly one line of text
-curl_text "standings.php" | grep Carroll | expect_one "<td class=.insuper.>1</td>"
-curl_text "standings.php" | grep Asher   | expect_one "<td class=.insuper.>2</td>"
-curl_text "standings.php" | grep Derick  | expect_one "<td class=.insuper.>T3</td>"
-curl_text "standings.php" | grep Jesse   | expect_one "<td class=.insuper.>T3</td>"
-curl_text "standings.php" | grep Felton  | expect_one "<td class=.insuper.>5</td>"
+curl_text "standings.php" | grep Carroll | expect_one "<td class=.insuper_column.>1</td>"
+curl_text "standings.php" | grep Asher   | expect_one "<td class=.insuper_column.>2</td>"
+curl_text "standings.php" | grep Derick  | expect_one "<td class=.insuper_column.>T3</td>"
+curl_text "standings.php" | grep Jesse   | expect_one "<td class=.insuper_column.>T3</td>"
+curl_text "standings.php" | grep Felton  | expect_one "<td class=.insuper_column.>5</td>"
 
 
 curl_text "export.php" | sed -n -e '/START_JSON/,/END_JSON/ p' | tail -2 | head -1 | \
@@ -128,33 +128,33 @@ cat $ROUND1_TMP | expect_count '<tr ' 5
 
 cat $ROUND1_TMP | expect_one Carroll
 cat $ROUND1_TMP | grep Carroll | expect_one "<div class=.inround.>1</div>"
-cat $ROUND1_TMP | grep Carroll | expect_one "<td class=.ingroup.></td>"
+cat $ROUND1_TMP | grep Carroll | expect_one "<td class=.ingroup_column.></td>"
 cat $ROUND1_TMP | grep Carroll | expect_one "<div class=.insuper.></div>"
-cat $ROUND1_TMP | grep Carroll | expect_one "<td class=.insuper.></td>"
+cat $ROUND1_TMP | grep Carroll | expect_one "<td class=.insuper_column.></td>"
 
 cat $ROUND1_TMP | expect_one Asher
 cat $ROUND1_TMP | grep Asher | expect_one "<div class=.inround.>2</div>"
-cat $ROUND1_TMP | grep Asher | expect_one "<td class=.ingroup.></td>"
+cat $ROUND1_TMP | grep Asher | expect_one "<td class=.ingroup_column.></td>"
 cat $ROUND1_TMP | grep Asher | expect_one "<div class=.insuper.></div>"
-cat $ROUND1_TMP | grep Asher | expect_one "<td class=.insuper.></td>"
+cat $ROUND1_TMP | grep Asher | expect_one "<td class=.insuper_column.></td>"
 
 cat $ROUND1_TMP | expect_one Derick
 cat $ROUND1_TMP | grep Derick | expect_one "<div class=.inround.>T3</div>"
-cat $ROUND1_TMP | grep Derick | expect_one "<td class=.ingroup.></td>"
+cat $ROUND1_TMP | grep Derick | expect_one "<td class=.ingroup_column.></td>"
 cat $ROUND1_TMP | grep Derick | expect_one "<div class=.insuper.></div>"
-cat $ROUND1_TMP | grep Derick | expect_one "<td class=.insuper.></td>"
+cat $ROUND1_TMP | grep Derick | expect_one "<td class=.insuper_column.></td>"
 
 cat $ROUND1_TMP | expect_one Jesse
 cat $ROUND1_TMP | grep Jesse | expect_one "<div class=.inround.>T3</div>"
-cat $ROUND1_TMP | grep Jesse | expect_one "<td class=.ingroup.></td>"
+cat $ROUND1_TMP | grep Jesse | expect_one "<td class=.ingroup_column.></td>"
 cat $ROUND1_TMP | grep Jesse | expect_one "<div class=.insuper.></div>"
-cat $ROUND1_TMP | grep Jesse | expect_one "<td class=.insuper.></td>"
+cat $ROUND1_TMP | grep Jesse | expect_one "<td class=.insuper_column.></td>"
 
 cat $ROUND1_TMP | expect_one Felton
 cat $ROUND1_TMP | grep Felton | expect_one "<div class=.inround.>5</div>"
-cat $ROUND1_TMP | grep Felton | expect_one "<td class=.ingroup.></td>"
+cat $ROUND1_TMP | grep Felton | expect_one "<td class=.ingroup_column.></td>"
 cat $ROUND1_TMP | grep Felton | expect_one "<div class=.insuper.></div>"
-cat $ROUND1_TMP | grep Felton | expect_one "<td class=.insuper.></td>"
+cat $ROUND1_TMP | grep Felton | expect_one "<td class=.insuper_column.></td>"
 
 rm $ROUND1_TMP
 
@@ -176,27 +176,27 @@ cat $ROUND6_TMP | expect_count '<tr ' 4
 
 cat $ROUND6_TMP | expect_one Asher
 cat $ROUND6_TMP | grep Asher | expect_one "<div class=.inround.>T1</div>"
-cat $ROUND6_TMP | grep Asher | expect_one "<td class=.ingroup.>T1</td>"
+cat $ROUND6_TMP | grep Asher | expect_one "<td class=.ingroup_column.>T1</td>"
 cat $ROUND6_TMP | grep Asher | expect_one "<div class=.insuper.>T1</div>"
-cat $ROUND6_TMP | grep Asher | expect_one "<td class=.insuper.>T1</td>"
+cat $ROUND6_TMP | grep Asher | expect_one "<td class=.insuper_column.>T1</td>"
 
 cat $ROUND6_TMP | expect_one Jesse
 cat $ROUND6_TMP | grep Jesse | expect_one "<div class=.inround.>T1</div>"
-cat $ROUND6_TMP | grep Jesse | expect_one "<td class=.ingroup.>T1</td>"
+cat $ROUND6_TMP | grep Jesse | expect_one "<td class=.ingroup_column.>T1</td>"
 cat $ROUND6_TMP | grep Jesse | expect_one "<div class=.insuper.>T1</div>"
-cat $ROUND6_TMP | grep Jesse | expect_one "<td class=.insuper.>T1</td>"
+cat $ROUND6_TMP | grep Jesse | expect_one "<td class=.insuper_column.>T1</td>"
 
 cat $ROUND6_TMP | expect_one Carroll
 cat $ROUND6_TMP | grep Carroll | expect_one "<div class=.inround.>T3</div>"
-cat $ROUND6_TMP | grep Carroll | expect_one "<td class=.ingroup.>T3</td>"
+cat $ROUND6_TMP | grep Carroll | expect_one "<td class=.ingroup_column.>T3</td>"
 cat $ROUND6_TMP | grep Carroll | expect_one "<div class=.insuper.>T3</div>"
-cat $ROUND6_TMP | grep Carroll | expect_one "<td class=.insuper.>T3</td>"
+cat $ROUND6_TMP | grep Carroll | expect_one "<td class=.insuper_column.>T3</td>"
 
 cat $ROUND6_TMP | expect_one Derick
 cat $ROUND6_TMP | grep Derick | expect_one "<div class=.inround.>T3</div>"
-cat $ROUND6_TMP | grep Derick | expect_one "<td class=.ingroup.>T3</td>"
+cat $ROUND6_TMP | grep Derick | expect_one "<td class=.ingroup_column.>T3</td>"
 cat $ROUND6_TMP | grep Derick | expect_one "<div class=.insuper.>T3</div>"
-cat $ROUND6_TMP | grep Derick | expect_one "<td class=.insuper.>T3</td>"
+cat $ROUND6_TMP | grep Derick | expect_one "<td class=.insuper_column.>T3</td>"
 
 rm $ROUND6_TMP
 

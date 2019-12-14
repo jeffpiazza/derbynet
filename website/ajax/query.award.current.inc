@@ -46,14 +46,14 @@ if (count($keys) >= 2) {
     list($finishers, $standings) = compute_all_standings($result_summary);
     if (count($keys) == 4) {
       $rankid = $keys[3];
-      $by_rank = $finishers['r'.$rankid];
+      $by_rank = $finishers[standings_key_subgroup($rankid)];
       $racerid = $by_rank[$place - 1][$place_index];
       $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
                                     array(':rankid' => $rankid));
       $awardname = nth_fastest($place, $rankname);
     } else if (count($keys) == 3) {
       $classid = $keys[2];
-      $by_class = $finishers['c'.$classid];
+      $by_class = $finishers[standings_key_class($classid)];
       $racerid = intval($by_class[$place - 1][$place_index]);
       $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                      array(':classid' => $classid));

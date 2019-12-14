@@ -33,12 +33,10 @@ $(function () {
     $("tr").not(".headers").addClass('hidden');
 
     $("#view-selector").on("change", function(event) {
-        standings_select_on_change($(this).find("option:selected"),
-                                   <?php echo json_encode(supergroup_label()); ?>);
+        standings_select_on_change($(this).find("option:selected"));
       });
 
-    standings_select_on_change($("#view-selector").find("option:selected"),
-                               <?php echo json_encode(supergroup_label()); ?>);
+    standings_select_on_change($("#view-selector").find("option:selected"));
 });
 </script>
 <title>Standings</title>
@@ -82,23 +80,10 @@ if (read_raceinfo_boolean('use-points')) {
 <?php
 
 foreach (standings_catalog() as $entry) {
-  if ($entry['kind'] == 'supergroup') {
-    echo "<option selected=\"selected\">"
+  echo '<option data-catalog-entry="'
+      .htmlspecialchars(json_encode($entry), ENT_QUOTES, 'UTF-8').'">'
          .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
          ."</option>\n";
-  } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
-    echo '<option data-roundid="'.$entry['roundid'].'">'
-          .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
-          .'</option>'."\n";
-  } else if ($entry['kind'] == 'rank') {
-    echo '<option data-roundid="'.$entry['roundid'].'" data-rankid="'.$entry['rankid'].'">';
-    echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
-    echo "</option>\n";
-  } else if ($entry['kind'] == 'agg-class') {
-    echo '<option data-aggregate="'.$entry['classid'].'">'
-        .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
-        .'</option>'."\n";
-  }
 }
     ?>
 </select>

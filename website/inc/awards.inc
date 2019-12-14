@@ -138,7 +138,7 @@ function add_speed_awards(&$awards) {
     $ntrophies = $agg_class['ntrophies'];
     if ($ntrophies < 0) $ntrophies = $n_den_trophies;
     add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
-                    $agg_class['class'], $finishers['c'.$agg_class['classid']]);
+                    $agg_class['class'], $finishers[standings_key_class($agg_class['classid'])]);
   }
 
   $classid = -1;
@@ -153,13 +153,13 @@ function add_speed_awards(&$awards) {
       $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
       $rank_within_den = 0;
       add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'],
-                      $finishers['c'.$classid]);
+                      $finishers[standings_key_class($classid)]);
     }
 
     ++$rank_within_den;
     $bias_for_rank = $bias_for_den + $n_den_trophies + $rank_within_den * $reserved_per_rank;
     add_speed_group($n_rank_trophies, $bias_for_rank, null, $r, $rank['rank'],
-                    $finishers['r'.$r]);
+                    $finishers[standings_key_subgroup($r)]);
   }
 
   return $reserved_overall;

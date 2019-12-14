@@ -38,7 +38,7 @@ function AddStandings(callable $choose, $entry, $title) {
   $sheet = array();
   $sheet[] = array('Standings for '.$entry['name']);
   export_standings(function($row) use (&$sheet) { $sheet[] = $row; },
-                   $choose, $entry['key'], $result_summary, $parallel);
+                   $choose, $entry, $result_summary, $parallel);
   $workbook[] = array($title, $sheet);
 }
 
@@ -58,7 +58,7 @@ foreach (standings_catalog() as $entry) {
     AddStandings(function(&$row, &$p) use (&$entry) {
         return $entry['roundid'] == $row['roundid']; },
       $entry, $name);
-  } else if ($entry['kind'] == 'rank') {
+  } else if ($entry['kind'] == 'rank' || $entry['kind'] == 'rank-round') {
     AddStandings(function(&$row, &$p) use (&$entry) {
         return $entry['roundid'] == $row['roundid'] &&
                $entry['rankid'] == $row['rankid']; },
