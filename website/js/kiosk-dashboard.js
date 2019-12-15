@@ -323,9 +323,7 @@ $(function () {
            {type: 'POST',
             data: {
               action: 'standings.reveal',
-              'catalog-entry': selection.attr('data-catalog-entry'),
-              roundid: selection.attr('data-roundid'),
-              rankid: selection.attr('data-rankid'),
+              'catalog-entry': selection.attr('data-catalog-entry')
             },
             success: function(data) {
               process_standings_reveal_result(data);

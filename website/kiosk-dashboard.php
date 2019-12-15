@@ -34,9 +34,11 @@ require_permission(PRESENT_AWARDS_PERMISSION);
       <?php
         // This <select> elements lets the operator choose what standings should be displayed on
         // kiosks displaying standings.
-        $current = read_raceinfo('standings-message', '');
-        list($current_roundid, $current_rankid, $current_exposed) =
-            array_pad(explode('-', $current), 3, '');
+        $standings_state =  explode('-', read_raceinfo('standings-message'), 2);
+        if (count($standigs_state) < 2) {
+        }
+        $current_exposed = $standings_state[0];
+        $current_catalog_entry = $standings_state[1];
 
         if ($current_exposed === '') {
           $current_exposed = 'all';
@@ -46,31 +48,18 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 
         $use_subgroups = read_raceinfo_boolean('use-subgroups');
 
-        $sel = ' selected="selected"';
-        if ($current == '') {
-          echo '<option '.$sel.' disabled="1">Please choose what standings to display</option>';
+        if ($current_catalog_entry == '') {
+          echo '<option selected="selected" disabled="1">Please choose what standings to display</option>';
         }
     {
       foreach (standings_catalog() as $entry) {
-        // TODO catalog entry subsumes the other attributes.
-        // TODO Test for "currently selected" based on kind+key
-        echo '<option data-catalog-entry="'.htmlspecialchars(json_encode($entry), ENT_QUOTES, 'UTF-8').'" ';
-        if ($entry['kind'] == 'supergroup') {
-          echo 'data-roundid=""'.(($current != '' && $current_roundid == '') ? $sel : '').'>';
-          echo supergroup_label();
-        } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
-          echo 'data-roundid="'.$entry['roundid'].'" data-rankid=""'
-              .($current_roundid == $entry['roundid'] && $current_rankid == '' ? $sel : '').'>';
-          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
-        } else if ($entry['kind'] == 'rank') {
-          echo 'data-roundid="'.$entry['roundid'].'" data-rankid="'.$entry['rankid'].'"'
-              .($current_roundid == $entry['roundid'] && $current_rankid == $entry['rankid'] ? $sel : '').'>';
-          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
-        } else if ($entry['kind'] == 'agg-class') {
-          // TODO !!!
-          echo "disabled='1'>";
-          echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
+        $json_entry = json_encode($entry);
+        echo '<option data-catalog-entry="'.htmlspecialchars($json_entry, ENT_QUOTES, 'UTF-8').'"';
+        if ($current_catalog_entry == $json_entry) {
+          echo ' selected="selected"';
         }
+        echo '>';
+        echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
         echo "</option>\n";
       }
     }
@@ -78,7 +67,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
     </select>
   </div>
   <div class="reveal block_buttons">
-        <h3 <?php if ($current == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
+        <h3 <?php if ($standings_state == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
     <input type="button" data-enhanced="true" value="Reveal One" onclick="handle_reveal1()"/><br/>
     <input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
   </div>

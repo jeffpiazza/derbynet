@@ -1,11 +1,5 @@
 <?php
 
-/////////////// TODO Obsolete:
-// $_POST['roundid'] unset for "no change"
-// $_POST['roundid']: set but empty for pack standings
-//
-// $_POST['rankid'] if roundid is present: either empty or a rankid for standings within a rank.
-/////////////// Obsolete
 // $_POST['catalog-entry'] unset for "no change"
 // $_POST['catalog-entry'] JSON string for a new standings_catalog entry
 //
