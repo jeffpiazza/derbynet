@@ -1,15 +1,9 @@
 <?php
-
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/action-helpers.inc');
-require_once('print/docs/racer/printable_racer_document.inc');
+require_once('print/inc/printable_racer_document.inc');
 require_once('fpdf/ext/combined.php');
-require_once('print/inc/load_document_files.inc');
-
-load_document_files_from(dirname(__FILE__)
-                         . DIRECTORY_SEPARATOR . 'docs'
-                         . DIRECTORY_SEPARATOR . 'racer');
 
 // $_GET['options']
 // $_GET['car_nos']
@@ -38,7 +32,6 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
     }
   }
 } else {
-
   $doc = new_document();
 
   if (isset($_GET['options'])) {
@@ -122,5 +115,4 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
 
   $doc->Output();
 }
-
 ?>

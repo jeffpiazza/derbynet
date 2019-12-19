@@ -6,18 +6,9 @@ require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 require_once('inc/photo-config.inc');
 
-require_once('print/docs/racer/printable_racer_document.inc');
-require_once('print/docs/award/printable_award_document.inc');
-
-require_once('print/inc/load_document_files.inc');
-load_document_files_from(dirname(__FILE__)
-                         . DIRECTORY_SEPARATOR . 'print'
-                         . DIRECTORY_SEPARATOR . 'docs'
-                         . DIRECTORY_SEPARATOR . 'racer');
-load_document_files_from(dirname(__FILE__)
-                         . DIRECTORY_SEPARATOR . 'print'
-                         . DIRECTORY_SEPARATOR . 'docs'
-                         . DIRECTORY_SEPARATOR . 'award');
+require_once('print/inc/printable_racer_document.inc');
+require_once('print/inc/printable_award_document.inc');
+// require_once('print/inc/printable_summary_document.inc');
 
 // TODO Printables should really have their own permission, but we need a
 // migration path for updating existing user config files.

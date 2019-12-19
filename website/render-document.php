@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Usage e.g. /derbynet/print.php/racer/car-tags
+// Usage e.g. /derbynet/print.php/racer/CarTagsDocument
 
 //  ["DOCUMENT_URI"]=> "/derbynet/pack153/2019/render-document.php/racer/CarTagsDocument"
 //  ["SCRIPT_NAME"]=> "/derbynet/pack153/2019/render-document.php"
@@ -40,5 +40,5 @@ function new_document() {
   return new $doc_class;
 }
 
-require_once('print/'.$inc.'.inc');
+require_once('print/render/'.$inc.'.inc');
 ?>
