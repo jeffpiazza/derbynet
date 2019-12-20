@@ -1,6 +1,6 @@
 Package: derbynet-extras
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 4.0-@BUILD@
+Version: 5.0-@BUILD@
 Priority: optional
 Architecture: all
 Replaces: derbynet (<= 3.0-1)

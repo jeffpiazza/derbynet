@@ -397,9 +397,13 @@
                  generated-version.inc,
                  generated-build-date.inc,
                  release-series, generated-commit-hash.inc">
+    <mkdir dir="RESOURCES"/>
+    <copy file="installer/mac/README.html" todir="RESOURCES"/>
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>
+        <arg value="--resources"/>
+        <arg value="RESOURCES"/>
         <arg value="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.pkg"/>
     </exec>
     <delete file="derbynet.docs.pkg"/>
@@ -407,6 +411,7 @@
     <delete file="derbynet.replay.pkg"/>
     <delete file="derbynet.timer.pkg"/>
     <delete file="derbynet.website.pkg"/>
+    <delete dir="RESOURCES"/>
 </target>
 
 <target name="unpack-uniserver" if="is_windows"
