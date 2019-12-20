@@ -40,5 +40,18 @@ function new_document() {
   return new $doc_class;
 }
 
+// Use windows-1252 encodings in the PDF to display correctly
+function convert($s) {
+  return iconv('UTF-8', 'windows-1252', $s);
+}
+
+function convert_strings(&$row) {
+  foreach ($row as $key => $value) {
+    if (is_string($value)) {
+      $row[$key] = iconv('UTF-8', 'windows-1252', $value);
+    }
+  }
+}
+
 require_once('print/render/'.$inc.'.inc');
 ?>

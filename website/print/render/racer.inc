@@ -11,14 +11,6 @@ require_once('fpdf/ext/combined.php');
 // $_GET['ids']
 // $_GET['where']
 
-function convert_strings(&$racer) {
-  foreach ($racer as $key => $value) {
-    if (is_string($value)) {
-      $racer[$key] = iconv('UTF-8', 'windows-1252', $value);
-    }
-  }
-}
-
 if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
   echo "<p>Not ".document_class()."</p>\n";
   /*

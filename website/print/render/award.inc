@@ -6,14 +6,6 @@ require_once('inc/action-helpers.inc');
 require_once('print/inc/printable_award_document.inc');
 require_once('fpdf/ext/combined.php');
 
-// TODO Share with racer.inc
-function convert_strings(&$racer) {
-  foreach ($racer as $key => $value) {
-    if (is_string($value)) {
-      $racer[$key] = iconv('UTF-8', 'windows-1252', $value);
-    }
-  }
-}
 
 if (!is_subclass_of(document_class(), 'PrintableAwardDocument')) {
   echo "<p>Not ".document_class()."</p>\n";

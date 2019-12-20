@@ -8,7 +8,7 @@ require_once('inc/photo-config.inc');
 
 require_once('print/inc/printable_racer_document.inc');
 require_once('print/inc/printable_award_document.inc');
-// require_once('print/inc/printable_summary_document.inc');
+require_once('print/inc/printable_summary_document.inc');
 
 // TODO Printables should really have their own permission, but we need a
 // migration path for updating existing user config files.
@@ -25,6 +25,11 @@ foreach (get_declared_classes() as $c) {
   if (is_subclass_of($c, 'PrintableAwardDocument') && !(new ReflectionClass($c))->isAbstract()) {
     $doc = new $c();
     $doc_classes[$c] = array('type' => 'award',
+                             'options' => $doc->get_available_options());
+  }
+  if (is_subclass_of($c, 'PrintableSummaryDocument') && !(new ReflectionClass($c))->isAbstract()) {
+    $doc = new $c();
+    $doc_classes[$c] = array('type' => 'summary',
                              'options' => $doc->get_available_options());
   }
 }
@@ -135,7 +140,9 @@ foreach ($doc_classes as $c => $details) {
     </div>
 
     <div id="sortorder-awards-div">
+    </div>
 
+    <div id="sortorder-summary-div">
     </div>
 
     <input type="button" data-enhanced="true" value="Select All" onclick="select_all(true)"/>
@@ -151,6 +158,9 @@ foreach ($doc_classes as $c => $details) {
       <table></table>
     </div>
     <div id="subject-awards" class="block_buttons hidden">
+      <table></table>
+    </div>
+    <div id="subject-summary" class="block_buttons hidden">
       <table></table>
     </div>
   </div>

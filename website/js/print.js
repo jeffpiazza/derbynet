@@ -13,6 +13,9 @@ function print_selected() {
     $("input[data-awardid]:checked").each(function(index, checkbox) {
       ids.push($(checkbox).attr('data-awardid'));
     });
+  } else if (doc_class_details['type'] == 'summary') {
+    // ids aren't meaningful for this, but we need at least one.
+    ids = [0];
   }
   if (ids.length == 0) {
     // Button should have been disabled anyway
@@ -42,13 +45,14 @@ function print_selected() {
 function update_print_button() {
   var doc_class = $("input[name='doc-class']:checked").val();
   var doc_class_details = doc_classes[doc_class];
-  var data_prop;
+  var enabled;
   if (doc_class_details['type'] == 'racer') {
-    data_prop = 'data-racerid';
+    enabled = $("input[data-racerid]:checked").length > 0;
   } else if (doc_class_details['type'] == 'award') {
-    data_prop = 'data-awardid';
+    enabled = $("input[data-awardid]:checked").length > 0;
+  } else if (doc_class_details['type'] == 'summary') {
+    enabled = true;
   }
-  var enabled = $("input[" + data_prop + "]:checked").length > 0;
   $("#print-selected").prop('disabled', !enabled);
 }
 
@@ -227,6 +231,9 @@ function select_all(checked) {
 function reveal_doc_specific_options() {
   $("div[data-docname]").addClass("hidden");
 
+  $("#subject-racers, #subject-awards, #subject-summary").addClass('hidden');
+  $("#sortorder-racers-div, #sortorder-awards-div, #sortorder-summary-div").addClass('hidden');
+  
   var doc_class = $("input[name='doc-class']:checked").val();
   var doc_class_details = doc_classes[doc_class];
   $("div[data-docname='" + doc_class + "']").removeClass("hidden");
@@ -234,11 +241,13 @@ function reveal_doc_specific_options() {
   // Switch between award/racer selections, depending on type of docclass
   if (doc_class_details['type'] == 'racer') {
     $("#subject-racers, #sortorder-racers-div").removeClass("hidden");
-    $("#subject-awards, #sortorder-awards-div").addClass("hidden");
   } else if (doc_class_details['type'] == 'award') {
-    $("#subject-racers, #sortorder-racers-div").addClass("hidden");
     $("#subject-awards, #sortorder-awards-div").removeClass("hidden");
+  } else if (doc_class_details['type'] == 'summary') {
+    $("#subject-summary, #sortorder-summary-div").removeClass("hidden");
   }
+  $("#page-controls").toggleClass('hidden', doc_class_details['type'] == 'summary');
+  update_print_button();
 }
 
 $(function() {
