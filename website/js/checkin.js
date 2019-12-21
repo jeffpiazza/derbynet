@@ -278,11 +278,17 @@ function bulk_eligibility() {
 }
 
 function disable_preview(msg) {
-  $("#preview").html('<h2>Webcam Disabled</h2>')
-    .append('<p></p>')
+  var preview = $("#preview").html('<h2>Webcam Disabled</h2>')
     .css({'border': '2px solid black',
           'background': '#d2d2d2'});
-  $("#preview p").text(msg).css({'font-size': '18px'});
+  $("<p></p>").text(msg).css({'font-size': '18px'}).appendTo(preview);
+
+  if (window.location.protocol == 'http:') {
+    var https_url = "https://" + window.location.hostname + window.location.pathname;
+    $("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>")
+      .css({'font-size': '18px'})
+      .appendTo(preview);
+  }
 }
 
 // In (some versions of) Safari, if Flash isn't enabled, the Webcam instance

@@ -109,7 +109,7 @@ function on_device_selection(selectq) {
 }
 
 $(function() {
-    if (window.MediaRecorder == undefined) {
+    if (typeof(window.MediaRecorder) == 'undefined') {
       $("#replay-setup").empty()
       .append("<h3 id='reject'>This browser does not support MediaRecorder.<br/>" +
               "Please use another browser for replay.</h3>")
@@ -117,9 +117,15 @@ $(function() {
       return;
     }
 
-    if (navigator.mediaDevices == undefined) {
-      // TODO This happens if we're not in a secure context
-      console.log('navigator.mediaDevice is undefined');
+    if (typeof(navigator.mediaDevices) == 'undefined') {
+      // This happens if we're not in a secure context
+      var setup = $("#replay-setup").empty()
+                .append("<h3 id='reject'>Access to cameras is blocked.</h3>");
+      if (window.location.protocol == 'http:') {
+        var https_url = "https://" + window.location.hostname + window.location.pathname;
+        setup.append("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>");
+      }
+      return;
     } else {
       navigator.mediaDevices.ondevicechange = function(event) {
         video_devices($("#device-picker :selected").prop('value'),
