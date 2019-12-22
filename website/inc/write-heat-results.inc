@@ -25,6 +25,9 @@ function write_heat_results() {
     // somewhere that can be presented on coordinator dashboard.
 
     $all_times = array();  // array of {resultid, lane, finishtime, finishplace} for scheduled lanes
+    $all_times_posted = true;
+    $all_places_posted = true;
+
     $stmt = $db->prepare('SELECT resultid, lane, finishtime, finishplace, completed FROM RaceChart'
                          .' WHERE roundid = :roundid AND heat = :heat'
                          .' ORDER BY lane');
@@ -33,7 +36,6 @@ function write_heat_results() {
 
     // For each scheduled lane, fetch existing results and overwrite new posted
     // results.
-    $all_places_present = true;
     foreach ($stmt as $row) {
       $lane = $row['lane'];
       $all_times[] = array('resultid' => $row['resultid'],
@@ -46,19 +48,26 @@ function write_heat_results() {
         $result = $_POST['lane'.$lane];
         if ($result == '') $result = 0.0;
         $all_times[count($all_times) - 1]['finishtime'] = $result;
+      } else {
+        $all_times_posted = false;
       }
       if (isset($_POST['place'.$lane])) {
         $all_times[count($all_times) - 1]['finishplace'] = $_POST['place'.$lane];
       } else {
-        $all_places_present = false;
+        $all_places_posted = false;
       }
     }
     $stmt->closeCursor();
 
-    if (!$all_places_present) {
+    if (!$all_places_posted && $all_times_posted) {
+      // Make up finish places based on finish times, if finish places weren't
+      // included in the post.  The $all_times_posted test is to avoid computing
+      // places if not all times were reported.
       usort($all_times, 'compare_by_finishtime');  // Now index gives finish place - 1
       for ($i = 0; $i < count($all_times); ++$i) {
-        $all_times[$i]['finishplace'] = 1 + $i;
+        if (isset($all_times[$i]['finishtime'])) {
+          $all_times[$i]['finishplace'] = 1 + $i;
+        }
       }
     }
 
