@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2018-10-13T08:50:47.669284579</meta:creation-date><meta:editing-duration>PT15H54M30S</meta:editing-duration><meta:editing-cycles>9</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2019-07-28T16:18:12.564874814</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="3" meta:paragraph-count="37" meta:word-count="880" meta:character-count="5510" meta:non-whitespace-character-count="4645"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2018-10-13T08:50:45.359480881"/></office:meta>
+ <office:meta><meta:creation-date>2018-10-13T08:50:47.669284579</meta:creation-date><meta:editing-duration>PT16H6M52S</meta:editing-duration><meta:editing-cycles>11</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2019-11-28T09:09:34.683525920</dc:date><meta:document-statistic meta:character-count="6016" meta:image-count="0" meta:non-whitespace-character-count="5090" meta:object-count="0" meta:page-count="3" meta:paragraph-count="39" meta:table-count="0" meta:word-count="939"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2018-10-13T08:50:45.359480881"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">36588</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">23952</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">27626</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">15655</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">25520</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">16226</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">21124</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">48743</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">16462</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">31988</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">36588</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">27624</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">52241</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">23952</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">25518</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">40176</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -96,7 +96,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">4727438</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">5116471</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -336,75 +336,99 @@
   <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:text-properties officeooo:rsid="0042ed20" officeooo:paragraph-rsid="0042ed20"/>
   </style:style>
-  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Heading_20_3">
+  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:text-properties officeooo:rsid="00245cea" officeooo:paragraph-rsid="00245cea"/>
   </style:style>
-  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Heading_20_3">
+  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0045528a" officeooo:paragraph-rsid="0045528a"/>
+  </style:style>
+  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0043c941" officeooo:paragraph-rsid="0042ed20"/>
+  </style:style>
+  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="0046515b"/>
+  </style:style>
+  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0048228e" officeooo:paragraph-rsid="0048228e"/>
+  </style:style>
+  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0046515b" officeooo:paragraph-rsid="0046515b"/>
+  </style:style>
+  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="004ad613" officeooo:paragraph-rsid="004ad613" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="004d3e53" officeooo:paragraph-rsid="004d3e53" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Heading_20_3">
+   <style:text-properties officeooo:rsid="00245cea" officeooo:paragraph-rsid="00245cea"/>
+  </style:style>
+  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Heading_20_3">
    <style:text-properties officeooo:rsid="0024e1c2" officeooo:paragraph-rsid="0024e1c2"/>
   </style:style>
-  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Heading_20_3">
+  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Heading_20_3">
    <style:text-properties officeooo:rsid="0024e1c2" officeooo:paragraph-rsid="0042ed20"/>
   </style:style>
-  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Footnote">
+  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Heading_20_3">
+   <style:text-properties officeooo:rsid="0046515b" officeooo:paragraph-rsid="0024e1c2"/>
+  </style:style>
+  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Heading_20_3">
+   <style:text-properties officeooo:rsid="0045528a" officeooo:paragraph-rsid="0042ed20"/>
+  </style:style>
+  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Footnote">
    <style:text-properties officeooo:rsid="0043c941" officeooo:paragraph-rsid="0043c941"/>
   </style:style>
-  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00205287" officeooo:paragraph-rsid="00205287"/>
   </style:style>
-  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="002106f3" officeooo:paragraph-rsid="002106f3"/>
   </style:style>
-  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P32" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0021678d" officeooo:paragraph-rsid="0021678d"/>
   </style:style>
-  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P33" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="00232f99" officeooo:paragraph-rsid="0043c941"/>
   </style:style>
-  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P34" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="002548c4" officeooo:paragraph-rsid="003b2633"/>
   </style:style>
-  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P35" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="002548c4" officeooo:paragraph-rsid="0049a14f"/>
+  </style:style>
+  <style:style style:name="P36" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0043b35f" officeooo:paragraph-rsid="0043b35f"/>
   </style:style>
-  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P37" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0043c941" officeooo:paragraph-rsid="0043c941"/>
   </style:style>
-  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties officeooo:rsid="002548c4" officeooo:paragraph-rsid="003b2633"/>
-  </style:style>
-  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P38" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="0044b9f0" officeooo:paragraph-rsid="0045528a"/>
   </style:style>
-  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+  <style:style style:name="P39" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0044b9f0" officeooo:paragraph-rsid="0049a14f"/>
+  </style:style>
+  <style:style style:name="P40" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="004ad613" officeooo:paragraph-rsid="004ad613" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P41" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="00245cea" officeooo:paragraph-rsid="00245cea"/>
+  </style:style>
+  <style:style style:name="P42" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="002483c9" officeooo:paragraph-rsid="002483c9"/>
+  </style:style>
+  <style:style style:name="P43" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="00205287" officeooo:paragraph-rsid="00205287"/>
   </style:style>
-  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Heading_20_3">
+  <style:style style:name="P44" style:family="paragraph" style:parent-style-name="Heading_20_3">
    <style:text-properties officeooo:rsid="00245cea" officeooo:paragraph-rsid="00245cea"/>
   </style:style>
-  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Heading_20_3">
-   <style:text-properties officeooo:rsid="0024e1c2" officeooo:paragraph-rsid="0024e1c2"/>
+  <style:style style:name="P45" style:family="paragraph" style:parent-style-name="Heading_20_3">
+   <style:text-properties officeooo:rsid="0046515b" officeooo:paragraph-rsid="0024e1c2"/>
   </style:style>
-  <style:style style:name="P32" style:family="paragraph" style:parent-style-name="Heading_20_3">
-   <style:text-properties officeooo:rsid="0024e1c2" officeooo:paragraph-rsid="0042ed20"/>
-  </style:style>
-  <style:style style:name="P33" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="00245cea" officeooo:paragraph-rsid="00245cea"/>
-  </style:style>
-  <style:style style:name="P34" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="002483c9" officeooo:paragraph-rsid="002483c9"/>
-  </style:style>
-  <style:style style:name="P35" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0045528a" officeooo:paragraph-rsid="0045528a"/>
-  </style:style>
-  <style:style style:name="P36" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0043c941" officeooo:paragraph-rsid="0042ed20"/>
-  </style:style>
-  <style:style style:name="P37" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:paragraph-rsid="0046515b"/>
-  </style:style>
-  <style:style style:name="P38" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0048228e" officeooo:paragraph-rsid="0048228e"/>
+  <style:style style:name="P46" style:family="paragraph" style:parent-style-name="Heading_20_3">
+   <style:text-properties officeooo:rsid="0045528a" officeooo:paragraph-rsid="0042ed20"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties fo:font-style="normal" style:font-style-asian="normal" style:font-style-complex="normal"/>
@@ -442,111 +466,16 @@
   <style:style style:name="T12" style:family="text">
    <style:text-properties officeooo:rsid="0046515b"/>
   </style:style>
+  <style:style style:name="T13" style:family="text">
+   <style:text-properties officeooo:rsid="0049a14f"/>
+  </style:style>
+  <style:style style:name="T14" style:family="text">
+   <style:text-properties officeooo:rsid="004ad613"/>
+  </style:style>
+  <style:style style:name="T15" style:family="text">
+   <style:text-properties officeooo:rsid="004c0f57"/>
+  </style:style>
   <text:list-style style:name="L1">
-   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-  </text:list-style>
-  <text:list-style style:name="L2">
-   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
-    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
-     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
-    </style:list-level-properties>
-   </text:list-level-style-number>
-  </text:list-style>
-  <text:list-style style:name="L3">
    <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
@@ -618,54 +547,56 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
-   <text:p text:style-name="P29">Webcams and Secure Contexts</text:p>
-   <text:p text:style-name="P20">Many browsers, most notably Google Chrome, now implement the “Secure Contexts” specification (<text:a xlink:type="simple" xlink:href="https://www.w3.org/TR/powerful-features/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.w3.org/TR/powerful-features/</text:a>). <text:s/>This specification requires that browsers block access to a webcam from<text:span text:style-name="T1"> web sites that are not secured by HTTPS. <text:s/>This can present a challenge to the use of webcams for photo capture in a typical LAN-based deployment of DerbyNet.</text:span></text:p>
+   <text:p text:style-name="P43">Webcams and Secure Contexts</text:p>
+   <text:p text:style-name="P30">Many browsers, most notably Google Chrome, now implement the “Secure Contexts” specification (<text:a xlink:type="simple" xlink:href="https://www.w3.org/TR/powerful-features/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.w3.org/TR/powerful-features/</text:a>). <text:s/>This specification requires that browsers block access to a webcam from<text:span text:style-name="T1"> web sites that are not secured by HTTPS. <text:s/>This can present a challenge to the use of webcams for photo capture in a typical LAN-based deployment of DerbyNet.</text:span></text:p>
    <text:h text:style-name="P6" text:outline-level="1">Background</text:h>
    <text:h text:style-name="P1" text:outline-level="2">What Is HTTPS?</text:h>
-   <text:p text:style-name="P20">HTTPS is a secure protocol for connecting to web sites. <text:s/>It requires that a web site prove its identity to the browser – when you visit your bank’s web site, you want to be sure it’s really your bank and not a fake web site trying to get your information. <text:s/>Proof of a web site’s identity is achieved by obtaining an “SSL certificate” for the site, usually by buying one from one of several <text:span text:style-name="T8">commercial Certificate Authorities</text:span>. <text:s/>Browsers are pre-configured with a list of trusted <text:span text:style-name="T8">certificate authorities</text:span>, and are able to conclusively test whether a certificate is valid. <text:s/><text:span text:style-name="T2">Many browsers mark the use of HTTPS by showing a small padlock or similar icon.</text:span></text:p>
+   <text:p text:style-name="P30">HTTPS is a secure protocol for connecting to web sites. <text:s/>It requires that a web site prove its identity to the browser – when you visit your bank’s web site, you want to be sure it’s really your bank and not a fake web site trying to get your information. <text:s/>Proof of a web site’s identity is achieved by <text:span text:style-name="T13">the site </text:span>obtaining an “SSL certificate,” usually by buying one from one of several <text:span text:style-name="T8">commercial Certificate Authorities</text:span>. <text:s/>Browsers are pre-configured with a list of trusted <text:span text:style-name="T8">certificate authorities</text:span>, and are able to conclusively test whether a <text:span text:style-name="T13">site has a valid</text:span> certificate. <text:s/><text:span text:style-name="T2">Many browsers mark the use of HTTPS by showing a small padlock or similar icon.</text:span></text:p>
    <text:h text:style-name="P2" text:outline-level="2">Secure Contexts</text:h>
-   <text:p text:style-name="P21">The Secure Contexts proposal suggests that browsers should prevent web sites from accessing your webcam (and other information) if the web site is not secured by HTTPS. <text:s/>It’s still just a proposal, so some browsers implement it and some do not. <text:s/>There’s an unresolved discussion whether an exception should be made when a browser connects to a web site hosted on the same machine (i.e., to localhost).</text:p>
+   <text:p text:style-name="P31">The Secure Contexts proposal suggests that browsers should prevent web sites from accessing your webcam (and other information) if the web site is not secured by HTTPS. <text:s/>It’s still just a proposal, so some browsers implement it and some do not. <text:s/>There’s an unresolved discussion whether an exception should be made when a browser connects to a web site hosted on the same machine (i.e., to localhost).</text:p>
    <text:h text:style-name="P2" text:outline-level="2">DerbyNet and Webcams</text:h>
-   <text:p text:style-name="P21">DerbyNet is most commonly deployed from a laptop on a local-area network (i.e., not on the public internet). <text:s/>The check-in page for DerbyNet supports the use of a webcam to capture racer and/or car photos as racers check in. <text:s/>Of course, this won’t be possible if the browser prevents access to the webcam from the check-in page.</text:p>
+   <text:p text:style-name="P31">DerbyNet is <text:span text:style-name="T13">frequently</text:span> deployed from a laptop on a local-area network (i.e., not on the public internet). <text:s/>The <text:span text:style-name="T13">replay kiosk uses a webcam to capture video of a heat; the </text:span>check-in page <text:span text:style-name="T13">s</text:span>upports the use of a webcam to capture racer and/or car photos as racers check in. <text:s/><text:span text:style-name="T13">Neither feature will</text:span> be <text:span text:style-name="T13">available</text:span> if the browser prevents access to the webcam.</text:p>
    <text:h text:style-name="P7" text:outline-level="1">Some Strategies</text:h>
-   <text:h text:style-name="P2" text:outline-level="2">Do You Need Webcam Access?</text:h>
-   <text:p text:style-name="P21">Some groups don’t bother trying to capture car or racer photos at check-in. <text:s/>If that describes your group, then this issue doesn’t affect you.</text:p>
    <text:h text:style-name="P2" text:outline-level="2">Try A Different Browser</text:h>
-   <text:p text:style-name="P21">As mentioned above, the Secure Contexts proposal is just a proposal, and browsers vary in their adherence to it. <text:s/>Google Chrome is probably the browser that most aggressively implements the proposal. <text:s/><text:span text:style-name="T3">(Given that the proposal originates with Google, that’s probably unsurprising.)</text:span></text:p>
-   <text:p text:style-name="P22">Some browsers implement Secure Contexts, but allow the user to declare a web site to be trustworthy even if it doesn’t use HTTPS.</text:p>
-   <text:p text:style-name="P26"><text:soft-page-break/>As of this writing (October, 2018), on Windows, the latest versions of Chrome and Opera block webcam access without HTTPS. <text:s/>Mozilla Firefox allows the user to choose to allow webcam access without HTTPS, although the permission isn’t persistent. <text:s/>Microsoft Edge allows full access to the webcam.</text:p>
-   <text:h text:style-name="P5" text:outline-level="2">Host DerbyNet On An Internet Server</text:h>
-   <text:p text:style-name="P24">If your event has reliable internet access, you have the option of hosting your DerbyNet server somewhere on the internet, on a web server that already supports HTTPS.</text:p>
-   <text:p text:style-name="P24"><text:span text:style-name="T8">If </text:span>you or your group already have a web site, <text:span text:style-name="T8">you could install DerbyNet there. <text:s/>If you don’t already have an SSL certificate for your site, Let’s Encrypt (</text:span><text:a xlink:type="simple" xlink:href="http://letsencrypt.org/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T8">http://letsencrypt.org</text:span></text:a><text:span text:style-name="T8">) can provide one at no charge.</text:span></text:p>
-   <text:p text:style-name="P28">Free hosting for DerbyNet is available at <text:a xlink:type="simple" xlink:href="https://www.jeffpiazza.org/derbynet/hosting/signup.php" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.jeffpiazza.org/derbynet/hosting/signup.php</text:a>.</text:p>
+   <text:p text:style-name="P31">As mentioned above, the Secure Contexts proposal is just a proposal, and browsers vary in their adherence to it. <text:s/>Google Chrome is probably the browser that most aggressively implements the proposal. <text:s/><text:span text:style-name="T3">(Given that the proposal originates with Google, that’s probably unsurprising.)</text:span></text:p>
+   <text:p text:style-name="P32">Some browsers implement Secure Contexts, but allow the user to declare a web site to be trustworthy even if it doesn’t use HTTPS.</text:p>
+   <text:p text:style-name="P37">As of this writing (October, 2018), on Windows, the latest versions of Chrome and Opera block webcam access without HTTPS. <text:s/>Mozilla Firefox allows the user to choose to allow webcam access without HTTPS, although the permission isn’t persistent. <text:s/>Microsoft Edge allows full access to the webcam.</text:p>
+   <text:h text:style-name="P5" text:outline-level="2"><text:soft-page-break/>Host DerbyNet On An Internet Server</text:h>
+   <text:p text:style-name="P34">If your event <text:span text:style-name="T14">venue </text:span>has reliable internet access, you have the option of hosting your DerbyNet server somewhere on the internet, on a web server that already supports HTTPS.</text:p>
+   <text:p text:style-name="P39">Free hosting for DerbyNet is available at <text:a xlink:type="simple" xlink:href="https://www.jeffpiazza.org/derbynet/hosting/signup.php" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.jeffpiazza.org/derbynet/hosting/signup.php</text:a>, <text:span text:style-name="T14">with full support for HTTPS.</text:span></text:p>
+   <text:p text:style-name="P35"><text:span text:style-name="T8">If </text:span>you or your group already have a web site, <text:span text:style-name="T8">you could install DerbyNet there. <text:s/>If you don’t already have an SSL certificate for your site, Let’s Encrypt (</text:span><text:a xlink:type="simple" xlink:href="http://letsencrypt.org/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T8">http://letsencrypt.org</text:span></text:a><text:span text:style-name="T8">) can provide one at no charge.</text:span></text:p>
    <text:h text:style-name="P3" text:outline-level="2">Capture Photos Outside the Browser</text:h>
-   <text:p text:style-name="P22">Secure Contexts just affects browsers, not the webcam itself. <text:s/>An alternative workflow might be to use a different application (i.e., not the browser) to capture photos, and then upload the photo(s) through the check-in page. <text:s/>(The check-in page supports “drag and drop” for photo uploading: open the photo capture dialog, then drag a photo onto it.)</text:p>
-   <text:p text:style-name="P22">DerbyNet also includes <text:span text:style-name="T4">scripts in the “extras” folder for doing automated photo capture, with barcode scanners used to identify the racers.</text:span></text:p>
+   <text:p text:style-name="P32">Secure Contexts just affects browsers, not the webcam itself. <text:s/>An alternative workflow <text:span text:style-name="T13">for capturing photos at check-in </text:span>might be to use a different application (i.e., not the browser) to capture photos, and then upload the photo(s) through the check-in page. <text:s/>(The check-in page supports “drag and drop” for photo uploading: open the photo capture dialog, then drag a photo onto it.)</text:p>
+   <text:p text:style-name="P32">DerbyNet also includes <text:span text:style-name="T4">scripts in the “extras” folder for doing automated photo capture, with barcode scanners used to identify the racers. <text:s/>(A video describing this system is available at </text:span><text:a xlink:type="simple" xlink:href="https://youtu.be/aR5vDUBemx4" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T4">https://youtu.be/aR5vDUBemx4</text:span></text:a><text:span text:style-name="T4">.)</text:span></text:p>
    <text:h text:style-name="P4" text:outline-level="2"><text:span text:style-name="T12">Use</text:span> a Self-Signed Certificate</text:h>
-   <text:p text:style-name="P23">While the usual practice for commercial web sites is to buy an SSL certificate from a vendor that’s trusted by the browser, it’s also possible to create your own SSL certificate, and install in the server. <text:s/><text:span text:style-name="T5">(A locally-produced certificate like this is said to be “self-signed.”)</text:span></text:p>
-   <text:p text:style-name="P23">Browsers will not initially trust this certificate, but usually <text:span text:style-name="T12">allow the user to choose</text:span> to accept <text:span text:style-name="T10">it</text:span>. <text:s/><text:span text:style-name="T12">Typically the browser will display a message saying like, “This Connection is Not Private.” <text:s/>It’s often necessary to click through to an “Advanced” or “Details” view in order to authorize accepting the certificate.</text:span></text:p>
-   <text:h text:style-name="P16" text:outline-level="3">Creating a Self-Signed Certificate on Windows<text:note text:id="ftn1" text:note-class="footnote"><text:note-citation>1</text:note-citation><text:note-body>
-      <text:p text:style-name="P19">Kudos to Carl Hunter for first noticing UniServer’s support for this.</text:p></text:note-body></text:note></text:h>
-   <text:p text:style-name="P38">The Apache web server included in the Windows installation of DerbyNet can be configured to use <text:s/>a self-signed certificate with just a few clicks.</text:p>
-   <text:list xml:id="list927158842" text:style-name="L1">
+   <text:p text:style-name="P33">While the usual practice for commercial web sites is to buy an SSL certificate from a vendor that’s trusted by the browser, it’s also possible to create your own SSL certificate, and install in the server. <text:s/><text:span text:style-name="T5">(A locally-produced certificate like this is said to be “self-signed.”)</text:span></text:p>
+   <text:p text:style-name="P33">Browsers will not initially trust this certificate, but usually <text:span text:style-name="T12">allow the user to choose</text:span> to accept <text:span text:style-name="T10">it</text:span>. <text:s/><text:span text:style-name="T12">Typically the browser will display a message saying something like, “This Connection is Not Private.” <text:s/>It’s often necessary to click through to an “Advanced” or “Details” view in order to authorize accepting the certificate.</text:span></text:p>
+   <text:p text:style-name="P40">Since user intervention is required for a self-signed certificate, it doesn’t actually matter what name the certificate attests to.</text:p>
+   <text:h text:style-name="P24" text:outline-level="3">Creating a Self-Signed Certificate on Windows<text:note text:id="ftn1" text:note-class="footnote"><text:note-citation>1</text:note-citation><text:note-body>
+      <text:p text:style-name="P29">Kudos to Carl Hunter for first noticing UniServer’s support for this.</text:p></text:note-body></text:note></text:h>
+   <text:p text:style-name="P20">The Apache web server included in the Windows installation of DerbyNet can be configured to use <text:s/>a self-signed certificate with just a few clicks.</text:p>
+   <text:list xml:id="list3813215912" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P33">In the UniController application in the UniServerZ folder, click on the Apache menu and select “Apache SSL &gt; Server Certificate and Key generator.” <text:s/>In the dialog that comes up, choose any names you like, and click “Generate.” <text:s/>A new self-signed certificate will be created, and SSL serving will be enabled for the Apache server.</text:p>
+     <text:p text:style-name="P41">In the UniController application in the UniServerZ folder, click on the Apache menu and select “Apache SSL &gt; Server Certificate and Key generator.” <text:s/>In the dialog that comes up, choose any names you like, and click “Generate.” <text:s/>A new self-signed certificate will be created, and SSL serving will be enabled for the Apache server.</text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P34">Again in the Apache menu, select “Change Apache Root-folders &gt; Select new Server Root-Folder (ssl)”. <text:s/>In the browser that appears, change the root folder from “ssl” to “www.”</text:p>
+     <text:p text:style-name="P42">Again in the Apache menu, select “Change Apache Root-folders &gt; Select new Server Root-Folder (ssl)”. <text:s/>In the browser that appears, change the root folder from “ssl” to “www.”</text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P34"><text:soft-page-break/>Stop the Apache server if it was running.</text:p>
+     <text:p text:style-name="P42"><text:soft-page-break/>Stop the Apache server if it was running.</text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P34">Start the Apache server.</text:p>
+     <text:p text:style-name="P42">Start the Apache server.</text:p>
     </text:list-item>
    </text:list>
-   <text:h text:style-name="P17" text:outline-level="3"><text:span text:style-name="T12">Using a Self-Signed Certificate on MacOS</text:span></text:h>
-   <text:p text:style-name="P37"><text:span text:style-name="T12">The MacOS installer for DerbyNet configures Apache with a self-signed certificate.</text:span></text:p>
-   <text:h text:style-name="P18" text:outline-level="3"><text:span text:style-name="T11">Using a Self-Signed Certificate on Debian/Raspbian</text:span></text:h>
-   <text:p text:style-name="P35">The <text:span text:style-name="T12">derbynet-server package</text:span> configures nginx <text:span text:style-name="T12">with a self-signed certificate from</text:span> <text:span text:style-name="T12">the ‘ssl-cert’ package.</text:span></text:p>
-   <text:p text:style-name="P36"/>
+   <text:h text:style-name="P27" text:outline-level="3">Using a Self-Signed Certificate on MacOS</text:h>
+   <text:p text:style-name="P21">The MacOS installer for DerbyNet configures Apache with a self-signed certificate.</text:p>
+   <text:h text:style-name="P28" text:outline-level="3">Using a Self-Signed Certificate on Debian/Raspbian</text:h>
+   <text:p text:style-name="P17">The <text:span text:style-name="T12">derbynet-server package</text:span> configures nginx <text:span text:style-name="T12">with a self-signed certificate from</text:span> <text:span text:style-name="T12">the ‘ssl-cert’ package.</text:span></text:p>
+   <text:p text:style-name="P22"/>
+   <text:p text:style-name="P23">[TODO – Confirm that certificate name doesn’t matter for self-signed certs.]</text:p>
+   <text:p text:style-name="P22">[TODO – Discuss zeroconf/bonjour, <text:span text:style-name="T15">including for Windows: https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux</text:span>.]</text:p>
+   <text:p text:style-name="P22">[TODO – What to do in the more common case where you aren’t bringing your own router, but instead using the venue’s Wi-Fi. <text:s/>Zeroconf should work, no?]</text:p>
   </office:text>
  </office:body>
 </office:document>
