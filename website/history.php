@@ -78,16 +78,20 @@ $bias = lane_bias_analysis();
 <h3>Lane Bias Analysis</h3>
 
   <div id="lane-bias">
-
+<?php
+  if (empty($bias)) {
+    echo "<p>There isn't enough evidence to assess lane bias.</p>";
+  } else {
+?>
     <p id="lane-bias-summary">
     <img id="lane-bias-triangle" src="img/triangle_east.png"/>
     &nbsp;
 <?php
-if ($bias['biased']) {
-  echo "<b>The track lanes appear to be biased, with 90% confidence.</b>";
-} else {
-  echo "There is no evidence of significant lane bias.";
-}
+    if ($bias['biased']) {
+      echo "<b>The track lanes appear to be biased, with 90% confidence.</b>";
+    } else {
+      echo "There is no evidence of significant lane bias.";
+    }
 ?>
     </p>
 
@@ -100,6 +104,7 @@ if ($bias['biased']) {
         echo "<p>Critical value for F statistic is ".sprintf("%5.3f", $bias['critical-value'])."</p>\n";
       ?>
 </div>
+<?php } ?>
 </div>
 
 <p>&nbsp;</p>

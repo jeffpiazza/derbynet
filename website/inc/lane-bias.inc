@@ -52,22 +52,26 @@ function lane_bias_analysis($emit_rows = false) {
     }
   }
 
-  if ($nn + $dnfs == 0) {
-    return array('biased' => false);
+  if ($nn + $dnfs == 0 || $nlanes <= 1 || $nn == $nlanes) {
+    return array();
+  } else {
+    $msbetween = $ssbetween / ($nlanes - 1);
+    $mswithin = $sswithin / ($nn - $nlanes);
+    if ($mswithin == 0) {
+      return array();
+    } else {
+      $f_stat = $msbetween / $mswithin;
+      $df1 = $nlanes - 1;
+      $df2 = $nn - $nlanes;
+      $f_critical = critical_f_value($df1, $df2);
+
+      return array('biased' => $f_stat > $f_critical,
+                   'f-statistic' => $f_stat,
+                   'df1' => $df1,
+                   'df2' => $df2,
+                   'critical-value' => $f_critical);
+    }
   }
-
-  $msbetween = $ssbetween / ($nlanes - 1);
-  $mswithin = $sswithin / ($nn - $nlanes);
-  $f_stat = $msbetween / $mswithin;
-  $df1 = $nlanes - 1;
-  $df2 = $nn - $nlanes;
-  $f_critical = critical_f_value($df1, $df2);
-
-  return array('biased' => $f_stat > $f_critical,
-               'f-statistic' => $f_stat,
-               'df1' => $df1,
-               'df2' => $df2,
-               'critical-value' => $f_critical);
 }
 
 ?>
