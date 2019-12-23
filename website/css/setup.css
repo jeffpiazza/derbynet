@@ -44,6 +44,7 @@
 
 #schema_step .upper {
   min-height: 42px;
+  height: 56px;
 }
 
 #schema_step .lower .step_button {
