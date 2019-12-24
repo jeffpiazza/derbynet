@@ -168,6 +168,10 @@ function inverted_constituents($with_supergroup = false) {
   $forward_map = array();
   $result = array();
 
+  if (schema_version() < 3) {
+    return;
+  }
+  
   if ($with_supergroup) {
     $supergroup_groups = supergroup_groups();
     if ($supergroup_groups !== false) {
