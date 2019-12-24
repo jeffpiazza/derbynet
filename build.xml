@@ -79,7 +79,7 @@
 
   <target name="generated" depends="banner, generated-version.inc,
                     generated-build-date.inc,
-                    release-series, generated-commit-hash.inc"
+                    release-series, generated-commit-hash.inc, quickref"
           description="Build generated files">
   </target>
 
@@ -151,8 +151,7 @@
           <propertyresource name="git-branch"/>
           <filterchain>
               <striplinebreaks/>
-              <replaceregex pattern="^v" replace="Version "/>
-              <replaceregex pattern="master" replace="Development"/>
+              <replaceregex pattern="master" replace="dev"/>
           </filterchain>
       </loadresource>
       <copy file="templates/banner.inc" tofile="website/inc/banner.inc" overwrite="true">
@@ -162,6 +161,10 @@
               </replacetokens>
           </filterchain>
       </copy>
+  </target>
+
+  <target name="quickref" depends="docs-dist">
+      <copy file="docs/dist/Quick Reference.pdf" tofile="website/quickref.pdf" overwrite="true"/>
   </target>
 
   <target name="timer-jar" depends="generated"

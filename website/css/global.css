@@ -33,9 +33,9 @@ body {
   right: 66px;
 }
 
-.banner .role {
+.banner .help {
   position: absolute;
-  right: 64px;
+  right: 70px;
   /* To achieve vertical centering
    (http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/)
   */
@@ -43,12 +43,12 @@ body {
   margin-bottom: auto;
   top: 0; bottom: 0;
   text-align: center;
- height: 40px;
+ height: 55px;
 }
 
-.banner .role,
-.banner .role a,
-.banner .role a:visited {
+.banner .help p {
+  font-size: 16px;
+  margin-top: -3px;
   color: #F7D117;
   text-shadow: none;
 }

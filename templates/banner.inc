@@ -13,13 +13,15 @@ function make_banner($banner_title, $back_button = 'index.php') {
   }
 
   if (isset($_SESSION['role']) && $_SESSION['role']) {
-    echo "<div class=\"role\">In ".$_SESSION['role']." role.<br/>";
-    echo "<a href=\"login.php?logout\">Log out</a></div>\n";
+    echo "<a href='quickref.pdf' target='derbynet_help' rel='noreferrer noopener'>";
+    echo "<div class=\"help\">";
+    echo "<img src=\"img/help.png\"/>";
+    echo "<p>@BRANCH@</p>";
+    echo "</div>";
+    echo "</a>\n";
   }
 
   echo "<img class=\"logo\" src=\"img/derbynet.png\"/>\n";
-  echo "</div>\n";  // class banner
-
-  echo "<div class=\"banner_version\">@BRANCH@</div>\n";
+  echo "</div>\n";
 }
 ?>

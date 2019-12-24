@@ -18,7 +18,8 @@
      <os family="windows"/>
    </condition>
 
-   <target name="dist" depends="installation, after-installation, operation, advanced-topics">
+   <target name="dist" depends="installation, after-installation, operation,
+                                advanced-topics, quickref">
    </target>
 
    <target name="make-dist-dir">
@@ -78,8 +79,11 @@
      <make-pdf file="Developers- Replay Messages.fodt"/>
  </target>
 
- <target name="clean"
-        description="clean up" >
+ <target name="quickref" depends="make-dist-dir">
+     <make-pdf file="Quick Reference.fodt"/>
+ </target>
+
+ <target name="clean" description="clean up" >
     <!-- Delete the ${dist} directory tree -->
     <delete dir="${dist}"/>
  </target>
