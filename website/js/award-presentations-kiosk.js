@@ -4,6 +4,14 @@ $(function() {
   KioskPoller.param_callback = function(parameters) {
     g_confetti = parameters.confetti;
   };
+
+  // Upon displaying an Awards Presentation page, clear any current award.
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'award.present',
+                 key: '',
+                 reveal: '0'}
+         });
 });
 
 var AwardPoller = {

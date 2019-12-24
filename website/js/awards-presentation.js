@@ -108,17 +108,29 @@ function initialize_award_controls() {
           success: function(data) {
             var award = parse_award(data);
             if (!award) {
-              return;
+              $("#rankname").text('');
+              award = {key: '',
+                       reveal: false,
+                       awardname: '',
+                       carnumber: '',
+                       carname: '',
+                       firstname: '',
+                       lastname: '',
+                       classname: '',
+                       subgroup: '',
+                       headphoto: '',
+                       carphoto: ''};
+            } else {
+              $(".presenter-inner").removeClass('hidden');
             }
             $("#awardname").text(award['awardname']);
             $("#recipient").text(award['firstname'] + ' ' + award['lastname']);
-            $("#carnumber").text('Car number ' + award['carnumber']);
+            $("#carnumber").text(award['carnumber'] ? 'Car number ' + award['carnumber'] : '');
             $("#carname").text(award['carname']);
             $("#classname").text(award['classname']);
             if (award['subgroup'] && award['subgroup'].length > 0) {
               $("#rankname").text(award['subgroup']);
             }
-            $(".presenter-inner").removeClass('hidden');
             $("#kiosk-summary").addClass('hidden');
             $("#reveal-checkbox").prop('checked', award['reveal']);
             g_changing_awards = true;
@@ -143,4 +155,5 @@ $(function () {
     AwardRadio.onchange(this); });
 
   initialize_award_controls();
+  setInterval(function() { initialize_award_controls(); }, 1000);
 });
