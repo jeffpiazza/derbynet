@@ -24,13 +24,17 @@ var fakeAjax = {
     return this._return_value;
   },
 
+  // A synchronous function, with no useful return value.
   expect: function(ex_config, ret_value) {
     this._expected_config = ex_config;
     this._return_value = ret_value;
+    // Calling fakeAjax._resolve resolves the Promise in _pending
+    // Calling fakeAjax._reject will reject the Promise in _pending.
     this._pending = new Promise(function(resolve, reject) {
       fakeAjax._resolve = resolve;
       fakeAjax._reject = reject;
     });
+    // The only way the _pending promise is rejected is if it times out.
     this._timeout_id = setTimeout(() => {
       fakeAjax._reject('fakeAjax timed out waiting for ' + JSON.stringify(ex_config));
     },
@@ -56,6 +60,13 @@ var fakeAjax = {
     });
   },
 
+  // actions: Callback to be invoked after the expectation has been set.
+  // expected_call: JSON representing the ajax call arguments
+  // return_value: XML that should be returned as the result of the ajax call.
+  //
+  // Returns a Promise that yields 'true' when the matching ajax call is made;
+  // no other outcomes possible except a timeout.  Waiting for the Promise
+  // amounts to waiting for a matching ajax call to occur.
   testForAjax: async function(actions, expected_call, return_value) {
     this.expect(expected_call, return_value);
     await actions();
