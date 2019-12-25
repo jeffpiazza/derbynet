@@ -12,7 +12,9 @@ if [ ! -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key" ] ; then
     openssl req -new -subj "/C=US/ST=-/O=-/localityName=-/CN=$SERVERNAME/"\
             -key "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key" \
             -out "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.csr"
-    openssl x509 -req -days 3650 \
+    # Per https://support.apple.com/en-us/HT210176, certificates need to be
+    # valid for 825 days or fewer.
+    openssl x509 -req -days 800 \
             -in "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.csr" \
             -signkey "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key" \
             -out "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.crt"
