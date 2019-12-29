@@ -73,6 +73,8 @@ if (@$_SESSION['role']) {
   <input type="hidden" name="name" id="name_for_password" value=""/>
   <p>Enter password:</p>
   <p><input type="password" name="pw" id="pw_for_password"/></p>
+  <p>&nbsp;</p>
+  <p>Don't remember setting a password?  Consult the documentation.</p>
   <input type="submit" value="Submit"/>
   <input type="button" value="Cancel"
       onclick='close_modal("#password_modal");'/>

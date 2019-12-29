@@ -181,6 +181,8 @@
                 <include name="usr/share/derbynet/autostart/derby-timer.desktop"/>
                 <include name="usr/share/derbynet/docs"/>
                 <include name="usr/share/derbynet/docs/Timer Operation.pdf"/>
+                <include name="usr/share/derbynet/scripts"/>
+                <include name="usr/share/derbynet/scripts/derby-timer.sh"/>
             </tarfileset>
             <!-- This second tarfileset sets executable permissions for these
                  files. -->
@@ -232,6 +234,7 @@
                  files. -->
             <tarfileset dir="${debian-root}" filemode="755">
                 <include name="usr/share/derbynet/scripts/**"/>
+                <exclude name="usr/share/derbynet/scripts/derby-timer.sh"/>
             </tarfileset>
         </tar>
 

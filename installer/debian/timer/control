@@ -4,7 +4,7 @@ Version: 5.0-@BUILD@
 Priority: optional
 Architecture: all
 Depends: jarwrapper
-Replaces: derbynet (<= 3.0-1), derbynet-extras (<= 3.0-1)
+Replaces: derbynet (<= 3.0-1), derbynet-extras (<= 5.0-962)
 Breaks: derbynet (<= 3.0-1)
 Enhances: derbynet-server
 Homepage: http://jeffpiazza.github.io/derbynet/
