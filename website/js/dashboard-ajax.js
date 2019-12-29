@@ -1,6 +1,13 @@
 // Common ajax-handling functions for dashboard-like pages.  Looks for <reload/>
 // elements to reload the page, and reports errors or failures via alerts.
 
+// safari seems to cache responses to ajax posts
+// this causes it to always requery
+// from https://www.mgcwebsites.co.uk/solved-jquery-ajax-request-not-working-iphones/
+$(document).ready(function(){
+	$.ajaxSetup({ cache: false }); // or iPhones don't get fresh data
+});
+
 g_action_url = "action.php";
 
 // This variable gets set to true when leaving a page; it should prevent errors from
