@@ -339,7 +339,6 @@ Dropzone.options.photoDrop = {
 
 function switch_camera_modal() {
   var i = 0;
-
   navigator.mediaDevices.enumerateDevices()
   .then(function(devices) {
     devices.forEach(function(device) {
@@ -395,7 +394,6 @@ function show_photo_modal(racerid, repo) {
   }
 
   var i = 0;
-
   navigator.mediaDevices.enumerateDevices()
   .then(function(devices) {
     devices.forEach(function(device) {
@@ -415,7 +413,7 @@ function show_photo_modal(racerid, repo) {
 	  crop_width: g_width,
 	  crop_height: g_height,
 	  constraints: {
-		  deviceId: g_cameras[g_cameraIndex]
+		  deviceId: {exact: g_cameras[g_cameraIndex]}
 	  }
   });
   Webcam.attach('#preview');
@@ -439,7 +437,7 @@ window.addEventListener('orientationchange', function() {
 	  crop_width: g_width,
 	  crop_height: g_height,
 	  constraints: {
-		  deviceId: g_cameras[g_cameraIndex]
+		  deviceId: {exact: g_cameras[g_cameraIndex]}
 	  }
   });
   Webcam.attach('#preview');
