@@ -5,6 +5,8 @@ $(function() {
     $.ajax("action.php",
            {type: 'GET',
             data: {query: 'poll.results'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               process_newresults(data);
             }

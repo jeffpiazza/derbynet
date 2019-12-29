@@ -105,6 +105,8 @@ function initialize_award_controls() {
   $.ajax(g_action_url,
          {type: 'GET',
           data: {query: 'award.current'},
+          cache: false,
+          headers: { "cache-control": "no-cache" },
           success: function(data) {
             var award = parse_award(data);
             if (!award) {

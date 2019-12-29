@@ -98,6 +98,8 @@ $(function() {
               data: {
                 query: 'standings.reveal'
               },
+              cache: false,
+              headers: { "cache-control": "no-cache" },
               dataType: "xml",
               success: function(data) {
                 var changed = false;

@@ -152,6 +152,8 @@ function handle_edit_racer() {
                  carname: new_carname,
                  rankid: new_rankid,
                  exclude: exclude},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
                 var warnings = data.getElementsByTagName('warning');
                 if (warnings && warnings.length > 0) {

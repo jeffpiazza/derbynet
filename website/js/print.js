@@ -173,6 +173,8 @@ function handle_sortorder_racers_change() {
          {type: 'GET',
           data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
+          cache: false,
+          headers: { "cache-control": "no-cache" },
           success: function(data) {
             process_racer_list(data);
           },
@@ -197,6 +199,8 @@ function poll() {
          {type: 'GET',
           data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
+          cache: false,
+          headers: { "cache-control": "no-cache" },
           success: function(data) {
             process_racer_list(data);
           },
@@ -205,6 +209,8 @@ function poll() {
          {type: 'GET',
           data: {query: "award.list",
                  adhoc: 1},
+          cache: false,
+          headers: { "cache-control": "no-cache" },
           success: function(data) {
             process_award_list(data);
           },

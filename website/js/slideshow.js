@@ -81,6 +81,8 @@ function mainphoto_onload(img) {
             data: {query: 'photo.next',
                    racerid: current_racer_id,
                    classids: classids && classids.length > 0 ? classids.join(',') : ''},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               var racers = data.getElementsByTagName("racer");
               if (racers.length > 0) {

@@ -25,6 +25,8 @@ function repopulate_chooser_modal(path) {
             // Disable the alert from dashboard-ajax.js that would show up for
             // "unable to list directory"
             global: false,
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
                 var root = data.getElementsByTagName("directory");
                 if (root.length == 0) {
@@ -124,6 +126,8 @@ function chooser_show_add_directory_modal(event) {
                {type: 'POST',
                 data: {action: 'file.directory.new.nodata',
                        directory: parent_path + $("#chooser_new_directory_name").val()},
+                cache: false,
+                headers: { "cache-control": "no-cache" },
                 success: function(data) {
                     var path = data.getElementsByTagName("path");
                     if (path.length > 0) {

@@ -5,6 +5,8 @@ function handle_login(role, pwd) {
             data: {action: 'login',
                    name: role,
                    password: pwd},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(/*PlainObject*/ response, /*String*/ textStatus, /*jqXHR*/ jqXHR) {
                 response = $(response);
 		        var succ = response.find("success");

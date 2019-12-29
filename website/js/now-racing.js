@@ -299,6 +299,8 @@ var Poller = {
                      roundid: roundid,
                      heat: heat,
                      'row-height': row_height},
+              cache: false,
+              headers: { "cache-control": "no-cache" },
               success: function(data) {
                 process_polling_result(data);
               },
