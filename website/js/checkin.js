@@ -307,7 +307,7 @@ function arm_webcam_dialog() {
     if (!loaded) {
       disable_preview('You may have to enable Flash, or give permission to use your webcam.');
     }
-  }, 2000);
+  }, 5000);
 }
 
 // For #photo_drop form:
@@ -338,6 +338,16 @@ Dropzone.options.photoDrop = {
 
 
 function switch_camera_modal() {
+  var i = 0;
+  navigator.mediaDevices.enumerateDevices()
+  .then(function(devices) {
+    devices.forEach(function(device) {
+      if( device.kind=== "videoinput") {
+        g_cameras[i]= device.deviceId;
+        i++;
+      }
+    });
+  });
   g_cameraIndex++;
   if ( g_cameraIndex >= g_cameras.length ) {
     g_cameraIndex = 0;
@@ -352,7 +362,7 @@ function switch_camera_modal() {
 	  crop_width: g_width,
 	  crop_height: g_height,
 	  constraints: {
-		  deviceId: g_cameras[g_cameraIndex]
+		  deviceId: {exact: g_cameras[g_cameraIndex]}
 	  }
   });
   Webcam.attach('#preview');
@@ -384,7 +394,6 @@ function show_photo_modal(racerid, repo) {
   }
 
   var i = 0;
-
   navigator.mediaDevices.enumerateDevices()
   .then(function(devices) {
     devices.forEach(function(device) {
@@ -404,7 +413,7 @@ function show_photo_modal(racerid, repo) {
 	  crop_width: g_width,
 	  crop_height: g_height,
 	  constraints: {
-		  deviceId: g_cameras[g_cameraIndex]
+		  deviceId: {exact: g_cameras[g_cameraIndex]}
 	  }
   });
   Webcam.attach('#preview');
@@ -428,7 +437,7 @@ window.addEventListener('orientationchange', function() {
 	  crop_width: g_width,
 	  crop_height: g_height,
 	  constraints: {
-		  deviceId: g_cameras[g_cameraIndex]
+		  deviceId: {exact: g_cameras[g_cameraIndex]}
 	  }
   });
   Webcam.attach('#preview');
