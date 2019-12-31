@@ -198,6 +198,8 @@ function cropPhoto() {
                    original_height: $('#work_image img').height(),
                    original_width: $('#work_image img').width()
                   },
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               var breaker = data.getElementsByTagName('cache_breaker');
               if (breaker) {
@@ -217,6 +219,8 @@ function rotatePhoto(angle) {
                  repo: photo_data.repo,
                  image_name: photo_data.basename,
                  rotation: angle},
+          cache: false,
+          headers: { "cache-control": "no-cache" },
           success: function(data) {
             var breaker = data.getElementsByTagName('cache_breaker');
             if (breaker) {

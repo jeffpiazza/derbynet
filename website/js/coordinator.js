@@ -94,6 +94,8 @@ function handle_isracing_change(event, scripted) {
                {type: 'POST',
                 data: {action: 'select-heat',
                        now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
+                cache: false,
+                headers: { "cache-control": "no-cache" },
                 success: function(data) { process_coordinator_poll_response(data); }
                });
     }
@@ -105,6 +107,8 @@ function handle_skip_heat_button() {
            {type: 'POST',
             data: {action: 'select-heat',
                    heat: 'next'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -114,6 +118,8 @@ function handle_previous_heat_button() {
            {type: 'POST',
             data: {action: 'select-heat',
                    heat: 'prev'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -164,6 +170,8 @@ function handle_manual_results_submit( ) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#manual_results_modal form").serialize(),
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -181,6 +189,8 @@ function handle_discard_results_button() {
             data: {action: 'result.delete',
                    roundid: 'current',
                    heat: 'current'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -214,6 +224,8 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
             data: {action: 'schedule.generate',
                    roundid: roundid,
                    n_times_per_lane: n_times_per_lane},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               process_coordinator_poll_response(data);
               if (then_race && data.getElementsByTagName('success').length > 0) {
@@ -238,6 +250,8 @@ function handle_race_button(roundid) {
                    roundid: roundid,
                    heat: 1,
                    now_racing: 1},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -251,6 +265,8 @@ function handle_unschedule_button(roundid, classname, round) {
                {type: 'POST',
                 data: {action: 'schedule.unschedule',
                        roundid: roundid},
+                cache: false,
+                headers: { "cache-control": "no-cache" },
                 success: function(data) { process_coordinator_poll_response(data); }
                });
         return false;
@@ -266,6 +282,8 @@ function handle_delete_round_button(roundid, classname, round) {
                {type: 'POST',
                 data: {action: 'roster.delete',
                        roundid: roundid},
+                cache: false,
+                headers: { "cache-control": "no-cache" },
                 success: function(data) { process_coordinator_poll_response(data); }
                });
         return false;
@@ -279,6 +297,8 @@ function handle_make_changes_button(roundid) {
                    roundid: roundid,
                    heat: 1,
                    now_racing: 0},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -297,6 +317,8 @@ function handle_purge_button(roundid, heats_run) {
             data: {action: 'database.purge',
                    purge: 'results',
                    roundid: roundid},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { coordinator_poll(); }
            });
       return false;
@@ -345,6 +367,8 @@ function handle_new_round_submit(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#new_round_modal form").serialize(),
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               process_coordinator_poll_response(data); }
            });
@@ -376,6 +400,8 @@ function handle_aggregate_submit() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#new_round_modal form").serialize(),
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -392,6 +418,8 @@ function handle_replay_settings_submit() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#replay_settings_modal form").serialize(),
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -402,6 +430,8 @@ function handle_master_next_up() {
             data: {action: 'select-heat',
                    heat: 'next-up',
                    now_racing: 0},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) { process_coordinator_poll_response(data); }
            });
 }
@@ -936,6 +966,8 @@ function coordinator_poll() {
     $.ajax(g_action_url,
            {type: 'GET',
             data: {query: 'poll.coordinator'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
                 process_coordinator_poll_response(data);

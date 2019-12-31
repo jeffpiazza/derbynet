@@ -25,6 +25,8 @@ var AwardPoller = {
     $.ajax('action.php',
            {type: 'GET',
             data: {query: 'award.current'},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               AwardPoller.queue_next_query();
               AwardPoller.process_current_award(data);

@@ -18,6 +18,8 @@ var KioskPoller = (function(KioskPoller) {
              {type: 'GET',
               data: {query: 'poll.kiosk',
                      address: address},
+              cache: false,
+              headers: { "cache-control": "no-cache" },
               success: function(data) {
                 cancel_ajax_failure();
                 $("#kiosk_name").text(data.documentElement.getAttribute("name"));

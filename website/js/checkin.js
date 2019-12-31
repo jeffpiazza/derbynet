@@ -152,6 +152,8 @@ function handle_edit_racer() {
                  carname: new_carname,
                  rankid: new_rankid,
                  exclude: exclude},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
                 var warnings = data.getElementsByTagName('warning');
                 if (warnings && warnings.length > 0) {
@@ -498,12 +500,13 @@ function take_snapshot(racerid, repo, photo_base_name) {
              {type: 'POST',
               data: form_data,
               cache: false,
+              headers: { "cache-control": "no-cache" },
               contentType: false,
               processData: false,
               success: function(data) {
                   var photo_url_element = data.getElementsByTagName('photo-url');
                   if (photo_url_element.length > 0) {
-                      $("#photo-" + racerid + " img[data-repo='" + repo + "'").attr(
+                      $("#photo-" + racerid + " img[data-repo='" + repo + "']").attr(
                           'src', photo_url_element[0].childNodes[0].nodeValue);
                   }
               }

@@ -196,6 +196,8 @@ function start_polling() {
                    since: g_update_status.last_update_time,
                    high_water_resultid: g_update_status.high_water_resultid,
                    merge_rounds: g_update_status.merge_rounds},
+            cache: false,
+            headers: { "cache-control": "no-cache" },
             success: function(data) {
               process_response_from_current(data);
             }
