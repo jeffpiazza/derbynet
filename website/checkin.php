@@ -269,7 +269,7 @@ foreach ($stmt as $rs) {
         <input type="submit" value="Capture Only" data-enhanced="true"
           onclick='g_check_in = false;'/>
         <input type="button" value="Switch Camera" data-enhanced="true"
-          onclick='switch_camera_modal();'/>
+          onclick='handle_switch_camera();'/>
         <input type="button" value="Cancel" data-enhanced="true"
           onclick='close_photo_modal();'/>
 

@@ -338,35 +338,45 @@ Dropzone.options.photoDrop = {
   },
 };
 
-
-function switch_camera_modal() {
-  var i = 0;
+// Re-writes the global g_cameras
+function enumerate_cameras() {
+  g_cameras = new Array();
   navigator.mediaDevices.enumerateDevices()
   .then(function(devices) {
     devices.forEach(function(device) {
-      if( device.kind=== "videoinput") {
-        g_cameras[i]= device.deviceId;
-        i++;
+      if (device.kind == "videoinput") {
+        g_cameras.push(device.deviceId);
       }
     });
   });
-  g_cameraIndex++;
-  if ( g_cameraIndex >= g_cameras.length ) {
-    g_cameraIndex = 0;
-  }
+}
 
-  Webcam.reset();
-  Webcam.set({
+function setup_webcam() {
+  var settings = {
 	  width: g_width,
 	  height: g_height,
 	  dest_width: g_width,
 	  dest_height: g_height,
 	  crop_width: g_width,
 	  crop_height: g_height,
-	  constraints: {
-		  deviceId: {exact: g_cameras[g_cameraIndex]}
-	  }
-  });
+  };
+  if (g_cameraIndex < g_cameras.length) {
+	settings['constraints'] = {
+	  deviceId: {exact: g_cameras[g_cameraIndex]}
+	};
+  }
+  Webcam.set(settings);
+}
+
+function handle_switch_camera() {
+  enumerate_cameras();
+  g_cameraIndex++;
+  if (g_cameraIndex >= g_cameras.length) {
+    g_cameraIndex = 0;
+  }
+
+  Webcam.reset();
+  setup_webcam();
   Webcam.attach('#preview');
 }
 
@@ -390,39 +400,20 @@ function show_photo_modal(racerid, repo) {
       return false;
   });
 
-  if( screen.width < screen.height ) {
+  if (screen.width < screen.height) {
     g_width = 480;
     g_height = 640;
   }
 
-  var i = 0;
-  navigator.mediaDevices.enumerateDevices()
-  .then(function(devices) {
-    devices.forEach(function(device) {
-      if( device.kind=== "videoinput") {
-        g_cameras[i]= device.deviceId;
-        i++;
-      }
-    });
-  });
+  enumerate_cameras();
 
   arm_webcam_dialog();
-  Webcam.set({
-	  width: g_width,
-	  height: g_height,
-	  dest_width: g_width,
-	  dest_height: g_height,
-	  crop_width: g_width,
-	  crop_height: g_height,
-	  constraints: {
-		  deviceId: {exact: g_cameras[g_cameraIndex]}
-	  }
-  });
+  setup_webcam();
   Webcam.attach('#preview');
 }
 
 window.addEventListener('orientationchange', function() {
-  if( screen.width < screen.height ) {
+  if (screen.width < screen.height) {
     g_width = 480;
     g_height = 640;
   } else {
@@ -431,17 +422,7 @@ window.addEventListener('orientationchange', function() {
   }
 
   Webcam.reset();
-  Webcam.set({
-	  width: g_width,
-	  height: g_height,
-	  dest_width: g_width,
-	  dest_height: g_height,
-	  crop_width: g_width,
-	  crop_height: g_height,
-	  constraints: {
-		  deviceId: {exact: g_cameras[g_cameraIndex]}
-	  }
-  });
+  setup_webcam();
   Webcam.attach('#preview');
 });
 
