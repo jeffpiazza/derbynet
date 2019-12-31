@@ -6,23 +6,43 @@ session_start();
 //  ["DOCUMENT_URI"]=> "/derbynet/pack153/2019/render-document.php/racer/CarTagsDocument"
 //  ["SCRIPT_NAME"]=> "/derbynet/pack153/2019/render-document.php"
 
-if (isset($_SERVER['DOCUMENT_URI']) && isset($_SERVER['SCRIPT_NAME']) &&
-    substr($_SERVER['DOCUMENT_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) == $_SERVER['SCRIPT_NAME']) {
-  $exploded = explode('/', substr($_SERVER['DOCUMENT_URI'], strlen($_SERVER['SCRIPT_NAME'])));
-} else {
-  if (isset($_SERVER['PATH_INFO'])) {
-    $path_info = $_SERVER['PATH_INFO'];
-  } else if (isset($_SERVER['ORIG_PATH_INFO'])) {
-    // Rewrite rules e.g. for hosted DerbyNet may leave ORIG_PATH_INFO instead of PATH_INFO
-    $path_info = $_SERVER['ORIG_PATH_INFO'];
-  } else {
-    echo "Debugging \$_SERVER:\n";
-    var_export($_SERVER);
-    exit(0);
+function confirm_args($str) {
+  $ex = explode('/', $str);
+  while (count($ex) > 0 && $ex[0] == '') {
+    array_shift($ex);
   }
-
-  $exploded = explode('/', $path_info);
+  if (count($ex) == 0) {
+    return false;
+  }
+  return file_exists(__DIR__.'/print/render/'.$ex[0].'.inc');
 }
+
+$have_args = false;
+
+if (!$have_args && isset($_SERVER['DOCUMENT_URI']) && isset($_SERVER['SCRIPT_NAME']) &&
+    substr($_SERVER['DOCUMENT_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) == $_SERVER['SCRIPT_NAME']) {
+  $args = substr($_SERVER['DOCUMENT_URI'], strlen($_SERVER['SCRIPT_NAME']));
+  $have_args = confirm_args($ags);
+}
+
+if (!$have_args && isset($_SERVER['PATH_INFO'])) {
+  $args = $_SERVER['PATH_INFO'];
+  $have_args = confirm_args($args);
+}
+
+if (!$have_args && isset($_SERVER['ORIG_PATH_INFO'])) {
+  // Rewrite rules e.g. for hosted DerbyNet may leave ORIG_PATH_INFO instead of PATH_INFO
+  $args = $_SERVER['ORIG_PATH_INFO'];
+  $have_args = confirm_args($args);
+}
+
+if (!$have_args) {
+  echo "Debugging \$_SERVER:\n";
+  var_export($_SERVER);
+  exit(0);
+}
+
+$exploded = explode('/', $args);
 
 while ($exploded[0] == '') {
   array_shift($exploded);
