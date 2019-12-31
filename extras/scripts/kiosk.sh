@@ -82,7 +82,9 @@ while [ $CONTACT_OK -eq 0 ]; do
 
 
 EOF
-    curl --connect-timeout 6 --location --silent "$DERBYNET_SERVER/index.php" > /dev/null && CONTACT_OK=1
+    curl --insecure --connect-timeout 6 --location --silent \
+         "$DERBYNET_SERVER/index.php" > /dev/null && \
+        CONTACT_OK=1
 done
 
 # While loop allows recovery from browser crashes
