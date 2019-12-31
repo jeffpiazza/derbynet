@@ -42,9 +42,13 @@ if ($last === false) {
 
 // Don't force http !
 $kiosk_url = '//'.substr($url, 0, $last + 1).'kiosk.php';
+if (isset($_REQUEST['address'])) {
+  $kiosk_url .= "?address=".$_REQUEST['address'];
+}
 ?>
 <link rel="stylesheet" type="text/css" href="css/replay.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/screenfull.min.js"></script>
 <script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
@@ -62,8 +66,6 @@ function poll_as_replay() {
     data: {action: 'replay-message',
            status: 0,
            'finished-replay': 0},
-    cache: false,
-    headers: { "cache-control": "no-cache" },
     success: function(data) {
       let msgs = data.getElementsByTagName('replay-message');
       for (let i = 0; i < msgs.length; ++i) {
@@ -196,8 +198,6 @@ function on_replay() {
                    data: form_data,
                    processData: false,
                    contentType: false,
-                   cache: false,
-                   headers: { "cache-control": "no-cache" },
                    success: function(data) {
                      console.log('ajax success');
                      console.log(data);

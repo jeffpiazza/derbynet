@@ -47,8 +47,6 @@ function render_directory_status_icon(photo_dir_selector) {
            {type: 'GET',
             data: {query: 'file.stat',
                    path: $(photo_dir_selector).val()},
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
                 var icon_span = $(photo_dir_selector + '_icon');
                 var msg_para = $(photo_dir_selector + '_message');
@@ -115,8 +113,6 @@ var PostSettingChange;
         $.ajax('action.php',
                {type: 'POST',
                 data: d,
-                cache: false,
-                headers: { "cache-control": "no-cache" },
                 success: function(data) {
                   var fail = data.documentElement.getElementsByTagName("failure");
                   if (fail && fail.length > 0) {

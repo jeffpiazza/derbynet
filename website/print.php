@@ -43,6 +43,7 @@ foreach (get_declared_classes() as $c) {
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/print.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/pseudo-mobile.js"></script>

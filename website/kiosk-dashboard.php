@@ -15,6 +15,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/kiosk-dashboard.css"/>
 <script type="text/javascript" src="js/mobile-init.js"></script>

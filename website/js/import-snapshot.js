@@ -6,8 +6,6 @@ function onFormSubmit(e) {
     type: "POST",
     data:  new FormData(this),
     contentType: false,
-    cache: false,
-    headers: { "cache-control": "no-cache" },
     processData:false,
     success: function(data) {
       var succ = data.documentElement.getElementsByTagName("success");

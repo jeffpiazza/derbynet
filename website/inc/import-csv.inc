@@ -7,6 +7,7 @@ function make_head_matter_for_import_page() {
     <?php require('inc/stylesheet.inc'); ?>
     <link rel="stylesheet" type="text/css" href="css/import-csv.css"/>
     <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/ajax-setup.js"></script>
     <script type="text/javascript" src="js/mobile-init.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>

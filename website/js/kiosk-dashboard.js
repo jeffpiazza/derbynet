@@ -5,8 +5,6 @@ function poll_kiosk_all() {
   $.ajax(g_action_url,
          {type: 'GET',
           data: {query: 'poll.kiosk.all'},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             setTimeout(poll_kiosk_all, 2000);
             generate_kiosk_control_group(parse_kiosk_pages(data),
@@ -270,8 +268,6 @@ function handle_assign_kiosk_page_change(sel) {
           data: {action: 'kiosk.assign',
                  address: sel.getAttribute('data-kiosk-address'),
                  page: sel.value},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             generate_kiosk_control_group(parse_kiosk_pages(data),
                                          parse_kiosks(data));
@@ -295,8 +291,6 @@ function handle_name_kiosk(address, name) {
           data: {action: 'kiosk.assign',
                  address: address,
                  name: name},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             generate_kiosk_control_group(parse_kiosk_pages(data),
                                          parse_kiosks(data));
@@ -331,8 +325,6 @@ $(function () {
               action: 'standings.reveal',
               'catalog-entry': selection.attr('data-catalog-entry')
             },
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               process_standings_reveal_result(data);
             }});
@@ -346,8 +338,6 @@ function handle_reveal1() {
             action: 'standings.reveal',
             expose: '+1'
             },
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             process_standings_reveal_result(data);
           }});
@@ -360,8 +350,6 @@ function handle_reveal_all() {
             action: 'standings.reveal',
             expose: 'all'
             },
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             process_standings_reveal_result(data);
           }});
@@ -433,8 +421,6 @@ function post_new_params(kiosk, new_params) {
           data: {action: 'kiosk.assign',
                  address: kiosk.address,
                  params: JSON.stringify(new_params)},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             generate_kiosk_control_group(parse_kiosk_pages(data),
                                          parse_kiosks(data));

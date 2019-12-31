@@ -13,6 +13,7 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>

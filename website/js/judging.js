@@ -26,8 +26,6 @@ function maybe_assign_award_winner(award_li, racer_div) {
                 data: {action: 'award.winner',
                        awardid: award_li.attr('data-awardid'),
                        racerid: racer_div.attr('data-racerid')},
-                cache: false,
-                headers: { "cache-control": "no-cache" },
                 success: function(data) {
                   update_awards(data);
                 }
@@ -57,8 +55,6 @@ function show_racer_awards_modal(judging_racer) {
     $.ajax('action.php',
            {type: 'POST',
             data:  $("#racer_awards_form").serialize(),
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               console.log("Response received: " + data);
               update_awards(data);
@@ -215,8 +211,6 @@ function handle_remove_recipient(imgxjq) {
           data: {action: 'award.winner',
                  awardid: imgxjq.closest("[data-awardid]").attr("data-awardid"),
                  racerid: 0},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             update_awards(data);
           }
@@ -300,8 +294,6 @@ $(function() {
   $.ajax('action.php',
          {type: 'GET',
           data: {query: 'award.list'},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             update_awards(data);
           }

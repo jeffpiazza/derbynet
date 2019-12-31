@@ -12,6 +12,7 @@ require_permission(SET_UP_PERMISSION);
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/import-snapshot.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/import-snapshot.js"></script>
 </head>
 <body>

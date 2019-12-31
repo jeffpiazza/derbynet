@@ -110,8 +110,6 @@ function handle_new_award() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $('#award_editor_form').serialize(),
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               update_awards(data);
             }
@@ -138,8 +136,6 @@ function handle_edit_award(list_item) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $('#award_editor_form').serialize(),
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               update_awards(data);
             }
@@ -155,8 +151,6 @@ function handle_delete_award() {
            {type: 'POST',
             data: {action: 'award.delete',
                    awardid: $('#award_editor_form input[name="awardid"]').val()},
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               update_awards(data);
             }
@@ -175,8 +169,6 @@ $(function() {
     $.ajax(g_action_url,
            {type: 'POST',
             data: data,
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               update_awards(data);
             }
@@ -188,8 +180,6 @@ $(function() {
          {type: 'GET',
           data: {query: 'award.list',
                  adhoc: '0'},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             update_awards(data);
           }

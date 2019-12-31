@@ -158,8 +158,6 @@ function handle_ezsetup_modal_submit() {
   $.ajax('action.php',
          {type: 'POST',
           data: serialized, // action = setup.nodata
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             report_success_xml(data);
           },
@@ -210,8 +208,6 @@ function handle_advanced_database_modal_submit() {
   $.ajax('action.php',
          {type: 'POST',
           data: serialized, // action = setup.nodata
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             report_success_xml(data);
           },
@@ -247,8 +243,6 @@ function confirm_purge(purge) {
            {type: 'POST',
             data: {action: 'database.purge',
                    purge: purge},
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               report_success_xml(data);
             },
@@ -274,8 +268,6 @@ function handle_initialize_schema() {
          {type: 'POST',
           data: {action: 'database.execute',
                  script: 'schema'},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             report_success_xml(data);
           },
@@ -299,8 +291,6 @@ function handle_update_schema() {
          {type: 'POST',
           data: {action: 'database.execute',
                  script: 'update-schema'},
-          cache: false,
-          headers: { "cache-control": "no-cache" },
           success: function(data) {
             report_success_xml(data);
           },

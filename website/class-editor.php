@@ -14,6 +14,7 @@ require_permission(SET_UP_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <link rel="stylesheet" type="text/css" href="css/class-editor.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>

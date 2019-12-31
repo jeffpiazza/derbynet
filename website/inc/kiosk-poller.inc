@@ -5,6 +5,7 @@
 require_once('inc/ajax-failure.inc');
 
 ?>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/kiosk-poller.js"></script>
 <script type="text/javascript">
 <?php

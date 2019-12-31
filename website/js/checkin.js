@@ -152,8 +152,6 @@ function handle_edit_racer() {
                  carname: new_carname,
                  rankid: new_rankid,
                  exclude: exclude},
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
                 var warnings = data.getElementsByTagName('warning');
                 if (warnings && warnings.length > 0) {
@@ -480,8 +478,6 @@ function take_snapshot(racerid, repo, photo_base_name) {
       $.ajax(g_action_url,
              {type: 'POST',
               data: form_data,
-              cache: false,
-              headers: { "cache-control": "no-cache" },
               contentType: false,
               processData: false,
               success: function(data) {

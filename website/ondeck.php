@@ -30,6 +30,7 @@ require_permission(VIEW_RACE_RESULTS_PERMISSION);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <?php if (isset($as_kiosk)) {
   require_once('inc/kiosk-poller.inc');

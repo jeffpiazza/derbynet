@@ -386,8 +386,6 @@ function uploadTableRowsFrom(row, action, parameter_names, failures) {
            {type: 'POST',
             data: params,
             global: false,  // Be sure that a failure doesn't present a modal alert
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(xmldoc) {
               var ok = xmldoc.documentElement.getElementsByTagName("success");
               if (ok && ok.length > 0) {

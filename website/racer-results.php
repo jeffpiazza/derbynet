@@ -17,6 +17,7 @@ $signatures = schedule_signature();
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <?php if (isset($as_kiosk)) {
   require_once('inc/kiosk-poller.inc');
   echo "<style type='text/css'>\n";

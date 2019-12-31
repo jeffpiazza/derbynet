@@ -11,6 +11,7 @@ require_permission(JUDGING_PERMISSION);
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Award Judging</title>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>

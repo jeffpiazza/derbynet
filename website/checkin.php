@@ -67,6 +67,7 @@ function column_header($text, $o) {
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript">
 var g_order = '<?php echo $order; ?>';

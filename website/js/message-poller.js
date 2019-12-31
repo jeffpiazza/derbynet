@@ -18,8 +18,6 @@ function MessagePoller(ms, recipient, on_message) {
            {type: 'POST',
             data: {action: 'message.retrieve',
                    recipient: recipient},
-            cache: false,
-            headers: { "cache-control": "no-cache" },
             success: function(data) {
               // console.log("retrieve_messages took " + ((new Date()).getTime() - start) + "ms.");
               let msgs = data.getElementsByTagName('message');
