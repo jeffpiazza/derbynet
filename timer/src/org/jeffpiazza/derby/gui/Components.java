@@ -40,6 +40,10 @@ public class Components extends javax.swing.JFrame {
     serialStatusLabel = new javax.swing.JLabel();
     serialIconStatusPanel = new javax.swing.JPanel();
     serialIconStatus = new javax.swing.JLabel();
+    jMenuBar1 = new javax.swing.JMenuBar();
+    fileMenu = new javax.swing.JMenu();
+    showLogFileMenuItem = new javax.swing.JMenuItem();
+    jMenu2 = new javax.swing.JMenu();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     getContentPane().setLayout(new java.awt.GridLayout(1, 2));
@@ -167,6 +171,18 @@ public class Components extends javax.swing.JFrame {
 
     getContentPane().add(serialPanel);
 
+    fileMenu.setText("File");
+
+    showLogFileMenuItem.setText("Show Log File");
+    fileMenu.add(showLogFileMenuItem);
+
+    jMenuBar1.add(fileMenu);
+
+    jMenu2.setText("Edit");
+    jMenuBar1.add(jMenu2);
+
+    setJMenuBar(jMenuBar1);
+
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
@@ -223,10 +239,13 @@ public class Components extends javax.swing.JFrame {
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   public javax.swing.JButton connectButton;
+  public javax.swing.JMenu fileMenu;
   public javax.swing.JLabel httpIconStatus;
   public javax.swing.JPanel httpIconStatusPanel;
   public javax.swing.JPanel httpPanel;
   public javax.swing.JLabel httpStatusLabel;
+  public javax.swing.JMenu jMenu2;
+  public javax.swing.JMenuBar jMenuBar1;
   public javax.swing.JPasswordField passwordField;
   public javax.swing.JLabel passwordLabel;
   public javax.swing.JList<SerialPortListElement> portList;
@@ -239,6 +258,7 @@ public class Components extends javax.swing.JFrame {
   public javax.swing.JPanel serialPanel;
   public javax.swing.JPanel serialPanelBody;
   public javax.swing.JLabel serialStatusLabel;
+  public javax.swing.JMenuItem showLogFileMenuItem;
   public javax.swing.JList<TimerClassListElement> timerClassList;
   public javax.swing.JScrollPane timerClassScrollPane;
   public javax.swing.JTextField urlField;

@@ -20,22 +20,23 @@ import org.jeffpiazza.derby.devices.TimerTask;
 // Command-line arguments may let us skip some of these steps.
 public class TimerGui {
   private Components components;
+  private Connector connector;
   private HttpTask.MessageTracer traceMessages;
   private HttpTask.MessageTracer traceHeartbeats;
-  private Connector connector;
+  private LogWriter logwriter;
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
 
   private TimerClassListController timerClassListController;
   private SerialPortListController portListController;
 
-  public TimerGui(HttpTask.MessageTracer traceMessages,
-                  HttpTask.MessageTracer traceHeartbeats,
-                  Connector connector) {
+  public TimerGui(Connector connector, HttpTask.MessageTracer traceMessages,
+                  HttpTask.MessageTracer traceHeartbeats, LogWriter logwriter) {
     this.components = new Components();
     this.connector = connector;
     this.traceMessages = traceMessages;
     this.traceHeartbeats = traceHeartbeats;
+    this.logwriter = logwriter;
     timerClassListController = new TimerClassListController(
         components.timerClassList);
     components.timerClassList.addListSelectionListener(timerClassListController);
@@ -63,6 +64,12 @@ public class TimerGui {
       @Override
       public void actionPerformed(ActionEvent e) {
         TimerGui.this.onScanButtonClick();
+      }
+    });
+    components.showLogFileMenuItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        logwriter.showLogFile();
       }
     });
 
@@ -187,11 +194,13 @@ public class TimerGui {
     } else // There's an existing roleFinder for the current URL, and the user
     // clicked "Connect."  If we're still waiting for the roles to
     // populate, then ignore the button, otherwise start a login request
-     if (rolesPopulated()) {
+    {
+      if (rolesPopulated()) {
         startHttpTask(roleFinder.getSession());
       } else {
         setHttpStatus("(Hold your horses)", black, icon_unknown);
       }
+    }
   }
 
   // Start a separate thread to contact the server and ask it for the available
@@ -263,7 +272,8 @@ public class TimerGui {
     portListController.markSerialPortWontOpen();
   }
 
-  public void updateTimerClasses(TimerTask timerTask, Class<? extends TimerDevice>[] timerClasses) {
+  public void updateTimerClasses(TimerTask timerTask,
+                                 Class<? extends TimerDevice>[] timerClasses) {
     timerClassListController.updateTimerClasses(timerTask, timerClasses);
   }
 

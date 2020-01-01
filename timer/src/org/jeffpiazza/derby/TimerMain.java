@@ -161,8 +161,8 @@ public class TimerMain {
       } else if (arg.equals("-reset-on-race-over")) {
         TheJudgeDevice.setResetOnRaceOver(true);
         ++consumed_args;
-      } else if (arg.equals("-delay-reset-after-race") ||
-                 arg.equals("-reset-delay-on-race-over")) {
+      } else if (arg.equals("-delay-reset-after-race")
+          || arg.equals("-reset-delay-on-race-over")) {
         long millis = 1000 * Integer.parseInt(args[consumed_args + 1]);
         NewBoldDevice.setPostRaceDisplayDurationMillis(millis);
         TimerDeviceCommon.setPostRaceDisplayDurationMillis(millis);
@@ -218,9 +218,9 @@ public class TimerMain {
     try {
       TimerGui timerGui = null;
       if (showGui) {
-        timerGui = startTimerGui(traceMessages, traceHeartbeats,
-                                 connector, base_url,
-                                 username, password, simulatedSession);
+        timerGui = startTimerGui(connector, base_url,
+                                 username, password, simulatedSession,
+                                 traceMessages, traceHeartbeats, logwriter);
       } else {
         final ClientSession clientSession
             = simulatedSession == null ? new ClientSession(base_url)
@@ -258,13 +258,15 @@ public class TimerMain {
     }
   }
 
-  private static TimerGui startTimerGui(HttpTask.MessageTracer traceMessages,
-                                        HttpTask.MessageTracer traceHeartbeats,
-                                        ConnectorImpl connector, String base_url,
+  private static TimerGui startTimerGui(ConnectorImpl connector, String base_url,
                                         String username, String password,
-                                        ClientSession simulatedSession) {
-    final TimerGui timerGui = new TimerGui(traceMessages, traceHeartbeats,
-                                           connector);
+                                        ClientSession simulatedSession,
+                                        HttpTask.MessageTracer traceMessages,
+                                        HttpTask.MessageTracer traceHeartbeats,
+                                        LogWriter logwriter) {
+    final TimerGui timerGui = new TimerGui(connector, traceMessages,
+                                           traceHeartbeats,
+                                           logwriter);
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         timerGui.show();

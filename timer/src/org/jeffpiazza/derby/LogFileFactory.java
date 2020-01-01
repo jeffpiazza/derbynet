@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby;
 
+import java.awt.Desktop;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -21,15 +22,18 @@ public class LogFileFactory {
     }
   }
 
-  public static PrintWriter makeLogFile() throws IOException {
+  public static LogWriter.FileAndPrintWriter makeLogFile() throws IOException {
     final String yyyymmdd_hhmm = (new SimpleDateFormat("yyyyMMdd-HHmm")).format(
         Calendar.getInstance().getTime());
+    File logFile;
+    PrintWriter writer;
     try {
-      return makeLogFile(new File(logFileDirectory,
+      writer = LogFileFactory.makeLogFile(logFile = new File(logFileDirectory,
                                   "timer-" + yyyymmdd_hhmm + ".log"));
     } catch (IOException ex) {
-      return makeLogFile(File.createTempFile("timer-", ".log"));
+      writer = LogFileFactory.makeLogFile(logFile = File.createTempFile("timer-", ".log"));
     }
+    return new LogWriter.FileAndPrintWriter(logFile, writer);
   }
 
   public static PrintWriter makeLogFile(File logfile) throws IOException {

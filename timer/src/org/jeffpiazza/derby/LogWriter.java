@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby;
 
+import java.awt.Desktop;
 import org.w3c.dom.Element;
 
 import java.io.*;
@@ -10,7 +11,15 @@ import org.jeffpiazza.derby.devices.SimulatedDevice;
 
 // TODO: Suppress heartbeats with uninteresting responses
 public class LogWriter implements HttpTask.MessageTracer {
-  private PrintWriter writer;
+  public static class FileAndPrintWriter {
+    public FileAndPrintWriter(File file, PrintWriter writer) {
+      this.file = file;
+      this.writer = writer;
+    }
+    public File file;
+    public PrintWriter writer;
+  }
+  private FileAndPrintWriter writer;
 
   public LogWriter() {
     try {
@@ -49,7 +58,7 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   public void serialPortLog(int direction, String msg) {
     if (writer != null) {
-      writer.println("+" + Timestamp.brief() + SERIAL_PORT_LOG + "\t\t" +
+      writer.writer.println("+" + Timestamp.brief() + SERIAL_PORT_LOG + "\t\t" +
                      (direction == INCOMING ? "<-- " :
                       direction == OUTGOING ? "--> " :
                          "INT ") +
@@ -63,7 +72,7 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   public void httpLog(int direction, String msg) {
     if (writer != null) {
-      writer.println("+" + Timestamp.brief()+ HTTP_LOG + "\t\t\t" +
+      writer.writer.println("+" + Timestamp.brief()+ HTTP_LOG + "\t\t\t" +
                      (direction == INCOMING ? "<-- " :
                       direction == OUTGOING ? "--> " :
                          "INT ") +
@@ -75,7 +84,7 @@ public class LogWriter implements HttpTask.MessageTracer {
     System.out.println();
     System.out.println(msg);
     if (writer != null) {
-      writer.println("\n+" + Timestamp.brief()+ SIMULATION_LOG + "\t" + msg);
+      writer.writer.println("\n+" + Timestamp.brief()+ SIMULATION_LOG + "\t" + msg);
     }
   }
 
@@ -93,7 +102,15 @@ public class LogWriter implements HttpTask.MessageTracer {
 
   public void stacktrace(Throwable t) {
     if (writer != null) {
-      t.printStackTrace(writer);
+      t.printStackTrace(writer.writer);
+    }
+  }
+
+  public void showLogFile() {
+    try {
+      Desktop.getDesktop().open(writer.file.getParentFile());
+    } catch (IOException ex) {
+      Logger.getLogger(LogWriter.class.getName()).log(Level.SEVERE, null, ex);
     }
   }
 
