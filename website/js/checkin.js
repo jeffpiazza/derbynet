@@ -337,9 +337,9 @@ Dropzone.options.photoDrop = {
 };
 
 // Re-writes the global g_cameras
-function enumerate_cameras() {
+async function enumerate_cameras() {
   g_cameras = new Array();
-  navigator.mediaDevices.enumerateDevices()
+  await navigator.mediaDevices.enumerateDevices()
   .then(function(devices) {
     devices.forEach(function(device) {
       if (device.kind == "videoinput") {
@@ -366,8 +366,8 @@ function setup_webcam() {
   Webcam.set(settings);
 }
 
-function handle_switch_camera() {
-  enumerate_cameras();
+async function handle_switch_camera() {
+  await enumerate_cameras();
   g_cameraIndex++;
   if (g_cameraIndex >= g_cameras.length) {
     g_cameraIndex = 0;
@@ -378,7 +378,7 @@ function handle_switch_camera() {
   Webcam.attach('#preview');
 }
 
-function show_photo_modal(racerid, repo) {
+async function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
   $("#racer_photo_name").text(firstname + ' ' + lastname);
@@ -403,9 +403,10 @@ function show_photo_modal(racerid, repo) {
     g_height = 640;
   }
 
-  enumerate_cameras();
-
   arm_webcam_dialog();
+
+  await enumerate_cameras();
+  Webcam.reset();
   setup_webcam();
   Webcam.attach('#preview');
 }
@@ -450,51 +451,53 @@ function take_snapshot(racerid, repo, photo_base_name) {
   }
 
   Webcam.snap(function(data_uri) {
-	  // detect image format from within image_data_uri
-	  var image_fmt = '';
-	  if (data_uri.match(/^data\:image\/(\w+)/))
-		  image_fmt = RegExp.$1;
-	  else
-		  throw "Cannot locate image format in Data URI";
-		
-	  // extract raw base64 data from Data URI
-	  var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
-		
-	  // create a blob and decode our base64 to binary
-	  var blob = new Blob( [ Webcam.base64DecToArr(raw_image_data) ], {type: 'image/'+image_fmt} );
-		
-	  // stuff into a form, so servers can easily receive it as a standard file upload
-	  var form_data = new FormData();
-	  form_data.append('action', 'photo.upload');
-      form_data.append('racerid', racerid);
-      form_data.append('repo', repo);
-      // image_fmt.replace is for jpeg -> jpg
-	  form_data.append('photo', blob, photo_base_name + "." + image_fmt.replace(/e/, ''));
-      if ($("#autocrop").prop('checked')) {
-        form_data.append('autocrop', '1');
-      }
+	// detect image format from within image_data_uri
+	var image_fmt = '';
+	if (data_uri.match(/^data\:image\/(\w+)/))
+	  image_fmt = RegExp.$1;
+	else
+	  throw "Cannot locate image format in Data URI";
 
-      // Testing for <failure> elements occurs in dashboard-ajax.js
-      $.ajax(g_action_url,
-             {type: 'POST',
-              data: form_data,
-              contentType: false,
-              processData: false,
-              success: function(data) {
-                  var photo_url_element = data.getElementsByTagName('photo-url');
-                  if (photo_url_element.length > 0) {
-                      $("#photo-" + racerid + " img[data-repo='" + repo + "']").attr(
-                          'src', photo_url_element[0].childNodes[0].nodeValue);
-                  }
+	// extract raw base64 data from Data URI
+	var raw_image_data = data_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+
+	// create a blob and decode our base64 to binary
+	var blob = new Blob( [ Webcam.base64DecToArr(raw_image_data) ], {type: 'image/'+image_fmt} );
+
+	// stuff into a form, so servers can easily receive it as a standard file upload
+	var form_data = new FormData();
+	form_data.append('action', 'photo.upload');
+    form_data.append('racerid', racerid);
+    form_data.append('repo', repo);
+    // image_fmt.replace is for jpeg -> jpg
+	form_data.append('photo', blob, photo_base_name + "." + image_fmt.replace(/e/, ''));
+    if ($("#autocrop").prop('checked')) {
+      form_data.append('autocrop', '1');
+    }
+
+    // Testing for <failure> elements occurs in dashboard-ajax.js
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: form_data,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+              var photo_url_element = data.getElementsByTagName('photo-url');
+              if (photo_url_element.length > 0) {
+                $("#photo-" + racerid + " img[data-repo='" + repo + "']").attr(
+                  'src', photo_url_element[0].childNodes[0].nodeValue);
               }
-             });
+            }
+           });
 
-      close_modal("#photo_modal");
+    Webcam.reset();
+    close_modal("#photo_modal");
   });
 }
 
 function close_photo_modal() {
-    close_modal("#photo_modal");
+  Webcam.reset();
+  close_modal("#photo_modal");
 }
 
 function compare_first(a, b) {
