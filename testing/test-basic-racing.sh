@@ -123,3 +123,7 @@ user_login_coordinator
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
 curl_post action.php "action=award.present&key=speed-2-1" | check_success
 curl_get "action.php?query=award.current" | expect_one Asher
+
+# Issue#87: make sure the awards presentation page populates for speed awards
+curl_get awards-presentation.php | expect_one "<option data-classid=.1.>Lions &amp; Tigers</option>"
+curl_get awards-presentation.php | expect_count ">3rd Fastest in " 6

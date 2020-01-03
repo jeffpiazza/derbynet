@@ -126,7 +126,7 @@ usort($awards, 'compare_by_sort');
         foreach ($classseq as $classid) {
           $cl = $classes[$classid];
           if (@$awards_per_class[$classid] > 0) {
-             echo '<option data-classid="'.$classid.'"> '
+             echo '<option data-classid="'.$classid.'">'
                 .htmlspecialchars($cl['class'], ENT_QUOTES, 'UTF-8')
               .'</option>'."\n";
           }
