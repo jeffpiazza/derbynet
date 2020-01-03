@@ -71,7 +71,7 @@ function get_racer_details($racerid) {
 // neither $classid nor $rankid), add to the argument $awards list entries for
 // the top $n speed trophies.  Returns the highest award sort value of the speed
 // awards added.
-function add_speed_group($n, $bias, $classid, $rankid, $label, &$finishers) {
+function add_speed_group($n, $bias, $classid, $rankid, $label, &$finishers, &$awards) {
   for ($p = 0; $p < $n; ++$p) {  // $p = 0 for 1st place, etc.
     if (!isset($finishers[$p])) {
       continue;
@@ -128,7 +128,7 @@ function add_speed_awards(&$awards) {
 
   $bias_for_pack = 0;
   add_speed_group($n_pack_trophies, $bias_for_pack, null, null,
-                  supergroup_label(), $finishers['supergroup']);
+                  supergroup_label(), $finishers['supergroup'], $awards);
 
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
@@ -138,7 +138,7 @@ function add_speed_awards(&$awards) {
     $ntrophies = $agg_class['ntrophies'];
     if ($ntrophies < 0) $ntrophies = $n_den_trophies;
     add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
-                    $agg_class['class'], $finishers[standings_key_class($agg_class['classid'])]);
+                    $agg_class['class'], $finishers[standings_key_class($agg_class['classid'])], $awards);
   }
 
   $classid = -1;
@@ -153,13 +153,13 @@ function add_speed_awards(&$awards) {
       $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
       $rank_within_den = 0;
       add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'],
-                      $finishers[standings_key_class($classid)]);
+                      $finishers[standings_key_class($classid)], $awards);
     }
 
     ++$rank_within_den;
     $bias_for_rank = $bias_for_den + $n_den_trophies + $rank_within_den * $reserved_per_rank;
     add_speed_group($n_rank_trophies, $bias_for_rank, null, $r, $rank['rank'],
-                    $finishers[standings_key_subgroup($r)]);
+                    $finishers[standings_key_subgroup($r)], $awards);
   }
 
   return $reserved_overall;
