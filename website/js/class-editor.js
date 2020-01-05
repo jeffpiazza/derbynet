@@ -19,6 +19,8 @@ function show_add_class_modal() {
   $("#add_class_modal input[name='name']").val("");
   $("#add_class_modal").removeClass("wide_modal");
   $("#aggregate-only").addClass("hidden");
+  $("#add_class_modal input[type='submit']").prop('disabled', false);
+
   show_secondary_modal("#add_class_modal", function () {
     close_add_class_modal();
     $.ajax(g_action_url,
