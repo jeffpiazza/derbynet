@@ -12,7 +12,7 @@
 // becomes unavailable and not required.
 function onDrop(draggable, droppable) {
   if (draggable.attr('data-field') == 'classname') {
-    onDropClassnameLabel(droppable);
+    onDropClassnameLabel(droppable.attr('data-column'));
   } else if (draggable.attr('data-field') == 'first-last') {
     $('.field[data-field="firstname"], .field[data-field="lastname"]').addClass('hidden').removeClass('required');
   } else if (draggable.attr('data-field') == 'lastname' ||
@@ -48,6 +48,15 @@ function onFileContentLoaded(file) {
   $('#class-counts-button').on('click', function() { show_class_details(); });
 }
 
+function onHeaderRowToggle() {
+  $('#file-racer-count').text(countNewRacers());
+
+  var classname_column_target = $("div[data-field=classname]").closest('.label_target');
+  if (classname_column_target.length > 0) {
+    calculateNewClasses(classname_column_target.attr('data-column'));
+  }
+}
+
 function show_class_details() {
   show_modal('#new_ranks_modal', function() {
   });
@@ -64,11 +73,15 @@ function countNewRacers() {
   return racers;
 }
 
-function onDropClassnameLabel(droppable) {
+function onDropClassnameLabel(column_number) {
+  calculateNewClasses(column_number);
+}
+
+function calculateNewClasses(column_number) {
   // classnames_to_import is an object, with class names from the csv as properties
-  // existing_classes is an array
-  var column_number = droppable.attr('data-column');
+  // existing_classes is an array of strings
   var classnames_to_import = collectClassNames(column_number);
+
   var all = all_classes();
   var n_existing_classes = all.length;
   var existing_classes = [];
@@ -83,7 +96,6 @@ function onDropClassnameLabel(droppable) {
   }
   for (var new_cl in classnames_to_import) {
     var canon = likelyCanonicalized(new_cl, combined_classes);
-    // TODO if new_cl != canon then we need to ask the user what to do.
     canonicalized[new_cl] = canon;
     if (new_cl == canon) {
       combined_classes.push(new_cl);
@@ -92,12 +104,12 @@ function onDropClassnameLabel(droppable) {
     }
   }
   rewriteClassnames(column_number, canonicalized);
-    
+
   $('#existing_ranks').empty();
   if (existing_classes.length > 0) {
     $('#existing_ranks').append('<h4>Existing ' + $('[data-field="classname"]:first').text() + 's:</h4>');
     for (var cl in existing_classes) {
-      var name = existing_classes[cl].name;
+      var name = existing_classes[cl];
       $('#existing_ranks').append(document.createTextNode(name), '<br/>');
       delete classnames_to_import[name];
     }
@@ -106,12 +118,12 @@ function onDropClassnameLabel(droppable) {
   var n_new_classes = 0;
 
   $('#new_ranks').empty();
-    for (var cl in classnames_to_import) {
-      if (classnames_to_import[cl] == 1) {
-        $('#new_ranks').append(document.createTextNode(cl), '<br/>');
-        ++n_new_classes;
-      }
+  for (var cl in classnames_to_import) {
+    if (classnames_to_import[cl] == 1) {
+      $('#new_ranks').append(document.createTextNode(cl), '<br/>');
+      ++n_new_classes;
     }
+  }
 
   if (n_new_classes > 0) {
     $('#new_ranks').prepend('<h4>New ' + $('[data-field="classname"]:first').text() + 's:</h4>');

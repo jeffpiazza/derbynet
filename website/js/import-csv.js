@@ -10,6 +10,10 @@ function usingLabelTargets() {
 function onFileContentLoaded(file) {
 }
 
+// Fires when the setting on whether there's a header row changes.
+function onHeaderRowToggle() {
+}
+
 // onDrop fires when a label is dragged to a th.label_target, but not when it's
 // dragged back to the palette of labels.
 function onDrop(draggable, droppable) {
@@ -231,11 +235,12 @@ function header_row_present() {
 }
 
 function handleHeaderRowPresentChange(event) {
-    if (header_row_present()) {
-        $('[data-row="1"]').addClass("header_row");
-    } else {
-        $('[data-row="1"]').removeClass("header_row");
-    }
+  if (header_row_present()) {
+    $('[data-row="1"]').addClass("header_row");
+  } else {
+    $('[data-row="1"]').removeClass("header_row");
+  }
+  onHeaderRowToggle();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
