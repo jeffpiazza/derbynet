@@ -42,7 +42,7 @@ function record_event_sql($sql, $params) {
       $stmt = $db->prepare($sql);
       $stmt->execute($params);
     } catch (PDOException $p) {
-      if ($p->getCode() == '42S02') {
+      if (is_no_such_table_exception($p)) {
         create_events_table();
         $retry = true;
       } else {
@@ -113,7 +113,7 @@ function racers_with_actions($action) {
                         'imagefile' => $row['imagefile']);
     }
   } catch (PDOException $p) {
-    if ($p->getCode() == '42S02') {
+    if (is_no_such_table_exception($p)) {
       // Silently fail -- no events table implies no events
     } else {
       echo $p;

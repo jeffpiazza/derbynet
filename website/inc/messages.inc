@@ -20,8 +20,7 @@ function message_queue_sql($sql, $params) {
       $stmt = $db->prepare($sql);
       $stmt->execute($params);
     } catch (PDOException $p) {
-      if (!$retry && ($p->getCode() == '42S02' ||
-                      ($p->getCode() == 'HY000' && $db->errorInfo()[2].strpos('no such table') >= 0))) {
+      if (!$retry && is_no_such_table_exception($p)) {
         $retry = true;
         echo "<creating-table/>\n";  // TODO
         create_message_queue_table();

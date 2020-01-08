@@ -255,4 +255,9 @@ function warn_no_timer() {
 function is_windows_server() {
   return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 }
+
+function is_no_such_table_exception(/* PDOException */ $p) {
+  return $p->getCode() == '42S02' ||
+      ($p->getCode() == 'HY000' && stripos($e->getMessage(), "no such table") !== false);
+}
 ?>

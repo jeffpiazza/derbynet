@@ -28,7 +28,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
       $nkiosks = read_single_value('SELECT COUNT(*) FROM Kiosks'
                                    .' WHERE page LIKE \'%award%present%\'', array());
     } catch (PDOException $p) {
-      if ($p->getCode() == '42S02') {
+      if (is_no_such_table_exception($p)) {
         create_kiosk_table();
       }
       $nkiosks = 0;

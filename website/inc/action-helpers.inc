@@ -50,7 +50,7 @@ function take_action_silently($sql, $params) {
       // an audit table.  We could try to create the table and try again, but the
       // risk seems to outweigh the benefit.
       //
-      // if ($p->getCode() == '42S02') {
+      // if (is_no_such_table_exception($p)) {
       //   run_sql_script('audit-table');
       // }
     }

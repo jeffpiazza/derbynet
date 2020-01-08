@@ -82,7 +82,7 @@ function kiosk_page($addr) {
                              ':page' => 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'));
       }
     } catch (PDOException $p) {
-      if ($p->getCode() == '42S02') {
+      if (is_no_such_table_exception($p)) {
         create_kiosk_table();
         $retry = true;
       } else {
