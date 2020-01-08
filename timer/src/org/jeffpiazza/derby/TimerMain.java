@@ -39,6 +39,8 @@ public class TimerMain {
     System.err.println(
         "   -min-gate-time <milliseconds>: Ignore gate transitions shorter than <milliseconds>");
     System.err.println(
+        "  -ignore-place: Discard any place indications from timer");
+    System.err.println(
         "   -d <device name>: Use specified device instead of trying to identify");
     System.err.println("      Known devices:");
     AllDeviceTypes.listDeviceClassNames();
@@ -140,6 +142,9 @@ public class TimerMain {
       } else if (arg.equals("-d") && has_value) {
         devicename = args[consumed_args + 1];
         consumed_args += 2;
+      } else if (arg.equals("-ignore-place")) {
+        Message.Finished.ignorePlaceData();
+        ++consumed_args;
       } else if (arg.equals("-simulate-timer")) {
         simulateTimer = true;
         ++consumed_args;

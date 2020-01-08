@@ -2,8 +2,6 @@ package org.jeffpiazza.derby;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 // TODO: Heartbeat should supply whatever ancillary information
 // the timer supports (reset button pressed, lane blocked, etc.)
@@ -63,6 +61,9 @@ public interface Message {
   }
 
   public static class Finished implements Message {
+    private static boolean report_place_data = true;
+    public static void ignorePlaceData() { report_place_data = false; }
+
     private int roundid;
     private int heat;
     private LaneResult[] results;
@@ -85,7 +86,7 @@ public interface Message {
             time = "9.9999";
           }
           sb.append("&lane").append(i + 1).append("=").append(time);
-          if (results[i].place != 0) {
+          if (results[i].place != 0 && report_place_data) {
             sb.append("&place").append(i + 1).append("=").append(
                 results[i].place);
           }
