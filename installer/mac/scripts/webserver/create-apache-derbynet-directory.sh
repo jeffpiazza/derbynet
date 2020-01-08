@@ -7,8 +7,9 @@ SERVERNAME="`hostname`"
 
 mkdir "$DSTVOLUME/private/etc/apache2/derbynet"
 
-if [ ! -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key" ] ; then
-    ssh-keygen -P "" -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key"
+if [ ! -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.crt" ] ; then
+    rm -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key"
+    ssh-keygen -P "" -m PEM -f "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key"
     openssl req -new -subj "/C=US/ST=-/O=-/localityName=-/CN=$SERVERNAME/"\
             -key "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.key" \
             -out "$DSTVOLUME/private/etc/apache2/derbynet/derbynet.csr"
