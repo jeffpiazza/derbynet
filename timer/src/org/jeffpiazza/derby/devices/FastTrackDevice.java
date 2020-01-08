@@ -21,11 +21,11 @@ public class FastTrackDevice extends TimerDeviceCommon {
         protected boolean interrogateGateIsClosed()
             throws NoResponseException, SerialPortException,
                    LostConnectionException {
-          portWrapper.write(READ_START_SWITCH);
+          portWrapper.write(MicroWizard.READ_START_SWITCH);
           long deadline = System.currentTimeMillis() + 1000;
           String s;
           while ((s = portWrapper.next(deadline)) != null) {
-            if (s.startsWith(READ_START_SWITCH)) {
+            if (s.startsWith(MicroWizard.READ_START_SWITCH)) {
               if (s.length() >= 3) {
                 return s.charAt(2) == '1';
               }
@@ -60,29 +60,6 @@ public class FastTrackDevice extends TimerDeviceCommon {
 
   public static final int MAX_LANES = 6;
 
-  private static final String PULSE_LASER_BIT = "LG";
-  // LG actually starts the timer, but after a brief pause
-  private static final String RESET_LASER_GATE = "LR";
-  // LR appears to be the real "reset" command for the timer
-  private static final String LANE_MASK = "M"; // + A to mask out lane 1, B lane 2, etc.
-  private static final String CLEAR_LANE_MASK = LANE_MASK + "G";
-  private static final String OLD_FORMAT = "N0"; //A=3.001! B=3.002 C=3.003 D=3.004 E=3.005 F=3.006 <LF> <CR>
-  private static final String NEW_FORMAT = "N1"; //A=3.001! B=3.002" C=3.003# D=3.004$ E=3.005% F=3.006& <CR> <LF>
-  private static final String ENHANCED_FORMAT = "N2";
-  // N2 => 5-digit time and start switch open/closed status, 2012 or newer timers only
-  // private static final String COUNT_DOWN_TIMER = "PC"; // e.g., PC01 to count down one minute
-  private static final String FORCE_RESULTS = "RA";
-  // RA doesn't report anything unless at least one car has crossed the line
-  // But it will stop the timer...
-  private static final String RESET_ELIMINATOR_MODE = "RE";
-  private static final String READ_START_SWITCH = "RG";
-  private static final String REVERSE_LANES = "RL";  // + 0-6, number of lanes on track
-  private static final String READ_MODE = "RM";
-  private static final String READ_SERIAL_NUMBER = "RS";
-  private static final String READ_VERSION = "RV";
-  // private static final String FORCE_PRINT = "RX";  // requires "Force Print" option
-  // RX resets the timer, but then seems to make it unresponsive
-
   public boolean probe() throws SerialPortException {
     if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
                                    SerialPort.DATABITS_8,
@@ -93,7 +70,7 @@ public class FastTrackDevice extends TimerDeviceCommon {
       return false;
     }
 
-    portWrapper.write(READ_VERSION);
+    portWrapper.write(MicroWizard.READ_VERSION);
 
     // We're looking for a response that matches these:
     // Copyright (c) Micro Wizard 2002-2005
@@ -112,12 +89,15 @@ public class FastTrackDevice extends TimerDeviceCommon {
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
           // Clean up the timer state and capture some details into the log
-          portWrapper.writeAndDrainResponse(RESET_ELIMINATOR_MODE, 2, 1000);
-          portWrapper.writeAndDrainResponse(NEW_FORMAT, 2, 1000);
+          portWrapper.writeAndDrainResponse(MicroWizard.RESET_ELIMINATOR_MODE, 2, 1000);
+          portWrapper.writeAndDrainResponse(MicroWizard.NEW_FORMAT, 2, 1000);
           if (attempt_enhanced_format) {
-            portWrapper.writeAndDrainResponse(ENHANCED_FORMAT, 2, 1000);
+            portWrapper.writeAndDrainResponse(MicroWizard.ENHANCED_FORMAT, 2, 1000);
           }
-          // This "RM" command seems to silence the K1 timer.
+          // Capture features to the log, for diagnostic purposes
+          portWrapper.writeAndDrainResponse(MicroWizard.RETURN_FEATURES, 2, 1000);
+
+          // This "RM" (Read Mode) command seems to silence the K1 timer.
           // TODO portWrapper.writeAndDrainResponse(READ_MODE);
           setUp();
           return true;
@@ -144,6 +124,8 @@ public class FastTrackDevice extends TimerDeviceCommon {
       }
     });
 
+    MicroWizard.registerEarlyDetectorForReset(portWrapper);
+
     // Unlike some timers, the FastTrack timers don't reset their display when
     // a lane mask is sent, so there's no need to wait after a heat-ready
     // message is received.
@@ -159,7 +141,7 @@ public class FastTrackDevice extends TimerDeviceCommon {
   protected void maskLanes(int lanemask) throws SerialPortException {
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.
-    doMaskLanes(lanemask, CLEAR_LANE_MASK, 0, LANE_MASK, 'A', 2);
+    doMaskLanes(lanemask, MicroWizard.CLEAR_LANE_MASK, 0, MicroWizard.LANE_MASK, 'A', 2);
   }
 
   public int getNumberOfLanes() throws SerialPortException {
@@ -188,7 +170,7 @@ public class FastTrackDevice extends TimerDeviceCommon {
       // If the gate state option is disabled, then we don't want to be
       // continuously resetting the laser gate, because we could receive results
       // at any instant, and they'd be disrupted by the reset dialog.
-      portWrapper.writeAndDrainResponse(RESET_LASER_GATE, 2, 2000);
+      portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 2000);
       checkConnection();
     }
   }

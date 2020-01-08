@@ -57,6 +57,8 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
       return false;
     }
 
+    portWrapper.writeAndDrainResponse(MicroWizard.RETURN_FEATURES, 2, 1000);
+
     setUp();
     return true;
   }
@@ -76,17 +78,7 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
         }
       }
     });
-    portWrapper.registerEarlyDetector(new SerialPortWrapper.Detector() {
-      @Override
-      public String apply(String s) throws SerialPortException {
-        if (s.charAt(0) == '@') {
-          // raceStarted();
-          return s.substring(1);
-        } else {
-          return s;
-        }
-      }
-    });
+    MicroWizard.registerEarlyDetectorForReset(portWrapper);
   }
 
   // No lane masks!

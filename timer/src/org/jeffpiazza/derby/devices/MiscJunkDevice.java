@@ -54,7 +54,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
   }
 
   public static String toHumanString() {
-    return "MiscJunk PDT (http://www.miscjunk.org/mj/pg_pdt.html)";
+    return "PDT timer (https://www.dfgtec.com/pdt)";
   }
 
   private int numberOfLanes = 0;
