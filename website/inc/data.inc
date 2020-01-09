@@ -258,6 +258,6 @@ function is_windows_server() {
 
 function is_no_such_table_exception(/* PDOException */ $p) {
   return $p->getCode() == '42S02' ||
-      ($p->getCode() == 'HY000' && stripos($e->getMessage(), "no such table") !== false);
+      ($p->getCode() == 'HY000' && stripos($p->getMessage(), "no such table") !== false);
 }
 ?>
