@@ -7,6 +7,7 @@ require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/name-mangler.inc');
 require_once('inc/photos-on-now-racing.inc');
+require_once('inc/xbs.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -50,9 +51,8 @@ function photo_directory_base() {
 make_banner('Settings', 'setup.php');
 
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
-$use_xbs = read_raceinfo_boolean('xbs-award');
-$xbs_award = read_raceinfo('xbs-award');
-if (!$xbs_award) $xbs_award = 'Exclusively By Scout';
+$use_xbs = read_raceinfo_boolean('use-xbs');
+$xbs_award = read_raceinfo('xbs-award', 'Exclusively By Scout');
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 $upload_videos = read_raceinfo_boolean('upload-videos');
 

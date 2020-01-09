@@ -37,8 +37,8 @@ $use_subgroups = read_raceinfo_boolean('use-subgroups');
 // check-in form.  For groups that don't do this, $xbs will be false
 // (and $xbs_award_name will be blank), and the checkboxes won't be
 // shown.
-$xbs = read_raceinfo_boolean('xbs-award');
-$xbs_award_name = read_raceinfo('xbs-award');
+$xbs = read_raceinfo_boolean('use-xbs');
+$xbs_award_name = read_raceinfo('xbs-award', 'Exclusively By Scout');
 
 $order = '';
 if (isset($_GET['order']))

@@ -3,6 +3,7 @@
 require_once('inc/classes.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/xbs.inc');
 
 // These functions construct each row of the main table on the check-in page.
 
@@ -18,6 +19,7 @@ function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
 }
 
 function checkin_table_row_for_id($racerid) {
+  $xbs_award_name = xbs_award();
   $row = read_single_row(
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
       .(schema_version() < 2 ? "" : " carphoto,")
@@ -37,7 +39,7 @@ function checkin_table_row_for_id($racerid) {
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
   $row['rankseq'] = $ranks[$row['rankid']]['seq'];
 
-  checkin_table_row($row, read_raceinfo_boolean('xbs-award'), read_raceinfo_boolean('use-subgroups'));
+  checkin_table_row($row, !empty($xbs_award_name), read_raceinfo_boolean('use-subgroups'));
 }
 
 // $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, rankseq,

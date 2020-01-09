@@ -44,8 +44,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
                   'upload-videos' => 'upload-videos',
-                  'drop-slowest' => 'drop-slowest')
-            // See also use-xbs, below
+                  'drop-slowest' => 'drop-slowest',
+                  'use-xbs' => 'use-xbs')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key.'-checkbox'])) {
         ++$num_picked;
@@ -64,7 +64,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'n-den-trophies' => 'n-den-trophies',
                   'n-rank-trophies' => 'n-rank-trophies',
                   'name-style' => 'name-style',
-                  'xbs-award' => 'xbs-award',  // @$_POST['use-xbs'] ? $_POST['xbs-award'] : ''
+                  'xbs-award' => 'xbs-award',
                   'group-label' => 'group-label',
                   'photos-on-now-racing' => 'photos-on-now-racing',
                   'subgroup-label' => 'subgroup-label',
@@ -93,14 +93,6 @@ if (have_permission(SET_UP_PERMISSION)) {
           $failures = true;
         }
       }
-    }
-  }
-
-  if (isset($_POST['use-xbs-checkbox'])) {
-    ++$num_picked;
-    if (isset($_POST['use-xbs'])) ++$num_picked;
-    if (!@$_POST['use-xbs']) {
-      write_raceinfo('xbs-award', '');
     }
   }
 
