@@ -2,8 +2,8 @@
 
 require_once('inc/photo-config.inc');
 
-class AWANADriversLicenseDocument extends PrintableRacerDocument {
-  function name() { return "AWANA Driver's License"; }
+class AwanaDriversLicenseDocument extends PrintableRacerDocument {
+  function name() { return "Awana Driver's License"; }
 
   function get_available_options() {
     return array(
