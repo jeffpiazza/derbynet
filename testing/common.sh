@@ -89,8 +89,7 @@ function curl_photo_any() {
     echo    >> $OUTPUT_CURL
 
     COUNT=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/$1 | wc -c`
-    echo curl_photo_any says $COUNT
-    if [ $COUNT -eq 0 ]; then
+    if [ $COUNT -lt 1000 ]; then
         test_fails No photo result for $1
     fi
 }

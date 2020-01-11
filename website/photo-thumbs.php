@@ -232,10 +232,28 @@ if (empty($allfiles)) {
 <input data-enhanced="true" type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
 <input data-enhanced="true" type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
 <input data-enhanced="true" type="button" value="Cancel" onclick="close_modal('#photo_crop_modal');"/>
+
+<input type="button" value="Delete"
+    data-enhanced="true" class="delete_button"
+    onclick="on_delete_photo_button(); return false;"/>
 </div>
 
 <div id="ajax_working" class="hidden">
   <span id="ajax_num_requests">0</span> request(s) pending.
 </div>
+
+
+<div id="delete_confirmation_modal" class="modal_dialog block_buttons hidden">
+  <form>
+    <p>Are you sure you want to delete this photo?</p>
+
+    <input type="submit" data-enhanced="true" value="Delete Photo"/>
+
+    <p>&nbsp;</p>
+    <input type="button" data-enhanced="true" value="Cancel"
+      onclick='close_secondary_modal("#delete_confirmation_modal");'/>
+  </form>
+</div>
+
 </body>
 </html>

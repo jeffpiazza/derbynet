@@ -66,3 +66,13 @@ else
 
     echo Done
 fi
+
+# Delete a photo, then upload it again
+curl_photo_any head/file/original/Cub-3126.jpg/xyz
+curl_post action.php "action=photo.delete&repo=head&photo=Cub-3126.jpg" | check_success
+
+COUNT=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/head/file/original/Cub-3126.jpg/xyz | wc -c`
+if [ $COUNT -gt 1000 ]; then
+    test_fails Photo not deleted
+fi
+upload_headshot `dirname $0`/data/headshots/Cub-3126.jpg

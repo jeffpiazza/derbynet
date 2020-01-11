@@ -228,6 +228,22 @@ function rotatePhoto(angle) {
          });
 }
 
+function on_delete_photo_button() {
+  var photo_data = $("#work_image").data('photo');
+  show_secondary_modal("#delete_confirmation_modal", function(event) {
+    close_secondary_modal("#delete_confirmation_modal");
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'photo.delete',
+                   repo: photo_data.repo,
+                   photo: photo_data.basename},
+            success: function (data) {
+              location.reload(true);
+            }});
+    close_modal('#photo_crop_modal');
+  });
+}
+
 
 // For #upload-target div:
 Dropzone.options.uploadTarget = {
