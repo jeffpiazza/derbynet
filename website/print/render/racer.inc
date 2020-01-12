@@ -54,7 +54,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
     .' imagefile,'
-    .($schema_version < 2 ? ' \'\' as carphoto' : ' carphoto'),
+    .($schema_version < 2 ? ' \'\' as carphoto' : ' carphoto').','
     .($schema_version < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
     .($schema_version < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
     .' (SELECT MAX(seq) FROM Events'
