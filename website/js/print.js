@@ -38,7 +38,7 @@ function print_selected() {
   
   window.open("render-document.php/" + doc_class_details['type'] + "/" + doc_class
               + "?options=" + encodeURIComponent(JSON.stringify(options))
-              + "&sort=" + encodeURIComponent($("#sortorder-racers option:selected").val())
+              + "&order=" + encodeURIComponent($("#sortorder-racers option:selected").val())
               + "&ids=" + ids.join(),
               "_blank");
 }
