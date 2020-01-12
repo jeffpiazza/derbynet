@@ -22,7 +22,7 @@ $have_args = false;
 if (!$have_args && isset($_SERVER['DOCUMENT_URI']) && isset($_SERVER['SCRIPT_NAME']) &&
     substr($_SERVER['DOCUMENT_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) == $_SERVER['SCRIPT_NAME']) {
   $args = substr($_SERVER['DOCUMENT_URI'], strlen($_SERVER['SCRIPT_NAME']));
-  $have_args = confirm_args($ags);
+  $have_args = confirm_args($args);
 }
 
 if (!$have_args && isset($_SERVER['PATH_INFO'])) {
