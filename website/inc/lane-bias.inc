@@ -52,12 +52,21 @@ function lane_bias_analysis($emit_rows = false) {
     }
   }
 
+  $mean = $total / $nn;
+  $ssbetween = 0.0;
+  $sswithin = 0.0;
+  foreach ($lanes as $lane) {
+    $ssbetween += $lane['n'] * ($lane['mean'] - $mean) * ($lane['mean'] - $mean);
+    $sswithin += $lane['sswithin'];
+  }
+
   if ($nn + $dnfs == 0 || $nlanes <= 1 || $nn == $nlanes) {
     return array();
   } else {
     $msbetween = $ssbetween / ($nlanes - 1);
     $mswithin = $sswithin / ($nn - $nlanes);
     if ($mswithin == 0) {
+      echo "<p>mswithin</p>\n";  // TODO
       return array();
     } else {
       $f_stat = $msbetween / $mswithin;

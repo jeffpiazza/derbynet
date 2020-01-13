@@ -127,3 +127,11 @@ curl_get "action.php?query=award.current" | expect_one Asher
 # Issue#87: make sure the awards presentation page populates for speed awards
 curl_get awards-presentation.php | expect_one "<option data-classid=.1.>Lions &amp; Tigers</option>"
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 6
+
+# Issue#97: confirm lane bias calculation isn't broken
+curl_get history.php | expect_one "<td>1.757 sample variance.</td>"
+curl_get history.php | expect_one "<td>1.867 sample variance.</td>"
+curl_get history.php | expect_one "<td>1.832 sample variance.</td>"
+curl_get history.php | expect_one "<td>1.966 sample variance.</td>"
+curl_get history.php | expect_one "<p>F statistic is 0.090 with df1=3 and df2=85</p>"
+
