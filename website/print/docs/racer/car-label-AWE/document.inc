@@ -1,7 +1,7 @@
 <?php
 // Print 1/2 circular labels, compatible with GarageSalePup AWE.
 class CarLabelAWE extends PrintableRacerDocument {
-  function name() { return "Car Label GarageSalePup AWE"; }
+  function name() { return "Car Number Label (GarageSalePup 1/2 inch round)"; }
   function get_available_options() {
     return array('skip' => array('type' => 'int',
                                  'desc' => 'Leave this many labels blank, for printing on a'
