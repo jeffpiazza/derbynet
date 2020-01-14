@@ -1,7 +1,6 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
-require_once('inc/events.inc');
 require_once('inc/action-helpers.inc');
 require_once('print/inc/printable_racer_document.inc');
 require_once('fpdf/ext/combined.php');
