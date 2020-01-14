@@ -102,11 +102,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       if (isset($_GET['where'])) {
         $sql = $sql.' WHERE '.$_GET['where'];
       }
-      if ($sort == "car") {
-        $sql = $sql.' ORDER BY carnumber, lastname, firstname';
-      } else {
-        $sql = $sql.' ORDER BY lastname, firstname, carnumber';
-      }
+      $sql = $sql.' ORDER BY lastname, firstname, carnumber';
 
       foreach ($db->query($sql) as $racer) {
         draw_one_racer($racer);
