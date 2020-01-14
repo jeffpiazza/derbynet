@@ -102,6 +102,15 @@ class DocumentLayout {
     $this->n_up = $this->n_per_row * $n_per_column;
   }
 
+  public function SetRawLayoutParameters($top, $left, $horizontalgap, $verticalgap, $n_per_row, $n_per_page) {
+    $this->top_margin = $top;
+    $this->left_margin = $left;
+    $this->alloc_height = $this->doc_height + $verticalgap;
+    $this->alloc_width = $this->doc_width + $horizontalgap;
+    $this->n_up = $n_per_page;
+    $this->n_per_row=$n_per_row;
+  }
+  
   // For diagnosing layout problems
   public function GetParameters() {
     return array('doc' => array('width' => $this->doc_width,
