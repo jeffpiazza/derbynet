@@ -30,11 +30,6 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
     $doc->set_options(json_decode($_GET['options'], true));
   }
 
-  $sort = '';
-  if (isset($_GET['sort'])) {
-    $sort=$_GET['sort'];
-  }
-
   $doc->StartDocument();
 
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
