@@ -2,7 +2,10 @@
 <html lang="en" itemscope itemtype="http://schema.org/Product">
 <head>
 <title>Fullscreen Kiosk</title>
-<?php require('inc/stylesheet.inc'); ?>
+<?php
+require('inc/stylesheet.inc');
+require('inc/servername.inc');
+?>
 <style type="text/css">
 
 .full-window {
@@ -18,30 +21,8 @@ margin-top: 100px;
 }
 </style>
 <?php
-if (isset($_SERVER['SERVER_NAME'])) {
-  $server = $_SERVER['SERVER_NAME'];
-} else if (isset($_SERVER['SERVER_ADDR'])) {
-  $server = $_SERVER['SERVER_ADDR'];
-} else if (isset($_SERVER['LOCAL_ADDR'])) {
-  $server = $_SERVER['LOCAL_ADDR'];
-} else if (isset($_SERVER['HTTP_HOST'])) {
-  $server = $_SERVER['HTTP_HOST'];
-} else {
-  $addrs = gethostbynamel(gethostname());
-  if (count($addrs) > 0) {
-    $server = $addrs[0];
-  } else {
-    $server = ' unknown server name! ';
-  }
-}
-
-if (isset($_SERVER['REQUEST_URI'])) {
-  $path = $_SERVER['REQUEST_URI'];
-} else if (isset($_SERVER['PHP_SELF'])) {
-  $path = $_SERVER['PHP_SELF'];
-} else {
-  $path = $_SERVER['SCRIPT_NAME'];
-}
+$server = server_name();
+$path = request_path();
 
 $url = $server . $path;
 
