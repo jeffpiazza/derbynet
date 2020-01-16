@@ -1,6 +1,6 @@
 <?php
 // Print 1-3/4 x 1/2 labels, compatible with Avery 5167 and the like.
-class CarLabel5267 extends PrintableRacerDocument {
+class CarLabel5167 extends PrintableRacerDocument {
   function name() { return "Car Label 5167"; }
   function get_available_options() {
     return array('skip' => array('type' => 'int',
