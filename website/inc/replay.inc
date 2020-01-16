@@ -97,9 +97,10 @@ function send_replay_START(&$current) {
 // "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
 function send_replay_REPLAY() {
   $skipback = read_raceinfo('replay-skipback', '4');
+  $skipback_offset = strval(floatval(read_raceinfo('replay-skipback', '4'))+floatval(read_raceinfo('delta_finish','0')));
   $num_showings = read_raceinfo('replay-num-showings', '2');
   $rate = read_raceinfo('replay-rate', '0.5');
-  send_replay_message("REPLAY ".$skipback." ".$num_showings." ".$rate);
+  send_replay_message("REPLAY ".$skipback." ".$num_showings." ".$rate." ".$skipback_offset);
 }
 
 // "CANCEL  -- cancel recording\r\n"
