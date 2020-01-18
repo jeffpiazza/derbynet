@@ -12,6 +12,14 @@ require_once('inc/banner.inc');
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>About DerbyNet</title>
 <?php require('inc/stylesheet.inc'); ?>
+<script type="text/javascript">
+window.onload = function() {
+  var span = document.getElementById("useragent");
+  if (span) {
+    span.innerHTML = navigator.userAgent;
+  }
+};
+</script>
 <style type="text/css">
 .ip_addr { border: 2px solid red;  padding: 2px; }
 
@@ -43,7 +51,7 @@ require_once('inc/banner.inc');
   position: absolute;
   top: 100px;
   right: 50px;
-  height: 50px;
+  height: 100px;
   width: 250px;
   padding-top: 30px;
   text-align: center;
@@ -88,6 +96,8 @@ if (count($addrs) == 0) {
 
 <p>Please include this page if you wish to report a bug, and
    contact me at <a href="mailto:bugs@jeffpiazza.org">bugs@jeffpiazza.org</a>.</p>
+
+<p>Your browser's User Agent string is<br/><span id="useragent"></span>.</p>
 
 <h4>DerbyNet Revision</h4>
 <?php 
@@ -152,8 +162,13 @@ if (isset($db)) {
     echo '<p>Schema version '.$schema_version.' (expecting version '.expected_schema_version().')</p>'."\n";
 
     if (have_permission(SET_UP_PERMISSION)) {
-      echo "<p class='capture-link'><a download='derbynet-".date('Ymd-His').".xml'"
-           ." href='action.php?query=snapshot.get'>Download Database Snapshot</a></p>\n";
+      echo "<p class='capture-link'>Download Database Snapshot:<br/>"
+           ."<a download='derbynet-".date('Ymd-His').".xml'"
+           ." href='action.php?query=snapshot.get'>Complete</a>"
+           ."<br/>or<br/>"
+           ."<a download='derbynet-".date('Ymd-His').".xml'"
+           ." href='action.php?query=snapshot.get&clean'>Cleaned</a>"
+           ."</p>\n";
     }
 
   } catch (PDOException $p) {

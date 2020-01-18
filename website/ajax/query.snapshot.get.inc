@@ -2,6 +2,10 @@
 <?php
 require_once('inc/export-schema.inc');
 
+// $_GET['clean'], if present, reduces first and last names to just an initial.
+
+$do_clean = isset($_GET['clean']);
+
 echo "[\n";
 $first_table = true;
 foreach ($schema as $table => $columns) {
@@ -17,6 +21,14 @@ foreach ($schema as $table => $columns) {
   $missed = array();
   $first_row = true;
   foreach ($db->query('SELECT '.implode(', ', $columns).' FROM '.$table.' ORDER BY '.$columns[0]) as $row) {
+    if ($do_clean) {
+      if (isset($row['firstname'])) {
+        $row['firstname'] = substr($row['firstname'], 0, 1);
+      }
+      if (isset($row['lastname'])) {
+        $row['lastname'] = substr($row['lastname'], 0, 1)."-".$row['racerid'];
+      }
+    }
     if ($first_row) {
       $first_row = false;
     } else {
