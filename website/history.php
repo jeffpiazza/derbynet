@@ -113,6 +113,8 @@ $bias = lane_bias_analysis();
 <table class="event-history">
 <?php
 
+$is_interleaved = use_master_sched();
+
 class EventFormatter {
   public function HeatIdentifier(&$event) {
     switch ($event['action']) {
@@ -198,7 +200,7 @@ while ($event !== false || $heat !== false) {
     echo "<td>".htmlspecialchars($heat['class'].' heat '.$heat['heat'], ENT_QUOTES, 'UTF-8')."</td>";
     echo "<td>".$heat['completed']."</td>";
 
-    if ($heat['roundid'] == $roundid) {
+    if (($is_interleaved && $roundid != 0) || $heat['roundid'] == $roundid) {
       $diff = $unix - $last_unix;
       $min = floor($diff / 60);
       $sec = $diff % 60;

@@ -867,14 +867,18 @@ function process_coordinator_poll_response(data) {
 
   offer_new_rounds(rounds);
 
-  if (current.master_schedule && $("#master-schedule-group .control_group").length == 0) {
-    $("#master-schedule-group").empty();
+  if (current.master_schedule) {
     var totals = calculate_totals(rounds);
     totals.roundid = -1;
     totals.classname = "Interleaved Schedule";
     totals.category = "master-schedule";
 
-    generate_scheduling_control_group(totals, current, timer_state);
+    if ($("#master-schedule-group .control_group").length == 0) {
+      $("#master-schedule-group").empty();
+      generate_scheduling_control_group(totals, current, timer_state);
+    } else {
+      inject_into_scheduling_control_group(totals, current, timer_state);
+    }
   } else if (!current.master_schedule) {
     $("#master-schedule-group").empty();
   }
