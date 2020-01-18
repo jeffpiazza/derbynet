@@ -150,8 +150,6 @@ var PostSettingChange;
 
 })();
 
-var g_form_modified = 0;
-
 $(function() {
 
   $("#n-lanes").on("keyup mouseup", on_lane_count_change);

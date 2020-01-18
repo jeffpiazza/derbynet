@@ -5,10 +5,6 @@
     margin: 1em;
 }
 
-.settings_group.modified {
-    border: 2px solid #ff6666;
-}
-
 .settings_group .settings_group_image {
     width: 220px;
     display: inline-block;
