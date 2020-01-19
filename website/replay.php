@@ -84,6 +84,15 @@ function handle_replay_message(cmdline) {
 $(function() { setInterval(poll_as_replay, 250); });
 
 function on_device_selection(selectq) {
+  stream = document.getElementById("preview").srcObject;
+  
+  // If a stream is already open, stop it.
+  if (stream != null) {
+    stream.getTracks().forEach(function(track) {
+      track.stop();
+    });
+  }	
+	
   let device_id = selectq.find(':selected').val();
   navigator.mediaDevices.getUserMedia({ video: { deviceId: device_id } })
   .then(stream => {
