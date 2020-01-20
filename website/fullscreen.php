@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" itemscope itemtype="http://schema.org/Product">
+<html>
 <head>
 <title>Fullscreen Kiosk</title>
 <?php

@@ -27,6 +27,8 @@ timer/.idea/encodings.xml
 website/inc/banner.inc
 website/inc/generated-*.inc
 website/quickref.pdf
+website/js/adapter.js
 website/local/
 
 dist/
+adapter-webrtc/

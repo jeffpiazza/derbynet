@@ -19,6 +19,9 @@
   <!-- The content of the .win.zip is staged here, zipped, and then
        deleted. -->
   <property name="uniserver-target" location="dist/uniserver"/>
+  <!-- Contains a recent copy of
+        https://webrtc.github.io/adapter/adapter-latest.js -->
+  <property name="webrtc-adapter-cache" location="adapter-webrtc"/>
 
   <condition property="is_mac">
     <os family="mac"/>
@@ -79,8 +82,16 @@
 
   <target name="generated" depends="banner, generated-version.inc,
                     generated-build-date.inc,
-                    release-series, generated-commit-hash.inc, quickref"
+                    release-series, generated-commit-hash.inc, quickref, webrtc-adapter"
           description="Build generated files">
+  </target>
+
+  <target name="webrtc-adapter">
+      <mkdir dir="${webrtc-adapter-cache}"/>
+      <get src="https://webrtc.github.io/adapter/adapter-latest.js"
+           dest="${webrtc-adapter-cache}" ignoreerrors="true"/>
+      <copy file="${webrtc-adapter-cache}/adapter-latest.js"
+            tofile="website/js/adapter.js" overwrite="true"/>
   </target>
 
   <target name="generated-version.inc">
