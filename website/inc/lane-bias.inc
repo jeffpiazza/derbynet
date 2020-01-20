@@ -29,7 +29,12 @@ function lane_bias_analysis($emit_rows = false) {
         ++$lane['dnfs'];
       }
     }
-    $lane['mean'] = $lane['total'] / $lane['n'];
+    if ($lane['n'] == 0) {
+      // There were no runs using this lane, or only DNFs in this lane.
+      $lane['mean'] = 0.0;
+    } else {
+      $lane['mean'] = $lane['total'] / $lane['n'];
+    }
     $stmt->execute(array(':lane' => $l));
     foreach ($stmt as $time) {
       if ($time['finishtime'] < 9.9) {
@@ -52,6 +57,9 @@ function lane_bias_analysis($emit_rows = false) {
     }
   }
 
+  if ($nn == 0) {
+    return array();
+  }
   $mean = $total / $nn;
   $ssbetween = 0.0;
   $sswithin = 0.0;
