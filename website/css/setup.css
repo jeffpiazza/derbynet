@@ -47,6 +47,11 @@
   height: 56px;
 }
 
+#schema_step .lower {
+  /* #99 For reasons I don't understand, Firefox needs this. */
+  margin-top: 1px;
+}
+
 #schema_step .lower .step_button {
   /* margin-left: 70px; */
   margin-top: 5px;
