@@ -153,7 +153,7 @@ function supergroup_groups() {
     }
     return $classes;
   } else if (count($agg_classes) == 1) {
-    return $agg_classes;
+    return array($agg_classes[0]['classid']);
   } else {
     return false;
   }
@@ -165,12 +165,9 @@ function supergroup_groups() {
 // entries for the supergroup, which is represented as a classid of -1.
 function inverted_constituents($with_supergroup = false) {
   global $db;
+  // Maps classids for aggregate classes to a list of classids of the constituents.
   $forward_map = array();
   $result = array();
-
-  if (schema_version() < 3) {
-    return;
-  }
   
   if ($with_supergroup) {
     $supergroup_groups = supergroup_groups();
@@ -179,14 +176,16 @@ function inverted_constituents($with_supergroup = false) {
     }
   }
 
-  $stmt = $db->prepare('SELECT classid, constituents FROM Classes'
-                       .' WHERE constituents != \'\''
-                       .'  AND NOT EXISTS(SELECT 1 FROM Rounds'
-                       .'                 WHERE Rounds.classid = Classes.classid)');
-  $stmt->execute(array());
-  foreach ($stmt as $row) {
-    $constituents = explode(',', $row['constituents']);
-    $forward_map[$row['classid']] = $constituents;
+  if (schema_version() >= 3) {
+    $stmt = $db->prepare('SELECT classid, constituents FROM Classes'
+                         .' WHERE constituents != \'\''
+                         .'  AND NOT EXISTS(SELECT 1 FROM Rounds'
+                         .'                 WHERE Rounds.classid = Classes.classid)');
+    $stmt->execute(array());
+    foreach ($stmt as $row) {
+      $constituents = explode(',', $row['constituents']);
+      $forward_map[$row['classid']] = $constituents;
+    }
   }
 
   foreach ($forward_map as $classid => $constituents) {

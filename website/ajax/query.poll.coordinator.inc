@@ -72,7 +72,9 @@ echo "</replay-state>\n";
 
 $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
-$stmt = $db->query('SELECT roundid, Rounds.classid, Classes.class, round FROM Rounds'
+$stmt = $db->query('SELECT roundid, Rounds.classid, Classes.class, round,'
+                   .(schema_version() >= 3 ? ' constituents' : '\'\' AS constituents')
+                   .' FROM Rounds'
                    .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
                    .' ORDER BY round DESC, '
                    .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
@@ -90,7 +92,7 @@ foreach ($rounds as $round) {
             .' classid="'.$round['classid'].'"'
             .' class="'.htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').'"'
             .' round="'.$round['round'].'"';
-    if (is_aggregate_class($round['classid'])) {
+    if (is_aggregate_class($round)) {
       echo ' aggregate="1"';
     }
 

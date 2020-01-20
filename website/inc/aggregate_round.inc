@@ -5,18 +5,18 @@ require_once('inc/newracer.inc');
 require_once('inc/schema_version.inc');
 
 // An aggregate round is one which draws from multiple prior rounds.  An
-// aggregate class is created by scheduling an aggregate round.  "Grand Finals"
-// is the default name for a (first) aggregate class.
+// aggregate class is created by scheduling an aggregate round, or by explicit
+// user action in the class editor.
 //
-// Aggregate classes are marked by being in the 'aggregate_class' key in RaceInfo.
-// The value of 'aggregate_class' key is a list of classids, separated by '/'
-// characters.  (First and last characters of the value are '/'.)
+// When created for an aggregate round, "Grand Finals" is the default name for
+// the (first) aggregate class, and the only name for pre-schema-3 databases.
 
-function is_aggregate_class($classid) {
-  return schema_version() >= 3 &&
-         strlen(read_single_value('SELECT constituents FROM Classes'
-                                  .' WHERE classid = :classid',
-                                  array(':classid' => $classid))) > 0;
+function is_aggregate_class(&$class_row) {
+  if (schema_version() >= 3) {
+    return strlen($class_row['constituents']) > 0;
+  } else {
+    return $class_row['class'] == "Grand Finals";
+  }
 }
 
 // Returns array of {classid, class, constituent, durable, ntrophies} elements
@@ -27,14 +27,20 @@ function aggregate_classes() {
     $stmt = $db->prepare('SELECT classid, class, constituents, durable, ntrophies FROM Classes'
                          .' WHERE constituents > \'\''
                          .' ORDER BY sortorder');
-    $stmt->execute(array());
-    foreach ($stmt as $cl) {
-      $results[] = array('classid' => $cl['classid'],
-                         'class' => $cl['class'],
-                         'constituents' => explode(',', $cl['constituents']),
-                         'durable' => $cl['durable'],
-                         'ntrophies' => $cl['ntrophies']);
-    }
+  } else {
+    $stmt = $db->prepare('SELECT classid, class, \'\' AS constituents, 0 AS durable,'
+                         .'   ntrophies FROM Classes'
+                         .' WHERE class = \'Grand Finals\''
+                         .' ORDER BY sortorder');
+  }
+
+  $stmt->execute(array());
+  foreach ($stmt as $cl) {
+    $results[] = array('classid' => $cl['classid'],
+                       'class' => $cl['class'],
+                       'constituents' => explode(',', $cl['constituents']),
+                       'durable' => $cl['durable'],
+                       'ntrophies' => $cl['ntrophies']);
   }
 
   return $results;
