@@ -45,4 +45,9 @@ if (schema_version() >= 2) {
   $schema['Ranks'][] = 'sortorder';
   $schema['RegistrationInfo'][] = 'carphoto';
 }
+
+if (schema_version() >= 3) {
+  $schema['Classes'][] = 'constituents';
+  $schema['Classes'][] = 'durable';
+}
 ?>

@@ -167,7 +167,7 @@ if (isset($db)) {
            ." href='action.php?query=snapshot.get'>Complete</a>"
            ."<br/>or<br/>"
            ."<a download='derbynet-".date('Ymd-His').".xml'"
-           ." href='action.php?query=snapshot.get&clean'>Cleaned</a>"
+           ." href='action.php?query=snapshot.get&amp;clean'>Cleaned</a>"
            ."</p>\n";
     }
 
