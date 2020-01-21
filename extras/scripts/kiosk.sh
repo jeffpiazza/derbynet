@@ -50,7 +50,7 @@ EOF
 # Default browser; last one wins
 BROWSER=epiphany
 test -x /usr/bin/midori && BROWSER=midori
-test -x /usr/bin/chromium && BROWSER=/chromium
+test -x /usr/bin/chromium && BROWSER=chromium
 test -x /usr/bin/chromium-browser && BROWSER=chromium-browser
 
 test -f /etc/derbynet.conf  && . /etc/derbynet.conf
