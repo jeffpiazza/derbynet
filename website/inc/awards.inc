@@ -158,7 +158,7 @@ function add_speed_awards(&$awards) {
 
     ++$rank_within_den;
     $bias_for_rank = $bias_for_den + $n_den_trophies + $rank_within_den * $reserved_per_rank;
-    add_speed_group($n_rank_trophies, $bias_for_rank, null, $r, $rank['rank'],
+    add_speed_group($n_rank_trophies, $bias_for_rank, $classid, $r, $rank['rank'],
                     $finishers[standings_key_subgroup($r)], $awards);
   }
 
