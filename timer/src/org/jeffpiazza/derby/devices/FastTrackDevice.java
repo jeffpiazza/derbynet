@@ -144,6 +144,13 @@ public class FastTrackDevice extends TimerDeviceCommon {
     doMaskLanes(lanemask, MicroWizard.CLEAR_LANE_MASK, 0, MicroWizard.LANE_MASK, 'A', 2);
   }
 
+  // K2 timer may report DNFs as 0.000
+  @Override
+  protected void raceFinished(Message.LaneResult[] results)
+      throws SerialPortException {
+    super.raceFinished(TimerDeviceUtils.zeroesToNines(results));
+  }
+
   public int getNumberOfLanes() throws SerialPortException {
     // FastTrack, at least older versions, doesn't report actual number of lanes.
     return 0;

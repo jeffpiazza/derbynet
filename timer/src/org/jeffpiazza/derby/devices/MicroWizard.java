@@ -46,7 +46,7 @@ public class MicroWizard {
     portWrapper.registerEarlyDetector(new SerialPortWrapper.Detector() {
       @Override
       public String apply(String s) throws SerialPortException {
-        while (s.charAt(0) == '@' || s.charAt(0) == '>') {
+        while (!s.isEmpty() && (s.charAt(0) == '@' || s.charAt(0) == '>')) {
           s = s.substring(1);
         }
         return s;
