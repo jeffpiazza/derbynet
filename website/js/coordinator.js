@@ -879,9 +879,16 @@ function process_coordinator_poll_response(data) {
     } else {
       inject_into_scheduling_control_group(totals, current, timer_state);
     }
+    $("#schedule-and-race").addClass('hidden');
+    $("#schedule-only").val("Make Schedule");
   } else if (!current.master_schedule) {
     $("#master-schedule-group").empty();
+    $("#schedule-and-race").removeClass('hidden');
+    $("#schedule-only").val("Schedule Only");
   }
+  // The "Schedule + Race" option from the #schedule_modal shouldn't be offered
+  // if we're in interleaved heats:
+  $("#schedule-and-race").toggleClass('hidden', current.master_schedule);
 
   var layout = {'now-racing': [],
                 'ready-to-race': [],

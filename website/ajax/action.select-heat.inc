@@ -16,7 +16,7 @@
 //   selected.  If not possible to engage now_racing, still considered
 //   a success.
 //
-// "Select Next" (for master scheduling): $_POST['heat']=first
+// "Select Next" (for master scheduling): $_POST['heat']=next-up
 
 require_once('inc/autoadvance.inc');
 require_once('inc/racing-state.inc');

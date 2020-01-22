@@ -21,7 +21,7 @@ $trace = !isset($_POST['trace']) ? 0 : ($_POST['trace'] == 'v' ? 2 : 1);
 
 require_once('inc/data.inc');
 require_once('inc/masterheat.inc');
-
+require_once('inc/autoadvance.inc');
 require_once('inc/schedule_generator.inc');
 
 // RACE_COUNT_WEIGHT is the weight (penalty) for uneven race counts.  That is,
@@ -326,6 +326,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
                                         array(':roundid' => $roundid)));
+  if (use_master_sched()) {
+    $current = get_running_round();
+    advance_heat($current, 'next-up', /* report failure */ false);
+  }
 } else {
   not_authorized_body();
 }

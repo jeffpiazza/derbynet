@@ -14,6 +14,7 @@ require_once('inc/replay.inc');
 //    "first"
 //    "next"
 //    "prev"
+//    "next-up"
 //    a specific requested heat (combined with $roundid)
 function get_next_heat(&$current, $requested) {
   global $db;
