@@ -66,6 +66,7 @@ var g_replay_count;
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
+    g_replay_count = parseInt(cmdline.split(" ")[2]);
     on_replay();
   } else if (cmdline.startsWith("START")) {
     g_video_name_root = cmdline.substr(6).trim();
@@ -195,7 +196,6 @@ function on_replay() {
         }
 
         document.querySelector("#playback").src = URL.createObjectURL(blob);
-        g_replay_count = 2;        // Play back twice
         $("#playback-background").show('slide');
         document.querySelector("#playback").play();
       } else {
