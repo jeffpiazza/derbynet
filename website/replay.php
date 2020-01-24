@@ -62,11 +62,13 @@ var g_remote_poller;
 var g_recorder;
 
 var g_replay_count;
+var g_replay_rate;
 
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
     g_replay_count = parseInt(cmdline.split(" ")[2]);
+    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     on_replay();
   } else if (cmdline.startsWith("START")) {
     g_video_name_root = cmdline.substr(6).trim();
@@ -75,6 +77,7 @@ function handle_replay_message(cmdline) {
     //  skipback and rate are ignored, but showings we can honor
     // (Must be exactly one space between fields:)
     g_replay_count = parseInt(cmdline.split(" ")[2]);
+    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     on_replay();
   } else if (cmdline.startsWith("CANCEL")) {
   } else {
@@ -162,6 +165,8 @@ $(function() {
             $("#playback-background").hide('slide');
             announce_to_interior('replay-ended');
           } else {
+            console.log('Replay rate of ' + g_replay_rate);
+            document.querySelector("#playback").playbackRate = g_replay_rate;
             document.querySelector("#playback").play();
           }
         });
@@ -197,6 +202,8 @@ function on_replay() {
 
         document.querySelector("#playback").src = URL.createObjectURL(blob);
         $("#playback-background").show('slide');
+        console.log('Replay rate of ' + g_replay_rate);
+        document.querySelector("#playback").playbackRate = g_replay_rate;
         document.querySelector("#playback").play();
       } else {
         console.log("No blob!");
