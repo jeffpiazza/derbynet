@@ -51,7 +51,7 @@ function checkin_table_row_for_id($racerid) {
 // $pack_xbs: whether exclusively-by-scout awards are shown in this table
 // $use_subgroups: whether rank information is relevant
 function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
-    echo '<tr class="d'.($n & 1)
+    echo '<tr data-racerid="'.$row['racerid'].'" class="d'.($n & 1)
           .($row['denscheduled'] ? ' den_scheduled' : '')
           .($row['exclude'] ? ' exclude-racer' : '').'">';
 
@@ -65,7 +65,11 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     if ($use_subgroups)
       echo '<td id="rank-'.$row['racerid'].'">'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'</td>';
 
-    echo '<td class="sort-car-number" id="car-number-'.$row['racerid'].'">'.$row['carnumber'].'</td>';
+    echo '<td class="sort-car-number"'
+        .' data-car-number="'.$row['carnumber'].'"'
+        .' id="car-number-'.$row['racerid'].'">'
+        .$row['carnumber']
+        .'</td>';
 
     echo '<td id="photo-'.$row['racerid'].'">';
 

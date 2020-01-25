@@ -3,6 +3,10 @@ tr.d0 td {
   background-color: #fcf6cf;
 }
 
+tr.highlight td {
+  background-color: #ff8080;
+}
+
 #edit_racer_modal {
     width: 400px;
 }

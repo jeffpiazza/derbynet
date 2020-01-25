@@ -582,10 +582,50 @@ function cancel_find_racer() {
     $(document).on("keypress", global_keypress);
 }
 
+function scroll_and_flash_row(row) {
+  $("html, body").animate({scrollTop: row.offset().top - $(window).height() / 2}, 250);
+  row.addClass('highlight');
+  setTimeout(function() {
+    row.removeClass('highlight');
+    $("#find-racer-text").val("");
+  }, 250);
+  setTimeout(function() {
+    row.addClass('highlight');
+  }, 500);
+  setTimeout(function() {
+    row.removeClass('highlight');
+  }, 750);
+
+  $("#find-racer-index").data("index", 1).text(1);
+  $("#find-racer-count").text(0);
+  $("#find-racer-message").css({visibility: 'hidden'});
+  $("#find-racer").removeClass("notfound");
+}
+
 // In response to each onchange event for the #find-racer-text control, hide the
 // table rows that don't contain the value string.
 function find_racer() {
-    var search_string = $("#find-racer-text").val().toLowerCase();
+  // If #find-racer-text val starts with PWD, then look up as a barcode, scroll
+  // to the racer, and flash the row
+  var raw_search = $("#find-racer-text").val();
+  if (raw_search.startsWith('PWDid') && raw_search.length == 8) {
+    remove_search_highlighting();
+    var row = $("tr[data-racerid=" + parseInt(raw_search.substr(5)) + "]");
+    if (row.length == 1) {
+      scroll_and_flash_row(row);
+      return;
+    }
+  }
+  if (raw_search.startsWith('PWD') && raw_search.length == 6) {
+    remove_search_highlighting();
+    var cell = $("td[data-car-number=" + parseInt(raw_search.substr(3)) + "]");
+    if (cell.length == 1) {
+      scroll_and_flash_row(cell.closest('tr'));
+      return;
+    }
+  }
+
+    var search_string = raw_search.toLowerCase();
     if (search_string.length == 0) {
         cancel_find_racer();
     } else {

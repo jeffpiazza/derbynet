@@ -339,12 +339,12 @@ foreach ($stmt as $rs) {
 
 <?php require_once('inc/ajax-pending.inc'); ?>
 <div id="find-racer">
-  <form id="find-racer-form">
+  <div id="find-racer-form">
     Find Racer:
     <input type="text" id="find-racer-text" name="narrowing-text" data-enhanced="true"/>
     <span id="find-racer-message"><span id="find-racer-index" data-index="1">1</span> of <span id="find-racer-count">0</span></span>
     <img onclick="cancel_find_racer()" src="img/cancel-20.png"/>
-  </form>
+  </div>
 </div>
 </body>
 </html>
