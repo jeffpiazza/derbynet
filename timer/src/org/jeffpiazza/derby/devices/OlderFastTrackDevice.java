@@ -57,7 +57,7 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
       return false;
     }
 
-    portWrapper.writeAndDrainResponse(MicroWizard.RETURN_FEATURES, 2, 1000);
+    MicroWizard.readFeatures(portWrapper);
 
     setUp();
     return true;
@@ -102,7 +102,9 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
     return 0;
   }
 
-  public String getTimerIdentifier() { return null; }
+  public String getTimerIdentifier() {
+    return null;
+  }
 
   public void poll() throws SerialPortException, LostConnectionException {
     String line;

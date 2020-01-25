@@ -40,6 +40,16 @@ public class MicroWizard {
   // P - Position (sequence of finish)
   public static final String RETURN_FEATURES = "RF";
 
+  public static boolean attemptReadFeatures = true;
+
+  public static void readFeatures(SerialPortWrapper portWrapper)
+      throws SerialPortException {
+    if (attemptReadFeatures) {
+      // Capture features to the log, for diagnostic purposes
+      portWrapper.writeAndDrainResponse(RETURN_FEATURES, 2, 1000);
+    }
+  }
+
   // public static final String FORCE_PRINT = "RX";  // requires "Force Print" option
   // RX resets the timer, but then seems to make it unresponsive
   public static void registerEarlyDetectorForReset(SerialPortWrapper portWrapper) {

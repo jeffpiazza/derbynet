@@ -7,6 +7,7 @@ import org.jeffpiazza.derby.gui.TimerGui;
 import javax.swing.*;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.FastTrackDevice;
+import org.jeffpiazza.derby.devices.MicroWizard;
 import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.SmartLineDevice;
@@ -173,7 +174,10 @@ public class TimerMain {
         TimerDeviceCommon.setPostRaceDisplayDurationMillis(millis);
         consumed_args += 2;
       } else if (arg.equals("-skip-enhanced-format")) {
-        FastTrackDevice.attempt_enhanced_format = false;
+        FastTrackDevice.attemptEnhancedFormat = false;
+        ++consumed_args;
+      } else if (arg.equals("-skip-read-features")) {
+        MicroWizard.attemptReadFeatures = false;
         ++consumed_args;
       } else if (arg.equals("-min-gate-time") && has_value) {
         TimerDeviceCommon.setMinimumGateTimeMillis(
