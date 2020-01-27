@@ -139,7 +139,6 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <div id='replay_settings_modal' class="modal_dialog hidden block_buttons">
   <form>
     <input type="hidden" name="action" value="settings.write"/>
-<?php /*
     <label for="replay-skipback">Duration of replay, in seconds:</label>
     <!-- Could be any decimal value... -->
     <!-- TODO MacReplay only accepts integral skipback values presently -->
@@ -155,8 +154,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <!-- <option>5.5</option> -->
         <option value="6">6.0</option>
         <!-- <option>6.5</option> -->
+        <option value="10">10.0</option>
+        <option value="15">15.0</option>
     </select>
-*/ ?>
     <label for="replay-num-showings">Number of times to show replay:</label>
     <!-- Could be any positive integer -->
     <select id="replay-num-showings" name="replay-num-showings">

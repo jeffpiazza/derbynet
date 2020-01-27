@@ -61,12 +61,17 @@ g_video_name_root = "";
 var g_remote_poller;
 var g_recorder;
 
-var g_replay_count;
-var g_replay_rate;
+var g_replay_duration = <?php echo read_raceinfo('replay-skipback', '4'); ?>;
+var g_replay_count = <?php echo read_raceinfo('replay-num-showings', '2'); ?>;
+var g_replay_rate = <?php echo read_raceinfo('replay-rate', '0.5'); ?>;
+console.log('Replay duration of ' + g_replay_duration);
+console.log('Replay count of ' + g_replay_count);
+console.log('Replay rate of ' + g_replay_rate);
 
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
+    g_replay_duration = parseInt(cmdline.split(" ")[1]);
     g_replay_count = parseInt(cmdline.split(" ")[2]);
     g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     on_replay();
@@ -76,6 +81,7 @@ function handle_replay_message(cmdline) {
     // REPLAY skipback showings rate
     //  skipback and rate are ignored, but showings we can honor
     // (Must be exactly one space between fields:)
+    g_replay_duration = parseInt(cmdline.split(" ")[1]);
     g_replay_count = parseInt(cmdline.split(" ")[2]);
     g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     on_replay();
@@ -100,7 +106,8 @@ function on_device_selection(selectq) {
   let device_id = selectq.find(':selected').val();
   navigator.mediaDevices.getUserMedia({ video: { deviceId: device_id } })
   .then(stream => {
-      g_recorder = new VideoCaptureFlight(stream, 4, 1000);
+console.log('Replay duration of ' + g_replay_duration);
+      g_recorder = new VideoCaptureFlight(stream, g_replay_duration, 1000);
       document.getElementById("preview").srcObject = stream;
     });
 }
@@ -146,7 +153,8 @@ $(function() {
           // Capturing from #preview doesn't do any better
           //g_recorder = new VideoCaptureFlight(
           //  document.querySelector('#preview').captureStream(), 4, 1000);
-          g_recorder = new VideoCaptureFlight(stream, 4, 1000);
+console.log('Replay duration of ' + g_replay_duration);
+          g_recorder = new VideoCaptureFlight(stream, g_replay_duration, 1000);
         });
     } else {  // Picker for local camera
       video_devices(false, (found, options) => {
