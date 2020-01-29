@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.jeffpiazza.derby.Message;
 
 // TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
+// More importantly, "V" responds with "Derby Magic v3.00" or some such.
 
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
@@ -30,6 +31,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
 
   private static final int MAX_LANES = 8;
 
+  private static final String READ_VERSION = "V";
   private static final String TIMER_HAS_STARTED = "B";
 
   private static final String TIMER_RESET = "R";
@@ -37,11 +39,34 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
 
   @Override
   public boolean canBeIdentified() {
-    return false;
+    return true;
   }
 
   public boolean probe() throws SerialPortException {
-    return probeAtSpeed(SerialPort.BAUDRATE_19200);
+    for (int baudrate : new int[]{9600, 19200}) {
+      if (!portWrapper.setPortParams(baudrate,
+                                     SerialPort.DATABITS_8,
+                                     SerialPort.STOPBITS_1,
+                                     SerialPort.PARITY_NONE,
+                                     /* rts */ false,
+                                     /* dtr */ false)) {
+        continue;
+      }
+
+      portWrapper.write(READ_VERSION);
+
+      long deadline = System.currentTimeMillis() + 1000;
+      String s;
+      while ((s = portWrapper.next(deadline)) != null) {
+        if (s.indexOf("Derby Magic") >= 0) {
+          timerIdentifier = s;
+          portWrapper.writeAndDrainResponse(TIMER_RESET, 1, 200);
+          setUp();
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   protected boolean probeAtSpeed(int baudrate) throws SerialPortException {
@@ -55,6 +80,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
     }
 
     portWrapper.writeAndDrainResponse(TIMER_RESET, 1, 200);
+    timerIdentifier = portWrapper.writeAndWaitForResponse(READ_VERSION);
 
     setUp();
     return true;

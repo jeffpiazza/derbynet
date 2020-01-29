@@ -16,6 +16,7 @@ public class AllDeviceTypes {
         MiscJunkDevice.class,
         DerbyMagicDevice.class,
         DerbyMagic9600.class,
+        DerbyMagic19200.class,
         BertDrakeDevice.class
       };
 

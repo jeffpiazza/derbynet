@@ -4,8 +4,8 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class DerbyMagic9600 extends DerbyMagicDevice {
-  public DerbyMagic9600(SerialPortWrapper portWrapper) {
+public class DerbyMagic19200 extends DerbyMagicDevice {
+  public DerbyMagic19200(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 
@@ -15,12 +15,12 @@ public class DerbyMagic9600 extends DerbyMagicDevice {
   }
 
   public static String toHumanString() {
-    return "Derby Magic timer (force 9600 baud)";
+    return "Derby Magic timer (force 19200 baud)";
   }
 
   @Override
   public boolean probe() throws SerialPortException {
-    return probeAtSpeed(SerialPort.BAUDRATE_9600);
+    return probeAtSpeed(SerialPort.BAUDRATE_19200);
   }
 
 }
