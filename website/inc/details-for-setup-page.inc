@@ -100,8 +100,10 @@ function inspect_database() {
         $result['schema_status'] = "ok";
         $result['schema_button'] = 're-initialize';
         $result['schema_message'] =
-            "<p>Schema version is S1".pad3($schema_version).", as expected.<br/>"
-            ."(If you have a previously-captured database snapshot, you can <a href='import-snapshot.php'>import it here.</a>)"
+            "<p>Schema version is S1".pad3($schema_version).", as expected."
+            .(!locked_settings() ? "<br/>"
+              ."(If you have a previously-captured database snapshot,"
+              ." you can <a href='import-snapshot.php'>import it here.</a>)" : "")
             ."</p>\n";
       } else {
         $result['schema_status'] = "unknown";
@@ -123,34 +125,43 @@ function inspect_database() {
     
     $racer_photo_directory = "";
     $car_photo_directory = "";
-    try {
-      $racer_photo_directory = read_raceinfo('photo-directory');
-      $car_photo_directory = read_raceinfo('car-photo-directory');
-      $result['settings_details'] = "Racer photos: ".$racer_photo_directory."<br/>\n"
-          ."Car photos: ".$car_photo_directory;
-    } catch (PDOException $p) {
-    }
-
-    if (parse_ini_size(ini_get('upload_max_filesize')) < 8000 * 1024) {
-      $result['settings_details'] .= '<br/><span class=\'trouble\'>'
-          .'Check your php.ini file if you plan to upload photos: upload_max_filesize='.ini_get('upload_max_filesize')
-          .'</span>';
-    }
-
-    if (!is_dir($racer_photo_directory) || !is_readable($racer_photo_directory) ||
-        !is_dir($car_photo_directory) || !is_readable($car_photo_directory)) {
-      $result['settings_icon'] = "trouble";
-    } else if (!is_writable($racer_photo_directory) || !is_writable($car_photo_directory)) {
-      $result['settings_icon'] = "readonly";
-    } else if (get_lane_count() == 0) {
-      $result['settings_icon'] = 'unknown';
-      $result['settings_details'] .= '<br/><span class=\'trouble\'>The number of lanes on the track hasn\'t been set.</span>';
+    if (locked_settings()) {
+      $result['settings_details'] = "";
+      if (get_lane_count() == 0) {
+        $result['settings_icon'] = 'unknown';
+        $result['settings_details'] .= '<br/><span class=\'trouble\'>The number of lanes on the track hasn\'t been set.</span>';
+      } else {
+        $result['settings_icon'] = "ok";
+        $result['settings_details'] .= '<br/>The track has '.get_lane_count().' lanes.';
+      }
     } else {
-      $result['settings_icon'] = "ok";
-      $result['settings_details'] .= '<br/>The track has '.get_lane_count().' lanes.';
+      try {
+        $racer_photo_directory = read_raceinfo('photo-directory');
+        $car_photo_directory = read_raceinfo('car-photo-directory');
+        $result['settings_details'] = "Racer photos: ".$racer_photo_directory."<br/>\n"
+        ."Car photos: ".$car_photo_directory;
+      } catch (PDOException $p) {
+      }
+      if (parse_ini_size(ini_get('upload_max_filesize')) < 8000 * 1024) {
+        $result['settings_details'] .= '<br/><span class=\'trouble\'>'
+        .'Check your php.ini file if you plan to upload photos: upload_max_filesize='.ini_get('upload_max_filesize')
+        .'</span>';
+      }
+
+      if (!is_dir($racer_photo_directory) || !is_readable($racer_photo_directory) ||
+          !is_dir($car_photo_directory) || !is_readable($car_photo_directory)) {
+        $result['settings_icon'] = "trouble";
+      } else if (!is_writable($racer_photo_directory) || !is_writable($car_photo_directory)) {
+        $result['settings_icon'] = "readonly";
+      } else if (get_lane_count() == 0) {
+        $result['settings_icon'] = 'unknown';
+        $result['settings_details'] .= '<br/><span class=\'trouble\'>The number of lanes on the track hasn\'t been set.</span>';
+      } else {
+        $result['settings_icon'] = "ok";
+        $result['settings_details'] .= '<br/>The track has '.get_lane_count().' lanes.';
+      }
     }
   }
-
   return $result;
 }
 
