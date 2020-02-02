@@ -215,7 +215,7 @@ foreach ($awards as &$row) {
         onchange="on_reveal();"/>
 </div>
 
-<div class="reset-footer block_buttons">
+<div class="block_buttons">
     <input type="button" data-enhanced="true" value="Clear" onclick="on_clear_awards()"/>
 </div>
 
