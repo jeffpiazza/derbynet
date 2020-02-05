@@ -2,6 +2,9 @@
 var g_confetti = false;
 $(function() {
   KioskPoller.param_callback = function(parameters) {
+    if (!parameters.hasOwnProperty('confetti')) {
+      parameters.confetti = true;
+    }
     g_confetti = parameters.confetti;
   };
 
