@@ -14,6 +14,7 @@ require('inc/servername.inc');
   height: 100%;
   left: 0;
   width: 100%;
+  border: none;
 }
 
 #setup {
