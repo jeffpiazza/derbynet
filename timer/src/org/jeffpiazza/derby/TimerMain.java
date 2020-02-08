@@ -10,7 +10,6 @@ import org.jeffpiazza.derby.devices.FastTrackDevice;
 import org.jeffpiazza.derby.devices.MicroWizard;
 import org.jeffpiazza.derby.devices.NewBoldDevice;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
-import org.jeffpiazza.derby.devices.SmartLineDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceCommon;
 import org.jeffpiazza.derby.devices.TimerTask;
@@ -71,8 +70,10 @@ public class TimerMain {
   private static LogWriter makeLogWriter() {
     try {
       LogWriter logwriter = new LogWriter();
-      logwriter.
-          serialPortLogInternal("derby-timer.jar version " + Version.get());
+      logwriter.serialPortLogInternal(
+          "derby-timer.jar version " + Version.get());
+      logwriter.serialPortLogInternal(
+          "os.name = " + System.getProperty("os.name"));
       return logwriter;
     } catch (Throwable t) {
       t.printStackTrace();
@@ -215,6 +216,11 @@ public class TimerMain {
 
     if (logwriter == null) {
       logwriter = makeLogWriter();
+    }
+    if (logwriter != null) {
+      for (String arg : args) {
+        logwriter.serialPortLogInternal("Command line argument: " + arg);
+      }
     }
     if (traceMessages == null) {
       traceMessages = logwriter;
