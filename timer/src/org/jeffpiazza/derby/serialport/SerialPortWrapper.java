@@ -126,6 +126,11 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
+  // The early detector, if there is one, runs on the buffered string from the
+  // timer device before the string is divided up into newline-separated lines.
+  // It's "early" because it doesn't wait for a newline to arrive to mark the
+  // end of a line.  Note that the string passed to the detector may contain
+  // zero or more newlines.
   public void registerEarlyDetector(Detector detector) {
     synchronized (detectors) {
       earlyDetector = detector;

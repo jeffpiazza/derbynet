@@ -1,9 +1,12 @@
 package org.jeffpiazza.derby.devices;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.jeffpiazza.derby.Message;
 
 import java.util.regex.*;
+import jssc.SerialPortException;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class TimerDeviceUtils {
   private static final Pattern finishPattern = Pattern.compile(
@@ -11,6 +14,62 @@ public class TimerDeviceUtils {
   private static final Pattern singleLanePattern = Pattern.compile(
       "([A-F])=(\\d\\.\\d+)([^ ]?)");
   private static final Pattern zeroesPattern = Pattern.compile("^0\\.0+$");
+
+  // Each island of carriage-return and/or newlines yields a pair of integers
+  // in the list: the index of the first cr/nl character, and the index of the
+  // first non-cr/nl character that follows.
+  public static List<Integer> lineBoundaries(String line) {
+    List<Integer> results = new ArrayList<Integer>();
+    int i = 0;
+    while (i < line.length()) {
+      if (line.charAt(i) == '\n' || line.charAt(i) == '\r') {
+        results.add(i);
+        int j = i + 1;
+        while (j < line.length()
+            && (line.charAt(j) == '\n' || line.charAt(j) == '\r')) {
+          ++j;
+        }
+        results.add(j);
+        i = j + 1;
+      } else {
+        ++i;
+      }
+    }
+    return results;
+  }
+
+  public static class SplittingDetector implements SerialPortWrapper.Detector {
+    public SplittingDetector(SerialPortWrapper.Detector inner) {
+      this.inner = inner;
+    }
+
+    @Override
+    public String apply(String buffer) throws SerialPortException {
+      List<Integer> boundaries = lineBoundaries(buffer);
+      String[] lines = new String[boundaries.size() / 2 + 1];
+      int cap = 0;
+      int buffer_index = 0;
+      for (int i = 0; i < boundaries.size() / 2; ++i) {
+        String line = buffer.substring(buffer_index, boundaries.get(2 * i));
+        lines[i] = inner.apply(line);
+        cap += lines[i].length()
+            + boundaries.get(2 * i + 1) - boundaries.get(2 * i);
+        buffer_index = boundaries.get(2 * i + 1);
+      }
+      lines[boundaries.size() / 2] = inner.apply(buffer.substring(buffer_index));
+      cap += lines[boundaries.size() / 2].length();
+      StringBuilder builder = new StringBuilder(cap);
+      for (int i = 0; i < boundaries.size() / 2; ++i) {
+        builder.append(lines[i])
+            .append(buffer.substring(boundaries.get(2 * i),
+                                     boundaries.get(2 * i + 1)));
+      }
+      builder.append(lines[boundaries.size() / 2]);
+      return builder.toString();
+    }
+
+    private SerialPortWrapper.Detector inner;
+  }
 
   // Returns either a Matcher that successfully matched within line, or null.
   public static Matcher matchedCommonRaceResults(String line) {
