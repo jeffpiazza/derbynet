@@ -38,6 +38,9 @@ public class MicroWizard {
   // L - Reset Laser
   // C - Count Down Clock
   // P - Position (sequence of finish)
+
+  // A K1 timer from 2004, version 1.09D, reported 0011 1111, and
+  // reported "X" (disabled) for reading the start switch ("RG")
   public static final String RETURN_FEATURES = "RF";
 
   public static boolean attemptReadFeatures = true;
