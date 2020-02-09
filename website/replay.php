@@ -179,14 +179,19 @@ function announce_to_interior(msg) {
 }
 
 function on_replay() {
+  // Capture these global variables before starting the asynchronous operation,
+  // because they're reasonably likely to be clobbered by another queued message
+  // from the server.
+  var upload = g_upload_videos;
+  var root = g_video_name_root;
   announce_to_interior('replay-started');
   g_recorder.stop(function(blob) {
       if (blob) {
         console.log('Blob of size ' + blob.size + ' and type ' + blob.type);
 
-        if (g_upload_videos && g_video_name_root != "") {
+        if (upload && root != "") {
           let form_data = new FormData();
-          form_data.append('video', blob, g_video_name_root + ".mkv");
+          form_data.append('video', blob, root + ".mkv");
           form_data.append('action', 'video.upload');
           $.ajax("action.php",
                  {type: 'POST',
