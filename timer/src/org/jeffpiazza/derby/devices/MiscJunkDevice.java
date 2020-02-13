@@ -5,8 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class MiscJunkDevice extends TimerDeviceCommon {
@@ -96,9 +96,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
         if (nl_index >= 0 && nl.length() > nl_index + 5) {
           this.numberOfLanes = nl.charAt(nl_index + 5) - '0';
           if (0 < numberOfLanes && numberOfLanes <= 9) {
-            portWrapper.logWriter().serialPortLogInternal(
-                Timestamp.string() + ": "
-                + this.numberOfLanes + " lane(s) reported.");
+            LogWriter.serial(this.numberOfLanes + " lane(s) reported.");
             setUp();
             return true;
           }
@@ -133,8 +131,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
         Matcher m = resultLine.matcher(line);
         if (m.find()) {
           int lane = Integer.parseInt(m.group(1));
-          portWrapper.logWriter().serialPortLogInternal(
-              "Detected result for lane " + lane + " = " + m.group(2));  // TODO
+          LogWriter.serial("Detected result for lane " + lane + " = " + m.group(2));  // TODO
           if (results != null) {
             TimerDeviceUtils.addOneLaneResult(lane, m.group(2), -1, results);
             // Results are sent in lane order, so results are complete when
@@ -149,8 +146,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
               //setOkToPoll(true);
             }
           } else {
-            portWrapper.logWriter().serialPortLogInternal(
-                "*** Unexpected lane result");
+            LogWriter.serial("*** Unexpected lane result");
           }
           return "";
         } else {

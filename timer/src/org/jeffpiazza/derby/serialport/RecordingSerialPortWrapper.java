@@ -1,18 +1,16 @@
 package org.jeffpiazza.derby.serialport;
 
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 
 public class RecordingSerialPortWrapper extends SerialPortWrapper {
-  public RecordingSerialPortWrapper(SerialPort port, LogWriter logwriter)
+  public RecordingSerialPortWrapper(SerialPort port)
       throws SerialPortException {
-    super(port, logwriter);
+    super(port);
     (new Thread() {
       @Override
       public void run() {
@@ -64,10 +62,10 @@ public class RecordingSerialPortWrapper extends SerialPortWrapper {
   }
 
   public void dumpRecordings() {
-    logWriter().traceInternal("Recorded transactions:");
+    LogWriter.serial("Recorded transactions:");
     for (String key : recorded.keySet()) {
       for (String v : recorded.get(key)) {
-        logWriter().traceInternal("\"" + key + "\"\t-> \"" + v + "\"");
+        LogWriter.serial("\"" + key + "\"\t-> \"" + v + "\"");
       }
     }
   }

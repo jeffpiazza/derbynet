@@ -1,6 +1,5 @@
 package org.jeffpiazza.derby.gui;
 
-import java.lang.reflect.Method;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.TimerDevice;
 

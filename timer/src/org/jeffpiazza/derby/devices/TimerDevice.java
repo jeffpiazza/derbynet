@@ -2,10 +2,6 @@ package org.jeffpiazza.derby.devices;
 
 import jssc.*;
 import org.jeffpiazza.derby.Message;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.regex.*;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public interface TimerDevice {

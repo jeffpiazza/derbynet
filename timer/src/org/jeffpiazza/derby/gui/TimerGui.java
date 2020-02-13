@@ -1,13 +1,11 @@
 package org.jeffpiazza.derby.gui;
 
-import jssc.SerialPort;
-import org.jeffpiazza.derby.*;
-import org.jeffpiazza.derby.devices.TimerDevice;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.*;
+import org.jeffpiazza.derby.*;
+import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
 
 // On the HTTP side, the GUI makes this approximate progression:
@@ -21,22 +19,22 @@ import org.jeffpiazza.derby.devices.TimerTask;
 public class TimerGui {
   private Components components;
   private Connector connector;
-  private HttpTask.MessageTracer traceMessages;
-  private HttpTask.MessageTracer traceHeartbeats;
-  private LogWriter logwriter;
+  private boolean traceMessages;
+  private boolean traceHeartbeats;
+  private boolean traceResponses;
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
 
   private TimerClassListController timerClassListController;
   private SerialPortListController portListController;
 
-  public TimerGui(Connector connector, HttpTask.MessageTracer traceMessages,
-                  HttpTask.MessageTracer traceHeartbeats, LogWriter logwriter) {
+  public TimerGui(Connector connector, boolean traceMessages,
+                  boolean traceHeartbeats, boolean traceResponses) {
     this.components = new Components();
     this.connector = connector;
     this.traceMessages = traceMessages;
     this.traceHeartbeats = traceHeartbeats;
-    this.logwriter = logwriter;
+    this.traceResponses = traceResponses;
     timerClassListController = new TimerClassListController(
         components.timerClassList);
     components.timerClassList.addListSelectionListener(timerClassListController);
@@ -69,7 +67,7 @@ public class TimerGui {
     components.showLogFileMenuItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        logwriter.showLogFile();
+        LogWriter.showLogFile();
       }
     });
 
@@ -221,7 +219,7 @@ public class TimerGui {
     HttpTask.start(components.roleComboBox.getItemAt(
         components.roleComboBox.getSelectedIndex()),
                    new String(components.passwordField.getPassword()),
-                   clientSession, traceMessages, traceHeartbeats,
+                   clientSession, traceMessages, traceHeartbeats, traceResponses,
                    connector,
                    new HttpTask.LoginCallback() {
                  @Override

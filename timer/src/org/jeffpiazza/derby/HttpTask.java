@@ -18,15 +18,15 @@ public class HttpTask implements Runnable {
   private HeatReadyCallback heatReadyCallback;
   private AbortHeatCallback abortHeatCallback;
   // Print queued Messages when actually sent.
-  private MessageTracer traceQueued;
+  private boolean traceQueued;
   // Print heartbeat Messages when actually sent.
-  private MessageTracer traceHeartbeat;
+  private boolean traceHeartbeat;
+  private boolean traceResponses;
 
   public static final long heartbeatPace = 10000;  // ms.
 
   // Callbacks all get invoked from the thread running HttpTask.  They're
   // expected to return reasonably quickly to their caller.
-
   // Called when it's time to send a heartbeat to the web server, which we'll
   // do only if the timer is healthy (connected).
   public interface TimerHealthCallback {
@@ -43,14 +43,6 @@ public class HttpTask implements Runnable {
     void onAbortHeat();
   }
 
-  public interface MessageTracer {
-    void onMessageSend(Message m, String params);
-
-    void onMessageResponse(Message m, Element response);
-
-    void traceInternal(String s);
-  }
-
   public interface LoginCallback {
     void onLoginSuccess();
 
@@ -61,8 +53,9 @@ public class HttpTask implements Runnable {
   // the HttpTask in a new Thread.
   public static void start(final String username, final String password,
                            final ClientSession session,
-                           final MessageTracer traceQueued,
-                           final MessageTracer traceHeartbeat,
+                           final boolean traceQueued,
+                           final boolean traceHeartbeat,
+                           final boolean traceResponses,
                            final Connector connector,
                            final LoginCallback callback) {
     (new Thread() {
@@ -83,7 +76,8 @@ public class HttpTask implements Runnable {
 
         if (login_ok) {
           callback.onLoginSuccess();
-          HttpTask task = new HttpTask(session, traceQueued, traceHeartbeat);
+          HttpTask task = new HttpTask(session, traceQueued, traceHeartbeat,
+                                       traceResponses);
           connector.setHttpTask(task);
           task.run();
         }
@@ -91,12 +85,13 @@ public class HttpTask implements Runnable {
     }).start();
   }
 
-  public HttpTask(ClientSession session, MessageTracer traceQueued,
-                  MessageTracer traceHeartbeat) {
+  public HttpTask(ClientSession session, boolean traceQueued,
+                  boolean traceHeartbeat, boolean traceResponses) {
     this.session = session;
     this.queue = new ArrayList<Message>();
     this.traceQueued = traceQueued;
     this.traceHeartbeat = traceHeartbeat;
+    this.traceResponses = traceResponses;
     synchronized (queue) {
       queueMessage(new Message.Hello());
     }
@@ -124,6 +119,7 @@ public class HttpTask implements Runnable {
   protected synchronized TimerHealthCallback getTimerHealthCallback() {
     return this.timerHealthCallback;
   }
+
   public synchronized void registerHeatReadyCallback(HeatReadyCallback cb) {
     this.heatReadyCallback = cb;
   }
@@ -146,10 +142,11 @@ public class HttpTask implements Runnable {
     }
     try {
       return Integer.valueOf(attr);
-    } catch (NumberFormatException nfe) { // regex should have ensured this won't happen
-      // TODO This should be logged, not dumped to stdout
-      System.out.println(Timestamp.string()
-                         + ": Unexpected number format exception reading heat-ready response");
+    } catch (NumberFormatException nfe) {
+      // regex should have ensured this won't happen
+      LogWriter.stacktrace(nfe);
+      System.err.println(
+          "Unexpected number format exception reading heat-ready response");
       return 0;
     }
   }
@@ -159,9 +156,11 @@ public class HttpTask implements Runnable {
   // queue, sending queued events; otherwise sends a HEARTBEAT and
   // sleeps a known amount of time.
   public void run() {
+    System.err.println("Running HttpTask");
     while (true) {
       Element response = null;
-      MessageTracer traceMessage = null;
+      boolean trace = false;
+      boolean log = true;
       Message nextMessage;
       synchronized (queue) {
         if (queue.size() == 0) {
@@ -172,14 +171,14 @@ public class HttpTask implements Runnable {
         }
         if (queue.size() > 0) {
           nextMessage = queue.remove(0);
-          traceMessage = this.traceQueued;
+          trace = this.traceQueued;
         } else {
           TimerHealthCallback timerHealth = getTimerHealthCallback();
           if (timerHealth != null && timerHealth.isTimerHealthy()) {
             // Send heartbeats only if we've actually identified the timer and
             // it's healthy.
             nextMessage = new Message.Heartbeat();
-            traceMessage = this.traceHeartbeat;
+            log = trace = this.traceHeartbeat;
           } else {
             continue;
           }
@@ -190,14 +189,19 @@ public class HttpTask implements Runnable {
           String params = null;
           try {
             params = nextMessage.asParameters();
-            if (traceMessage != null) {
-              traceMessage.onMessageSend(nextMessage, params);
+            if (trace) {
+              StdoutMessageTrace.httpMessage(nextMessage, params);
+            }
+            if (log) {
+              LogWriter.httpMessage(nextMessage, params);
             }
             response = session.sendTimerMessage(params);
             succeeded = true;
           } catch (Throwable t) {
-            System.out.println(Timestamp.string()
-                + ": Unable to send HTTP message " + params + "; retrying");
+            LogWriter.trace("Unable to send HTTP message " + params);
+            LogWriter.stacktrace(t);
+            System.err.println(
+                "Unable to send HTTP message " + params + "; retrying");
             t.printStackTrace();
           }
         }
@@ -207,10 +211,14 @@ public class HttpTask implements Runnable {
         continue;
       }
 
-      if (traceMessage != null) {
-        traceMessage.onMessageResponse(nextMessage, response);
+      if (traceResponses) {
+        if (trace) {
+          StdoutMessageTrace.httpResponse(nextMessage, response);
+        }
+        if (log) {
+          LogWriter.httpResponse(response);
+        }
       }
-
       NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
       if (heatReadyNodes.getLength() > 0) {
         HeatReadyCallback cb = getHeatReadyCallback();

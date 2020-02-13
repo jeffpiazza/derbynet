@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -70,7 +71,7 @@ public class TheJudgeDevice extends TimerDeviceBase {
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Checking Valid Lanes") >= 0) {
         timerIdentifier = s;
-        portWrapper.logWriter().traceInternal("* 'The Judge' detected.");
+        LogWriter.serial("* 'The Judge' detected.");
         setUp();
         return true;
       }
@@ -143,22 +144,20 @@ public class TheJudgeDevice extends TimerDeviceBase {
       Matcher m;
       if ((m = matched(numberOfLanesPattern, line)) != null) {
         numberOfLanes = Integer.parseInt(m.group(1));
-        portWrapper.logWriter().traceInternal(
+        LogWriter.trace(
             "Identified " + numberOfLanes + " lane(s).");
         System.out.println("Identified " + numberOfLanes + " lane(s).");  // TODO
       } else if (matched(startRacePattern, line) != null) {
         // TODO The startRacePattern should have been picked up in the
         // early detector; this is just insurance.
-        portWrapper.logWriter().traceInternal("Race start detected by polling");
+        LogWriter.trace("Race start detected by polling");
         raceStarted();
       } else if ((m = matched(singleLanePattern, line)) != null) {
         int lane = Integer.parseInt(m.group(1));
         if (results == null) {
-          portWrapper.logWriter().traceInternal(
-              "* Unexpected race results before race start");
+          LogWriter.serial("* Unexpected race results before race start");
           if (numberOfLanes == 0) {
-            portWrapper.logWriter().traceInternal(
-                "* Forcing 6 lanes");
+            LogWriter.serial("* Forcing 6 lanes");
             numberOfLanes = 6;
           }
           results = new Message.LaneResult[numberOfLanes];
@@ -176,8 +175,7 @@ public class TheJudgeDevice extends TimerDeviceBase {
           }
           results[lane - 1].time = time;
         } else {
-          portWrapper.logWriter().traceInternal(
-              "Can't record result for lane " + lane);
+          LogWriter.serial("Can't record result for lane " + lane);
         }
         ++lanesReceived;
       } else if (matched(raceOverPattern, line) != null) {
@@ -192,12 +190,11 @@ public class TheJudgeDevice extends TimerDeviceBase {
 
   private void raceStarted() {
     System.out.println("* Race started!");  // TODO
-    portWrapper.logWriter().traceInternal("* Race started!");  // TODO
+    LogWriter.serial("* Race started!");  // TODO
     int nlanes = numberOfLanes;
     if (nlanes == 0) {
       nlanes = 6;
-      portWrapper.logWriter().traceInternal(
-          "Lane count not received; forcing 6 lanes");
+      LogWriter.serial("Lane count not received; forcing 6 lanes");
     }
     results = new Message.LaneResult[nlanes];
     lanesReceived = 0;

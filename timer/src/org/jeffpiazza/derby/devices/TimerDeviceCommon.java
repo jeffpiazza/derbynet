@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby.devices;
 
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
@@ -30,8 +31,7 @@ public abstract class TimerDeviceCommon
                               GateWatcher gateWatcher,
                               boolean gate_state_is_knowable) {
     super(portWrapper);
-    this.rsm = new RacingStateMachine(gate_state_is_knowable, this,
-                                      portWrapper.logWriter());
+    this.rsm = new RacingStateMachine(gate_state_is_knowable, this);
     this.gateWatcher = gateWatcher;
   }
 
@@ -98,7 +98,7 @@ public abstract class TimerDeviceCommon
     if (this.roundid == roundid && this.heat == heat
         && (state == RacingStateMachine.State.MARK
             || state == RacingStateMachine.State.SET)) {
-      portWrapper.logWriter().traceInternal("Ignoring redundant prepareHeat()");
+      LogWriter.trace("Ignoring redundant prepareHeat()");
       return;
     }
 
@@ -151,7 +151,7 @@ public abstract class TimerDeviceCommon
 
   protected void logOverdueResults() {
     String msg = Timestamp.string() + ": ****** Race timed out *******";
-    portWrapper.logWriter().traceInternal(msg);
+    LogWriter.trace(msg);
     System.err.println(msg);
   }
 
@@ -207,8 +207,7 @@ public abstract class TimerDeviceCommon
         portWrapper.checkConnection();
 
         // Don't know, assume unchanged
-        portWrapper.logWriter().serialPortLogInternal(
-            "** Unable to determine starting gate state");
+        LogWriter.serial("** Unable to determine starting gate state");
         System.err.println(Timestamp.string() + ": Unable to read gate state");
       }
       return getGateIsClosed();
@@ -308,8 +307,6 @@ public abstract class TimerDeviceCommon
     // We'd like to alert the operator to intervene manually, but
     // as currently implemented, a malfunction(false) message would require
     // unplugging/replugging the timer to reset: too invasive.
-    portWrapper.logWriter().
-        serialPortLogInternal(
-            "No result from timer for the running race; giving up.");
+    LogWriter.serial("No result from timer for the running race; giving up.");
   }
 }

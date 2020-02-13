@@ -6,6 +6,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jeffpiazza.derby.LogWriter;
 
 // This class supports PICmicro-based DIY timer designed by Bert Drake,
 // described at http://drakedev.com/pinewood/.  The "Race Timer Software
@@ -106,8 +107,7 @@ public class BertDrakeDevice extends TimerDeviceCommon {
               // We only accept results when the race is running, as a guard
               // against late results from one heat being applied after
               // receiving a heat-ready for the next heat.
-              portWrapper.logWriter().traceInternal(
-                  "Ignoring lane result because race isn't running");
+              LogWriter.serial("Ignoring lane result because race isn't running");
             } else if (result != null) {
               ++nresults;
               result.setLane(lane, time, nresults);

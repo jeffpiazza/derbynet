@@ -148,19 +148,21 @@ public class ClientSession {
       try {
         return db.parse(inputStream).getDocumentElement();
       } catch (Exception e) {
+        LogWriter.stacktrace(e);
         System.err.println("Failed");
         e.printStackTrace();
       }
     } catch (Exception e) {
+      LogWriter.stacktrace(e);
       e.printStackTrace();
     }
-    System.out.
-        println(Timestamp.string() + ": Unparseable response for message");
+    LogWriter.httpResponse("Unparseable response for message");
     inputStream.reset();
     byte[] buffer = new byte[1024];
     int bytesRead;
     while ((bytesRead = inputStream.read(buffer)) != -1) {
       System.out.write(buffer, 0, bytesRead);
+      LogWriter.httpResponse(new String(buffer, 0, bytesRead));
     }
     return null;
   }
@@ -170,10 +172,12 @@ public class ClientSession {
       return false;
     } else if (response.getElementsByTagName("success").getLength() == 0
         || response.getElementsByTagName("failure").getLength() > 0) {
-      System.out.println(Timestamp.string() + ": Message resulted in failure");
-      System.out.println("=======================");
-      System.out.println(XmlSerializer.serialized(response));
-      System.out.println("=======================");
+      LogWriter.httpResponse("Message resulted in failure");
+      LogWriter.httpResponse(response);
+      System.err.println(Timestamp.string() + ": Message resulted in failure");
+      System.err.println("=======================");
+      System.err.println(XmlSerializer.serialized(response));
+      System.err.println("=======================");
       return false;
     } else {
       return true;

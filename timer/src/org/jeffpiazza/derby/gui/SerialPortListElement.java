@@ -1,7 +1,5 @@
 package org.jeffpiazza.derby.gui;
 
-import jssc.SerialPort;
-
 public class SerialPortListElement {
   private String portName;
   private boolean wontOpen;

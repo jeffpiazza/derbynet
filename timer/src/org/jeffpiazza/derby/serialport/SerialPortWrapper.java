@@ -29,7 +29,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
   private String leftover;
   // Messages (full lines) received from timer
   private ArrayList<String> queue;
-  private LogWriter logwriter;
   // System time in millis when we last sent a command to the serial port.
   // TODO What we really want is to track the last command for which we actually
   // expect a response.
@@ -52,21 +51,21 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // buffer changes, without waiting for a newline character.
   private Detector earlyDetector;
 
-  public SerialPortWrapper(SerialPort port, LogWriter logwriter) throws
+  public SerialPortWrapper(SerialPort port) throws
       SerialPortException {
     this.port = port;
     this.leftover = "";
     this.queue = new ArrayList<String>();
-    this.logwriter = logwriter;
 
     if (port != null) {
       if (!port.purgePort(SerialPort.PURGE_RXCLEAR
           | SerialPort.PURGE_TXCLEAR)) {
-        System.out.println("purgePort failed.");  // TODO
+        LogWriter.serial("purgePort failed.");
+        System.err.println("purgePort failed.");
         // return false;
       }
 
-      logwriter.serialPortLog(LogWriter.INTERNAL, "SerialPortWrapper attached");
+      LogWriter.serial("SerialPortWrapper attached");
       port.addEventListener(this, SerialPort.MASK_RXCHAR);
     }
   }
@@ -94,10 +93,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   protected void writeStringToPort(String s) throws SerialPortException {
     port.writeString(s);
-  }
-
-  public LogWriter logWriter() {
-    return logwriter;
   }
 
   public long millisSinceLastCommand() {
@@ -148,11 +143,14 @@ public class SerialPortWrapper implements SerialPortEventListener {
         // it comes up sometimes on Windows
         noticeContact();
       } else {
-        System.out.println("\n(Unexpected serialEvent type: " + event.
-            getEventType() + " with value " + event.getEventValue() + ")");
+        String msg = "\n(Unexpected serialEvent type: " +
+            event.getEventType() + " with value " + event.getEventValue() + ")";
+        LogWriter.info(msg);
+        System.err.println(msg);
       }
     } catch (Exception e) {
-      System.out.println("serialEvent gets an exception: " + e);
+      LogWriter.stacktrace(e);
+      System.err.println("serialEvent gets an exception: " + e);
     }
   }
 
@@ -181,7 +179,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
         while ((cr = s.indexOf('\n')) >= 0) {
           String line = s.substring(0, cr).trim();
           if (line.length() > 0) {
-            logwriter.serialPortLog(LogWriter.INCOMING, line);
+            LogWriter.serialIn(line);
             synchronized (detectors) {
               for (Detector detector : detectors) {
                 line = detector.apply(line);
@@ -202,13 +200,14 @@ public class SerialPortWrapper implements SerialPortEventListener {
         leftover = s;
       }
     } catch (Exception exc) {
-      System.out.println("Exception while reading: " + exc);
-      exc.printStackTrace();  // TODO
+      LogWriter.stacktrace(exc);
+      System.err.println("Exception while reading: " + exc);
+      exc.printStackTrace();
     }
   }
 
   public void write(String s) throws SerialPortException {
-    logwriter.serialPortLog(LogWriter.OUTGOING, s);
+    LogWriter.serialOut(s);
     last_command = System.currentTimeMillis();
     writeStringToPort(s);
   }
@@ -253,7 +252,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
       }
     }
     if (s != null && s.length() > 0 && s.charAt(0) == '@') {
-      // System.out.println("* Spurious '@' removed");
       s = s.substring(1);
     }
     return s;
@@ -263,7 +261,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void clear() {
     synchronized (queue) {
       for (String s : queue) {
-        logwriter.serialPortLogInternal("CLEARED: " + s);
+        LogWriter.serial("CLEARED: " + s);
       }
       queue.clear();
     }
@@ -276,7 +274,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
       synchronized (queue) {
         if (queue.size() >= expectedLines) {
           for (String s : queue) {
-            logwriter.serialPortLogInternal("DRAINED: " + s);
+            LogWriter.serial("DRAINED: " + s);
           }
           queue.clear();
           return;

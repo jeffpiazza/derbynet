@@ -14,12 +14,10 @@ public class SimulatedClientSession extends ClientSession {
   // until the current one is answered or aborted.
   private String heatReadyString = null;
   private int numberOfHeatsPrepared = 0;
-  private LogWriter logWriter;
   private Random random;
 
-  public SimulatedClientSession(LogWriter logWriter) {
+  public SimulatedClientSession() {
     super("");
-    this.logWriter = logWriter;
     this.random = new Random();
   }
 
@@ -97,7 +95,7 @@ public class SimulatedClientSession extends ClientSession {
           + " round=\"1\""
           + " roundid=\"" + (1 + random.nextInt(9)) + "\"/>\n";
 
-      logWriter.simulationLog("Simulating heat-ready with " +
+      LogWriter.simulationLog("Simulating heat-ready with " +
           LogWriter.laneMaskString(laneMask, nlanes));
       System.out.print("\t\t\t\t" + heatReadyString);
 

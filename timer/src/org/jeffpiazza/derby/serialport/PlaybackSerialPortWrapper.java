@@ -1,13 +1,11 @@
 package org.jeffpiazza.derby.serialport;
 
-import jssc.SerialPortException;
-import org.jeffpiazza.derby.LogWriter;
-
-import java.util.HashMap;
 import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.ArrayDeque;
 import java.io.FileReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import jssc.SerialPortException;
 
 // For testing a new TimerDevice class, this simulates the data arriving on
 // the serial port.
@@ -45,9 +43,9 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
     }
   }
 
-  public PlaybackSerialPortWrapper(LogWriter logwriter)
+  public PlaybackSerialPortWrapper()
       throws SerialPortException {
-    super(null, logwriter);
+    super(null);
     System.out.println("Creating simulated port wrapper");
     pushMessages();
     new Thread() {

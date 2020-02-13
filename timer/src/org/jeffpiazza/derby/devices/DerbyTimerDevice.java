@@ -7,6 +7,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jeffpiazza.derby.LogWriter;
 
 // This class supports the "Derby Timer" device, http://derbytimer.com
 public class DerbyTimerDevice extends TimerDeviceTypical {
@@ -156,8 +157,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
       } else if (s.trim().equals("D")) {
         return false;
       } else {
-        portWrapper.logWriter().serialPortLogInternal(
-            "Unrecognized response: '" + s + "'");
+        LogWriter.serial("Unrecognized response: '" + s + "'");
       }
     }
 

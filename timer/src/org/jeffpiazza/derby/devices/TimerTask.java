@@ -18,7 +18,6 @@ import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
 
 public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private TimerGui timerGui;
-  private LogWriter logwriter;
   private Connector connector;
   private static final int PORT_NORMAL = 0;
   private static final int PORT_RECORDING = 1;
@@ -31,9 +30,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private boolean userIntervened = false;
 
   public TimerTask(String portname, String devicename, TimerGui timerGui,
-                   LogWriter logwriter, Connector connector) {
+                   Connector connector) {
     this.timerGui = timerGui;
-    this.logwriter = logwriter;
     this.connector = connector;
 
     timerClasses = new ChoosableList<Class<? extends TimerDevice>>(
@@ -96,14 +94,14 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         connector.setTimerTask(this);
         runDevicePollingLoop();
       } catch (TimerDevice.LostConnectionException lce) {
-        System.out.println("Lost connection!");
+        System.err.println("Lost connection!");
         if (device != null) {
           String msg = "No response from timer in "
               + device.getPortWrapper().millisSinceLastContact() + "ms.";
-          logwriter.serialPortLogInternal(msg);
+          LogWriter.serial(msg);
           device.invokeMalfunctionCallback(true, msg);
         } else {
-          logwriter.traceInternal("LostConnectionException with no device!");
+          LogWriter.trace("LostConnectionException with no device!");
         }
         if (timerGui != null) {
           // Note that this status message will get replaced almost immediately
@@ -116,10 +114,10 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         if (cause == null) {
           cause = ex;
         }
-        logwriter.traceInternal(
+        LogWriter.trace(
             "** Timer loop restarted due to "
             + cause.getClass().getName() + ": " + ex.getMessage());
-        logwriter.stacktrace(ex);
+        LogWriter.stacktrace(ex);
       } finally {
         if (device != null) {
           device.close();
@@ -229,13 +227,13 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
           switch (port_record_playback) {
             case PORT_NORMAL:
             default:
-              portWrapper = new SerialPortWrapper(port, logwriter);
+              portWrapper = new SerialPortWrapper(port);
               break;
             case PORT_RECORDING:
-              portWrapper = new RecordingSerialPortWrapper(port, logwriter);
+              portWrapper = new RecordingSerialPortWrapper(port);
               break;
             case PORT_PLAYBACK:
-              portWrapper = new PlaybackSerialPortWrapper(logwriter);
+              portWrapper = new PlaybackSerialPortWrapper();
               break;
           }
           for (Class<? extends TimerDevice> timerClass
@@ -298,7 +296,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
       if (timerClass != timerClasses.chosen()) {
         // Unless the user chose this class, treat as a failed probe without
         // bothering to probe.
-        logwriter.serialPortLogInternal(
+        LogWriter.serial(
             "Skipping " + timerClass.getSimpleName()
             + " on " + portWrapper.getPortName());
         System.out.println(" (skipped)");
@@ -311,11 +309,11 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
             + ", because positive identification is not possible.";
         System.out.println();
         System.out.println(msg);
-        logwriter.serialPortLogInternal(msg);
+        LogWriter.serial(msg);
         return device;
       }
     } else {
-      logwriter.serialPortLogInternal(
+      LogWriter.serial(
           "Trying " + timerClass.getSimpleName()
           + " on " + portWrapper.getPortName());
 
@@ -323,7 +321,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         String msg = "*** Identified as a(n) " + timerClass.getSimpleName();
         System.out.println();
         System.out.println(msg);
-        logwriter.serialPortLogInternal(msg);
+        LogWriter.serial(msg);
         return device;
       } else {
         System.out.println();
@@ -339,6 +337,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         port.closePort();
       }
     } catch (Throwable t) {
+      LogWriter.stacktrace(t);
       System.err.println("Exception closing port: ");
       t.printStackTrace();
     }
@@ -348,7 +347,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     try {
       return port.openPort();
     } catch (SerialPortException spe) {
-      System.out.println(spe.getExceptionType());
+      LogWriter.stacktrace(spe);
+      System.err.println(spe.getExceptionType());
       return false;
     }
   }

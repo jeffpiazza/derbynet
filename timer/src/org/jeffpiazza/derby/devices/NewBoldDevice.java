@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -94,16 +95,14 @@ public class NewBoldDevice extends TimerDeviceBase {
           if (lane != 0) {
             // For DNF lanes, DerbyStick reports lane 0 and 0.0000 result.
             TimerDeviceUtils.addOneLaneResult(lane, time, nresults, results);
-            portWrapper.logWriter().traceInternal(
-                "Lane " + lane + ": " + time + " seconds");
+            LogWriter.serial("Lane " + lane + ": " + time + " seconds");
           } else {
-            portWrapper.logWriter().traceInternal("DNF result");
+            LogWriter.serial("DNF result");
           }
           nresults++;
           line = m.group(3).trim();
         } else {
-          portWrapper.logWriter().traceInternal(
-              "* Unrecognized: [[" + line + "]]");
+          LogWriter.serial("* Unrecognized: [[" + line + "]]");
           break;
         }
       }
@@ -113,7 +112,7 @@ public class NewBoldDevice extends TimerDeviceBase {
                                    (Message.LaneResult[]) results.toArray(
                                        new Message.LaneResult[results.size()]));
         roundid = heat = 0;
-        portWrapper.logWriter().traceInternal("Race finished!");
+        LogWriter.serial("Race finished!");
         timerResetMillis
             = System.currentTimeMillis() + postRaceDisplayDurationMillis;
       }

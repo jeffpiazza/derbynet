@@ -4,111 +4,151 @@ import java.awt.Desktop;
 import org.w3c.dom.Element;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jeffpiazza.derby.devices.SimulatedDevice;
 
 // TODO: Suppress heartbeats with uninteresting responses
-public class LogWriter implements HttpTask.MessageTracer {
-  public static class FileAndPrintWriter {
-    public FileAndPrintWriter(File file, PrintWriter writer) {
-      this.file = file;
-      this.writer = writer;
-    }
-    public File file;
-    public PrintWriter writer;
-  }
-  private FileAndPrintWriter writer;
+public class LogWriter {
+  private static File logFileDirectory
+      = new File(System.getProperty("user.dir"));
 
-  public LogWriter() {
-    try {
-      this.writer = LogFileFactory.makeLogFile();
-    } catch (IOException ex) {
-      System.err.println("Unable to create log file");
-      Logger.getLogger(LogWriter.class.getName()).log(Level.SEVERE, null, ex);
+  public static void setLogFileDirectory(String directory) {
+    File dir = new File(directory);
+    if (!dir.exists()) {
+      dir.mkdirs();
     }
-    serialPortLog(INTERNAL, "Started at " + Timestamp.string());
-    (new Thread() {
-      @Override
-      public void run() {
-        try {
-          long seconds = (new Date(System.currentTimeMillis())).getSeconds();
-          Thread.sleep(1000 * (60 - seconds));
-        } catch (InterruptedException ex) {
-        }
-        while (true) {
-          try {
-            Thread.sleep(60000);
-          } catch (InterruptedException ex) {
+    if (dir.isDirectory()) {
+      logFileDirectory = dir;
+    } else {
+      System.err.println(
+          "File path " + dir.getAbsolutePath() + " is not a directory.");
+    }
+  }
+
+  private static File logFile;
+  private static PrintWriter writer;
+
+  public static void initialize() {
+    if (writer == null) {
+      try {
+        makeLogFile();
+        info("Started at " + Timestamp.string());
+        (new Thread() {
+          @Override
+          public void run() {
+            try {
+              long seconds = (new Date(System.currentTimeMillis())).getSeconds();
+              Thread.sleep(1000 * (60 - seconds));
+            } catch (InterruptedException ex) {
+            }
+            while (true) {
+              try {
+                Thread.sleep(60000);
+              } catch (InterruptedException ex1) {
+              }
+              info(Timestamp.string());
+            }
           }
-          serialPortLog(INTERNAL, Timestamp.string());
-        }
+        }).start();
+      } catch (IOException ex) {
+        System.err.println("*** Unable to create log file");
       }
-    }).start();
-  }
-
-  public static final int INCOMING = 0;
-  public static final int OUTGOING = 1;
-  public static final int INTERNAL = 2;
-
-  private static final char HTTP_LOG = 'H';
-  private static final char SERIAL_PORT_LOG = 'S';
-  private static final char SIMULATION_LOG = '*';
-
-  public void serialPortLog(int direction, String msg) {
-    if (writer != null) {
-      writer.writer.println("+" + Timestamp.brief() + SERIAL_PORT_LOG + "\t\t" +
-                     (direction == INCOMING ? "<-- " :
-                      direction == OUTGOING ? "--> " :
-                         "INT ") +
-                     msg.replace("\r", "\\r"));
     }
   }
 
-  public void serialPortLogInternal(String msg) {
-    serialPortLog(INTERNAL, msg);
-  }
-
-  public void httpLog(int direction, String msg) {
-    if (writer != null) {
-      writer.writer.println("+" + Timestamp.brief()+ HTTP_LOG + "\t\t\t" +
-                     (direction == INCOMING ? "<-- " :
-                      direction == OUTGOING ? "--> " :
-                         "INT ") +
-                     msg.replace("\r", "\\r"));
+  private static void makeLogFile() throws IOException {
+    final String yyyymmdd_hhmm = (new SimpleDateFormat("yyyyMMdd-HHmm")).format(
+        Calendar.getInstance().getTime());
+    try {
+      writer = makeLogFile(logFile
+          = new File(logFileDirectory, "timer-" + yyyymmdd_hhmm + ".log"));
+    } catch (IOException ex) {
+      writer = makeLogFile(logFile = File.createTempFile("timer-", ".log"));
     }
   }
 
-  public void simulationLog(String msg) {
+  private static PrintWriter makeLogFile(File logfile) throws IOException {
+    System.err.println("Starting log file " + logfile.getAbsolutePath());
+    return new PrintWriter(new BufferedWriter(new FileWriter(logfile)),
+                           /*autoflush*/ true);
+  }
+
+
+  protected static final String INCOMING = "<-- ";
+  protected static final String OUTGOING = "--> ";
+  protected static final String INTERNAL = "INT ";
+
+  protected static final String SIMULATION_CHANNEL = "*";
+  protected static final String INFO_CHANNEL = "I";
+  protected static final String SERIAL_CHANNEL = "S\t";
+  protected static final String HTTP_CHANNEL = "H\t\t";
+
+  protected static final SimpleDateFormat hh_mm_ss
+      = new SimpleDateFormat("HH:mm:ss.SSS");
+
+  private static void write(String s, String channelString,
+                            String directionString) {
+    if (writer != null) {
+      writer.println("+" + hh_mm_ss.format(new Date(System.currentTimeMillis()))
+          + channelString + "\t" + directionString
+          + s.replace("\r", "\\r"));
+    }
+  }
+
+  public static void info(String s) {
+    write(s, INFO_CHANNEL, "");
+  }
+
+  public static void httpMessage(Message m, String params) {
+    write(m.asParameters(), HTTP_CHANNEL, OUTGOING);
+  }
+
+  public static void httpResponse(Element response) {
+    httpResponse(XmlSerializer.serialized(response));
+  }
+
+  public static void httpResponse(String s) {
+    write(s, HTTP_CHANNEL, INCOMING);
+  }
+
+  // TODO A bunch of these calls should probably be to serial()
+  public static void trace(String s) {
+    write(s, HTTP_CHANNEL, INTERNAL);
+  }
+
+  public static void serial(String s) {
+    write(s, SERIAL_CHANNEL, INTERNAL);
+  }
+
+  public static void serialIn(String s) {
+    write(s, SERIAL_CHANNEL, INCOMING);
+  }
+
+  public static void serialOut(String s) {
+    write(s, SERIAL_CHANNEL, OUTGOING);
+  }
+
+  public static void simulationLog(String msg) {
     System.out.println();
     System.out.println(msg);
     if (writer != null) {
-      writer.writer.println("\n+" + Timestamp.brief()+ SIMULATION_LOG + "\t" + msg);
+      writer.println();
     }
+    write(msg, SIMULATION_CHANNEL, "");
   }
 
-  public void onMessageSend(Message m, String params) {
-    httpLog(OUTGOING, m.asParameters());
-  }
-
-  public void onMessageResponse(Message m, Element response) {
-    httpLog(INCOMING, XmlSerializer.serialized(response));
-  }
-
-  public void traceInternal(String s) {
-    httpLog(INTERNAL, s);
-  }
-
-  public void stacktrace(Throwable t) {
+  public static void stacktrace(Throwable t) {
     if (writer != null) {
-      t.printStackTrace(writer.writer);
+      t.printStackTrace(writer);
     }
   }
 
-  public void showLogFile() {
+  public static void showLogFile() {
     try {
-      Desktop.getDesktop().open(writer.file.getParentFile());
+      Desktop.getDesktop().open(logFile.getParentFile());
     } catch (IOException ex) {
       Logger.getLogger(LogWriter.class.getName()).log(Level.SEVERE, null, ex);
     }

@@ -1,11 +1,9 @@
 package org.jeffpiazza.derby;
 
+import java.io.IOException;
 import org.jeffpiazza.derby.gui.TimerGui;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import java.io.IOException;
-import org.w3c.dom.ls.DOMImplementationLS;
 
 // From a server address, tries to make first contact with the web server by
 // asking about the available roles.

@@ -3,6 +3,7 @@ package org.jeffpiazza.derby.devices;
 import java.util.regex.Matcher;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -109,8 +110,7 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
   public void poll() throws SerialPortException, LostConnectionException {
     String line;
     while ((line = portWrapper.nextNoWait()) != null) {
-      portWrapper.logWriter().serialPortLogInternal(
-          "Unexpected timer output: " + line);
+      LogWriter.serial("Unexpected timer output: " + line);
     }
   }
 }

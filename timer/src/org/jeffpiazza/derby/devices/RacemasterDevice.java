@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -97,7 +98,7 @@ public class RacemasterDevice extends TimerDeviceBase {
         if (m.find()) {
           int lane = m.group(1).charAt(0) - '0';
           String time = m.group(2);
-          portWrapper.logWriter().traceInternal("Lane " + lane + ": " + time);
+          LogWriter.serial("Lane " + lane + ": " + time);
           if (result != null) {
             result.setLane(lane, time);
             if (result.isFilled()) {
@@ -106,8 +107,7 @@ public class RacemasterDevice extends TimerDeviceBase {
               lastCarDeadline = System.currentTimeMillis() + kDeadlineMs;
             }
           } else {
-            portWrapper.logWriter().traceInternal(
-                "* No heat pending; ignoring time " + time
+            LogWriter.serial("* No heat pending; ignoring time " + time
                 + " for lane " + lane);
           }
           return line.substring(0, m.start()) + line.substring(m.end());
@@ -168,10 +168,10 @@ public class RacemasterDevice extends TimerDeviceBase {
   public void poll() throws SerialPortException, LostConnectionException {
     String line;
     while ((line = portWrapper.nextNoWait()) != null) {
-      portWrapper.logWriter().traceInternal("POLL ignoring \"" + line + "\"");
+      LogWriter.serial("POLL ignoring \"" + line + "\"");
     }
     if (lastCarDeadline != 0 && System.currentTimeMillis() >= lastCarDeadline) {
-      portWrapper.logWriter().traceInternal("POLL timing out last car(s)");
+      LogWriter.serial("POLL timing out last car(s)");
       raceFinished();
     }
   }

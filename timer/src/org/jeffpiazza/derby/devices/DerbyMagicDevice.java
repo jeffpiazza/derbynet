@@ -5,6 +5,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 
 // TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
@@ -97,7 +98,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         if (line.equals(TIMER_HAS_STARTED)) {
-          portWrapper.logWriter().serialPortLogInternal("Detected gate opening");
+          LogWriter.serial("Detected gate opening");
           // This will be an unexpected state change, if it ever happens
           onGateStateChange(false);
           return "";
@@ -110,8 +111,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
       public String apply(String line) throws SerialPortException {
         Matcher m = singleLanePattern.matcher(line);
         while (m.find()) {
-          portWrapper.logWriter().serialPortLogInternal(
-              "    Early detector match for (" + m.group() + ")");
+          LogWriter.serial("    Early detector match for (" + m.group() + ")");
           int lane = m.group(1).charAt(0) - '1' + 1;
           String time = m.group(2);
           int place = 0;
@@ -120,8 +120,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
           }
 
           if (result == null) {
-            portWrapper.logWriter().serialPortLogInternal(
-                "*    No results were expected now.");
+            LogWriter.serial("*    No results were expected now.");
           } else {
             result.setLane(lane, time, place);
             if (timeOfFirstResult == 0) {
