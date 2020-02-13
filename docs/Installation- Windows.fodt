@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2016-11-30T23:19:45.569220000</meta:creation-date><meta:editing-duration>PT1H11S</meta:editing-duration><meta:editing-cycles>10</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2019-12-29T06:46:16.660698333</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="4" meta:object-count="0" meta:page-count="2" meta:paragraph-count="15" meta:word-count="254" meta:character-count="1728" meta:non-whitespace-character-count="1482"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2016-11-30T23:19:44.589810000"/></office:meta>
+ <office:meta><meta:creation-date>2016-11-30T23:19:45.569220000</meta:creation-date><meta:editing-duration>P2DT6H7M2S</meta:editing-duration><meta:editing-cycles>12</meta:editing-cycles><meta:generator>LibreOffice/6.0.0.3$MacOSX_X86_64 LibreOffice_project/64a0f66915f38c6217de274f0aa8e15618924765</meta:generator><dc:date>2020-01-31T18:51:22.795516745</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="4" meta:object-count="0" meta:page-count="3" meta:paragraph-count="17" meta:word-count="295" meta:character-count="1961" meta:non-whitespace-character-count="1673"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2016-11-30T23:19:44.589810000"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
    <config:config-item config:name="ViewAreaTop" config:type="long">0</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
-   <config:config-item config:name="ViewAreaWidth" config:type="long">26037</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">17263</config:config-item>
+   <config:config-item config:name="ViewAreaWidth" config:type="long">32468</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">18708</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">12628</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">9370</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">11426</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">30942</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
      <config:config-item config:name="VisibleTop" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleRight" config:type="long">26035</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">17261</config:config-item>
+     <config:config-item config:name="VisibleRight" config:type="long">32466</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">18706</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -96,7 +96,7 @@
    <config:config-item config:name="TableRowKeep" config:type="boolean">false</config:config-item>
    <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="EmbeddedDatabaseName" config:type="string"/>
-   <config:config-item config:name="Rsid" config:type="int">2817788</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">3124963</config:config-item>
    <config:config-item config:name="TabsRelativeToIndent" config:type="boolean">true</config:config-item>
    <config:config-item config:name="UseOldPrinterMetrics" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IgnoreTabsAndBlanksForLineCalculation" config:type="boolean">false</config:config-item>
@@ -312,9 +312,17 @@
   <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Heading_20_1">
    <style:text-properties officeooo:rsid="002961e0" officeooo:paragraph-rsid="002aaa16"/>
   </style:style>
-  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
+   <style:paragraph-properties fo:margin-top="0.0598in" fo:margin-bottom="0.0799in" loext:contextual-spacing="false" style:writing-mode="page"/>
+   <style:text-properties officeooo:rsid="002cab3f" officeooo:paragraph-rsid="002cab3f"/>
+  </style:style>
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="002026cf" officeooo:paragraph-rsid="002026cf"/>
+  </style:style>
+  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Heading_20_1">
+   <style:paragraph-properties fo:margin-top="0.0598in" fo:margin-bottom="0.0799in" loext:contextual-spacing="false" style:writing-mode="page"/>
+   <style:text-properties officeooo:rsid="002cab3f" officeooo:paragraph-rsid="002cab3f"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="00233d0e"/>
@@ -367,6 +375,9 @@
   <style:style style:name="T17" style:family="text">
    <style:text-properties officeooo:rsid="002afefc"/>
   </style:style>
+  <style:style style:name="T18" style:family="text">
+   <style:text-properties officeooo:rsid="002def5e"/>
+  </style:style>
   <style:style style:name="fr1" style:family="graphic" style:parent-style-name="Graphics">
    <style:graphic-properties style:run-through="foreground" style:wrap="none" style:horizontal-pos="center" style:horizontal-rel="paragraph" style:mirror="none" fo:clip="rect(0in, 0in, 0in, 0in)" draw:luminance="0%" draw:contrast="0%" draw:red="0%" draw:green="0%" draw:blue="0%" draw:gamma="100%" draw:color-inversion="false" draw:image-opacity="100%" draw:color-mode="standard"/>
   </style:style>
@@ -393,7 +404,7 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Text"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
    </text:sequence-decls>
-   <text:p text:style-name="P13"><text:span text:style-name="T6">README: One-Click Install for </text:span>Windows</text:p>
+   <text:p text:style-name="P14"><text:span text:style-name="T6">README: One-Click Install for </text:span>Windows</text:p>
    <text:p text:style-name="P11">The Windows download for DerbyNet is a single .zip file. <text:s/>After downloading, unzip the file in a folder of your choosing.<text:span text:style-name="T2"> <text:s/></text:span><text:span text:style-name="T11">Note:</text:span><text:span text:style-name="T14"> the directory containing the unzipped content, and all its parent directories, </text:span><text:span text:style-name="T15">must not contain spaces</text:span><text:span text:style-name="T14"> in their names.</text:span></text:p>
    <text:p text:style-name="P11">If desired, the unzipped content can be kept on a removable flash drive and transported from one machine to another. <text:s/>(The DerbyNet Windows download is based on Uniform Server, <text:s text:c="2"/>http://www.uniformserver.com.)</text:p>
    <text:h text:style-name="P12" text:outline-level="1">About Passwords</text:h>
@@ -898,7 +909,9 @@
       </office:binary-data>
      </draw:image>
     </draw:frame></text:p>
-   <text:h text:style-name="P3" text:outline-level="1"><text:soft-page-break/>Launch The <text:span text:style-name="T13">Timer</text:span> Interface</text:h>
+   <text:h text:style-name="P15" text:outline-level="1"><text:soft-page-break/>Point Your Browser At The Server</text:h>
+   <text:p text:style-name="P13"><text:span text:style-name="T18">Normally, the “Start Apache” button opens a browser when the server starts. <text:s/>If for some reason it doesn’t, you should o</text:span>pen a web browser on the same machine, and enter “localhost” in the address bar. <text:s/></text:p>
+   <text:h text:style-name="P3" text:outline-level="1">Launch The <text:span text:style-name="T13">Timr</text:span> Interface</text:h>
    <text:p text:style-name="P2"><text:span text:style-name="T6">To interface to the track timer, d</text:span>ouble-click <text:span text:style-name="T2">derby-timer.jar</text:span> <text:span text:style-name="T6">(next to the UniServerZ folder).</text:span></text:p>
    <text:p text:style-name="P2">If you see a dialog like this, you need to install Java:</text:p>
    <text:p text:style-name="P8"><draw:frame draw:style-name="fr2" draw:name="Image3" text:anchor-type="paragraph" svg:width="2.978in" svg:height="2.128in" draw:z-index="2"><draw:image loext:mime-type="image/png">
@@ -1567,7 +1580,7 @@
      </draw:image>
     </draw:frame></text:p>
    <text:p text:style-name="P9">Enter “localhost” as the server URL.</text:p>
-   <text:p text:style-name="P9"/>
+   <text:p text:style-name="P9"><text:soft-page-break/></text:p>
   </office:text>
  </office:body>
 </office:document>
