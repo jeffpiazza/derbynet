@@ -1,7 +1,12 @@
-<?php session_start(); ?>
+<?php @session_start(); ?>
 <?php
 require_once('inc/data.inc');
 require_once('inc/kiosks.inc');
+require_once('inc/permissions.inc');
+
+// The award presentation kiosk wants to reset the current award when it starts
+// up.
+$_SESSION['permissions'] |= PRESENT_AWARDS_PERMISSION;
 
 $g_kiosk_parameters_string = '';
 function kiosk_parameters() {
