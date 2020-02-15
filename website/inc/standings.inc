@@ -105,43 +105,14 @@ function final_roundids_for_all_classes() {
   return $roundids;
 }
 
-// If there are no aggregate classes, returns false.
-//
-// If there's just one aggregate class, chooses the roundid of its highest
-// round.  We're assuming that the single aggregate class is the Grand Finals
-// round that determines overall standings.
-//
-// If there's more than one aggregate class, returns 0 (which means there's no
-// round for determining overall standings).
-function last_aggregate_roundid() {
-  $agg_classes = aggregate_classes();
-  if (count($agg_classes) == 0) {
-    return false;
-  }
-  if (count($agg_classes) > 1) {
-    // We decline to pick a roundid that establishes overall results
-    return 0;
-  }
-  return read_single_value('SELECT R2.roundid AS roundid'
-                           .' FROM (SELECT classid, MAX(round) AS max_round'
-                           .'       FROM Rounds'
-                           .'       WHERE classid = :classid'
-                           .'       AND NOT EXISTS('
-                           .'            SELECT 1 FROM RegistrationInfo'
-                           .'            WHERE RegistrationInfo.classid = Rounds.classid)'
-                           .'       GROUP BY classid) AS R1'
-                           .' INNER JOIN Rounds AS R2'
-                           .' ON R1.classid = R2.classid'
-                           .' AND R1.max_round = R2.round',
-                           array(':classid' => $agg_classes[0]));
-}
-
 // Returns true if we can assess standings for the whole field (supergroup) --
 // either there are no aggregate classes or exactly one.
 function has_supergroup_standings() {
-  return last_aggregate_roundid() !== 0;
+  return count(aggregate_classes()) <= 1;
 }
 
+// Returns a list of classids for groups/classes whose outcomes should be
+// incorporated as supergroup standing outcomes.
 function supergroup_groups() {
   global $db;
   $agg_classes = aggregate_classes();

@@ -25,6 +25,20 @@ if (have_permission(JUDGING_PERMISSION)) {
         list($award_classid, $award_rankid) = $award;
         list($racer_classid, $racer_rankid, $racer_exclude) = $racer;
 
+        if (isset($award_classid) && $award_classid != 0) {
+          $agg_classes = aggregate_classes();
+          if (isset($agg_classes[$award_classid])) {
+            compute_aggregate_constituents_tc($agg_classes);
+            if (in_array($racer_classid,
+                         $agg_classes[$award_classid]['constituents_tc'])) {
+              // Racer is a member of one of the constituent classes, and so is
+              // eligible for the award.  Express this by removing the award
+              // class restriction that gets tested below.
+              $award_classid = 0;
+            }
+          }
+        }
+
         if ($racer_exclude) {
           $ok = false;
           echo "<failure code='ineligible'>Racer not eligible for awards</failure>\n";

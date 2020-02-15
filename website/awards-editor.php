@@ -86,19 +86,22 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
     <select name="class_and_rank">
       <option selected="selected" value="0,0"><?php echo supergroup_label(); ?></option>
         <?php
-        $classid = -1;
-        foreach ($rankseq as $rankid) {
-          $rank = $ranks[$rankid];
-          if ($rank['classid'] != $classid) {
-              $classid = $rank['classid'];
-              echo '<option value="'.$classid.',0">'
-               .htmlspecialchars($rank['class'], ENT_QUOTES, 'UTF-8')
-               .'</option>'."\n";
-          }
-          if ($use_subgroups) {
-            echo '<option value="'.$classid.','.$rank['rankid'].'">'
-                 .htmlspecialchars($rank['rank'], ENT_QUOTES, 'UTF-8')
-                 .'</option>'."\n";
+        $rankseq_index = 0;
+        foreach ($classseq as $classid) {
+          $cl = $classes[$classid];
+          echo '<option value="'.$classid.',0">'
+              .htmlspecialchars($cl['class'], ENT_QUOTES, 'UTF-8')
+              .'</option>'."\n";
+          for (; $rankseq_index < count($rankseq); ++$rankseq_index) {
+            $rank = $ranks[$rankseq[$rankseq_index]];
+            if ($rank['classid'] != $classid) {
+              break;
+            }
+            if ($use_subgroups) {
+              echo '<option value="'.$classid.','.$rank['rankid'].'">'
+                   .htmlspecialchars($rank['rank'], ENT_QUOTES, 'UTF-8')
+                   .'</option>'."\n";
+            }
           }
         }
         ?>

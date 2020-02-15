@@ -11,7 +11,19 @@ function award_assignment_hover_class(award_li, racer_div) {
   }
   var classid = award_li.attr('data-classid');
   var rankid = award_li.attr('data-rankid');
-  if ((classid != 0 && classid != racer_div.find('div.group_name').attr('data-classid')) ||
+  var eligible = award_li.attr('data-eligible');
+  if (typeof eligible == typeof undefined || eligible === false) {
+    eligible = '';
+  }
+  
+  if (eligible != '') {
+    // If eligible is present, it's a list of classids, and classid is NOT used
+    classid = 0;
+  }
+  
+  if (eligible != '' &&
+          !eligible.split(',').includes(racer_div.find('div.group_name').attr('data-classid')) ||
+      (classid != 0 && classid != racer_div.find('div.group_name').attr('data-classid')) ||
       (rankid != 0 && rankid != racer_div.find('div.subgroup_name').attr('data-rankid'))) {
     return "unacceptable-hover-wrong-class";
   }
@@ -51,12 +63,10 @@ function show_racer_awards_modal(judging_racer) {
 
   show_modal("#racer_awards_modal", function(event) {
     close_racer_awards_modal();
-    console.log("Sending data: " + $("#racer_awards_form").serialize());  // TODO
     $.ajax('action.php',
            {type: 'POST',
             data:  $("#racer_awards_form").serialize(),
             success: function(data) {
-              console.log("Response received: " + data);
               update_awards(data);
             }
            });
@@ -112,7 +122,8 @@ function update_awards(dataxml) {
   for (var i = 0; i < awards.length; ++i) {
     if (awards[i].getAttribute("adhoc") != 0) {
       var racerid = awards[i].getAttribute("racerid");
-      $(".judging_racer[data-racerid='" + racerid + "']").attr('data-adhoc', awards[i].getAttribute('awardname'));
+      $(".judging_racer[data-racerid='" + racerid + "']")
+        .attr('data-adhoc', awards[i].getAttribute('awardname'));
       $(".judging_racer[data-racerid='" + racerid + "'] .adhoc_marker").removeClass('hidden');
       ++adhoc_count;
     }
@@ -121,8 +132,8 @@ function update_awards(dataxml) {
   var speed_awards = dataxml.getElementsByTagName('speed-award');
   for (var i = 0; i < speed_awards.length; ++i) {
     var racerid = speed_awards[i].getAttribute("racerid");
-    console.log("Marking speed award for " + racerid);  // TODO
-    $(".judging_racer[data-racerid='" + racerid + "']").css("background-image", "url('img/laurel.png')");
+    $(".judging_racer[data-racerid='" + racerid + "']")
+      .css("background-image", "url('img/laurel.png')");
   }
   
   // Add more empty list items, as necessary
@@ -167,6 +178,11 @@ function update_awards(dataxml) {
           var classname = classid_to_class(awards[i].getAttribute("classid"), dataxml);
           $(this).attr("data-class", classname);
           $(this).find('.classname').text(classname);
+        }
+
+        if ($(this).attr("data-eligible") != awards[i].getAttribute("eligible")) {
+          console.log("Writing data-eligible: " + awards[i].getAttribute("eligible"));  // TODO
+          $(this).attr("data-eligible", awards[i].getAttribute("eligible"));
         }
 
         if ($(this).attr("data-rankid") != awards[i].getAttribute("rankid")) {

@@ -20,6 +20,8 @@ function emit_award_types($include_ad_hoc) {
 
 function emit_all_awards($include_ad_hoc) {
   global $db;
+  $agg_classes = aggregate_classes();
+  compute_aggregate_constituents_tc($agg_classes);
   foreach (all_awards($include_ad_hoc) as $award) {
     echo '<award';
     echo ' awardid="'.$award['awardid'].'"';
@@ -27,6 +29,15 @@ function emit_all_awards($include_ad_hoc) {
     echo ' awardtypeid="'.$award['awardtypeid'].'"';
     echo ' adhoc="'.($award['awardtypeid'] == AD_HOC_AWARDTYPEID ? 1 : 0).'"';
     echo ' classid="'.@$award['classid'].'"';
+    // For awards on aggregate classes, the award can be given to any members of
+    // the native classes that comprise the aggregate class, perhaps indirectly.
+    // For these cases, the 'eligible' attribute names all those native classes.
+    // (Otherwise, a racer's eligibility for an award is determined by the
+    // classid attribute, which must be either 0 or the same as the racer's
+    // native class.)
+    if (isset($award['classid']) && isset($agg_classes[$award['classid']])) {
+      echo ' eligible="'.implode(',', $agg_classes[$award['classid']]['constituents_tc']) .'"';
+    }
     echo ' rankid="'.@$award['rankid'].'"';
     echo ' racerid="'.$award['racerid'].'"';
     echo ' firstname="'.htmlspecialchars($award['firstname'], ENT_QUOTES, 'UTF-8').'"';

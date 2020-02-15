@@ -19,7 +19,8 @@ function is_aggregate_class(&$class_row) {
   }
 }
 
-// Returns array of {classid, class, constituent, durable, ntrophies} elements
+// Returns array of {classid, class, constituent, durable, ntrophies} elements,
+// indexed by classid.
 function aggregate_classes() {
   global $db;
   $results = array();
@@ -36,14 +37,41 @@ function aggregate_classes() {
 
   $stmt->execute(array());
   foreach ($stmt as $cl) {
-    $results[] = array('classid' => $cl['classid'],
-                       'class' => $cl['class'],
-                       'constituents' => explode(',', $cl['constituents']),
-                       'durable' => $cl['durable'],
-                       'ntrophies' => $cl['ntrophies']);
+    $results[$cl['classid']] = array('classid' => $cl['classid'],
+                                     'class' => $cl['class'],
+                                     'constituents' => explode(',', $cl['constituents']),
+                                     'durable' => $cl['durable'],
+                                     'ntrophies' => $cl['ntrophies']);
   }
 
   return $results;
+}
+
+// Updates $agg_classes argument, which is a map of aggregate classes as
+// returned by aggregate_classes(), and adds ['constituents_tc'] to each
+// element, containing the transitive closure of the constituents relation.
+function compute_aggregate_constituents_tc(&$agg_classes) {
+  foreach ($agg_classes as &$cl) {
+    $cl['constituents_tc'] = $cl['constituents'];
+  }
+
+  do {
+    $repeat = false;
+    foreach ($agg_classes as &$cl) {
+      foreach ($cl['constituents_tc'] as $constituent_classid) {
+        if (isset($agg_classes[$constituent_classid])) {
+          foreach ($agg_classes[$constituent_classid]['constituents'] as $second_classid) {
+            if (!in_array($second_classid, $cl['constituents_tc'])) {
+              $cl['constituents_tc'][] = $second_classid;
+              $repeat = true;
+            }
+          }
+        }
+      }
+    }
+  } while ($repeat);
+
+  return $agg_classes;
 }
 
 function nonracing_aggregate_classids() {
