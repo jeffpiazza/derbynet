@@ -61,9 +61,7 @@ public class TimerMain {
     System.err.println();
     System.err.println("Experimental flags for The Judge only:");
     System.err.println(
-        "   -reset-on-ready: reset timer when next heat scheduled");
-    System.err.println(
-        "   -reset-on-race-over: reset timer immediately after Race Over from timer");
+        "   -reset-after-start <nsec>: reset timer <nsec> seconds after heat start, default 10");
     System.err.println();
   }
 
@@ -143,15 +141,13 @@ public class TimerMain {
         SimulatedClientSession.setNumberOfLanes(nlanes);
         consumed_args += 2;
       } else if (arg.equals("-pace") && has_value) {
-        SimulatedDevice.
-            setStagingTime(Integer.parseInt(args[consumed_args + 1]));
+        SimulatedDevice.setStagingTime(
+            Integer.parseInt(args[consumed_args + 1]));
         consumed_args += 2;
-      } else if (arg.equals("-reset-on-ready")) {
-        TheJudgeDevice.setResetOnReady(true);
-        ++consumed_args;
-      } else if (arg.equals("-reset-on-race-over")) {
-        TheJudgeDevice.setResetOnRaceOver(true);
-        ++consumed_args;
+      } else if (arg.equals("-reset-after-start")) {
+        TheJudgeDevice.setResetAfterStart(
+            Integer.parseInt(args[consumed_args + 1]));
+        consumed_args += 2;
       } else if (arg.equals("-delay-reset-after-race")
           || arg.equals("-reset-delay-on-race-over")) {
         long millis = 1000 * Integer.parseInt(args[consumed_args + 1]);
@@ -183,6 +179,11 @@ public class TimerMain {
     String base_url = null;
     if (consumed_args < args.length) {
       base_url = args[consumed_args];
+      ++consumed_args;
+    }
+    if (consumed_args < args.length) {
+      usage();
+      System.exit(1);
     }
 
     if (!showGui) {
