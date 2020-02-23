@@ -1,0 +1,112 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'idea'
+
+    // Creates fat JAR
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+
+    // (Optional) Adds dependencyUpdates task for checking for updated dependencies
+    id 'com.github.ben-manes.versions' version '0.28.0'
+}
+
+def gradleDependencyVersion = '6.2'
+
+// Use the full version of Gradle in case we want to debug this script
+wrapper {
+    gradleVersion = gradleDependencyVersion
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+// Use this class when the JAR is executed directly
+mainClassName = 'org.jeffpiazza.derby.TimerMain'
+
+// Don't build ZIP or TAR archives
+distZip.enabled = shadowDistZip.enabled = false
+distTar.enabled = shadowDistTar.enabled = false
+
+// Specify all of our dependency versions
+def junitVersion = '4.13'
+def jsscVersion = '2.8.0'
+def hamcrestVersion = '2.2'
+
+group = 'org.jeffpiazza.derby.TimerMain'
+version = '1.0-SNAPSHOT'
+
+description = """"""
+
+shadowJar {
+    // Create a shadow JAR with all of the necessary dependencies
+    archiveFileName = 'derby-timer.jar'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Copy the images to our build directory so they can be used as resources
+task copyWebsiteImages(type: Copy) {
+    from "$buildDir/../../website/img/status"
+    include "*.png"
+    into "$buildDir/resources/main/status"
+}
+
+// Make sure that website images are copied when doing a compile
+compileJava.dependsOn copyWebsiteImages
+
+dependencies {
+    // Serial port dependency
+    compile "org.scream3r:jssc:$jsscVersion"
+
+    // Junit and related matchers for writing tests
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.hamcrest:hamcrest:$hamcrestVersion"
+}
+
+// (Optional) Adds dependencyUpdates task for checking for updated dependencies
+// START dependencyUpdates
+// From: https://gist.github.com/matthiasbalke/3c9ecccbea1d460ee4c3fbc5843ede4a
+task resolveDependencies {
+    doLast {
+        project.rootProject.allprojects.each { subProject ->
+            subProject.buildscript.configurations.each { configuration ->
+                // Check to prevent "Resolving configuration 'integrationTestImplementation' directly is not allowed" error
+                if (!configuration.getName().contains("integrationTest")) {
+                    resolveConfiguration(configuration)
+                }
+            }
+            subProject.configurations.each { configuration ->
+                // Check to prevent "Resolving configuration 'integrationTestImplementation' directly is not allowed" error
+                if (!configuration.getName().contains("integrationTest")) {
+                    resolveConfiguration(configuration)
+                }
+            }
+        }
+    }
+}
+
+void resolveConfiguration(configuration) {
+    if (isResolveableConfiguration(configuration)) {
+        configuration.resolve()
+    }
+}
+
+boolean isResolveableConfiguration(configuration) {
+    def nonResolveableConfigurations = ['apiElements', 'implementation',
+                                        'runtimeElements', 'runtimeOnly',
+                                        'testImplementation', 'testRuntimeOnly',
+                                        'generatedImplementation', 'generatedRuntimeOnly']
+
+    if (nonResolveableConfigurations.contains(configuration.getName())) {
+        return false
+    }
+    return true
+}
+// END dependencyUpdates

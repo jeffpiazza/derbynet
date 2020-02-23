@@ -1,12 +1,13 @@
 package org.jeffpiazza.derby.gui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
 import org.jeffpiazza.derby.*;
 import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.devices.TimerTask;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // On the HTTP side, the GUI makes this approximate progression:
 //
@@ -17,6 +18,16 @@ import org.jeffpiazza.derby.devices.TimerTask;
 //
 // Command-line arguments may let us skip some of these steps.
 public class TimerGui {
+  // Status icons should be one of: "ok", "trouble", "unknown".
+  // Check the build file for where these icons come from, and to change the
+  // available choices.
+  public static String icon_ok = "ok";
+  public static String icon_trouble = "trouble";
+  public static String icon_unknown = "unknown";
+  private static Color green = new Color(52, 127, 79);
+  private static Color black = Color.BLACK;
+  private static Color red = Color.RED;
+  private static Color defaultBackground = new Color(184, 207, 229);
   private Components components;
   private Connector connector;
   private boolean traceMessages;
@@ -24,7 +35,6 @@ public class TimerGui {
   private boolean traceResponses;
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
-
   private TimerClassListController timerClassListController;
   private SerialPortListController portListController;
 
@@ -46,10 +56,8 @@ public class TimerGui {
     components.setTitle("Derby Timer Management");
     components.getRootPane().setDefaultButton(components.connectButton);
 
-    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(
-        "/status/trouble.png")));
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().
-        getResource("/status/unknown.png")));
+    components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(IconResource.TROUBLE.getPath())));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource(IconResource.UNKNOWN.getPath())));
 
     components.portList.setCellRenderer(new SerialPortListRenderer());
     components.connectButton.addActionListener(new ActionListener() {
@@ -133,27 +141,15 @@ public class TimerGui {
     this.notifyAll();
   }
 
-  private static Color green = new Color(52, 127, 79);
-  private static Color black = Color.BLACK;
-  private static Color red = Color.RED;
-  private static Color defaultBackground = new Color(184, 207, 229);
-
   public void setHttpStatus(String message, Color color) {
     components.httpStatusLabel.setForeground(color);
     components.httpStatusLabel.setText(message);
   }
 
-  // Status icons should be one of: "ok", "trouble", "unknown".
-  // Check the build file for where these icons come from, and to change the
-  // available choices.
-  public static String icon_ok = "ok";
-  public static String icon_trouble = "trouble";
-  public static String icon_unknown = "unknown";
-
   public void setHttpStatus(String message, Color color, String icon) {
     setHttpStatus(message, color);
     components.httpIconStatus.setIcon(new ImageIcon(getClass().getResource(
-        "/status/" + icon + ".png")));
+        IconResource.getByName(icon).getPath())));
   }
 
   public void setSerialStatus(String message) {
@@ -167,8 +163,8 @@ public class TimerGui {
 
   public void setSerialStatus(String message, Color color, String icon) {
     setSerialStatus(message, color);
-    components.serialIconStatus.setIcon(new ImageIcon(getClass().
-        getResource("/status/" + icon + ".png")));
+    components.serialIconStatus.setIcon(new ImageIcon(getClass().getResource(
+        IconResource.getByName(icon).getPath())));
   }
 
   // Runs on dispatch thread; no individual invocation can be long-running.
@@ -218,20 +214,20 @@ public class TimerGui {
     setHttpStatus("Logging in...", black, icon_unknown);
     HttpTask.start(components.roleComboBox.getItemAt(
         components.roleComboBox.getSelectedIndex()),
-                   new String(components.passwordField.getPassword()),
-                   clientSession, traceMessages, traceHeartbeats, traceResponses,
-                   connector,
-                   new HttpTask.LoginCallback() {
-                 @Override
-                 public void onLoginSuccess() {
-                   setHttpStatus("Connected", green, icon_ok);
-                 }
+        new String(components.passwordField.getPassword()),
+        clientSession, traceMessages, traceHeartbeats, traceResponses,
+        connector,
+        new HttpTask.LoginCallback() {
+          @Override
+          public void onLoginSuccess() {
+            setHttpStatus("Connected", green, icon_ok);
+          }
 
-                 @Override
-                 public void onLoginFailed(String message) {
-                   setHttpStatus("Unsuccessful login", red, icon_trouble);
-                 }
-               });
+          @Override
+          public void onLoginFailed(String message) {
+            setHttpStatus("Unsuccessful login", red, icon_trouble);
+          }
+        });
   }
 
   // Called once for each role to be added to the role combobox.  After the last role is added,
