@@ -47,7 +47,6 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
                            ':roundid' => $current['roundid'],
                            ':heat' => $current['heat']));
     if (get_racing_state()) {
-      send_replay_REPLAY();
       $current = get_running_round();
       advance_heat($current, 'next', /* show failure */ false);
     }

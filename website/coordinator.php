@@ -79,7 +79,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <h3>Replay Status</h3>
     <p><b id="replay_status">Remote replay status not yet updated</b></p>
     <div id="test_replay" class="block_buttons">
-      <input type="button" data-enhanced="true" value="Test Replay" onclick="handle_test_replay();"/>
+      <input type="button" data-enhanced="true" value="Trigger Replay" onclick="handle_test_replay();"/>
     </div>
     <div class="block_buttons">
       <input type="button" data-enhanced="true" value="Replay Settings" onclick="show_replay_settings_modal();"/>
