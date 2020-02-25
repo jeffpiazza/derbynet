@@ -70,7 +70,7 @@ $time_format = get_finishtime_formatting_string();
 
 $use_master_sched = use_master_sched();
 $now_running = get_running_round();
-emit_current_heat($now_running, $use_master_sched);
+emit_current_heat($now_running);
 ?>
 
 <?php

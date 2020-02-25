@@ -127,9 +127,10 @@ function handle_test_replay() {
 }
 
 function show_manual_results_modal() {
-    // g_current_heat_racers: lane, name, carnumber, finishtime
+    // g_current_heat_racers: lane, name, carnumber, finishtime, finishplace
     var racer_table = $("#manual_results_modal table");
     racer_table.empty();
+  // TODO Show place instead of time if using points
     racer_table.append("<tr><th>Lane</th><th>Racer</th><th>Car</th><th>Time</th></tr>");
     var any_results = false;
     for (var i = 0; i < g_current_heat_racers.length; ++i) {
@@ -408,8 +409,8 @@ function handle_master_next_up() {
 
 // Parsing for poll.coordinator output
 
-/* <current-heat now-racing= use-master-sched= classid= roundid= round=
-                 group= heat= /> */
+/* <current-heat now-racing= use-master-sched= use-points=
+                 classid= roundid= round= group= heat= /> */
 function parse_current_heat(data) {
     var current_xml = data.getElementsByTagName("current-heat")[0];
     if (!current_xml) {
@@ -419,7 +420,8 @@ function parse_current_heat(data) {
     return {roundid: current_xml.getAttribute('roundid'),
             heat: current_xml.getAttribute('heat'),
             is_racing: current_xml.getAttribute('now-racing') == '1',
-            master_schedule: current_xml.getAttribute('use-master-sched') == '1'};
+            master_schedule: current_xml.getAttribute('use-master-sched') == '1',
+            use_points: current_xml.getAttribute('use-points') == '1'};
 }
 
 function parse_rounds(data) {
@@ -470,7 +472,8 @@ function parse_racers(data) {
         racers[i] = {lane: racers_xml[i].getAttribute("lane"),
                      name: racers_xml[i].getAttribute("name"),
                      carnumber: racers_xml[i].getAttribute("carnumber"),
-                     finishtime: racers_xml[i].getAttribute("finishtime")};
+                     finishtime: racers_xml[i].getAttribute("finishtime"),
+                     finishplace: racers_xml[i].getAttribute("finishplace")};
     }
     return racers;
 }
@@ -706,24 +709,27 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
 function generate_current_heat_racers(racers, current) {
     g_current_heat_racers = racers;
     // TODO: Assumes now-racing-group empty?
-    if (racers.length > 0) {
-        $("#now-racing-group .heat-lineup").prepend("<table>"
-                                       + "<tr>" 
-                                       + "<th>Lane</th>"
-                                       + "<th>Racer</th>"
-                                       + "<th>Car</th>"
-                                       + "<th>Time</th>" 
-                                       + "</tr>"
-                                       + "</table>"
-                                       + "<h3>Heat " + current.heat + " of "
-                                           + current.heats_scheduled + "</h3>"
-                                       + "</div>");
+  if (racers.length > 0) {
+        $("#now-racing-group .heat-lineup").prepend(
+          "<table>"
+            + "<tr>"
+            + "<th>Lane</th>"
+            + "<th>Racer</th>"
+            + "<th>Car</th>"
+            + "<th>" + (current.use_points ? "Place" : "Time") + "</th>"
+            + "</tr>"
+            + "</table>"
+            + "<h3>Heat " + current.heat + " of "
+            + current.heats_scheduled + "</h3>"
+            + "</div>");
         var racers_table = $("#now-racing-group table");
         for (var i = 0; i < racers.length; ++i) {
             racers_table.append('<tr><td>' + racers[i].lane + '</td>'
                                 + '<td>' + racers[i].name + '</td>'
                                 + '<td>' + racers[i].carnumber + '</td>'
-                                + '<td>' + racers[i].finishtime + '</td>'
+                                + '<td>' + (current.use_points
+                                            ? racers[i].finishplace
+                                            : racers[i].finishtime) + '</td>'
                                 + '</tr>');
         }
     }

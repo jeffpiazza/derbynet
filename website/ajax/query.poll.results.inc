@@ -18,8 +18,6 @@ write_signatures();
 $use_points = read_raceinfo_boolean('use-points');
 $time_format = get_finishtime_formatting_string();
 
-$use_master_sched = use_master_sched();
-
 $stmt = $db->prepare('SELECT'
                      .' resultid, Rounds.roundid, heat, lane, racerid, finishtime, finishplace, completed'
                      .' FROM Rounds'
@@ -48,7 +46,7 @@ foreach ($stmt as $row) {
   echo "<result resultid='".$row['resultid']."'$details outcome='".$val."'/>\n";
 }
 
-emit_current_heat($now_running, $use_master_sched);
+emit_current_heat($now_running);
 
 $next = get_next_heat($now_running, 'next');
 if ($next !== false) {

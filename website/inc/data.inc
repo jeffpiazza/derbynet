@@ -196,6 +196,7 @@ function high_water_rounds() {
 function get_running_round() {
   global $db;
   $config = array('use_master_sched' => 0,
+                  'use_points' => 0,
                   'now_racing' => 0,
 				  'class' => '',
 				  'roundid' => -1);  // May be overwritten
@@ -214,6 +215,8 @@ function get_running_round() {
     // TODO: use-master-sched key => UseMasterSched
     else if ($key == 'use-master-sched')
       $config['use_master_sched'] = $val ? 1 : 0;
+    else if ($key == 'use-points')
+      $config['use_points'] = $val ? 1 : 0;
     else if ($key == 'NowRacingState')
       $config['now_racing'] = $val ? 1 : 0;
   }

@@ -69,11 +69,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   await page.evaluate(function(xml) { process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
                 '<?xml version="1.0" encoding="UTF-8"?>\n' +
                 '<coordinator_poll>\n' +
-                '  <current-heat now-racing="1" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                 '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime=""/>\n' +
-                '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime=""/>\n' +
-                '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime=""/>\n' +
+                '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
+                '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
+                '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
                 '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                 '         icon="img/status/ok.png">Staging</timer-state>\n' +
                 '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -171,11 +171,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                  'heat': 'next'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="0" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                       '  <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                        '                tbodyid="3" heat="4" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="2" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime=""/>\n' +
-                       '  <racer lane="3" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime=""/>\n' +
-                       '  <racer lane="4" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime=""/>\n' +
+                       '  <racer lane="2" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="3" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="4" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
                        '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -209,11 +209,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                  'heat': 'prev'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="0" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                       '  <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                        '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime=""/>\n' +
+                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
                        '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -248,11 +248,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                  'now_racing': 1}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                        '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime=""/>\n' +
+                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
                        '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -307,11 +307,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                         'data': 'action=result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                        '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="1.234"/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="2.34"/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="4.321"/>\n' +
+                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="1.234" finishplace="1"/>\n' +
+                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="2.34" finishplace="2"/>\n' +
+                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="4.321" finishplace="3"/>\n' +
                        '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -358,11 +358,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                  "heat": "current"}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" classid="3" roundid="3" round="1"' +
+                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
                        '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime=""/>\n' +
+                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
+                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
                        '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
@@ -430,11 +430,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                              '  <new-round roundid="8"/>\n' +
                              '  <success/>\n' +
                              '  <coordinator_poll>\n' +
-                             '    <current-heat now-racing="0" use-master-sched="0" classid="2" roundid="2"' +
+                             '    <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="2" roundid="2"' +
                              '                  round="1" tbodyid="2" heat="5" number-of-heats="5">White\'s Wolves</current-heat>\n' +
-                             '    <racer lane="1" name="Kelvin Knapp" carname="" carnumber="247" photo="" finishtime=""/>\n' +
-                             '    <racer lane="3" name="Darrell &amp; Darrell Delaughter" carname="" carnumber="217" photo="" finishtime=""/>\n' +
-                             '    <racer lane="5" name="Ian Ives" carname="" carnumber="237" photo="" finishtime=""/>\n' +
+                             '    <racer lane="1" name="Kelvin Knapp" carname="" carnumber="247" photo="" finishtime="" finishplace=""/>\n' +
+                             '    <racer lane="3" name="Darrell &amp; Darrell Delaughter" carname="" carnumber="217" photo="" finishtime="" finishplace=""/>\n' +
+                             '    <racer lane="5" name="Ian Ives" carname="" carnumber="237" photo="" finishtime="" finishplace=""/>\n' +
                              '    <timer-state lanes="6" last_contact="0" state="1" icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
                              '    <replay-state last_contact="0" state="1" icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
                              '    <round roundid="8" classid="2" class="White\'s Wolves" round="2" roster_size="4"' +
@@ -487,16 +487,16 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
     var poll_result = '<?xml version="1.0" encoding="UTF-8"?>\n' +
       '<coordinator_poll>\n' +
-      '  <current-heat now-racing="1" use-master-sched="1" classid="2" roundid="2" round="1"' +
+      '  <current-heat now-racing="1" use-master-sched="1" use-points="0" classid="2" roundid="2" round="1"' +
       '     tbodyid="1" heat="13" number-of-heats="13">White\'s Wolves</current-heat>\n' +
       '  <racer lane="1" name="Willard Woolfolk" carname="" carnumber="282"' +
-      '     photo="" finishtime="3.977"/>\n' +
+      '     photo="" finishtime="3.977" finishplace="4"/>\n' +
       '  <racer lane="2" name="Blake Burling" carname="" carnumber="207"' +
-      '     photo="" finishtime="3.646"/>\n' +
+      '     photo="" finishtime="3.646" finishplace="2"/>\n' +
       '  <racer lane="3" name="Elliot Eastman" carname="" carnumber="227"' +
-      '     photo="" finishtime="2.295"/>\n' +
+      '     photo="" finishtime="2.295" finishplace="1"/>\n' +
       '  <racer lane="4" name="Dexter Dawes" carname="" carnumber="222"' +
-      '     photo="" finishtime="3.720"/>\n' +
+      '     photo="" finishtime="3.720" finishplace="3"/>\n' +
       '  <timer-state lanes="4" last_contact="1496356697" state="1"' +
       '     icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
       '  <replay-state last_contact="1496360776" state="1"' +

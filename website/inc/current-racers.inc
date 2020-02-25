@@ -16,8 +16,8 @@ function emit_current_racers(&$now_running, $name_style, $photo_render) {
   $use_subgroups = read_raceinfo_boolean('use-subgroups');
   $time_format = get_finishtime_formatting_string();
 
-  $stmt = $db->prepare('SELECT lane, carnumber, lastname, firstname, carname, rank, finishtime,'
-                       .' imagefile, '
+  $stmt = $db->prepare('SELECT lane, carnumber, lastname, firstname, carname, rank,'
+                       .' finishtime, finishplace, imagefile, '
                        .(schema_version() >= 2 ? 'carphoto' : "'' AS carphoto")
                        .' FROM '
                        .inner_join('RaceChart', 'RegistrationInfo',
@@ -37,6 +37,7 @@ function emit_current_racers(&$now_running, $name_style, $photo_render) {
     .' carnumber="'.$row['carnumber'].'"'
     .' photo="'.($photo_render ? $photo_render->url_for_row($row) : '').'"'
     .' finishtime="'.($row['finishtime'] ? sprintf($time_format, $row['finishtime']) : '').'"'
+    .' finishplace="'.($row['finishplace'] ? $row['finishplace'] : '').'"'
     .'/>'."\n";
   }
 }

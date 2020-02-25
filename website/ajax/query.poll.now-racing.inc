@@ -63,8 +63,7 @@ foreach ($stmt as $row) {
 echo "<zero zero='".sprintf($time_format, 0.0)."'/>\n";
 
 $now_running = get_running_round();
-$use_master_sched = use_master_sched();
-emit_current_heat($now_running, $use_master_sched);
+emit_current_heat($now_running);
 
 $render = false;
 if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
