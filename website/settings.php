@@ -63,6 +63,10 @@ $show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
 $name_style = read_raceinfo('name-style', FULL_NAME);
 $finish_formatting = get_finishtime_formatting_string();
+if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
+  write_raceinfo('scoring', 1);
+}
+$scoring = read_raceinfo('scoring', 0);
 ?>
 
 <div class="block_buttons">
@@ -214,7 +218,7 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
 
     <div class="settings_group_settings">
       <p><b>Now Racing</b> display:<br/>&nbsp;&nbsp;
-        <input type="radio" name="photos-on-now-racing" value="0"
+        <input type="radio" name="photos-on-now-racing"
                     id="now-racing-photos-0" data-role="none"<?php
         echo $photos_on_now_racing ? '' : ' checked="checked"';
         ?>/><label for="now-racing-photos-0" data-enhanced="true">No photos</label>&nbsp;
@@ -259,11 +263,6 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
     </div>
     <div class="settings_group_settings">
       <p>
-        <input id="drop-slowest" name="drop-slowest" data-enhanced="true" type="checkbox"<?php
-            if (read_raceinfo_boolean('drop-slowest')) echo ' checked="checked"';?>/>
-        <label>Drop each racer's slowest heat?</label>
-      </p>
-      <p>
         <input id="use-master-sched" name="use-master-sched" data-enhanced="true" type="checkbox"<?php
             if ($use_master_sched) echo ' checked="checked"';?>/>
         <label>Interleave heats from different <?php echo group_label_lc(); ?>s</label>
@@ -281,6 +280,17 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
           onchange="on_max_runs_change();"/>
         <label>Abbreviated single-run-per-car schedule?</label>
       </p>
+      <p>Scoring method:</p>
+        <input type='radio' name='scoring' id='scoring_avg' value='0' data-role='none'
+                <?php if ($scoring == 0) echo 'checked="checked"'; ?>/>
+        <label for='scoring_avg'>Average all heat times</label><br/>
+        <input type='radio' name='scoring' id='scoring_drop' value='1' data-role='none'
+                <?php if ($scoring == 1) echo 'checked="checked"'; ?>/>
+        <label for='scoring_avg'>Drop slowest heat</label><br/>
+        <input type='radio' name='scoring' id='scoring_fastest' value='2' data-role='none'
+                <?php if ($scoring == 2) echo 'checked="checked"'; ?>/>
+        <label for='scoring_avg'>Take single fastest heat</label>
+
     </div>
   </div>
 </form>

@@ -6,6 +6,10 @@ require_once('inc/name-mangler.inc');
 
 require_once('inc/standings.inc');
 
+if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
+  write_raceinfo('scoring', 1);
+}
+
 function export_standings(callable $out, callable $choose, $entry,
                           &$result_summary, &$parallel) {
   $key = $entry['key'];
@@ -17,12 +21,13 @@ function export_standings(callable $out, callable $choose, $entry,
   $show_car_name = show_car_name_in_standings();
   $use_points = read_raceinfo_boolean('use-points');
   $time_format = get_finishtime_formatting_string();
+  $scoring = read_raceinfo('scoring', 0);
 
-  $out(array($use_points
-             ? "Scoring by points"
-             : (read_raceinfo_boolean('drop-slowest')
-                ? "Dropping each racer's slowest time"
-                : "Averaging all heat times")));
+  $out(array($use_points ? "Scoring by points"
+             : ($scoring == 0 ? "Averaging all heat times"
+             : ($scoring == 1 ? "Dropping each racer's slowest time"
+             : ($scoring == 2 ? "Using each racer's fastest time only"
+             : "Unknown scoring method")))));
 
   $headers = array("Place", "Car Number", "Name");
   if (show_car_name_in_standings()) {

@@ -44,7 +44,6 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
                   'upload-videos' => 'upload-videos',
-                  'drop-slowest' => 'drop-slowest',
                   'use-xbs' => 'use-xbs')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key.'-checkbox'])) {
@@ -78,7 +77,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'replay-rate' => 'replay-rate',
                   'unused-lane-mask' => 'unused-lane-mask',
                   'max-runs-per-car' => 'max-runs-per-car',
-                  'finish-formatting' => 'finish-formatting')
+                  'finish-formatting' => 'finish-formatting',
+                  'scoring' => 'scoring')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key])) {
         ++$num_picked;

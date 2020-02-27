@@ -61,16 +61,23 @@ $(function () {
 
 <div class="center-select">
 <h3><?php
+$scoring = read_raceinfo('scoring', 0);
 if (read_raceinfo_boolean('use-points')) {
-  if (read_raceinfo_boolean('drop-slowest')) {
+  if ($scoring == 0) {
+    echo "Scoring by points";
+  } else if ($scoring == 1) {
     echo "Scoring by points,<br/>dropping each racer's worst heat";
   } else {
-    echo "Scoring by points";
+    echo "Scoring by points,<br/>best heat";
   }
-} else if (read_raceinfo_boolean('drop-slowest')) {
-  echo "Dropping each racer's worst heat";
 } else {
-  echo "Averaging all heat times";
+  if ($scoring == 0) {
+    echo "Averaging all heat times";
+  } else if ($scoring == 1) {
+    echo "Dropping each racer's worst heat";
+  } else {
+    echo "Selecting best heat";
+  }
 }
 ?></h3>
 </div>

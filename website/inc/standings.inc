@@ -6,6 +6,10 @@ require_once('inc/name-mangler.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/aggregate_round.inc');
 
+if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
+  write_raceinfo('scoring', 1);
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 // For a given roundid, it's straightforward to calculate standings within the
 // round, provided all the heats have been run.  If not all heats have been run,
@@ -77,14 +81,24 @@ function parse_standings_key_round_subgroup($key) { return explode('-', substr($
 function sql_scoring_expression($finishtime, $finishplace) {
   global $dbtype;
   $finish = read_raceinfo_boolean('use-points') ? $finishplace.'*1.0' : $finishtime;
-  return read_raceinfo_boolean('drop-slowest') 
-      ? ($dbtype == 'sqlite'
-         ?  "CASE COUNT(*)"
+  $scoring = read_raceinfo('scoring', 0);
+  if ($scoring == 0) {
+    return "SUM($finish)/COUNT(*)";
+  } else if ($scoring == 1) {
+    if ($dbtype == 'sqlite') {
+      return"CASE COUNT(*)"
              ." WHEN 1 THEN MAX($finish)"
              ." ELSE (SUM($finish) - MAX($finish))/(COUNT(*) - 1)"
-             ." END"
-         : "(SUM($finish) - MAX($finish))/(COUNT(*) - 1)" )
-      : "SUM($finish)/COUNT(*)";
+             ." END";
+    } else {
+      // TODO MS Access SELECT CASE <expr> CASE <cond> <result> CASE ELSE <result> END SELECT
+      return "(SUM($finish) - MAX($finish))/(COUNT(*) - 1)";
+    }
+  } else if ($scoring == 2) {
+    return  "MIN($finish)";
+  } else {
+    return "UNKNOWN_SCORING_METHOD";
+  }
 }
 
 // Returns the final roundids for all classes, either native classes or
@@ -213,10 +227,17 @@ function result_summary() {
   $scoring_expr = sql_scoring_expression('finishtime', 'finishplace');
   $raw_expr = read_raceinfo_boolean('use-points') ? 'finishplace' : 'finishtime';
   if (read_raceinfo_boolean('use-points')) {
-    if (read_raceinfo_boolean('drop-slowest')) {
+    // finishplace: 1=1st
+    // Points for a given heat is (1 + get_lane_count()) - finishplace, e.g.,
+    // 1st place on a 4-lane track is 4 points.
+    // Points for N heats is (1 + get_lane_count()) * N - SUM(finishplace)
+    $scoring = read_raceinfo('scoring', 0);
+    if ($scoring == 0) {
+      $avg_expr = (1 + get_lane_count()).' * COUNT(*) - SUM(finishplace)';
+    } else if ($scoring == 1) {
       $avg_expr = (1 + get_lane_count()).' * (COUNT(*) - 1) - (SUM(finishplace) - MAX(finishplace))';
     } else {
-      $avg_expr = (1 + get_lane_count()).' * COUNT(*) - SUM(finishplace)';
+      $avg_expr = (1 + get_lane_count()).' - MIN(finishplace)';
     }
   } else {
     $avg_expr = $scoring_expr;
