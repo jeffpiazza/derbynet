@@ -10,8 +10,8 @@
 // abandon those heats from the rough schedule that would cause any car to have
 // second run.
 
-require_once('inc/schedule_rough.inc');
-require_once('inc/schedule_ordered.inc');
+require_once('inc/schedule_generator.inc');
+// require_once('inc/schedule_ordered.inc');
 require_once('inc/schedule_utils.inc');
 
 // Returns roster, where roster[sequence] = racerid,

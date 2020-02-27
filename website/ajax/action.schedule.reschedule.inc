@@ -1,6 +1,26 @@
 <?php
 // $_POST['roundid']
 
+//===============================
+//
+// The search space for injecting a new racer:
+//
+// First, pick a possibly-empty set of lanes ("skip lanes") for which new heats
+// will be added to incorporate a run of the new racer in the designated lane.
+//
+// For a given set of "skip lanes", then generate proposals for how to fill the
+// lanes for a first new heat.
+//
+// If there are more than one "skip lanes", it's presumably because the new
+// racer was added in too late to be accommodated well in existing heats.
+//
+// A total of no more than search_budget proposals will be considered, across
+// all considered skip_lanes.  * That's a bug: there's always a max_skip_lanes
+// possibility; injection shouldn't fail.
+//
+//===============================
+
+
 // TODO Strongly assumes 1 run per car per lane.  Enforce this constraint if it
 // can't be removed.
 
@@ -12,6 +32,9 @@
 
 // TODO master schedule
 
+// TODO inc/schedule_generate.inc is different from inc/schedule_generator.inc,
+// exists in this branch only, and comprises a few functions extracted from
+// action.schedule.generate.inc.
 require_once('inc/schedule_generate.inc');
 
 define('DEBUG', true);
@@ -92,15 +115,15 @@ class ScheduleAdjuster {
     $start = microtime(true);
     $this->generate_injection_proposals();
     $stop = microtime(true);
-    echo "<injection-outcome>\n";
+    echo "<injection-outcome>\n";  // TODO
     if ($this->best_proposal !== null) {
-      echo "<best-score>".$this->best_score."</best-score>\n";
-      echo "<skip-lanes>".json_encode($this->best_skip_lanes)."</skip-lanes>";
-      echo "<proposal>".json_encode($this->best_proposal)."</proposal>\n";
+      echo "<best-score>".$this->best_score."</best-score>\n";  // TODO
+      echo "<skip-lanes>".json_encode($this->best_skip_lanes)."</skip-lanes>";  // TODO
+      echo "<proposal>".json_encode($this->best_proposal)."</proposal>\n";  // TODO
     }
-    echo "<timing>".number_format($stop - $start, 4)."</timing>\n";
-    echo "<unspent-budget>".$this->search_budget."</unspent-budget>\n";
-    echo "</injection-outcome>\n";
+    echo "<timing>".number_format($stop - $start, 4)."</timing>\n";  // TODO
+    echo "<unspent-budget>".$this->search_budget."</unspent-budget>\n";  // TODO
+    echo "</injection-outcome>\n";  // TODO
 
     if ($this->best_proposal === null) {
       return false;
@@ -297,6 +320,10 @@ class ScheduleAdjuster {
 
     $max_heats_to_add = max(1, $this->nlanes - $this->nheats_to_run);
     for ($nskip = 0; $nskip <= $max_heats_to_add; ++$nskip) {
+      // $skip_lanes is an array of lane indices to leave blank in the proposal
+      // -- we expect to add a heat with the new racer in the $skip_lane[0]'th
+      // lane.  We want as few skip-lane entries as possible; each represents a
+      // tacked-on heat with the new racer racing alone.
       $skip_lanes = array_fill(0, $nskip, null);
       $this->generate_lanes_to_skip_for_injection_proposals(/* skip_i */ 0, $skip_lanes,
                                                             $proposal, $proposed_new_heat);
@@ -483,9 +510,9 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   $roundid = $_POST['roundid'];
 
   $deleted = deleted_racers($roundid);
-  if (count($deleted) > 0) echo "<deleted>".json_encode($deleted)."</deleted>\n";
+  if (count($deleted) > 0) echo "<deleted>".json_encode($deleted)."</deleted>\n";  // TODO
   $added = added_racers($roundid);
-  if (count($added) > 0) echo "<added>".json_encode($added)."</added>\n";
+  if (count($added) > 0) echo "<added>".json_encode($added)."</added>\n";  // TODO
   
   $adjuster = new ScheduleAdjuster($roundid);
 

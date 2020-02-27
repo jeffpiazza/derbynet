@@ -1,9 +1,7 @@
 <?php
-// Action to schedule heats for a round, with each car running once in each
-// lane.  (An exception is if max-runs-per-car is non-zero; see comment in
-// schedule_generate.inc.)
+// Action to schedule heats for a round, with each car running once in each lane.
+// (An exception is if max-runs-per-car is non-zero; see below.)
 //
-<<<<<<< HEAD
 
 $roundid = $_POST['roundid'];
 $n_times_per_lane = isset($_POST['n_times_per_lane']) ? $_POST['n_times_per_lane'] : 1;
@@ -300,17 +298,6 @@ function count_one_bits($n) {
   }
   return $onebits;
 }
-=======
-// $_POST: roundid, nrounds(=1)
-// nrounds here is the number of times each racer should race in each lane.
-
-$roundid = $_POST['roundid'];
-$nrounds = isset($_POST['nrounds']) ? $_POST['nrounds'] : 1;
-
-require_once('inc/masterheat.inc');
-require_once('inc/schedule_generate.inc');
-require_once('inc/schedule_utils.inc');
->>>>>>> Move schedule generator functionality into include files.
 
 start_response();
 
@@ -321,7 +308,6 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   $nlanes -= count_one_bits(read_raceinfo('unused-lane-mask', 0));
   if ($nlanes <= 0) {
 	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
-<<<<<<< HEAD
 // TODO
 //  } else if (!isset($all_generators[$nlanes])) {
 //    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
@@ -330,15 +316,6 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 	echo '<failure code="results-exist">Race results already exist for this round</failure>';
   } else {
 	if (schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace)) {
-=======
-  } else if (!isset($all_generators[$nlanes])) {
-    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
-    .max(array_keys($all_generators)).' lanes.</failure>';
-  } else if (results_exist($roundid)) {
-	echo '<failure code="results-exist">Race results already exist for this round</failure>';
-  } else {
-	if (schedule_one_round($roundid, $nlanes, $nrounds)) {
->>>>>>> Move schedule generator functionality into include files.
       echo '<success/>';
       require('ajax/query.poll.coordinator.inc');
     } else {
@@ -347,16 +324,12 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     }
   }
 
-<<<<<<< HEAD
   assign_master_heats(read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
                                         array(':roundid' => $roundid)));
   if (use_master_sched()) {
     $current = get_running_round();
     advance_heat($current, 'next-up', /* report failure */ false);
   }
-=======
-  assign_master_heats(round_number_from_roundid($roundid));
->>>>>>> Move schedule generator functionality into include files.
 } else {
   not_authorized_body();
 }
