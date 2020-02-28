@@ -114,6 +114,7 @@ $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, sco
                      .'       INNER JOIN Rounds'
                      .'       ON RaceChart.roundid = Rounds.roundid'
                      .'       WHERE RaceChart.roundid IN ('.$all_roundids.')'
+                     .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
 					 // This is basically "GROUP BY racerid"; racerid will
 					 // determine Rounds.roundid uniquely, unless a racer is
 					 // part of two different constituent rounds; in that case,
