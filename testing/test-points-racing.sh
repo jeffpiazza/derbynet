@@ -114,7 +114,7 @@ run_heat_place 6 2   3 4 1 2
 staged_heat4 121 101 111 141
 run_heat_place 6 3   4 1 2 3
 staged_heat4 141 121 101 111
-run_heat_place 6 4   1 2 3 4
+run_heat_place 6 4   1 2 3 4  x
 
 # Usage: curl_text standings.php | for_roundid 1 | ...
 function for_roundid() {

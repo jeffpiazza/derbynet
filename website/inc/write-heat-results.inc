@@ -1,5 +1,6 @@
 <?php
 
+define('DNF_TIME', 9.9999);
 
 function compare_by_finishtime(&$lhs, &$rhs) {
   if ($lhs['finishtime'] == $rhs['finishtime']) return 0;
@@ -8,7 +9,7 @@ function compare_by_finishtime(&$lhs, &$rhs) {
 
 // $_POST['lane1'], $_POST['lane2'], etc. for times
 // Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
-
+//
 function write_heat_results() {
   global $db;
 
@@ -49,6 +50,9 @@ function write_heat_results() {
         if ($result == '') $result = 0.0;
         $all_times[count($all_times) - 1]['finishtime'] = $result;
       } else {
+        if (!isset($all_times[count($all_times) - 1]['finishtime'])) {
+          $all_times[count($all_times) - 1]['finishtime'] = DNF_TIME;
+        }
         $all_times_posted = false;
       }
       if (isset($_POST['place'.$lane])) {

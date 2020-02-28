@@ -81,6 +81,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       send_replay_REPLAY();
       $current = get_running_round();
       advance_heat($current, 'next', /* show failure */ false);
+      $racing_state = get_racing_state();
       echo "\n  <success/>\n";
     }
     // If another heat is teed up, we'll immediately change state to
@@ -128,7 +129,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $pending = true;
     $mask = 0;
     foreach ($stmt as $row) {
-      if ($row['finishtime']) {
+      if ($row['finishtime'] || $row['finishplace']) {
         $pending = false;
       }
       $mask |= (1 << ($row['lane'] - 1));
