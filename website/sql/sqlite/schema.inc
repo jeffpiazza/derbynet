@@ -71,7 +71,7 @@ array(
 ."  `finishtime` DOUBLE NULL, "
 ."  `finishplace` INTEGER, "
 ."  `points` INTEGER, "
-."  `completed` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+."  `completed` TIMESTAMP, "
 ."  `ignoretime` TINYINT(1) DEFAULT 0, "
 ."  `masterheat` INTEGER DEFAULT 0"
 .")",
