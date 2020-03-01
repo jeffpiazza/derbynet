@@ -64,6 +64,8 @@ var g_recorder;
 var g_replay_count;
 var g_replay_rate;
 
+var g_replay_length = 4;
+
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
@@ -100,7 +102,7 @@ function on_device_selection(selectq) {
   let device_id = selectq.find(':selected').val();
   navigator.mediaDevices.getUserMedia({ video: { deviceId: device_id } })
   .then(stream => {
-      g_recorder = new VideoCaptureFlight(stream, 4, 1000);
+      g_recorder = new VideoCaptureFlight(stream, g_replay_length, 1000);
       document.getElementById("preview").srcObject = stream;
     });
 }
@@ -145,8 +147,8 @@ $(function() {
           document.querySelector('#preview').srcObject = stream;
           // Capturing from #preview doesn't do any better
           //g_recorder = new VideoCaptureFlight(
-          //  document.querySelector('#preview').captureStream(), 4, 1000);
-          g_recorder = new VideoCaptureFlight(stream, 4, 1000);
+          //  document.querySelector('#preview').captureStream(), g_replay_length, 1000);
+          g_recorder = new VideoCaptureFlight(stream, g_replay_length, 1000);
         });
     } else {  // Picker for local camera
       video_devices(false, (found, options) => {
