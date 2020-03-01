@@ -18,13 +18,18 @@ $signatures = schedule_signature();
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
-<?php if (isset($as_kiosk)) {
+<script type="text/javascript">
+var g_as_kiosk = <?php echo isset($as_kiosk) ? true : false; ?>;
+</script>
+<?php
+if (isset($as_kiosk)) {
   require_once('inc/kiosk-poller.inc');
   echo "<style type='text/css'>\n";
   echo "body { overflow: hidden; }\n";
   echo "</style>\n";
-}?>
-<?php require_once('inc/ajax-failure.inc'); ?>
+}
+require_once('inc/ajax-failure.inc');
+?>
 <script type="text/javascript" src="js/common-update.js"></script>
 <script type="text/javascript" src="js/results-by-racer-update.js"></script>
 <?php if (isset($as_kiosk))

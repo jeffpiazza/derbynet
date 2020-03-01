@@ -80,12 +80,14 @@ function update_results(result_elements) {
       .text(result.getAttribute('outcome'));
   }
 
-  // Any tbody's with no results should be collapsed or hidden
-  $("tbody[data-roundid]").not(".being-scrolled").each(function() {
-    var tbody = $(this);
-    tbody.toggleClass('hidden',
-                      tbody.find("span.time").filter(function() {
-                        return $(this).text() != '--';
-                      }).length == 0);
-  });
+  if (g_as_kiosk) {
+    // Any tbody's with no results should be collapsed or hidden
+    $("tbody[data-roundid]").not(".being-scrolled").each(function() {
+      var tbody = $(this);
+      tbody.toggleClass('hidden',
+                        tbody.find("span.time").filter(function() {
+                          return $(this).text() != '--';
+                        }).length == 0);
+    });
+  }
 }
