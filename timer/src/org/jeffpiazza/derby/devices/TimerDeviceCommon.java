@@ -72,6 +72,12 @@ public abstract class TimerDeviceCommon
   private int pendingLaneMask = 0;
   private boolean laneMaskIsPending = false;
 
+  // If non-zero, then avoid resetting the timer display until this time
+  protected long displayHoldUntilMillis() {
+    return lastFinishTime == 0 ? 0
+           : lastFinishTime + postRaceDisplayDurationMillis;
+  }
+
   public static void setPostRaceDisplayDurationMillis(long millis) {
     postRaceDisplayDurationMillis = millis;
   }

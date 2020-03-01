@@ -5,49 +5,51 @@ import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
+import org.jeffpiazza.derby.LogWriter;
 
 public class FastTrackDevice extends TimerDeviceCommon {
   // A FastTrack timer that doesn't understand the N2 ("enhanced format")
   // command should just ignore it, but in case there are more severe
   // consequences, this variable lets the attempt be skipped.
   public static boolean attemptEnhancedFormat = true;
+
   public FastTrackDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
-        // Interrogates the starting gate's state.  CAUTION: polling while a
-        // race is running may cause the race results, sent asynchronously, to
-        // be mixed with the RG response, making them unintelligible.
-        @Override
-        protected boolean interrogateGateIsClosed()
-            throws NoResponseException, SerialPortException,
-                   LostConnectionException {
-          portWrapper.write(MicroWizard.READ_START_SWITCH);
-          long deadline = System.currentTimeMillis() + 1000;
-          String s;
-          while ((s = portWrapper.next(deadline)) != null) {
-            if (s.startsWith(MicroWizard.READ_START_SWITCH)) {
-              if (s.length() >= 3) {
-                return s.charAt(2) == '1';
-              }
-              // K1 timer seems to respond "RG" followed by separate "X"
-              // response, but it doesn't otherwise appear to show the gate
-              // state.
-              // Per Stuart Ferguson (18 Jan 2019):
-              // The "X" indicates that the option is disabled. We will need
-              // the serial number of your timer to generate a code that will
-              // enable this feature.  You can then purchase the unlock code for
-              // $20 at http://microwizard.com/orderform.php
-              s = portWrapper.next(deadline);
-              if (s != null) {
-                if (s.equals("X")) {
-                  setGateStateNotKnowable();
-                }
+      // Interrogates the starting gate's state.  CAUTION: polling while a
+      // race is running may cause the race results, sent asynchronously, to
+      // be mixed with the RG response, making them unintelligible.
+      @Override
+      protected boolean interrogateGateIsClosed()
+          throws NoResponseException, SerialPortException,
+                 LostConnectionException {
+        portWrapper.write(MicroWizard.READ_START_SWITCH);
+        long deadline = System.currentTimeMillis() + 1000;
+        String s;
+        while ((s = portWrapper.next(deadline)) != null) {
+          if (s.startsWith(MicroWizard.READ_START_SWITCH)) {
+            if (s.length() >= 3) {
+              return s.charAt(2) == '1';
+            }
+            // K1 timer seems to respond "RG" followed by separate "X"
+            // response, but it doesn't otherwise appear to show the gate
+            // state.
+            // Per Stuart Ferguson (18 Jan 2019):
+            // The "X" indicates that the option is disabled. We will need
+            // the serial number of your timer to generate a code that will
+            // enable this feature.  You can then purchase the unlock code for
+            // $20 at http://microwizard.com/orderform.php
+            s = portWrapper.next(deadline);
+            if (s != null) {
+              if (s.equals("X")) {
+                setGateStateNotKnowable();
               }
             }
           }
-          throw new NoResponseException();
         }
-      };
+        throw new NoResponseException();
+      }
+    };
 
     // Once started, we expect a race result within 10 seconds; we allow an
     // extra second before considering the results overdue.
@@ -89,10 +91,12 @@ public class FastTrackDevice extends TimerDeviceCommon {
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
           // Clean up the timer state and capture some details into the log
-          portWrapper.writeAndDrainResponse(MicroWizard.RESET_ELIMINATOR_MODE, 2, 1000);
+          portWrapper.
+              writeAndDrainResponse(MicroWizard.RESET_ELIMINATOR_MODE, 2, 1000);
           portWrapper.writeAndDrainResponse(MicroWizard.NEW_FORMAT, 2, 1000);
           if (attemptEnhancedFormat) {
-            portWrapper.writeAndDrainResponse(MicroWizard.ENHANCED_FORMAT, 2, 1000);
+            portWrapper.writeAndDrainResponse(MicroWizard.ENHANCED_FORMAT, 2,
+                                              1000);
           }
           MicroWizard.readFeatures(portWrapper);
 
@@ -135,7 +139,8 @@ public class FastTrackDevice extends TimerDeviceCommon {
   protected void maskLanes(int lanemask) throws SerialPortException {
     // The CLEAR_LANE_MASK causes an "AC" response, but without a cr/lf to mark
     // a complete response.
-    doMaskLanes(lanemask, MicroWizard.CLEAR_LANE_MASK, 0, MicroWizard.LANE_MASK, 'A', 2);
+    doMaskLanes(lanemask, MicroWizard.CLEAR_LANE_MASK, 0, MicroWizard.LANE_MASK,
+                'A', 2);
   }
 
   // K2 timer may report DNFs as 0.000
@@ -171,7 +176,9 @@ public class FastTrackDevice extends TimerDeviceCommon {
       // If the gate state option is disabled, then we don't want to be
       // continuously resetting the laser gate, because we could receive results
       // at any instant, and they'd be disrupted by the reset dialog.
-      portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 2000);
+      if (System.currentTimeMillis() >= displayHoldUntilMillis()) {
+        portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 2000);
+      }
       checkConnection();
     }
   }
