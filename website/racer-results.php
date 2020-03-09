@@ -19,7 +19,7 @@ $signatures = schedule_signature();
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
-var g_as_kiosk = <?php echo isset($as_kiosk) ? true : false; ?>;
+var g_as_kiosk = <?php echo isset($as_kiosk) ? "true" : "false"; ?>;
 </script>
 <?php
 if (isset($as_kiosk)) {
