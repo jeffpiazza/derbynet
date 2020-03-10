@@ -6,7 +6,7 @@ import javax.xml.transform.stream.*;
 import org.w3c.dom.Element;
 
 public class StdoutMessageTrace {
-  public static void httpMessage(Message m, String params) {
+  public static void httpMessage(String params) {
     System.out.println("===================== sending " + params);
   }
 

@@ -88,6 +88,13 @@ g_aggregate_rounds = [];
 
 // Controls for current racing group:
 
+function handle_start_race_button() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'timer.remote-start'}
+         });
+}
+
 function handle_isracing_change(event, scripted) {
     if (!g_updating_current_round) {
         $.ajax(g_action_url,
@@ -454,7 +461,8 @@ function parse_timer_state(data) {
     if (tstate_xml) {
         return {status: tstate_xml.textContent,
                 icon: tstate_xml.getAttribute('icon'),
-                lanes: tstate_xml.getAttribute('lanes')};
+                lanes: tstate_xml.getAttribute('lanes'),
+                remote_start: tstate_xml.getAttribute('remote_start')};
     }
 }
 
@@ -869,6 +877,9 @@ function process_coordinator_poll_response(data) {
   $("#now-racing-group-buttons").empty();
   update_for_current_round(current);
 
+  $("#start_race_button_div").toggleClass('hidden',
+                                          timer_state.remote_start != "1");
+  
   var rounds = parse_rounds(data);
 
   offer_new_rounds(rounds);

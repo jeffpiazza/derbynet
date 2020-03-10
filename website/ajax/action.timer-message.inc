@@ -5,6 +5,7 @@ require_once('inc/timer-state.inc');
 require_once('inc/write-heat-results.inc');
 require_once('inc/autoadvance.inc');
 require_once('inc/replay.inc');
+require_once('inc/remote-start.inc');
 require_once('inc/events.inc');
 
 // Timer-controller-to-web-service messages:
@@ -35,6 +36,11 @@ require_once('inc/events.inc');
 // <HEAT-READY lane-mask="15"/> -- prepare timer (15 = 1111b)
 // <ABORT/> -- reset timer, abandon 
 
+$remote_start = 'NO';
+if (isset($_POST['remote-start'])) {
+  $remote_start = $_POST['remote-start'];
+}
+
 $message = $_POST['message'];
 
 $racing_state = get_racing_state();  // True if we're racing, false if not
@@ -43,6 +49,10 @@ $timer_state = new TimerState();     // An object carrying our idea of the timer
 start_response();
 
 if (have_permission(TIMER_MESSAGE_PERMISSION)) {
+  if ($remote_start == 'YES') {
+    set_has_remote_start();
+  }
+
   if ($message == 'HELLO') {
     // Timer begins in TIMER_SEARCHING, almost the same as unhealthy, until we
     // receive confirmation that derby-timer.jar has actually connected to the
@@ -144,6 +154,10 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       $timer_state->to_state(TIMER_STAGING);
       // send_replay_START($current);
     }
+  }
+
+  if (remote_start_pending()) {
+    echo '  <remote-start/>'."\n";
   }
 
   if (!$racing_state && ($tstate == TIMER_STAGING || $tstate == TIMER_RUNNING)) {

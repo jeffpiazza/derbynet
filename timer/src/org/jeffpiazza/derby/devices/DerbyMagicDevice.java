@@ -13,7 +13,8 @@ import org.jeffpiazza.derby.Message;
 
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
-public class DerbyMagicDevice extends TimerDeviceCommon {
+public class DerbyMagicDevice extends TimerDeviceCommon
+                              implements RemoteStartInterface {
   private TimerResult result = null;
   private long timeOfFirstResult = 0;
 
@@ -37,6 +38,8 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
 
   private static final String TIMER_RESET = "R";
   private static final String FORCE_DATA_SEND = "F";
+
+  private static final String TRIGGER_START_SOLENOID = "S";
 
   @Override
   public boolean canBeIdentified() {
@@ -139,6 +142,16 @@ public class DerbyMagicDevice extends TimerDeviceCommon {
         return line;
       }
     });
+  }
+
+  @Override
+  public boolean hasRemoteStart() {
+    return true;
+  }
+
+  @Override
+  public void remoteStart() throws SerialPortException {
+     portWrapper.write(TRIGGER_START_SOLENOID);
   }
 
   protected void raceFinished() throws SerialPortException {

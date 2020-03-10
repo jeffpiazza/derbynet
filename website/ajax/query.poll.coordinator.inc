@@ -4,6 +4,7 @@ require_once('inc/current-heat.inc');
 require_once('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/aggregate_round.inc');
+require_once('inc/remote-start.inc');
 
 $now_running = get_running_round();
 emit_current_heat($now_running);
@@ -41,6 +42,7 @@ echo '<timer-state lanes="'.get_lane_count().'"'
     .' last_contact="'.$timer_state->last_contact().'"'
     .' state="'.$tstate.'"'
     .' icon="'.$icon.'"'
+    .' remote_start="'.has_remote_start().'"'
     .'>';
 echo $msg;
 echo '</timer-state>'."\n";

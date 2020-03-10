@@ -9,6 +9,7 @@ import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.FastTrackDevice;
 import org.jeffpiazza.derby.devices.MicroWizard;
 import org.jeffpiazza.derby.devices.NewBoldDevice;
+import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.SimulatedDevice;
 import org.jeffpiazza.derby.devices.TheJudgeDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceCommon;
@@ -311,7 +312,7 @@ public class TimerMain {
         try {
           nlanes = timerTask.device().getNumberOfLanes();
         } catch (SerialPortException e) {
-          e.printStackTrace();
+          LogWriter.stacktrace(e);
         }
         httpTask.sendIdentified(
             nlanes, timerTask.device().getClass().getSimpleName(),
@@ -339,8 +340,7 @@ public class TimerMain {
             }
             timerTask.device().prepareHeat(roundid, heat, laneMask);
           } catch (Throwable t) {
-            // TODO: details
-            t.printStackTrace();
+            LogWriter.stacktrace(t);
             httpTask.queueMessage(
                 new Message.Malfunction(false, "Can't ready timer."));
           }
@@ -355,7 +355,34 @@ public class TimerMain {
           try {
             timerTask.device().abortHeat();
           } catch (Throwable t) {
+            LogWriter.stacktrace(t);
             t.printStackTrace();
+          }
+        }
+      });
+
+      httpTask.registerRemoteStart(new HttpTask.RemoteStartCallback() {
+        @Override
+        public boolean hasRemoteStart() {
+          if (timerTask.device() instanceof RemoteStartInterface) {
+            RemoteStartInterface rs = (RemoteStartInterface) timerTask.device();
+            return rs.hasRemoteStart();
+          }
+          return false;
+        }
+
+        @Override
+        public void remoteStart() {
+          if (timerTask.device() instanceof RemoteStartInterface) {
+            RemoteStartInterface rs = (RemoteStartInterface) timerTask.device();
+            try {
+              LogWriter.serial("Executing remote-start");
+              rs.remoteStart();
+            } catch (SerialPortException ex) {
+              LogWriter.stacktrace(ex);
+            }
+          } else {
+            LogWriter.serial("Unable to respond to remote-start");
           }
         }
       });

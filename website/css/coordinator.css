@@ -131,6 +131,11 @@ p.last_contact {
     width: 1.875em;
     background-color: #023882; /* JEP */
 }
+
+#start_race_button_div input[type='button'] {
+  background: #357116;
+}
+
 /* TODO: custom_size_flipswitch is from the example code */
 @media (min-width: 28em) {
     /*Repeated from rule .ui-flipswitch above*/

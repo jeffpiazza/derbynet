@@ -9,7 +9,8 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class MiscJunkDevice extends TimerDeviceCommon {
+public class MiscJunkDevice extends TimerDeviceCommon
+                            implements RemoteStartInterface {
   public MiscJunkDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
 
@@ -67,6 +68,7 @@ public class MiscJunkDevice extends TimerDeviceCommon {
   private static final String UNMASK_ALL_LANES = "U";
   private static final String POLL_GATE = "G";
   private static final String FORCE_END_OF_RACE = "F";
+  private static final String START_SOLENOID = "S";
 
   @Override
   public boolean probe() throws SerialPortException {
@@ -154,6 +156,16 @@ public class MiscJunkDevice extends TimerDeviceCommon {
         }
       }
     });
+  }
+
+  @Override
+  public boolean hasRemoteStart() {
+    return true;
+  }
+
+  @Override
+  public void remoteStart() throws SerialPortException {
+    portWrapper.writeAndDrainResponse(START_SOLENOID);
   }
 
   @Override

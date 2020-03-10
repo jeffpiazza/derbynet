@@ -102,8 +102,8 @@ public class LogWriter {
     write(s, INFO_CHANNEL, "");
   }
 
-  public static void httpMessage(Message m, String params) {
-    write(m.asParameters(), HTTP_CHANNEL, OUTGOING);
+  public static void httpMessage(String s) {
+    write(s, HTTP_CHANNEL, OUTGOING);
   }
 
   public static void httpResponse(Element response) {
