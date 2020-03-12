@@ -80,6 +80,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
     $timer_state->to_state(TIMER_RUNNING);
+    send_replay_RACE_STARTS();
     echo "\n  <success/>\n";
   } else if ($message == 'FINISHED') {
     if (!$racing_state) {

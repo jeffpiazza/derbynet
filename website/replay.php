@@ -57,6 +57,9 @@ function poll_as_replay() {
 
 g_upload_videos = <?php echo read_raceinfo_boolean('upload-videos') ? "true" : "false"; ?>;
 g_video_name_root = "";
+// If a replay is triggered by timing out after a RACE_STARTS, then ignore any
+// subsequent REPLAY messages until the next START.
+g_preempted = false;
 
 var g_remote_poller;
 var g_recorder;
@@ -66,22 +69,40 @@ var g_replay_rate;
 
 var g_replay_length = 4;
 
+// If non-zero, holds the timeout ID of a pending timeout that will trigger a
+// replay based on the start of a heat.
+var g_replay_timeout = 0;
+// Milliseconds short of g_replay_length to start a replay after a race start.
+var g_replay_timeout_epsilon = 0;
+
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
     g_replay_count = parseInt(cmdline.split(" ")[2]);
     g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     on_replay();
-  } else if (cmdline.startsWith("START")) {
+  } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
     g_video_name_root = cmdline.substr(6).trim();
+    g_preempted = false;
   } else if (cmdline.startsWith("REPLAY")) {
     // REPLAY skipback showings rate
     //  skipback and rate are ignored, but showings we can honor
     // (Must be exactly one space between fields:)
     g_replay_count = parseInt(cmdline.split(" ")[2]);
     g_replay_rate = parseFloat(cmdline.split(" ")[3]);
-    on_replay();
+    if (!g_preempted) {
+      on_replay();
+    }
   } else if (cmdline.startsWith("CANCEL")) {
+  } else if (cmdline.startsWith("RACE_STARTS")) {
+    g_replay_count = parseInt(cmdline.split(" ")[2]);
+    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
+    g_replay_timeout = setTimeout(
+      function() {
+        g_preempted = true;
+        on_replay();
+      },
+      g_replay_length * 1000 - g_replay_timeout_epsilon);
   } else {
     console.log("Unrecognized replay message: " + cmdline);
   }
@@ -100,7 +121,13 @@ function on_device_selection(selectq) {
   }	
 	
   let device_id = selectq.find(':selected').val();
-  navigator.mediaDevices.getUserMedia({ video: { deviceId: device_id } })
+  navigator.mediaDevices.getUserMedia(
+    { video: {
+        deviceId: device_id,
+        width: { ideal: $(window).width() },
+        height: { ideal: $(window).height() }
+      }
+    })
   .then(stream => {
       g_recorder = new VideoCaptureFlight(stream, g_replay_length, 1000);
       document.getElementById("preview").srcObject = stream;
@@ -186,7 +213,16 @@ function on_replay() {
   // from the server.
   var upload = g_upload_videos;
   var root = g_video_name_root;
+  // If this is a replay triggered after RACE_START, make sure we don't start
+  // another replay for the same heat.
+
+  if (g_replay_timeout > 0) {
+    clearTimeout(g_replay_timeout);
+  }
+  g_replay_timeout = 0;
+
   announce_to_interior('replay-started');
+
   g_recorder.stop(function(blob) {
       if (blob) {
         console.log('Blob of size ' + blob.size + ' and type ' + blob.type);

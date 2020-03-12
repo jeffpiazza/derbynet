@@ -34,6 +34,8 @@ function VideoCapture(stream) {
             let all_blobs = new Blob(recordedChunks, { mimeType: recordedChunks[0].type });
             recordedChunks = [];
             cb(all_blobs);
+          } else {
+            cb(null);
           }
         };
       }

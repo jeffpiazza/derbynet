@@ -107,4 +107,12 @@ function send_replay_CANCEL() {
   send_replay_message("CANCEL");
 }
 
+// RACE_STARTS skipback showings rate -- induce a replay in replay-skipback less epsilon
+function send_replay_RACE_STARTS() {
+  $skipback = read_raceinfo('replay-skipback', '4');
+  $num_showings = read_raceinfo('replay-num-showings', '2');
+  $rate = read_raceinfo('replay-rate', '0.5');
+  send_replay_message("RACE_STARTS $skipback $num_showings $rate");
+}
+
 ?>
