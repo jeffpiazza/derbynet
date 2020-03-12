@@ -32,3 +32,5 @@ website/local/
 
 dist/
 adapter-webrtc/
+.idea
+*.iml
