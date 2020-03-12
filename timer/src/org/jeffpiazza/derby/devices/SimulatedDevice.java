@@ -5,6 +5,7 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.Random;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 
@@ -12,17 +13,7 @@ import org.jeffpiazza.derby.Message;
 // a device class
 public class SimulatedDevice extends TimerDeviceBase
                              implements RemoteStartInterface {
-  private static int nlanes = 0;
-  private static int staging_time = 10;  // seconds;
   private HeatRunner runningHeat = null;
-
-  public static void setNumberOfLanes(int n) {
-    nlanes = n;
-  }
-
-  public static void setStagingTime(int nsec) {
-    staging_time = nsec;
-  }
 
   private Random random;
 
@@ -43,7 +34,7 @@ public class SimulatedDevice extends TimerDeviceBase
 
   @Override
   public int getNumberOfLanes() throws SerialPortException {
-    return nlanes;
+    return Flag.lanes.value();
   }
 
   @Override
@@ -55,7 +46,7 @@ public class SimulatedDevice extends TimerDeviceBase
     synchronized (this) {
       if (runningHeat == null) {
         System.out.println("STAGING:  heat " + heat + " of roundid " + roundid + ": "
-            + LogWriter.laneMaskString(laneMask, nlanes));
+            + LogWriter.laneMaskString(laneMask, Flag.lanes.value()));
         runningHeat = new HeatRunner(roundid, heat, laneMask);
         (new Thread(runningHeat)).start();
       } // TODO Confirm roundid/heat match runningHeat
@@ -112,7 +103,7 @@ public class SimulatedDevice extends TimerDeviceBase
     public int heat() { return heat; }
 
     public void run() {
-      pause(staging_time);
+      pause(Flag.pace.value());
       System.out.println("GO!       heat " + heat + " of roundid " + roundid + " begins.");
       invokeRaceStartedCallback();
       pause(4);  // 4 seconds for a pretty slow race

@@ -28,8 +28,7 @@ public class TimerGui {
   private TimerClassListController timerClassListController;
   private SerialPortListController portListController;
 
-  public TimerGui(Connector connector, boolean traceMessages,
-                  boolean traceHeartbeats, boolean traceResponses) {
+  public TimerGui(Connector connector) {
     this.components = new Components();
     this.connector = connector;
     this.traceMessages = traceMessages;
@@ -216,10 +215,7 @@ public class TimerGui {
 
   private void startHttpTask(ClientSession clientSession) {
     setHttpStatus("Logging in...", black, icon_unknown);
-    HttpTask.start(components.roleComboBox.getItemAt(
-        components.roleComboBox.getSelectedIndex()),
-                   new String(components.passwordField.getPassword()),
-                   clientSession, traceMessages, traceHeartbeats, traceResponses,
+    HttpTask.start(                   clientSession,
                    connector,
                    new HttpTask.LoginCallback() {
                  @Override

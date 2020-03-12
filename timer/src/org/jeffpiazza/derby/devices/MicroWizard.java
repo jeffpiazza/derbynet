@@ -3,6 +3,7 @@ package org.jeffpiazza.derby.devices;
 // Some common functionality shared between FastTrackDevice and
 // OlderFastTrackDevice classes.
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class MicroWizard {
@@ -43,11 +44,9 @@ public class MicroWizard {
   // reported "X" (disabled) for reading the start switch ("RG")
   public static final String RETURN_FEATURES = "RF";
 
-  public static boolean attemptReadFeatures = true;
-
   public static void readFeatures(SerialPortWrapper portWrapper)
       throws SerialPortException {
-    if (attemptReadFeatures) {
+    if (!Flag.skip_read_features.value()) {
       // Capture features to the log, for diagnostic purposes
       portWrapper.writeAndDrainResponse(RETURN_FEATURES, 2, 1000);
     }

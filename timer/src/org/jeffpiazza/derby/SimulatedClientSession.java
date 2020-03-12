@@ -8,8 +8,6 @@ import org.w3c.dom.Element;
 // For exercising a timer device class, this takes the place of a ClientSession
 // to simulate the actions of a web host running races.
 public class SimulatedClientSession extends ClientSession {
-  // TODO That these are static implies there are multiple SimulatedClientSessions ?
-  private static int nlanes = 0;
   // Sent after sending a heat-ready, and precludes sending another heat-ready
   // until the current one is answered or aborted.
   private String heatReadyString = null;
@@ -21,16 +19,12 @@ public class SimulatedClientSession extends ClientSession {
     this.random = new Random();
   }
 
-  public static void setNumberOfLanes(int n) {
-    nlanes = n;
-  }
-
   @Override
-  public Element login(String username, String password) throws IOException {
+  public Element login() throws IOException {
     return parseResponse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        + "<action-response action=\"login\" name=\"" + username + "\""
+        + "<action-response action=\"login\" name=\"" + Flag.username.value() + "\""
         + " password=\"...\">\n"
-        + "<success>" + username + "</success>\n"
+        + "<success>" + Flag.username.value() + "</success>\n"
         + "</action-response>");
   }
 
@@ -54,6 +48,7 @@ public class SimulatedClientSession extends ClientSession {
     }
 
     if (makeNewHeat) {
+      int nlanes = Flag.lanes.value();
       int fullMask = (1 << nlanes) - 1;
       int laneMask = fullMask;
 

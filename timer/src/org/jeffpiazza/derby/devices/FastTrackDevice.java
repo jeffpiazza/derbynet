@@ -5,14 +5,9 @@ import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
-import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.Flag;
 
 public class FastTrackDevice extends TimerDeviceCommon {
-  // A FastTrack timer that doesn't understand the N2 ("enhanced format")
-  // command should just ignore it, but in case there are more severe
-  // consequences, this variable lets the attempt be skipped.
-  public static boolean attemptEnhancedFormat = true;
-
   public FastTrackDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
@@ -94,7 +89,10 @@ public class FastTrackDevice extends TimerDeviceCommon {
           portWrapper.
               writeAndDrainResponse(MicroWizard.RESET_ELIMINATOR_MODE, 2, 1000);
           portWrapper.writeAndDrainResponse(MicroWizard.NEW_FORMAT, 2, 1000);
-          if (attemptEnhancedFormat) {
+          // A FastTrack timer that doesn't understand the N2 ("enhanced format")
+          // command should just ignore it, but in case there are more severe
+          // consequences, this variable lets the attempt be skipped.
+          if (!Flag.skip_enhanced_format.value()) {
             portWrapper.writeAndDrainResponse(MicroWizard.ENHANCED_FORMAT, 2,
                                               1000);
           }

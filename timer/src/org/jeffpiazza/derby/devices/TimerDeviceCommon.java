@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby.devices;
 
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
@@ -9,15 +10,6 @@ import org.jeffpiazza.derby.Timestamp;
 public abstract class TimerDeviceCommon
     extends TimerDeviceBase
     implements TimerDevice, RacingStateMachine.TransitionCallback {
-
-  // Issue #35: Reject gate state changes that don't last "reasonably" long.
-  // To do that, don't record a gate state change until it's aged a bit.
-  //
-  static protected int minimum_gate_time_millis = 500;
-
-  static public void setMinimumGateTimeMillis(int mgt) {
-    minimum_gate_time_millis = mgt;
-  }
 
   protected RacingStateMachine rsm;
   protected String timerIdentifier;
@@ -63,10 +55,7 @@ public abstract class TimerDeviceCommon
     }
   }
 
-  // How long to wait after a race before responding to a heat-ready message?
-  // For some timers (e.g., The Champ), masking the lanes causes the timer's
-  // display to go blank, which isn't ideal.
-  private static long postRaceDisplayDurationMillis = 10000;
+
   // System time at which raceFinished was last called.
   private long lastFinishTime = 0;
   private int pendingLaneMask = 0;
@@ -75,19 +64,13 @@ public abstract class TimerDeviceCommon
   // If non-zero, then avoid resetting the timer display until this time
   protected long displayHoldUntilMillis() {
     return lastFinishTime == 0 ? 0
-           : lastFinishTime + postRaceDisplayDurationMillis;
-  }
-
-  public static void setPostRaceDisplayDurationMillis(long millis) {
-    postRaceDisplayDurationMillis = millis;
+           : lastFinishTime + Flag.delay_reset_after_race.value() * 1000;
   }
 
   protected synchronized void maybeProcessPendingLaneMask()
       throws SerialPortException {
     if (laneMaskIsPending) {
-      if (lastFinishTime == 0
-          || System.currentTimeMillis()
-          >= lastFinishTime + postRaceDisplayDurationMillis) {
+      if (System.currentTimeMillis() >= displayHoldUntilMillis()) {
         describeLaneMask(pendingLaneMask);
         maskLanes(pendingLaneMask);
         laneMaskIsPending = false;
@@ -203,7 +186,7 @@ public abstract class TimerDeviceCommon
             long now = System.currentTimeMillis();
             if (timeOfFirstChange == 0) {
               timeOfFirstChange = now;
-            } else if (now - timeOfFirstChange > minimum_gate_time_millis) {
+            } else if (now - timeOfFirstChange > Flag.min_gate_time.value()) {
               gateIsClosed = isClosedNow;
               timeOfFirstChange = 0;
             }

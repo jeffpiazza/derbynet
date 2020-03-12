@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
@@ -27,13 +28,6 @@ public class NewBoldDevice extends TimerDeviceBase {
   //
   // < 0 means no reset is pending.
   private long timerResetMillis = -1;
-
-  // How long to wait after a race before sending the reset?
-  private static long postRaceDisplayDurationMillis = 10000;
-
-  public static void setPostRaceDisplayDurationMillis(long v) {
-    postRaceDisplayDurationMillis = v;
-  }
 
   @Override
   public boolean canBeIdentified() {
@@ -113,8 +107,8 @@ public class NewBoldDevice extends TimerDeviceBase {
                                        new Message.LaneResult[results.size()]));
         roundid = heat = 0;
         LogWriter.serial("Race finished!");
-        timerResetMillis
-            = System.currentTimeMillis() + postRaceDisplayDurationMillis;
+        timerResetMillis = System.currentTimeMillis()
+            + Flag.delay_reset_after_race.value() * 1000;
       }
     }
     if (timerResetMillis > 0 && System.currentTimeMillis() > timerResetMillis) {

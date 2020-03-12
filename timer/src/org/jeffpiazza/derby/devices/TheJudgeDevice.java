@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPort;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -28,15 +29,8 @@ public class TheJudgeDevice extends TimerDeviceBase {
     return "The Judge (New Directions)";
   }
 
-  private static int resetAfterStart = 10;
   private long resetAt = 0;
-
   private String timerIdentifier;
-
-
-  public static void setResetAfterStart(int v) {
-    resetAfterStart = v;
-  }
 
   // Since the device doesn't listen to anything we say, we don't "probe" the
   // device at all, we just assume that we're talking to one.
@@ -187,8 +181,9 @@ public class TheJudgeDevice extends TimerDeviceBase {
       LogWriter.serial("Lane count not received; forcing 6 lanes");
     }
     invokeRaceStartedCallback();
-    if (resetAfterStart != 0) {
-      resetAt = System.currentTimeMillis() + 1000 * resetAfterStart;
+    if (Flag.reset_after_start.value() != 0) {
+      resetAt = System.currentTimeMillis()
+          + 1000 * Flag.reset_after_start.value();
     }
   }
 }

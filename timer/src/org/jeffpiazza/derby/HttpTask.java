@@ -58,11 +58,7 @@ public class HttpTask implements Runnable {
 
   // When a ClientSession and credentials are available, start() launches
   // the HttpTask in a new Thread.
-  public static void start(final String username, final String password,
-                           final ClientSession session,
-                           final boolean traceQueued,
-                           final boolean traceHeartbeat,
-                           final boolean traceResponses,
+  public static void start(final ClientSession session,
                            final Connector connector,
                            final LoginCallback callback) {
     (new Thread() {
@@ -70,7 +66,7 @@ public class HttpTask implements Runnable {
       public void run() {
         boolean login_ok = false;
         try {
-          Element login_response = session.login(username, password);
+          Element login_response = session.login();
           login_ok = ClientSession.wasSuccessful(login_response);
           if (!login_ok) {
             callback.onLoginFailed("Login failed");
@@ -83,8 +79,7 @@ public class HttpTask implements Runnable {
 
         if (login_ok) {
           callback.onLoginSuccess();
-          HttpTask task = new HttpTask(session, traceQueued, traceHeartbeat,
-                                       traceResponses);
+          HttpTask task = new HttpTask(session);
           connector.setHttpTask(task);
           task.run();
         }
@@ -92,8 +87,7 @@ public class HttpTask implements Runnable {
     }).start();
   }
 
-  public HttpTask(ClientSession session, boolean traceQueued,
-                  boolean traceHeartbeat, boolean traceResponses) {
+  public HttpTask(ClientSession session) {
     this.session = session;
     this.queue = new ArrayList<Message>();
     this.traceQueued = traceQueued;

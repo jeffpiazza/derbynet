@@ -61,9 +61,6 @@ public interface Message {
   }
 
   public static class Finished implements Message {
-    private static boolean report_place_data = true;
-    public static void ignorePlaceData() { report_place_data = false; }
-
     private int roundid;
     private int heat;
     private LaneResult[] results;
@@ -86,7 +83,7 @@ public interface Message {
             time = "9.9999";
           }
           sb.append("&lane").append(i + 1).append("=").append(time);
-          if (results[i].place != 0 && report_place_data) {
+          if (results[i].place != 0 && !Flag.ignore_place.value()) {
             sb.append("&place").append(i + 1).append("=").append(
                 results[i].place);
           }

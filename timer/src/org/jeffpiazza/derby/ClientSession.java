@@ -52,9 +52,10 @@ public class ClientSession {
     return false;
   }
 
-  public Element login(String username, String password) throws IOException {
+  public Element login() throws IOException {
     return doPostWithVariations("action.php",
-                                "action=login&name=" + username + "&password=" + password);
+                                "action=login&name=" + Flag.username.value()
+                                + "&password=" + Flag.password.value());
   }
 
   public Element sendTimerMessage(String messageAndParams) throws IOException {
@@ -88,8 +89,8 @@ public class ClientSession {
                                   "derby-timer.jar/" + Version.get());
 
     connection.setDoOutput(true);
-    OutputStreamWriter writer =
-        new OutputStreamWriter(connection.getOutputStream());
+    OutputStreamWriter writer
+        = new OutputStreamWriter(connection.getOutputStream());
     writer.write(params);
     writer.flush();
     writer.close(); // writer.close() may block.

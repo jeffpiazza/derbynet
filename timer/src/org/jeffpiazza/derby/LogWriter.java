@@ -15,7 +15,7 @@ public class LogWriter {
   private static File logFileDirectory
       = new File(System.getProperty("user.dir"));
 
-  public static void setLogFileDirectory(String directory) {
+  private static void setLogFileDirectory(String directory) {
     File dir = new File(directory);
     if (!dir.exists()) {
       dir.mkdirs();
@@ -33,6 +33,9 @@ public class LogWriter {
 
   public static void initialize() {
     if (writer == null) {
+      if (Flag.logdir.value() != null) {
+        setLogFileDirectory(Flag.logdir.value());
+      }
       try {
         makeLogFile();
         info("Started at " + Timestamp.string());
@@ -75,7 +78,6 @@ public class LogWriter {
     return new PrintWriter(new BufferedWriter(new FileWriter(logfile)),
                            /*autoflush*/ true);
   }
-
 
   protected static final String INCOMING = "<-- ";
   protected static final String OUTGOING = "--> ";
