@@ -139,6 +139,9 @@ public class FastTrackDevice extends TimerDeviceCommon {
     // a complete response.
     doMaskLanes(lanemask, MicroWizard.CLEAR_LANE_MASK, 0, MicroWizard.LANE_MASK,
                 'A', 2);
+    // Even without gate polling available, send a single reset command as
+    // part of the preparation for the next heat
+    portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 500);
   }
 
   // K2 timer may report DNFs as 0.000
