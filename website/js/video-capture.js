@@ -1,7 +1,5 @@
 'use strict';
 
-// TODO stop() should perhaps return a Promise
-
 // Starts capturing video from the stream argument, and returns a control
 // object.  The returned object implements a stop(cb) method whose callback
 // argument will be invoked with the recorded Blob.
@@ -30,7 +28,6 @@ function VideoCapture(stream) {
       if (cb) {
         recorder.onstop = (event) => {
           if (recordedChunks.length > 0) {
-            console.log("recorder.onstop with " + recordedChunks.length + " chunks");  // TODO
             let all_blobs = new Blob(recordedChunks, { mimeType: recordedChunks[0].type });
             recordedChunks = [];
             cb(all_blobs);
@@ -45,34 +42,5 @@ function VideoCapture(stream) {
         cb(null);
       }
     }
-  };
-}
-
-
-// Keep a flight of n VideoCaptures, staggered at spacing_ms interval
-
-function VideoCaptureFlight(stream, n, spacing_ms) {
-  let captures = [];
-  let interval = setInterval(function() {
-    let new_capture;
-    try {
-        new_capture = new VideoCapture(stream);
-    } catch (error) {
-      console.log("Failed to create VideoCapture: " + error);
-      clearInterval(interval);
-    }
-    if (captures.length >= n) {
-      captures[0].stop();
-      for (let i = 0; i < captures.length - 1; ++i) {
-        captures[i] = captures[i + 1];
-      }
-      captures[captures.length - 1] = new_capture;
-    } else {
-      captures.push(new_capture);
-    }
-  }, spacing_ms);
-
-  this.stop = function(cb) {
-    captures[0].stop(cb);
   };
 }

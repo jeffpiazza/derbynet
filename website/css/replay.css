@@ -25,10 +25,24 @@ video#preview {
   margin-left: 25%;
 }
 
+#recorder-warning {
+  width: 50%;
+  margin-left: 25%;
+}
+
+#recorder-warning p,
+#recorder-warning span {
+  font-size: 18px;
+}
+
 #replay-setup {
   background: white;
 }
 
 #playback-background {
   background-color: black;
+}
+
+#click-shield {
+  z-index: 20;
 }

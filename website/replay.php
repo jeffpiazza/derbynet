@@ -20,6 +20,9 @@ if ($last === false) {
   $last = -1;
 }
 
+// TODO: See https://www.w3.org/TR/image-capture/#example4 for handling manual
+// focus for cameras that support it.
+
 // Don't force http !
 $kiosk_url = '//'.substr($url, 0, $last + 1).'kiosk.php';
 if (isset($_REQUEST['address'])) {
@@ -35,6 +38,7 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript" src="js/message-poller.js"></script>
 <script type="text/javascript" src="js/viewer-signaling.js"></script>
 <script type="text/javascript" src="js/video-capture.js"></script>
+<script type="text/javascript" src="js/circular-frame-buffer.js"></script>
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
@@ -91,7 +95,7 @@ function handle_replay_message(cmdline) {
     g_replay_count = parseInt(cmdline.split(" ")[2]);
     g_replay_rate = parseFloat(cmdline.split(" ")[3]);
     if (!g_preempted) {
-      on_replay();
+    on_replay();
     }
   } else if (cmdline.startsWith("CANCEL")) {
   } else if (cmdline.startsWith("RACE_STARTS")) {
@@ -102,7 +106,7 @@ function handle_replay_message(cmdline) {
         g_preempted = true;
         on_replay();
       },
-      g_replay_length * 1000 - g_replay_timeout_epsilon);
+                                  g_replay_length * 1000 - g_replay_timeout_epsilon);
   } else {
     console.log("Unrecognized replay message: " + cmdline);
   }
@@ -119,28 +123,29 @@ function on_device_selection(selectq) {
       track.stop();
     });
   }	
-	
+
   let device_id = selectq.find(':selected').val();
   navigator.mediaDevices.getUserMedia(
     { video: {
         deviceId: device_id,
         width: { ideal: $(window).width() },
         height: { ideal: $(window).height() }
-      }
-    })
+    }
+  })
   .then(stream => {
-      g_recorder = new VideoCaptureFlight(stream, g_replay_length, 1000);
+      g_recorder = new CircularFrameBuffer(stream, g_replay_length);
+      g_recorder.start();
       document.getElementById("preview").srcObject = stream;
     });
 }
 
+$(window).on('resize', function(event) { on_setup(); });
+
 $(function() {
     if (typeof(window.MediaRecorder) == 'undefined') {
-      $("#replay-setup").empty()
-      .append("<h3 id='reject'>This browser does not support MediaRecorder.<br/>" +
-              "Please use another browser for replay.</h3>")
-      .append("<p>" + navigator.userAgent + "</p>");
-      return;
+      g_upload_videos = false;
+      $("#user_agent").text(navigator.userAgent);
+      $("#recorder-warning").removeClass('hidden');
     }
 
     if (typeof(navigator.mediaDevices) == 'undefined') {
@@ -207,6 +212,28 @@ function announce_to_interior(msg) {
   document.querySelector("#interior").contentWindow.postMessage(msg, '*');
 }
 
+function upload_video(root, blob) {
+  if (blob) {
+    console.log("Uploading video");
+    let form_data = new FormData();
+    form_data.append('video', blob, root + ".mkv");
+    form_data.append('action', 'video.upload');
+    $.ajax("action.php",
+           {type: 'POST',
+             data: form_data,
+             processData: false,
+             contentType: false,
+             success: function(data) {
+               console.log('video upload success:');
+               console.log(data);
+             }
+           });
+  }
+}
+
+// TODO My working theory is that the captureStream() from an offscreen canvas
+// doesn't produce any frames.
+
 function on_replay() {
   // Capture these global variables before starting the asynchronous operation,
   // because they're reasonably likely to be clobbered by another queued message
@@ -222,35 +249,30 @@ function on_replay() {
   g_replay_timeout = 0;
 
   announce_to_interior('replay-started');
+  g_recorder.stop();
 
-  g_recorder.stop(function(blob) {
-      if (blob) {
-        console.log('Blob of size ' + blob.size + ' and type ' + blob.type);
-
-        if (upload && root != "") {
-          let form_data = new FormData();
-          form_data.append('video', blob, root + ".mkv");
-          form_data.append('action', 'video.upload');
-          $.ajax("action.php",
-                 {type: 'POST',
-                   data: form_data,
-                   processData: false,
-                   contentType: false,
-                   success: function(data) {
-                     console.log('ajax success');
-                     console.log(data);
-                   }
-                 });
-        }
-
-        document.querySelector("#playback").src = URL.createObjectURL(blob);
-        $("#playback-background").show('slide');
-        console.log('Replay rate of ' + g_replay_rate);
-        document.querySelector("#playback").playbackRate = g_replay_rate;
-        document.querySelector("#playback").play();
-      } else {
-        console.log("No blob!");
-      }
+  let playback = document.querySelector("#playback");
+  playback.width = $(window).width();
+  playback.height = $(window).height();
+  $("#playback-background").show('slide', function() {
+      let vc;
+      g_recorder.playback(playback, 2, 0.5,
+                          function(pre_canvas) {
+                            if (upload && root != "") {
+                              vc = new VideoCapture(pre_canvas.captureStream());
+                            }
+                          },
+                          function(findex) {
+                            if (vc && findex >= 1.0) {
+                              vc.stop(function(blob) { upload_video(root, blob); });
+                              vc = null;
+                            }
+                          },
+                          function() {
+                            $("#playback-background").hide('slide');
+                            announce_to_interior('replay-ended');
+                            g_recorder.start();
+                          });
     });
 }
 
@@ -266,9 +288,11 @@ function on_proceed() {
   $("#replay-setup").hide('slide', {direction: 'down'});
   $("#playback-background").hide('slide').removeClass('hidden');
   $("#interior").removeClass('hidden');
+  $("#click-shield").removeClass('hidden');
 }
 
 function on_setup() {
+  $("#click-shield").addClass('hidden');
   $("#replay-setup").show('slide', {direction: 'down'});
 }
 
@@ -279,13 +303,23 @@ function on_setup() {
 <iframe id="interior" class="hidden full-window">
 </iframe>
 
+<div id="click-shield" class="hidden full-window"
+     onclick="on_setup(); return false;"
+     oncontextmenu="on_replay(); return false;">
+</div>
+
 <div id="playback-background" class="hidden full-window">
-<video id="playback" class="full-window" autoplay muted playsinline>
-</video>
+  <canvas id="playback" class="full-window">
+  </canvas>
 </div>
 
 <div id="replay-setup" class="full-window block_buttons">
   <?php make_banner('Replay'); ?>
+  <div id="recorder-warning" class="hidden">
+    <h2>This browser does not support MediaRecorder.</h2>
+    <p>Replay is still possible, but uploading videos will not be.</p>
+    <p>Your browser's User Agent string is:<br/><span id="user_agent"></span></p>
+  </div>
   <video id="preview" autoplay muted playsinline>
   </video>
 
