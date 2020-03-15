@@ -106,20 +106,22 @@ function toggle_preview() {
 
 <div id="log"></div>
 
-<video id="preview" autoplay muted playsinline></video>
+<div class="block_buttons">
+  <video id="preview" autoplay muted playsinline></video>
 
-<div id="no-camera-warning" class="hidden">
-   <h2 id='reject'>Access to cameras is blocked.</h2>
-</div>
+  <div id="no-camera-warning" class="hidden">
+     <h2 id='reject'>Access to cameras is blocked.</h2>
+  </div>
 
-<div id="device-picker-div">
-  <select id="device-picker"><option>Please wait</option></select>
-</div>
+  <div id="device-picker-div">
+    <select id="device-picker"><option>Please wait</option></select>
+  </div>
 
-<div>
+  <div>
     <input type="checkbox" id="show-preview" checked="checked"
         onclick="toggle_preview();"/>
     <label for="show-preview">Show preview?</label>
+  </div>
 </div>
 
 </body>
