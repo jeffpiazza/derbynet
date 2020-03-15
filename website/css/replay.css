@@ -46,3 +46,18 @@ video#preview {
 #click-shield {
   z-index: 20;
 }
+
+#preview-container {
+  position: relative;
+}
+#waiting-for-remote {
+  position: absolute;
+  top: 45%;
+  left: 25%;
+  right: 75%;
+  z-index: 10;
+  background-color: white;
+}
+#waiting-for-remote p {
+  text-align: center;
+}

@@ -25,6 +25,16 @@ require_once('inc/locked.inc');
 #banner_link {
     cursor: default;
 }
+
+#login-kiosk {
+  position: fixed;
+  bottom: 20px;
+/*  left: 1em;
+  padding: 1em; */
+  width: 25em;
+  left: 50%;
+  margin-left: -12.5em;
+}
 </style>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
@@ -53,10 +63,10 @@ foreach ($roles as $name => $details) {
 }
 ?>
 
-<div class="login-kiosk">
+<div id="login-kiosk">
 <input type="button" value="Be a Kiosk" onclick="show_kiosk_form();"/>
+<a class="button_link" href="camera.php">Be a Camera</a>
 </div>
-
 
 <?php
 if (@$_SESSION['role']) {

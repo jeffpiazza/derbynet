@@ -78,29 +78,6 @@ div.index_column {
 .block_buttons input.other_button[type='submit'] {
   color: #ffddff;
 }
-
-.block_buttons .double {
-  width: 280px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.block_buttons .double a.button_link {
-  width: 95px;
-  font-size: 15px;
-  display: inline-block;
-  margin-left: 5px;
-  margin-right: 5px;
-  /* top and bottom padding are normally 9px */
-  padding-top: 5px;
-  padding-bottom: 13px;
-}
-.block_buttons .double .left {
-  float: left;
-}
-.block_buttons .double a.right {
-  /* margin-left: 150px; */
-  margin-left: 11px;
-}
 </style>
 </head>
 <body>

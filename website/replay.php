@@ -20,6 +20,16 @@ if ($last === false) {
   $last = -1;
 }
 
+// TODO Layout of camera page:
+//    Allow turning off camera preview
+//    https link
+//
+// TODO Camera selection for the camera page doesn't work for iphone, at least, or Safari Mac
+//
+// TODO What resolution is transmitted if camera doesn't ask for its window
+// size?  Should viewer send its ideal size to remote camera?
+//
+
 // TODO: See https://www.w3.org/TR/image-capture/#example4 for handling manual
 // focus for cameras that support it.
 
@@ -65,13 +75,20 @@ g_video_name_root = "";
 // subsequent REPLAY messages until the next START.
 g_preempted = false;
 
+
 var g_remote_poller;
 var g_recorder;
 
-var g_replay_count;
-var g_replay_rate;
+var g_replay_options = {
+  count: 2,
+  rate: 0.5,
+  length: 4
+};
 
-var g_replay_length = 4;
+function parse_replay_options(cmdline) {
+  g_replay_options.count = parseInt(cmdline.split(" ")[2]);
+  g_replay_options.rate = parseFloat(cmdline.split(" ")[3]);
+}
 
 // If non-zero, holds the timeout ID of a pending timeout that will trigger a
 // replay based on the start of a heat.
@@ -82,8 +99,7 @@ var g_replay_timeout_epsilon = 0;
 function handle_replay_message(cmdline) {
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
-    g_replay_count = parseInt(cmdline.split(" ")[2]);
-    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
+    parse_replay_options(cmdline);
     on_replay();
   } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
     g_video_name_root = cmdline.substr(6).trim();
@@ -92,21 +108,19 @@ function handle_replay_message(cmdline) {
     // REPLAY skipback showings rate
     //  skipback and rate are ignored, but showings we can honor
     // (Must be exactly one space between fields:)
-    g_replay_count = parseInt(cmdline.split(" ")[2]);
-    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
+    parse_replay_options(cmdline);
     if (!g_preempted) {
-    on_replay();
+      on_replay();
     }
   } else if (cmdline.startsWith("CANCEL")) {
   } else if (cmdline.startsWith("RACE_STARTS")) {
-    g_replay_count = parseInt(cmdline.split(" ")[2]);
-    g_replay_rate = parseFloat(cmdline.split(" ")[3]);
+    parse_replay_options(cmdline);
     g_replay_timeout = setTimeout(
       function() {
         g_preempted = true;
         on_replay();
       },
-                                  g_replay_length * 1000 - g_replay_timeout_epsilon);
+      g_replay_options.length * 1000 - g_replay_timeout_epsilon);
   } else {
     console.log("Unrecognized replay message: " + cmdline);
   }
@@ -114,10 +128,16 @@ function handle_replay_message(cmdline) {
 
 $(function() { setInterval(poll_as_replay, 250); });
 
+function on_stream_ready(stream) {
+  $("#waiting-for-remote").addClass('hidden');
+  g_recorder = new CircularFrameBuffer(stream, g_replay_options.length);
+  g_recorder.start();
+  document.getElementById("preview").srcObject = stream;
+}
+
 function on_device_selection(selectq) {
-  stream = document.getElementById("preview").srcObject;
-  
   // If a stream is already open, stop it.
+  stream = document.getElementById("preview").srcObject;
   if (stream != null) {
     stream.getTracks().forEach(function(track) {
       track.stop();
@@ -125,18 +145,30 @@ function on_device_selection(selectq) {
   }	
 
   let device_id = selectq.find(':selected').val();
-  navigator.mediaDevices.getUserMedia(
-    { video: {
-        deviceId: device_id,
-        width: { ideal: $(window).width() },
-        height: { ideal: $(window).height() }
-    }
-  })
-  .then(stream => {
-      g_recorder = new CircularFrameBuffer(stream, g_replay_length);
-      g_recorder.start();
-      document.getElementById("preview").srcObject = stream;
-    });
+
+  if (typeof(navigator.mediaDevices) == 'undefined') {
+    $("no-camera-warning").toggleClass('hidden', device_id == 'remote');
+  }
+
+  if (device_id == 'remote') {
+    $("#waiting-for-remote").removeClass('hidden');
+    let id = make_viewer_id();
+    console.log("Viewer id is " + id);
+    g_remote_poller = new RemoteCamera(
+      id,
+      {width: $(window).width(),
+       height: $(window).height()},
+      on_stream_ready);
+  } else {
+    navigator.mediaDevices.getUserMedia(
+      { video: {
+          deviceId: device_id,
+          width: { ideal: $(window).width() },
+          height: { ideal: $(window).height() }
+        }
+      })
+    .then(on_stream_ready);
+  }
 }
 
 $(window).on('resize', function(event) { on_setup(); });
@@ -147,64 +179,38 @@ $(function() {
       $("#user_agent").text(navigator.userAgent);
       $("#recorder-warning").removeClass('hidden');
     }
+});
 
+function build_device_picker() {
+  let selected = $("#device-picker :selected").prop('value');
+  video_devices(
+    selected,
+    (found, options) => {
+      options.push($("<option value='remote'>Remote Camera</option>"));
+      let picker = $("#device-picker");
+      picker.empty()
+            .append(options)
+            .on('input', event => { on_device_selection(picker); });
+      if (!found) {
+        on_setup();
+      }
+      picker.trigger("create");
+      on_device_selection(picker);
+    });
+}
+
+$(function() {
     if (typeof(navigator.mediaDevices) == 'undefined') {
-      // This happens if we're not in a secure context
-      var setup = $("#replay-setup").empty()
-                .append("<h3 id='reject'>Access to cameras is blocked.</h3>");
+      $("#no-camera-warning").removeClass('hidden');
       if (window.location.protocol == 'http:') {
         var https_url = "https://" + window.location.hostname + window.location.pathname;
-        setup.append("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>");
+        $("#no-camera-warning").append("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>");
       }
-      return;
     } else {
-      navigator.mediaDevices.ondevicechange = function(event) {
-        video_devices($("#device-picker :selected").prop('value'),
-                      (found, options) => {
-                        $("#device-picker").empty().append(options);
-                        if (!found) {
-                          on_setup();
-                          on_device_selection($("#device-picker"));
-                        }
-                      });
-      };
+      navigator.mediaDevices.ondevicechange = function(event) { build_device_picker(); };
     }
 
-    if (false) {
-      // TODO Remote camera not working yet
-      let id = make_viewer_id();
-      $("#viewerid").text(id);
-      g_remote_poller = new RemoteCamera(
-        id, function(stream) {
-          document.querySelector('#preview').srcObject = stream;
-          // Capturing from #preview doesn't do any better
-          //g_recorder = new VideoCaptureFlight(
-          //  document.querySelector('#preview').captureStream(), g_replay_length, 1000);
-          g_recorder = new VideoCaptureFlight(stream, g_replay_length, 1000);
-        });
-    } else {  // Picker for local camera
-      video_devices(false, (found, options) => {
-          let picker = $("#device-picker");
-          picker.append(options)
-                .on('input', event => {
-                    on_device_selection($("#device-picker"));
-                  });
-          on_device_selection(picker);
-        });
-
-      $("#playback").on('ended', function(event) {
-          --g_replay_count;
-          console.log('End of playback; ' + g_replay_count + ' to go');
-          if (g_replay_count <= 0) {
-            $("#playback-background").hide('slide');
-            announce_to_interior('replay-ended');
-          } else {
-            console.log('Replay rate of ' + g_replay_rate);
-            document.querySelector("#playback").playbackRate = g_replay_rate;
-            document.querySelector("#playback").play();
-          }
-        });
-    }
+    build_device_picker();
 });
 
 // Posts a message to the page running in the interior iframe.
@@ -256,7 +262,9 @@ function on_replay() {
   playback.height = $(window).height();
   $("#playback-background").show('slide', function() {
       let vc;
-      g_recorder.playback(playback, 2, 0.5,
+      g_recorder.playback(playback,
+                          g_replay_options.count,
+                          g_replay_options.rate,
                           function(pre_canvas) {
                             if (upload && root != "") {
                               vc = new VideoCapture(pre_canvas.captureStream());
@@ -317,14 +325,24 @@ function on_setup() {
   <?php make_banner('Replay'); ?>
   <div id="recorder-warning" class="hidden">
     <h2>This browser does not support MediaRecorder.</h2>
-    <p>Replay is still possible, but uploading videos will not be.</p>
+    <p>Replay is still possible, but you can't upload videos.</p>
     <p>Your browser's User Agent string is:<br/><span id="user_agent"></span></p>
   </div>
-  <video id="preview" autoplay muted playsinline>
-  </video>
+
+  <div id="no-camera-warning" class="hidden">
+     <h2 id='reject'>Access to cameras is blocked.</h2>
+  </div>
+
+  <div id="preview-container">
+    <video id="preview" autoplay muted playsinline>
+    </video>
+    <div id="waiting-for-remote" class="hidden">
+      <p>Waiting for remote camera to connect...</p>
+    </div>
+  </div>
 
   <div id="device-picker-div">
-    <select id="device-picker"></select>
+    <select id="device-picker"><option>Please wait</option></select>
   </div>
 
   <input type="checkbox" id="go-fullscreen" checked="checked"/>

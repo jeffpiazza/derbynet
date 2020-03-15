@@ -1,0 +1,16 @@
+
+#log {
+  position: fixed;
+  width: 350px;
+  right: 0;
+  top: 65px;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+  opactity: 50%;
+  padding-left: 15px;
+}
+
+#device-picker-div {
+  min-height: 50px;
+}

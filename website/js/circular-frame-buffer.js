@@ -1,25 +1,22 @@
 'use strict';
 
+var g_offscreen_video;
+var g_offscreen_canvas;
+
 function CircularFrameBuffer(stream, no_seconds) {
   let debugging = false;
 
   let offscreen_video = document.createElement('video');
-  offscreen_video.height = stream.getVideoTracks()[0].getSettings().height;
-  offscreen_video.width = stream.getVideoTracks()[0].getSettings().width;
+  // For a remote stream, the width and height may initially not be set, and
+  // will require fixing up in the catch clause in recording_playback.
+  let stream_settings = stream.getVideoTracks()[0].getSettings();
+  offscreen_video.width = stream_settings.width;
+  offscreen_video.height = stream_settings.height;
 
   let offscreen_canvas = document.createElement('canvas');
   offscreen_canvas.width = offscreen_video.width;
   offscreen_canvas.height = offscreen_video.height;
   let offscreen_context = offscreen_canvas.getContext('2d');
-
-  $("#wh-stream").text(
-    stream.getVideoTracks()[0].getSettings().width + "x" +
-      stream.getVideoTracks()[0].getSettings().height);
-  $("#wh-offscreen-video").text(
-    offscreen_video.width + "x" +
-      offscreen_video.height);
-  $("#wh-window").text($(window).width() + "x" + $(window).height());
-  $("#wh-offscreen-canvas").text(offscreen_canvas.width + "x" + offscreen_canvas.height);
 
   let frames;
   let frame_index = 0;
@@ -44,13 +41,27 @@ function CircularFrameBuffer(stream, no_seconds) {
     }
 
     try {
-      // frame_times[frame_index] = ts;
       frames[frame_index] =
         offscreen_context.getImageData(0, 0,
                                        offscreen_canvas.width,
                                        offscreen_canvas.height);
     } catch(error) {
       console.log("Caught error " + error.message);
+      // For a remote stream, the width and height may not have been known
+      // initially, and require fixing up here.
+      let tr = stream.getVideoTracks()[0];
+      if (tr) {
+        let settings = tr.getSettings();
+        if (settings.width && offscreen_canvas.width != settings.width) {
+          console.log("Adjusting width to " + settings.width);
+          offscreen_video.width = offscreen_canvas.width = settings.width;
+        }
+
+        if (settings.height && offscreen_canvas.height != settings.height) {
+          console.log("Adjusting height to " + settings.height);
+          offscreen_video.height = offscreen_canvas.height = settings.height;
+        }
+      }
     }
 
     frame_index = (frame_index + 1) % frames.length;
@@ -124,7 +135,8 @@ function CircularFrameBuffer(stream, no_seconds) {
             let fr = '000' + ((Math.round(findex) - frame_index) % frames.length);
             pre_context.fillText('Index ' + fr.substr(fr.length - 3), 30, 80);
           }
-          
+
+          // TODO drawImage fails
           context.drawImage(pre_canvas, draw_x, draw_y, draw_width, draw_height);
           lastp = pindex;
         }

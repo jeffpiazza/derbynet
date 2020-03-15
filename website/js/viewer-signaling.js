@@ -18,7 +18,10 @@ function make_viewer_id() {
   return id;
 }
 
-function RemoteCamera(viewer_id, stream_cb) {
+// viewer_id is string identifying this viewer.
+// ideal is the ideal video stream width and height.
+// stream_cb gets called when a new stream is added.
+function RemoteCamera(viewer_id, ideal, stream_cb) {
   let pc = null;
 
   let poller = new MessagePoller(
@@ -81,13 +84,13 @@ function RemoteCamera(viewer_id, stream_cb) {
     if (!pc) {
       viewer_sent('solicitation (nag)');
       send_message('replay-camera',
-                   {type: 'solicitation', from: viewer_id});
+                   {type: 'solicitation', from: viewer_id, ideal: ideal});
     }
   }, 10000);
 
   viewer_sent('solicitation');
   send_message('replay-camera',
-               {type: 'solicitation', from: viewer_id});
+               {type: 'solicitation', from: viewer_id, ideal: ideal});
 
   this.stop = function() { nag.clearInterval(); };
 }
