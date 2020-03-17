@@ -32,10 +32,7 @@
 
 // TODO master schedule
 
-// TODO inc/schedule_generate.inc is different from inc/schedule_generator.inc,
-// exists in this branch only, and comprises a few functions extracted from
-// action.schedule.generate.inc.
-require_once('inc/schedule_generate.inc');
+require_once('inc/schedule_one_round.inc');
 
 define('DEBUG', true);
 define('DEBUG_SEARCH', true);
@@ -469,6 +466,24 @@ class ScheduleAdjuster {
   }
 }
 
+function n_runs_per_lane($roundid) {
+  global $db;
+
+  $nracers = read_single_value('SELECT COUNT(DISTINCT racerid) FROM RaceChart'
+                               .' WHERE roundid = :roundid',
+                               array(':roundid' => $roundid));
+  if ($nracers == 0) {
+    return 0;
+  }
+  $nheats = read_single_value('SELECT COUNT(DISTINCT heat) FROM RaceChart'
+                              .' WHERE roundid = :roundid',
+                              array(':roundid' => $roundid));
+  $n_runs_per_lane = $nheats / $nracers;
+  if (!is_int($n_runs_per_lane)) {
+    return 0;
+  }
+  return $n_runs_per_lane;
+}
 
 function deleted_racers($roundid) {
   global $db;
@@ -513,8 +528,6 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   if (count($deleted) > 0) echo "<deleted>".json_encode($deleted)."</deleted>\n";  // TODO
   $added = added_racers($roundid);
   if (count($added) > 0) echo "<added>".json_encode($added)."</added>\n";  // TODO
-  
-  $adjuster = new ScheduleAdjuster($roundid);
 
   $ok = true;
 
@@ -522,6 +535,14 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     echo "<failure code='nothingtodo'>Nothing to do</failure>\n";
     $ok = false;
   }
+
+  $n_runs_per_lane = n_runs_per_lane($roundid);
+  if ($n_runs_per_lane == 0) {
+    echo "<failure code='unrecognizable'>Schedule not recognizable</failure>\n";
+    $ok = false;
+  }
+
+  $adjuster = new ScheduleAdjuster($roundid);
   
   if ($adjuster->number_of_completed_heats() == 0) {
     echo "<regenerating/>\n";
@@ -529,7 +550,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
                     array(':roundid' => $roundid));
 
 	if (schedule_one_round($roundid, $adjuster->number_of_usable_lanes(),
-                           /* nrounds */ 1)) {
+                           $n_runs_per_lane)) {
       echo "<success/>\n";
     } else {
       echo '<failure code="too-few-racers">'
@@ -548,6 +569,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   if ($ok) {
     foreach ($added as $new_racer) {
+      // TODO for ($run = 0; $run < $n_runs_per_lane; ++$run) ?
       if ($adjuster->inject($new_racer)) {
         echo "<successful-injection/>\n";
       } else {

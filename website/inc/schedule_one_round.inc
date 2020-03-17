@@ -72,7 +72,7 @@ function write_chart($roundid, &$heats) {
 
 // The top-level scheduling function.  Constructs a schedule, converts to a race
 // chart, and writes the race chart into the database.
-function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
+function schedule_one_round($roundid, $nlanes, $n_runs_per_lane = 1) {
   $roster = read_roster($roundid);
   if (count($roster) < 2) {
     return false;
@@ -84,7 +84,7 @@ function schedule_one_round($roundid, $nlanes, $nrounds = 1) {
   while (count($roster) * $max_runs_per_car % $nlanes != 0) {
     $roster[] = null;
   }
-  $sched = make_ordered_schedule($nlanes, count($roster), $nrounds);
+  $sched = make_ordered_schedule($nlanes, count($roster), $n_runs_per_lane);
   write_chart($roundid, spread_across_unused_lanes(form_chart($sched, $roster)));
   return true;
 }
