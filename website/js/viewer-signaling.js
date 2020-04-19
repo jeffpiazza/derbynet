@@ -2,11 +2,17 @@
 
 
 function viewer_sent(key) {
-  $("#log").append("<p>=&gt; " + key + "</p>");
+  logmessage("=> " + key);
 }
 function viewer_received(key) {
-  $("#log").append("<p>&lt;= " + key + "</p>");
+  logmessage("<= " + key);
 }
+function ice_candidate_key(candidate) {
+  return "ice " + 
+    candidate.protocol + " " + candidate.address + ":" + candidate.port +
+    " (" + candidate.type + ")";
+}
+
 
 function make_viewer_id() {
   var alphabet = "abcdefghjklmnpqrstuvwz0123456789";
@@ -33,15 +39,17 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
         }
         pc.onicecandidate = function(event) {
           if (event.candidate) {
-            viewer_sent('ice-candidate');
+            viewer_sent(ice_candidate_key(event.candidate));
             send_message('replay-camera',
                          {type: 'ice-candidate',
                           from: viewer_id,
                           candidate: event.candidate});
           }
         };
-        pc.onaddstream = function(event) {  // TODO
-          viewer_received('addstream (see it?)');
+        // TODO onaddstream is obsolete; ontrack should be used instead.
+        // The track event is specified to include an optional streams member,
+        // but its only optional.
+        pc.onaddstream = function(event) {
           stream_cb(event.stream);
         };
 
@@ -64,12 +72,13 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
         if (!pc) {
           pc = new RTCPeerConnection(null);
         }
-        viewer_received('ice-candidate');
+        let candidate = new RTCIceCandidate(msg.candidate);
+        viewer_received(ice_candidate_key(candidate));
         if (msg.from != 'replay-camera') {
           console.log('ICE candidate from unknown sender ' + msg.from + '');
           return;
         }
-        pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+        pc.addIceCandidate(candidate);
       } else {
         console.error('Unrecognized message ' + msg);
       }

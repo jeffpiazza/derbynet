@@ -52,6 +52,14 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
+function logmessage(txt) {
+  $("<p></p>").text(txt).appendTo($("#log"));
+  let msgs = $("#log p");
+  if (msgs.length > 20) {
+    msgs.slice(0, -20).remove();
+  }
+}
+
 // TODO Poll for messages.
 // In the meantime, use the existing replay protocol
 function poll_as_replay() {
@@ -135,6 +143,16 @@ function on_stream_ready(stream) {
   document.getElementById("preview").srcObject = stream;
 }
 
+function on_remote_stream_ready(stream) {
+  let resize = function(w, h) {
+    $("#recording-stream-info").removeClass('hidden');
+    $("#recording-stream-size").text(w + 'x' + h);
+  };
+  resize(-1, -1);  // Says we've got a stream, even if no frames yet.
+  on_stream_ready(stream);
+  g_recorder.on_resize(resize);
+}
+
 function on_device_selection(selectq) {
   // If a stream is already open, stop it.
   stream = document.getElementById("preview").srcObject;
@@ -158,8 +176,9 @@ function on_device_selection(selectq) {
       id,
       {width: $(window).width(),
        height: $(window).height()},
-      on_stream_ready);
+      on_remote_stream_ready);
   } else {
+    $("#recording-stream-info").addClass('hidden');
     navigator.mediaDevices.getUserMedia(
       { video: {
           deviceId: device_id,
@@ -261,6 +280,7 @@ function on_replay() {
   playback.width = $(window).width();
   playback.height = $(window).height();
   $("#playback-background").show('slide', function() {
+      let playback_start_ms = Date.now();
       let vc;
       g_recorder.playback(playback,
                           g_replay_options.count,
@@ -277,6 +297,7 @@ function on_replay() {
                             }
                           },
                           function() {
+                            console.log("Playback time: " + (Date.now() - playback_start_ms) + "ms. for " + g_replay_options.count + " showing(s) of " + g_replay_options.length + " at " + g_replay_options.rate);
                             $("#playback-background").hide('slide');
                             announce_to_interior('replay-ended');
                             g_recorder.start();
@@ -323,6 +344,9 @@ function on_setup() {
 
 <div id="replay-setup" class="full-window block_buttons">
   <?php make_banner('Replay'); ?>
+<!-- Uncomment for debugging 
+  <div id="log"></div>
+-->
   <div id="recorder-warning" class="hidden">
     <h2>This browser does not support MediaRecorder.</h2>
     <p>Replay is still possible, but you can't upload videos.</p>
@@ -344,6 +368,9 @@ function on_setup() {
   <div id="device-picker-div">
     <select id="device-picker"><option>Please wait</option></select>
   </div>
+  <p id="recording-stream-info" class="hidden">
+    Recording at <span id="recording-stream-size"></span>
+  </p>
 
   <input type="checkbox" id="go-fullscreen" checked="checked"/>
   <label for="go-fullscreen">Change to fullscreen?</label>

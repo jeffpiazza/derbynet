@@ -9,8 +9,18 @@
   background-color: white;
   opactity: 50%;
   padding-left: 15px;
+  line-height: 1.0;
+}
+#log p {
+  font-size: 12px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 #device-picker-div {
   min-height: 50px;
+}
+
+#preview {
+  max-width: 640px;
 }

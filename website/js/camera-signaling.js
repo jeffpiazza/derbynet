@@ -19,6 +19,11 @@ function camera_sent(viewer, key) {
 function camera_received(viewer, key) {
   logmessage("<= " + viewer + ": " + key);
 }
+function ice_candidate_key(candidate) {
+  return "ice " + 
+    candidate.protocol + " " + candidate.ip + ":" + candidate.port +
+    " (" + candidate.type + ")";
+}
 
 // A ViewClient represents a remote client that wants to receive the camera stream.
 function ViewClient(recipient) {
@@ -27,12 +32,11 @@ function ViewClient(recipient) {
   // Local ICE candidate
   pc.onicecandidate = function(event) {
     if (event.candidate) {
-      camera_sent(recipient, 'ice-candidate');
+      camera_sent(recipient, ice_candidate_key(event.candidate));
       send_message(recipient,
                    {type: 'ice-candidate',
                     from: 'replay-camera',
                     candidate: event.candidate});
-
     }
   };
 
@@ -71,8 +75,9 @@ function ViewClient(recipient) {
     pc.setRemoteDescription(new RTCSessionDescription(msg.sdp));
   };
   this.on_ice_candidate = function(msg) {  // Remote ICE candidate signaled
-    camera_received(recipient, 'ice-candidate');
-    pc.addIceCandidate(new RTCIceCandidate(msg.candidate));
+    let candidate = new RTCIceCandidate(msg.candidate);
+    camera_received(recipient, ice_candidate_key(candidate));
+    pc.addIceCandidate(candidate);
   };
 
   let ideal = {width: 0, height: 0};

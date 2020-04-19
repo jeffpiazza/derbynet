@@ -53,18 +53,13 @@ function on_device_selection(selectq) {
   .then(stream => {
       document.getElementById("preview").srcObject = stream;
       g_client_manager.setstream(stream);
+
+      let tracks = stream.getVideoTracks();
+      if (tracks.length > 0) {
+        logmessage("Video stream width is " + tracks[0].getSettings().width);
+      }
     });
 }
-
-$(function() {
-    let w = 0;
-    setInterval(function() {
-        if ($("#preview").width() != w) {
-          w = $("#preview").width();
-          logmessage("Preview width is " + w);
-        }
-      }, 2000);
-  });
 
 function build_device_picker() {
   let selected = $("#device-picker :selected").prop('value');

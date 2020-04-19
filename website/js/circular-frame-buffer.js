@@ -6,6 +6,9 @@ var g_offscreen_canvas;
 function CircularFrameBuffer(stream, no_seconds) {
   let debugging = false;
 
+  let resizing_callback = false;
+  this.on_resize = function(cb) { resizing_callback = cb; }
+  
   let offscreen_video = document.createElement('video');
   // For a remote stream, the width and height may initially not be set, and
   // will require fixing up in the catch clause in recording_playback.
@@ -41,6 +44,26 @@ function CircularFrameBuffer(stream, no_seconds) {
     }
 
     try {
+      let tr = stream.getVideoTracks()[0];
+      if (tr) {
+        let settings = tr.getSettings();
+        let did_resize = false;
+        if (settings.width && offscreen_canvas.width != settings.width) {
+          console.log("Adjusting width to " + settings.width);
+          offscreen_video.width = offscreen_canvas.width = settings.width;
+          did_resize = true;
+        }
+
+        if (settings.height && offscreen_canvas.height != settings.height) {
+          console.log("Adjusting height to " + settings.height);
+          offscreen_video.height = offscreen_canvas.height = settings.height;
+          did_resize = true;
+        }
+        if (did_resize && resizing_callback) {
+          resizing_callback(offscreen_video.width, offscreen_video.height);
+        }
+      }
+
       frames[frame_index] =
         offscreen_context.getImageData(0, 0,
                                        offscreen_canvas.width,
@@ -49,19 +72,6 @@ function CircularFrameBuffer(stream, no_seconds) {
       console.log("Caught error " + error.message);
       // For a remote stream, the width and height may not have been known
       // initially, and require fixing up here.
-      let tr = stream.getVideoTracks()[0];
-      if (tr) {
-        let settings = tr.getSettings();
-        if (settings.width && offscreen_canvas.width != settings.width) {
-          console.log("Adjusting width to " + settings.width);
-          offscreen_video.width = offscreen_canvas.width = settings.width;
-        }
-
-        if (settings.height && offscreen_canvas.height != settings.height) {
-          console.log("Adjusting height to " + settings.height);
-          offscreen_video.height = offscreen_canvas.height = settings.height;
-        }
-      }
     }
 
     frame_index = (frame_index + 1) % frames.length;
@@ -73,6 +83,7 @@ function CircularFrameBuffer(stream, no_seconds) {
 
   this.start = function() {
     frames = Array(no_seconds * 60);
+    console.log("Circular frame buffer: " + frames.length + " frames allocated.");  // TODO
     // frame_times = Array(no_seconds * 60);
     frame_index = 0;
     recording = true;
@@ -123,9 +134,17 @@ function CircularFrameBuffer(stream, no_seconds) {
     // lastp and pindex ARE mod frames.length
     let lastp = frame_index;
 
+    console.log("Playback will play frames " + findex + " to " + last_frame_index);  // TODO
+    let century_frames_time_ms = Date.now();
+    
     function playback_callback(ts) {
       try {
         let pindex = Math.round(findex) % frames.length;
+        if (pindex % 100 == 0) {
+          let ms = Date.now();
+          console.log("At frame " + Math.round(findex) + " for another " + (ms - century_frames_time_ms));
+          century_frames_time_ms = ms;
+        }
         if (pindex != lastp) {
           pre_context.putImageData(frames[pindex], 0, 0);
 

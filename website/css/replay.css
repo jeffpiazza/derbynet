@@ -18,11 +18,22 @@ h3#reject {
   margin-left: 25%;
 }
 
-video#preview {
+#preview {
   border: 1px solid green;
   width: 50%;
   max-height: 60%;
   margin-left: 25%;
+}
+
+#recording-stream-info {
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
+}
+#recording-stream-info,
+#recording-stream-info span {
+  font-size: 18px;
+  font-family: sans-serif;
 }
 
 #recorder-warning {
@@ -50,14 +61,29 @@ video#preview {
 #preview-container {
   position: relative;
 }
+
 #waiting-for-remote {
   position: absolute;
   top: 45%;
   left: 25%;
+  min-width: 50%;
   right: 75%;
   z-index: 10;
   background-color: white;
 }
 #waiting-for-remote p {
   text-align: center;
+}
+
+/* If present: */
+#log {
+  position: absolute;
+  width: 400px;
+  left: 0;
+  line-height: 1.0;
+}
+#log p {
+  font-size: 12px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
