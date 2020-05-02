@@ -50,6 +50,8 @@ function photo_directory_base() {
 <?php
 make_banner('Settings', 'setup.php');
 
+$experimental_settings = isset($_GET['experimental']);
+
 $use_subgroups = read_raceinfo_boolean('use-subgroups');
 $use_xbs = read_raceinfo_boolean('use-xbs');
 $xbs_award = read_raceinfo('xbs-award', 'Exclusively By Scout');
@@ -113,6 +115,13 @@ Lanes available for scheduling:</p>
         echo $finish_formatting == "%6.4f" ? ' checked="checked"' : '';
         ?>/><label for="finish-formatting-4">5 digits (0.0001)</label>
       </p>
+    <?php if ($experimental_settings) { ?>
+      <p>
+         <label for="now-racing-linger-ms">Linger time on last heat (ms.)</label>
+         <input type="number" id="now-racing-linger-ms" name="now-racing-linger-ms"
+                value="<?php echo read_raceinfo('now-racing-linger-ms', 10000); ?>"/>
+      </p>
+    <?php } ?>
     </div>
   </div>
 

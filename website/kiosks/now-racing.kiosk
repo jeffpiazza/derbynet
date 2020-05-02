@@ -1,6 +1,7 @@
 <?php @session_start();
 $nlanes = get_lane_count();
 $use_points = read_raceinfo_boolean('use-points');
+$linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
 require_once('inc/banner.inc');
 ?><!DOCTYPE html>
 <html>
@@ -31,6 +32,9 @@ $(function () {
 </script>
 <?php }  // if ($nlanes <= 0)
 ?>
+<script type="text/javascript">
+var g_linger_ms = <?php echo $linger_ms; ?>;
+</script>
 </head>
 <body>
 <?php make_banner('Racing', /* back_button */ false); ?>

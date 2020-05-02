@@ -52,7 +52,7 @@ var Lineup = {
   // After an animation of heat results, hold the display for a few seconds
   // before advancing to the next heat.
   hold_display: function() {
-    this.hold_display_until = (new Date()).valueOf() + 10000;
+    this.hold_display_until = (new Date()).valueOf() + g_linger_ms;
   },
 
   ok_to_change: function() {

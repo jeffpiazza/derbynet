@@ -78,7 +78,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'unused-lane-mask' => 'unused-lane-mask',
                   'max-runs-per-car' => 'max-runs-per-car',
                   'finish-formatting' => 'finish-formatting',
-                  'scoring' => 'scoring')
+                  'scoring' => 'scoring',
+                  'now-racing-linger-ms' => 'now-racing-linger-ms')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key])) {
         ++$num_picked;
