@@ -46,7 +46,7 @@ require_once('inc/ordinals.inc');
 // The class, round, and heat elements identify the "current" heat.
 //
 // The update elements provide heat times for heats that completed after the page's last update.
-// The client-side page, via update.js, passes a date/time parameter named 'since' to identify
+// The client-side page, via ondeck-update.js, passes a date/time parameter named 'since' to identify
 // the high water mark of Completed values that it's already displaying.
 //
 // The most_recent element tells the page what its new high water mark for Completed values is.

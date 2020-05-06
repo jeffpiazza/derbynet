@@ -47,9 +47,12 @@ var g_update_status = {
       use_master_sched: <?php echo $use_master_sched ? 1 : 0; ?>,
       merge_rounds: <?php echo $use_master_sched ? 1 : 0; ?>,
 };
+// False if auto-scrolling should center the NEXT heat (the default), true if we
+// should scroll to focus on the current heat.
+var g_focus_current = <?php echo isset($_GET['focus_current']) ? "true" : "false"; ?>;
 </script>
 <script type="text/javascript" src="js/common-update.js"></script>
-<script type="text/javascript" src="js/update.js"></script>
+<script type="text/javascript" src="js/ondeck-update.js"></script>
 <script type="text/javascript">
 
 function handle_row_click(tr) {

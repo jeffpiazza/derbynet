@@ -27,7 +27,7 @@ g_update_status.current = {tbodyid: -1,
                            heat: -1};
 
 g_update_status.update_period = 2500;
-g_update_status.interval_id = 0;
+g_update_status.interval_id = 0;  // Returned by start_polling
 
 // Process <update resultid="nnn" time="n.nnn"/> elements; these are race times
 // not previously recorded for entries already in the table.
@@ -83,6 +83,8 @@ function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
   // previously-current heat was visible.
   if (roundid != g_update_status.current.roundid ||
       heat != g_update_status.current.heat) {
+    // If the page is newly loaded, no row will have been marked .curheat, and
+    // so we'll always scroll the first time.
 	var vis = true;
 	var curheat = $(".curheat");
 	if (curheat.length > 0)
@@ -95,11 +97,13 @@ function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
     var nextheat = $("#heat_" + next_roundid + "_" + next_heat);
     nextheat.addClass("nextheat");
 	if (!nextheat[0]) {
+      // If we're running the last heat, then there may not be a next heat.
 	  nextheat = curheat;
 	}
-	if (vis && nextheat[0])
-	  setTimeout(function() { scroll_to_current(nextheat[0]); }, 250);
-
+    let scroll_target = g_focus_current ? curheat[0] : nextheat[0];
+    if (vis && scroll_target) {
+      setTimeout(function() { scroll_to_current(scroll_target); }, 250);
+    }
 	g_update_status.current.roundid = roundid;
 	g_update_status.current.heat = heat;
   }
