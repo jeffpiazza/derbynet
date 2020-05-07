@@ -163,7 +163,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   assert.equal(true, await page.$eval("#is-currently-racing", r => { return $(r).prop('checked'); }));
 
   await fakeAjax.testForAjax(async () => {
-    var skip_button = await page.$("input[type='button'][value='Skip Heat']");
+    var skip_button = await page.$("#skip_heat_button");
     skip_button.click();
   },
                        {'type': 'POST',
@@ -201,7 +201,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   // After "Previous Heat" button jumps back to heat 3
   await fakeAjax.testForAjax(async () => {
-    var prev_button = await page.$("input[type='button'][value='Previous Heat']");
+    var prev_button = await page.$("#prev_heat_button");
     prev_button.click();
   },
                        {'type': 'POST',

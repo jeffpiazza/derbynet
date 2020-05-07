@@ -41,16 +41,26 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <div id="start_race_button_div" class="block_buttons hidden">
       <input type="button" data-enhanced="true" value="Start Race" onclick="handle_start_race_button()"/>
     </div>
-    <div class="centered_flipswitch">
+    <div class="centered_flipswitch" style="margin-bottom: 0px;">
       <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
         checked="checked"
         data-on-text="Racing" data-off-text="Not Racing"/>
     </div>
 
     <div class="block_buttons">
-      <input type="button" data-enhanced="true" value="Skip Heat" onclick="handle_skip_heat_button()"/><br/>
-      <input type="button" data-enhanced="true" value="Previous Heat" onclick="handle_previous_heat_button()"/><br/>
-      <input type="button" data-enhanced="true" value="Manual Results" onclick="show_manual_results_modal()"/>
+
+      <div id="prev_heat_button" class="button_link" onclick="handle_previous_heat_button()">
+        <img src="img/left-white-60.png"/>
+      </div>
+
+      <input type="button" id="manual_results_button" data-enhanced="true" value="Manual Results"
+        onclick="show_manual_results_modal()" />
+
+      <div id="skip_heat_button" class="button_link" onclick="handle_skip_heat_button()">
+        <img src="img/right-white-60.png"/>
+      </div>
+
+      <!-- input type="button" data-enhanced="true" value="Re-Run Heat" onclick=""/ -->
     </div>
   </div>
 
