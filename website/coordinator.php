@@ -41,7 +41,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <div id="start_race_button_div" class="block_buttons hidden">
       <input type="button" data-enhanced="true" value="Start Race" onclick="handle_start_race_button()"/>
     </div>
-    <div class="centered_flipswitch" style="margin-bottom: 0px;">
+    <div class="centered_flipswitch">
       <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
         checked="checked"
         data-on-text="Racing" data-off-text="Not Racing"/>

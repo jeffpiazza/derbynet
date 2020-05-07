@@ -56,7 +56,7 @@ while true ; do
   curl_post action.php "action=kiosk.assign&all=kiosks/ondeck.kiosk" | check_success
 
   # Start racing
-  curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
+  curl_post action.php "action=heat.select&now_racing=1&roundid=1" | check_success
 
   user_login_timer
   sleep 1s

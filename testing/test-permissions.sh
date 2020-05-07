@@ -37,7 +37,7 @@ curl_post action.php "action=photo" | check_failure
 curl_post action.php "action=replay-test" | check_failure
 curl_post action.php "action=schedule.reschedule" | check_failure
 curl_post action.php "action=schedule.generate" | check_failure
-curl_post action.php "action=select-heat" | check_failure
+curl_post action.php "action=heat.select" | check_failure
 curl_post action.php "action=timer-message" | check_failure
 curl_post action.php "action=award.xbs" | check_failure
 

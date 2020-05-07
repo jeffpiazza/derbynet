@@ -69,8 +69,8 @@ curl_post action.php "action=schedule.generate&roundid=5" | check_failure
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="0"'
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'roundid="1"'
 
-curl_post action.php "action=select-heat&heat=next-up&now_racing=0" | check_success
-curl_post action.php "action=select-heat&now_racing=1" | check_success
+curl_post action.php "action=heat.select&heat=next-up&now_racing=0" | check_success
+curl_post action.php "action=heat.select&now_racing=1" | check_success
 
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'now-racing="1"'
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'roundid="1"'
@@ -143,8 +143,8 @@ curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'n
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'roundid="8"'
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one 'heat="1"'
 
-curl_post action.php "action=select-heat&heat=next-up&now_racing=0" | check_success
-curl_post action.php "action=select-heat&now_racing=1" | check_success
+curl_post action.php "action=heat.select&heat=next-up&now_racing=0" | check_success
+curl_post action.php "action=heat.select&now_racing=1" | check_success
 
 run_heat 8 1  3 2 1 4
 

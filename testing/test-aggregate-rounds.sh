@@ -20,7 +20,7 @@ curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
 echo Starting run_heat
 
-curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
 run_heat	1	1	3.488	3.656	3.36	3.518
 run_heat	1	2	3.393	3.273	3.346	3.293
 run_heat	1	3	3.339	3.698	3.844	3.465
@@ -39,7 +39,7 @@ run_heat	1	15	3.759	3.874	3.042	3.261
 run_heat	1	16	3.452	3.146	3.592	3.882
 run_heat	1	17	3.819	3.065	3.761	3.551  x
 
-curl_post action.php "action=select-heat&roundid=2&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=2&now_racing=1" | check_success
 run_heat	2	1	3.711	3.108	3.42	3.463
 run_heat	2	2	3.397	3.019	3.792	3.081
 run_heat	2	3	3.71	3.874	3.474	3.757
@@ -58,7 +58,7 @@ run_heat	2	15	3.245	3.477	3.846	3.571
 run_heat	2	16	3.291	3.811	3.786	3.189
 run_heat	2	17	3.642	3.182	3.571	3.311 x
 
-curl_post action.php "action=select-heat&roundid=3&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=3&now_racing=1" | check_success
 run_heat	3	1	3.848	3.865	3.25	3.017
 run_heat	3	2	3.507	3.105	3.551	3.748
 run_heat	3	3	3.897	3.681	3.482	3.398
@@ -76,7 +76,7 @@ run_heat	3	14	3.554	3.571	3.629	3.765
 run_heat	3	15	3.764	3.636	3.001	3.131
 run_heat	3	16	3.535	3.205	3.207	3.249 x
 
-curl_post action.php "action=select-heat&roundid=4&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=4&now_racing=1" | check_success
 run_heat	4	1	3.756	3.737	3.639	3.892
 run_heat	4	2	3.141	3.306	3.742	3.087
 run_heat	4	3	3.197	3.532	3.436	3.064
@@ -94,7 +94,7 @@ run_heat	4	14	3.035	3.297	3.107	3.762
 run_heat	4	15	3.324	3.861	3.045	3.767
 run_heat	4	16	3.499	3.468	3.388	3.281 x
 
-curl_post action.php "action=select-heat&roundid=5&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=5&now_racing=1" | check_success
 run_heat	5	1	3.315	3.62	3.242	3.455
 run_heat	5	2	3.773	3.022	3.638	3.08
 run_heat	5	3	3.698	3.597	3.512	3.853
@@ -115,7 +115,7 @@ run_heat	5	16	3.646	3.184	3.678	3.263 x
 ## Create "Younger Finals" aggregate of roundid 1,2 and race the round
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_success
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
-curl_post action.php "action=select-heat&roundid=6&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
 run_heat	6	1	3.103	3.762	3.359	3.471
 run_heat	6	2	3.757	3.635	3.085	3.328
 run_heat	6	3	3.586	3.749	3.095	3.494
@@ -128,7 +128,7 @@ run_heat	6	8	3.000	3.477	3.67	3.512 x
 ## Create "Older Finals" aggregate of roundid 3,4,5, and race
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_success
 curl_post action.php "action=schedule.generate&roundid=7" | check_success
-curl_post action.php "action=select-heat&roundid=7&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=7&now_racing=1" | check_success
 run_heat	7	1	3.85	3.145	3.849	3.288
 run_heat	7	2	3.706	3.212	3.343	3.711
 run_heat	7	3	3.282	3.51	3.703	3.653
@@ -145,7 +145,7 @@ run_heat	7	12	3.563	3.857	3.255	3.742 x
 ## Race a second round of Older Finals
 curl_post action.php "action=roster.new&top=8&roundid=7" | check_success
 curl_post action.php "action=schedule.generate&roundid=8" | check_success
-curl_post action.php "action=select-heat&roundid=8&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=8&now_racing=1" | check_success
 
 run_heat	8	1	3.862	3.887	3.162	3.234
 run_heat	8	2	3.329	3.401	3.554	3.015
@@ -159,7 +159,7 @@ run_heat	8	8	3.028	3.104	3.049	3.301 x
 ## Create a final final of the other two GF's
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_success
 curl_post action.php "action=schedule.generate&roundid=9" | check_success
-curl_post action.php "action=select-heat&roundid=9&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=9&now_racing=1" | check_success
 
 run_heat	9	1	3.061	3.857	3.565	3.674
 run_heat	9	2	3.825	3.672	3.592	3.106

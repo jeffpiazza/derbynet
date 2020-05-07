@@ -167,7 +167,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     skip_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'select-heat',
+                        'data': {'action': 'heat.select',
                                  'heat': 'next'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
@@ -205,7 +205,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     prev_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'select-heat',
+                        'data': {'action': 'heat.select',
                                  'heat': 'prev'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +
@@ -244,7 +244,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     racing_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'select-heat',
+                        'data': {'action': 'heat.select',
                                  'now_racing': 1}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
                        '<coordinator_poll>\n' +

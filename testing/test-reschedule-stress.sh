@@ -42,7 +42,7 @@ function setup_schedule() {
     curl_post action.php "action=racer.pass&racer=101&value=1" | check_success
     # RacerY
     curl_post action.php "action=racer.pass&racer=102&value=1" | check_success
-    curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
+    curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
 }
 
 

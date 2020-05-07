@@ -68,7 +68,7 @@ function get_next_heat(&$current, $requested) {
   }
 }
 
-// action.select-heat needs to handle changing rounds, in which case the
+// action.heat.select needs to handle changing rounds, in which case the
 // requested heat is always 1 (or could be 'first').
 
 
@@ -76,7 +76,7 @@ function get_next_heat(&$current, $requested) {
 // so some of these fields may be empty in $current.
 
 // This gets called either for manual heat change
-// (action.select-heat.inc) or automatic heat advancement in response
+// (action.heat.select.inc) or automatic heat advancement in response
 // to a timer message (action.timer-message.inc).
 
 function advance_heat(&$current, $requested, $report_failure) {

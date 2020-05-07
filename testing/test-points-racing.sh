@@ -22,7 +22,7 @@ curl_post action.php "action=settings.write&n-lanes=4" | check_success
 ### Schedule roundid 1
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 # Racing for roundid=1: 5 heats
-curl_post action.php "action=select-heat&roundid=1&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
@@ -105,7 +105,7 @@ fi
 
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 # Racing for roundid=6: 4 heats
-curl_post action.php "action=select-heat&roundid=6&now_racing=1" | check_success
+curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
 
 staged_heat4 111 141 121 101
 run_heat_place 6 1   2 3 4 1
