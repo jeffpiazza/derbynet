@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby;
 
+import java.io.File;
 import jssc.*;
 import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.gui.TimerGui;
@@ -243,6 +244,15 @@ public class TimerMain {
       timerTask.device().registerRaceStartedCallback(
           new TimerDevice.RaceStartedCallback() {
         public void raceStarted() {
+          if (Flag.trigger_file_directory.value != null) {
+            try {
+              (new File(new File(Flag.trigger_file_directory.value),
+                        "heat-started")).createNewFile();
+            } catch (Throwable t) {
+              LogWriter.info("Failed to create /tmp/heat-started: " + t.
+                  getMessage());
+            }
+          }
           try {
             httpTask.queueMessage(new Message.Started());
           } catch (Throwable t) {
@@ -254,6 +264,15 @@ public class TimerMain {
           new TimerDevice.RaceFinishedCallback() {
         public void raceFinished(int roundid, int heat,
                                  Message.LaneResult[] results) {
+          if (Flag.trigger_file_directory.value != null) {
+            try {
+              (new File(new File(Flag.trigger_file_directory.value),
+                        "heat-finished")).createNewFile();
+            } catch (Throwable t) {
+              LogWriter.info("Failed to create /tmp/heat-finished: " + t.
+                  getMessage());
+            }
+          }
           // Rely on recipient to ignore if not expecting any results
           try {
             httpTask.queueMessage(new Message.Finished(roundid, heat, results));

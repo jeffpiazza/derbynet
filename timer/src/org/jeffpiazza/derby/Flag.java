@@ -61,6 +61,11 @@ public abstract class Flag<T> {
   public static final Flag<Integer> pace
       = new IntegerFlag("pace", 0, "Staging pace (seconds between heats)");
 
+  public static final Flag<String> trigger_file_directory
+      = new StringFlag("trigger-file-directory", null,
+                       "Directory into which signaling files, heat-started and "
+                       + "heat-finished, will be written in response to "
+                       + "timer events.");
   public static final Flag<Boolean> record
       = new BooleanFlag("record", null);
   public static final Flag<String> playback
