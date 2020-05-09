@@ -235,6 +235,13 @@ public class HttpTask implements Runnable {
         }
       }
 
+      if (response.getElementsByTagName("abort").getLength() > 0) {
+        AbortHeatCallback cb = getAbortHeatCallback();
+        if (cb != null) {
+          cb.onAbortHeat();
+        }
+      }
+
       NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
       if (heatReadyNodes.getLength() > 0) {
         HeatReadyCallback cb = getHeatReadyCallback();
@@ -244,13 +251,6 @@ public class HttpTask implements Runnable {
           int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
           int heat = parseIntOrZero(heatReady.getAttribute("heat"));
           cb.onHeatReady(roundid, heat, lanemask);
-        }
-      }
-
-      if (response.getElementsByTagName("abort").getLength() > 0) {
-        AbortHeatCallback cb = getAbortHeatCallback();
-        if (cb != null) {
-          cb.onAbortHeat();
         }
       }
 

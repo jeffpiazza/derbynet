@@ -90,6 +90,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       echo "\n  <failure code='notracing'>Not racing now.</failure>\n";
     } else if (write_heat_results()) {
       send_replay_REPLAY();
+      write_raceinfo('timer_current', '');
       $current = get_running_round();
       advance_heat($current, 'next', /* show failure */ false);
       $racing_state = get_racing_state();
@@ -129,9 +130,20 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
         ." not recognized.</failure>\n";
   }
 
+  $timer_current = read_raceinfo('timer_current', '');
+  $current = get_running_round();
+  if ($timer_current) {
+    $timer_current = explode('#', $timer_current);
+    if ($current['roundid'] != $timer_current[0] ||
+        $current['heat'] != $timer_current[1]) {
+      echo "\n <abort />\n";
+      $timer_state->to_state(TIMER_CONNECTED);
+      write_raceinfo('timer_current', '');
+    }
+  }
+  
   $tstate = $timer_state->state();
   if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not staging or running
-    $current = get_running_round();
     $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
                          .' WHERE roundid = :roundid AND heat = :heat'
                          .' ORDER BY lane');
@@ -154,16 +166,18 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
           .'/>'."\n";
       $timer_state->to_state(TIMER_STAGING);
       // send_replay_START($current);
+      write_raceinfo('timer_current', $current['roundid'].'#'.$current['heat']);
     }
   }
 
   if (remote_start_pending()) {
     echo '  <remote-start/>'."\n";
   }
-
+  
   if (!$racing_state && ($tstate == TIMER_STAGING || $tstate == TIMER_RUNNING)) {
     echo "\n  <abort/>\n";
     $timer_state->to_state(TIMER_CONNECTED);
+    write_raceinfo('timer_current', '');
   }
   $timer_state->write(true);
 } else {

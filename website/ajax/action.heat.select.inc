@@ -51,7 +51,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     if (!set_racing_state($_POST['now_racing'])) {
       // This 'if' test is to control the wording of the failure
       // message from clicking the 'race' button for a heat whose
-      // first heat already has data.
+      // first result already has data.
       if (isset($_POST['roundid'])) {
         echo "<failure code='cant_race'>"
             ."The first heat in this group has already been run.  Please choose a heat without results."

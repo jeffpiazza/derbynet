@@ -60,7 +60,10 @@ public class SimulatedDevice extends TimerDeviceBase
   @Override
   public void abortHeat() throws SerialPortException {
     System.out.println("SimulatedDevice.abortHeat called");
-    // TODO cancel heatrunner
+    if (runningHeat != null) {
+      runningHeat.cancel();
+      runningHeat = null;
+    }
   }
 
   @Override
@@ -92,6 +95,7 @@ public class SimulatedDevice extends TimerDeviceBase
     private int roundid;
     private int heat;
     private int lanemask;
+    private boolean canceled = false;
 
     public HeatRunner(int roundid, int heat, int lanemask) {
       this.roundid = roundid;
@@ -102,8 +106,17 @@ public class SimulatedDevice extends TimerDeviceBase
     public int roundid() { return roundid; }
     public int heat() { return heat; }
 
+    public synchronized void cancel() {
+      this.canceled = true;
+    }
+
     public void run() {
       pause(Flag.pace.value());
+      synchronized (this) {
+        if (canceled) {
+          return;
+        }
+      }
       System.out.println("GO!       heat " + heat + " of roundid " + roundid + " begins.");
       invokeRaceStartedCallback();
       pause(4);  // 4 seconds for a pretty slow race
