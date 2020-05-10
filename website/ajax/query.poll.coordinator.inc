@@ -5,6 +5,7 @@ require_once('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/aggregate_round.inc');
 require_once('inc/remote-start.inc');
+require_once('inc/last-heat.inc');
 
 $now_running = get_running_round();
 emit_current_heat($now_running);
@@ -68,6 +69,9 @@ echo '<replay-state'
     .'>';
 echo $msg;
 echo "</replay-state>\n";
+?>
+<?php  // last_heat
+echo last_heat_xml_element()."\n";
 ?>
 <?php // Rounds
 

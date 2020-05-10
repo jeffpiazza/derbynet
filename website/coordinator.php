@@ -60,7 +60,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <img src="img/right-white-60.png"/>
       </div>
 
-      <!-- input type="button" data-enhanced="true" value="Re-Run Heat" onclick=""/ -->
+      <input type="button" id="rerun-button" data-enhanced="true" value="Re-Run"
+             data-rerun="none"
+             onclick="handle_rerun(this);"/>
     </div>
   </div>
 

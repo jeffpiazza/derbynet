@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/last-heat.inc');
+
 define('DNF_TIME', 9.9999);
 
 function compare_by_finishtime(&$lhs, &$rhs) {
@@ -15,6 +17,7 @@ function write_heat_results() {
 
   $current = get_running_round();
   $roundid = @$current['roundid'];
+  $heat = @$current['heat'];
 
   if (!$roundid || $roundid < 0) {
     echo '<failure code="nocurrentround">No currently-racing round is available!</failure>';
@@ -33,7 +36,7 @@ function write_heat_results() {
                          .' WHERE roundid = :roundid AND heat = :heat'
                          .' ORDER BY lane');
     $stmt->execute(array(':roundid' => $roundid,
-                         ':heat' => $current['heat']));
+                         ':heat' => $heat));
 
     // For each scheduled lane, fetch existing results and overwrite new posted
     // results.
@@ -86,6 +89,8 @@ function write_heat_results() {
                                  ':resultid' => $content['resultid']));
     }
 
+    record_last_heat($roundid, $heat);
+    
     return true;
   }
 }

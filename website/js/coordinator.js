@@ -125,6 +125,25 @@ function handle_previous_heat_button() {
            });
 }
 
+function handle_rerun(button) {
+  let rerun_type = $(button).prop('data-rerun');
+  // rerun_type values are: 'none', recoverable, available, current
+  if (rerun_type == 'current' || rerun_type == 'available') {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'heat.rerun',
+                   heat: rerun_type == 'current' ? 'current' : 'last'},
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+  } else if (rerun_type = 'recoverable') {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'heat.reinstate'},
+            success: function(data) { process_coordinator_poll_response(data); }
+           });
+  }
+}
+
 // Controls for Replay
 function handle_test_replay() {
     $.ajax(g_action_url,
@@ -485,6 +504,35 @@ function parse_racers(data) {
     }
     return racers;
 }
+
+function update_for_last_heat(data, racers) {
+  let last_heat = data.getElementsByTagName("last_heat");
+  let button = $("#rerun-button");
+  let rerun_type = last_heat.length == 0 ? 'none' : last_heat[0].getAttribute("type");
+  let enable = true;
+  button.prop("data-rerun", rerun_type);
+  if (rerun_type == 'recoverable') {
+    button.val("Reinstate Heat");
+  } else {
+    let results = false;
+    for (let i = 0; i < racers.length; ++i) {
+      if (racers[i]['finishtime'] || racers[i]['finishplace']) {
+        results = true;
+      }
+    }
+    if (results) {
+      button.val("Re-Run This Heat");
+      button.prop("data-rerun", 'current');
+    } else if (rerun_type == 'none') {
+      button.val("Re-Run");
+      enable = false;
+    } else /* rerun_type == 'available' */ {
+      button.val("Re-Run Previous");
+    }
+  }
+  button.prop('disabled', !enable);
+}
+
 
 // Generate page contents in response to poll.coordinator output
 
@@ -876,6 +924,8 @@ function process_coordinator_poll_response(data) {
   }
   $("#now-racing-group-buttons").empty();
   update_for_current_round(current);
+  let racers = parse_racers(data)
+  update_for_last_heat(data, racers);
 
   $("#start_race_button_div").toggleClass('hidden',
                                           timer_state.remote_start != "1");
@@ -951,7 +1001,7 @@ function process_coordinator_poll_response(data) {
 
   generate_replay_state_group(parse_replay_state(data));
 
-  generate_current_heat_racers(parse_racers(data), current);
+  generate_current_heat_racers(racers, current);
 
   // Hide the control group if there's nothing to show
   $("#supplemental-control-group").toggleClass("hidden",

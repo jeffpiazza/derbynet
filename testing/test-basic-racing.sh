@@ -47,6 +47,23 @@ cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
 
 run_heat 2 1 2.6149 2.0731 3.0402 3.7937
 run_heat 2 2 2.9945 3.4571 2.1867 2.3447
+
+user_login_coordinator
+curl_get "action.php?query=poll.coordinator" | grep last_heat | expect_one available
+curl_post action.php "action=heat.rerun&heat=last" | check_success
+curl_get "action.php?query=poll.coordinator" | grep last_heat | expect_one recoverable
+curl_get "action.php?query=poll.coordinator" | expect_count 'finishtime=.. ' 4
+curl_get "action.php?query=poll.coordinator" | expect_count 'finishplace=../' 4
+
+curl_post action.php "action=heat.reinstate" | grep last_heat | expect_one none
+curl_get "action.php?query=poll.coordinator" | grep Darrell | expect_one 2.994
+curl_get "action.php?query=poll.coordinator" | grep "Ian Ives" | expect_one 3.457
+curl_get "action.php?query=poll.coordinator" | grep "Blake Burling" | expect_one 2.187
+curl_get "action.php?query=poll.coordinator" | grep "Elliot Eastman" | expect_one 2.345
+
+curl_post action.php "action=heat.select&heat=next&now_racing=1" | check_success
+user_login_timer
+
 run_heat 2 3 2.4901 2.0838 3.6469 2.1003
 run_heat 2 4 3.9403 3.4869 3.5717 3.5386
 run_heat 2 5 3.0439 3.4090 3.3881 2.9110      x
