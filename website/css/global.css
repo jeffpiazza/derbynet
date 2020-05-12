@@ -171,6 +171,7 @@ tbody {
   text-align: center;
   text-decoration: none;
   text-shadow: none;
+  color: #ffffff;
 }
 
 .block_buttons input[disabled][type='button'],
