@@ -3,6 +3,9 @@ require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 
+define('UNSPECIFIED_CLASS', '* Not specified');
+define('UNSPECIFIED_RANK', '* Not specified');
+
 // $values are: { firstname, lastname, carnumber, carname, rankid, classid, exclude }
 // Must have at least one of classid or rankid.
 
@@ -146,7 +149,7 @@ function find_or_create_rank($rankname, $classid) {
 function force_populate_a_rankid() {
   global $db;
   if (read_single_value('SELECT COUNT(*) FROM Classes') == 0) {
-    $classid = find_or_create_class('* Not specified');
+    $classid = find_or_create_class(UNSPECIFIED_CLASS);
   } else {
     // If there are classes but not ranks, we'll pick a class at random, but most likely,
     // the only class in the database is the one we just created.
@@ -155,7 +158,7 @@ function force_populate_a_rankid() {
 
   if (read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
                         array(':classid' => $classid)) == 0) {
-    $rankid = find_or_create_rank('* Not specified', $classid);
+    $rankid = find_or_create_rank(UNSPECIFIED_RANK, $classid);
   } else {
     $rankid = read_single_value('SELECT rankid FROM Ranks WHERE classid = :classid',
                                 array(':classid' => $classid));

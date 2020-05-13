@@ -25,7 +25,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   // them.
   $fields = array('lastname' => true,  
                   'firstname' => true,
-                  'classname' => true,
+                  'classname' => false,
                   'carnumber' => false,
                   'carname' => false,
                   'subgroup' => false,
@@ -73,7 +73,11 @@ if (have_permission(SET_UP_PERMISSION)) {
 }
 
 if ($ok) {
-  $classname = substr(trim($_POST['classname']), 0, CLASS_COLUMN_WIDTH);
+  $classname = isset($_POST['classname']) ? trim(@$_POST['classname']) : '';
+  if (!$classname) {
+    $classname = UNSPECIFIED_CLASS;
+  }
+  $classname = substr($classname, 0, CLASS_COLUMN_WIDTH);
   $classid = find_or_create_class($classname);
   if (!empty(read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
                                array(':classid' => $classid)))) {
@@ -83,6 +87,10 @@ if ($ok) {
 }
 if ($ok) {
   $rankname = isset($_POST['subgroup']) ? trim($_POST['subgroup']) : $classname;
+  if (!$rankname) {
+    $rankname = UNSPECIFIED_RANK;
+  }
+  $rankname = substr($rankname, 0, RANK_COLUMN_WIDTH);
   $rankid = find_or_create_rank($rankname, $classid);
 
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
