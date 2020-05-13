@@ -20,6 +20,7 @@ Master schedules:
 // Returns each distinct Rounds entry, with roundid as the groupid.
 function all_rounds() {
   global $db;
+  $use_groups = use_groups();
   $rounds = array();
   foreach ($db->query('SELECT roundid, round, Classes.classid, class'
 					  .' FROM Rounds INNER JOIN Classes'
@@ -32,7 +33,9 @@ function all_rounds() {
 					  'classid' => $row['classid'],
 					  'class' => $row['class'],
 					  'groupid' => $row['roundid'],
-					  'groupname' => $row['class'].', Round '.$row['round']);
+					  'groupname' => $use_groups
+                          ? $row['class'].', Round '.$row['round']
+                          : ('Round '.$row['round']));
   }
 
   return $rounds;

@@ -13,7 +13,9 @@ function emit_current_heat(&$now_running) {
                                             .' WHERE roundid = :roundid',
                                             array(':roundid' => @$now_running['roundid'])).'"'
     .'>';
-  echo htmlspecialchars(@$now_running['class'], ENT_QUOTES, 'UTF-8');
+  if (use_groups()) {
+    echo htmlspecialchars(@$now_running['class'], ENT_QUOTES, 'UTF-8');
+  }
   echo "</current-heat>\n";
 }
 ?>

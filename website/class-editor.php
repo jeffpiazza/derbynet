@@ -24,7 +24,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/wrap-flipswitch.js"></script>
 <script type="text/javascript" src="js/class-editor.js"></script>
 <script type="text/javascript">
-function use_subgroups() { return <?php echo json_encode(read_raceinfo_boolean('use-subgroups')); ?>; }
+function use_subgroups() { return <?php echo json_encode(use_subgroups()); ?>; }
 function group_label() { return <?php echo json_encode(group_label()); ?>; }
 function group_label_plural() { return <?php echo json_encode(plural(group_label())); ?>; }
 function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>; }

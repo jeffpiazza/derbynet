@@ -57,7 +57,7 @@ function all_classes() {
 // classes, which don't have any ranks.
 function classes_and_ranks() {
   global $db;
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_subgroups = use_subgroups();
   $n_den_trophies = read_raceinfo('n-den-trophies', 3);
   $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
 

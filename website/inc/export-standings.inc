@@ -16,8 +16,8 @@ function export_standings(callable $out, callable $choose, $entry,
   $show_supergroup_column = $key != 'supergroup';
   $show_inround_column = $entry['kind'] == 'rank-round';
   $name_style = read_raceinfo('name-style', FULL_NAME);
-  $use_groups = show_group_standings();
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_groups = use_groups();
+  $use_subgroups = use_subgroups();
   $show_car_name = show_car_name_in_standings();
   $use_points = read_raceinfo_boolean('use-points');
   $time_format = get_finishtime_formatting_string();

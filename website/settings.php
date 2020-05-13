@@ -52,7 +52,7 @@ make_banner('Settings', 'setup.php');
 
 $experimental_settings = isset($_GET['experimental']);
 
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_subgroups = use_subgroups();
 $use_xbs = read_raceinfo_boolean('use-xbs');
 $xbs_award = read_raceinfo('xbs-award', 'Exclusively By Scout');
 $use_master_sched = read_raceinfo_boolean('use-master-sched');

@@ -15,7 +15,7 @@ class CarLabel5167 extends PrintableRacerDocument {
                                        'default' => true),
                  'show_rank' => array('type' => 'bool',
                                       'desc' => 'Include '.subgroup_label_lc(),
-                                      'default' => read_raceinfo_boolean('use-subgroups')),
+                                      'default' => use_subgroups()),
                    );
   }
   function StartDocument() {

@@ -27,9 +27,8 @@ require_permission(CHECK_IN_RACERS_PERMISSION);
 
 // TODO- subgroups explanation
 
-// $use_subgroups, from GPRM settings, tells whether we're using
-// "subgroups" within each racing group.
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_groups = use_groups();
+$use_subgroups = use_subgroups();
 
 // Our pack provides an "exclusively by scout" award, based on a
 // signed statement from the parent.  Collecting the statement is part
@@ -98,7 +97,9 @@ make_banner('Racer Check-In');
 <thead>
   <tr>
     <th/>
-    <th><?php echo column_header(group_label(), 'class'); ?></th>
+    <?php if ($use_groups) {
+        echo '<th>'.column_header(group_label(), 'class').'</th>';
+    } ?>
     <?php if ($use_subgroups) {
         echo '<th>'.subgroup_label().'</th>';
     } ?>
@@ -143,7 +144,7 @@ $n = 1;
 foreach ($stmt as $rs) {
   // TODO
   $rs['rankseq'] = $ranks[$rs['rankid']]['seq'];
-  checkin_table_row($rs, $xbs, $use_subgroups, $n);
+  checkin_table_row($rs, $use_groups, $use_subgroups, $xbs, $n);
   ++$n;
 }
 ?>

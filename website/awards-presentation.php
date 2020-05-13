@@ -50,7 +50,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <body>
 <?php make_banner('Awards Presentation');
 
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_subgroups = use_subgroups();
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 

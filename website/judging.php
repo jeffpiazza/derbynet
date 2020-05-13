@@ -96,7 +96,7 @@ foreach ($db->query($sql) as $rs) {
 <div id="racers">
   <?php
 
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_subgroups = use_subgroups();
 
   foreach ($racers as $racer) {
     echo "<div class='judging_racer' data-racerid='".$racer['racerid']."' onclick='show_racer_awards_modal($(this));'>\n";

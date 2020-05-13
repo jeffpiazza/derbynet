@@ -153,7 +153,7 @@ foreach ($doc_classes as $c => $details) {
           <option value="name">Last Name</option>
           <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
       <?php
-      if (read_raceinfo_boolean('use-subgroups')) {
+      if (use_subgroups()) {
         echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
       } ?>
           <option value="car" selected="selected">Car Number</option>

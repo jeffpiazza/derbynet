@@ -39,7 +39,7 @@ function checkin_table_row_for_id($racerid) {
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
   $row['rankseq'] = $ranks[$row['rankid']]['seq'];
 
-  checkin_table_row($row, !empty($xbs_award_name), read_raceinfo_boolean('use-subgroups'));
+  checkin_table_row($row, use_groups(), use_subgroups(), !empty($xbs_award_name));
 }
 
 // $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, rankseq,
@@ -50,7 +50,7 @@ function checkin_table_row_for_id($racerid) {
 //         denscheduled - whether any racer in this racer's class have any RaceChart entries
 // $pack_xbs: whether exclusively-by-scout awards are shown in this table
 // $use_subgroups: whether rank information is relevant
-function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
+function checkin_table_row(&$row, $use_groups, $use_subgroups, $pack_xbs, $n = 0) {
     echo '<tr data-racerid="'.$row['racerid'].'" class="d'.($n & 1)
           .($row['denscheduled'] ? ' den_scheduled' : '')
           .($row['exclude'] ? ' exclude-racer' : '').'">';
@@ -58,9 +58,11 @@ function checkin_table_row(&$row, $pack_xbs, $use_subgroups, $n = 0) {
     // TODO: Button formatting; data-enhanced="true", but that's pretty unattractive in this table
     echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
 
-    echo '<td id="class-'.$row['racerid'].'"  data-rankid="'.$row['rankid'].'"'
-        .' data-rankseq="'.$row['rankseq'].'">'
-        .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>';
+    if ($use_groups) {
+      echo '<td id="class-'.$row['racerid'].'"  data-rankid="'.$row['rankid'].'"'
+          .' data-rankseq="'.$row['rankseq'].'">'
+          .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>';
+    }
 
     if ($use_subgroups)
       echo '<td id="rank-'.$row['racerid'].'">'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'</td>';

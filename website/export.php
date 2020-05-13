@@ -42,7 +42,7 @@ function AddStandings(callable $choose, $entry, $title) {
   $workbook[] = array($title, $sheet);
 }
 
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_subgroups = use_subgroups();
 
 foreach (standings_catalog() as $entry) {
   $name = 'Standings '.preg_replace('+[/]+', '-', $entry['name']);

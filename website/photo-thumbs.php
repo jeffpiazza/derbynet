@@ -139,6 +139,8 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <?php
 require_once('inc/data.inc');
 
+$use_groups = use_groups();
+
 $racers_by_photo = array();
 $stmt = $db->query('SELECT racerid, lastname, firstname, '.$photo_repository->column_name().','
                    .' carnumber, class,'
@@ -182,7 +184,11 @@ foreach ($stmt as $rs) {
       .' src="'.$photo_repository->lookup(RENDER_LISTVIEW)->render_url($image_filename).'"/>';
   }
   echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
-  echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
+  if ($use_groups) {
+    echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
+  } else {
+    echo '<p><strong>'.$rs['carnumber'].'</strong></p>';
+  }
   echo '</li>'."\n";
 }
 

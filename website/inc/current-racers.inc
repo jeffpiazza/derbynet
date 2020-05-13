@@ -13,7 +13,7 @@ require_once('inc/schema_version.inc');
 function emit_current_racers(&$now_running, $name_style, $photo_render) {
   global $db;
 
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_subgroups = use_subgroups();
   $time_format = get_finishtime_formatting_string();
 
   $stmt = $db->prepare('SELECT lane, carnumber, lastname, firstname, carname, rank,'

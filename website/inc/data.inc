@@ -111,6 +111,13 @@ function write_raceinfo($key, $val) {
 					   ':value' => $val));
 }
 
+function use_groups() {
+  return read_single_value('SELECT COUNT(*) FROM Classes') > 1;
+}
+
+function use_subgroups() {
+  return read_raceinfo_boolean('use-subgroups');
+}
 
 // GPRM sets these in "Advanced Settings", but they're not stored in the database.
 // Presumably they're in the Windows registry somewhere.

@@ -28,7 +28,7 @@ require_permission(EDIT_AWARDS_PERMISSION);
 <body>
 <?php make_banner('Awards Editor');
 
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_subgroups = use_subgroups();
 
 require_once('inc/awards.inc');
 

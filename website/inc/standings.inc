@@ -367,7 +367,7 @@ function compute_all_standings($result_summary, $finalized_only = false) {
     }
   }
 
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_subgroups = use_subgroups();
 
   $trackers = array();  // An array of key => StandingsTracker
 
@@ -430,11 +430,6 @@ function compute_all_standings($result_summary, $finalized_only = false) {
   return array($results, $parallel);
 }
 
-// If there's only one class, standings within that class are the same as
-// standings within the supergroup, and there's no real point in showing them.
-function show_group_standings() {
-  return read_single_value('SELECT COUNT(*) FROM Classes') > 1;
-}
 function show_car_name_in_standings() {
   return read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
                            .' WHERE carname IS NOT NULL AND carname > \'\'');
@@ -448,11 +443,11 @@ function write_standings_table_headers() {
   if (show_car_name_in_standings()) {
     echo "<th>Car Name</th>";
   }
-  if (show_group_standings()) {
+  if (use_groups()) {
     echo "<th class='group_column'>".group_label()."</th>";
     echo "<th class='ingroup_column'>In <span id='per-group-label'>".group_label()."</span></th>";
   }
-  if (read_raceinfo_boolean('use-subgroups')) {
+  if (use_subgroups()) {
     echo "<th class='subgroup_column'>".subgroup_label()."</th>";
     echo "<th class='insubgroup_column'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
   }
@@ -475,8 +470,8 @@ function write_standings_table_headers() {
 
 function write_standings_table_rows(&$result_summary) {
   $name_style = read_raceinfo('name-style', FULL_NAME);
-  $use_groups = show_group_standings();
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_groups = use_groups();
+  $use_subgroups = use_subgroups();
   $show_car_name = show_car_name_in_standings();
   $time_format = get_finishtime_formatting_string();
 
@@ -598,7 +593,7 @@ function write_standings_table_rows(&$result_summary) {
 
 function standings_catalog() {
   global $db;
-  $use_subgroups = read_raceinfo_boolean('use-subgroups');
+  $use_subgroups = use_subgroups();
 
   $result = array();
   $stmt = $db->query('SELECT roundid, classid, round'
@@ -631,7 +626,7 @@ function standings_catalog() {
       if (count($rounds) == 0) continue;  // this would be a bug
       // The final round for a class is listed first
       $final_round = array_shift($rounds);
-      if (show_group_standings()) {
+      if (use_groups()) {
         $catalog[] = array('kind' => 'class',
                            'key' => standings_key_class($classid),
                            'name' => $cl['class'],
@@ -654,7 +649,7 @@ function standings_catalog() {
 
       // Loop through the non-final rounds for the class
       foreach ($rounds as $round) {
-        if (show_group_standings()) {
+        if (use_groups()) {
           $round_name =  $cl['class'].', Round '.$round['round'];
         } else {
           $round_name = 'Round '.$round['round'];

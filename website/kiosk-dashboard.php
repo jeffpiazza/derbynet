@@ -48,7 +48,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
           $current_exposed = 'lowest '.$current_exposed;
         }
 
-        $use_subgroups = read_raceinfo_boolean('use-subgroups');
+        $use_subgroups = use_subgroups();
 
         if ($current_catalog_entry == '') {
           echo '<option selected="selected" disabled="1">Please choose what standings to display</option>';

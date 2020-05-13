@@ -9,7 +9,7 @@ require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 
 $key = read_raceinfo('current_award_key', '');
-$use_subgroups = read_raceinfo_boolean('use-subgroups');
+$use_subgroups = use_subgroups();
 $reveal = read_raceinfo_boolean('reveal_current_award');
 
 // award-<awardid>

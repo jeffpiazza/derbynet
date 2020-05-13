@@ -211,7 +211,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <input type="number" name="top" id="now_round_rop" value="3"/>
 
     <div class="single_den_only">
-    <?php if (read_raceinfo('use-subgroups')) { ?>
+    <?php if (use_subgroups()) { ?>
       <p>racers from</p>
       <div class="centered_flipswitch">
         <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_single"

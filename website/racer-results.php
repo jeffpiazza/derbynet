@@ -146,7 +146,10 @@ foreach ($rounds as $round) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-          .htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').', Round '.$round['round'].'</th>'
+      .(use_groups()
+        ? htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').', '
+        : '')
+      .'Round '.$round['round'].'</th>'
       .'</tr>'."\n";
 
   echo '<tr>';
