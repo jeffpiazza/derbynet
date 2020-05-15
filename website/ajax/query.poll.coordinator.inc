@@ -5,6 +5,7 @@ require_once('inc/current-racers.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/aggregate_round.inc');
 require_once('inc/remote-start.inc');
+require_once('inc/rounds.inc');
 require_once('inc/last-heat.inc');
 
 $now_running = get_running_round();
@@ -77,18 +78,7 @@ echo last_heat_xml_element()."\n";
 
 $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
-$stmt = $db->query('SELECT roundid, Rounds.classid, Classes.class, round,'
-                   .(schema_version() >= 3 ? ' constituents' : '\'\' AS constituents')
-                   .' FROM Rounds'
-                   .' INNER JOIN Classes ON Rounds.classid = Classes.classid'
-                   .' ORDER BY round DESC, '
-                   .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
-                   .'Classes.class');
-$rounds = array();
-foreach ($stmt as $round) {
-    $rounds[] = $round;
-}
-
+$rounds = all_rounds();
 
 foreach ($rounds as $round) {
     $roundid = $round['roundid'];
@@ -138,7 +128,7 @@ foreach ($rounds as $round) {
 										  .'   WHERE roundid = :roundid'
 										  .'   AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)) AS tmp',
 										  array(':roundid' => $roundid)).'"';
-    echo '/>'."\n";
+    echo '>'.htmlspecialchars($round['roundname'], ENT_QUOTES, 'UTF-8')."</round>\n";
 }
 ?>
 </coordinator_poll>

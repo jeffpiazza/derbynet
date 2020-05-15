@@ -5,19 +5,19 @@ require_once('inc/schema_version.inc');
 Racing groups for different scheduling strategies:
 
 Regular schedules:
-  RoundID
-  Round
-  ClassID
-  Class
-  GroupID = RoundID
-  GroupName = <Class>, Round <Round>
+  roundid
+  round
+  classid
+  class
+  groupid
+  roundname = <Class>, Round <Round>
 
 Master schedules:
   GroupID = Round
   GroupName = Round <Round>
  */
 
-// Returns each distinct Rounds entry, with roundid as the groupid.
+// Returns each distinct Rounds entry
 function all_rounds() {
   global $db;
   $use_groups = use_groups();
@@ -32,8 +32,8 @@ function all_rounds() {
 					  'round' => $row['round'],
 					  'classid' => $row['classid'],
 					  'class' => $row['class'],
-					  'groupid' => $row['roundid'],
-					  'groupname' => $use_groups
+                      'groupid' => $row['roundid'],
+					  'roundname' => $use_groups
                           ? $row['class'].', Round '.$row['round']
                           : ('Round '.$row['round']));
   }
@@ -51,8 +51,8 @@ function all_schedule_groups() {
 						.' FROM Rounds'
 						.' ORDER BY round') as $row) {
       $groups[] = array('round' => $row['round'],
-						'groupid' => $row['round'],
-						'groupname' => 'Round '.$row['round']);
+                        'groupid' => $row['round'],
+						'roundname' => 'Round '.$row['round']);
     }
 
     return $groups;

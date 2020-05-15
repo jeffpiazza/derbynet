@@ -79,18 +79,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                 '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                 '         connected="">NOT CONNECTED</replay-state>\n' +
                 '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
+                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
+                      'Lions &amp; Tigers, Round 1</round>\n' +
                 '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
+                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
+                      'White\'s Wolves, Round 1</round>\n' +
                 '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
+                '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2">' +
+                      'Bears and Frèr, Round 1</round>\n' +
                 '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
+                '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0">' +
+                      'Webelos (&quot;Webes</round>\n' +
                 '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
+                '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
+                      'Arrows &lt;&lt;--&lt;&lt;</round>\n' +
                 '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                      '</coordinator_poll>');
+                '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
+                      'TheLastClass, Round 1</round>\n' +
+                '</coordinator_poll>');
 
   assert.equal({"now-racing":[3],
                 "ready-to-race":[],
@@ -118,8 +124,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return table;
                }));
 
-  assert.equal("1", await page.$eval("#now-racing-group .roundno", span => { return $(span).text(); }));
-  assert.equal("Bears and Frèr",
+  assert.equal("Bears and Frèr, Round 1",
                await page.$eval("#now-racing-group > div > h3", h3 => { return $(h3).text(); }));
   assert.equal("17 racer(s), 3 passed, 3 in schedule.4 heats scheduled, 2 run.",
                await page.$eval("#now-racing-group p", p => { return $(p).text(); }));
@@ -181,17 +186,23 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
+                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
+                             'Lions &amp; Tigers, Round 1</round>\n' +
                        '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
+                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
+                             'White\'s Wolves, Round 1</round>\n' +
                        '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
+                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2">' +
+                             'Bears and Frèr, Round 1</round>\n' +
                        '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
+                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0">' +
+                             'Webelos (&quot;Webes, Round 1</round>\n' +
                        '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
+                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
+                             'Arrows &lt;&lt;--&lt;&lt;, Round 1</round>\n' +
                        '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
+                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
+                             'TheLastClass, Round 1</round>\n' +
                        '</coordinator_poll>');
   
   await page.waitFor(() => { return !$("#is-currently-racing").prop('checked'); });
@@ -502,21 +513,29 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
       '  <replay-state last_contact="1496360776" state="1"' +
       '     icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
       '  <round roundid="7" classid="2" class="White\'s Wolves" round="2" roster_size="3"' +
-      '     passed="3" unscheduled="3" heats_scheduled="0" heats_run="0"/>\n' +
+      '     passed="3" unscheduled="3" heats_scheduled="0" heats_run="0">' +
+        'White\'s Wolves</round>\n' +
       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"' +
-      '     passed="17" unscheduled="0" heats_scheduled="17" heats_run="17"/>\n' +
+      '     passed="17" unscheduled="0" heats_scheduled="17" heats_run="17">' +
+        'Lions &amp; Tigers, Round 1</round>\n' +
       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="17"' +
-      '     passed="13" unscheduled="0" heats_scheduled="13" heats_run="13"/>\n' +
+      '     passed="13" unscheduled="0" heats_scheduled="13" heats_run="13">' +
+        'White\'s Wolves, Round 1</round>\n' +
       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="16"' +
-      '     passed="2" unscheduled="0" heats_scheduled="4" heats_run="4"/>\n' +
+      '     passed="2" unscheduled="0" heats_scheduled="4" heats_run="4">' +
+        'Bears and Frèr</round>\n' +
       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="16"' +
-      '     passed="3" unscheduled="0" heats_scheduled="4" heats_run="4"/>\n' +
+      '     passed="3" unscheduled="0" heats_scheduled="4" heats_run="4">' +
+        'Webelos (&quot;Webes, Round 1</round>\n' +
       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"' +
-      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
+      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
+        'Arrows &lt;&lt;--&lt;&lt;, Round 1</round>\n' +
       '  <round roundid="6" classid="6" class="TheLastClass" round="1" roster_size="0"' +
-      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
+      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
+        'TheLastClass, Round 1</round>\n' +
       '  <round roundid="8" classid="7" class="Grand Finals" aggregate="1" round="1" roster_size="5"' +
-      '     passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
+      '     passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
+        'Grand Finals, Round 1</round>\n' +
       '</coordinator_poll>';
 
   await page.evaluate(function(xml) {
@@ -552,8 +571,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return table;
                }));
 
-  assert.equal("1", await page.$eval("#now-racing-group .roundno", span => { return $(span).text(); }));
-  assert.equal("White's Wolves",
+  assert.equal("White's Wolves, Round 1",
                await page.$eval("#now-racing-group > div > h3", h3 => { return $(h3).text(); }));
   assert.equal("17 racer(s), 13 passed, 13 in schedule.13 heats scheduled, 13 run.",
                await page.$eval("#now-racing-group p", p => { return $(p).text(); }));

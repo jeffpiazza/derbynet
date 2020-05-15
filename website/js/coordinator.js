@@ -4,6 +4,7 @@
 //
 // round = { roundid:
 //           classname:
+//           roundname:
 //           round: (number)
 //           roster_size, racers_passed, racers_unscheduled, racers_scheduled,
 //           heats_scheduled, heats_run
@@ -458,6 +459,7 @@ function parse_rounds(data) {
         rounds[i] = {roundid: 1*round_xml.getAttribute('roundid'),
                      classid: 1*round_xml.getAttribute('classid'),
                      classname: round_xml.getAttribute('class'),
+                     roundname: round_xml.textContent,
                      aggregate: round_xml.hasAttribute('aggregate'),
                      round: 1*round_xml.getAttribute('round'),
                      roster_size: 1*round_xml.getAttribute('roster_size'),
@@ -645,10 +647,9 @@ function generate_scheduling_control_group(round, current, timer_state) {
     control_group.append("<div class='heat-lineup'></div>");
   }
 
-  control_group.append('<div class="roundno">' + round.round + '</div>');
   control_group.append('<h3 class="roundclass">' + (round.roundid == current.roundid ? '' :
                                  '<img data-name="triangle" src="img/triangle_east.png"/>')
-                       + round.classname + '</h3>');
+                       + round.roundname + '</h3>');
 
   emit_progress_text(control_group, collapsible);
   emit_progress_bars(control_group);

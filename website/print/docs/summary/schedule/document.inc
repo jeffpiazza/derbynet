@@ -39,8 +39,7 @@ class ScheduleDocument extends PrintableSummaryDocument {
     $use_master_sched = use_master_sched();
     $name_style = read_raceinfo('name-style', FULL_NAME);
 
-    // array of {round, groupid, groupname},
-    //  but groupid and groupname are really a roundid and round name
+    // array of {round, groupid, roundname},
     $groups = all_schedule_groups();
 
     $sql = 'SELECT'
@@ -71,7 +70,7 @@ class ScheduleDocument extends PrintableSummaryDocument {
     $lane = $nlanes;
     foreach ($groups as $group) {
       $roundid = $group['groupid'];
-      $round_name = $group['groupname'];
+      $round_name = $group['roundname'];
       $this->Newline();
       $this->pdf->SetFont('Arial', 'B', 15);
       $this->pdf->Cell(7.0, 0.5, convert($round_name), /* border */ 0, /* ln */0, "C");

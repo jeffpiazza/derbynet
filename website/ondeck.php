@@ -161,7 +161,7 @@ foreach ($groups as $group) {
   echo '<tr><th/><th class="group_spacer wide" colspan="'.$nlanes.'"/></tr>'."\n";
   echo '<tr><th class="pre_group_title"/>'
       .'<th class="group_title wide" colspan="'.$nlanes.'">'
-      .htmlspecialchars($group['groupname'], ENT_QUOTES, 'UTF-8').'</th>'
+      .htmlspecialchars($group['roundname'], ENT_QUOTES, 'UTF-8').'</th>'
       .'</tr>'."\n";
 
   // Draw a new set of lane headers.
