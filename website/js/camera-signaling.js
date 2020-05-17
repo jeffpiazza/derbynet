@@ -27,7 +27,7 @@ function ice_candidate_key(candidate) {
 
 // A ViewClient represents a remote client that wants to receive the camera stream.
 function ViewClient(recipient) {
-  let pc = new RTCPeerConnection(null);
+  let pc = new RTCPeerConnection({'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]});
 
   // Local ICE candidate
   pc.onicecandidate = function(event) {

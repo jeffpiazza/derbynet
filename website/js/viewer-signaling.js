@@ -35,7 +35,7 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
     function(msg) {
       if (msg.type == 'offer') {
         if (!pc) {
-          pc = new RTCPeerConnection(null);
+          pc = new RTCPeerConnection({'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]});
         }
         pc.onicecandidate = function(event) {
           if (event.candidate) {
