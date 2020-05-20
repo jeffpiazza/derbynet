@@ -248,6 +248,10 @@ p.last_contact {
     background: #F7D117;
 }
 
+div.block_buttons[data-name=buttons] {
+ margin-top: 20px;
+}
+
 .new_rounds_control_group .block_buttons {
     padding-bottom: 0px;
     margin-bottom: 0px;

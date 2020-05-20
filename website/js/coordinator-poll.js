@@ -222,18 +222,6 @@ function generate_replay_state_group(replay_state) {
     }
 }
 
-// Appends (unpopulated) progress bar structures to the control group.
-function emit_progress_bars(control_group) {
-    control_group.append("<div class='racers progress'>"
-                         + "<div class='bar2'>"
-                         + "<div class='bar1'></div>"
-                         + "</div>"
-                         + "</div>");
-    control_group.append("<div class='heats progress'>"
-                         + "<div class='bar1'></div>"
-                         + "</div>");
-}
-
 // Updates progress bars with new progress values
 function inject_progress_bars(control_group, round) {
     if (round.roster_size > 0) {
@@ -250,19 +238,6 @@ function inject_progress_bars(control_group, round) {
     if (round.heats_scheduled > 0) {
         control_group.find(".heats .bar1").width((100 * round.heats_run / round.heats_scheduled) + '%');
     }
-}
-
-// Appends unpopulatd progress text structures to the control group.
-//
-// collapsible is a string containing space-separated css class names, possibly empty.
-function emit_progress_text(control_group, collapsible) {
-    control_group.append('<div class="' + collapsible + '">'
-               + '<p><span data-name="roster_size"></span> racer(s), '
-               + '<span data-name="n_passed"></span> passed, ' 
-               + '<span data-name="scheduled"></span> in schedule.<br/>'
-               + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
-               + '<span data-name="n_heats_run"></span> run.</p>'
-               + '</div>');
 }
 
 // Injects new progress values into the progress text
@@ -292,25 +267,43 @@ function inject_progress_text(control_group, round) {
 // timer_state = { lanes: }
 //
 function generate_scheduling_control_group(round, current, timer_state) {
-  var control_group = $("<div data-roundid=\"" + round.roundid + "\" class=\"control_group scheduling_control\"/>");
-  var collapsible = " collapsible";
-  if (round.roundid == current.roundid) {
-    control_group.addClass('current');
-    collapsible = "";
-    control_group.append("<div class='heat-lineup'></div>");
-  }
-
-  control_group.append('<h3 class="roundclass">' + (round.roundid == current.roundid ? '' :
-                                 '<img data-name="triangle" src="img/triangle_east.png"/>')
-                       + round.roundname + '</h3>');
-
-  emit_progress_text(control_group, collapsible);
-  emit_progress_bars(control_group);
-
-  // Which buttons appear depends on a bunch of the parameters.
-  // It should be OK for inject to just rewrite the buttons every time.
-  var buttons = $("<div data-name=\"buttons\" class=\"block_buttons" + collapsible + "\"/>");
-  buttons.appendTo(control_group);
+  console.log(round);
+  let is_current =  round.roundid == current.roundid;
+  let show_checkins = round.round == 1 && round.heats_scheduled == 0;
+  let control_group = $("<div class=\"control_group scheduling_control\"></div>")
+      .attr('data-roundid', round.roundid)
+      .toggleClass('current', is_current)
+      .append(is_current ? "<div class='heat-lineup'></div>" : '')
+      .append($("<h3 class=\"roundclass\"></h3>")
+              .text(round.roundname)
+              .prepend(is_current ? ''
+                       : "<img data-name=\"triangle\" src=\"img/triangle_east.png\"/>"))
+      .append($('<div>'
+                + '<p>'
+                + (show_checkins ?
+                   '<span data-name="roster_size"></span> racer(s), '
+                   + '<span data-name="n_passed"></span> passed, ' 
+                   + '<span data-name="scheduled"></span> in schedule.'
+                   + '<br/>'
+                   : '')
+                + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
+                + '<span data-name="n_heats_run"></span> run.'
+                + '</p>'
+                + '</div>')
+              .toggleClass('collapsible', !is_current))
+      .append(show_checkins ?
+              "<div class='racers progress'>"
+              + "<div class='bar2'>"
+              + "<div class='bar1'></div>"
+              + "</div>"
+              + "</div>" : "")
+      .append(round.heats_scheduled != 0
+              ? "<div class='heats progress'>"
+              + "<div class='bar1'></div>"
+              + "</div>" : "")
+      .append(is_current ? '' : $("<div data-name=\"buttons\" class=\"block_buttons\"/>")
+              .toggleClass('collapsible', !is_current));
+              
 
   // By this rule, changes to n_heats_run and n_heats_scheduled and
   // current.roundid would change the order for the rounds.

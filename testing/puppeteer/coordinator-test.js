@@ -52,7 +52,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.evaluate((selector) => { $(selector).click(); }, selector);
     
     // Wait for control group to open
-    await page.waitFor((selector) => { return $(selector).height() > 200; }, {}, selector);
+    await page.waitFor((selector) => { console.log(selector + " height = " +  $(selector).height()); return $(selector).height() > 150; }, {}, selector);
   }
 
   async function modal_open(selector) {
@@ -126,7 +126,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   assert.equal("Bears and Frèr, Round 1",
                await page.$eval("#now-racing-group > div > h3", h3 => { return $(h3).text(); }));
-  assert.equal("17 racer(s), 3 passed, 3 in schedule.4 heats scheduled, 2 run.",
+  assert.equal("4 heats scheduled, 2 run.",
                await page.$eval("#now-racing-group p", p => { return $(p).text(); }));
 
   assert.equal([
@@ -573,7 +573,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   assert.equal("White's Wolves, Round 1",
                await page.$eval("#now-racing-group > div > h3", h3 => { return $(h3).text(); }));
-  assert.equal("17 racer(s), 13 passed, 13 in schedule.13 heats scheduled, 13 run.",
+  assert.equal("13 heats scheduled, 13 run.",
                await page.$eval("#now-racing-group p", p => { return $(p).text(); }));
 
   assert.equal([
