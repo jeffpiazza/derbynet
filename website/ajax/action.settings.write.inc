@@ -44,7 +44,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'show-racer-photos-rr' => 'show-racer-photos-rr',
                   'show-car-photos-rr' => 'show-car-photos-rr',
                   'upload-videos' => 'upload-videos',
-                  'use-xbs' => 'use-xbs')
+                  'use-xbs' => 'use-xbs',
+                  'one-trophy-per' => 'one-trophy-per')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key.'-checkbox'])) {
         ++$num_picked;

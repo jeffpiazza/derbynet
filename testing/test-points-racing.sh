@@ -115,6 +115,22 @@ curl_get "action.php?query=award.current" | expect_count '<award ' 0
 curl_post action.php "action=award.present&key=speed-4-1" | check_success
 curl_get "action.php?query=award.current" | expect_count '<award ' 0
 
+# One-trophy-per-racer means Felton takes 1st place in Lions
+curl_post action.php "action=settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_success
+curl_post action.php "action=award.present&key=speed-3a" | check_success
+curl_get "action.php?query=award.current" | expect_one Derick
+curl_post action.php "action=award.present&key=speed-3b" | check_success
+curl_get "action.php?query=award.current" | expect_one Jesse
+curl_post action.php "action=award.present&key=speed-3c" | check_success
+curl_get "action.php?query=award.current" | expect_count '<award ' 0
+curl_post action.php "action=award.present&key=speed-4" | check_success
+curl_get "action.php?query=award.current" | expect_count '<award ' 0
+curl_post action.php "action=award.present&key=speed-1-1" | check_success
+curl_get "action.php?query=award.current" | expect_one Felton
+curl_post action.php "action=award.present&key=speed-2-1" | check_success
+curl_get "action.php?query=award.current" | expect_count '<award ' 0
+
+
 # Generate a next round of top 3, where there's a tie for third -- take 4 finalists
 curl_post action.php "action=roster.new&roundid=1&top=3" | check_success
 if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 4 ]; then

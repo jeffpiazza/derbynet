@@ -7,6 +7,7 @@
 require_once('inc/photo-config.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
+require_once('inc/awards.inc');
 
 $key = read_raceinfo('current_award_key', '');
 $use_subgroups = use_subgroups();
@@ -44,23 +45,40 @@ if (count($keys) >= 2) {
 
     $result_summary = result_summary();
     list($finishers, $standings) = compute_all_standings($result_summary);
+    $awards = array();
+    add_speed_awards($awards);
+
     if (count($keys) == 4) {
       $rankid = $keys[3];
-      $by_rank = $finishers[standings_key_subgroup($rankid)];
-      $racerid = $by_rank[$place - 1][$place_index];
       $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
                                     array(':rankid' => $rankid));
       $awardname = nth_fastest($place, $rankname);
     } else if (count($keys) == 3) {
       $classid = $keys[2];
-      $by_class = $finishers[standings_key_class($classid)];
-      $racerid = intval($by_class[$place - 1][$place_index]);
       $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                      array(':classid' => $classid));
       $awardname = nth_fastest($place, $classname);
     } else {
-      $racerid = $finishers['supergroup'][$place - 1][$place_index];
       $awardname = nth_fastest_in_pack($place);
+    }
+
+    foreach ($awards as $award) {
+      if ($place == $award['place']) {
+        if (isset($rankid)) {
+          $match = $award['rankid'] == $rankid;
+        } else if (isset($classid)) {
+          $match = $award['classid'] == $classid;
+        } else {
+          $match = true;
+        }
+        if ($match) {
+          if ($place_index == 0) {
+            $racerid = $award['racerid'];
+            break;
+          }
+          --$place_index;
+        }
+      }
     }
 
     if ($racerid > 0) {

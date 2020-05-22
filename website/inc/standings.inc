@@ -20,12 +20,13 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
 // the standings of the highest-numbered round for that class.  This applies
 // both to native classes, and to aggregate classes that have associated racing
 // rounds.  If there are (say) 2 rounds of racing for the class, this means that
-// racers eliminated in the first round don't having a class standing.
+// racers eliminated in the first round don't have a class standing.
 //
 // Classes that don't have racing rounds (called "nonracing aggregate classes")
 // are a little different.  Their standings are determined by the highest round
 // of racing for each constituent class.  (If the constituent class is also a
-// nonracing aggregate class, then its constituent classes are examined.)
+// nonracing aggregate class, then its constituent classes are examined in
+// turn.)
 //
 // A native class can be partitioned into ranks (subgroups).  Standings for a
 // rank are imposed by the standings for the class, with numbering considering

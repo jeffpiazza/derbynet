@@ -48,36 +48,19 @@ function emit_all_awards($include_ad_hoc) {
   }
 }
 
-// $category is one of 'supergroup', 'group', 'subgroup'
-function emit_one_speed_award($racerid, $category, $place) {
-  echo "<speed-award racerid=\"".$racerid."\" category=\"".$category."\" place=\"".$place."\"/>\n";
-}
-
-function emit_speed_award_group($n, $category, &$finishers) {
-  for ($p = 0; $p < $n; ++$p) {
-    foreach ($finishers[$p] as $racerid) {
-      emit_one_speed_award($racerid, $category, 1 + $p);
-    }
-  }
-}
-
 function emit_speed_awards() {
-  $n_per_den = read_raceinfo('n-den-trophies', 3);
-  $n_per_rank = read_raceinfo('n-rank-trophies', 0);
-
-  list($finishers, $parallel) = compute_all_standings(result_summary(), /* finalized_only */ true);
-
-  emit_speed_award_group(read_raceinfo('n-pack-trophies', 3), 'supergroup',
-                         $finishers['supergroup']);
-  
-  list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-  foreach ($classseq as $c) {
-    $ntrophies = $classes[$c]['ntrophies'];
-    if ($ntrophies < 0) $ntrophies = $n_per_den;
-    emit_speed_award_group($ntrophies, 'group', $finishers[standings_key_class($c)]);
-  }
-  foreach ($rankseq as $r) {
-    emit_speed_award_group($n_per_rank, 'subgroup', $finishers[standings_key_subgroup($r)]);
+  $awards = array();
+  add_speed_awards($awards);
+  foreach ($awards as $award) {
+    echo "<speed-award racerid=\"$award[racerid]\" key=\"$award[awardkey]\"";
+    if (isset($award['rankid'])) {
+      echo " category=\"subgroup\" classid=\"$award[classid]\" rankid=\"$award[rankid]\"";
+    } else if (isset($award['classid'])) {
+      echo " category=\"group\" classid=\"$award[classid]\"";
+    } else {
+      echo " category=\"supergroup\"";
+    }
+    echo " place=\"$award[place]\"/>\n";
   }
 }
 

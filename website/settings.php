@@ -187,6 +187,12 @@ Lanes available for scheduling:</p>
                <span class="subgroup-label"><?php echo subgroup_label_lc(); ?></span></label>
       </p>
       <p>
+        <input id="one-trophy-per" name="one-trophy-per" data-enhanced="true"
+                type="checkbox"<?php
+                    if (read_raceinfo_boolean('one-trophy-per')) echo ' checked="checked"';?>/>
+        <label>At most one trophy per racer?</label>
+      </p>
+      <p>
         <input id="use-xbs" name="use-xbs" data-enhanced="true"
                 type="checkbox"<?php if ($use_xbs) echo ' checked="checked"';?>/>
         <label>Offer "Exclusively By Scout" award?</label>
