@@ -16,7 +16,7 @@ max-height: 80vh;
 </head>
 <body>
 <div class="full_page_center">
-<img src="photo.php/info/welcome-image/<?php echo time(); ?>/img/cubscout_emblem_800.png"/>
+<img src="<?php echo images_dir(); ?>/kiosks/emblem_800.png"/>
 </div>
 <p class="kiosk_title">Welcome</p>
 </body>

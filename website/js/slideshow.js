@@ -66,8 +66,9 @@ function mainphoto_onload(img) {
     } else {
       // We assume there's no img.mainphoto under current, because there
       // shouldn't have been any 'next' racer last time.
-      var img = "photo.php/info/slideshow-title/" + cachebreaker + "/img/derby_car.png";
-      current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' + img + '"/>');
+      // Also assumes g_title_slide defined in main page.
+      current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
+                     g_title_slide + '"/>');
       if (kiosk_parameters.title) {
         $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(current);
       }

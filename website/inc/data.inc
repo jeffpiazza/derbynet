@@ -145,6 +145,11 @@ function supergroup_label_lc() {
 function use_master_sched() {
   return read_raceinfo_boolean('use-master-sched');
 }
+
+function images_dir() {
+  return "Images/".read_raceinfo("images-dir", 'Cub Scouts');
+}
+
 function update_period() {
   return read_raceinfo('update-period', 2500);
 }
