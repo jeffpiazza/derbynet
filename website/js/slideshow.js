@@ -24,9 +24,13 @@ function mainphoto_onload(img) {
   // will pick up any changes to the title slide image.
   var cachebreaker = Date.now();
   var kiosk_parameters = {};
-  KioskPoller.param_callback = function(parameters) {
-    kiosk_parameters = parameters;
-  };
+  try {
+    KioskPoller.param_callback = function(parameters) {
+      kiosk_parameters = parameters;
+    };
+  } catch (e) {
+    // If not in a kiosk, then KioskPoller will be undefined.
+  }
 
   function refresh_page(racer) {
     // There's always a div.next, which is hidden; we populate it with images
@@ -97,6 +101,7 @@ function mainphoto_onload(img) {
   }
 
   $(document).ready(function() {
+    $("#photo-background").height($("#photo-background").height() - $("#photo-background").position().top);
     photo_poll();
     setInterval(photo_poll, 10000);
   });
