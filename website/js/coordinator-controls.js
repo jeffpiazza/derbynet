@@ -69,7 +69,7 @@ function handle_previous_heat_button() {
 }
 
 function handle_rerun(button) {
-  let rerun_type = $(button).prop('data-rerun');
+  var rerun_type = $(button).prop('data-rerun');
   // rerun_type values are: 'none', recoverable, available, current
   if (rerun_type == 'current' || rerun_type == 'available') {
     $.ajax(g_action_url,
@@ -254,7 +254,7 @@ function handle_make_changes_button(roundid) {
 }
 
 function handle_purge_button(roundid, heats_run) {
-  let control_group = $("div[data-roundid=\"" + roundid + "\"]");
+  var control_group = $("div[data-roundid=\"" + roundid + "\"]");
   $("#purge_round_name").text(control_group.find(".roundclass").text());
   $("#purge_round_no").text(control_group.find(".roundno").text());
   $("#purge_results_count").text(heats_run);
@@ -297,7 +297,7 @@ function show_new_round_modal(roundid) {
     $("#new_round_modal #new_round_roundid").val(roundid);
     // For a single-round follow-on round, #bucketed flipswitch won't even be
     // present unless we're using subgroups.
-    let bucketed = $("#new_round_modal #bucketed_single");
+    var bucketed = $("#new_round_modal #bucketed_single");
     if (bucketed) {
       bucketed.prop('checked', false)
         .trigger("change", true)

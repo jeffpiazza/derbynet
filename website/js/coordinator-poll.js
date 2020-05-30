@@ -161,16 +161,16 @@ function parse_racers(data) {
 }
 
 function update_for_last_heat(data, racers) {
-  let last_heat = data.getElementsByTagName("last_heat");
-  let button = $("#rerun-button");
-  let rerun_type = last_heat.length == 0 ? 'none' : last_heat[0].getAttribute("type");
-  let enable = true;
+  var last_heat = data.getElementsByTagName("last_heat");
+  var button = $("#rerun-button");
+  var rerun_type = last_heat.length == 0 ? 'none' : last_heat[0].getAttribute("type");
+  var enable = true;
   button.prop("data-rerun", rerun_type);
   if (rerun_type == 'recoverable') {
     button.val("Reinstate Heat");
   } else {
-    let results = false;
-    for (let i = 0; i < racers.length; ++i) {
+    var results = false;
+    for (var i = 0; i < racers.length; ++i) {
       if (racers[i]['finishtime'] || racers[i]['finishplace']) {
         results = true;
       }
@@ -268,9 +268,9 @@ function inject_progress_text(control_group, round) {
 //
 function generate_scheduling_control_group(round, current, timer_state) {
   console.log(round);
-  let is_current =  round.roundid == current.roundid;
-  let show_checkins = round.round == 1 && round.heats_scheduled == 0;
-  let control_group = $("<div class=\"control_group scheduling_control\"></div>")
+  var is_current =  round.roundid == current.roundid;
+  var show_checkins = round.round == 1 && round.heats_scheduled == 0;
+  var control_group = $("<div class=\"control_group scheduling_control\"></div>")
       .attr('data-roundid', round.roundid)
       .toggleClass('current', is_current)
       .append(is_current ? "<div class='heat-lineup'></div>" : '')
@@ -511,7 +511,7 @@ function process_coordinator_poll_response(data) {
   }
   $("#now-racing-group-buttons").empty();
   update_for_current_round(current);
-  let racers = parse_racers(data)
+  var racers = parse_racers(data)
   update_for_last_heat(data, racers);
 
   $("#start_race_button_div").toggleClass('hidden',

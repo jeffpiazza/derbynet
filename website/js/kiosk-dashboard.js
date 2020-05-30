@@ -69,7 +69,7 @@ var g_kiosk_page_handlers = {
   },
   'kiosks/award-presentations.kiosk': {
     configure: function(kiosk, kiosk_select) {
-      let k_id = 'k-' + kiosk.address.replace(/[:+]/g, '_');
+      var k_id = 'k-' + kiosk.address.replace(/[:+]/g, '_');
       if (!kiosk.parameters.hasOwnProperty('confetti')) {
         kiosk.parameters.confetti = true;
       }

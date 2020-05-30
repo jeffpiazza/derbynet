@@ -98,14 +98,14 @@ function on_label_change() {
 var PostSettingChange;
 
 (function() {
-  let next_train = 0;
-  let values = {action: 'settings.write'};
+  var next_train = 0;
+  var values = {action: 'settings.write'};
 
   function maybe_post() {
     if (next_train == 0) {
       next_train = setTimeout(function() {
         next_train = 0;
-        let d = values;
+        var d = values;
         values = {action: 'settings.write'};
 
         console.log('POSTing ' + JSON.stringify(d));
@@ -129,7 +129,7 @@ var PostSettingChange;
   }
 
   PostSettingChange = function(input) {
-    let name = input.attr('name');
+    var name = input.attr('name');
     if (typeof name == 'undefined' || name === false) {
       return;
     }
