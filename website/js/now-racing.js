@@ -95,11 +95,11 @@ var Lineup = {
       this.heat = new_heat;
       this.previous_heat_results = new_heat_results;
 
-      if (current.firstChild) {  // The body of the <current-heat>
-        // element names the class
-        $('.banner_title').text(current.firstChild.data
-                                + ', Heat ' + this.heat
-                                + ' of ' + current.getAttribute('number-of-heats'));
+      var nheats = current.getAttribute('number-of-heats');
+      if (nheats) {
+        var round_class_name = current.textContent;
+        $('.banner_title').text((round_class_name ? round_class_name + ', ' : '')
+                                + 'Heat ' + this.heat + ' of ' + nheats);
       }
 
       var racers = now_racing.getElementsByTagName("racer");
