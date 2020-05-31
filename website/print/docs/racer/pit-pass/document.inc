@@ -6,7 +6,7 @@ class PitPassDocument extends PrintableRacerDocument {
   function get_available_options() {
     return array(
       'with_logo' => array('type' => 'bool',
-                           'desc' => 'Include Cub Scout logo in frame',
+                           'desc' => 'Include logo image in frame',
                            'default' => true),
       'event_title1' => array('type' => 'string',
                               'desc' => 'First line of event name, to be included in frame',
@@ -28,6 +28,7 @@ class PitPassDocument extends PrintableRacerDocument {
     'carname' => 0,
     'carnumber' => 3.82,
     'yellow-car' => 3.125,
+    'logo' => 4.061,
     'date-rect' => 4.62,
     'date' => 4.82,
     );
@@ -53,6 +54,9 @@ class PitPassDocument extends PrintableRacerDocument {
     }
 
     $this->DrawBorder($x, $y);
+    if ($this->get_option('with_logo')) {
+      $this->DrawLogo($x + 0.058, $y + $this->y_coords['logo']);
+    }
 
     $this->DrawNameBox($x, $y + $this->y_coords['namebox'], $racer);
 
@@ -111,13 +115,12 @@ class PitPassDocument extends PrintableRacerDocument {
   }
 
   protected function DrawBorder($x, $y) {
-    if ($this->get_option('with_logo')) {
-      $file_path = '/pit-pass-frame-logo.png';
-    } else {
-      $file_path = '/pit-pass-frame.png';
-    }
+    $this->pdf->Image(dirname(__FILE__).'/pit-pass-frame.png', $x, $y, 3.825, 5.000);
+  }
 
-    $this->pdf->Image(dirname(__FILE__).$file_path, $x, $y, 3.825, 5.000);
+  protected function DrawLogo($x, $y) {
+    $this->pdf->Image(print_images_dir().DIRECTORY_SEPARATOR.'logo532.png',
+                      $x, $y, 0.886, 0.886);
   }
 }
 
@@ -133,6 +136,7 @@ class PitPass4x6 extends PitPassDocument {
     'carname' => 4.02,
     'carnumber' => 4.35,
     'yellow-car' => 4.125,
+    'logo' => 5.061,
     'date-rect' => 5.62,
     'date' => 5.82,
     );
@@ -143,13 +147,7 @@ class PitPass4x6 extends PitPassDocument {
   }
 
   protected function DrawBorder($x, $y) {
-    if ($this->get_option('with_logo')) {
-      $file_path = '/pit-pass-frame-4x6-logo.png';
-    } else {
-      $file_path = '/pit-pass-frame-4x6.png';
-    }
-
-    $this->pdf->Image(dirname(__FILE__).$file_path, $x, $y, 3.825, 6.000);
+    $this->pdf->Image(dirname(__FILE__).'/pit-pass-frame-4x6.png', $x, $y, 3.825, 6.000);
   }
 }
 
