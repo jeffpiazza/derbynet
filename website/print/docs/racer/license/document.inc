@@ -38,9 +38,11 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                              array(new SetFontTag('Times', '', 14), $racer['firstname']." ",
                                    new SetFontTag('Times', 'B', 14), $racer['lastname']));
 
-    $this->pdf->DrawSequence($x + 0.25, $y + 0.90,
-                             array(new SetFontTag('Times', '', 10), group_label().": ",
-                                   new SetFontTag('Times', 'B', 10), $racer['class']));
+    if (use_groups()) {
+      $this->pdf->DrawSequence($x + 0.25, $y + 0.90,
+                               array(new SetFontTag('Times', '', 10), group_label().": ",
+                                     new SetFontTag('Times', 'B', 10), $racer['class']));
+    }
 
     if (!$this->get_option('use_photo')) {
     } else if ($racer['imagefile']) {

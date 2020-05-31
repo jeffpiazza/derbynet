@@ -96,6 +96,7 @@ foreach ($db->query($sql) as $rs) {
 <div id="racers">
   <?php
 
+  $use_groups = use_groups();
   $use_subgroups = use_subgroups();
 
   foreach ($racers as $racer) {
@@ -109,9 +110,11 @@ foreach ($db->query($sql) as $rs) {
 
 
     echo "<div class='racer_name'>".htmlspecialchars($racer['firstname'].' '.$racer['lastname'], ENT_QUOTES, 'UTF-8')."</div>";
-    echo "<div class='group_name' data-classid='".$racer['classid']."'>"
-        .htmlspecialchars($racer['class'], ENT_QUOTES, 'UTF-8')
-    ."</div>";
+    echo "<div class='group_name' data-classid='".$racer['classid']."'>";
+    if ($use_groups) {
+      echo htmlspecialchars($racer['class'], ENT_QUOTES, 'UTF-8');
+    }
+    echo "</div>";
     if ($use_subgroups) {
       echo "<div class='subgroup_name' data-rankid='".$racer['rankid']."'>"
           .htmlspecialchars($racer['rank'], ENT_QUOTES, 'UTF-8')

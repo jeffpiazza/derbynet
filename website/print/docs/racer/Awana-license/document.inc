@@ -66,9 +66,11 @@ class AwanaDriversLicenseDocument extends PrintableRacerDocument {
                              array(new SetFontTag('Times', 'B', 14), $racer['firstname']." ",
                                    new SetFontTag('Times', 'B', 14), $racer['lastname']));
 
-    $this->pdf->DrawSequence($x + 0.90, $y + 0.95,
-                             array(new SetFontTag('Times', '', 10), group_label().": ",
-                                   new SetFontTag('Times', 'B', 10), $racer['class']));
+    if (use_groups()) {
+      $this->pdf->DrawSequence($x + 0.90, $y + 0.95,
+                               array(new SetFontTag('Times', '', 10), group_label().": ",
+                                     new SetFontTag('Times', 'B', 10), $racer['class']));
+    }
 
     $this->pdf->CenteredSequence($x + 2.35, $y + 1.075,
                                  array(new SetFontTag('Arial', 'B', 24), $racer['carnumber']));
