@@ -288,16 +288,19 @@ function on_replay() {
                           function(pre_canvas) {
                             if (upload && root != "") {
                               vc = new VideoCapture(pre_canvas.captureStream());
+                            } else if (!upload) {
+                              console.log("No video upload planned.");
+                            } else {
+                              console.log("No video root name specified; will not upload.");
                             }
                           },
-                          function(findex) {
-                            if (vc && findex >= 1.0) {
+                          function() {
+                            if (vc) {
                               vc.stop(function(blob) { upload_video(root, blob); });
                               vc = null;
                             }
                           },
                           function() {
-                            console.log("Playback time: " + (Date.now() - playback_start_ms) + "ms. for " + g_replay_options.count + " showing(s) of " + g_replay_options.length + " at " + g_replay_options.rate);
                             $("#playback-background").hide('slide');
                             announce_to_interior('replay-ended');
                             g_recorder.start();
@@ -328,6 +331,8 @@ function on_setup() {
 </script>
 </head>
 <body>
+  <div id="fps"
+    style="position: fixed; bottom: 0; right: 0; width: 80px; height: 20px; z-index: 1000; text-align: right;"></div>
 
 <iframe id="interior" class="hidden full-window">
 </iframe>
