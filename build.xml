@@ -3,9 +3,6 @@
     Web-based software for managing pinewood derby races
   </description>
 
-  <property name="replay-dir" location="replay"/>
-  <property name="replay-app.name" value="MacDerbyReplay"/>
-  <property name="replay-app-dir" location="${replay-dir}/build/Release"/>
   <property name="timer-dir" location="timer"/>
   <property name="timer-jar-dir" location="${timer-dir}/dist/lib"/>
   <property name="docs-dir" location="docs"/>
@@ -76,8 +73,6 @@
               <include name="extras/**/*"/>
           </fileset>
       </zip>
-
-      <delete file="${replay-app.name}.dmg" quiet="yes" failonerror="false"/>
   </target>
 
   <target name="generated" depends="banner, generated-version.inc,
@@ -192,101 +187,6 @@
       <ant dir="${docs-dir}"/>
   </target>
 
-<!-- From http://www.rkuntz.org/pmwiki.php?n=Code.AntDiskImage -->
-<!-- Create a DMG - This only works on MacOSX (requires hdiutil) -->
-<target name="replay-dmg" if="is_mac" depends="replay-build-release"
-        description="Create a DMG package for MacOSX (only works on MacOSX)">
-
-    <!-- Set this property value to your application name -->
-
-    <!-- Set this property value to a directory where you can 
-         mount temporarily your images, for example /tmp -->
-    <property name="mountdir"
-              value="/tmp"/>
-
-    <!-- Delete previously created DMG -->
-    <delete file="${replay-app.name}.dmg"
-            quiet="yes" failonerror="false"/>
-
-    <!-- Create a temporary Disk Image -->
-    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-      <arg value="create"/>
-      <arg value="-srcfolder"/>
-      <arg value="${replay-app-dir}/${replay-app.name}.app"/>
-      <arg value="-volname"/>
-      <arg value="${replay-app.name}"/>
-      <arg value="-ov"/>
-      <arg value="${replay-app.name}-tmp.dmg"/>
-      <arg value="-format"/>
-      <arg value="UDRW"/>
-    </exec>
-
-    <!-- Attach the temporary image -->
-    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-      <arg value="attach"/>
-      <arg value="${replay-app.name}-tmp.dmg"/>
-      <arg value="-mountroot"/>
-      <arg value="${mountdir}/"/>
-    </exec>
-
-    <!-- Copy the background, the volume icon and DS_Store files -->
-<!--
-    <mkdir dir="${mountdir}/${replay-app.name}/.background"/>
-    <copy file="background.png"
-          tofile="${mountdir}/${replay-app.name}/.background/background.png"
-          overwrite="true"/>
-    <copy file="VolumeIcon.icns"
-          tofile="${mountdir}/${replay-app.name}/.VolumeIcon.icns"
-          overwrite="true"/>
-    <copy file="DS_Store"
-          tofile="${mountdir}/${replay-app.name}/.DS_Store"
-          overwrite="true"/>
--->
-
-    <!-- Indicate that we want a custom icon -->
-<!--
-    <exec executable="/Developer/Tools/SetFile" os="Mac OS X">
-      <arg value="-a"/>
-      <arg value="C"/>
-      <arg value="${mountdir}/${replay-app.name}"/>
-    </exec>
--->
-
-    <!-- Add a symbolic link to the Applications directory -->
-    <symlink link="${mountdir}/${replay-app.name}" resource="/Applications"/>
-
-    <!-- Detach the temporary image -->
-    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-      <arg value="detach"/>
-      <arg value="${mountdir}/${replay-app.name}"/>
-    </exec>
-
-    <!-- Compress it to a new image -->
-    <exec executable="/usr/bin/hdiutil" os="Mac OS X" failonerror="true">
-      <arg value="convert"/>
-      <arg value="${replay-app.name}-tmp.dmg"/>
-      <arg value="-format"/>
-      <arg value="UDZO"/>
-      <arg value="-o"/>
-      <arg value="${replay-app.name}.dmg"/>
-    </exec>
-
-    <!-- Delete the temporary image -->
-    <delete file="${replay-app.name}-tmp.dmg"
-            quiet="yes" failonerror="false"/>
-</target>
-
-<target name="replay-build-release" if="is_mac"
-        description="(Mac only)">
-            <exec executable="/usr/bin/xcodebuild" os="Mac OS X">
-                <arg value="-project"/>
-                <arg value="replay/MacDerbyReplay.xcodeproj"/>
-                <arg value="-configuration"/>
-                <arg value="Release"/>
-                <arg value="build"/>
-            </exec>
-</target>
-
 <target name="mac.installer.website" if="is_mac" depends="generated">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
@@ -305,30 +205,6 @@
         <arg value="--version"/>
         <arg value="1.0"/>
         <arg value="derbynet.website.pkg"/>
-    </exec>
-    <delete dir="ROOT"/>
-</target>
-
-<target name="mac.installer.replay" if="is_mac" depends="replay-build-release">
-    <mkdir dir="ROOT/Applications/DerbyNet"/>
-    <copy todir="ROOT/Applications/DerbyNet/" overwrite="true">
-      <fileset dir="${replay-app-dir}">
-          <include name="${replay-app.name}.app/**"/>
-      </fileset>
-    </copy>
-    <chmod perm="+x"
-           file="ROOT/Applications/DerbyNet/${replay-app.name}.app/Contents/MacOS/${replay-app.name}"/>
-    <exec executable="/usr/bin/pkgbuild">
-        <arg value="--component"/>
-        <arg value="ROOT/Applications/DerbyNet/${replay-app.name}.app"/>
-        <arg value="--install-location"/>
-        <arg value="/Applications/DerbyNet"/>
-
-        <arg value="--identifier"/>
-        <arg value="org.jeffpiazza.derbynet.replay"/>
-        <arg value="--version"/>
-        <arg value="1.0"/>
-        <arg value="derbynet.replay.pkg"/>
     </exec>
     <delete dir="ROOT"/>
 </target>
@@ -406,7 +282,7 @@
 
 <target name="dist.mac" if="is_mac" description="Full Macintosh installer package"
     depends="mac.installer.website,
-                 mac.installer.replay, mac.installer.timer,
+                mac.installer.timer,
                  mac.installer.docs, mac.installer.extras,
                  generated-version.inc,
                  generated-build-date.inc,
@@ -422,7 +298,6 @@
     </exec>
     <delete file="derbynet.docs.pkg"/>
     <delete file="derbynet.extras.pkg"/>
-    <delete file="derbynet.replay.pkg"/>
     <delete file="derbynet.timer.pkg"/>
     <delete file="derbynet.website.pkg"/>
     <delete dir="RESOURCES"/>

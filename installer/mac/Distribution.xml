@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <installer-gui-script minSpecVersion="1">
     <pkg-ref id="org.jeffpiazza.derbynet.website"/>
-    <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
     <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
     <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
     <pkg-ref id="org.jeffpiazza.derbynet.extras"/>
@@ -9,7 +8,6 @@
     <conclusion file="README.html"/>
     <choices-outline>
             <line choice="org.jeffpiazza.derbynet.website"/>
-            <line choice="org.jeffpiazza.derbynet.replay"/>
             <line choice="org.jeffpiazza.derbynet.timer"/>
             <line choice="org.jeffpiazza.derbynet.docs"/>
             <line choice="org.jeffpiazza.derbynet.extras"/>
@@ -19,10 +17,6 @@
         <pkg-ref id="org.jeffpiazza.derbynet.website"/>
     </choice>
     <pkg-ref id="org.jeffpiazza.derbynet.website" version="5.0" onConclusion="none">derbynet.website.pkg</pkg-ref>
-    <choice id="org.jeffpiazza.derbynet.replay" visible="true" title="MacReplay application">
-        <pkg-ref id="org.jeffpiazza.derbynet.replay"/>
-    </choice>
-    <pkg-ref id="org.jeffpiazza.derbynet.replay" version="5.0" onConclusion="none">derbynet.replay.pkg</pkg-ref>
     <choice id="org.jeffpiazza.derbynet.timer" visible="true"
             title="DerbyNet timer manager">
         <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
