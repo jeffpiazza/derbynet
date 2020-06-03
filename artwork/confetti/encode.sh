@@ -4,7 +4,7 @@
 # These go in /tmp, but that might vary on other platforms.
 
 PNG_DIR=/tmp
-OUT_DIR=../website
+OUT_DIR=./website
 
 # There doesn't seem to be one universal video format that's supported by all
 # browsers and that supports alpha channel transparency.  So we generate the

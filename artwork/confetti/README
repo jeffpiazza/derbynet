@@ -1,0 +1,10 @@
+To re-generate the confetti animations, open confetti.blend in blender and run
+the "Render Animation" command.  This will create a series of .png files, one
+per frame, in /tmp.
+
+From the derbynet directory, run:
+
+artwork/confetti/encode.sh
+
+to generate a .webm and a .mov version in the website directory.
+
