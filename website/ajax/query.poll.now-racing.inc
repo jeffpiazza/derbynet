@@ -13,7 +13,6 @@
 //     <current-heat ...> 
 //     <racer lane="1" name="Jimmy Jones" carname="Greased Lightning" carnumber="" photo=""/>
 //     - if the server is requesting a repeat of the finish-order animation:
-//     <repeat-animation/>
 //   </now-racing>
 
 if (warn_no_timer()) {
@@ -75,12 +74,5 @@ if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
 }
 
 emit_current_racers($now_running, read_raceinfo('name-style', FULL_NAME), $render);
-
-if (read_raceinfo('replay_just_finished')) {
-  write_raceinfo('replay_just_finished', 0);
-  echo "<repeat-animation/>\n";
-} else if (replay_playing()) {
-  echo "<hold-current-screen/>\n";
-}
 ?>
 </now-racing>

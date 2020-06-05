@@ -42,8 +42,6 @@ if ($_POST['status'] == REPLAY_REPORTED_PLAYING &&
   write_raceinfo('replay_started_playing_at', time());
 }
 write_raceinfo('replay_last_contact', time());
-write_raceinfo('replay_just_finished', 
-               (isset($_POST['finished-replay']) && $_POST['finished-replay']) ? 1 : 0);
 echo "<success/>\n";
 drain_queue();
 

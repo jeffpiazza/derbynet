@@ -45,30 +45,33 @@ var Lineup = {
   // elements were in the previous update.
   previous_heat_results: 0,
 
-  // hold_display_until tells when it's OK to change the display.  Value is a
-  // timestamp in milliseconds.
-  hold_display_until: 0,
+  // While hidden by a replay, don't advance the display.
+  holding: false,
+  hold: function() {
+    this.holding_display = true;
+  }
+  release: function() {
+    this.holding = false;
+  }
+
+  // display_lingers_until tells when it's OK to advance the display to the next
+  // heat.  Value is a timestamp in milliseconds.
+  display_lingers_until: 0,
 
   // After an animation of heat results, hold the display for a few seconds
   // before advancing to the next heat.
-  hold_display: function() {
-    this.hold_display_until = (new Date()).valueOf() + g_linger_ms;
+  start_display_linger: function() {
+    this.display_lingers_until = (new Date()).valueOf() + g_linger_ms;
   },
 
   ok_to_change: function() {
-    return (new Date()).valueOf() > this.hold_display_until;
+    return !this.holding && (new Date()).valueOf() > this.display_lingers_until;
   },
 
   // When the current heat differs from what we're presently displaying,
   // we get a <current-heat/> element, plus some number of <racer>
   // elements identifying the new heat's contestants.
   process_new_lineup: function(now_racing) {
-    if (now_racing.getElementsByTagName("hold-current-screen").length > 0) {
-      // Each time a hold-current-screen element is sent, reset the
-      // hold-display deadline.  (Our display is presumed not to be visible,
-      // so the display-for-ten-seconds clock shouldn't start yet.)
-      this.hold_display();
-    }
     var current = now_racing.getElementsByTagName("current-heat")[0];
     if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
       Overlay.show('#timer_overlay');
@@ -333,12 +336,6 @@ var Poller = {
 function process_polling_result(now_racing) {
   var heat_results = now_racing.getElementsByTagName("heat-result");
   if (heat_results.length > 0) {
-    // The presence of a <repeat-animation/> element is a request to re-run
-    // the finish place animation, which we do by clearing the flag that
-    // remembers we've already done it once.
-    if (now_racing.getElementsByTagName("repeat-animation").length > 0) {
-      FlyerAnimation.enable_flyers();
-    }
     var place_to_lane = new Array();  // place => lane
     for (var i = 0; i < heat_results.length; ++i) {
       var hr = heat_results[i];
@@ -365,7 +362,7 @@ function process_polling_result(now_racing) {
       FlyerAnimation.animate_flyers(1, place_to_lane, function () {
         // Need to continue to poll for repeat-animation, just not
         // accept new participants for 10 seconds.
-        Lineup.hold_display();
+        Lineup.start_display_linger();
         Lineup.process_new_lineup(now_racing);
       });
     } else {
@@ -394,11 +391,18 @@ function resize_table() {
   FontAdjuster.table_resized();
 }
 
+// This function receives messages from the surrounding replay kiosk, if there
+// is one.
 function on_message(msg) {
   if (msg == 'replay-started') {
+    // TODO There's a race here: if the flyers have already started when replay takes
+    // over the screen, the audience may not get to see the whole thing.
     Poller.suspended = true;
-    Lineup.hold_display();
+    Lineup.hold();
   } else if (msg == 'replay-ended') {
+    // Start the timer that blocks advancing to the next heat
+    Lineup.start_display_linger();
+    Lineup.release();
     Poller.suspended = false;
     FlyerAnimation.enable_flyers();
   }

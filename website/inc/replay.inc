@@ -52,17 +52,6 @@ function get_replay() {
                'trouble' => $trouble);
 }
 
-// Tells whether the replay service has recently reported (within the last
-// second or two) that it's playing back video.
-function replay_playing() {
-  $t = time();
-  return read_raceinfo('replay_reported', 0) == REPLAY_REPORTED_PLAYING
-      // This is a safeguard against the Replay app not reporting its state
-      // change correctly
-      && $t - read_raceinfo('replay_started_playing_at', 0) < 90
-      && $t - read_raceinfo('replay_last_contact', 0) < 2;
-}
-
 function send_replay_message($cmd) {
   global $db;
   $replay = get_replay();
