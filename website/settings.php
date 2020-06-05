@@ -233,7 +233,7 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
 
     <div class="settings_group_settings">
       <p><b>Now Racing</b> display:<br/>&nbsp;&nbsp;
-        <input type="radio" name="photos-on-now-racing"
+        <input type="radio" name="photos-on-now-racing" value="0"
                     id="now-racing-photos-0" data-role="none"<?php
         echo $photos_on_now_racing ? '' : ' checked="checked"';
         ?>/><label for="now-racing-photos-0" data-enhanced="true">No photos</label>&nbsp;
