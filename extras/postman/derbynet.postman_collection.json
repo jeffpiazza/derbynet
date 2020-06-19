@@ -1,0 +1,523 @@
+{
+	"info": {
+		"_postman_id": "30e6dc99-f349-488d-b707-99d9fd9d24c2",
+		"name": "derbynet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "952abdb8-0f76-460d-9370-822c07ce00c1",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0a25a171-ac18-4068-ba4c-9843dacd3060",
+						"exec": [
+							"//Successful login is shown with a session cookie (or if i already have one) and <success>{{username}}</success>",
+							"",
+							"//check I get a cookie if i don't already have one",
+							"if (!pm.cookies.has(\"PHPSESSID\")){",
+							"    pm.test(\"Did I get a cookie?\", function () {",
+							"        pm.response.to.have.header(\"Set-Cookie\") || pm.expect(pm.cookies.has(\"PHPSESSID\")).to.be.true;",
+							"    });",
+							"};",
+							"",
+							"pm.test(\"Check a cookie is now set \", function () {",
+							"    pm.expect(pm.cookies.has(\"PHPSESSID\")).to.be.true;",
+							"});",
+							"",
+							"//Check my user exists",
+							"pm.test(\"Recognises my username\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"<success>\"+pm.environment.get(\"username\")+\"</success>\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "User-Agent",
+						"value": "Java/1.8.0_25",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "login",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Hello",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "HELLO",
+							"type": "text"
+						},
+						{
+							"key": "remote-start",
+							"value": "yes",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Heartbeat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "707eaa39-f40a-4c32-b703-77972a5f7a29",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"<success/>\");",
+							"});",
+							"",
+							"pm.test(\"Has heat info\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"heat-ready\");",
+							"});",
+							"",
+							"if (pm.response.text().includes(\"heat-ready\")){",
+							"",
+							"    var jsonObject = xml2Json(responseBody);",
+							"",
+							"    pm.environment.set(\"lane-mask\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"lane-mask\"]);",
+							"    pm.environment.set(\"class\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"class\"]);",
+							"    pm.environment.set(\"round\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"round\"]);",
+							"    pm.environment.set(\"roundid\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"roundid\"]);",
+							"    pm.environment.set(\"heat\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"heat\"]);",
+							"",
+							"}else{",
+							"    pm.environment.set(\"lane-mask\", null);",
+							"    pm.environment.set(\"class\", null);",
+							"    pm.environment.set(\"round\", null);",
+							"    pm.environment.set(\"roundid\", null);",
+							"    pm.environment.set(\"heat\", null);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "HEARTBEAT",
+							"type": "text"
+						},
+						{
+							"key": "remote-start",
+							"value": "yes",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IDENTIFIED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a415d008-3389-4926-9473-adc1865213f4",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"<success/>\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "IDENTIFIED",
+							"type": "text"
+						},
+						{
+							"key": "lane_count",
+							"value": "{{lane_count}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "STARTED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9b4a9378-fd76-4a59-b332-27bb7f59c974",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"<success/>\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "STARTED",
+							"type": "text"
+						},
+						{
+							"key": "remote-start",
+							"value": "yes",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FINISHED",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d07db324-2523-42dc-8288-9183a0c5d041",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Has heat info\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"heat-ready\");\r",
+							"});\r",
+							"\r",
+							"if (pm.expect(pm.response.text()).to.include(\"heat-ready\")){\r",
+							"\r",
+							"    var jsonObject = xml2Json(responseBody);\r",
+							"\r",
+							"    pm.environment.set(\"lane-mask\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"lane-mask\"]);\r",
+							"    pm.environment.set(\"class\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"class\"]);\r",
+							"    pm.environment.set(\"round\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"round\"]);\r",
+							"    pm.environment.set(\"roundid\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"roundid\"]);\r",
+							"    pm.environment.set(\"heat\", jsonObject[\"action-response\"][\"heat-ready\"][\"$\"][\"heat\"]);\r",
+							"\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "FINISHED",
+							"type": "text"
+						},
+						{
+							"key": "roundid",
+							"value": "{{roundid}}",
+							"type": "text"
+						},
+						{
+							"key": "heat",
+							"value": "{{heat}}",
+							"type": "text"
+						},
+						{
+							"key": "lane1",
+							"value": "1.11",
+							"type": "text"
+						},
+						{
+							"key": "place1",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "lane2",
+							"value": "2.22",
+							"type": "text"
+						},
+						{
+							"key": "place2",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "lane3",
+							"value": "3.33",
+							"type": "text"
+						},
+						{
+							"key": "place3",
+							"value": "3",
+							"type": "text"
+						},
+						{
+							"key": "lane4",
+							"value": "4.44",
+							"type": "text"
+						},
+						{
+							"key": "place4",
+							"value": "4",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MALFUNCTION",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "13adaa4e-09c3-4f1d-9373-281a8f65b5f5",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"<success/>\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "action",
+							"value": "timer-message",
+							"type": "text"
+						},
+						{
+							"key": "message",
+							"value": "MALFUNCTION",
+							"type": "text"
+						},
+						{
+							"key": "detectable",
+							"value": "{{error_detectable}}",
+							"type": "text"
+						},
+						{
+							"key": "error",
+							"value": "{{error_message}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"urlencoded": {}
+					}
+				},
+				"url": {
+					"raw": "https://{{derbynet_url}}/derbynet/action.php",
+					"protocol": "https",
+					"host": [
+						"{{derbynet_url}}"
+					],
+					"path": [
+						"derbynet",
+						"action.php"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
