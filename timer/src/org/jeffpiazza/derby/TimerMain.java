@@ -82,6 +82,7 @@ public class TimerMain {
         final ClientSession clientSession
             = simulatedSession == null ? new ClientSession(base_url)
               : simulatedSession;
+        LogWriter.setClientSession(clientSession);
         HttpTask.start(clientSession, connector,
                        new HttpTask.LoginCallback() {
                      @Override

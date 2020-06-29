@@ -59,6 +59,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     // timer device.  Otherwise, all we know is that derby-timer.jar is alive
     // and scanning.
     $timer_state->to_state(TIMER_SEARCHING);
+    // Upon getting a new timer connection, choose a new name for server-side
+    // timer log file (which we may well never create).
+    write_raceinfo("timer-log", tempnam(sys_get_temp_dir(), "timer-"));
     echo "\n  <success/>\n";
   } else if ($message == 'IDENTIFIED') {
     if (isset($_POST['lane_count']) && $_POST['lane_count'] > 0) {
@@ -173,6 +176,8 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
   if (remote_start_pending()) {
     echo '  <remote-start/>'."\n";
   }
+
+  echo "<remote-log send='".(read_raceinfo_boolean('timer-send-logs') ? "true" : "false")."'/>\n";
   
   if (!$racing_state && ($tstate == TIMER_STAGING || $tstate == TIMER_RUNNING)) {
     echo "\n  <abort/>\n";

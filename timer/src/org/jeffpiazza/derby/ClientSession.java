@@ -9,11 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ClientSession {
   private CookieManager manager;
   private String base_url;
   private String original_base_url;
+
+  private static final List<String> kTimerLogHeaders = new ArrayList<String>(
+      Arrays.asList("Content-Type", "text/plain"));
 
   public ClientSession(String base_url) {
     String lowercase_url = base_url.toLowerCase();
@@ -59,39 +65,55 @@ public class ClientSession {
   }
 
   public Element sendTimerMessage(String messageAndParams) throws IOException {
-    return doPost("action=timer-message&" + messageAndParams);
+    return doActionPost("action=timer-message&" + messageAndParams);
   }
 
-  public Element doPost(String params) throws IOException {
-    return doPost("action.php", params);
+  public void sendTimerLogFragment(String logFragment) throws IOException {
+    // Ignore the response from the timer log POST
+    doTimerLogPost(logFragment);
   }
 
-  private Element doPostWithVariations(String url_path, String params)
+  private Element doActionPost(String body) throws IOException {
+    return doPost("action.php", null, body);
+  }
+
+  private Element doTimerLogPost(String body) throws IOException {
+    return doPost("post-timer-log.php", kTimerLogHeaders, body);
+  }
+
+  private Element doPostWithVariations(String url_path, String body)
       throws IOException {
     Element result;
 
     do {
-      result = doPost(url_path, params);
+      result = doPost(url_path, null, body);
     } while (result == null && makeUrlVariation());
 
     return result;
   }
 
-  private Element doPost(String url_path, String params) throws IOException {
-    return doPost(new URL(base_url + url_path), params);
+  private Element doPost(String url_path, List<String> headers, String body)
+      throws IOException {
+    return doPost(new URL(base_url + url_path), headers, body);
   }
 
-  private Element doPost(URL url, String params) throws IOException {
+  private Element doPost(URL url, List<String> headers, String body)
+      throws IOException {
     // TODO Sun Security Validator failed
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     connection.setRequestMethod("POST");
     connection.addRequestProperty("User-Agent",
                                   "derby-timer.jar/" + Version.get());
+    if (headers != null) {
+      for (int i = 0; i < headers.size(); i += 2) {
+        connection.addRequestProperty(headers.get(i), headers.get(i + 1));
+      }
+    }
 
     connection.setDoOutput(true);
     OutputStreamWriter writer
         = new OutputStreamWriter(connection.getOutputStream());
-    writer.write(params);
+    writer.write(body);
     writer.flush();
     writer.close(); // writer.close() may block.
 

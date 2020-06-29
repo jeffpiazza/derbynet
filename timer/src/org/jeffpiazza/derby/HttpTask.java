@@ -61,6 +61,7 @@ public class HttpTask implements Runnable {
   public static void start(final ClientSession session,
                            final Connector connector,
                            final LoginCallback callback) {
+    LogWriter.setClientSession(session);
     (new Thread() {
       @Override
       public void run() {
@@ -90,9 +91,6 @@ public class HttpTask implements Runnable {
   public HttpTask(ClientSession session) {
     this.session = session;
     this.queue = new ArrayList<Message>();
-    this.traceQueued = traceQueued;
-    this.traceHeartbeat = traceHeartbeat;
-    this.traceResponses = traceResponses;
     synchronized (queue) {
       queueMessage(new Message.Hello());
     }
@@ -170,7 +168,6 @@ public class HttpTask implements Runnable {
   // queue, sending queued events; otherwise sends a HEARTBEAT and
   // sleeps a known amount of time.
   public void run() {
-    System.err.println("Running HttpTask");
     while (true) {
       Element response = null;
       boolean trace;
@@ -233,6 +230,12 @@ public class HttpTask implements Runnable {
         if (log) {
           LogWriter.httpResponse(response);
         }
+      }
+
+      NodeList remote_logs = response.getElementsByTagName("remote-log");
+      if (remote_logs.getLength() > 0) {
+        LogWriter.setRemoteLogging(Boolean.parseBoolean(
+            ((Element) remote_logs.item(0)).getAttribute("send")));
       }
 
       if (response.getElementsByTagName("abort").getLength() > 0) {

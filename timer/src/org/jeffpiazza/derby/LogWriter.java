@@ -30,6 +30,11 @@ public class LogWriter {
 
   private static File logFile;
   private static PrintWriter writer;
+  private static ClientSession clientSession;
+  private static StringBuilder remoteLogBuffer = new StringBuilder();
+  private static boolean isRemoteLogging = false;
+  private static long remoteLogDeadline = 0;
+  private static final long kRemoteLogDeltaMs = 100;
 
   public static void initialize() {
     if (writer == null) {
@@ -39,11 +44,14 @@ public class LogWriter {
       try {
         makeLogFile();
         info("Started at " + Timestamp.string());
+        // Timestamp thread
         (new Thread() {
           @Override
           public void run() {
+            // Periodically wake up and add a timestamp to the log.
+            // Align to a round minute boundary before starting.
             try {
-              long seconds = (new Date(System.currentTimeMillis())).getSeconds();
+              long seconds = Calendar.getInstance().get(Calendar.SECOND);
               Thread.sleep(1000 * (60 - seconds));
             } catch (InterruptedException ex) {
             }
@@ -56,8 +64,62 @@ public class LogWriter {
             }
           }
         }).start();
+
+        // Remote logging thread
+        (new Thread() {
+          @Override
+          public void run() {
+            while (true) {
+              String fragment;
+              synchronized (remoteLogBuffer) {
+                while (remoteLogBuffer.length() == 0) {
+                  try {
+                    if (!isRemoteLogging) {
+                      // Wait indefinitely if we're not sending remote logging info.
+                      // setRemoteLogging will notify if necessary.
+                      remoteLogBuffer.wait();
+                    } else {
+                      long sleep_ms = kRemoteLogDeltaMs;
+                      if (remoteLogDeadline != 0) {
+                        long sleep2 = remoteLogDeadline
+                            - System.currentTimeMillis();
+                        if (sleep2 != 0 && sleep2 < sleep_ms) {
+                          sleep_ms = sleep2;
+                        }
+                      }
+                      remoteLogBuffer.wait(sleep_ms);
+                    }
+                  } catch (InterruptedException ex) {
+                  }
+                }
+                fragment = remoteLogBuffer.toString();
+                remoteLogBuffer.setLength(0);
+                remoteLogDeadline = 0;
+              }
+              if (clientSession != null) {
+                try {
+                  clientSession.sendTimerLogFragment(fragment);
+                } catch (IOException ex) {
+                }
+              }
+            }
+          }
+        }).start();
       } catch (IOException ex) {
         System.err.println("*** Unable to create log file");
+      }
+    }
+  }
+
+  public static void setClientSession(ClientSession session) {
+    clientSession = session;
+  }
+
+  public static void setRemoteLogging(boolean on) {
+    synchronized (remoteLogBuffer) {
+      isRemoteLogging = on;
+      if (isRemoteLogging) {
+        remoteLogBuffer.notifyAll();
       }
     }
   }
@@ -100,6 +162,19 @@ public class LogWriter {
     }
   }
 
+  private static void writeRemoteLogFragment(String prefix, String s) {
+    synchronized (remoteLogBuffer) {
+      if (isRemoteLogging) {
+        if (remoteLogDeadline == 0) {
+          remoteLogDeadline = System.currentTimeMillis() + kRemoteLogDeltaMs;
+        }
+        remoteLogBuffer.append(prefix);
+        remoteLogBuffer.append(s);
+        remoteLogBuffer.append("\n");
+      }
+    }
+  }
+
   public static void info(String s) {
     write(s, INFO_CHANNEL, "");
   }
@@ -123,14 +198,17 @@ public class LogWriter {
 
   public static void serial(String s) {
     write(s, SERIAL_CHANNEL, INTERNAL);
+    writeRemoteLogFragment(INTERNAL, s);
   }
 
   public static void serialIn(String s) {
     write(s, SERIAL_CHANNEL, INCOMING);
+    writeRemoteLogFragment(INCOMING, s);
   }
 
   public static void serialOut(String s) {
     write(s, SERIAL_CHANNEL, OUTGOING);
+    writeRemoteLogFragment(OUTGOING, s);
   }
 
   public static void simulationLog(String msg) {

@@ -12,7 +12,7 @@ import org.jeffpiazza.derby.Message;
 // For testing the web server and the derby-timer framework, simulate
 // a device class
 public class SimulatedDevice extends TimerDeviceBase
-                             implements RemoteStartInterface {
+    implements RemoteStartInterface {
   private HeatRunner runningHeat = null;
 
   private Random random;
@@ -38,14 +38,17 @@ public class SimulatedDevice extends TimerDeviceBase
   }
 
   @Override
-  public String getTimerIdentifier() { return null; }
+  public String getTimerIdentifier() {
+    return null;
+  }
 
   @Override
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
     synchronized (this) {
       if (runningHeat == null) {
-        System.out.println("STAGING:  heat " + heat + " of roundid " + roundid + ": "
+        System.out.println(
+            "STAGING:  heat " + heat + " of roundid " + roundid + ": "
             + LogWriter.laneMaskString(laneMask, Flag.lanes.value()));
         runningHeat = new HeatRunner(roundid, heat, laneMask);
         (new Thread(runningHeat)).start();
@@ -84,8 +87,7 @@ public class SimulatedDevice extends TimerDeviceBase
     if ((pollCount % 1000) == 0
         || (pollCount < 1000 && (pollCount % 100) == 0)
         || pollCount < 10) {
-      // TODO System.out.println("SimulatedDevice.poll() called "
-      //                         + pollCount + " time(s).");
+      LogWriter.serial("SimulatedDevice.poll");
     }
   }
 
@@ -103,8 +105,13 @@ public class SimulatedDevice extends TimerDeviceBase
       this.lanemask = lanemask;
     }
 
-    public int roundid() { return roundid; }
-    public int heat() { return heat; }
+    public int roundid() {
+      return roundid;
+    }
+
+    public int heat() {
+      return heat;
+    }
 
     public synchronized void cancel() {
       this.canceled = true;
@@ -117,10 +124,18 @@ public class SimulatedDevice extends TimerDeviceBase
           return;
         }
       }
-      System.out.println("GO!       heat " + heat + " of roundid " + roundid + " begins.");
+      LogWriter.serialOut("SimulatedDevice.run()");
+      final String goMessage = "GO!       heat " + heat
+          + " of roundid " + roundid + " begins.";
+      System.out.println(goMessage);
+      LogWriter.serialIn(goMessage);
       invokeRaceStartedCallback();
+      LogWriter.serialOut("pause");
       pause(4);  // 4 seconds for a pretty slow race
-      System.out.println("COMPLETE: heat " + heat + " of roundid " + roundid + " finishes.");
+      final String completeMessage = "COMPLETE: heat " + heat
+          + " of roundid " + roundid + " finishes.";
+      System.out.println(completeMessage);
+      LogWriter.serialIn(completeMessage);
       invokeRaceFinishedCallback(roundid, heat, makeHeatResults(lanemask));
       endRunningHeat();
     }
