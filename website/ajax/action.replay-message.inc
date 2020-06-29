@@ -35,12 +35,6 @@ if ($replay['state'] != REPLAY_CONNECTED) {
 }
 
 write_raceinfo('replay_reported', $_POST['status']);
-
-if ($_POST['status'] == REPLAY_REPORTED_PLAYING &&
-    $replay['status'] != REPLAY_REPORTED_PLAYING) {
-  // Record the timestamp for when Replay first claimed to be playing back
-  write_raceinfo('replay_started_playing_at', time());
-}
 write_raceinfo('replay_last_contact', time());
 echo "<success/>\n";
 drain_queue();
