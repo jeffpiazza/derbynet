@@ -7,11 +7,8 @@ function on_lane_count_change() {
   for (var i = 0; i < nlanes; ++i) {
     var bit = 1 << i;
     $("#lanes-in-use").append(" " + (i + 1) + ":");
-    if (mask & bit) {
-      $("#lanes-in-use").append("<img data-bit='" + bit + "' src='img/lane_closed.png'/>");
-    } else {
-      $("#lanes-in-use").append("<img data-bit='" + bit + "' src='img/lane_open.png'/>");
-    }
+    var img_src = (mask & bit) ? 'img/lane_closed.png' : 'img/lane_open.png';
+    $("#lanes-in-use").append("<img data-bit='" + bit + "' src='" + img_src + "'/>");
   }
 
   // In case the lane count decreased, clear any higher-order bits as they're no
@@ -25,13 +22,8 @@ function on_lane_click(event) {
   var mask = $("#unused-lane-mask").val();
   var target = $(event.currentTarget);
   var bit = target.attr('data-bit');
-  if ((mask & bit) == 0) {  // open -> closed
-    target.attr('src', 'img/lane_closed.png');
-    mask |= bit;
-  } else {
-    target.attr('src', 'img/lane_open.png');
-    mask &= ~bit;
-  }
+  mask ^= bit;
+  target.attr('src', (mask & bit) ? 'img/lane_closed.png' : 'img/lane_open.png');
 
   $("#unused-lane-mask").val(mask);
   PostSettingChange($("#unused-lane-mask"));
