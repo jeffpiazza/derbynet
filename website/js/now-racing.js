@@ -49,10 +49,10 @@ var Lineup = {
   holding: false,
   hold: function() {
     this.holding_display = true;
-  }
+  },
   release: function() {
     this.holding = false;
-  }
+  },
 
   // display_lingers_until tells when it's OK to advance the display to the next
   // heat.  Value is a timestamp in milliseconds.
