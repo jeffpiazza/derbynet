@@ -7,47 +7,12 @@ require_once('inc/aggregate_round.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/rounds.inc');
 require_once('inc/last-heat.inc');
+require_once('inc/timer-state-xml.inc');
 
 $now_running = get_running_round();
 emit_current_heat($now_running);
 emit_current_racers($now_running, FULL_NAME, /* photos */ false);
-?>
-<?php /* Timer */
-require_once('inc/timer-state.inc');
-
-$timer_state = new TimerState();
-$tstate = $timer_state->state();
-
-if ($tstate == TIMER_NOT_CONNECTED) {
-  $msg = 'NOT CONNECTED';
-  $icon = 'img/status/not_connected.png';
-} else if ($tstate == TIMER_SEARCHING) {
-  $msg = 'Scanning for timer';
-  $icon = 'img/status/unknown.png';
-} else if ($timer_state->troubled()) {
-  $msg = $timer_state->malfunction();
-  $icon = 'img/status/trouble.png';
-} else if ($tstate == TIMER_CONNECTED) {
-  $msg ='CONNECTED ('.($timer_state->seconds_since_last_contact()).' sec.)';
-  $icon = 'img/status/ok.png';
-} else if ($tstate == TIMER_STAGING) {
-  $msg = 'Staging';
-  $icon = 'img/status/ok.png';
-} else if ($tstate == TIMER_RUNNING) {
-  $msg = 'Race running';
-  $icon = 'img/status/ok.png';
-} else {
-  $msg = 'Unknown ('.$tstate.')';
-  $icon = 'img/status/trouble.png';
-}
-echo '<timer-state lanes="'.get_lane_count().'"'
-    .' last_contact="'.$timer_state->last_contact().'"'
-    .' state="'.$tstate.'"'
-    .' icon="'.$icon.'"'
-    .' remote_start="'.has_remote_start().'"'
-    .'>';
-echo $msg;
-echo '</timer-state>'."\n";
+emit_timer_state();
 ?>
 <?php /* Replay */
 require_once('inc/replay.inc');
