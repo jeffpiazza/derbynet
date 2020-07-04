@@ -6,4 +6,4 @@ set -e -E -o pipefail
 source `dirname $0`/common.sh
 
 curl -X POST -H 'Content-Type: text/plain' --data-binary @- \
-     $BASE_URL/timer-log.php
+     $BASE_URL/post-timer-log.php

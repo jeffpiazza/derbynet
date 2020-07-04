@@ -82,6 +82,11 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <div class="status_icon">
       <img id="timer_status_icon" src="img/status/unknown.png"/>
     </div>
+
+    <div id='timer-test' class="block_buttons">
+      <a class='button_link' href='timer.php'>Test</a>
+    </div>
+
     <h3>Timer Status</h3>
     <p><b id="timer_status_text">Timer status not yet updated</b></p>
     <p>The track has <span id="lane_count">an unknown number of</span> lane(s).</p>

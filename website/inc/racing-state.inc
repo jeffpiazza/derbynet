@@ -32,6 +32,9 @@ function racing_state_allowed(&$current) {
   if (!isset($current['roundid']) || !isset($current['heat'])) {
     return false;
   }
+  if ($current['roundid'] == TIMER_TEST_ROUNDID) {
+    return true;
+  }
   $finished = read_single_value('SELECT COUNT(*) FROM RaceChart'
                                 .' WHERE roundid = :roundid'
                                 .'  AND  heat = :heat'

@@ -146,10 +146,17 @@ td.photo img {
 }
 
 #timer_overlay {
-    color: #a7101c;
-    font-size: 50px;
-    font-weight: bold;
-    text-align: center;
+  color: #a7101c;
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#testing_overlay {
+  color: #fffd38;
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .banner_version { display: none; }

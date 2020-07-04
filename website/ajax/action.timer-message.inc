@@ -147,18 +147,25 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
   
   $tstate = $timer_state->state();
   if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not staging or running
-    $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
-                         .' WHERE roundid = :roundid AND heat = :heat'
-                         .' ORDER BY lane');
-    $stmt->execute(array(':roundid' => $current['roundid'],
-                         ':heat' => $current['heat']));
     $pending = true;
     $mask = 0;
-    foreach ($stmt as $row) {
-      if ($row['finishtime'] || $row['finishplace']) {
-        $pending = false;
+    if ($current['roundid'] == TIMER_TEST_ROUNDID) {
+      $lane_count = get_lane_count();
+      if ($lane_count > 0) {
+        $mask = (1 << $lane_count) - 1;
       }
-      $mask |= (1 << ($row['lane'] - 1));
+    } else {
+      $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
+                           .' WHERE roundid = :roundid AND heat = :heat'
+                           .' ORDER BY lane');
+      $stmt->execute(array(':roundid' => $current['roundid'],
+                           ':heat' => $current['heat']));
+      foreach ($stmt as $row) {
+        if ($row['finishtime'] || $row['finishplace']) {
+          $pending = false;
+        }
+        $mask |= (1 << ($row['lane'] - 1));
+      }
     }
     if ($pending) {
       echo '  <heat-ready lane-mask="'.$mask.'"'

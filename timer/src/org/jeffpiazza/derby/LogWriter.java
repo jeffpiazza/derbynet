@@ -33,6 +33,7 @@ public class LogWriter {
   private static ClientSession clientSession;
   private static StringBuilder remoteLogBuffer = new StringBuilder();
   private static boolean isRemoteLogging = false;
+  private static boolean hasEverHadRemoteLogging = false;
   private static long remoteLogDeadline = 0;
   private static final long kRemoteLogDeltaMs = 100;
 
@@ -60,7 +61,9 @@ public class LogWriter {
                 Thread.sleep(60000);
               } catch (InterruptedException ex1) {
               }
-              info(Timestamp.string());
+              final String ts = Timestamp.string();
+              info(ts);
+              writeRemoteLogFragment("===== ", ts);
             }
           }
         }).start();
@@ -119,6 +122,13 @@ public class LogWriter {
     synchronized (remoteLogBuffer) {
       isRemoteLogging = on;
       if (isRemoteLogging) {
+        if (!hasEverHadRemoteLogging) {
+          remoteLogBuffer.append(Timestamp.string());
+          remoteLogBuffer.append("\nClient log file: ");
+          remoteLogBuffer.append(logFile.toString());
+          remoteLogBuffer.append("\n\n");
+          hasEverHadRemoteLogging = true;
+        }
         remoteLogBuffer.notifyAll();
       }
     }
@@ -168,6 +178,9 @@ public class LogWriter {
         if (remoteLogDeadline == 0) {
           remoteLogDeadline = System.currentTimeMillis() + kRemoteLogDeltaMs;
         }
+        //remoteLogBuffer.append(hh_mm_ss.format(
+        //    new Date(System.currentTimeMillis())));
+        //remoteLogBuffer.append(" ");
         remoteLogBuffer.append(prefix);
         remoteLogBuffer.append(s);
         remoteLogBuffer.append("\n");

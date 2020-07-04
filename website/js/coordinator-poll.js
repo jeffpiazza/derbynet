@@ -267,7 +267,6 @@ function inject_progress_text(control_group, round) {
 // timer_state = { lanes: }
 //
 function generate_scheduling_control_group(round, current, timer_state) {
-  console.log(round);
   var is_current =  round.roundid == current.roundid;
   var show_checkins = round.round == 1 && round.heats_scheduled == 0;
   var control_group = $("<div class=\"control_group scheduling_control\"></div>")
@@ -589,6 +588,16 @@ function process_coordinator_poll_response(data) {
   generate_replay_state_group(parse_replay_state(data));
 
   generate_current_heat_racers(racers, current);
+
+  if (current.roundid == -100 && current.is_racing) {
+    $("#now-racing-group")
+      .empty()
+      .append($("<h3 id='timer-testing-herald'>Timer testing in progress</h3>")
+              .append("<input style='float: right;' type='button' data-enhanced='true'"
+                      + " onclick='handle_stop_testing();' value='Stop Test'/>"));
+  } else {
+    $('#timer-testing-herald').remove();
+  }
 
   // Hide the control group if there's nothing to show
   $("#supplemental-control-group").toggleClass("hidden",

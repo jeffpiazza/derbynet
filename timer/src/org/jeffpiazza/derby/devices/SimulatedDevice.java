@@ -47,9 +47,12 @@ public class SimulatedDevice extends TimerDeviceBase
       throws SerialPortException {
     synchronized (this) {
       if (runningHeat == null) {
-        System.out.println(
-            "STAGING:  heat " + heat + " of roundid " + roundid + ": "
-            + LogWriter.laneMaskString(laneMask, Flag.lanes.value()));
+        final String stagingMessage = "STAGING:  heat " + heat
+            + " of roundid " + roundid + ": "
+            + LogWriter.laneMaskString(laneMask, Flag.lanes.value());
+        System.out.println(stagingMessage);
+        LogWriter.serialIn(stagingMessage);
+
         runningHeat = new HeatRunner(roundid, heat, laneMask);
         (new Thread(runningHeat)).start();
       } // TODO Confirm roundid/heat match runningHeat

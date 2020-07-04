@@ -39,7 +39,8 @@ var all_uris = [
   "racer-results.php",
   "settings.php",
   "setup.php",
-  "standings.php"
+  "standings.php",
+  "timer.php"
 ];
 
 puppeteer.launch({devtools: debugging}).then(async browser => {

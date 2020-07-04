@@ -19,7 +19,20 @@ function write_heat_results() {
   $roundid = @$current['roundid'];
   $heat = @$current['heat'];
 
-  if (!$roundid || $roundid < 0) {
+  if ($roundid == TIMER_TEST_ROUNDID) {
+    // For timer testing, store (only) the most recently reported times and
+    // places, in RaceInfo table, along with the "heat" with which they're
+    // associated.  (tt-results-heat lets the timer page know when to clear old
+    // results because new results are available.)
+    $db->exec('DELETE FROM RaceInfo WHERE itemkey LIKE \'tt-lane%\' OR itemkey LIKE \'tt-place%\'');
+    write_raceinfo('tt-results-heat', $heat);
+    foreach ($_POST as $key => $value) {
+      if (substr($key, 0, 4) == 'lane' || substr($key, 0, 5) == 'place') {
+        write_raceinfo('tt-'.$key, $value);
+      }
+    }
+    return true;
+  } else if (!$roundid || $roundid < 0) {
     echo '<failure code="nocurrentround">No currently-racing round is available!</failure>';
     return false;
   } else {

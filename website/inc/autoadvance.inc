@@ -19,7 +19,9 @@ require_once('inc/replay.inc');
 function get_next_heat(&$current, $requested) {
   global $db;
 
-  if ($current['use_master_sched'] && !is_numeric($requested)) {
+  if ($current['use_master_sched'] && !is_numeric($requested) &&
+      // In timer test, ignore master heat scheduling
+      $current['roundid'] != TIMER_TEST_ROUNDID) {
     if ($requested == 'next-up') {
       $stmt = $db->prepare('SELECT roundid, heat FROM RaceChart'
                            .' WHERE masterheat = (SELECT MIN(masterheat)'
@@ -90,7 +92,7 @@ function advance_heat(&$current, $requested, $report_failure) {
     echo '<failure code="nosuchheat">No '.$requested.' heat available.</failure>';
   }
 
-  if ($ok) {
+  if ($ok && $next['roundid'] != TIMER_TEST_ROUNDID) {
     // Here: $next['roundid'] and $next['heat'] should have integer values that
     // identify the next (expected) heat.  It's possible the expected heat
     // doesn't exist or has already been run.

@@ -376,6 +376,14 @@ function handle_master_next_up() {
            });
 }
 
+function handle_stop_testing() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'timer.test',
+                 'test-mode': 0},
+         });
+}
+
 function populate_new_round_modals() {
   var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
 

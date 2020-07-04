@@ -75,6 +75,8 @@ var Lineup = {
     var current = now_racing.getElementsByTagName("current-heat")[0];
     if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
       Overlay.show('#timer_overlay');
+    } else if (current.getAttribute("roundid") == "-100") {
+      Overlay.show('#testing_overlay');
     } else if (current.getAttribute("now-racing") == "0" && this.ok_to_change()) {
       Overlay.show('#paused_overlay');
     } else {

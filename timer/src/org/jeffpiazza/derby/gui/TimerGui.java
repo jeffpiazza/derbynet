@@ -19,9 +19,6 @@ import org.jeffpiazza.derby.devices.TimerTask;
 public class TimerGui {
   private Components components;
   private Connector connector;
-  private boolean traceMessages;
-  private boolean traceHeartbeats;
-  private boolean traceResponses;
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
 
@@ -31,9 +28,6 @@ public class TimerGui {
   public TimerGui(Connector connector) {
     this.components = new Components();
     this.connector = connector;
-    this.traceMessages = traceMessages;
-    this.traceHeartbeats = traceHeartbeats;
-    this.traceResponses = traceResponses;
     timerClassListController = new TimerClassListController(
         components.timerClassList);
     components.timerClassList.addListSelectionListener(timerClassListController);
