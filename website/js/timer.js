@@ -19,7 +19,7 @@ function on_lane_count_change() {
         .append("<td>" + (i + 1) + "</td>")
         .append($("<td data-bit='" + bit + "'></td>")
                 .append($("<img src='img/car-60.png'/>").toggleClass('hidden', (mask & bit) != 0)))
-        .append("<td class='time'>0.000</td>")
+        .append("<td class='time'></td>")
         .append("<td class='place'></td>"));
   }
 
@@ -60,7 +60,6 @@ function on_mask_click(event) {
 
   $("#unused-lane-mask").val(mask);
 
-  // TODO Set testing off and write mask
   $.ajax("action.php",
          {type: 'POST',
           data: {action: 'timer.test',
@@ -68,24 +67,30 @@ function on_mask_click(event) {
          });
 }
 
-function on_testing_change() {
-  $.ajax('action.php',
-         {type: 'POST',
-          data: {action: 'timer.test',
-                 'test-mode': $("#test-mode").is(':checked') ? 1 : 0,
-                },
-         });
+function on_testing_change(event, synthetic) {
+  if (!synthetic) {
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'timer.test',
+                   'test-mode': $("#test-mode").is(':checked') ? 1 : 0,
+                  },
+           });
+  }
 }
 $(function() { $("#test-mode").on('change', on_testing_change); });
 
 function update_testing_mode(current) {
-  $("#test-mode").prop('checked',
-    current.getAttribute('roundid') == -100 && current.getAttribute('now-racing') == 1);
+  var should_be_checked =
+      current.getAttribute('roundid') == -100 && current.getAttribute('now-racing') == 1;
+  if ($("#test-mode").is(':checked') != should_be_checked) {
+    $("#test-mode").prop('checked', should_be_checked);
+    $("#test-mode").trigger('change', /*synthetic*/true);
+  }
 }
 
-function update_timer_status(tstate) {
+function update_timer_summary(tstate) {
   $("#timer_status_text").text(tstate.textContent);
-  $("#timer_status_icon").attr('src', tstate.getAttribute("icon"));
+  $("#timer_summary_icon").attr('src', tstate.getAttribute("icon"));
 }
 
 function update_timer_details(details) {
@@ -110,7 +115,7 @@ $(function() {
             success: function(data) {
               var tstate = data.documentElement.getElementsByTagName('timer-state');
               if (tstate.length > 0) {
-                update_timer_status(tstate[0]);
+                update_timer_summary(tstate[0]);
               }
               var details = data.documentElement.getElementsByTagName('timer-details');
               if (details.length > 0) {
@@ -181,7 +186,7 @@ function poll_for_timer_log(seek, timeout) {
 
 function on_resize() {
   $("#log_container").height($(window).height() -
-                             $("#log_container")[0].getBoundingClientRect().top - 5);
+                             $("#log_container")[0].getBoundingClientRect().top - 15);
 }
 
 $(function() {

@@ -592,9 +592,9 @@ function process_coordinator_poll_response(data) {
   if (current.roundid == -100 && current.is_racing) {
     $("#now-racing-group")
       .empty()
-      .append($("<h3 id='timer-testing-herald'>Timer testing in progress</h3>")
-              .append("<input style='float: right;' type='button' data-enhanced='true'"
-                      + " onclick='handle_stop_testing();' value='Stop Test'/>"));
+      .append($("<h3 id='timer-testing-herald'>Simulated racing in progress</h3>")
+              .append("<input style='float: right; font-size: 18px;' type='button' data-enhanced='true'"
+                      + " onclick='handle_stop_testing();' value='Stop'/>"));
   } else {
     $('#timer-testing-herald').remove();
   }

@@ -31,7 +31,7 @@ function update_lane_mask($mask) {
 }
 
 
-if (isset($POST['tt-mask'])) {
+if (isset($_POST['tt-mask'])) {
   update_lane_mask($_POST['tt-mask']);
   echo "<success/>\n";
 } else if (isset($_POST['test-mode'])) {

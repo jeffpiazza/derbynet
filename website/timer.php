@@ -16,7 +16,10 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 <title>Timer</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/flipswitch.css"/>
+<link rel="stylesheet" type="text/css" href="css/timer.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/flipswitch.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/timer.js"></script>
 <script type="text/javascript">
@@ -26,100 +29,62 @@ $(function() {
     "<doc><timer-state icon='<?php echo $timer_state_status[1]; ?>'>"
     + <?php echo json_encode($timer_state_status[0]); ?>
     + "</timer-state></doc>", "text/xml");
-  update_timer_status(xmlDoc.getElementsByTagName('timer-state')[0]);
+  update_timer_summary(xmlDoc.getElementsByTagName('timer-state')[0]);
 });
 
 </script>
-<style>
-#log_container {
-  float: right;
-  border: 2px solid black;
-  width: 50%;
-  overflow-y: scroll;
-  margin-top: 10px;
-}
-
-div#timer_block {
-  display: inline-block;
-}
-div#timer_status h3 {
-  margin-top: 0px;
-  margin-bottom: 5px;
-}
-div#timer_status p {
-  margin-top: 5px;
-}
-img#timer_status_icon {
-  float: left;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-table#lanes {
-  margin-left: 20px;
-}
-
-table#lanes td {
-  min-width: 80px;
-}
-table#lanes td.time {
-  text-align: right;
-}
-</style>
 </head>
 <body>
 <?php make_banner('Timer', 'coordinator.php'); ?>
 
-<div id="log_container">
-  <pre id="log_text">
-  </pre>
+<div id="log_outer">
+  <div class="test-control">
+    <label for="timer-send-logs">Remote logging:</label>
+    <input id="timer-send-logs" type="checkbox" class="flipswitch" <?php
+    if (read_raceinfo_boolean('timer-send-logs')) {
+      echo " checked='checked'";
+    } ?>/>
+  </div>
+
+  <div id="log_container">
+    <pre id="log_text"></pre>
+  </div>
 </div>
 
-  <label style="font-size: 20px;" for="n-lanes">Number of lanes on the track:</label>
-  <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
-  style="line-height: 1.3; font-family: sans-serif; font-size: 24px"
-         data-enhanced="true"
-         value="<?php echo get_lane_count(); ?>"/>
-
-  <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
-           value="<?php echo read_raceinfo('tt-mask', read_raceinfo('unused-lane-mask', 0)); ?>"/>
-
-<div id="timer_status">
-  <img id="timer_status_icon" src="img/status/unknown.png"/>
-  <div id="timer_block">
+<div id="timer_summary">
+  <img id="timer_summary_icon" src="img/status/unknown.png"/>
+  <div id="timer_summary_text">
     <h3>Timer Status</h3>
     <p><b id="timer_status_text">Timer status not yet updated</b></p>
     <div id="timer-details"></div>
   </div>
 </div>
 
-<table id="lanes" style="font-size: 24px;">
-  <tr><th>Lane</th>
-      <th>Occupied?</th>
-      <th>Time</th>
-      <th>Place</th>
-  </tr>
-</table>
-
-<div>
-<input type="checkbox" id="test-mode" <?php
+<div class="test-control">
+  <label for="test-mode">Simulate racing:</label>
+  <input id="test-mode" type="checkbox" class="flipswitch" <?php
     if ($current['roundid'] == TIMER_TEST_ROUNDID && $current['now_racing']) {
       echo " checked=\"checked\"";
     } ?>/>
-<label for="test-mode">Test mode</label>
 </div>
 
-<form id="log-setting-form" action="action.php">
-  <input type="hidden" name="action" value="settings.write"/>
-  <?php $logging_on = read_raceinfo_boolean('timer-send-logs'); ?>
-  <p>Remote Logging</p>
-  <input type="radio" name="timer-send-logs" id="remote-logs-on"
-      value="1" <?php if ($logging_on) echo " checked='checked'"; ?>/>
-  <label for="remote-logs-on">On</label>
-  <br/>
-  <input type="radio" name="timer-send-logs" id="remote-logs-off"
-      value="0" <?php if (!$logging_on) echo " checked='checked'"; ?>/>
-  <label for="remote-logs-off">Off</label>
-</form>
+<div id="now-racing">
+  <label id="n-lanes-label" for="n-lanes">Number of lanes on the track:</label>
+  <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
+         data-enhanced="true"
+         value="<?php echo get_lane_count(); ?>"/>
+
+  <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
+           value="<?php echo read_raceinfo('tt-mask', read_raceinfo('unused-lane-mask', 0)); ?>"/>
+
+  <table id="lanes">
+    <tr><th>Lane</th>
+        <th>Occupied?</th>
+        <th>Time</th>
+        <th>Place</th>
+    </tr>
+  </table>
+</div>
+
 </body>
 </html>
