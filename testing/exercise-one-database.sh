@@ -37,7 +37,7 @@ run_tests() {
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
-
+    `dirname $0`/test-scenes.sh "$BASE_URL"
 
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"

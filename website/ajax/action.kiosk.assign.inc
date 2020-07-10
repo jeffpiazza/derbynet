@@ -25,6 +25,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     $stmt = $db->prepare('UPDATE Kiosks SET page = :page WHERE address = :address');
     $stmt->execute(array(':page' => $page,
                          ':address' => $_POST['address']));
+    write_raceinfo('current_scene', '');
   }
 
   if (isset($_POST['name'])) {
