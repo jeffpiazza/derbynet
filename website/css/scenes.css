@@ -1,0 +1,44 @@
+div#select-wrap {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 24px;
+}
+div#select-wrap .ui-btn.ui-btn-a {
+  font-size: 24px;
+}
+div.kiosk {
+  clear: right;
+  background-color: #ffffd0;
+  height: 245px;
+  position: relative;
+  width: 100%;
+}
+div.kiosk h3 {
+  margin-left: 50px;
+}
+div.page-div {
+  width: 200px;
+}
+div.wrap {
+  width: 384px;
+  height: 245px;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+iframe {
+   width: 1920px;
+   height: 1080px;
+   transform: scale(.20);
+   transform-origin: top left;
+  border: 12px solid black;
+  margin-bottom: 0px;
+  background-color: white;
+}
+
+#new_scene_name,
+#new_kiosk_name {
+  margin-left: 13px;
+  margin-bottom: 15px;
+}

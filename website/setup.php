@@ -146,6 +146,19 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_details"></div>
 </div>
 
+<!-- Scenes and Playlists -->
+<div id="scenes_step" class="step_div">
+  <div class="status_icon"><img src="img/status/ok.png"/></div>
+  <div class="step_button block_buttons">
+    <a class="button_link" href="scenes.php">Scenes</a>
+  </div>
+
+  <div class="step_details">
+    <p>If you're fortunate enough to have multiple screens for DerbyNet, scenes can help 
+       make managing them easier.</p>
+  </div>
+</div>
+
 
 <div id="ezsetup_modal" class="modal_dialog hidden block_buttons">
   <form>

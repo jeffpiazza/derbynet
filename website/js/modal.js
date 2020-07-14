@@ -1,21 +1,21 @@
 $(function() {
-    $("body").append('<div id="modal_background"></div>');
-    $("body").append('<div id="second_modal_background"></div>');
-    $("body").append('<div id="third_modal_background"></div>');
-    $(document).keyup(function(e) {
-        if (e.keyCode == 27) {
-            do_close_modal(g_modal_dialogs[g_modal_dialogs.length - 1],
-                           ['#modal_background',
-                            '#second_modal_background',
-                            '#third_modal_background'][g_modal_dialogs.length - 1]);
-        }
-    });
+  $("body").append('<div id="modal_background"></div>');
+  $("body").append('<div id="second_modal_background"></div>');
+  $("body").append('<div id="third_modal_background"></div>');
+  $(document).keyup(function(e) {
+    if (e.keyCode == 27) {
+      do_close_modal(g_modal_dialogs[g_modal_dialogs.length - 1],
+                     ['#modal_background',
+                      '#second_modal_background',
+                      '#third_modal_background'][g_modal_dialogs.length - 1]);
+    }
+  });
 });
 
 // A stack of selectors for the currently-open modal dialog(s), if any.
 var g_modal_dialogs = []
 
-function do_show_modal(modal_selector, background_selector, z_index, submit_handler) {
+function do_show_modal(modal_selector, focus, submit_handler, background_selector, z_index) {
   if (background_selector) {
     // background_selector == false leaves the background in place, if we're
     // going to display another modal immediately after closing this one.
@@ -27,14 +27,14 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
     modal_background.fadeTo(200, 0.5);
   }
 
-    var modal_div = $(modal_selector);
-    if (typeof submit_handler != 'undefined' && submit_handler) {
-        var form = modal_div.find("form");
-        form.off("submit");
-        form.on("submit", submit_handler);
-    }
+  var modal_div = $(modal_selector);
+  if (typeof submit_handler != 'undefined' && submit_handler) {
+    var form = modal_div.find("form");
+    form.off("submit");
+    form.on("submit", submit_handler);
+  }
 
-    g_modal_dialogs.push(modal_selector);
+  g_modal_dialogs.push(modal_selector);
 
   if (modal_div.closest('.modal_frame').length == 0) {
     modal_div.wrap('<div class="modal_frame"></div>');
@@ -42,31 +42,39 @@ function do_show_modal(modal_selector, background_selector, z_index, submit_hand
   }
   modal_div.closest('.modal_frame').removeClass('hidden');
 
-    var modal_width = modal_div.outerWidth();
-    modal_div.removeClass("hidden");
-    modal_div.css({ 
-        'display': 'block',
-        'position': 'absolute',
-        'opacity': 0,
-        'left' : 50 + '%',
-        'margin-left': -(modal_width/2) + "px"
-    });
-    modal_div.fadeTo(200, 1);
+  var modal_width = modal_div.outerWidth();
+  modal_div.removeClass("hidden");
+  modal_div.css({ 
+    'display': 'block',
+    'position': 'absolute',
+    'opacity': 0,
+    'left' : 50 + '%',
+    'margin-left': -(modal_width/2) + "px"
+  });
+  modal_div.fadeTo(200, 1);
+  if (focus) {
+    setTimeout(function() { $(focus).focus(); }, 210);
+  }
 }
 
 function do_close_modal(modal_selector, background_selector) {
-    g_modal_dialogs.pop();
-    $(background_selector).fadeOut(200);
-    $(modal_selector).closest('.modal_frame').addClass('hidden');
-    $(modal_selector).css({'display': 'none'});
+  g_modal_dialogs.pop();
+  $(background_selector).fadeOut(200);
+  $(modal_selector).closest('.modal_frame').addClass('hidden');
+  $(modal_selector).css({'display': 'none'});
 }
 
-function show_modal(modal_selector, submit_handler) {
-    do_show_modal(modal_selector, "#modal_background", 11000, submit_handler);
+function show_modal(modal_selector, focus, submit_handler) {
+  if (arguments.length == 2 && Object.prototype.toString.call(focus) == "[object Function]") {
+    submit_handler = focus;
+    focus = null;
+  }
+  do_show_modal(modal_selector, focus, submit_handler,
+                "#modal_background", 11000);
 }
 
 function close_modal(modal_selector) {
-    do_close_modal(modal_selector, "#modal_background");
+  do_close_modal(modal_selector, "#modal_background");
 }
 
 function close_modal_leave_background(modal_selector) {
@@ -79,24 +87,34 @@ function close_modal_leave_background(modal_selector) {
 // hide_modal() should be followed immediately with another show_modal call of
 // some kind.
 function hide_modal(modal_selector) {
-    g_modal_dialogs.pop();
-    $(modal_selector).closest('.modal_frame').addClass('hidden');
-    $(modal_selector).css({'display': 'none'});
+  g_modal_dialogs.pop();
+  $(modal_selector).closest('.modal_frame').addClass('hidden');
+  $(modal_selector).css({'display': 'none'});
 }
 
 // For a modal that's supposed to appear in front of another ("ordinary") modal.
-function show_secondary_modal(modal_selector, submit_handler) {
-    do_show_modal(modal_selector, "#second_modal_background", 13000, submit_handler);
+function show_secondary_modal(modal_selector, focus, submit_handler) {
+  if (arguments.length == 2 && Object.prototype.toString.call(focus) == "[object Function]") {
+    submit_handler = focus;
+    focus = null;
+  }
+  do_show_modal(modal_selector, focus, submit_handler,
+                "#second_modal_background", 13000);
 }
 
 function close_secondary_modal(modal_selector) {
-    do_close_modal(modal_selector, "#second_modal_background");
+  do_close_modal(modal_selector, "#second_modal_background");
 }
 
-function show_tertiary_modal(modal_selector, submit_handler) {
-    do_show_modal(modal_selector, "#third_modal_background", 15000, submit_handler);
+function show_tertiary_modal(modal_selector, focus, submit_handler) {
+  if (arguments.length == 2 && Object.prototype.toString.call(focus) == "[object Function]") {
+    submit_handler = focus;
+    focus = null;
+  }
+  do_show_modal(modal_selector, focus, submit_handler,
+                "#third_modal_background", 15000);
 }
 
 function close_tertiary_modal(modal_selector) {
-    do_close_modal(modal_selector, "#third_modal_background");
+  do_close_modal(modal_selector, "#third_modal_background");
 }

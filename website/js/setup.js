@@ -25,7 +25,8 @@ function populate_details(details) {
   $("#roster_step a.button_link, "
     + "#classes_step a.button_link, "
     + "#awards_step a.button_link, "
-    + "#settings_step a.button_link").toggleClass('disabled', disabled);
+    + "#settings_step a.button_link, "
+    + "#scenes_step a.button_link").toggleClass('disabled', disabled);
   $("#purge_data_button")
     .prop('disabled', details.purge.nracers == 0 && details.purge.nawards == 0);
 

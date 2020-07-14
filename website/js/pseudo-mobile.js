@@ -4,8 +4,8 @@
 //
 // Assumes we're using jquery.mobile's CSS.
 
-function pseudo_mobile_radio() {
-  $("input:radio")
+function pseudo_mobile_radio(radio) {
+  radio
     .wrap("<div class='ui-radio'/>")
     .before(function() {
       var label = $("label[for='" + $(this).attr('id') + "']");
@@ -33,8 +33,7 @@ function pseudo_mobile_radio() {
   $("div[data-role='controlgroup']").find("label").last().addClass('ui-last-child');
 }
 
-function pseudo_mobile_select() {
-  var select = $("select");
+function pseudo_mobile_select(select) {
   select.wrap("<div class='ui-select'>" +
               "<div class='ui-btn ui-btn-a ui-icon-carat-d ui-btn-icon-right ui-corner-all ui-shadow'" +
               " id='sortorder-button'>" +
@@ -49,6 +48,6 @@ function pseudo_mobile_select() {
 }
 
 $(function() {
-  pseudo_mobile_select();
-  pseudo_mobile_radio();
+  pseudo_mobile_select($("select"));
+  pseudo_mobile_radio($("input:radio"));
 });

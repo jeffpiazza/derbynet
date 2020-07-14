@@ -96,13 +96,15 @@ function kiosk_page($addr) {
                'params' => '');
 }
 
-function xml_for_kiosk_pages($prefix) {
+function all_kiosk_pages_with_prefix($prefix) {
   $entries = array();
   $dh = opendir(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.$prefix);
   if ($dh !== false) {
     while (($entry = readdir($dh)) !== FALSE) {
       if (substr($entry, -6) == ".kiosk") {
-        $entries[] = substr($entry, 0, -6);
+        $brief = substr($entry, 0, -6);
+        $entries[] = array('brief' => $brief,
+                           'full' => $prefix.DIRECTORY_SEPARATOR.$entry);
       }
     }
   }
@@ -110,10 +112,20 @@ function xml_for_kiosk_pages($prefix) {
 
   sort($entries);
 
+  return $entries;
+}
+
+function all_kiosk_pages() {
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  return array_merge(all_kiosk_pages_with_prefix('kiosks'),
+                     all_kiosk_pages_with_prefix($configdir.DIRECTORY_SEPARATOR.'kiosks'));
+}
+
+function xml_for_kiosk_pages() {
+  $entries = all_kiosk_pages();
   foreach ($entries as $entry) {
-    $value = $prefix.DIRECTORY_SEPARATOR.$entry;
-    echo '<kiosk-page brief="'.htmlspecialchars($entry, ENT_QUOTES, 'UTF-8').'">'
-        .htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'.kiosk</kiosk-page>'."\n";
+    echo '<kiosk-page brief="'.htmlspecialchars($entry['brief'], ENT_QUOTES, 'UTF-8').'">'
+        .htmlspecialchars($entry['full'], ENT_QUOTES, 'UTF-8').'</kiosk-page>'."\n";
   }
 }
 
@@ -123,7 +135,7 @@ function xml_for_kiosk_pages($prefix) {
 // remain in the database on race day.
 function drop_old_kiosks() {
   global $db;
-  // 300 seconds in five minutes
+  // 300 seconds is five minutes
   $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 300');
 }
 ?>

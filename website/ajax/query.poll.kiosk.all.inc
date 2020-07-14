@@ -22,8 +22,6 @@ try {
   // One will be created if a kiosk actually connects.
 }
 
-xml_for_kiosk_pages('kiosks');
-$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
-xml_for_kiosk_pages($configdir.DIRECTORY_SEPARATOR.'kiosks');
+xml_for_kiosk_pages();
 ?>
 </kiosk.all>
