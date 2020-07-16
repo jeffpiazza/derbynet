@@ -1,15 +1,15 @@
-function setup_kiosk_previews() {
+function setup_kiosk_previews(all_scene_kiosk_names, all_kiosk_pages) {
   $("#previews").empty();
-  for (var i = 0; i < g_all_kiosk_names.length; ++i) {
+  for (var i = 0; i < all_scene_kiosk_names.length; ++i) {
     var sel = $("<select/>").append($("<option>(Unspecified)</option>").attr('value', -1));
-    for (var j = 0; j < g_all_pages.length; ++j) {
+    for (var j = 0; j < all_kiosk_pages.length; ++j) {
       sel.append($("<option/>")
                  .attr('value', j)
-                 .text(g_all_pages[j].brief));
+                 .text(all_kiosk_pages[j].brief));
     }
     sel.on('change', on_page_change);
 
-    var name = g_all_kiosk_names[i];
+    var name = all_scene_kiosk_names[i];
     $("#previews").append($("<div class='kiosk'/>")
                           .attr('data-kiosk', name)
                           .append($("<h3/>").text(name))
@@ -20,15 +20,15 @@ function setup_kiosk_previews() {
   }
 }
 
-function setup_scenes_select_control() {
+function setup_scenes_select_control(all_scenes, current_scene) {
   $("#scenes-select").empty();
   var first_selection = 0;
-  for (var i = 0; i < g_all_scenes.length; ++i) {
-    var scene = g_all_scenes[i];
+  for (var i = 0; i < all_scenes.length; ++i) {
+    var scene = all_scenes[i];
     $("#scenes-select").append($("<option/>")
                                .attr('value', scene.sceneid)
                                .text(scene.name));
-    if (scene.sceneid == g_current_scene) {
+    if (scene.sceneid == current_scene) {
       first_selection = i;
     }
   }
@@ -38,7 +38,7 @@ function setup_scenes_select_control() {
 
   $("#scenes-select")
     .on('change', on_scene_change)
-    .val(g_all_scenes[first_selection].sceneid)
+    .val(all_scenes[first_selection].sceneid)
     .trigger('change');
 }
 
@@ -51,7 +51,7 @@ function on_scene_change() {
     on_new_scene();
     return;
   }
-  var unspecified = g_all_kiosk_names.slice(0, g_all_kiosk_names.length);
+  var unspecified = g_all_scene_kiosk_names.slice(0, g_all_scene_kiosk_names.length);
   for (var i = 0; i < g_all_scenes.length; ++i) {
     var scene = g_all_scenes[i];
     if (scene.sceneid == sceneid) {
@@ -115,7 +115,7 @@ function on_new_scene() {
                                      name: name,
                                      kiosks: []});
                   g_current_scene = sceneid;
-                  setup_scenes_select_control();
+                  setup_scenes_select_control(g_all_scenes, g_current_scene);
                 }
               }
              });
@@ -152,7 +152,7 @@ function valid_new_kiosk_name() {
   if (v.length == 0) {
     return false;
   }
-  if (g_all_kiosk_names.findIndex((s) => { return s.toLowerCase() == v; }) >= 0) {
+  if (g_all_scene_kiosk_names.findIndex((s) => { return s.toLowerCase() == v; }) >= 0) {
     return false;
   }
   return true;
@@ -169,8 +169,8 @@ function on_add_kiosk() {
   show_modal("#new_kiosk_modal", $("#new_kiosk_name"), function(event) {
     close_modal("#new_kiosk_modal");
     if (valid_new_kiosk_name()) {
-      g_all_kiosk_names.push($("#new_kiosk_name").val());
-      g_all_kiosk_names.sort((e1, e2) => {
+      g_all_scene_kiosk_names.push($("#new_kiosk_name").val());
+      g_all_scene_kiosk_names.sort((e1, e2) => {
         if (e1 == "Main") return -1;
         if (e2 == "Main") return  1;
         if (e1 < e2) return -1;
@@ -178,8 +178,8 @@ function on_add_kiosk() {
         return 0;
       });
 
-      setup_kiosk_previews();
-      setup_scenes_select_control();
+      setup_kiosk_previews(g_all_scene_kiosk_names, g_all_pages);
+      setup_scenes_select_control(g_all_scenes, g_current_scene);
     }
     return false;
   });
@@ -202,7 +202,7 @@ function on_delete_scene() {
 }
 
 $(function() {
-  setup_kiosk_previews();
-  setup_scenes_select_control();
+  setup_kiosk_previews(g_all_scene_kiosk_names, g_all_pages);
+  setup_scenes_select_control(g_all_scenes, g_current_scene);
 });
 
