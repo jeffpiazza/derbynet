@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "<success>$nbytes bytes</success>\n";
   } else {
     echo "<failure>Can't open ".read_raceinfo('timer-log')."\n";
-    echo json_encode(error_get_last(), JSON_HEX_AMP | JSON_PRETTY_PRINT);
+    echo json_encode(error_get_last(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT);
     echo "</failure>\n";
   }
 } else {
