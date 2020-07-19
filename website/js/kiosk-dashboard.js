@@ -1,3 +1,6 @@
+var g_unclaimed_scene_kiosk_names;
+
+
 //////////////////////////////////////////////////////////////////////////
 // Polling for kiosk dashboard
 //////////////////////////////////////////////////////////////////////////
@@ -7,9 +10,7 @@ function poll_kiosk_all() {
           data: {query: 'poll.kiosk.all'},
           success: function(data) {
             setTimeout(poll_kiosk_all, 2000);
-            generate_kiosk_control_group(parse_kiosk_pages(data),
-                                         parse_kiosks(data));
-            $("#kiosk_control_group").trigger("create");
+            process_polled_data(data);
           },
           error: function() {
             setTimeout(poll_kiosk_all, 2000);
@@ -122,6 +123,7 @@ function configure_title_and_class_ids(kiosk, kiosk_select) {
 
 //////////////////////////////////////////////////////////////////////////
 // Construct dynamic elements for kiosk dashboard
+
 //////////////////////////////////////////////////////////////////////////
 // The polling rate for the page is relatively fast, and each time
 // causes a rewrite of everything for all the kiosks.  If the user has
@@ -141,9 +143,21 @@ function hash_string(hash, str) {
   return hash;
 }
 
-// pages: array of {brief:, path:}
-// kiosks: array of {name:, address:, last_contact:, assigned_page:, parameters:}
-function generate_kiosk_control_group(pages, kiosks) {
+function process_polled_data(data) {
+  var pages = parse_kiosk_pages(data);
+  var kiosks = parse_kiosks(data);
+
+  var current_scene = data.getElementsByTagName("current-scene");
+  if (current_scene.length > 0) {
+    current_scene = current_scene[0].getAttribute("id");
+    if (current_scene != g_current_scene) {
+      g_current_scene = current_scene;
+      $("#scenes-select")
+        .val(g_current_scene == '' ? -1 : g_current_scene)
+        .trigger('change', /*synthetic*/true);
+    }
+  }
+
   var hash = 0;
   for (var i = 0; i < kiosks.length; ++i) {
     var kiosk = kiosks[i];
@@ -154,22 +168,46 @@ function generate_kiosk_control_group(pages, kiosks) {
     hash = hash_string(hash, JSON.stringify(kiosk.parameters));
   }
   if (hash != g_kiosk_hash) {
-    for (var kiosk_page in g_kiosk_page_handlers) {
-      var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
-      if ('init_for_rebuild' in kiosk_page_handler) {
-        kiosk_page_handler.init_for_rebuild();
-      }
-    }
-    $("#kiosk_control_group").empty();
-    if (kiosks.length == 0) {
-      $("#kiosk_control_group").append("<h3>No kiosks are presently registered.</h3>");
-    } else {
-      for (var i = 0; i < kiosks.length; ++i) {
-        generate_kiosk_control(i, kiosks[i], pages);
-      }
-    }
     g_kiosk_hash = hash;
+    generate_kiosk_control_group(pages, kiosks);
+    $("#kiosk_control_group").trigger("create");
+    update_kiosk_names(kiosks);
   }
+}
+
+// pages: array of {brief:, path:}
+// kiosks: array of {name:, address:, last_contact:, assigned_page:, parameters:}
+function generate_kiosk_control_group(pages, kiosks) {
+  for (var kiosk_page in g_kiosk_page_handlers) {
+    var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
+    if ('init_for_rebuild' in kiosk_page_handler) {
+      kiosk_page_handler.init_for_rebuild();
+    }
+  }
+  $("#kiosk_control_group").empty();
+  if (kiosks.length == 0) {
+    $("#kiosk_control_group").append("<h3>No kiosks are presently registered.</h3>");
+  } else {
+    for (var i = 0; i < kiosks.length; ++i) {
+      generate_kiosk_control(i, kiosks[i], pages);
+    }
+  }
+}
+
+function update_kiosk_names(kiosks) {
+  if (kiosks.length > 1) {
+    $("#scenes-control").removeClass('hidden');
+  }
+  var name_count = 0;
+  for (var i = 0; i < kiosks.length; ++i) {
+    if (kiosks[i].name != '') {
+      ++name_count;
+    }
+  }
+  $("#scenes-status-message")
+    .text(name_count + " named kiosk" + (name_count == 1 ? "" : "s")
+          + (name_count < kiosks.length ? " out of " + kiosks.length : ""))
+    .toggleClass('red-text', name_count < kiosks.length);
 }
 
 // Returns an array of entries, {brief:, path:}, describing each available kiosk page.
@@ -261,6 +299,42 @@ function generate_kiosk_control(index, kiosk, pages) {
 // Controls for assigning pages to kiosks
 //////////////////////////////////////////////////////////////////////////
 
+function setup_scenes_select_control() {
+  $("#scenes-select").empty();
+  $("#scenes-select").append($("<option/>")
+                             .attr('value', -1)
+                             .text(""));
+  for (var i = 0; i < g_all_scenes.length; ++i) {
+    var scene = g_all_scenes[i];
+    $("#scenes-select").append($("<option/>")
+                               .attr('value', scene.sceneid)
+                               .text(scene.name));
+  }
+
+  $("#scenes-select")
+    .on('change', on_scene_change)
+    .val(g_current_scene == '' ? -1 : g_current_scene)
+    .trigger('change', /*synthetic*/true);
+}
+$(function() { setup_scenes_select_control(); });
+
+// synthetic=false if user triggered scene change
+function on_scene_change(event, synthetic) {
+  if (!synthetic) {
+    var val = $("#scenes-select").val();
+    if (val >= 0) {
+      $.ajax(g_action_url,
+             {type: 'POST',
+              data: {action: 'scene.apply',
+                     sceneid: val},
+              success: function(data) {
+                process_polled_data(data);
+              },
+             });
+    }
+  }
+}
+
 // sel is the <select data-kiosk-address> input element
 function handle_assign_kiosk_page_change(sel) {
   $.ajax(g_action_url,
@@ -269,16 +343,28 @@ function handle_assign_kiosk_page_change(sel) {
                  address: sel.getAttribute('data-kiosk-address'),
                  page: sel.value},
           success: function(data) {
-            generate_kiosk_control_group(parse_kiosk_pages(data),
-                                         parse_kiosks(data));
-            $("#kiosk_control_group").trigger("create");
+            process_polled_data(data);
           },
          });
 }
 
+function on_click_preferred_name(event) {
+  console.log(event.target);
+  console.log($(event.target).text());
+  $("#kiosk_name_field").val($(event.target).text()).focus();
+  return false;
+}
+
 function show_kiosk_naming_modal(address, name) {
   $("#kiosk_name_field").val(name);
-  show_modal("#kiosk_modal", function(event) {
+  $("#preferred_kiosk_names").empty();
+  for (var i = 0; i < g_all_scene_kiosk_names.length; ++i) {
+    $("#preferred_kiosk_names")
+      .append($("<div class='ui-btn'/>").text(g_all_scene_kiosk_names[i])
+              .on('click', on_click_preferred_name));
+  }
+  $("#preferred_kiosk_names").trigger('create');
+  show_modal("#kiosk_modal", $("#kiosk_name_field"), function(event) {
     handle_name_kiosk(address, $("#kiosk_name_field").val());
     return false;
   });
@@ -292,9 +378,7 @@ function handle_name_kiosk(address, name) {
                  address: address,
                  name: name},
           success: function(data) {
-            generate_kiosk_control_group(parse_kiosk_pages(data),
-                                         parse_kiosks(data));
-            $("#kiosk_control_group").trigger("create");
+            process_polled_data(data);
           },
          });
 }
@@ -422,9 +506,7 @@ function post_new_params(kiosk, new_params) {
                  address: kiosk.address,
                  params: JSON.stringify(new_params)},
           success: function(data) {
-            generate_kiosk_control_group(parse_kiosk_pages(data),
-                                         parse_kiosks(data));
-            $("#kiosk_control_group").trigger("create");
+            process_polled_data(data);
           },
          });
 }

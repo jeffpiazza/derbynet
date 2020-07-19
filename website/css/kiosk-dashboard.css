@@ -1,3 +1,31 @@
+div#scenes-control {
+  display: inline-block;
+  width: 500px;
+  font-size: 24px;
+}
+div#scenes-control label {
+  display: inline-block;
+  width: 150px;
+  font-size: 20px;
+}
+#scenes-status-message {
+  font-size: 16px;
+  margin-left: 60px;
+}
+.red-text {
+  color: red;
+  font-weight: bold;
+}
+
+div#select-wrap {
+  display: inline-block;
+  width: 300px;
+}
+
+div#select-wrap .ui-btn.ui-btn-a,
+div#select-wrap .ui-btn {
+  font-size: 20px;
+}
 
 .control_group {
   border: 3px solid #023882;

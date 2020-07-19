@@ -96,6 +96,45 @@ function kiosk_page($addr) {
                'params' => '');
 }
 
+// Returns an array of {address, name, page, parameters, last_contact}
+function all_kiosks() {
+  global $db;
+  $kiosks = array();
+  try {
+    drop_old_kiosks();
+    $stmt = $db->query('SELECT address, name, page, last_contact'
+                       .' FROM Kiosks'
+                       .' ORDER BY '
+                       .'     CASE name WHEN \'Main\' THEN \'\' ELSE name END,'
+                       .'        address, last_contact');
+    foreach ($stmt as $row) {
+      parse_kiosk_params($row);
+      $kiosks[] = array('name' => $row['name'],
+                        'address' => $row['address'],
+                        'last_contact' => $row['last_contact'],
+                        'page' => $row['page'],
+                        'parameters' => $row['params']);
+    }
+  } catch (PDOException $p) {
+    // Most likely: no kiosks table.
+    // One will be created if a kiosk actually connects.
+  }
+  return $kiosks;
+}
+
+function xml_for_all_kiosks() {
+  foreach (all_kiosks() as $row) {
+    echo '<kiosk>'."\n";
+    echo '  <name>'.htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8').'</name>'."\n";
+    echo '  <address>'.htmlspecialchars($row['address'], ENT_QUOTES, 'UTF-8').'</address>'."\n";
+    echo '  <last_contact>'.floor((time() - $row['last_contact'])/60)
+    .' minute(s) ago</last_contact>'."\n";
+    echo '  <assigned_page>'.htmlspecialchars($row['page'], ENT_QUOTES, 'UTF-8').'</assigned_page>'."\n";
+    echo '  <parameters>'.htmlspecialchars($row['parameters'], ENT_QUOTES, 'UTF-8').'</parameters>'."\n";
+    echo '</kiosk>'."\n";
+  }
+}
+
 function all_kiosk_pages_with_prefix($prefix) {
   $entries = array();
   $dh = opendir(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.$prefix);
