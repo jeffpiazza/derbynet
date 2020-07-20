@@ -550,7 +550,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
                     array(':roundid' => $roundid));
 
 	if (schedule_one_round($roundid, $adjuster->number_of_usable_lanes(),
-                           $n_runs_per_lane)) {
+                           $n_runs_per_lane, /* trace */ false)) {
       echo "<success/>\n";
     } else {
       echo '<failure code="too-few-racers">'

@@ -10,8 +10,8 @@
 // abandon those heats from the rough schedule that would cause any car to have
 // second run.
 
-require_once('inc/schedule_generator.inc');
-// require_once('inc/schedule_ordered.inc');
+require_once('inc/schedule_rough.inc');
+require_once('inc/schedule_ordered.inc');
 require_once('inc/schedule_utils.inc');
 
 // Returns roster, where roster[sequence] = racerid,
@@ -72,19 +72,20 @@ function write_chart($roundid, &$heats) {
 
 // The top-level scheduling function.  Constructs a schedule, converts to a race
 // chart, and writes the race chart into the database.
-function schedule_one_round($roundid, $nlanes, $n_runs_per_lane = 1) {
+function schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace) {
   $roster = read_roster($roundid);
   if (count($roster) < 2) {
     return false;
   }
   while (count($roster) < $nlanes) {
-    $roster[] = null;
+    $roster[] = null;  // Byes to bring up the roster count to at least the number of lanes
   }
   $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
   while (count($roster) * $max_runs_per_car % $nlanes != 0) {
     $roster[] = null;
   }
-  $sched = make_ordered_schedule($nlanes, count($roster), $n_runs_per_lane);
+  $sched = make_ordered_schedule($nlanes, count($roster), $n_times_per_lane,
+                                 $max_runs_per_car, $trace);
   write_chart($roundid, spread_across_unused_lanes(form_chart($sched, $roster)));
   return true;
 }

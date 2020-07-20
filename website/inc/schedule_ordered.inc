@@ -52,33 +52,43 @@ function rate_consecutive(&$prev_heat, &$next_heat) {
 }
 
 function rate_next_heat(&$prev_heat, $n_prev_heats, &$next_heat, &$appearances) {
-  if ($n_prev_heats == 0) {
-    return rate_race_counts($next_heat, $n_prev_heats, $appearances);
-  } else {
-    return rate_race_counts($next_heat, $n_prev_heats, $appearances) + rate_consecutive($prev_heat, $next_heat);
+  $rating = rate_race_counts($next_heat, $n_prev_heats, $appearances);
+  if ($n_prev_heats > 0) {
+    $rating += rate_consecutive($prev_heat, $next_heat);
   }
+  return $rating;
 }
 
 // Starts with the rough schedule (as produced by generator(s)), and then
 // reorders the heats to optimize goals of keeping even race counts, and
 // avoiding consecutive races for the same racer.
-function make_ordered_schedule($nlanes, $ncars, $nrounds) {
-  $rough = make_rough_schedule($nlanes, $ncars, $nrounds);
+function make_ordered_schedule($nlanes, $ncars, $n_times_per_lane,
+                               $max_runs_per_car, $trace) {
+  $rough = make_rough_schedule($nlanes, $ncars, $n_times_per_lane,
+                               $max_runs_per_car, $trace);
+  if (empty($rough)) {
+    return $rough;
+  }
+
+  // $appearances[$car] tells how many times $car has appeared in the ordered schedule
   $appearances = array();
   for ($i = 0; $i < $ncars; ++$i) {
     $appearances[] = 0;
   }
-  $max_runs_per_car = read_raceinfo('max-runs-per-car', 0);
 
   $ordered = array();
   $prev_heat = array();
-  for ($round = 0; $round < $nrounds; ++$round) {
+  for ($round = 0; $round < $n_times_per_lane; ++$round) {
     for ($car_index = 0; $car_index < $ncars; ++$car_index) {
       $best_heat_index = count($rough) - 1;
       $best_heat_score = 10000;
       for ($rough_i = 0; $rough_i < count($rough); ++$rough_i) {
         if ($rough[$rough_i]) {
-          $score = rate_next_heat($prev_heat, count($ordered), $rough[$rough_i], $appearances);
+          $score = rate_next_heat($prev_heat, count($ordered), $rough[$rough_i],
+                                  $appearances);
+          if ($trace > 1) {
+            echo "<rating score='".$score."' index='".$rough_i."'/>";
+          }
           if ($score < $best_heat_score - 0.00001) {
             $best_heat_score = $score;
             $best_heat_index = $rough_i;
@@ -86,6 +96,12 @@ function make_ordered_schedule($nlanes, $ncars, $nrounds) {
         }
       }
 
+      if ($trace) {
+        echo "<ordered rough_index='".$best_heat_index."' score='".$best_heat_score."'>";
+        echo json_encode($rough[$best_heat_index]);
+        echo "</ordered>\n";
+      }
+      
       $prev_heat = $rough[$best_heat_index];
       $rough[$best_heat_index] = NULL;
       foreach ($prev_heat as $car) {
