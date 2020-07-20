@@ -1,5 +1,8 @@
 <?php
 // $_POST['sceneid'] OR $_POST['name'] to select the scene
+
+require_once('inc/scenes.inc');
+
 start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
@@ -13,17 +16,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   if (isset($sceneid)) {
-    write_raceinfo('current_scene', $sceneid);
-    $upd = $db->prepare('UPDATE Kiosks SET page = :page WHERE name = :name');
-
-    $stmt = $db->prepare('SELECT kiosk_name, page FROM SceneKiosk'
-                         .' WHERE sceneid = :sceneid'
-                         .' AND PAGE <> \'\'');
-    $stmt->execute(array(':sceneid' => $sceneid));
-    foreach ($stmt as $row) {
-      $upd->execute(array(':name' => $row['kiosk_name'],
-                          ':page' => $row['page']));
-    }
+    apply_scene($sceneid);
     echo "<success/>\n";
     require('ajax/query.poll.kiosk.all.inc');
   }

@@ -22,6 +22,11 @@ require_once('inc/schema_version.inc');
    Roster(racerid) -> RegistrationInfo
 
    Rounds(classid) -> Classes
+
+   SceneKiosk(sceneid) -> Scenes
+
+   Playlist(roundid) -> Rounds
+   Playlist(sceneid_at_finish) -> Scenes
  */
 
 $schema = array('Classes' => array('classid', 'class'),
@@ -49,5 +54,10 @@ if (schema_version() >= 2) {
 if (schema_version() >= 3) {
   $schema['Classes'][] = 'constituents';
   $schema['Classes'][] = 'durable';
+
+  $schema['SceneKiosk'] = array('sceneid', 'kiosk_name', 'page');
+  $schema['Scenes'] = array('sceneid', 'name', 'sortorder');
+  $schema['Playlist'] = array('playlistid', 'seq', 'roundid', 'n_times_per_lane',
+                              'sceneid_at_finish', 'continue_racing');
 }
 ?>

@@ -12,7 +12,7 @@ foreach ($stmt as $row) {
     if ($last_sceneid >= 0) {
       echo "</scene>\n";
     }
-    echo  "<scene name=\"".htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8')."\">\n";
+    echo  "<scene id=\"$row[sceneid]\" name=\"".htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8')."\">\n";
     $last_sceneid = $row['sceneid'];
   }
 

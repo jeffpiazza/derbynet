@@ -49,4 +49,19 @@ function all_scene_kiosk_names() {
   }
   return $all_kiosk_names;
 }
+
+function apply_scene($sceneid) {
+  global $db;
+  write_raceinfo('current_scene', $sceneid);
+  $upd = $db->prepare('UPDATE Kiosks SET page = :page WHERE name = :name');
+
+  $stmt = $db->prepare('SELECT kiosk_name, page FROM SceneKiosk'
+                       .' WHERE sceneid = :sceneid'
+                       .' AND PAGE <> \'\'');
+  $stmt->execute(array(':sceneid' => $sceneid));
+  foreach ($stmt as $row) {
+    $upd->execute(array(':name' => $row['kiosk_name'],
+                        ':page' => $row['page']));
+  }
+}
 ?>
