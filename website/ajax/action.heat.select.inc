@@ -20,6 +20,7 @@
 
 require_once('inc/autoadvance.inc');
 require_once('inc/racing-state.inc');
+require_once('inc/scenes.inc');
 
 start_response();
 
@@ -48,7 +49,11 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   if ($ok && isset($_POST['now_racing'])) {
-    if (!set_racing_state($_POST['now_racing'])) {
+    if (set_racing_state($_POST['now_racing'])) {
+      if ($_POST['now_racing']) {
+        maybe_apply_racing_scene();
+      }
+    } else {
       // This 'if' test is to control the wording of the failure
       // message from clicking the 'race' button for a heat whose
       // first result already has data.

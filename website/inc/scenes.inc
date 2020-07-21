@@ -64,4 +64,11 @@ function apply_scene($sceneid) {
                         ':page' => $row['page']));
   }
 }
+
+function maybe_apply_racing_scene() {
+  $racing_scene = read_raceinfo('racing_scene', '');
+  if ($racing_scene) {
+    apply_scene($racing_scene);
+  }
+}
 ?>

@@ -7,6 +7,7 @@ require_once('inc/autoadvance.inc');
 require_once('inc/events.inc');
 require_once('inc/timer-state.inc');
 require_once('inc/last-heat.inc');
+require_once('inc/scenes.inc');
 
 start_response();
 
@@ -58,6 +59,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
                          ':heat' => $heat));
 
     if (set_racing_state(1)) {
+      maybe_apply_racing_scene();
       // If a heat was already staging (or running!), force it back to a CONNECTED
       // state, so that the next message from the timer will trigger a new
       // heat-ready element.  (No <abort/> gets sent, though.)

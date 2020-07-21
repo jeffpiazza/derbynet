@@ -58,6 +58,8 @@ function playlist_after_round($roundid) {
     // apply the scene immediately.
     apply_scene($playlist['sceneid_at_finish']);
   } else if ($playlist['continue_racing']) {
+    // Since we were racing before, DON'T re-apply the racing scene, as user may
+    // have customized their set-up for whatever reason.
     set_racing_state(1);
   }
 }

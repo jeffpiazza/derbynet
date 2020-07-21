@@ -8,8 +8,6 @@ user_login_coordinator
 
 `dirname $0`/reset-database.sh $BASE_URL
 
-curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=2" | check_success
-
 # $1 = car number
 # $2 = classname
 function make_racer() {
@@ -36,7 +34,11 @@ curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/welco
 
 # Assuming Den1's first round is roundid = 1, etc.
 #
-# Assuming sceneid 4 is "Awards", with awards-presentation kiosk on Main
+# Assuming sceneid 3 is "Racing"  with now-racing page on Main,
+# and sceneid 4 is "Awards", with awards-presentation page on Main
+
+curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=2" | check_success
+curl_post action.php "action=settings.write&racing_scene=3" | check_success
 
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
@@ -46,6 +48,7 @@ curl_post action.php "action=playlist.new&roundid=3&n_times_per_lane=1" | check_
 
 # Race roundid=1:
 curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
@@ -58,10 +61,12 @@ curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.2.
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one now-racing=.0.
 
-curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/now-racing.kiosk" | check_success
+curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_success
 
 # Race roundid=2:
 curl_post action.php "action=heat.select&now_racing=1" | check_success
+curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
+
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
 curl_post action.php "action=timer-message&message=STARTED" | check_success
