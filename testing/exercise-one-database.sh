@@ -38,7 +38,6 @@ run_tests() {
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-scenes.sh "$BASE_URL"
-    `dirname $0`/test-playlists.sh "$BASE_URL"
 
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
@@ -54,6 +53,9 @@ run_tests() {
 
 ############################## Points Racing ##############################
     `dirname $0`/test-points-racing.sh "$BASE_URL"
+
+############################## Playlists ##############################
+    `dirname $0`/test-playlists.sh "$BASE_URL"
 
 ############################## One-Run-Per-Car Racing ##############################
     `dirname $0`/test-model-a-club.sh "$BASE_URL"
