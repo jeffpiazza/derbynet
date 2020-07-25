@@ -15,11 +15,10 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Timer</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
-<link rel="stylesheet" type="text/css" href="css/flipswitch.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/timer.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/flipswitch.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/timer.js"></script>
 <script type="text/javascript">

@@ -12,10 +12,10 @@ require_permission(SET_UP_PERMISSION);
 <head>
 <title>Scenes</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/scenes.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/pseudo-mobile.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type='text/javascript' src="js/modal.js"></script>
 <script type='text/javascript' src="js/scenes.js"></script>
 <script type='text/javascript'>

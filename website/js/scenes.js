@@ -16,7 +16,7 @@ function setup_kiosk_previews(all_scene_kiosk_names, all_kiosk_pages) {
                           .append($("<div class='page-div'/>")
                                   .append(sel))
                          );
-    pseudo_mobile_select(sel);
+    mobile_select(sel);
   }
 }
 
@@ -35,7 +35,6 @@ function setup_scenes_select_control(all_scenes, current_scene) {
   $("#scenes-select").append($("<option/>")
                              .attr('value', -1)
                              .text("(New scene)"));
-
   $("#scenes-select")
     .on('change', on_scene_change)
     .val(all_scenes[first_selection].sceneid)

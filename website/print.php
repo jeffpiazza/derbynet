@@ -63,13 +63,13 @@ uasort($doc_classes, 'order_by_name');
 <title>Printables</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/print.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-<script type="text/javascript" src="js/pseudo-mobile.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/print.js"></script>
 <script type="text/javascript">
 var doc_classes = <?php echo json_encode($doc_classes); ?>;
@@ -90,7 +90,7 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
 
 $radio_count = 0;
 $last_type = '';
-echo "<div data-role='controlgroup'>\n";
+echo "<div class='mradiogroup' data-role='controlgroup'>\n";
 foreach ($doc_classes as $c => $details) {
   ++$radio_count;
   $options = $details['options'];
