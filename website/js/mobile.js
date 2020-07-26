@@ -47,6 +47,19 @@ function mobile_select(selects) {
   });
 }
 
+// Update appearance to match the current selection
+function mobile_select_refresh(select) {
+  select = $(select);
+  select.prev("span").text(select.find("option:selected").text());
+}
+
+function mobile_text(texts) {
+  $(texts).each(function(i, text) {
+    text = $(text);
+    text.wrap("<div class='mtext'/>");
+  });
+}
+
 // checkbox is an element to wrap.
 function flipswitch(checkboxes) {
   // Consider each checkbox individually, for classes and checked state
@@ -77,8 +90,9 @@ function flipswitch(checkboxes) {
 $(function() {
   flipswitch($("input.flipswitch[type=checkbox]"));
   // While checkboxes need class='flipswitch' for conversion, <select> and
-  // <input type=radio> elements get converted unless they're marked with a
-  // not-mobile class.
+  // <input type=radio> and <input type=text> elements get converted unless
+  // they're marked with a not-mobile class.
   mobile_select($("select").not("not-mobile"));
   mobile_radio($("input:radio").not("not-mobile"));
+  mobile_text($("input[type='text']").not("not-mobile"));
 });

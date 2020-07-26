@@ -1,4 +1,4 @@
-.ui-listview > li > p {
+.mlistview > li > p {
     margin: 0;
     display: block;
     position: relative;
@@ -18,26 +18,22 @@ border-width: 1px 0 0 0;
 border-style: solid;
 }
 
-.ui-listview > li > p span {
+.mlistview > li > p span {
     font-size: 16px;
     font-weight: bold;
 }
 
-.ui-listview > li > p span.count {
+.mlistview > li > p span.count {
     float: right;
 }
 
-.ui-listview > li.ui-li-has-alt > p + a.ui-btn {
-position: absolute;
-width: 2.5em;
-height: 100%;
-box-sizing: border-box;
-border-left-width: 1px;
-top: 0;
-right: 0;
-margin: 0;
-padding: 0;
-z-index: 2;
+
+.mlistview.has-alts > li > p + a {
+  /* 998 */
+  background-color: #f6f6f6;
+  border-color: #ddd;
+  color: #333;
+  text-shadow: 0 1px 0 #f3f3f3;
 }
 
 #directories_above-button {
@@ -64,19 +60,8 @@ z-index: 2;
     padding-top: 40px;
 }
 
-#aggregate-constituents .ui-flipswitch {
-  margin-left: auto;
-  margin-right: auto;
-  padding: 5px;
-  width: 6.875em;
-}
-#aggregate-constituents .ui-flipswitch span {
+#aggregate-constituents .flipswitch span {
   font-size: 16px;
-}
-
-#aggregate-constituents .ui-flipswitch.ui-flipswitch-active {
-    padding-left: 5em;
-    width: 1.875em;
 }
 
 #aggregate-constituents label {

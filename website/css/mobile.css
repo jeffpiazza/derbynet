@@ -330,3 +330,255 @@ div.flipswitch.racing.checked {
   padding-left:	168px;
   width:	48px;
 }
+
+
+.mlistview {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mlistview > li {
+  list-style: none;
+  display: block;
+  position: relative;
+  overflow: visible;
+  margin: 0;
+  display: block;
+  position: relative;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  padding: .7em 1em;
+}
+
+.mlistview.has-thumbs > li {
+  min-height: 3.625em;
+  padding-left: 6.25em;
+}
+
+.mlistview.has-thumbs > li > img:first-child {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-height: 5em;
+  max-width: 5em;
+}
+
+.mlistview > li p {
+  font-size: .75em;
+  font-weight: normal;
+  display: block;
+  margin: .6em 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* mlistview has-alts expects each li to contain a <p> and an <a> element, or exactly two <a> elements. */
+.mlistview.has-alts > li {
+  padding: 0;
+  border-width: 0;
+}
+
+.mlistview.has-alts > li > a:first-child,
+.mlistview.has-alts > li > p:first-child {
+  font-size: 1em;
+  line-height: 1.3;
+  font-family: sans-serif;
+
+  font-weight: bold;
+  border-width: 1px;
+  border-style: solid;
+
+  font-size: 16px;
+  margin: .5em 0;
+  padding: .7em 1em;
+  display: block;
+  position: relative;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  margin: 0;
+  display: block;
+  position: relative;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+  border-width: 1px 0 0 0;
+  border-style: solid;
+
+  margin-right: 2.5em;
+  border-right-width: 0;
+}
+
+.mlistview > li:last-child {
+  border-bottom-width: 1px;
+}
+
+.mlistview.has-alts > li:last-child {
+  border-bottom-width: 0px;
+}
+
+.mlistview.has-alts > li:last-child > a {
+  border-bottom-width: 1px;
+}
+
+.mlistview.has-alts > li > a + a,
+.mlistview.has-alts > li > p + a {
+  line-height: 1.3;
+  font-family: sans-serif;
+
+  font-weight: bold;
+
+  font-size: 16px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  text-indent: -9999px;
+  white-space: nowrap !important;
+
+  display: block;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+  border-width: 1px 0 0 0;
+  border-style: solid;
+
+  margin-right: 2.5em;
+  border-right-width: 0;
+
+  -webkit-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  position: absolute;
+  width: 2.5em;
+  height: 100%;
+  min-height: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border-left-width: 1px;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+
+  /* 3614 li.ui-first-child only */
+  -webkit-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -webkit-border-top-right-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.mlistview.has-alts > li > a + a:after,
+.mlistview.has-alts > li > p + a:after {
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20style%3D%22enable-background%3Anew%200%200%2014%2014%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M13.621%2C5.904l-1.036-0.259c-0.168-0.042-0.303-0.168-0.355-0.332c-0.092-0.284-0.205-0.559-0.339-0.82%20c-0.079-0.153-0.073-0.337%2C0.017-0.486l0.549-0.915c0.118-0.196%2C0.088-0.448-0.075-0.61l-0.862-0.863%20c-0.162-0.163-0.414-0.193-0.611-0.075l-0.916%2C0.55C9.844%2C2.182%2C9.659%2C2.188%2C9.506%2C2.109C9.244%2C1.975%2C8.97%2C1.861%2C8.686%2C1.77%20c-0.165-0.052-0.29-0.187-0.332-0.354L8.095%2C0.379C8.039%2C0.156%2C7.839%2C0%2C7.609%2C0H6.391c-0.229%2C0-0.43%2C0.156-0.485%2C0.379L5.646%2C1.415%20C5.604%2C1.582%2C5.479%2C1.718%2C5.313%2C1.77c-0.284%2C0.092-0.559%2C0.206-0.82%2C0.34C4.339%2C2.188%2C4.155%2C2.182%2C4.007%2C2.093L3.092%2C1.544%20c-0.196-0.118-0.448-0.087-0.61%2C0.075L1.619%2C2.481C1.457%2C2.644%2C1.426%2C2.896%2C1.544%2C3.093l0.549%2C0.914%20c0.089%2C0.148%2C0.095%2C0.332%2C0.017%2C0.486C1.975%2C4.755%2C1.861%2C5.029%2C1.77%2C5.314c-0.053%2C0.164-0.188%2C0.29-0.354%2C0.332L0.379%2C5.905%20C0.156%2C5.961%2C0%2C6.161%2C0%2C6.391v1.219c0%2C0.229%2C0.156%2C0.43%2C0.379%2C0.485l1.036%2C0.26C1.582%2C8.396%2C1.717%2C8.521%2C1.77%2C8.687%20c0.092%2C0.284%2C0.205%2C0.559%2C0.34%2C0.82C2.188%2C9.66%2C2.182%2C9.844%2C2.093%2C9.993l-0.549%2C0.915c-0.118%2C0.195-0.087%2C0.448%2C0.075%2C0.61%20l0.862%2C0.862c0.162%2C0.163%2C0.414%2C0.193%2C0.61%2C0.075l0.915-0.549c0.148-0.089%2C0.332-0.095%2C0.486-0.017%20c0.262%2C0.135%2C0.536%2C0.248%2C0.82%2C0.34c0.165%2C0.053%2C0.291%2C0.187%2C0.332%2C0.354l0.259%2C1.036C5.96%2C13.844%2C6.16%2C14%2C6.39%2C14h1.22%20c0.229%2C0%2C0.43-0.156%2C0.485-0.379l0.259-1.036c0.042-0.167%2C0.168-0.302%2C0.333-0.354c0.284-0.092%2C0.559-0.205%2C0.82-0.34%20c0.154-0.078%2C0.338-0.072%2C0.486%2C0.017l0.914%2C0.549c0.197%2C0.118%2C0.449%2C0.088%2C0.611-0.074l0.862-0.863%20c0.163-0.162%2C0.193-0.415%2C0.075-0.611l-0.549-0.915c-0.089-0.148-0.096-0.332-0.017-0.485c0.134-0.263%2C0.248-0.536%2C0.339-0.82%20c0.053-0.165%2C0.188-0.291%2C0.355-0.333l1.036-0.259C13.844%2C8.039%2C14%2C7.839%2C14%2C7.609V6.39C14%2C6.16%2C13.844%2C5.96%2C13.621%2C5.904z%20M7%2C10%20c-1.657%2C0-3-1.343-3-3s1.343-3%2C3-3s3%2C1.343%2C3%2C3S8.657%2C10%2C7%2C10z%22%2F%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+
+  /* 856 */
+  background-color: #666;
+  background-color: rgba(0,0,0,.3);
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-border-radius: 1em;
+  border-radius: 1em;
+
+  /* 1579 */
+  content: "";
+  position: absolute;
+  display: block;
+  width: 22px;
+  height: 22px;
+
+  /* 1590 */
+  top: 50%;
+  margin-top: -11px;
+
+  /* 1614 */
+  left: 50%;
+  margin-left: -11px;
+}
+
+/* awards-presentation.php, chooser use li.ui-btn.ui-btn-icon-right.ui-icon-carat-r */
+li.icon-right:after {
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20style%3D%22enable-background%3Anew%200%200%2014%2014%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpolygon%20style%3D%22fill%3A%23FFFFFF%3B%22%20points%3D%223.404%2C2.051%208.354%2C7%203.404%2C11.95%205.525%2C14.07%2012.596%2C7%205.525%2C-0.071%20%22%2F%3E%3C%2Fsvg%3E");
+}
+
+
+div.mtext {
+  /* 802 */
+  -webkit-border-radius: .3125em;
+  border-radius: .3125em;
+
+  /* 825 */
+  -webkit-background-clip: padding;
+  background-clip: padding-box;
+
+  /* 844 */
+  -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+  -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.2);
+
+  /* 4065 */
+  margin: .5em 0;
+  border-width: 1px;
+  border-style: solid;
+
+  /* 956 */
+  background-color: #fff;
+  border-color: #ddd;
+  color: #333;
+  text-shadow: 0 1px 0 #f3f3f3;
+
+  /* 1074 */
+  -webkit-box-shadow: 0 0 12px #3388cc;
+  -moz-box-shadow: 0 0 12px #3388cc;
+  box-shadow: 0 0 12px #3388cc;
+}
+
+div.mtext input[type='text'] {
+  /* 742 */
+  color: inherit;
+  text-shadow: inherit;
+
+  /* 4071 */
+  padding: .4em;
+  line-height: 1.4em;
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: 0;
+
+  /* 4084 */
+  margin: 0;
+  min-height: 2.2em;
+  text-align: left;
+  border: 0;
+  background: transparent none;
+  -webkit-appearance: none;
+  -webkit-border-radius: inherit;
+  border-radius: inherit;
+}

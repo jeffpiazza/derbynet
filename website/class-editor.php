@@ -11,17 +11,15 @@ require_permission(SET_UP_PERMISSION);
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title><?php echo group_label(); ?> Editor</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/class-editor.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
-<script type="text/javascript" src="js/mobile-init.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<script type="text/javascript" src="js/wrap-flipswitch.js"></script>
 <script type="text/javascript" src="js/class-editor.js"></script>
 <script type="text/javascript">
 function use_subgroups() { return <?php echo json_encode(use_subgroups()); ?>; }
@@ -45,7 +43,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     <h3>Drag to Re-order <?php echo plural(group_label()); ?></h3>
 
     <div id="groups_container">
-      <ul id="groups" data-role="listview" data-split-icon="gear">
+      <ul id="groups" class="mlistview has-alts">
       </ul>
     </div>
 
