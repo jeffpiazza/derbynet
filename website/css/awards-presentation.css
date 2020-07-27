@@ -1,3 +1,18 @@
+.block_buttons span {
+  font-size: 1em;
+}
+.center-select .mselect-inner {
+  padding: .7em 1em;
+}
+.center-select .mselect span {
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.mlistview > li:last-child {
+  border-bottom-width: 1px;
+}
+
 .center-select {
   width: 400px;
   margin-left: auto;
@@ -17,15 +32,15 @@
   overflow-y: auto;
 }
 
-.ui-listview > li span {
+.mlistview > li span {
   font-size: 16px;
   font-weight: bold;
 }
-.ui-listview > li p {
+.mlistview > li p {
   font-size: 12px;
 }
 
-.ui-listview > li.hidden {
+.mlistview > li.hidden {
   height: 0px;
   padding: 0px 0px 0px 0px;
 }
@@ -33,7 +48,7 @@ li.hidden p {
   margin: 0px;
 }
 
-.ui-listview > li.ui-btn.adhoc {
+.mlistview > li.adhoc {
     background-color: #f0f0f6;
 }
 
@@ -68,7 +83,7 @@ h3#recipient {
   width: 237px;
  }
 
-.presenter .ui-flipswitch {
+.presenter .flipswitch {
   /* Leaves a gap around the button within the flipswitch */
   padding: 5px;
   width: 9.375em /* 225px */;
@@ -81,7 +96,7 @@ h3#recipient {
   font-size: x-large;
  }
 
-.presenter .ui-flipswitch.ui-flipswitch-active {
+.presenter .flipswitch.checked {
   padding-left: 7.7em;
   /* This width is necessary to clip the "Off" text */
   width: 45px;
@@ -106,12 +121,12 @@ h3#recipient {
     // 1.8em seems to look better.
 */
 
-.ui-flipswitch .ui-btn.ui-flipswitch-on {
+.flipswitch span.on {
   /* This shoves the "on" text far enough left to be fully hidden 
      when the switch is off, and centered when the switch is on. */
   text-indent: -5.8em;
 }
 
-.ui-flipswitch .ui-flipswitch-off {
+.flipswitch span.off {
   text-indent: 1.8em;
 }

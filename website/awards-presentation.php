@@ -20,8 +20,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<script type="text/javascript" src="js/mobile-init.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/awards-presentation.js"></script>
 <?php
     try {
@@ -44,7 +43,7 @@ require_permission(PRESENT_AWARDS_PERMISSION);
       echo '</script>'."\n";
     }
 ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/awards-presentation.css"/>
 </head>
 <body>
@@ -150,13 +149,13 @@ usort($awards, 'compare_by_sort');
 </div>
 
 <div class="listview">
-<ul data-role="listview" class="ui-listview">
+<ul class="mlistview">
 <?php
 
 foreach ($awards as &$row) {
    $classid = isset($row['classid']) ? $row['classid'] : 0;
    $rankid = (isset($row['rankid']) && $use_subgroups) ? $row['rankid'] : 0;
-   echo '<li class="ui-btn ui-btn-icon-right ui-icon-carat-r'.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
+   echo '<li class="icon-right '.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
         .' onclick="on_choose_award(this);"'
         .' data-awardkey="'.$row['awardkey'].'"'
         .' data-awardtypeid="'.$row['awardtypeid'].'"'
@@ -208,7 +207,7 @@ foreach ($awards as &$row) {
 <p id="carname" class="detail"></p>
 
 <div class="presenter-inner hidden">
-  <input type="checkbox" data-role="flipswitch"
+  <input type="checkbox" class="flipswitch"
         id="reveal-checkbox"
         data-on-text="Showing"
         data-off-text="Hidden"

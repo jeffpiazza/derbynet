@@ -73,8 +73,8 @@ function flipswitch(checkboxes) {
     checkbox
       .removeClass(classes)
       .wrap('<div>')
-      .before('<span class="on">On</span>'
-              + '<span class="off">Off</span>')
+      .before($('<span class="on"></span>').text(checkbox.attr('data-on-text') || 'On'))
+      .before($('<span class="off"></span>').text(checkbox.attr('data-off-text') || 'Off'))
       .on('change', function(event) {
         checkbox.parent().toggleClass('checked', checkbox.is(':checked'));
       })
