@@ -52,7 +52,7 @@ function update_awards(dataxml) {
         .append('<a onclick="handle_edit_award($(this).closest(\'li\'));"></a>')
         .appendTo('#all_awards');
     }
-    $("#all_awards").listview("refresh");
+    // $("#all_awards").listview("refresh");
   }
   
   $("#all_awards li").each(function(i) {

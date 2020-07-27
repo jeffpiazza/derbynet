@@ -133,6 +133,8 @@ tbody {
 	margin-bottom: 20px;
     padding:10px 15px;
     font-size: x-large;
+    font-family: sans-serif;
+    line-height: 1.3;
 }
 
 .block_buttons input[type='button'],

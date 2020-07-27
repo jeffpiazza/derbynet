@@ -149,9 +149,9 @@ div.mselect-inner span {
   white-space: nowrap;
 }
 div.mselect-inner select {
-  font-size: 1em;
+  /* font-size: 1em; */
   line-height: 1.3;
-  font-family: sans-serif /*{global-font-family}*/;
+  font-family: sans-serif;
 
   position: absolute;
   top: 0;
@@ -382,6 +382,12 @@ div.flipswitch.racing.checked {
 .mlistview.has-alts > li {
   padding: 0;
   border-width: 0;
+  background-color: #f6f6f6;
+}
+
+.mlistview.has-alts > li > a,
+.mlistview.has-alts > li > p {
+  border-color: #ddd;
 }
 
 .mlistview.has-alts > li > a:first-child,
