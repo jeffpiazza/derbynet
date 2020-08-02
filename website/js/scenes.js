@@ -56,8 +56,8 @@ function on_scene_change() {
     if (scene.sceneid == sceneid) {
       for (var j = 0; j < scene.kiosks.length; ++j) {
         unspecified.splice(unspecified.indexOf(scene.kiosks[j].kiosk_name), 1);
-        // TODO Special characters
-        var kdiv = $("div.kiosk[data-kiosk=" + scene.kiosks[j].kiosk_name + "]");
+        var kdiv = $("div.kiosk")
+            .filter((i, elt) => $(elt).attr('data-kiosk') == scene.kiosks[j].kiosk_name);
 
         // For currently-selected scene, update select to match the page
         for (var p = 0; p < g_all_pages.length; ++p) {
