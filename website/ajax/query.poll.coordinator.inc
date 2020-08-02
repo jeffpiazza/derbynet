@@ -43,7 +43,7 @@ echo last_heat_xml_element()."\n";
 
 $curr_round = $now_running; // Avoid an extra DB call: get_running_round();
 
-$rounds = all_rounds();
+$rounds = all_rounds_with_counts();
 
 foreach ($rounds as $round) {
     $roundid = $round['roundid'];
@@ -52,47 +52,12 @@ foreach ($rounds as $round) {
             .' classid="'.$round['classid'].'"'
             .' class="'.htmlspecialchars($round['class'], ENT_QUOTES, 'UTF-8').'"'
             .' round="'.$round['round'].'"';
-    if (is_aggregate_class($round)) {
-      echo ' aggregate="1"';
-    }
-
-    // Number of racers in the roster for the round
-    echo ' roster_size="'.read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
-                                            array(':roundid' => $roundid)).'"';
-
-    // Number of racers in the round who've passed inspection.  (After
-    // the first round, this should be the same as the roster size.)
-    echo ' passed="'.read_single_value('SELECT COUNT(*) FROM Roster'
-                                       .' INNER JOIN RegistrationInfo'
-                                       .' ON Roster.racerid = RegistrationInfo.racerid'
-                                       .' WHERE roundid = :roundid'
-                                       .' AND RegistrationInfo.passedinspection <> 0',
-                                       array(':roundid' => $roundid)).'"';
-
-    // Number of passed racers in the round who aren't in the schedule for the round
-    echo ' unscheduled="'.read_single_value('SELECT COUNT(*)'
-                                            .' FROM Roster'
-                                            .' INNER JOIN RegistrationInfo'
-                                            .' ON Roster.racerid = RegistrationInfo.racerid'
-                                            .' WHERE Roster.roundid = :roundid'
-                                            .' AND RegistrationInfo.passedinspection <> 0'
-                                            .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
-                                            .'  WHERE RaceChart.roundid = Roster.roundid'
-                                            .'  AND RaceChart.racerid = Roster.racerid)',
-                                            array(':roundid' => $roundid)).'"';
-
-    echo ' heats_scheduled="'.read_single_value('SELECT COUNT(*) FROM'
-												.' (SELECT DISTINCT heat'
-                                                .'   FROM RaceChart'
-                                                .'   WHERE roundid = :roundid) AS tmp',
-                                                array(':roundid' => $roundid)).'"';
-
-    echo ' heats_run="'.read_single_value('SELECT COUNT(*) FROM'
-										  .' (SELECT DISTINCT heat'
-										  .'   FROM RaceChart'
-										  .'   WHERE roundid = :roundid'
-										  .'   AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)) AS tmp',
-										  array(':roundid' => $roundid)).'"';
+    echo " aggregate=\"$round[aggregate]\"";
+    echo " roster_size=\"$round[roster_size]\"";
+    echo " passed=\"$round[passed]\"";
+    echo " unscheduled=\"$round[unscheduled]\"";
+    echo " heats_scheduled=\"$round[heats_scheduled]\"";
+    echo " heats_run=\"$round[heats_run]\"";
     echo '>'.htmlspecialchars($round['roundname'], ENT_QUOTES, 'UTF-8')."</round>\n";
 }
 ?>
