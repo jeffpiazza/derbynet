@@ -3,13 +3,14 @@ require_once('inc/banner.inc');
 
 function make_head_matter_for_import_page() {
   ?>
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
     <?php require('inc/stylesheet.inc'); ?>
     <link rel="stylesheet" type="text/css" href="css/import-csv.css"/>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/ajax-setup.js"></script>
     <script type="text/javascript" src="js/mobile-init.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.10.4.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
     <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -104,7 +105,7 @@ class ImportCsvGenerator {
 
   public function make_import_csv_div($button_label, $labels) {
     // The #file_target div's <input> is invisible (opacity 0) and z-index'ed on
-    // top of the entire #file_target.  Drag and drop behavior is added by jquery-ui.
+    // top of the entire #file_target.
 ?>
 <div class="import_csv">
   <div id="top_matter">
