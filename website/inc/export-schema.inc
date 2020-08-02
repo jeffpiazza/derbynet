@@ -25,8 +25,8 @@ require_once('inc/schema_version.inc');
 
    SceneKiosk(sceneid) -> Scenes
 
-   Playlist(roundid) -> Rounds
-   Playlist(sceneid_at_finish) -> Scenes
+   RacingQueue(roundid) -> Rounds
+   RacingQueue(sceneid_at_finish) -> Scenes
  */
 
 $schema = array('Classes' => array('classid', 'class'),
@@ -57,7 +57,7 @@ if (schema_version() >= 3) {
 
   $schema['SceneKiosk'] = array('sceneid', 'kiosk_name', 'page');
   $schema['Scenes'] = array('sceneid', 'name', 'sortorder');
-  $schema['Playlist'] = array('playlistid', 'seq', 'roundid', 'n_times_per_lane',
-                              'sceneid_at_finish', 'continue_racing');
+  $schema['RacingQueue'] = array('queueid', 'seq', 'roundid', 'n_times_per_lane',
+                                 'sceneid_at_finish', 'continue_racing');
 }
 ?>

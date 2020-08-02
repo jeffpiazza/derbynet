@@ -2,9 +2,9 @@
 
 return array(
 
-"DROP TABLE IF EXISTS Playlist",
-"CREATE TABLE Playlist ("
-."  playlistid           COUNTER,"
+"DROP TABLE IF EXISTS RacingQueue",
+"CREATE TABLE RacingQueue ("
+."  queueid              COUNTER,"
 ."  seq                  INTEGER,"
 ."  roundid              INTEGER,"
 ."  n_times_per_lane     INTEGER,"
@@ -12,7 +12,7 @@ return array(
 ."  continue_racing      INTEGER"
 ."  )",
 
-"CREATE UNIQUE INDEX PrimaryKey ON Playlist(playlistid)"
+"CREATE UNIQUE INDEX PrimaryKey ON RacingQueue(queueid)"
 
 );
 ?>

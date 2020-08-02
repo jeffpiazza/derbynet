@@ -147,7 +147,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_details"></div>
 </div>
 
-<!-- Scenes and Playlists -->
+<!-- Scenes and Racing Queue -->
 <div id="scenes_step" class="step_div">
   <div class="status_icon"><img src="img/status/ok.png"/></div>
   <div class="step_button block_buttons">

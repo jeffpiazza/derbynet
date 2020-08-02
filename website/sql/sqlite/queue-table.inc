@@ -2,9 +2,9 @@
 
 return array(
 
-"DROP TABLE IF EXISTS Playlist",
-"CREATE TABLE Playlist ("
-."  playlistid           INTEGER PRIMARY KEY,"
+"DROP TABLE IF EXISTS RacingQueue",
+"CREATE TABLE RacingQueue ("
+."  queueid              INTEGER PRIMARY KEY,"
 ."  seq                  INTEGER,"
 ."  roundid              INTEGER,"
 ."  n_times_per_lane     INTEGER,"

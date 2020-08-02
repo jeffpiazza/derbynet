@@ -32,10 +32,9 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
 
   if ($ok) {
-    $new_seq = 1 + read_single_value('SELECT MAX(seq) FROM Playlist', array(), 0);
-    echo "<new-seq>$new_seq</new-seq>\n";  // TODO
-    $stmt = $db->prepare('INSERT INTO Playlist(seq, roundid, n_times_per_lane,'
-                         .'                    sceneid_at_finish, continue_racing)'
+    $new_seq = 1 + read_single_value('SELECT MAX(seq) FROM RacingQueue', array(), 0);
+    $stmt = $db->prepare('INSERT INTO RacingQueue(seq, roundid, n_times_per_lane,'
+                         .'                       sceneid_at_finish, continue_racing)'
                          .' VALUES(:newseq, :roundid, :n_times_per_lane,'
                          .'        :sceneid_at_finish, :continue_racing)');
     $stmt->execute(array(':newseq' => $new_seq,

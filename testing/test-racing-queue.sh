@@ -42,9 +42,9 @@ curl_post action.php "action=settings.write&racing_scene=3" | check_success
 
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
-curl_post action.php "action=playlist.new&roundid=1&sceneid_at_finish=4" | check_success
-curl_post action.php "action=playlist.new&roundid=2&n_times_per_lane=1&continue_racing=1" | check_success
-curl_post action.php "action=playlist.new&roundid=3&n_times_per_lane=1" | check_success
+curl_post action.php "action=queue.new&roundid=1&sceneid_at_finish=4" | check_success
+curl_post action.php "action=queue.new&roundid=2&n_times_per_lane=1&continue_racing=1" | check_success
+curl_post action.php "action=queue.new&roundid=3&n_times_per_lane=1" | check_success
 
 # Race roundid=1:
 curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success

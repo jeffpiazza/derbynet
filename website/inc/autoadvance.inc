@@ -2,7 +2,7 @@
 
 require_once('inc/racing-state.inc');
 require_once('inc/replay.inc');
-require_once('inc/playlist.inc');
+require_once('inc/racing-queue.inc');
 
 // $current is an array as returned by get_running_round() (data.inc):
 //    classid =>
@@ -110,7 +110,7 @@ function advance_heat(&$current, $requested, $report_failure) {
     set_racing_state(0);
 
     if ($requested == 'next' && round_is_completed($current['roundid'])) {
-      playlist_after_round($current['roundid']);
+      perform_queue_after_round($current['roundid']);
     }
     if ($report_failure) {
       echo '<failure code="nosuchheat">No heat '.@$next['heat'].' scheduled for roundid '.@$next['roundid'].'</failure>';
@@ -141,7 +141,7 @@ function advance_heat(&$current, $requested, $report_failure) {
         // End of a group.  set_racing_state(0) will send a CANCEL
         set_racing_state(0);
         if ($requested == 'next' && round_is_completed($roundid)) {
-          playlist_after_round($roundid);
+          perform_queue_after_round($roundid);
         }
       } else {
         // Starting a new heat, roll camera
