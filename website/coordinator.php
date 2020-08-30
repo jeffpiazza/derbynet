@@ -215,7 +215,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     </div>
 
     <p>Choose top</p>
-    <input type="number" name="top" id="now_round_rop" value="3"/>
+    <input type="number" name="top" id="new_round_top" value="3"/>
 
     <div class="single_den_only">
     <?php if (use_subgroups()) { ?>
@@ -235,8 +235,10 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_multi"
                data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
       </div>
+      <div id="agg_classname_div">
        <p>Name for new round:</p>
        <input type="text" name="classname" id="agg_classname" value="Grand Finals"/>
+      </div>
     </div>
 
     <input type="submit" data-enhanced="true" value="Submit"/>

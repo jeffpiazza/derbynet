@@ -60,5 +60,30 @@ foreach ($rounds as $round) {
     echo " heats_run=\"$round[heats_run]\"";
     echo '>'.htmlspecialchars($round['roundname'], ENT_QUOTES, 'UTF-8')."</round>\n";
 }
+
+// Pre-defined aggregate classes that could be scheduled for racing:
+foreach (aggregate_classes() as $agg_class) {
+  $ready_to_race =
+      read_single_value('SELECT COUNT(*) FROM Rounds WHERE classid = :classid',
+                        array(':classid' => $agg_class['classid'])) == 0;
+  if ($ready_to_race) {
+    foreach ($agg_class['constituents'] as $classid) {
+      if (read_single_value('SELECT COUNT(*) FROM RaceChart'
+                            .' JOIN Rounds'
+                            .' ON RaceChart.roundid = Rounds.roundid'
+                            .' WHERE Rounds.classid = :classid'
+                            .'  AND (completed IS NOT NULL AND completed <> \'\')',
+                            array(':classid' => $classid))
+          == 0) {
+        $ready_to_race = false;
+      }
+    }
+  }
+  if ($ready_to_race) {
+    echo "<ready-aggregate classid=\"$agg_class[classid]\">";
+    echo htmlspecialchars($agg_class['class'], ENT_QUOTES, 'UTF-8');
+    echo "</ready-aggregate>\n";
+  }
+}
 ?>
 </coordinator_poll>

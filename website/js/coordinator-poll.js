@@ -160,6 +160,16 @@ function parse_racers(data) {
     return racers;
 }
 
+function parse_ready_aggregate_classes(data) {
+  g_ready_aggregate_classes = [];
+  var elts = data.getElementsByTagName("ready-aggregate");
+  for (var i = 0; i < elts.length; ++i) {
+    g_ready_aggregate_classes[i] =
+      {classid: elts[i].getAttribute("classid"),
+       classname: elts[i].textContent};
+  }
+}
+
 function update_for_last_heat(data, racers) {
   var last_heat = data.getElementsByTagName("last_heat");
   var button = $("#rerun-button");
@@ -517,6 +527,8 @@ function process_coordinator_poll_response(data) {
                                           timer_state.remote_start != "1");
   
   var rounds = parse_rounds(data);
+
+  parse_ready_aggregate_classes(data);
 
   offer_new_rounds(rounds);
 

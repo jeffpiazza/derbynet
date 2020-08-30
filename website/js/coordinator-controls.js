@@ -28,6 +28,8 @@ g_completed_rounds = [];
 
 // Roundids of an aggregate rounds
 g_aggregate_rounds = [];
+// {classid:, classname:} for each aggregate class for which a first round could be created
+g_ready_aggregate_classes = [];
 
 // Controls for current racing group:
 
@@ -276,78 +278,108 @@ function handle_purge_button(roundid, heats_run) {
 }
 
 function show_choose_new_round_modal() {
-    populate_new_round_modals();
+  populate_new_round_modals();
 
-    // There's no submit, or even a form, in this modal; just a bunch
-    // of buttons with their own actions
-    show_modal("#choose_new_round_modal", function(event) {
-        return false;
-    });
+  // There's no submit, or even a form, in this modal; just a bunch
+  // of buttons with their own actions:
+  //
+  // - handle_new_round_simple to create a follow-on round to an existing round
+  // - handle_new_round_make_aggregate to create an aggregate round ("Grand Final")
+  // - handle_new_round_aggregate_class to create a first round for an existing aggregate class
+  show_modal("#choose_new_round_modal", function(event) {
+    return false;
+  });
 }
 
-function handle_new_round_chosen(roundid) {
-    close_modal_leave_background("#choose_new_round_modal");
-    show_new_round_modal(roundid);
+
+function handle_new_round_simple(roundid) {
+  close_modal_leave_background("#choose_new_round_modal");
+  $("#new_round_modal div").removeClass("hidden");
+  $("#new_round_modal").removeClass("wide_modal");
+  $(".multi_den_only").addClass("hidden");
+  $("#new_round_modal #new_round_roundid").val(roundid);
+  // For a single-round follow-on round, #bucketed flipswitch won't even be
+  // present unless we're using subgroups.
+  var bucketed = $("#new_round_modal #bucketed_single");
+  if (bucketed) {
+    bucketed.prop('checked', false)
+      .trigger("change", true)
+      .toggleClass('hidden', g_aggregate_rounds.includes(roundid));
+  }
+
+  show_modal("#new_round_modal", function(event) {
+    on_submit_new_round_simple();
+    return false;
+  });
 }
 
-function show_new_round_modal(roundid) {
-    $(".multi_den_only").addClass("hidden");
-    $(".single_den_only").removeClass("hidden");
-    $("#new_round_modal").removeClass("wide_modal");
-    $("#new_round_modal #new_round_roundid").val(roundid);
-    // For a single-round follow-on round, #bucketed flipswitch won't even be
-    // present unless we're using subgroups.
-    var bucketed = $("#new_round_modal #bucketed_single");
-    if (bucketed) {
-      bucketed.prop('checked', false)
-        .trigger("change", true)
-        .toggleClass('hidden', g_aggregate_rounds.includes(roundid));
-    }
-
-    show_modal("#new_round_modal", function(event) {
-        handle_new_round_submit();
-        return false;
-    });
+function on_submit_new_round_simple(roundid) {
+  close_modal("#new_round_modal");
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: $("#new_round_modal form").serialize(),
+          success: function(data) {
+            process_coordinator_poll_response(data); }
+         });
 }
 
-function handle_new_round_submit(roundid) {
-    close_modal("#new_round_modal");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: $("#new_round_modal form").serialize(),
-            success: function(data) {
-              process_coordinator_poll_response(data); }
-           });
+// Manufacture a new aggregate round (ephemeral aggregate class) from top
+// finishers in several completed rounds.
+function handle_new_round_make_aggregate() {
+  close_modal_leave_background("#choose_new_round_modal");
+  $("#new_round_modal div").removeClass("hidden");
+  $("#new_round_modal").addClass("wide_modal");
+  $(".single_den_only").addClass("hidden");
+  // Have to suspend updates to this dialog while it's open
+  g_new_round_modal_open = true;
+  show_modal("#new_round_modal", function(event) {
+    on_submit_new_round_make_aggregate();
+    return false;
+  });
 }
 
-function handle_aggregate_chosen() {
-    close_modal_leave_background("#choose_new_round_modal");
-    show_aggregate_modal();
+function on_submit_new_round_make_aggregate() {
+  g_new_round_modal_open = false;
+  close_modal("#new_round_modal");
+
+  console.log($("#new_round_modal form").serialize());
+
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: $("#new_round_modal form").serialize(),
+          success: function(data) { process_coordinator_poll_response(data); }
+         });
 }
 
-function show_aggregate_modal() {
-    $(".multi_den_only").removeClass("hidden");
-    $(".single_den_only").addClass("hidden");
-    $("#new_round_modal").addClass("wide_modal");
-    // Have to suspend updates to this dialog while it's open
-    g_new_round_modal_open = true;
-    show_modal("#new_round_modal", function(event) {
-        handle_aggregate_submit();
-        return false;
-    });
+// Create first round for a pre-defined aggregate class
+function handle_new_round_aggregate_class(classid) {
+  close_modal_leave_background("#choose_new_round_modal");
+  $("#new_round_modal div").removeClass("hidden");
+  $("#new_round_modal").removeClass("wide_modal");
+  $(".single_den_only").addClass("hidden");
+  $("#multi_flipswitches").addClass("hidden");
+  $("#agg_classname_div").addClass("hidden");
+  g_new_round_modal_open = true;
+  show_modal("#new_round_modal", function(event) {
+    on_submit_new_round_aggregate_class(classid);
+    return false;
+  });
 }
 
-function handle_aggregate_submit() {
-    g_new_round_modal_open = false;
-    close_modal("#new_round_modal");
-
-    console.log($("#new_round_modal form").serialize());
-
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: $("#new_round_modal form").serialize(),
-            success: function(data) { process_coordinator_poll_response(data); }
-           });
+function on_submit_new_round_aggregate_class(classid) {
+  close_modal("#new_round_modal");
+  g_new_round_modal_open = false;
+  console.log('Bucketed: ' + $("#bucketed_multi").prop('checked'));  // TODO
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'roster.new',
+                 classid: classid,
+                 top:$("#new_round_top").val(),
+                 bucketed: $("#bucketed_multi").prop('checked') ? 1 : 0},
+          success: function(data) {
+            console.log(data);  // TODO
+            process_coordinator_poll_response(data); }
+         });
 }
 
 function show_replay_settings_modal() {
@@ -408,7 +440,7 @@ function populate_new_round_modals() {
         // the button itself.
         button.prop('data-roundid', round.roundid);
         button.on('click', function(event) {
-          handle_new_round_chosen($(this).prop('data-roundid'));
+          handle_new_round_simple($(this).prop('data-roundid'));
         });
         modal.append(button);
 
@@ -431,8 +463,18 @@ function populate_new_round_modals() {
   }
   if (add_aggregate) {
     modal.append('<h3>Add Aggregate Round</h3>');
+    for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
+      var agg = g_ready_aggregate_classes[i];
+      var button = $('<input type="button" data-enhanced="true"/>');
+      button.prop('value', agg.classname);
+      button.prop('data-classid', agg.classid);
+      button.on('click', function(event) {
+        handle_new_round_aggregate_class($(this).prop('data-classid'));
+      });
+      modal.append(button);
+    }
     var button = $('<input type="button" data-enhanced="true" value="Aggregate Round"/>');
-    button.on('click', function(event) { handle_aggregate_chosen(); });
+    button.on('click', function(event) { handle_new_round_make_aggregate(); });
     modal.append(button);
     // Even though we're doing the embellishment explicitly, the create
     // trigger is still needed to make the flipswitches actually do

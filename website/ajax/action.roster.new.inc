@@ -8,10 +8,17 @@
 // on the top finishers from the identified round.
 //
 // If roundid is empty, then we're generating an aggregate round, taking top
-// finishers across multiple previous rounds.  Those previous rounds are
-// identified by $_POST keys of the form roundid_<nnn>.  A new class will be
-// created for the round; $_POST['classname'] will be taken as the name of the
-// new class.
+// finishers across multiple previous rounds.  There are two ways this can happen:
+//
+// - If $_POST['classname'] is present, then we're creating an aggregate round for
+//    a new aggregate class.  $_POST['classname'] will be taken as the name of
+//    the new class.  The rounds whose results feed into the new aggregate round
+//    are identified by $_POST keys of the form roundid_<nnn>.
+//
+//  - If $_POST['classid'] is present, then we're creating an aggregate round
+//    based on a defined aggregate class.  The rounds whose results feed into
+//    the new aggregate round will be the highest defined round for each of the
+//    aggregate class' constituent classes.
 //
 // "top" identifies how many racers to select for the new round, but its interpretation also
 // depends on "bucketed".
@@ -43,19 +50,33 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   $new_round = 1 + $old_round;
 } else {
   $aggregate = true;
-  $all_roundids = '0';
-  foreach ($_POST as $key => $value) {
-    if (substr($key, 0, strlen('roundid_')) == 'roundid_') {
-      $all_roundids .= ', '.substr($key, strlen('roundid_'));
-    }
-  }
-  // TODO: Handle 0 or 1 roundid's provided
 
-  // A new aggregate round creates a new pseudo-class for the aggregate, and
-  // starts at round 1
+  // A new aggregate round starts at round 1 and may create a new pseudo-class
+  // for the aggregate.
   $new_round = 1;
 
-  $classid = create_aggregate_class($_POST['classname'], $all_roundids, false);
+  if (isset($_POST['classname'])) {
+    $all_roundids = '0';
+    foreach ($_POST as $key => $value) {
+      if (substr($key, 0, strlen('roundid_')) == 'roundid_') {
+        $all_roundids .= ', '.substr($key, strlen('roundid_'));
+      }
+    }
+    $classid = create_aggregate_class($_POST['classname'], $all_roundids, false);
+    // TODO: Handle 0 or 1 roundid's provided
+  } else {
+    $classid = $_POST['classid'];
+    // TODO Worry about schema version?
+    $constituents = read_single_value('SELECT constituents FROM Classes'
+                                      .' WHERE classid = :classid',
+                                      array(':classid' => $classid));
+    $stmt = $db->prepare('SELECT roundid FROM Rounds r'
+                         .' WHERE classid IN ('.$constituents.')'
+                         .'  AND round = (SELECT MAX(round) FROM Rounds r2'
+                         .'               WHERE r2.classid = r.classid)');
+    $stmt->execute(array());
+    $all_roundids = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN, 0));
+  }
 }
 
 // With $new_round and $classid settled, make the new round (unless it
@@ -134,7 +155,7 @@ foreach ($stmt as $row) {
   if ($n_in_bucket < $bucket_limit ||
       // If there's a tie for third when picking top 3, include additional finalists
       $buckets[$bucketno][$n_in_bucket - 1]['score'] >= $row['score']) {
-    echo "<finalist racerid=\"".$row['racerid']."\" bucket_number=\"".$bucketno."\"/>\n";
+    echo "<finalist racerid=\"$row[racerid]\" bucket_number=\"".$bucketno."\" score=\"$row[score]\"/>\n";
     $buckets[$bucketno][] = array('racerid' => $row['racerid'], 'score' => $row['score']);
   }
 }
