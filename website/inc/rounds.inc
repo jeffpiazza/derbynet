@@ -20,27 +20,22 @@ Master schedules:
 
 // Returns each distinct Rounds entry:
 //  {roundid, round, classid, class, groupid(=roundid), roundname}
-function all_rounds() {
+// By default, ordered primarily by class
+// all_rounds(false) ordered primarily by round, then by class within each round.
+function all_rounds($by_class = true) {
   global $db;
   $use_groups = use_groups();
-  $rounds = array();
-  foreach ($db->query('SELECT roundid, round, Classes.classid, class'
-					  .' FROM Rounds INNER JOIN Classes'
-					  .' ON Rounds.classid = Classes.classid'
-					  .' ORDER BY '
-                      .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
-                      .'class, round') as $row) {
-    $rounds[] = array('roundid' => $row['roundid'],
-					  'round' => $row['round'],
-					  'classid' => $row['classid'],
-					  'class' => $row['class'],
-                      'groupid' => $row['roundid'],
-					  'roundname' => $use_groups
-                          ? $row['class'].', Round '.$row['round']
-                          : ('Round '.$row['round']));
-  }
-
-  return $rounds;
+  $stmt = $db->query('SELECT roundid, roundid AS groupid, round,'
+                     .' Classes.classid, class,'
+                     .($use_groups ? "class || ', ' || " : "")
+                     .'\'Round \' || round AS roundname'
+                     .' FROM Rounds INNER JOIN Classes'
+                     .' ON Rounds.classid = Classes.classid'
+                     .' ORDER BY '
+                     .($by_class ? '' : 'round, ')
+                     .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                     .'class, round');
+  return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // Each entry has:
@@ -48,46 +43,43 @@ function all_rounds() {
 //    aggregate(0 or 1),
 //    roster_size, passed, unscheduled,
 //    heats_scheduled, heats_run}
-function all_rounds_with_counts() {
-  $rounds = all_rounds();
-  foreach ($rounds as $round) {
-    $roundid = $round['roundid'];
-    $round['aggregate'] = is_aggregate_class($round) ? 1 : 0;
-    // Number of racers in the roster for the round
-    $round['roster_size'] = read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
-                                              array(':roundid' => $roundid));
-    // Number of racers in the round who've passed inspection.  (After
-    // the first round, this should be the same as the roster size.)
-    $round['passed'] = read_single_value('SELECT COUNT(*) FROM Roster'
-                                         .' INNER JOIN RegistrationInfo'
-                                         .' ON Roster.racerid = RegistrationInfo.racerid'
-                                         .' WHERE roundid = :roundid'
-                                         .' AND RegistrationInfo.passedinspection <> 0',
-                                         array(':roundid' => $roundid));
-    // Number of passed racers in the round who aren't in the schedule for the round
-    $round['unscheduled'] = read_single_value('SELECT COUNT(*)'
-                                              .' FROM Roster'
-                                              .' INNER JOIN RegistrationInfo'
-                                              .' ON Roster.racerid = RegistrationInfo.racerid'
-                                              .' WHERE Roster.roundid = :roundid'
-                                              .' AND RegistrationInfo.passedinspection <> 0'
-                                              .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
-                                              .'  WHERE RaceChart.roundid = Roster.roundid'
-                                              .'  AND RaceChart.racerid = Roster.racerid)',
-                                              array(':roundid' => $roundid));
-    $round['heats_scheduled'] = read_single_value('SELECT COUNT(*) FROM'
-                                                  .' (SELECT DISTINCT heat'
-                                                  .'   FROM RaceChart'
-                                                  .'   WHERE roundid = :roundid) AS tmp',
-                                                  array(':roundid' => $roundid));
-    $round['heats_run'] = read_single_value('SELECT COUNT(*) FROM'
-                                            .' (SELECT DISTINCT heat'
-                                            .'   FROM RaceChart'
-                                            .'   WHERE roundid = :roundid'
-                                            .'   AND (finishtime IS NOT NULL'
-                                            .'         OR finishplace IS NOT NULL)) AS tmp',
-                                            array(':roundid' => $roundid));
-  }
+function all_rounds_with_counts($by_class = true) {
+  global $db;
+  $use_groups = use_groups();
+  $stmt = $db->query('SELECT roundid, roundid AS groupid, round,'
+                     .' Classes.classid, class,'
+                     .($use_groups ? " class || ', ' ||" : "")
+                     .' \'Round \' || round AS roundname,'
+                      .' (SELECT COUNT(*) FROM Roster'
+                      .'   WHERE Roster.roundid = Rounds.roundid) AS roster_size,'
+                      .' (SELECT COUNT(*) FROM Roster'
+                      .'    INNER JOIN RegistrationInfo'
+                      .'    ON Roster.racerid = RegistrationInfo.racerid'
+                      .'   WHERE Roster.roundid = Rounds.roundid'
+                      .'   AND RegistrationInfo.passedinspection <> 0) AS passed,'
+                      .' (SELECT COUNT(*) FROM Roster'
+                      .'    INNER JOIN RegistrationInfo'
+                      .'    ON Roster.racerid = RegistrationInfo.racerid'
+                      .'   WHERE Roster.roundid = Rounds.roundid'
+                      .'   AND RegistrationInfo.passedinspection <> 0'
+                      .'   AND NOT EXISTS(SELECT 1 FROM RaceChart'
+                      .'      WHERE RaceChart.roundid = Roster.roundid'
+                      .'      AND RaceChart.racerid = Roster.racerid)) AS unscheduled,'
+                      .' (SELECT COUNT(*) FROM'
+                      .'     (SELECT DISTINCT heat FROM RaceChart'
+                      .'         WHERE roundid = Rounds.roundid)) AS heats_scheduled,'
+                      .' (SELECT COUNT(*) FROM'
+                      .'     (SELECT DISTINCT heat FROM RaceChart'
+                      .'         WHERE roundid = Rounds.roundid'
+                      .'         AND (finishtime IS NOT NULL'
+                      .'         OR finishplace IS NOT NULL))) AS heats_run'
+					  .' FROM Rounds INNER JOIN Classes'
+					  .' ON Rounds.classid = Classes.classid'
+					  .' ORDER BY '
+                      .($by_class ? '' : 'round, ')
+                      .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
+                     .'class, round');
+  return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // Returns each distinct Rounds entry, except if master scheduling, in which

@@ -78,7 +78,8 @@ function classes_and_ranks() {
     if (!isset($classes[$row['classid']])) {
       $classseq[] = $row['classid'];
       $classes[$row['classid']] = array('class' => $row['class'],
-                                        'constituents' => explode(',', $row['constituents']),
+                                        'constituents' => array_filter(explode(',', $row['constituents']),
+                                                                       'strlen'),
                                         'ntrophies' => $row['ntrophies'],
                                         'seq' => count($classseq));
     }

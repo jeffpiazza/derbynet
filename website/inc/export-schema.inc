@@ -57,7 +57,8 @@ if (schema_version() >= 3) {
 
   $schema['SceneKiosk'] = array('sceneid', 'kiosk_name', 'page');
   $schema['Scenes'] = array('sceneid', 'name', 'sortorder');
-  $schema['RacingQueue'] = array('queueid', 'seq', 'roundid', 'n_times_per_lane',
+  $schema['RacingQueue'] = array('queueid', 'seq', 'classid', 'round',
+                                 'bucket_limit', 'bucketed', 'n_times_per_lane',
                                  'sceneid_at_finish', 'continue_racing');
 }
 ?>

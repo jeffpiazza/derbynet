@@ -1,9 +1,12 @@
 <?php
 require_once('inc/scenes.inc');
+require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
 
 function queue_entry_for($roundid) {
-  return read_single_row('SELECT * FROM RacingQueue WHERE roundid = :roundid',
+  return read_single_row('SELECT * FROM RacingQueue'
+                         .' INNER JOIN Rounds USING (classid, round)'
+                         .' WHERE roundid = :roundid',
                          array(':roundid' => $roundid), PDO::FETCH_ASSOC);
 }
 
@@ -24,7 +27,39 @@ function round_is_completed($roundid) {
 
 // Returns false, and emits <failure>, if unable to activate the queue entry
 function activate_queue_entry(&$queue_entry) {
-  $roundid = $queue_entry['roundid'];
+  global $db;
+  $roundid = read_single_value('SELECT roundid FROM Rounds'
+                               .' WHERE classid = :classid AND round = :round',
+                               array(':classid' => $queue_entry['classid'],
+                                     ':round' => $queue_entry['round']));
+  if (!$roundid) {
+    $roundid = make_new_round($queue_entry['classid'], $queue_entry['round']);
+  }
+  if (read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
+                                     array(':roundid' => $roundid)) == 0) {
+    if ($queue_entry['round'] == 1) {
+      $is_aggregate = true;
+      $constituent_classids = read_single_value('SELECT constituents FROM Classes'
+                                                .' WHERE classid = :classid',
+                                                array(':classid' => $queue_entry['classid']));
+      $stmt = $db->prepare('SELECT roundid FROM Rounds r1'
+                           .' WHERE r1.classid IN ('.$constituent_classids.')'
+                           .' AND round = (SELECT MAX(round) FROM Rounds r2'
+                           .'              WHERE r2.classid = r1.classid)');
+      $stmt->execute();
+      $constituent_roundids = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    } else {
+      // Follow-on round
+      $is_aggregate = false;
+      $constituent_roundids = read_single_value('SELECT roundid FROM Rounds'
+                                                .' WHERE classid = :classid'
+                                                .'  AND round = :round',
+                                                array(':classid' => $queue_entry['classid'],
+                                                      ':round' => $queue_entry['round'] - 1));
+    }
+    populate_roster($roundid, $queue_entry['classid'], $constituent_roundids,
+                    $queue_entry['bucketed'], $queue_entry['bucket_limit'], $is_aggregate);
+  }
   if ($queue_entry['n_times_per_lane'] > 0 &&
       read_single_value('SELECT COUNT(*) FROM RaceChart'
                         .' WHERE roundid = :roundid',
@@ -54,7 +89,7 @@ function perform_queue_after_round($roundid) {
     activate_queue_entry($after);
   }
   if ($entry['sceneid_at_finish'] > 0) {
-    // TODO We want to queue a new scene for a short time after racing ends, not
+    // TODO We want to queue a new scene a short time after racing ends, not
     // apply the scene immediately.
     apply_scene($entry['sceneid_at_finish']);
   } else if ($entry['continue_racing']) {
