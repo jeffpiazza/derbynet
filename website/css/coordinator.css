@@ -62,6 +62,10 @@
   color: white;
 }
 
+div.queue_control_group.block_buttons a {
+  color: white;
+}
+
 #timer-testing-herald {
   width: 100%;
   padding-top: 20px;

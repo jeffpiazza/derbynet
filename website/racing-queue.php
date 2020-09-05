@@ -1,4 +1,7 @@
 <?php @session_start();
+
+// $_GET['back'] if "Back" button should go to another page, otherwise coordinator.php.
+
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
@@ -30,6 +33,13 @@ $use_groups = use_groups();
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type='text/javascript' src="js/modal.js"></script>
 <style type='text/css'>
+#main {
+  position: relative;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 #queue {
   width: 400px;
 }
@@ -202,24 +212,27 @@ $(function() {
 <script type="text/javascript" src="js/racing-queue.js"></script>
 </head>
 <body>
-<?php make_banner('Racing Queue'); ?>
+<?php make_banner('Racing Queue', isset($_GET['back']) ? $_GET['back'] : 'coordinator.php'); ?>
 
-<div id="queue">
+<div id="main">
 
-<div id="racing-scene-div">
-  <label for="racing-scene">Racing scene:</label>
-  <select id="racing-scene">
-  </select>
-</div>
+  <div id="queue">
 
-<ul class="mlistview" id="queue-ul">
-</ul>
-</div>
+    <div id="racing-scene-div">
+      <label for="racing-scene">Racing scene:</label>
+      <select id="racing-scene">
+      </select>
+    </div>
 
-<div id="rounds-div">
-<p>Available rounds:</p>
-<ul class="mlistview" id="rounds-ul">
-</ul>
+    <ul class="mlistview" id="queue-ul">
+    </ul>
+  </div>
+
+  <div id="rounds-div">
+    <p>Available rounds:</p>
+    <ul class="mlistview" id="rounds-ul">
+    </ul>
+  </div>
 </div>
 
 <div id='new-roster-modal' class='modal_dialog block_buttons hidden'>

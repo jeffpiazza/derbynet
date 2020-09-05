@@ -41,6 +41,7 @@
 //       div                           #now-racing-group-buttons
 //     div.control_group.timer_control_group
 //       #timer_status_icon, other stuff
+//     div.control_group.queue_control_group
 //     div.control_group.replay_control_group
 //       #replay_status_icon, replay controls
 //   div.control_column

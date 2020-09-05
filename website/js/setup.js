@@ -11,6 +11,8 @@
 //            classes:
 //            awards:
 //            settings:
+//            scenes:
+//            queue:
 //            form_fields: {drivers:, radio:, sqlite_path:, odbc_dsn_name:}
 function populate_details(details) {
   $("#database_step div.status_icon img").attr('src', 'img/status/' + details.database.status + '.png');
@@ -19,6 +21,8 @@ function populate_details(details) {
   $("#classes_step div.status_icon img").attr('src', 'img/status/' + details.classes.status + '.png');
   $("#awards_step div.status_icon img").attr('src', 'img/status/' + details.awards.status + '.png');
   $("#settings_step div.status_icon img").attr('src', 'img/status/' + details.settings.status + '.png');
+  $("#scenes_step div.status_icon img").attr('src', 'img/status/' + details.scenes.status + '.png');
+  $("#queue_step div.status_icon img").attr('src', 'img/status/' + details.queue.status + '.png');
 
   var disabled = (details.schema.button == 'disabled') || !details.database.writable 
   // $("#settings_step input[type='submit']").prop('disabled', disabled);
@@ -26,7 +30,8 @@ function populate_details(details) {
     + "#classes_step a.button_link, "
     + "#awards_step a.button_link, "
     + "#settings_step a.button_link, "
-    + "#scenes_step a.button_link").toggleClass('disabled', disabled);
+    + "#scenes_step a.button_link,"
+    + "#queue_step a.button_link").toggleClass('disabled', disabled);
   $("#purge_data_button")
     .prop('disabled', details.purge.nracers == 0 && details.purge.nawards == 0);
 
@@ -53,6 +58,7 @@ function populate_details(details) {
   $("#classes_step div.step_details").html(details.classes.details);
   $("#awards_step div.step_details").html(details.awards.details);
   $("#settings_step div.step_details").html(details.settings.details);
+  $("#queue_step div.step_details").html(details.queue.details);
 
   function maybe_mark_driver_missing(driver, radio_id) {
     var driver_ok = ($.inArray(driver, details.form_fields.drivers) >= 0);

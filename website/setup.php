@@ -160,6 +160,13 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   </div>
 </div>
 
+<div id="queue_step" class="step_div">
+  <div class="status_icon"><img src="img/status/ok.png"/></div>
+  <div class="step_button block_buttons">
+    <a class="button_link" href="racing-queue.php?back=setup.php">Racing Queue</a>
+  </div>
+  <div class="step_details"></div>
+</div>
 
 <div id="ezsetup_modal" class="modal_dialog hidden block_buttons">
   <form>
