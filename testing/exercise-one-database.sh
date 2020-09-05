@@ -27,7 +27,7 @@ run_tests() {
     `dirname $0`/photo-setup.sh "$BASE_URL"
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
 
-    `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-permissions.sh $BASE_URL
 
@@ -35,7 +35,7 @@ run_tests() {
     `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-awards.sh "$BASE_URL" basic
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
-    `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-scenes.sh "$BASE_URL"
 
@@ -67,7 +67,7 @@ run_tests() {
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
-    `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-awards.sh "$BASE_URL" master
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
