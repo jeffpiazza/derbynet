@@ -13,6 +13,12 @@
   margin-bottom: 30px;
 }
 
+#top-of-queue {
+  width: 400px;
+  text-align: center;
+  font-weight: bold;
+}
+
 #queue ul {
   padding-bottom: 50px;
 }

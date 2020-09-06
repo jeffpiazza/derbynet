@@ -7,6 +7,13 @@ function find_round(classid, roundno) {
   return null;
 }
 
+function maybe_change_queue_message() {
+  $("#top-of-queue").text(
+    $("#queue-ul li").length == 0
+      ? "Select rounds for playlist"
+      : "Drag to reorder");
+}
+
 function on_racing_scene_change() {
   $.ajax('action.php',
          {type: 'POST',
@@ -59,13 +66,24 @@ function on_change_times_per_lane() {
   on_queue_entry_update($(this).closest('li'));
 }
 
+function update_queue_entry_format(after_sel) {
+  var li = after_sel.closest('li');
+
+  li.find('p.gap').toggleClass('squeeze', after_sel.val() == -1);
+  var selected = after_sel.find('option:selected');
+  if (selected.val() == 0) {
+    li.find('span.after-action').html("&nbsp;");
+  } else {
+    li.find('span.after-action').text(selected.text());
+  }
+}
+
 function on_change_sceneid_at_finish() {
   var after_sel = $(this);
   var li = after_sel.closest('li');
 
-  li.find('p.gap').toggleClass('squeeze', after_sel.val() == -1);
-  li.find('span.after-action').text(after_sel.find('option:selected').text());
-
+  update_queue_entry_format(after_sel);
+  
   on_queue_entry_update(li);
 }
 
@@ -99,6 +117,7 @@ function on_remove_queue_entry() {
           success: function(data) {
             g_queue.splice(li.index(), 1);
             li.remove();
+            maybe_change_queue_message();
             build_rounds(g_queue, g_classes, g_all_rounds);
           }
          });
@@ -150,7 +169,7 @@ function show_create_roster_dialog(classid, roundno) {
     add_round_to_queue(classid, roundno,
                        {top: $("#new_roster_top").val(),
                         bucketed:
-                          roundid == 1 ? $("#bucketed_groups").is(':checked')
+                          roundno == 1 ? $("#bucketed_groups").is(':checked')
                           : g_use_subgroups ? $("#bucketed_subgroups").is(':checked')
                           : false}
                       );
@@ -159,7 +178,6 @@ function show_create_roster_dialog(classid, roundno) {
 }
 
 function add_round_to_queue(classid, round, roster_params) {
-  console.log(roster_params);  // TODO
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'queue.new',
@@ -177,6 +195,7 @@ function add_round_to_queue(classid, round, roster_params) {
               entry.seq = parseInt(entry.seq);
               g_queue.push(entry);
               $('#queue-ul').append(make_queue_entry_li(entry, g_all_scenes));
+              maybe_change_queue_message();
               // TODO Maybe a new round
               build_rounds(g_queue, g_classes, g_all_rounds);
             }
@@ -232,12 +251,12 @@ function make_queue_entry_li(entry, all_scenes) {
     after_sel.val(entry.sceneid_at_finish);
   } else if (parseInt(entry.continue_racing)) {
     after_sel.val(-1);
-    li.find('p.gap').addClass('squeeze');
   } else {  // stop
     after_sel.val(0);
   }
   after_sel.on('change', on_change_sceneid_at_finish);
-  li.find('span.after-action').text(after_sel.find('option:selected').text());
+
+  update_queue_entry_format(after_sel);
 
   mobile_select(reps);
   mobile_select(after_sel);
@@ -329,37 +348,7 @@ $(function() {
       $("#queue-ul").removeClass('hover');
     },
     stop: function(event, ui) {
-      ui.item.removeClass('width200').removeAttr('style');
-      if (ui.item.hasClass('draggable')) {
-        console.log('New queue entry at ' + ui.item.index());  // TODO
-        var q = {queueid: -1,
-                 roundname: ui.item.text(),
-                 n_times_per_lane: -1,
-                 sceneid_at_finish: -1,
-                 continue_racing: 1};
-        ui.item.replaceWith(make_queue_entry_li(q, g_all_scenes));
-        var roundid = ui.item.attr('data-roundid');
-        if (typeof attr !== typeof undefined && attr !== false) {
-        }
-
-        $.ajax('action.php',
-               {type: 'POST',
-                data: {action: 'queue.new',
-                       // classid, round
-                       // n_times_per_lane
-                       // sceneid_at_finish or continue_racing or not
-                       // index
-                      }
-               });
-      } else {
-        on_reorder($("#queue-ul"));
-      }
+      on_reorder($("#queue-ul"));
     }
-  });
-
-  $("#rounds-ul li").draggable({
-    connectToSortable: "#queue-ul",
-    revert: "invalid",
-    cursorAt: { left: 100, top: 20 },
   });
 });

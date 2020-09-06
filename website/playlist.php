@@ -23,7 +23,7 @@ $use_groups = use_groups();
 ?><!DOCTYPE html>
 <html>
 <head>
-<title>Racing Queue</title>
+<title>Rounds Playlist</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
@@ -64,7 +64,7 @@ $(function() {
            function(i, entry) {
              $('#queue-ul').append(make_queue_entry_li(entry, g_all_scenes));
            });
-
+    maybe_change_queue_message();
     build_rounds(g_queue, g_classes, g_all_rounds);
   });
 </script>
@@ -83,6 +83,7 @@ $(function() {
       </select>
     </div>
 
+    <p id="top-of-queue"></p>
     <ul class="mlistview" id="queue-ul">
     </ul>
   </div>
