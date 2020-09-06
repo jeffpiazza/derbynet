@@ -122,6 +122,7 @@ function parse_rounds(data) {
                      racers_scheduled: round_xml.getAttribute('passed') - round_xml.getAttribute('unscheduled'),
                      heats_scheduled: 1*round_xml.getAttribute('heats_scheduled'),
                      heats_run: 1*round_xml.getAttribute('heats_run'),
+                     next: round_xml.hasAttribute('next_round'),
                      category: 'unassigned'};
         rounds[i].category = 
           // May get changed to now-racing for the current round
@@ -313,6 +314,9 @@ function generate_scheduling_control_group(round, current, timer_state) {
               + "</div>" : "")
       .append(is_current ? '' : $("<div data-name=\"buttons\" class=\"block_buttons\"/>")
               .toggleClass('collapsible', !is_current));
+  if (round.next) {
+    control_group.find('h3').append('<div class="next_tag">NEXT</div>');
+  }
               
 
   // By this rule, changes to n_heats_run and n_heats_scheduled and

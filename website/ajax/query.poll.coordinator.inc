@@ -6,6 +6,7 @@ require_once('inc/schema_version.inc');
 require_once('inc/aggregate_round.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/rounds.inc');
+require_once('inc/playlist.inc');
 require_once('inc/last-heat.inc');
 require_once('inc/timer-state-xml.inc');
 
@@ -41,7 +42,16 @@ echo last_heat_xml_element()."\n";
 ?>
 <?php // Rounds
 
-$curr_round = $now_running; // Avoid an extra DB call: get_running_round();
+$next_roundid = false;
+if (isset($now_running['roundid'])) {
+  $q = queue_entry_for($now_running['roundid']);
+  if ($q) {
+    $q = queue_entry_after($q['seq']);
+  }
+  if ($q) {
+    $next_roundid = find_roundid($q['classid'], $q['round']);
+  }
+}
 
 $rounds = all_rounds_with_counts();
 
@@ -58,6 +68,9 @@ foreach ($rounds as $round) {
     echo " unscheduled=\"$round[unscheduled]\"";
     echo " heats_scheduled=\"$round[heats_scheduled]\"";
     echo " heats_run=\"$round[heats_run]\"";
+    if ($round['roundid'] == $next_roundid) {
+      echo " next_round=\"true\"";
+    }
     echo '>'.htmlspecialchars($round['roundname'], ENT_QUOTES, 'UTF-8')."</round>\n";
 }
 

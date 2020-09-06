@@ -18,6 +18,14 @@ Master schedules:
   GroupName = Round <Round>
  */
 
+function find_roundid($classid, $roundno) {
+  return read_single_value('SELECT roundid FROM Rounds'
+                           .' WHERE classid = :classid'
+                           .'  AND round = :roundno',
+                           array(':classid' => $classid,
+                                 ':roundno' => $roundno));
+}
+
 // Returns each distinct Rounds entry:
 //  {roundid, round, classid, class, groupid(=roundid), roundname}
 // By default, ordered primarily by class

@@ -43,7 +43,8 @@
  }
 
 .control_column .scheduling_control {
-    cursor: pointer;
+  position: relative;
+  cursor: pointer;
 }
 
 .current {
@@ -59,10 +60,6 @@
   width: 98px;
   height: 25px;
   padding-top: 5px;
-  color: white;
-}
-
-div.queue_control_group.block_buttons a {
   color: white;
 }
 
@@ -101,8 +98,28 @@ h3 {
     margin-top: 0px;
 }
 
+div.scheduling_control div.next_tag {
+  background-color: #cc0000;
+  color: white;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 55px;
+  text-align: center;
+  font-size: 16px;
+}
+
 p.last_contact {
     font-size: 18px;
+}
+
+#playlist-group a.button_link {
+  color: white;
+  height: 20px;
+  width: 440px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 1px;
 }
 
 
