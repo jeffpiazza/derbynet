@@ -313,7 +313,7 @@ array(
 
 @include_once(sql_file_path('scene-tables')),
 
-@include_once(sql_file_path('queue-table')),
+@include_once(sql_file_path('playlist-table')),
 
 @include_once(sql_file_path('award-type-values')),
 

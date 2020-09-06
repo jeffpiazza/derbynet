@@ -57,8 +57,8 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
 
   if ($ok) {
-    $new_seq = 1 + read_single_value('SELECT MAX(seq) FROM RacingQueue', array(), 0);
-    $stmt = $db->prepare('INSERT INTO RacingQueue(seq, classid, round,'
+    $new_seq = 1 + read_single_value('SELECT MAX(seq) FROM Playlist', array(), 0);
+    $stmt = $db->prepare('INSERT INTO Playlist(seq, classid, round,'
                          .' bucket_limit, bucketed,'
                          .' n_times_per_lane, sceneid_at_finish, continue_racing)'
                          .' VALUES(:newseq, :classid, :round,'
@@ -74,14 +74,14 @@ if (have_permission(SET_UP_PERMISSION)) {
                          ':continue_racing' => $continue_racing));
     echo "<success/>\n";
     echo "<queue-entry>".json_encode(
-      read_single_row('SELECT queueid, seq, RacingQueue.classid, RacingQueue.round,'
+      read_single_row('SELECT queueid, seq, Playlist.classid, Playlist.round,'
                       .' bucket_limit, bucketed,'
                       .' n_times_per_lane, sceneid_at_finish, continue_racing,'
                       .' Classes.classid, class, round,'
                       .(use_groups() ? "class || ', ' || " : "")
                       .'\'Round \' || round AS roundname'
-                      .' FROM '.inner_join('RacingQueue', 'Classes',
-                                           'RacingQueue.classid = Classes.classid')
+                      .' FROM '.inner_join('Playlist', 'Classes',
+                                           'Playlist.classid = Classes.classid')
                       .' WHERE seq = :seq',
                       array(':seq' => $new_seq),
                       PDO::FETCH_ASSOC),

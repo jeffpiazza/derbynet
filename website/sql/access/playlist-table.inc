@@ -2,8 +2,8 @@
 
 return array(
 
-"DROP TABLE IF EXISTS RacingQueue",
-"CREATE TABLE RacingQueue ("
+"DROP TABLE IF EXISTS Playlist",
+"CREATE TABLE Playlist ("
 ."  queueid              COUNTER,"
 ."  seq                  INTEGER,"
 // Identifying the round, either by classid + round or by roundid.
@@ -18,7 +18,7 @@ return array(
 ."  continue_racing      INTEGER"
 ."  )",
 
-"CREATE UNIQUE INDEX PrimaryKey ON RacingQueue(queueid)"
+"CREATE UNIQUE INDEX PrimaryKey ON Playlist(queueid)"
 
 );
 ?>

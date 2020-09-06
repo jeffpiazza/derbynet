@@ -95,7 +95,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   </div>
 
   <div class="control_group queue_control_group block_buttons">
-    <a class='button_link' href='racing-queue.php'>Racing Queue</a>
+    <a class='button_link' href='playlist.php'>Rounds Playlist</a>
   </div>
 
   <div class="control_group replay_control_group">

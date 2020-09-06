@@ -4,7 +4,7 @@ require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
 
 function queue_entry_for($roundid) {
-  return read_single_row('SELECT * FROM RacingQueue'
+  return read_single_row('SELECT * FROM Playlist'
                          .' INNER JOIN Rounds USING (classid, round)'
                          .' WHERE roundid = :roundid',
                          array(':roundid' => $roundid), PDO::FETCH_ASSOC);
@@ -12,8 +12,8 @@ function queue_entry_for($roundid) {
 
 // Finds the next queue entry after the given one.
 function queue_entry_after($seq) {
-  return read_single_row('SELECT * FROM RacingQueue'
-                         .' WHERE seq = (SELECT MIN(seq) FROM RacingQueue'
+  return read_single_row('SELECT * FROM Playlist'
+                         .' WHERE seq = (SELECT MIN(seq) FROM Playlist'
                          .'              WHERE seq > :seq)',
                          array(':seq' => $seq), PDO::FETCH_ASSOC);
 }
@@ -76,7 +76,7 @@ function activate_queue_entry(&$queue_entry) {
 }
 
 /* When racing ends, at the completion of a round (all heats have been run), if
-  the current head of RacingQueue matches the just-ending roundid, then:
+  the current head of Playlist matches the just-ending roundid, then:
   - Activate the next queue entry (generate the schedule if need be, set the current round).
   - If sceneid_at_finish, then set that, otherwise
   - if continue_racing_at_end, then set racing on (it was just turned off), otherwise

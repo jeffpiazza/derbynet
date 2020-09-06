@@ -29,7 +29,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     $continue_racing = 0;
   }
 
-  $stmt = $db->prepare('UPDATE RacingQueue'
+  $stmt = $db->prepare('UPDATE Playlist'
                        .' SET n_times_per_lane = :ntimes,'
                        .'     sceneid_at_finish = :sceneid,'
                        .'     continue_racing = :continue'

@@ -2,7 +2,7 @@
 
 require_once('inc/racing-state.inc');
 require_once('inc/replay.inc');
-require_once('inc/racing-queue.inc');
+require_once('inc/playlist.inc');
 
 // $current is an array as returned by get_running_round() (data.inc):
 //    classid =>

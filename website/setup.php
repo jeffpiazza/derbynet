@@ -147,7 +147,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_details"></div>
 </div>
 
-<!-- Scenes and Racing Queue -->
+<!-- Scenes and Racing Playlist -->
 <div id="scenes_step" class="step_div">
   <div class="status_icon"><img src="img/status/ok.png"/></div>
   <div class="step_button block_buttons">
@@ -163,7 +163,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 <div id="queue_step" class="step_div">
   <div class="status_icon"><img src="img/status/ok.png"/></div>
   <div class="step_button block_buttons">
-    <a class="button_link" href="racing-queue.php?back=setup.php">Racing Queue</a>
+    <a class="button_link" href="playlist.php?back=setup.php">Rounds Playlist</a>
   </div>
   <div class="step_details"></div>
 </div>

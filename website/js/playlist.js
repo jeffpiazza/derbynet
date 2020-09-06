@@ -126,8 +126,6 @@ function on_add_round_to_queue(evt) {
   }
 }
 
-var g_use_subgroups = false;  // TODO
-
 function show_create_roster_dialog(classid, roundno) {
   // roster.new action:
   // For a follow-on round (round >= 2): $_POST['roundid'] + $_POST['top'] + ['bucketed']

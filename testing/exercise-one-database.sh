@@ -54,8 +54,8 @@ run_tests() {
 ############################## Points Racing ##############################
     `dirname $0`/test-points-racing.sh "$BASE_URL"
 
-############################## Racing Queue ##############################
-    `dirname $0`/test-racing-queue.sh "$BASE_URL"
+############################## Rounds Playlist ##############################
+    `dirname $0`/test-playlist.sh "$BASE_URL"
 
 ############################## One-Run-Per-Car Racing ##############################
     `dirname $0`/test-model-a-club.sh "$BASE_URL"
