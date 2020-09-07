@@ -20,6 +20,14 @@ foreach (all_scenes() as $sc) {
   $all_scenes[$sc['sceneid']] = $sc;
 }
 $use_groups = use_groups();
+
+$all_rounds_by_class = array();
+foreach (all_rounds_with_counts() as $round) {
+  if (!isset($all_rounds_by_class[$round['classid']])) {
+    $all_rounds_by_class[$round['classid']] = array();
+  }
+  $all_rounds_by_class[$round['classid']][] = $round;
+}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -36,16 +44,19 @@ $use_groups = use_groups();
 <script type='text/javascript'>
 
   var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
+  var g_group_label = <?php echo json_encode(group_label(), JSON_HEX_TAG); ?>;
+  var g_subgroup_label = <?php echo json_encode(subgroup_label(), JSON_HEX_TAG); ?>;
 
   var g_all_scenes = <?php echo json_encode(all_scenes(),
-                                            JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+                                            JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
   var g_current_racing_scene = "<?php echo read_raceinfo('racing_scene', ''); ?>";
 
-  var g_all_rounds = <?php echo json_encode(all_rounds_with_counts(/* by class: */false),
-                                            JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+  var g_all_rounds = <?php echo json_encode($all_rounds_by_class,
+                                            JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
   var g_queue = <?php
     $stmt = $db->query('SELECT queueid, seq, Playlist.classid, Playlist.round,'
-                       .' n_times_per_lane, sceneid_at_finish, continue_racing,'
+                       .' bucket_limit, bucketed, n_times_per_lane,'
+                       .' sceneid_at_finish, continue_racing,'
                        .' Classes.classid, class, round,'
                        .($use_groups ? "class || ', ' || " : "")
                        .'\'Round \' || round AS roundname'
@@ -53,11 +64,11 @@ $use_groups = use_groups();
                                             'Playlist.classid = Classes.classid')
                        .' ORDER BY seq');
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
-                 JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT);
+                 JSON_HEX_TAG | JSON_PRETTY_PRINT);
   ?>;
 
   var g_classes = <?php echo json_encode($classes, 
-                                         JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+                                         JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
 
 $(function() {
     $.each(g_queue,
@@ -66,6 +77,11 @@ $(function() {
            });
     maybe_change_queue_message();
     build_rounds(g_queue, g_classes, g_all_rounds);
+    $.each(g_all_scenes, function(i, v) {
+        $("#after-action-sel").append($("<option/>")
+                                      .attr('value', v.sceneid)
+                                      .text(v.name + " Scene"));
+      });
   });
 </script>
 <script type="text/javascript" src="js/playlist.js"></script>
@@ -95,36 +111,54 @@ $(function() {
   </div>
 </div>
 
-<div id='new-roster-modal' class='modal_dialog block_buttons hidden'>
+<div id='add-to-queue-modal' class='modal_dialog block_buttons hidden'>
   <form>
-    <p>Choose top</p>
-    <input type="number" id="new_roster_top" value="3"/>
+    <div id='new-roster-div'>
+      <p>Choose top</p>
+      <input type="number" id="new-roster-top" value="3"/>
 
-    <div class='no-buckets hidable'>
-      <p>racers</p>
-    </div>
-    <div class='subgroup-buckets hidable'>
-      <p>racers from</p>
-      <div class="centered_flipswitch">
-        <input type="checkbox" class="flipswitch bucketed-single"
-                id="bucketed_subgroups"
-                data-on-text="Each <?php echo subgroup_label(); ?>"
-                data-off-text="Overall"/>
+      <div class='no-buckets hidable'>
+        <p>racers</p>
+      </div>
+      <div class='subgroup-buckets hidable'>
+        <p>racers from</p>
+        <div class="centered_flipswitch">
+          <input type="checkbox" class="flipswitch bucketed-single"
+                  id="bucketed_subgroups"
+                  data-on-text="Each <?php echo subgroup_label(); ?>"
+                  data-off-text="Overall"/>
+        </div>
+      </div>
+      <div class='group-buckets hidable'>
+        <p>racers from</p>
+        <div class="centered_flipswitch">
+          <input type="checkbox" class="flipswitch bucketed-multi"
+                 id="bucketed_groups"
+                 data-on-text="Each <?php echo group_label(); ?>"
+                 data-off-text="Overall"/>
+        </div>
       </div>
     </div>
-    <div class='group-buckets hidable'>
-      <p>racers from</p>
-      <div class="centered_flipswitch">
-        <input type="checkbox" class="flipswitch bucketed-multi"
-               id="bucketed_groups"
-               data-on-text="Each <?php echo group_label(); ?>"
-               data-off-text="Overall"/>
-      </div>
-    </div>
+
+    <label for='schedule-reps'>Runs per lane:</label>
+    <select id='schedule-reps'>
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+    </select>
+
+    <label for='after-action-sel'>And then:</label>
+    <select id='after-action-sel'>
+      <option value='0'>Stop</option>
+      <option value='-1' selected='selected'>Start Next Round</option>
+    </select>
 
     <input type="submit" data-enhanced="true" value="Submit"/>
     <input type="button" data-enhanced="true" value="Cancel"
-      onclick='close_modal("#new-roster-modal");'/>
+      onclick='close_modal("#add-to-queue-modal");'/>
   </form>
 </div>
 

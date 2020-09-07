@@ -1,7 +1,9 @@
 function find_round(classid, roundno) {
-  for (var i = 0; i < g_all_rounds.length; ++i) {
-    if (g_all_rounds[i].classid == classid && g_all_rounds[i].round == roundno) {
-      return g_all_rounds[i];
+  if (g_all_rounds.hasOwnProperty(classid)) {
+    for (var i = 0; i < g_all_rounds[classid].length; ++i) {
+      if (g_all_rounds[classid][i].round == roundno) {
+        return g_all_rounds[classid][i];
+      }
     }
   }
   return null;
@@ -43,7 +45,8 @@ function setup_racing_scene_control(all_scenes, current_scene) {
     .on('change', on_racing_scene_change);
 }
 
-function on_open_queue_entry() {
+function on_open_queue_entry(evt) {
+  console.trace(); console.log(evt);
   var li = $(this).closest('li');
   var closed = li.find(".collapsible").css("display") == "none";
 
@@ -62,8 +65,35 @@ function on_open_queue_entry() {
   }
 }
 
+function on_change_bucket_limit() {
+  var li = $(this).closest('li');
+  g_queue[li.index()].bucket_limit = $(this).val();
+  on_queue_entry_update(li);
+}
+
+function on_change_bucketed() {
+  console.log('on_change_bucketed');
+  var li = $(this).closest('li');
+  g_queue[li.index()].bucketed = $(this).is(':checked') ? 1 : 0;
+  on_queue_entry_update(li);
+}
+
 function on_change_times_per_lane() {
-  on_queue_entry_update($(this).closest('li'));
+  var li = $(this).closest('li');
+  g_queue[li.index()].n_times_per_lane = $(this).val();
+  on_queue_entry_update(li);
+}
+
+function on_change_sceneid_at_finish() {
+  var li = $(this).closest('li');
+  var entry = g_queue[li.index()];
+  var after = $(this).val();
+  entry.sceneid_at_finish = after;
+  entry.continue_racing = (after == 0 ? 0 : 1);
+
+  update_queue_entry_format($(this));
+  
+  on_queue_entry_update(li);
 }
 
 function update_queue_entry_format(after_sel) {
@@ -78,28 +108,16 @@ function update_queue_entry_format(after_sel) {
   }
 }
 
-function on_change_sceneid_at_finish() {
-  var after_sel = $(this);
-  var li = after_sel.closest('li');
-
-  update_queue_entry_format(after_sel);
-  
-  on_queue_entry_update(li);
-}
-
 function on_queue_entry_update(li) {
   var queueid = li.attr('data-queueid');
-  var after = li.find('#after_' + queueid).val();
-
   var entry = g_queue[li.index()];
-  entry.n_times_per_lane = li.find('#reps_' + queueid).val();
-  entry.sceneid_at_finish = after;
-  entry.continue_racing = (after == 0 ? 0 : 1);
 
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'queue.update',
                  queueid: queueid,
+                 top: entry.bucket_limit,
+                 bucketed: entry.bucketed,
                  n_times_per_lane: entry.n_times_per_lane,
                  sceneid_at_finish: entry.sceneid_at_finish,
                  continue_racing: entry.continue_racing},
@@ -118,7 +136,7 @@ function on_remove_queue_entry() {
             g_queue.splice(li.index(), 1);
             li.remove();
             maybe_change_queue_message();
-            build_rounds(g_queue, g_classes, g_all_rounds);
+            build_rounds(g_queue, g_classes);
           }
          });
 
@@ -138,11 +156,11 @@ function on_reorder(ul) {
 
 function on_add_round_to_queue(evt) {
   var li = $(this).closest('li');
-  if (li.attr('data-roundid')) {
-    add_round_to_queue(li.attr('data-classid'), li.attr('data-round'), {});
-  } else {
-    show_create_roster_dialog(li.attr('data-classid'), li.attr('data-round'));
-  }
+  var li_roundid = li.attr('data-roundid');
+  $("#new-roster-div").toggleClass('hidden',
+                                   li_roundid !== false &&
+                                   typeof li_roundid != typeof undefined);
+  show_create_roster_dialog(li.attr('data-classid'), li.attr('data-round'));
 }
 
 function show_create_roster_dialog(classid, roundno) {
@@ -152,22 +170,22 @@ function show_create_roster_dialog(classid, roundno) {
   classid = parseInt(classid);
   var cl = g_classes[classid];
 
-  $("#new-roster-modal .hidable").addClass('hidden');
+  $("#add-to-queue-modal .hidable").addClass('hidden');
   if (roundno == 1) {
-    $("#new-roster-modal .group-buckets").removeClass('hidden');
+    $("#add-to-queue-modal .group-buckets").removeClass('hidden');
   } else if (g_use_subgroups) {
-    $("#new-roster-modal .subgroup-buckets").removeClass('hidden');
+    $("#add-to-queue-modal .subgroup-buckets").removeClass('hidden');
   } else {
-    $("#new-roster-modal .no-buckets").removeClass('hidden');
+    $("#add-to-queue-modal .no-buckets").removeClass('hidden');
   }
 
-  show_modal("#new-roster-modal", function (event) {
-    close_modal("#new-roster-modal");
+  show_modal("#add-to-queue-modal", function (event) {
+    close_modal("#add-to-queue-modal");
     // For roundno >= 2, the previous round may not be defined, so roster
     // contruction will have to figure out the roundid only at the very last
     // moment.
     add_round_to_queue(classid, roundno,
-                       {top: $("#new_roster_top").val(),
+                       {top: $("#new-roster-top").val(),
                         bucketed:
                           roundno == 1 ? $("#bucketed_groups").is(':checked')
                           : g_use_subgroups ? $("#bucketed_subgroups").is(':checked')
@@ -184,7 +202,7 @@ function add_round_to_queue(classid, round, roster_params) {
                  classid: classid,
                  round: round,
                  top: roster_params ? roster_params.top : 0,
-                 bucketed: roster_params ? roster_params.bucketed : false,
+                 bucketed: roster_params ? (roster_params.bucketed ? 1 : 0) : false,
                  n_times_per_lane: 1,
                  continue_racing: 1},
           success: function(data) {
@@ -197,16 +215,70 @@ function add_round_to_queue(classid, round, roster_params) {
               $('#queue-ul').append(make_queue_entry_li(entry, g_all_scenes));
               maybe_change_queue_message();
               // TODO Maybe a new round
-              build_rounds(g_queue, g_classes, g_all_rounds);
+              build_rounds(g_queue, g_classes);
             }
           }
          });
 }
 
-// Returns the new li.  entry = {queueid, roundname, n_times_per_lane, sceneid_at_finish, continue_racing}
+// Returns the new li.  entry is a playlist queue entry, and includes:
+// queueid, classid, round, roundname, bucket_limit, bucketed, n_times_per_lane,
+// sceneid_at_finish, continue_racing
+
 function make_queue_entry_li(entry, all_scenes) {
+  var top_id = 'top_' + entry.queueid;
+  var bucketed_id = 'bucketed_' + entry.queueid;
   var reps_id = 'reps_' + entry.queueid;
   var after_id = 'after_' + entry.queueid;
+
+  // TODO
+  // Mark rounds that are completed (in the queue)
+  // Mark the current round
+
+  var collapsible = $("<div class='collapsible'/>").css('display', 'none');
+  if (!find_round(entry.classid, entry.round)) {
+    // Show roster params only if round doesn't exist
+    collapsible.append($("<label>Choose top:</label>").attr('for', top_id))
+      .append($("<input type='number'/>")
+              .attr('id', top_id)
+              .attr('value', entry.bucket_limit)
+              .on('click', function (evt) { evt.stopPropagation(); })
+              .on('change', on_change_bucket_limit));
+
+    var bucketed = $("<input type='checkbox' class='flipswitch'/>")
+        .attr('id', bucketed_id)
+        .attr('data-off-text', 'Overall')
+        .prop('checked', entry.bucketed == 0 ? false : true)
+        .on('change', on_change_bucketed);
+    if (g_classes[entry.classid].constituents.length > 0) {
+      // Aggregate class
+      bucketed.attr('data-on-text', 'Each ' + g_group_label);
+    } else if (g_use_subgroups) {
+      bucketed.attr('data-on-text', 'Each ' + g_subgroup_label);
+    } else {
+      bucketed = false;
+    }
+    if (bucketed) {
+      collapsible
+        .append("<br/>")
+        .append($("<label>From:</label>").attr('for', bucketed_id))
+        .append(bucketed);
+    }
+    collapsible.append("<br/>");
+  }
+
+  var reps = $("<select/>").attr('id', reps_id)
+      .append("<option>1</option>")
+      .append("<option>2</option>")
+      .append("<option>3</option>")
+      .append("<option>4</option>")
+      .append("<option>5</option>")
+      .append("<option>6</option>")
+      .val(entry.n_times_per_lane)
+      .on('change', on_change_times_per_lane);
+  collapsible
+    .append($("<label>Runs per lane:</label>").attr('for', reps_id))
+    .append(reps);
 
   var after_sel = $("<select/>")
       .attr('id', after_id)
@@ -218,19 +290,13 @@ function make_queue_entry_li(entry, all_scenes) {
                      .text(v.name + " Scene"));
   });
 
-  var reps = $("<select/>").attr('id', reps_id)
-      .append("<option>1</option>")
-      .append("<option>2</option>")
-      .append("<option>3</option>")
-      .append("<option>4</option>")
-      .append("<option>5</option>")
-      .append("<option>6</option>")
-      .val(entry.n_times_per_lane)
-      .on('change', on_change_times_per_lane);
+  collapsible.append($("<label>After racing:</label>").attr('for', after_id))
+    .append(after_sel);
   
   var li = $("<li class='queue'/>")
       .attr('data-queueid', entry.queueid)
       .attr('data-classid', entry.classid)
+      .attr('data-round', entry.round)
       .append($("<div class='queued-round'/>")
               .append($("<p/>")
                       .text(entry.roundname)
@@ -238,12 +304,7 @@ function make_queue_entry_li(entry, all_scenes) {
                       .append($("<input type='button' class='queue-remove' value=' x '/>")
                               .on('click', on_remove_queue_entry))
                      )
-              .append($("<div class='collapsible'/>")
-                      .css('display', 'none')
-                      .append($("<label>Runs per lane:</label>").attr('for', reps_id))
-                      .append(reps)
-                      .append($("<label>After racing:</label>").attr('for', after_id))
-                      .append(after_sel)))
+              .append(collapsible))
       .append("<p class='gap'><span class='after-action'/></p>")
       .on('click', on_open_queue_entry);
 
@@ -260,26 +321,43 @@ function make_queue_entry_li(entry, all_scenes) {
 
   mobile_select(reps);
   mobile_select(after_sel);
+  if (bucketed) {
+    flipswitch(bucketed);
+    bucketed.parent().on('click', function(event) { event.stopPropagation(); });
+  }
   return li;
 }
 
-function build_rounds(queue, classes, rounds) {
+function build_rounds(queue, classes) {
   $('#rounds-ul').empty();
 
+  var highest_round_per_class = {};
+  
   var highest_round = 0;  // Highest round overall
   $.each(queue, function(i, entry) {
     // entry = {classid, round}
     entry.round = parseInt(entry.round);
     entry.seq = parseInt(entry.seq);
-      if (entry.round > highest_round) {
-        highest_round = entry.round;
-      }
-  });
-  $.each(rounds, function(i, entry) {
-    entry.round = parseInt(entry.round);
     if (entry.round > highest_round) {
       highest_round = entry.round;
     }
+  });
+
+  $.each(classes, function(classid, cl) {
+    highest_round_per_class[classid] = 0;
+  });
+
+  // Go through existing rounds
+  $.each(g_all_rounds, function(classid, round_entries) {
+    $.each(round_entries, function(i, round_entry) {
+      round_entry.round = parseInt(round_entry.round);
+      if (round_entry.round > highest_round) {
+        highest_round = round_entry.round;
+      }
+      if (round_entry.round > highest_round_per_class[classid]) {
+        highest_round_per_class[classid] = round_entry.round;
+      }
+    });
   });
 
   var first_ever = true;
@@ -298,29 +376,26 @@ function build_rounds(queue, classes, rounds) {
         }
       });
       if (!in_queue) {
-        var round_exists = false;
-        $.each(rounds, function(ri, round) {
-          if (round.classid == classid && round.round == r) {
-            round_exists = round.roundid;
-            return false;
+        var round_exists = find_round(classid, r) ? true : false;
+
+        if (round_exists || highest_round_per_class[classid] == r - 1) {
+          if (first_in_round) {
+            $("#rounds-ul").append("<div class='spacer'/>");
+            first_in_round = false;
           }
-        });
-        if (first_in_round) {
-          $("#rounds-ul").append("<div class='spacer'/>");
-          first_in_round = false;
+          $("#rounds-ul").append(
+            $("<li class='draggable width200'/>")
+              .text(cl.class + ', Round ' + r)  // TODO roundname
+              .attr('data-classid', classid)
+              .attr('data-round', r)
+              .attr('data-roundid', function() {
+                if (round_exists) {
+                  return round_exists;
+                }
+              })
+              .append($("<input type='button' value='+'/>").on('click', on_add_round_to_queue))
+          );
         }
-        $("#rounds-ul").append(
-          $("<li class='draggable width200'/>")
-            .text(cl.class + ', Round ' + r)  // TODO roundname
-            .attr('data-classid', classid)
-            .attr('data-round', r)
-            .attr('data-roundid', function() {
-              if (round_exists) {
-                return round_exists;
-              }
-            })
-            .append($("<input type='button' value='+'/>").on('click', on_add_round_to_queue))
-        );
       }
     });
   }

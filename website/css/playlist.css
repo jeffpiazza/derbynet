@@ -64,6 +64,17 @@ div.queued-round > p > img.triangle {
   width: 100%;
   text-align: center;
 }
+
+#queue ul > li input[type=number] {
+  font-size: 20px;
+  width: 150px;
+  margin-left: 10px;
+}
+
+#queue ul > li div.flipswitch {
+  margin-left: 10px;
+}
+
 #queue ul > li > p span.after-action {
   font-size: 16px;
   font-weight: normal;
@@ -76,7 +87,7 @@ p.squeeze {
 
 #rounds-div {
   position: absolute;
-  top: 150px;
+  top: 10px;
   right: 0;
   width: 300px;
 }
