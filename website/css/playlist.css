@@ -24,7 +24,8 @@
 }
 #queue ul.mlistview > li {
   border-width: 0px;
-  padding: 0em 1em;
+  padding: 0px;
+  padding-right: 2em;
 }
 
 #queue ul.mlistview > li > div.queued-round {
@@ -53,6 +54,15 @@ div.queued-round > p {
   margin-left: 10px;
   font-size: 18px;
   font-weight: bold;
+}
+
+#queue ul.mlistview div.queued-round.current {
+  border-right-width: 10px;
+  border-right-color: red;
+}
+
+#queue ul.mlistview div.queued-round.finished {
+  background-color: #dddddd;
 }
 
 div.queued-round > p > img.triangle {

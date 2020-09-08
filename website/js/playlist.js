@@ -231,12 +231,9 @@ function make_queue_entry_li(entry, all_scenes) {
   var reps_id = 'reps_' + entry.queueid;
   var after_id = 'after_' + entry.queueid;
 
-  // TODO
-  // Mark rounds that are completed (in the queue)
-  // Mark the current round
-
   var collapsible = $("<div class='collapsible'/>").css('display', 'none');
-  if (!find_round(entry.classid, entry.round)) {
+  var round_entry = find_round(entry.classid, entry.round);
+  if (!round_entry) {
     // Show roster params only if round doesn't exist
     collapsible.append($("<label>Choose top:</label>").attr('for', top_id))
       .append($("<input type='number'/>")
@@ -298,6 +295,12 @@ function make_queue_entry_li(entry, all_scenes) {
       .attr('data-classid', entry.classid)
       .attr('data-round', entry.round)
       .append($("<div class='queued-round'/>")
+              .toggleClass('finished', round_entry != null &&
+                           round_entry.heats_scheduled > 0 &&
+                           round_entry.heats_run == round_entry.heats_scheduled)
+              .toggleClass('current',
+                           g_current_round.classid == entry.classid &&
+                           g_current_round.round == entry.round)
               .append($("<p/>")
                       .text(entry.roundname)
                       .prepend("<img class='triangle' src='img/triangle_east.png'/>")

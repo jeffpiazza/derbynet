@@ -49,7 +49,9 @@ foreach (all_rounds_with_counts() as $round) {
 
   var g_all_scenes = <?php echo json_encode(all_scenes(),
                                             JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
-  var g_current_racing_scene = "<?php echo read_raceinfo('racing_scene', ''); ?>";
+  var g_current_racing_scene = <?php echo json_encode(read_raceinfo('racing_scene', ''),
+                                                      JSON_HEX_TAG); ?>;
+  var g_current_round = <?php echo json_encode(get_running_round(), JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
 
   var g_all_rounds = <?php echo json_encode($all_rounds_by_class,
                                             JSON_HEX_TAG | JSON_PRETTY_PRINT); ?>;
