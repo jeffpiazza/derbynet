@@ -21,6 +21,17 @@ window.onload = function() {
 };
 </script>
 <style type="text/css">
+
+.advert {
+  font-size: 18px;
+  border: 5px solid #023882;
+  background-color: #fcf0b5;
+  padding: 20px;
+  margin-bottom: 50px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
 .ip_addr { border: 2px solid red;  padding: 2px; }
 
 .phpinfo {background-color: #ffffff; color: #000000;}
@@ -68,7 +79,10 @@ window.onload = function() {
 <div class="main-body">
 <h1>About DerbyNet</h1>
 
-<p></p>
+<p class='advert'><b>DerbyNet</b> is the free, open-source, multi-screen race management system for Pinewood Derby-style racing.  It's used by packs and other groups all around the country, and around the globe!
+Check us out <a href="http://jeffpiazza.github.io/derbynet/">on GitHub!</a></p>
+
+
 
 <?php
 $addrs = gethostbynamel(gethostname());
