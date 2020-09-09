@@ -72,7 +72,6 @@ function on_change_bucket_limit() {
 }
 
 function on_change_bucketed() {
-  console.log('on_change_bucketed');
   var li = $(this).closest('li');
   g_queue[li.index()].bucketed = $(this).is(':checked') ? 1 : 0;
   on_queue_entry_update(li);
@@ -212,7 +211,7 @@ function add_round_to_queue(classid, round, roster_params) {
               entry.round = parseInt(entry.round);
               entry.seq = parseInt(entry.seq);
               g_queue.push(entry);
-              $('#queue-ul').append(make_queue_entry_li(entry, g_all_scenes));
+              append_playlist_entry_li(entry, g_all_scenes);
               maybe_change_queue_message();
               // TODO Maybe a new round
               build_rounds(g_queue, g_classes);
@@ -221,11 +220,10 @@ function add_round_to_queue(classid, round, roster_params) {
          });
 }
 
-// Returns the new li.  entry is a playlist queue entry, and includes:
+// entry is a playlist queue entry, and includes:
 // queueid, classid, round, roundname, bucket_limit, bucketed, n_times_per_lane,
 // sceneid_at_finish, continue_racing
-
-function make_queue_entry_li(entry, all_scenes) {
+function append_playlist_entry_li(entry, all_scenes) {
   var top_id = 'top_' + entry.queueid;
   var bucketed_id = 'bucketed_' + entry.queueid;
   var reps_id = 'reps_' + entry.queueid;
@@ -309,7 +307,8 @@ function make_queue_entry_li(entry, all_scenes) {
                      )
               .append(collapsible))
       .append("<p class='gap'><span class='after-action'/></p>")
-      .on('click', on_open_queue_entry);
+      .on('click', on_open_queue_entry)
+      .appendTo('#queue-ul');
 
   if (entry.sceneid_at_finish > 0) {
     after_sel.val(entry.sceneid_at_finish);
@@ -328,7 +327,6 @@ function make_queue_entry_li(entry, all_scenes) {
     flipswitch(bucketed);
     bucketed.parent().on('click', function(event) { event.stopPropagation(); });
   }
-  return li;
 }
 
 function build_rounds(queue, classes) {

@@ -308,9 +308,11 @@ div.flipswitch.checked {
 }
 div.flipswitch .on {
   text-indent:	-2.6em;
+  font-size: 100%;
 }
 div.flipswitch .off {
   text-indent:	1em;
+  font-size: 100%;
 }
 
 /* These rules match the "Racing/Not Racing" flipswitch on the
