@@ -34,10 +34,10 @@ curl_post action.php "action=scene.apply&sceneid=1" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/identify.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/welcome.kiosk
 
-# Name the two kiosks.  Assigned pages don't change.
+# Name the two kiosks.  Assigned pages change to match the current scene.
 curl_post action.php "action=kiosk.assign&address=$KIOSK1&name=Main" | check_success
 curl_post action.php "action=kiosk.assign&address=$KIOSK2&name=Aux1" | check_success
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/identify.kiosk
+curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/welcome.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/welcome.kiosk
 
 # Setting a scene now affects the named kiosks
@@ -48,7 +48,7 @@ curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/ondec
 # Now the third kiosk joins
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/identify.kiosk
 curl_post action.php "action=kiosk.assign&address=$KIOSK3&name=Aux2" | check_success
-curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/identify.kiosk
+curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/results-by-racer.kiosk
 
 # Re-setting the scene affects the late kiosk
 curl_post action.php "action=scene.apply&sceneid=4" | check_success

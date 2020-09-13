@@ -60,6 +60,7 @@ curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
 # After the first round, we should have Den2 scheduled and teed up, but not
 # racing.  After a brief pause, we should see the scene switched to Awards
+echo "Waiting for scene change to take effect..."
 sleep 11s
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.2.

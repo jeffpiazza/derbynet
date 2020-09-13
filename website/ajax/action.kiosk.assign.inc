@@ -32,6 +32,19 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     $stmt = $db->prepare('UPDATE Kiosks SET name = :name WHERE address = :address');
     $stmt->execute(array(':name' => $_POST['name'],
                          ':address' => $_POST['address']));
+    // If there's a current scene and it provides a page for the new name, then apply that page.
+    $current_scene = read_raceinfo('current_scene');
+    if ($current_scene) {
+      $page = read_single_value('SELECT page FROM SceneKiosk'
+                                .' WHERE sceneid = :sceneid AND kiosk_name = :name',
+                                array(':sceneid' => $current_scene,
+                                      ':name' => $_POST['name']));
+      if ($page) {
+        $stmt = $db->prepare('UPDATE Kiosks SET page = :page WHERE address = :address');
+        $stmt->execute(array(':page' => $page,
+                             ':address' => $_POST['address']));
+      }
+    }
   }
 
   if (isset($_POST['all'])) {
