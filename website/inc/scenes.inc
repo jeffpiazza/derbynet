@@ -71,4 +71,14 @@ function maybe_apply_racing_scene() {
     apply_scene($racing_scene);
   }
 }
+
+function maybe_apply_playlist_scene() {
+  global $db;
+  $when = read_raceinfo('playlist_scene_at');
+  if ($when !== false && $when < time()) {
+    $db->exec('DELETE FROM RaceInfo WHERE itemkey = \'playlist_scene_at\'');
+    apply_scene(read_raceinfo('playlist_scene'));
+  }
+}
+
 ?>

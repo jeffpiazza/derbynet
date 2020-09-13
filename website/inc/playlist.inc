@@ -89,9 +89,8 @@ function perform_queue_after_round($roundid) {
     activate_queue_entry($after);
   }
   if ($entry['sceneid_at_finish'] > 0) {
-    // TODO We want to queue a new scene a short time after racing ends, not
-    // apply the scene immediately.
-    apply_scene($entry['sceneid_at_finish']);
+    write_raceinfo('playlist_scene', $entry['sceneid_at_finish']);
+    write_raceinfo('playlist_scene_at', time() + 10);
   } else if ($entry['continue_racing']) {
     // Since we were racing before, DON'T re-apply the racing scene, as user may
     // have customized their set-up for whatever reason.
