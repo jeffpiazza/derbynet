@@ -49,7 +49,8 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
 <body>
 <?php make_banner('Scenes', 'setup.php'); ?>
 
-<div id="select-wrap">
+<div id="select-wrap" class="block_buttons">
+ <!-- block_buttons for  .block_buttons option  css rule -->
   <select id="scenes-select">
   </select>
 </div>

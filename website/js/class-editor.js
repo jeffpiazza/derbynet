@@ -323,9 +323,8 @@ function repopulate_class_list(data) {
                             .addClass('flipswitch')
                             .attr('id', "constituent_" + cl.getAttribute('classid'))
                             .attr('name', "constituent_" + cl.getAttribute('classid')));
-      flipswitch(flipswitch_div.find("input[type=checkbox]"));
       $("#aggregate-constituents").append(flipswitch_div);
-      
+      flipswitch(flipswitch_div.find("input[type=checkbox]"));
     }
     $("#aggregate-constituents input[type='checkbox']").on('change', maybe_enable_aggregate_create);
     $("#aggregate-constituents").trigger("create");

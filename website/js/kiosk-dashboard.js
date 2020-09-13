@@ -195,9 +195,6 @@ function generate_kiosk_control_group(pages, kiosks) {
 }
 
 function update_kiosk_names(kiosks) {
-  if (kiosks.length > 1) {
-    $("#scenes-control").removeClass('hidden');
-  }
   var name_count = 0;
   for (var i = 0; i < kiosks.length; ++i) {
     if (kiosks[i].name != '') {

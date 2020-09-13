@@ -26,21 +26,21 @@ function on_racing_scene_change() {
 
 function setup_racing_scene_control(all_scenes, current_scene) {
   $("#racing-scene").empty();
-  var first_selection = 0;
+  var first_selection = -1;
+  $("#racing-scene").append($("<option/>")
+                            .attr('value', -1)
+                            .text("(None)"));
   for (var i = 0; i < all_scenes.length; ++i) {
     var scene = all_scenes[i];
     $("#racing-scene").append($("<option/>")
                               .attr('value', scene.sceneid)
                               .text(scene.name));
     if (scene.sceneid == current_scene) {
-      first_selection = i;
+      first_selection = scene.sceneid;
     }
   }
-  $("#racing-scene").append($("<option/>")
-                            .attr('value', -1)
-                            .text("(New scene)"));
   $("#racing-scene")
-    .val(all_scenes[first_selection].sceneid)
+    .val(first_selection)
     .trigger('change')
     .on('change', on_racing_scene_change);
 }
@@ -91,7 +91,7 @@ function on_change_sceneid_at_finish() {
   entry.continue_racing = (after == 0 ? 0 : 1);
 
   update_queue_entry_format($(this));
-  
+
   on_queue_entry_update(li);
 }
 
@@ -144,17 +144,19 @@ function on_remove_queue_entry() {
 
 function on_reorder(ul) {
   var data = {action: 'queue.order'};
-  $(ul).each(function(i) {
+  $(ul).find('li').each(function(i) {
     data['queueid_' + (i + 1)] = $(this).attr('data-queueid');
   });
-
   $.ajax('action.php',
          {type: 'POST',
-          data: data});
+          data: data,
+          success: function(data) {
+          }
+         });
 }
 
 function on_add_round_to_queue(evt) {
-  var li = $(this).closest('li');
+  var li = $(this);
   var li_roundid = li.attr('data-roundid');
   $("#new-roster-div").toggleClass('hidden',
                                    li_roundid !== false &&
@@ -287,7 +289,7 @@ function append_playlist_entry_li(entry, all_scenes) {
 
   collapsible.append($("<label>After racing:</label>").attr('for', after_id))
     .append(after_sel);
-  
+
   var li = $("<li class='queue'/>")
       .attr('data-queueid', entry.queueid)
       .attr('data-classid', entry.classid)
@@ -332,8 +334,13 @@ function append_playlist_entry_li(entry, all_scenes) {
 function build_rounds(queue, classes) {
   $('#rounds-ul').empty();
 
-  var highest_round_per_class = {};
-  
+  // Maps classid to { highest:, all_queued: }
+  //  all_queued = false if there are any rounds for the class not in the queue
+  var per_class = {};
+  $.each(classes, function(classid, cl) {
+    per_class[classid] = {highest: 0, all_queued: true};
+  });
+
   var highest_round = 0;  // Highest round overall
   $.each(queue, function(i, entry) {
     // entry = {classid, round}
@@ -342,10 +349,9 @@ function build_rounds(queue, classes) {
     if (entry.round > highest_round) {
       highest_round = entry.round;
     }
-  });
-
-  $.each(classes, function(classid, cl) {
-    highest_round_per_class[classid] = 0;
+    if (entry.round > per_class[entry.classid].highest) {
+      per_class[entry.classid].highest = entry.round;
+    }
   });
 
   // Go through existing rounds
@@ -355,8 +361,8 @@ function build_rounds(queue, classes) {
       if (round_entry.round > highest_round) {
         highest_round = round_entry.round;
       }
-      if (round_entry.round > highest_round_per_class[classid]) {
-        highest_round_per_class[classid] = round_entry.round;
+      if (round_entry.round > per_class[classid].highest) {
+        per_class[classid].highest = round_entry.round;
       }
     });
   });
@@ -378,14 +384,17 @@ function build_rounds(queue, classes) {
       });
       if (!in_queue) {
         var round_exists = find_round(classid, r) ? true : false;
+        if (round_exists /* and !in_queue */) {
+          per_class[classid].all_queued = false;
+        }
 
-        if (round_exists || highest_round_per_class[classid] == r - 1) {
+        if (round_exists || (per_class[classid].all_queued && per_class[classid].highest == r - 1)) {
           if (first_in_round) {
             $("#rounds-ul").append("<div class='spacer'/>");
             first_in_round = false;
           }
           $("#rounds-ul").append(
-            $("<li class='draggable width200'/>")
+            $("<li/>")
               .text(cl.class + ', Round ' + r)  // TODO roundname
               .attr('data-classid', classid)
               .attr('data-round', r)
@@ -394,14 +403,14 @@ function build_rounds(queue, classes) {
                   return round_exists;
                 }
               })
-              .append($("<input type='button' value='+'/>").on('click', on_add_round_to_queue))
+              .on('click', on_add_round_to_queue)
           );
         }
       }
     });
   }
 }
-  
+
 $(function() {
   setup_racing_scene_control(g_all_scenes, g_current_racing_scene);
   // TODO Prevent scheduling rounds before their precursors, or constituents.

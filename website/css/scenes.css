@@ -20,6 +20,9 @@ div.kiosk h3 {
 div.page-div {
   width: 200px;
 }
+div.page-div select {
+  font-size: 16px;
+}
 div.wrap {
   width: 384px;
   height: 245px;

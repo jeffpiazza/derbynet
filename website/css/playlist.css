@@ -132,7 +132,7 @@ p.squeeze {
   border-radius: 0.4em 0.4em 0.4em 0.4em;
 }
 
-li.width200.width200.width200 {
+#rounds-ul.mlistview > li {
   width: 256px;
 }
 

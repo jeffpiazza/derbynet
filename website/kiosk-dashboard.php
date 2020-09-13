@@ -39,7 +39,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 <?php make_banner('Kiosks'); ?>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
-<div id="scenes-control" class="hidden">
+<div id="scenes-control">
   <label for="scenes-select">Current scene:</label>
   <div id="select-wrap">
     <select id="scenes-select"></select>
