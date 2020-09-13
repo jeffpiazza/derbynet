@@ -26,7 +26,6 @@ require_permission(SET_UP_PERMISSION);
 <?php make_banner('Set-Up'); ?>
 <?php
 
-require_once('inc/ajax-failure.inc'); // Must follow jquery
 require_once('inc/parse-connection-string.inc');
 require_once('inc/details-for-setup-page.inc');
 require_once('inc/default-database-directory.inc');
@@ -159,6 +158,8 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
        make managing them easier.</p>
   </div>
 </div>
+
+<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id="queue_step" class="step_div">
   <div class="status_icon"><img src="img/status/ok.png"/></div>

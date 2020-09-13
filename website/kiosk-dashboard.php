@@ -37,7 +37,6 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 </head>
 <body>
 <?php make_banner('Kiosks'); ?>
-<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id="scenes-control">
   <label for="scenes-select">Current scene:</label>
@@ -97,6 +96,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 <div id="kiosk_control_group" class="kiosk_control_group">
 </div>
 
+<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id='kiosk_modal' class="modal_dialog hidden block_buttons">
   <form>

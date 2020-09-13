@@ -27,7 +27,6 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 </head>
 <body>
 <?php make_banner('Race Dashboard'); ?>
-<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div class="double_control_column">
   <div id="now-racing-group" class="scheduling_control_group">
@@ -124,6 +123,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 </div>
 
 </div>
+
+<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id='schedule_modal' class="modal_dialog hidden block_buttons">
   <form>

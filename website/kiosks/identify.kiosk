@@ -33,5 +33,6 @@ make_banner('Kiosk Identification', /* back_button */ false);
      <img class="big-logo" src="img/derbynet-300.png"/>
    </div>
  </div>
+<?php require_once('inc/ajax-failure.inc'); ?>
 </body>
 </html>

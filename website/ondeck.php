@@ -37,7 +37,6 @@ require_once('inc/running_round_header.inc');
   echo "body { overflow: hidden; }\n";
   echo "</style>\n";
 }?>
-<?php require_once('inc/ajax-failure.inc'); ?>
 <script type="text/javascript">
 var g_update_status = {
       last_update_time: "", // First refresh is for everything
@@ -237,6 +236,7 @@ $stmt->closeCursor();
 ?>
 </table>
 
+<?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id='photo_view_modal' class="modal_dialog hidden block_buttons">
   <img id='photo_view_img'/>

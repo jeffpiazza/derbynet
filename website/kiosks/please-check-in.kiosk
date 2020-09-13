@@ -3,9 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Please Check In</title>
-<script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript" src="js/please-check-in.js"></script>
 <script type="text/javascript">
  // Instead of dynamically tracking check-ins, we just reload the page every 30
@@ -20,7 +21,6 @@ li.first {
 </style>
 </head>
 <body>
-<?php require('inc/kiosk-poller.inc'); ?>
 <?php
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');

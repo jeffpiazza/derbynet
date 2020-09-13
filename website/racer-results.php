@@ -28,7 +28,6 @@ if (isset($as_kiosk)) {
   echo "body { overflow: hidden; }\n";
   echo "</style>\n";
 }
-require_once('inc/ajax-failure.inc');
 ?>
 <script type="text/javascript" src="js/common-update.js"></script>
 <script type="text/javascript" src="js/results-by-racer-update.js"></script>
@@ -221,5 +220,6 @@ $stmt->closeCursor();
   }
 ?>
 </div>
+<?php require_once('inc/ajax-failure.inc'); ?>
 </body>
 </html>

@@ -7,7 +7,6 @@ require_once('inc/banner.inc');
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<?php require('inc/kiosk-poller.inc'); ?>
 <title>Derby Racing Main Board</title>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/global.css"/>
@@ -15,6 +14,7 @@ require_once('inc/banner.inc');
 <link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript" src="js/now-racing.js"></script>
 <script type="text/javascript" src="js/now-racing-adjust-fonts.js"></script>
 <?php if (@$simulated_polling_url) { ?>
@@ -76,6 +76,9 @@ var g_linger_ms = <?php echo $linger_ms; ?>;
 <?php } else { ?>
 <h2>Number of lanes not yet recorded...</h2>
 <?php } ?>
+
+<?php require_once('inc/ajax-failure.inc'); ?>
+
 <div id="overlay_background"></div>
 <div id="paused_overlay" class="overlay_foreground">
  <img src="img/pause.png"/>

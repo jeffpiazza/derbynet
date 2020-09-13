@@ -19,5 +19,8 @@ max-height: 80vh;
 <img src="<?php echo images_dir(); ?>/kiosks/emblem_800.png"/>
 </div>
 <p class="kiosk_title">Welcome</p>
+
+<?php require_once('inc/ajax-failure.inc'); ?>
+
 </body>
 </html>
