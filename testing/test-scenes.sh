@@ -41,7 +41,7 @@ curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/ident
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/welcome.kiosk
 
 # Setting a scene now affects the named kiosks
-curl_post action.php "action=scene.apply&sceneid=3" | check_success
+curl_post action.php "action=scene.apply&sceneid=4" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/ondeck.kiosk
 
@@ -51,24 +51,24 @@ curl_post action.php "action=kiosk.assign&address=$KIOSK3&name=Aux2" | check_suc
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/identify.kiosk
 
 # Re-setting the scene affects the late kiosk
-curl_post action.php "action=scene.apply&sceneid=3" | check_success
+curl_post action.php "action=scene.apply&sceneid=4" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/ondeck.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/results-by-racer.kiosk
 
 # Switching to a scene without assignments for some kiosks leaves those kiosks
 # unaffected
-curl_post action.php "action=scene.apply&sceneid=4" | check_success
+curl_post action.php "action=scene.apply&sceneid=5" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/ondeck.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/results-by-racer.kiosk
 
-curl_post action.php "action=scene.apply&sceneid=2" | check_success
+curl_post action.php "action=scene.apply&sceneid=3" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/slideshow.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/please-check-in.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one kiosks/welcome.kiosk
 
-curl_post action.php "action=scene.apply&sceneid=5" | check_success
+curl_post action.php "action=scene.apply&sceneid=6" | check_success
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/standings.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK2" | expect_one kiosks/derbynet.kiosk
 curl_get "action.php?query=poll.kiosk&address=$KIOSK3" | expect_one local/kiosks/feedback.kiosk

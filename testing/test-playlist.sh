@@ -37,15 +37,15 @@ curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/welco
 
 # Assuming Den1's first round is roundid = 1, etc.
 #
-# Assuming sceneid 3 is "Racing"  with now-racing page on Main,
-# and sceneid 4 is "Awards", with awards-presentation page on Main
+# Assuming sceneid 4 is "Racing"  with now-racing page on Main,
+# and sceneid 5 is "Awards", with awards-presentation page on Main
 
 curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=2" | check_success
-curl_post action.php "action=settings.write&racing_scene=3" | check_success
+curl_post action.php "action=settings.write&racing_scene=4" | check_success
 
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
-curl_post action.php "action=queue.new&classid=1&round=1&sceneid_at_finish=4" | check_success
+curl_post action.php "action=queue.new&classid=1&round=1&sceneid_at_finish=5" | check_success
 curl_post action.php "action=queue.new&classid=2&round=1&n_times_per_lane=1&continue_racing=1" | check_success
 curl_post action.php "action=queue.new&classid=3&round=1&n_times_per_lane=1&continue_racing=1" | check_success
 curl_post action.php "action=queue.new&classid=4&round=1&top=3&bucketed=0&n_times_per_lane=2" | check_success
@@ -59,8 +59,8 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.0
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
 # After the first round, we should have Den2 scheduled and teed up, but not
-# racing, and scene switched to Awards
-
+# racing.  After a brief pause, we should see the scene switched to Awards
+sleep 11s
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.2.
 curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one now-racing=.0.
