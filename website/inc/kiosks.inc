@@ -174,7 +174,6 @@ function xml_for_kiosk_pages() {
 // remain in the database on race day.
 function drop_old_kiosks() {
   global $db;
-  // 300 seconds is five minutes
-  $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 300');
+  $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 30');
 }
 ?>
