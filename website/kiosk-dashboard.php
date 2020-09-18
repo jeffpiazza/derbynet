@@ -72,7 +72,8 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
           echo '<option selected="selected" disabled="1">Please choose what standings to display</option>';
         }
     {
-      foreach (standings_catalog() as $entry) {
+      $standings = new StandingsOracle();
+      foreach ($standings->standings_catalog() as $entry) {
         $json_entry = json_encode($entry);
         echo '<option data-catalog-entry="'.htmlspecialchars($json_entry, ENT_QUOTES, 'UTF-8').'"';
         if ($current_catalog_entry == $json_entry) {

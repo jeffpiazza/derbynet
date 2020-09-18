@@ -10,11 +10,8 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
   write_raceinfo('scoring', 1);
 }
 
-function export_standings(callable $out, callable $choose, $entry,
-                          &$result_summary, &$parallel) {
-  $key = $entry['key'];
-  $show_supergroup_column = $key != 'supergroup';
-  $show_inround_column = $entry['kind'] == 'rank-round';
+function export_standings(callable $out, $key, $presentation,
+                          &$result_summary) {
   $name_style = read_raceinfo('name-style', FULL_NAME);
   $use_groups = use_groups();
   $use_subgroups = use_subgroups();
@@ -22,6 +19,9 @@ function export_standings(callable $out, callable $choose, $entry,
   $use_points = read_raceinfo_boolean('use-points');
   $time_format = get_finishtime_formatting_string();
   $scoring = read_raceinfo('scoring', 0);
+
+  $show_supergroup_column = $presentation == 'subgroup';
+  $show_inround_column = false;  // TODO
 
   $out(array($use_points ? "Scoring by points"
              : ($scoring == 0 ? "Averaging all heat times"
@@ -64,7 +64,7 @@ function export_standings(callable $out, callable $choose, $entry,
 
   $i = 0;
   foreach ($result_summary as $row) {
-    $p = $parallel[$i];
+    $p = $row['outcome'];
     ++$i;
 
     $racerid = $row['racerid'];
@@ -72,7 +72,7 @@ function export_standings(callable $out, callable $choose, $entry,
     $classid = $row['classid'];
     $rankid = $row['rankid'];
 
-    if ($choose($row, $p)) {
+    if (isset($p[$key])) {
       $values = array();
       $values[] = isset($p[$key]) ? $p[$key] : '';
 
@@ -83,18 +83,19 @@ function export_standings(callable $out, callable $choose, $entry,
       }
       if ($use_groups) {
         $values[] = $row['class'];
-        $values[] = isset($p[standings_key_class($classid)]) ? $p[standings_key_class($classid)] : '';
+        $values[] = ($presentation == 'ff' || $presentation == 'class' || $presentation == 'subgroup')
+        ? $p[stkey_round($roundid)] : '';
       }
       if ($use_subgroups) {
         $values[] = $row['rank'];
-        $values[] = isset($p[standings_key_subgroup($rankid)]) ? $p[standings_key_subgroup($rankid)] : '';
+        $values[] = $p[stkey_round_subgroup($roundid, $rankid)];
       }
 
       if ($show_supergroup_column) {
-        $values[] = isset($p['supergroup']) ? $p['supergroup'] : '';
+        $values[] = isset($p[stkey_full_field()]) ? $p[stkey_full_field()] : '';
       }
       if ($show_inround_column) {
-        $values[] = $p[standings_key_round($roundid)];
+        $values[] = $p[stkey_round($roundid)];
       }
 
       $values[] = $row['base'];  // Number of heats

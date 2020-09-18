@@ -57,14 +57,11 @@ function all_classes() {
 // classes, which don't have any ranks.
 function classes_and_ranks() {
   global $db;
-  $use_subgroups = use_subgroups();
-  $n_den_trophies = read_raceinfo('n-den-trophies', 3);
-  $n_pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
-  $classes = array();  // classid => {'class', 'seq'}
-  $classseq = array(); // ordered classids
-  $ranks = array();    // rankid => {'class', 'rank'}
-  $rankseq = array();  // ordered rankids
+  $classes = array();
+  $classseq = array();
+  $ranks = array();
+  $rankseq = array();
   foreach ($db->query('SELECT Classes.classid, class, rankid, rank,'
                       .(schema_version() >= 3
                         ? 'constituents, ntrophies'

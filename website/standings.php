@@ -24,8 +24,7 @@ require_once('inc/standings.inc');
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/mobile-init.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/standings.js"></script>
 <script type="text/javascript">
 // This bit of javascript has to be here and not standings.js because of the PHP portions
@@ -40,8 +39,8 @@ $(function () {
 });
 </script>
 <title>Standings</title>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <style type="text/css">
 
@@ -82,13 +81,24 @@ if (read_raceinfo_boolean('use-points')) {
 ?></h3>
 </div>
 
+<?php
+
+$standings = new StandingsOracle();
+
+if (isset($_GET['debug'])) {
+  echo "<pre>\n";
+  echo json_encode($standings->all_standings, JSON_PRETTY_PRINT | JSON_HEX_TAG);
+  echo json_encode($standings->result_summary, JSON_PRETTY_PRINT | JSON_HEX_TAG);
+  echo "</pre>\n";
+}
+?>
+
 <div class="center-select">
 <select id="view-selector">
 <?php
 
-foreach (standings_catalog() as $entry) {
-  echo '<option data-catalog-entry="'
-      .htmlspecialchars(json_encode($entry), ENT_QUOTES, 'UTF-8').'">'
+foreach ($standings->standings_catalog() as $entry) {
+  echo "<option data-presentation=\"$entry[presentation]\" value=\"$entry[key]\">"
          .htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8')
          ."</option>\n";
 }
@@ -96,11 +106,10 @@ foreach (standings_catalog() as $entry) {
 </select>
 </div>
 </div>
+
 <table class="main_table">
 <?php
-write_standings_table_headers();
-  $result_summary = result_summary();
-write_standings_table_rows($result_summary);
+$standings->write_standings_table();
 ?>
 </table>
 </body>

@@ -28,46 +28,24 @@ $workbook[] = array('Results', $results);
 
 
 ////////////// Standings
-$result_summary = result_summary();
-list($finishers, $parallel) = compute_all_standings($result_summary);
+$use_subgroups = use_subgroups();
 
-function AddStandings(callable $choose, $entry, $title) {
-  global $workbook;
-  global $result_summary;
-  global $parallel;
+$standings = new StandingsOracle();
+foreach ($standings->standings_catalog() as $entry) {
+  $title = 'Standings '.preg_replace('+[/]+', '-', $entry['name']);
+  // XLSX won't allow sheet name to exceed 31 characters
+  if (strlen($title) > 31) {
+    $title = 'Standings '.$entry['key'];
+  }
+  if ($presentation == 'ff') {
+    $title = 'Standings';
+  }
+
   $sheet = array();
   $sheet[] = array('Standings for '.$entry['name']);
   export_standings(function($row) use (&$sheet) { $sheet[] = $row; },
-                   $choose, $entry, $result_summary, $parallel);
+                   $entry['key'], $entry['presentation'], $standings->result_summary);
   $workbook[] = array($title, $sheet);
-}
-
-$use_subgroups = use_subgroups();
-
-foreach (standings_catalog() as $entry) {
-  $name = 'Standings '.preg_replace('+[/]+', '-', $entry['name']);
-  // XLSX won't allow sheet name to exceed 31 characters
-  if (strlen($name) > 31) {
-    $name = 'Standings '.$entry['key'];
-  }
-  if ($entry['kind'] == 'supergroup') {
-    AddStandings(function(&$row, &$p) {
-        return isset($p['supergroup']); },
-      $entry, 'Standings');
-  } else if ($entry['kind'] == 'class' || $entry['kind'] == 'round') {
-    AddStandings(function(&$row, &$p) use (&$entry) {
-        return $entry['roundid'] == $row['roundid']; },
-      $entry, $name);
-  } else if ($entry['kind'] == 'rank' || $entry['kind'] == 'rank-round') {
-    AddStandings(function(&$row, &$p) use (&$entry) {
-        return $entry['roundid'] == $row['roundid'] &&
-               $entry['rankid'] == $row['rankid']; },
-      $entry, $name);
-  } else if ($entry['kind'] == 'agg-class') {
-    AddStandings(function(&$row, &$p) use (&$entry) {
-        return isset($p[$entry['key']]); },
-      $entry, $name);
-  }
 }
 
 

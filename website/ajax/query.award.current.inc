@@ -43,8 +43,6 @@ if (count($keys) >= 2) {
       $place_index = 0;
     }
 
-    $result_summary = result_summary();
-    list($finishers, $standings) = compute_all_standings($result_summary);
     $awards = array();
     add_speed_awards($awards);
 

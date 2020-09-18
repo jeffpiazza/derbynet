@@ -132,8 +132,8 @@ function add_speed_group($n, $bias, $classid, $rankid, $label, &$no_trophies_for
 // do away with add_speed_group entirely.
 function add_speed_awards(&$awards) {
   $one_trophy_per = read_raceinfo_boolean('one-trophy-per');
-  $result_summary = result_summary();
-  list($finishers, $parallel) = compute_all_standings(result_summary());
+
+  $standings = new StandingsOracle();
 
   $no_trophies_for = array();
 
@@ -158,7 +158,7 @@ function add_speed_awards(&$awards) {
   $bias_for_pack = 0;
   add_speed_group($n_pack_trophies, $bias_for_pack, null, null,
                   supergroup_label(), $no_trophies_for,
-                  $finishers['supergroup'], $awards);
+                  $standings->award_ladder_full_field(), $awards);
 
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
@@ -170,7 +170,7 @@ function add_speed_awards(&$awards) {
     if (!$one_trophy_per) $no_trophies_for = array();
     add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
                     $agg_class['class'], $no_trophies_for,
-                    $finishers[standings_key_class($agg_class['classid'])], $awards);
+                    $standings->award_ladder_class($agg_class['classid']), $awards);
   }
 
   $classid = -1;
@@ -187,7 +187,7 @@ function add_speed_awards(&$awards) {
       if (!$one_trophy_per) $no_trophies_for = array();
       add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'],
                       $no_trophies_for,
-                      $finishers[standings_key_class($classid)], $awards);
+                      $standings->award_ladder_class($classid), $awards);
     }
 
     ++$rank_within_den;
@@ -195,7 +195,7 @@ function add_speed_awards(&$awards) {
     if (!$one_trophy_per) $no_trophies_for = array();
     add_speed_group($n_rank_trophies, $bias_for_rank, $classid, $r, $rank['rank'],
                     $no_trophies_for,
-                    $finishers[standings_key_subgroup($r)], $awards);
+                    $standings->award_ladder_subgroup($r), $awards);
   }
 
   return $reserved_overall;
