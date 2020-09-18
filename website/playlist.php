@@ -97,6 +97,9 @@ $(function() {
       <label for="racing-scene">Racing scene:</label>
       <select id="racing-scene">
       </select>
+      <p id='racing-scene-psa' class='hidden'>
+        It's usually a good idea to set a racing scene if you're using playlists.
+      </p>
     </div>
 
     <p id="top-of-queue"></p>

@@ -13,14 +13,17 @@ function maybe_change_queue_message() {
   $("#top-of-queue").text(
     $("#queue-ul li").length == 0
       ? "Select rounds for playlist"
-      : "Drag to reorder");
+      : "Playlist: Drag entries to reorder");
 }
 
 function on_racing_scene_change() {
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'settings.write',
-                 racing_scene: $("#racing-scene").val()}
+                 racing_scene: $("#racing-scene").val()},
+          success: function(data) {
+            $("#racing-scene-psa").toggleClass('hidden', $("#racing-scene").val() >= 0);
+          }
          });
 }
 
@@ -43,6 +46,7 @@ function setup_racing_scene_control(all_scenes, current_scene) {
     .val(first_selection)
     .trigger('change')
     .on('change', on_racing_scene_change);
+  $("#racing-scene-psa").toggleClass('hidden', $("#racing-scene").val() >= 0);
 }
 
 function on_open_queue_entry(evt) {
