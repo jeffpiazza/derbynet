@@ -113,7 +113,8 @@ p.last_contact {
     font-size: 18px;
 }
 
-#playlist-group a.button_link {
+#playlist-group a.button_link,
+#playlist-group input[type='button'] {
   color: white;
   height: 20px;
   width: 440px;
@@ -121,7 +122,11 @@ p.last_contact {
   font-weight: bold;
   margin-bottom: 1px;
 }
-
+#playlist-group input[type='button'] {
+  height: 40px;
+  width: 470px;
+  background: #006000;
+}
 
 .heat_control_group .ui-flipswitch,
 #new_round_modal .ui-flipswitch,
@@ -219,7 +224,7 @@ p.last_contact {
 }
 
 #start_race_button_div input[type='button'] {
-  background: #357116;
+  background: #008000;
 }
 
 /* TODO: custom_size_flipswitch is from the example code */

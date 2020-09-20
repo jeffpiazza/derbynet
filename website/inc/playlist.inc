@@ -2,6 +2,13 @@
 require_once('inc/scenes.inc');
 require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
+require_once('inc/autoadvance.inc');
+
+function first_queue_entry() {
+  return read_single_row('SELECT * FROM Playlist'
+                         .' WHERE seq = (SELECT MIN(seq) FROM Playlist)',
+                         array(), PDO::FETCH_ASSOC);
+}
 
 function queue_entry_for($roundid) {
   return read_single_row('SELECT * FROM Playlist'

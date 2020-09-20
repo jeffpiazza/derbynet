@@ -47,6 +47,8 @@ if (isset($now_running['roundid'])) {
   $q = queue_entry_for($now_running['roundid']);
   if ($q) {
     $q = queue_entry_after($q['seq']);
+  } else {
+    $q = first_queue_entry();
   }
   if ($q) {
     $next_roundid = find_roundid($q['classid'], $q['round']);

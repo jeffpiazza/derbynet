@@ -416,6 +416,13 @@ function handle_stop_testing() {
          });
 }
 
+function handle_start_playlist() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'queue.start'}
+         });
+}
+
 function populate_new_round_modals() {
   var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
 

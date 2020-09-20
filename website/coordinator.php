@@ -113,6 +113,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
   <div id="playlist-group" class="block_buttons">
     <a class='button_link' href='playlist.php'>Rounds Playlist</a>
+    <div id="playlist-start">
+      <input type="button" data-enhanced="true" value="Start Playlist" onclick="handle_start_playlist();"/>
+    </div>
   </div>
 
   <div id="master-schedule-group" class="master_schedule_group"></div>

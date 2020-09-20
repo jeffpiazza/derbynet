@@ -500,6 +500,8 @@ function offer_new_rounds(rounds) {
     if (highest_rounds[classid] ? highest_rounds[classid].round < round.round : true) {
       highest_rounds[classid] = round;
     }
+    if (round.next) {
+    }
   }
 
   var completed_rounds = [];
@@ -615,6 +617,9 @@ function process_coordinator_poll_response(data) {
   } else {
     $('#timer-testing-herald').remove();
   }
+
+  $("#playlist-start").toggleClass('hidden',
+                                   !(current.roundid == -1 && rounds.some(r => r.next)));
 
   // Hide the control group if there's nothing to show
   $("#supplemental-control-group").toggleClass("hidden",
