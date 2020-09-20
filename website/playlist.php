@@ -75,7 +75,7 @@ foreach (all_rounds_with_counts() as $round) {
 $(function() {
     $.each(g_queue,
            function(i, entry) { append_playlist_entry_li(entry, g_all_scenes); });
-    maybe_change_queue_message();
+    maybe_change_playlist_message();
     build_rounds(g_queue, g_classes, g_all_rounds);
     $.each(g_all_scenes, function(i, v) {
         $("#after-action-sel").append($("<option/>")

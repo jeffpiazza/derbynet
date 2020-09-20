@@ -295,10 +295,10 @@ function build_setup_page_details() {
                'settings' => array('status' => $schema['settings_icon'],
                                    'details' => "<p>".$schema['settings_details']."</p>\n"),
                'scenes' => array('status' => $db_ok ? 'ok' : 'unknown'),
-               'queue' => array('status' => count($schema['dens']) == 0 ? "unknown" : "ok",
-                                'details' => count($schema['dens']) == 0
-                                ? "<p>There are no rounds defined.</p>"
-                                : "<p>Automate round-to-round changes.</p>"),
+               'playlist' => array('status' => count($schema['dens']) == 0 ? "unknown" : "ok",
+                                   'details' => count($schema['dens']) == 0
+                                   ? "<p>There are no rounds defined.</p>"
+                                   : "<p>Automate round-to-round changes.</p>"),
                'form_fields' => build_form_fields_for_advanced_database_dialog($db_connection_string)
     );
 }

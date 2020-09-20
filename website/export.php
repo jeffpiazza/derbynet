@@ -37,7 +37,7 @@ foreach ($standings->standings_catalog() as $entry) {
   if (strlen($title) > 31) {
     $title = 'Standings '.$entry['key'];
   }
-  if ($presentation == 'ff') {
+  if ($entry['presentation'] == 'ff') {
     $title = 'Standings';
   }
 

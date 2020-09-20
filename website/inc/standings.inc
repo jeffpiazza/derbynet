@@ -383,7 +383,11 @@ class StandingsOracle {
     if ($this->n_aggregates == 0) {
       // stkey_full_field will have already been populated with every scoring
       // round's result.
-      return $this->all_standings[stkey_full_field()];
+      if (isset($this->all_standings[stkey_full_field()])) {
+        return $this->all_standings[stkey_full_field()];
+      } else {
+        return array();
+      }
     } else if ($this->n_aggregates == 1) {
       // We don't show a full-field standing if there are any aggregate classes,
       // but for awards, if there's exactly one aggregate class, we guess that
@@ -398,9 +402,14 @@ class StandingsOracle {
     $rounds = $this->class_details[$classid]['rounds'];
     if (count($rounds) > 0) {
       // Scoring (final) round is listed first
-      return $this->all_standings[stkey_round($rounds[0]['roundid'])];
+      $key = stkey_round($rounds[0]['roundid']);
     } else {
-      return $this->all_standings[stkey_qual($classid)];
+      $key = stkey_qual($classid);
+    }
+    if (isset($this->all_standings[$key])) {
+      return $this->all_standings[$key];
+    } else {
+      return array();
     }
   }
 
@@ -408,7 +417,8 @@ class StandingsOracle {
     $classid = $this->ranks[$subgroupid]['classid'];
     $cl = $this->class_details[$classid];
     if (count($cl['rounds']) > 0) {
-      return $this->all_standings[stkey_round_subgroup($cl['rounds'][0]['roundid'], $subgroupid)];
+      $key = stkey_round_subgroup($cl['rounds'][0]['roundid'], $subgroupid);
+      return isset($this->all_standings[$key]) ? $this->all_standings[$key] : array();
     } else {
       return array();
     }

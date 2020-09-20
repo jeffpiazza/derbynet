@@ -4,13 +4,13 @@ require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
 require_once('inc/autoadvance.inc');
 
-function first_queue_entry() {
+function first_playlist_entry() {
   return read_single_row('SELECT * FROM Playlist'
                          .' WHERE seq = (SELECT MIN(seq) FROM Playlist)',
                          array(), PDO::FETCH_ASSOC);
 }
 
-function queue_entry_for($roundid) {
+function playlist_entry_for($roundid) {
   return read_single_row('SELECT * FROM Playlist'
                          .' INNER JOIN Rounds USING (classid, round)'
                          .' WHERE roundid = :roundid',
@@ -18,7 +18,7 @@ function queue_entry_for($roundid) {
 }
 
 // Finds the next queue entry after the given one.
-function queue_entry_after($seq) {
+function playlist_entry_after($seq) {
   return read_single_row('SELECT * FROM Playlist'
                          .' WHERE seq = (SELECT MIN(seq) FROM Playlist'
                          .'              WHERE seq > :seq)',
@@ -33,22 +33,22 @@ function round_is_completed($roundid) {
 }
 
 // Returns false, and emits <failure>, if unable to activate the queue entry
-function activate_queue_entry(&$queue_entry) {
+function activate_playlist_entry(&$playlist_entry) {
   global $db;
   $roundid = read_single_value('SELECT roundid FROM Rounds'
                                .' WHERE classid = :classid AND round = :round',
-                               array(':classid' => $queue_entry['classid'],
-                                     ':round' => $queue_entry['round']));
+                               array(':classid' => $playlist_entry['classid'],
+                                     ':round' => $playlist_entry['round']));
   if (!$roundid) {
-    $roundid = make_new_round($queue_entry['classid'], $queue_entry['round']);
+    $roundid = make_new_round($playlist_entry['classid'], $playlist_entry['round']);
   }
   if (read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
                                      array(':roundid' => $roundid)) == 0) {
-    if ($queue_entry['round'] == 1) {
+    if ($playlist_entry['round'] == 1) {
       $is_aggregate = true;
       $constituent_classids = read_single_value('SELECT constituents FROM Classes'
                                                 .' WHERE classid = :classid',
-                                                array(':classid' => $queue_entry['classid']));
+                                                array(':classid' => $playlist_entry['classid']));
       $stmt = $db->prepare('SELECT roundid FROM Rounds r1'
                            .' WHERE r1.classid IN ('.$constituent_classids.')'
                            .' AND round = (SELECT MAX(round) FROM Rounds r2'
@@ -61,19 +61,19 @@ function activate_queue_entry(&$queue_entry) {
       $constituent_roundids = read_single_value('SELECT roundid FROM Rounds'
                                                 .' WHERE classid = :classid'
                                                 .'  AND round = :round',
-                                                array(':classid' => $queue_entry['classid'],
-                                                      ':round' => $queue_entry['round'] - 1));
+                                                array(':classid' => $playlist_entry['classid'],
+                                                      ':round' => $playlist_entry['round'] - 1));
     }
-    populate_roster($roundid, $queue_entry['classid'], $constituent_roundids,
-                    $queue_entry['bucketed'], $queue_entry['bucket_limit'], $is_aggregate);
+    populate_roster($roundid, $playlist_entry['classid'], $constituent_roundids,
+                    $playlist_entry['bucketed'], $playlist_entry['bucket_limit'], $is_aggregate);
   }
-  if ($queue_entry['n_times_per_lane'] > 0 &&
+  if ($playlist_entry['n_times_per_lane'] > 0 &&
       read_single_value('SELECT COUNT(*) FROM RaceChart'
                         .' WHERE roundid = :roundid',
                         array(':roundid' => $roundid)) == 0) {
     $nlanes = get_lane_count();
     if ($nlanes > 0) {
-      schedule_one_round($roundid, $nlanes, $queue_entry['n_times_per_lane'], /* trace */ false);
+      schedule_one_round($roundid, $nlanes, $playlist_entry['n_times_per_lane'], /* trace */ false);
     }
   }
 
@@ -89,11 +89,11 @@ function activate_queue_entry(&$queue_entry) {
   - if continue_racing_at_end, then set racing on (it was just turned off), otherwise
   - do nothing (leave racing off)
 */
-function perform_queue_after_round($roundid) {
-  $entry = queue_entry_for($roundid);
-  $after = queue_entry_after($entry['seq']);
+function perform_playlist_after_round($roundid) {
+  $entry = playlist_entry_for($roundid);
+  $after = playlist_entry_after($entry['seq']);
   if ($after) {
-    activate_queue_entry($after);
+    activate_playlist_entry($after);
   }
   if ($entry['sceneid_at_finish'] > 0) {
     write_raceinfo('playlist_scene', $entry['sceneid_at_finish']);

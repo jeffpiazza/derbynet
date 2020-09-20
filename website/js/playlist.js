@@ -9,7 +9,7 @@ function find_round(classid, roundno) {
   return null;
 }
 
-function maybe_change_queue_message() {
+function maybe_change_playlist_message() {
   $("#top-of-queue").text(
     $("#queue-ul li").length == 0
       ? "Select rounds for playlist"
@@ -49,7 +49,7 @@ function setup_racing_scene_control(all_scenes, current_scene) {
   $("#racing-scene-psa").toggleClass('hidden', $("#racing-scene").val() >= 0);
 }
 
-function on_open_queue_entry(evt) {
+function on_open_playlist_entry(evt) {
   console.trace(); console.log(evt);
   var li = $(this).closest('li');
   var closed = li.find(".collapsible").css("display") == "none";
@@ -72,19 +72,19 @@ function on_open_queue_entry(evt) {
 function on_change_bucket_limit() {
   var li = $(this).closest('li');
   g_queue[li.index()].bucket_limit = $(this).val();
-  on_queue_entry_update(li);
+  on_playlist_entry_update(li);
 }
 
 function on_change_bucketed() {
   var li = $(this).closest('li');
   g_queue[li.index()].bucketed = $(this).is(':checked') ? 1 : 0;
-  on_queue_entry_update(li);
+  on_playlist_entry_update(li);
 }
 
 function on_change_times_per_lane() {
   var li = $(this).closest('li');
   g_queue[li.index()].n_times_per_lane = $(this).val();
-  on_queue_entry_update(li);
+  on_playlist_entry_update(li);
 }
 
 function on_change_sceneid_at_finish() {
@@ -94,12 +94,12 @@ function on_change_sceneid_at_finish() {
   entry.sceneid_at_finish = after;
   entry.continue_racing = (after == 0 ? 0 : 1);
 
-  update_queue_entry_format($(this));
+  update_playlist_entry_format($(this));
 
-  on_queue_entry_update(li);
+  on_playlist_entry_update(li);
 }
 
-function update_queue_entry_format(after_sel) {
+function update_playlist_entry_format(after_sel) {
   var li = after_sel.closest('li');
 
   li.find('p.gap').toggleClass('squeeze', after_sel.val() == -1);
@@ -111,13 +111,13 @@ function update_queue_entry_format(after_sel) {
   }
 }
 
-function on_queue_entry_update(li) {
+function on_playlist_entry_update(li) {
   var queueid = li.attr('data-queueid');
   var entry = g_queue[li.index()];
 
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'queue.update',
+          data: {action: 'playlist.update',
                  queueid: queueid,
                  top: entry.bucket_limit,
                  bucketed: entry.bucketed,
@@ -129,16 +129,16 @@ function on_queue_entry_update(li) {
          });
 }
 
-function on_remove_queue_entry() {
+function on_remove_playlist_entry() {
   var li = $(this).closest('li');
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'queue.remove',
+          data: {action: 'playlist.remove',
                  queueid: g_queue[li.index()].queueid},
           success: function(data) {
             g_queue.splice(li.index(), 1);
             li.remove();
-            maybe_change_queue_message();
+            maybe_change_playlist_message();
             build_rounds(g_queue, g_classes);
           }
          });
@@ -147,7 +147,7 @@ function on_remove_queue_entry() {
 }
 
 function on_reorder(ul) {
-  var data = {action: 'queue.order'};
+  var data = {action: 'playlist.order'};
   $(ul).find('li').each(function(i) {
     data['queueid_' + (i + 1)] = $(this).attr('data-queueid');
   });
@@ -203,7 +203,7 @@ function show_create_roster_dialog(classid, roundno) {
 function add_round_to_queue(classid, round, roster_params) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'queue.new',
+          data: {action: 'playlist.new',
                  classid: classid,
                  round: round,
                  top: roster_params ? roster_params.top : 0,
@@ -218,7 +218,7 @@ function add_round_to_queue(classid, round, roster_params) {
               entry.seq = parseInt(entry.seq);
               g_queue.push(entry);
               append_playlist_entry_li(entry, g_all_scenes);
-              maybe_change_queue_message();
+              maybe_change_playlist_message();
               // TODO Maybe a new round
               build_rounds(g_queue, g_classes);
             }
@@ -309,11 +309,11 @@ function append_playlist_entry_li(entry, all_scenes) {
                       .text(entry.roundname)
                       .prepend("<img class='triangle' src='img/triangle_east.png'/>")
                       .append($("<input type='button' class='queue-remove' value=' x '/>")
-                              .on('click', on_remove_queue_entry))
+                              .on('click', on_remove_playlist_entry))
                      )
               .append(collapsible))
       .append("<p class='gap'><span class='after-action'/></p>")
-      .on('click', on_open_queue_entry)
+      .on('click', on_open_playlist_entry)
       .appendTo('#queue-ul');
 
   if (entry.sceneid_at_finish > 0) {
@@ -325,7 +325,7 @@ function append_playlist_entry_li(entry, all_scenes) {
   }
   after_sel.on('change', on_change_sceneid_at_finish);
 
-  update_queue_entry_format(after_sel);
+  update_playlist_entry_format(after_sel);
 
   mobile_select(reps);
   mobile_select(after_sel);
@@ -423,7 +423,7 @@ $(function() {
     revert: true,
 
     update: function(event, ui) {
-      // Clicking on a list item wants to open it (on_open_queue_entry); if
+      // Clicking on a list item wants to open it (on_open_playlist_entry); if
       // we're dragging, cancel that.
       var target = $(event.target);
       target.find("img.triangle").attr('src', 'img/triangle_east.png');

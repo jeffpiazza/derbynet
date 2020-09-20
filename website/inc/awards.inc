@@ -80,7 +80,7 @@ function get_racer_details($racerid) {
 // this list, it is instead bestowed on the next eligible racer.
 // Racer IDs are also added to $no_trophies_for as they receive awards.
 function add_speed_group($n, $bias, $classid, $rankid, $label, &$no_trophies_for,
-                         &$finishers, &$awards) {
+                         $finishers, &$awards) {
   // $place is the trophy "place" (i.e., $place = 0 for 1st place).
   // $p is the position in the $finishers ladder, which gives the true place in the standings.
   $place = 0;

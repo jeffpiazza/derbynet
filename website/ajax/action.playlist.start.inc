@@ -6,7 +6,7 @@ require_once('inc/racing-state.inc');
 
 start_response();
 
-activate_queue_entry(first_queue_entry());
+activate_playlist_entry(first_playlist_entry());
 set_racing_state(1);
 
 echo "<success/>";

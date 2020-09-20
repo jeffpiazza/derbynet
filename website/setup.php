@@ -161,7 +161,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 
 <?php require_once('inc/ajax-failure.inc'); ?>
 
-<div id="queue_step" class="step_div">
+<div id="playlist_step" class="step_div">
   <div class="status_icon"><img src="img/status/ok.png"/></div>
   <div class="step_button block_buttons">
     <a class="button_link" href="playlist.php?back=setup.php">Rounds Playlist</a>
