@@ -27,36 +27,11 @@ require_once('inc/replay.inc');
 require_once('inc/current-racers.inc');
 require_once('inc/current-heat.inc');
 require_once('inc/photos-on-now-racing.inc');
+require_once('inc/heat-results.inc');
 
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
-$track_length = read_raceinfo('track-length', 40);  // in feet
-$time_format = get_finishtime_formatting_string();
-
-// $track_length / $finishtime gives feet per second.
-//  * 3600 gives feet per hour
-//  / 5280 gives miles per hour
-//  * 25 gives scale miles per mile (not user-adjustable; makes a 7" derby car scale to 14.5 feet)
-$fps_to_scale_mph = 3600 * 25 / 5280;
-
-$stmt = $db->prepare('SELECT lane, finishtime, finishplace, completed'
-                     .' FROM RaceChart'
-                     .' WHERE roundid = :roundid'
-                     .' AND heat = :heat'
-                     //.' AND completed IS NOT NULL AND completed != \'\''
-                     .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
-                     .' ORDER BY lane');
-$stmt->execute(array(':roundid' => $roundid,
-                     ':heat' => $heat));
-foreach ($stmt as $row) {
-  $finishtime = $row['finishtime'];
-  $speed = $finishtime == 0 ? "--" : sprintf("%4.1f", $track_length / $finishtime * $fps_to_scale_mph);
-  echo '  <heat-result lane="'.$row['lane'].'"';
-  echo ' time="'.sprintf($time_format, $finishtime).'"';
-  echo ' place="'.$row['finishplace'].'"';
-  echo ' speed="'.$speed.'"';
-  echo "/>\n";
-}
+emit_heat_results($roundid, $heat);
 
 // This lets the js reserve room for the right number of digits
 echo "<zero zero='".sprintf($time_format, 0.0)."'/>\n";

@@ -109,12 +109,13 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                     controls => { return controls.length; }));
 
   assert.equal([[],    // Headers row
-                ["1","Juan Jacobsen","343",""],
-                ["2","Jeffress Jamison","139",""],
-                ["3","Antoine Akiyama","303",""]],
+                ["1","343","Juan Jacobsen",""],
+                ["2","139","Jeffress Jamison",""],
+                ["3","303","Antoine Akiyama",""],
+                ["4","","",""]],
                await page.evaluate(function() {
                  var table = [];
-                 $("#now-racing-group .heat-lineup table tr").each(function(index, tr) {
+                 $("#now-racing-group .heat-lineup table").first().find("tr").each(function(index, tr) {
                    var row = [];
                    $(tr).find("td").each(function(index, td) {
                      row.push($(td).text());
@@ -137,8 +138,8 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     "5", 1, "Schedule",
     "7", 0,  // No passed racers
     // Done racing
-    "1", 2, "Make Changes", "Purge Results",
-    "2", 2, "Make Changes", "Purge Results"],
+    "1", 2, "Make Changes", "Repeat Round",
+    "2", 2, "Make Changes", "Repeat Round"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("div.control_group[data-roundid]").each(function() {
@@ -151,7 +152,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds", "Purge Results"],
+  assert.equal(["Add New Rounds", "Repeat Round"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {
@@ -163,7 +164,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   // ===============================  =====================================
 
   assert.equal("Heat 3 of 4",
-               await page.$eval("#now-racing-group .heat-lineup h3", h3 => { return $(h3).text(); }));
+               await page.$eval("#now-racing-group .heat_number h3", h3 => { return $(h3).text(); }));
   
   assert.equal(true, await page.$eval("#is-currently-racing", r => { return $(r).prop('checked'); }));
 
@@ -207,7 +208,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   
   await page.waitFor(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitFor(() => {
-    return $("#now-racing-group .heat-lineup h3").text() == "Heat 4 of 4";
+    return $("#now-racing-group .heat-text h3").text() == "Heat 4 of 4";
   });
 
   // After "Previous Heat" button jumps back to heat 3
@@ -245,7 +246,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   await page.waitFor(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitFor(() => {
-    return $("#now-racing-group .heat-lineup h3").text() == "Heat 3 of 4";
+    return $("#now-racing-group .heat-text h3").text() == "Heat 3 of 4";
   });
 
   if (false) {
@@ -555,10 +556,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                     controls => { return controls.length; }));
 
   assert.equal([[],  // Headers row
-                ["1", "Willard Woolfolk", "282", "3.977"],
-                ["2", "Blake Burling", "207", "3.646"],
-                ["3", "Elliot Eastman", "227", "2.295"],
-                ["4", "Dexter Dawes", "222", "3.720"]],
+                ["1", "282", "Willard Woolfolk", "3.977"],
+                ["2", "207", "Blake Burling", "3.646"],
+                ["3", "227", "Elliot Eastman", "2.295"],
+                ["4", "222", "Dexter Dawes", "3.720"]],
                await page.evaluate(function() {
                  var table = [];
                  $("#now-racing-group .heat-lineup table tr").each(function(index, tr) {
@@ -587,9 +588,9 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     "6", 0,
     "8", 2,"Schedule","Delete Round",
     // Done racing
-    "1", 2,"Make Changes","Purge Results",
-    "3", 2,"Make Changes","Purge Results",
-    "4", 2,"Make Changes","Purge Results"],
+    "1", 2,"Make Changes","Repeat Round",
+    "3", 2,"Make Changes","Repeat Round",
+    "4", 2,"Make Changes","Repeat Round"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("div.control_group[data-roundid]").each(function() {
@@ -602,7 +603,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds","Purge Results"],
+  assert.equal(["Add New Rounds","Repeat Round"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {

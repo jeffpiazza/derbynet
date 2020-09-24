@@ -16,24 +16,48 @@
   margin-right: auto;
 }
 
+#now-racing-group div.heat-text {
+  display: inline-block;
+  width: 200px;
+}
+
 .heat-lineup {
-  width: 485px;
-  margin-right: 10px;
-  float: right;
+  display: inline-block;
+  width: 730px;
+  margin-right: 0px;
+
+}
+.heat-lineup div.racing {
+  display: inline-block;
+}
+
+.heat-lineup div.now-racing-spacer {
+  display: inline-block;
+  width: 50px;
+}
+
+.heat-lineup div.staging {
+  display: inline-block;
 }
 
 .heat-lineup table {
   width: 100%;
 }
 
-.heat-lineup h3 {
-  text-align: center;
-  margin-bottom: 0px;
-}
-
 .heat-lineup td {
   margin: 0px;
   padding: 0px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.heat-lineup td.racer-name {
+  max-width: 200px;
+}
+
+#now-racing-group input.stop-test {
+  float: right;
+  font-size: 18px;
 }
 
 .control_group {

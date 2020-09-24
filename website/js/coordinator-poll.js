@@ -55,6 +55,11 @@
 // displayed.
 g_current_heat_racers = new Array();
 
+// The "current" heat as shown to the user.  The timer may cause the server's
+// idea of the "current" heat to advance, but, like the now-racing page, we hold
+// our "current" heat a few seconds beyond the reporting of results.
+g_current_heat = {roundid: 0, heat: 0, hold_until: Date.now() - 1};
+
 // To avoid rewriting (as opposed to updating) round controls constantly,
 // keep this signature that gives the roundids in each category, in order.
 // We only need to rewrite the round controls when this signature changes.
@@ -93,16 +98,27 @@ g_aggregate_rounds = [];
 /* <current-heat now-racing= use-master-sched= use-points=
                  classid= roundid= round= group= heat= /> */
 function parse_current_heat(data) {
-    var current_xml = data.getElementsByTagName("current-heat")[0];
-    if (!current_xml) {
-        return false;
-    }
-    // NOTE: heats_scheduled gets written in process_coordinator_poll_response
-    return {roundid: current_xml.getAttribute('roundid'),
-            heat: current_xml.getAttribute('heat'),
-            is_racing: current_xml.getAttribute('now-racing') == '1',
-            master_schedule: current_xml.getAttribute('use-master-sched') == '1',
-            use_points: current_xml.getAttribute('use-points') == '1'};
+  var current_xml = data.getElementsByTagName("current-heat")[0];
+  if (!current_xml) {
+    return false;
+  }
+
+  // NOTE: heats_scheduled gets written in process_coordinator_poll_response
+  var current = {roundid: current_xml.getAttribute('roundid'),
+                 heat: current_xml.getAttribute('heat'),
+                 is_racing: current_xml.getAttribute('now-racing') == '1',
+                 master_schedule: current_xml.getAttribute('use-master-sched') == '1',
+                 use_points: current_xml.getAttribute('use-points') == '1',
+                 heat_results: []};
+
+  var heat_results = data.getElementsByTagName('heat-result');
+  for (var i = 0; i < heat_results.length; ++i) {
+    current.heat_results.push({lane: heat_results[i].getAttribute('lane'),
+                               time: heat_results[i].getAttribute('time'),
+                               place: heat_results[i].getAttribute('place')});
+  }
+  
+  return current;
 }
 
 function parse_rounds(data) {
@@ -278,66 +294,90 @@ function inject_progress_text(control_group, round) {
 // current = { roundid: }
 // timer_state = { lanes: }
 //
+
+
+
+
+
+//  div.control_group data-roundid=
+//    h3.roundclass
+//      img(triangle)
+//    div.collapsible
+//      p (racers, heats)
+//    div.racers.progress
+//      div.bar1(no)
+//      div.bar2
+//    div.block_buttons.collapsible
+
 function generate_scheduling_control_group(round, current, timer_state) {
-  var is_current =  round.roundid == current.roundid;
   var show_checkins = round.round == 1 && round.heats_scheduled == 0;
+  
   var control_group = $("<div class=\"control_group scheduling_control\"></div>")
       .attr('data-roundid', round.roundid)
-      .toggleClass('current', is_current)
-      .append(is_current ? "<div class='heat-lineup'></div>" : '')
+      .appendTo("#" + round.category + "-group")
       .append($("<h3 class=\"roundclass\"></h3>")
               .text(round.roundname)
-              .prepend(is_current ? ''
-                       : "<img data-name=\"triangle\" src=\"img/triangle_east.png\"/>"))
-      .append($('<div>'
-                + '<p>'
-                + (show_checkins ?
-                   '<span data-name="roster_size"></span> racer(s), '
-                   + '<span data-name="n_passed"></span> passed, ' 
-                   + '<span data-name="scheduled"></span> in schedule.'
-                   + '<br/>'
-                   : '')
-                + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
-                + '<span data-name="n_heats_run"></span> run.'
-                + '</p>'
-                + '</div>')
-              .toggleClass('collapsible', !is_current))
-      .append(show_checkins ?
-              "<div class='racers progress'>"
-              + "<div class='bar2'>"
-              + "<div class='bar1'></div>"
-              + "</div>"
-              + "</div>" : "")
-      .append(round.heats_scheduled != 0
-              ? "<div class='heats progress'>"
-              + "<div class='bar1'></div>"
-              + "</div>" : "")
-      .append(is_current ? '' : $("<div data-name=\"buttons\" class=\"block_buttons\"/>")
-              .toggleClass('collapsible', !is_current));
+              .prepend("<img data-name=\"triangle\" src=\"img/triangle_east.png\"/>"))
+      .append($('<div class="collapsible"/>')
+              .append('<p>'
+                      + (show_checkins
+                         ? '<span data-name="roster_size"></span> racer(s), '
+                         + '<span data-name="n_passed"></span> passed, ' 
+                         + '<span data-name="scheduled"></span> in schedule.'
+                         + '<br/>'
+                         : '')
+                      + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
+                      + '<span data-name="n_heats_run"></span> run.'
+                      + '</p>'))
+      .append('<div class="racers progress">'
+              + (show_checkins
+                 ? "<div class='bar2'>"
+                 + "<div class='bar1'></div>"
+                 + "</div>"
+                 + "</div>"
+                 : "")
+              + (round.heats_scheduled != 0
+                 ? "<div class='bar1'></div>"
+                 : "")
+              + '</div>')
+      .append($("<div data-name=\"buttons\" class=\"block_buttons collapsible\"/>"));
+
   if (round.next) {
-    control_group.find('h3').append('<div class="next_tag">NEXT</div>');
+    control_group.find('h3.roundclass').append('<div class="next_tag">NEXT</div>');
   }
-              
 
-  // By this rule, changes to n_heats_run and n_heats_scheduled and
-  // current.roundid would change the order for the rounds.
-  control_group.appendTo("#" + round.category + "-group");
+  control_group.find(".collapsible").hide();
+  control_group.on('click', function() {
+    var closed = control_group.find(".collapsible").css("display") == "none";
+    // Don't want the current round to collapse like this...
 
-  if (round.roundid != current.roundid) {
-    control_group.find(".collapsible").hide();
-    control_group.on('click', function() {
-      var closed = control_group.find(".collapsible").css("display") == "none";
-      // Don't want the current round to collapse like this...
+    $("img[data-name=triangle]").attr('src', 'img/triangle_east.png');
+    $(".collapsible").slideUp(200);
 
-      $("img[data-name=triangle]").attr('src', 'img/triangle_east.png');
-      $(".collapsible").slideUp(200);
+    if (closed) {
+      control_group.find("img[data-name=triangle]").attr('src', 'img/triangle_south.png');
+      control_group.find(".collapsible").slideDown(200); 
+    }
+  });
 
-      if (closed) {
-        control_group.find("img[data-name=triangle]").attr('src', 'img/triangle_south.png');
-        control_group.find(".collapsible").slideDown(200); 
-      }
-    });
-  }
+  inject_into_scheduling_control_group(round, current, timer_state);
+}
+
+// This is the double-wide section describing the current round, at the top of the page
+function generate_current_round_control_group(round, current, timer_state) {
+  var control_group = $("<div class=\"control_group scheduling_control\"></div>")
+      .attr('data-roundid', round.roundid)
+      .appendTo("#now-racing-group")
+      .append($("<h3 class=\"roundclass\"></h3>")
+              .text(round.roundname))
+      .append($("<div class='heat-text'/>")
+              .append($('<p>'
+                        + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
+                        + '<span data-name="n_heats_run"></span> run.'
+                        + '</p>'))
+              .append('<div class="heat_number"/>'))
+    .addClass('current')
+    .append("<div class='heat-lineup'></div>");
 
   inject_into_scheduling_control_group(round, current, timer_state);
 }
@@ -408,7 +448,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     if (round.heats_run > 0) {
         buttons.append('<input type="button" data-enhanced="true"'
                        + ' onclick="handle_purge_button(' + round.roundid + ', ' + round.heats_run + ')"'
-                       + ' value="Purge Results"/>');
+                       + ' value="Repeat Round"/>');
     }
 
     // TODO: AND there isn't already a next round or aggregate round with
@@ -423,33 +463,89 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
   }
 }
 
-function generate_current_heat_racers(racers, current) {
-    g_current_heat_racers = racers;
-    // TODO: Assumes now-racing-group empty?
-  if (racers.length > 0) {
-        $("#now-racing-group .heat-lineup").prepend(
-          "<table>"
-            + "<tr>"
-            + "<th>Lane</th>"
-            + "<th>Racer</th>"
-            + "<th>Car</th>"
-            + "<th>" + (current.use_points ? "Place" : "Time") + "</th>"
-            + "</tr>"
-            + "</table>"
-            + "<h3>Heat " + current.heat + " of "
-            + current.heats_scheduled + "</h3>"
-            + "</div>");
-        var racers_table = $("#now-racing-group table");
-        for (var i = 0; i < racers.length; ++i) {
-            racers_table.append('<tr><td>' + racers[i].lane + '</td>'
-                                + '<td>' + racers[i].name + '</td>'
-                                + '<td>' + racers[i].carnumber + '</td>'
-                                + '<td>' + (current.use_points
-                                            ? racers[i].finishplace
-                                            : racers[i].finishtime) + '</td>'
-                                + '</tr>');
-        }
+function generate_current_heat_racers(new_racers, current, nlanes) {
+  var racers = g_current_heat_racers;
+  // g_current_heat is the heat shown in the current heat field.
+  // If that differs from the actual current round, then stick with the g_current_heat for the next
+  // several seconds.
+  if ((g_current_heat.roundid != current.roundid || g_current_heat.heat != current.heat) &&
+      g_current_heat.hold_until == 0 && current.heat_results.length > 0) {
+    console.log('Transitioning from ' + g_current_heat.roundid + ':' + g_current_heat.heat
+                + ' to ' + current.roundid + ':' + current.heat);
+    g_current_heat.hold_until = Date.now() + 10 * 1000;  // 10 seconds
+  }
+
+  if (racers.length == 0 && new_racers.length == 0) {
+    return;
+  }
+  var holding = Date.now() < g_current_heat.hold_until;
+
+  $("#now-racing-group .heat_number").empty()
+    .append("<h3>Heat " + current.heat + " of "
+            + current.heats_scheduled + "</h3>");
+  var heat_lineup =
+      $("#now-racing-group .heat-lineup").empty()
+      .append($("<div class='racing'/>")
+              .append(
+                "<table>"
+                  + "<tr>"
+                  + "<th>Lane</th>"
+                  + "<th>Car</th>"
+                  + "<th>Racer</th>"
+                  + "<th>" + (current.use_points ? "Place" : "Time") + "</th>"
+                  + "</tr>"
+                  + "</table>"));
+  if (holding) {
+    heat_lineup
+      .append("<div class='now-racing-spacer'/>")
+      .append($("<div class='staging'/>")
+              .append(
+                "<table>"
+                  + "<tr>"
+                  + "<th colspan='2'>Staging</th>"
+                  + "</tr>"
+                  + "</table>"));
+  }
+  var racers_table = $("#now-racing-group table").first();
+  var next_table = $("#now-racing-group table").slice(1);
+
+  if (!holding) {
+    g_current_heat.roundid = current.roundid;
+    g_current_heat.heat = current.heat;
+    g_current_heat.hold_until = 0;
+    g_current_heat_racers = new_racers;
+    racers = new_racers;
+  }
+
+  for (var lane = 1; lane <= nlanes; ++lane) {
+    var r = racers.find(function(rr) { return rr.lane == lane; });
+    console.log('lane ' + lane); console.log(r);
+    var hr = false;
+    var nr = false;
+    if (holding) {
+      hr = current.heat_results.find(function(h) { return h.lane == lane; });
+      nr = new_racers.find(function(n) { return n.lane == lane; });
     }
+
+    var result = "";
+    if (r) {
+      result = current.use_points ? r.finishplace : r.finishtime;
+    }
+    if (holding && hr) {
+      result = current.use_points ? hr.place : hr.time;
+    }
+    racers_table.append('<tr><td>' + lane + '</td>'
+                        + '<td>' + (r ? r.carnumber : '') + '</td>'
+                        + '<td class="racer-name">' + (r ? r.name : '') + '</td>'
+                        + '<td>' + result + '</td>'
+                        + '</tr>');
+    if (holding) {
+      next_table.append('<tr>'
+                        + '<td>' + (nr ? nr.carnumber : '&nbsp;') + '</td>'
+                        + '<td class="racer-name">' + (nr ? nr.name : '') + '</td>'
+                        + '</tr>');
+    }
+  }
 }
 
 // For master scheduling, make a synthetic round data structure by calculating
@@ -499,8 +595,6 @@ function offer_new_rounds(rounds) {
     var classid = round.classid;
     if (highest_rounds[classid] ? highest_rounds[classid].round < round.round : true) {
       highest_rounds[classid] = round;
-    }
-    if (round.next) {
     }
   }
 
@@ -586,7 +680,6 @@ function process_coordinator_poll_response(data) {
 
   if (matched) {
     // TODO Want to remove everything except data-name="buttons"
-    $("#now-racing-group .heat-lineup *").remove();
     $.each(rounds, function (index, round) {
       inject_into_scheduling_control_group(round, current, timer_state);
     });
@@ -598,7 +691,11 @@ function process_coordinator_poll_response(data) {
       if (round.aggregate) {
         g_aggregate_rounds.push(round.roundid);
       }
-      generate_scheduling_control_group(round, current, timer_state);
+      if (round.roundid == current.roundid) {
+        generate_current_round_control_group(round, current, timer_state);
+      } else {
+        generate_scheduling_control_group(round, current, timer_state);
+      }
     });
   }
 
@@ -606,13 +703,13 @@ function process_coordinator_poll_response(data) {
 
   generate_replay_state_group(parse_replay_state(data));
 
-  generate_current_heat_racers(racers, current);
+  generate_current_heat_racers(racers, current, timer_state.lanes);
 
   if (current.roundid == -100 && current.is_racing) {
     $("#now-racing-group")
       .empty()
       .append($("<h3 id='timer-testing-herald'>Simulated racing in progress</h3>")
-              .append("<input style='float: right; font-size: 18px;' type='button' data-enhanced='true'"
+              .append("<input class='stop-test' type='button' data-enhanced='true'"
                       + " onclick='handle_stop_testing();' value='Stop'/>"));
   } else {
     $('#timer-testing-herald').remove();
@@ -631,7 +728,9 @@ function coordinator_poll() {
   if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'poll.coordinator'},
+            data: {query: 'poll.coordinator',
+                   roundid: g_current_heat.roundid,
+                   heat: g_current_heat.heat},
             success: function(data) {
               if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
                 process_coordinator_poll_response(data);
