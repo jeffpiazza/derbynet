@@ -163,6 +163,11 @@ td.test-only img {
   text-align: center;
 }
 
+#timer_overlay p {
+  background: white;
+  opacity: 0.75;
+}
+
 .banner_version { display: none; }
 
 .aside { display: none; }
