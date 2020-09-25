@@ -80,8 +80,11 @@ foreach ($db->query($sql) as $rs) {
 
 ?>
 <div id="top_matter" class="block_buttons">
+  <div id="dd-prompt">
+Drag awards to racers,<br/>or racers to awards.
+  </div>
   <div id="sort_controls">
-    Sort racers by
+    Sort racers by:<br/>
     <?php link_for_ordering('name', "name,"); ?>
     <?php link_for_ordering('class', group_label_lc().","); ?> or
     <?php link_for_ordering('car', "car number"); ?>.
@@ -90,6 +93,7 @@ foreach ($db->query($sql) as $rs) {
 </div>
 
 <div id="awards">
+  <p id="awards-empty">There are currently no awards defined.</p>
   <ul data-rolex="listview">
   </ul>
 </div>

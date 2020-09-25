@@ -26,6 +26,13 @@
     overflow-y: auto;
 }
 
+#awards-empty {
+  font-weight: bold;
+  padding-left: 30px;
+  padding-right: 30px;
+  text-align: center;
+}
+
 #awards ul {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -140,11 +147,25 @@
     font-size: inherit;
 }
 
+#dd-prompt {
+  position: absolute;
+  left: 25px;
+  width: 300px;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  background: #ccc;
+}
+
 #sort_controls {
   position: absolute;
-  right: 2px;
+  text-align: center;
+  right: 25px;
+  width: 300px;
   margin-top: 10px;
   font-size: 16px;
+  line-height: 20px;
 }
 
 #sort_controls a {

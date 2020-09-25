@@ -219,6 +219,8 @@ function update_awards(dataxml) {
       }
     }
   });
+
+  $("#awards-empty").toggleClass('hidden', $("#awards li").length != 0);
 }
 
 function handle_remove_recipient(imgxjq) {
