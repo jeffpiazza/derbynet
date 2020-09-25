@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/last-heat.inc');
+require_once('inc/timer-test.inc');
 
 define('DNF_TIME', 9.9999);
 
@@ -24,11 +25,11 @@ function write_heat_results() {
     // places, in RaceInfo table, along with the "heat" with which they're
     // associated.  (tt-results-heat lets the timer page know when to clear old
     // results because new results are available.)
-    $db->exec('DELETE FROM RaceInfo WHERE itemkey LIKE \'tt-lane%\' OR itemkey LIKE \'tt-place%\'');
-    write_raceinfo('tt-results-heat', $heat);
+    timer_test_clear_old_results();
+    timer_test_record_heat($heat);
     foreach ($_POST as $key => $value) {
       if (substr($key, 0, 4) == 'lane' || substr($key, 0, 5) == 'place') {
-        write_raceinfo('tt-'.$key, $value);
+        timer_test_store_result($key, $value);
       }
     }
     return true;

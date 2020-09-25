@@ -151,11 +151,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $mask = 0;
     if ($current['roundid'] == TIMER_TEST_ROUNDID) {
       $lane_count = get_lane_count();
-      if ($lane_count > 0) {
-        $mask = (1 << $lane_count) - 1;
-      }
+      $mask = (1 << $lane_count) - 1 - read_raceinfo('tt-mask', 0);
     } else {
-      $stmt = $db->prepare('SELECT lane, finishtime FROM RaceChart'
+      $stmt = $db->prepare('SELECT lane, finishtime, finishplace FROM RaceChart'
                            .' WHERE roundid = :roundid AND heat = :heat'
                            .' ORDER BY lane');
       $stmt->execute(array(':roundid' => $current['roundid'],

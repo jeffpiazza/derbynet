@@ -130,19 +130,21 @@ $(function() {
               if (current.length > 0) {
                 update_testing_mode(current[0]);
               }
+              var tt_mask = data.documentElement.getElementsByTagName('tt-mask');
+              if (tt_mask.length > 0) {
+                $("#unused-lane-mask").val(tt_mask[0].textContent);
+                show_mask();
+              }
               var tt = data.documentElement.getElementsByTagName('tt');
               for (var i = 0; i < tt.length; ++i) {
-                var key = tt[i].getAttribute('key');
-                var val = tt[i].textContent;
-                if (key.startsWith('tt-lane')) {
-                  var lane = key.substr(7);
-                  $("table#lanes tr.lane[data-lane=" + lane + "] td.time").text(val);
-                } else if (key.startsWith('tt-place')) {
-                  var lane = key.substr(8);
-                  $("table#lanes tr.lane[data-lane=" + lane + "] td.place").text(val);
-                } else if (key == 'tt-mask') {
-                  $("#unused-lane-mask").val(val);
-                  show_mask();
+                var lane = tt[i].getAttribute('lane');
+                var time = tt[i].getAttribute('time');
+                if (time) {
+                  $("table#lanes tr.lane[data-lane=" + lane + "] td.time").text(time);
+                }
+                var place = tt[i].getAttribute('place');
+                if (place) {
+                  $("table#lanes tr.lane[data-lane=" + lane + "] td.place").text(place);
                 }
               }
             }

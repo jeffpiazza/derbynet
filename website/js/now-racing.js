@@ -75,14 +75,28 @@ var Lineup = {
     var current = now_racing.getElementsByTagName("current-heat")[0];
     if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
       Overlay.show('#timer_overlay');
-    } else if (current.getAttribute("roundid") == "-100") {
-      Overlay.show('#testing_overlay');
     } else if (current.getAttribute("now-racing") == "0" && this.ok_to_change()) {
       Overlay.show('#paused_overlay');
     } else {
       Overlay.clear();
     }
 
+    if (now_racing.getElementsByTagName('timer-test').length > 0) {
+      // Overlay.show('#testing_overlay');
+      if ($('td.test-only').length == 0) {
+        $(".no-test").addClass('hidden');
+        $("tr#table-headers th").first().after("<th class='test-only'/>");
+        $("tr[data-lane=1] td.lane").after("<td class='test-only' rowspan='" + $("td.lane").length + "'>"
+                                           + "<img src='img/timer-testing.png'/><br/>"
+                                           + "Timer testing"
+                                           + "</td>");
+      }
+    } else {
+      if ($('td.test-only').length > 0) {
+        $(".test-only").remove();
+        $(".no-test").removeClass("hidden");
+      }
+    }
     // We always need to notice an increase in the number of heat-results, in
     // case they get cleared before the ok_to_change() test lets us update the
     // screen.
@@ -109,6 +123,7 @@ var Lineup = {
 
       var racers = now_racing.getElementsByTagName("racer");
       var zero = now_racing.getElementsByTagName('zero')[0].getAttribute('zero');
+
       if (is_new_heat && racers.length > 0) {
         FlyerAnimation.enable_flyers();
         FlyerAnimation.set_number_of_racers(racers.length);
@@ -121,7 +136,7 @@ var Lineup = {
         $('[data-lane] .time').css({opacity: 0}).text(zero);
         $('[data-lane] .speed').css({opacity: 0}).text('200.0');
         $('[data-lane] .place span').text('');
-        $('[data-lane] img').remove();
+        $('[data-lane] .photo img').remove();
         for (var i = 0; i < racers.length; ++i) {
           var r = racers[i];
           var lane = r.getAttribute('lane');
@@ -145,6 +160,7 @@ var Lineup = {
           $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
         }
       } else if (racers.length > 0) {
+
         // Same heat, but possibly updated photo paths
         for (var i = 0; i < racers.length; ++i) {
           var r = racers[i];

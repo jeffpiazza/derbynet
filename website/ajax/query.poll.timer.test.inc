@@ -2,6 +2,7 @@
 <?php
 require_once('inc/current-heat.inc');
 require_once('inc/timer-state-xml.inc');
+require_once('inc/timer-test.inc');
 
 $now_running = get_running_round();
 emit_current_heat($now_running);
@@ -10,12 +11,17 @@ emit_timer_details();
 ?>
 
 <?php
-foreach($db->query('SELECT itemkey, itemvalue FROM RaceInfo'
-                   .' WHERE itemkey LIKE \'tt-%\'') as $row) {
-  if ($row['itemkey'] == 'tt-results-heat') {
-    echo "<tt-results heat=\"$row[itemvalue]\"/>\n";
+
+$tt = timer_test_recorded_results();
+
+echo "<tt-results heat=\"$tt[heat]\"/>\n";
+echo "<tt-mask>$tt[mask]</tt-mask>\n";
+
+foreach($tt['results'] as $r) {
+  if (isset($r['time'])) {
+    echo "<tt lane='$r[lane]' time='$r[time]'/>\n";
   } else {
-    echo "<tt key=\"$row[itemkey]\">$row[itemvalue]</tt>\n";
+    echo "<tt lane='$r[lane]' place='$r[place]'/>\n";
   }
 }
 ?>

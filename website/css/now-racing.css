@@ -83,6 +83,17 @@ td.photo img {
     float: left;
 }
 
+td.test-only {
+  color: #fffd38;
+  background-color: #888;
+  font-size: 50px;
+  font-weight: bold;
+  text-align: center;
+}
+td.test-only img {
+  max-width: 50%;
+}
+
 @media screen and (max-width: 800px),
        screen and (max-height: 500px) {
   td {
@@ -147,13 +158,6 @@ td.photo img {
 
 #timer_overlay {
   color: #a7101c;
-  font-size: 50px;
-  font-weight: bold;
-  text-align: center;
-}
-
-#testing_overlay {
-  color: #fffd38;
   font-size: 50px;
   font-weight: bold;
   text-align: center;
