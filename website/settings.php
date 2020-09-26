@@ -69,6 +69,7 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
   write_raceinfo('scoring', 1);
 }
 $scoring = read_raceinfo('scoring', 0);
+
 ?>
 
 <div class="block_buttons">
@@ -130,6 +131,34 @@ Lanes available for scheduling:</p>
       <img src="img/settings-groups.png"/>
     </div>
     <div class="settings_group_settings">
+      <p>Use Image Set:<br/>
+        <?php
+            $current = read_raceinfo('images-dir', 'Generic');
+            $image_directories = @scandir(image_base_dir());
+            if ($image_directories !== false) {
+              usort($image_directories,
+                    function($a, $b) {
+                      if ($a == 'Generic') return -1;
+                      if ($b == 'Generic') return 1;
+                      if ($a < $b) return -1;
+                      if ($a > $b) return 1;
+                      return 0; });
+              $i = 0;
+              foreach ($image_directories as $img_dir) {
+                if ($img_dir[0] == '.') continue;
+                echo "<input type='radio' name='images-dir' data-role='none'";
+                echo " value='".htmlspecialchars($img_dir, ENT_QUOTES, 'UTF-8')."'";
+                if ($img_dir == $current) {
+                  echo " checked='checked'";
+                }
+                echo " id='images-dir-$i'/>\n";
+                echo "<label for='images-dir-$i'>".htmlspecialchars($img_dir, ENT_QUOTES, 'UTF-8')."</label>\n";
+                ++$i;
+              }
+            }
+        ?>
+      </p>
+
       <p>
         <input id="supergroup-label" name="supergroup-label" type="text" data-enhanced="true"
                value="<?php echo supergroup_label(); ?>"/>

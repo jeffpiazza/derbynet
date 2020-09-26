@@ -146,10 +146,12 @@ function use_master_sched() {
   return read_raceinfo_boolean('use-master-sched');
 }
 
+function image_base_dir() {
+  return  dirname(__FILE__, 2).DIRECTORY_SEPARATOR."Images";
+}
 function image_file_path($filename) {
-  return dirname(__FILE__, 2).DIRECTORY_SEPARATOR
-      ."Images".DIRECTORY_SEPARATOR
-      .read_raceinfo("images-dir", 'Cub Scouts').DIRECTORY_SEPARATOR
+  return image_base_dir().DIRECTORY_SEPARATOR
+      .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
       .$filename;
 }
 
