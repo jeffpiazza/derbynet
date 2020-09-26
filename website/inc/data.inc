@@ -146,18 +146,11 @@ function use_master_sched() {
   return read_raceinfo_boolean('use-master-sched');
 }
 
-// Returns a relative URL that points to the Images directory, without trailing
-// slash
-function images_dir() {
-  return "Images/".read_raceinfo("images-dir", 'Cub Scouts');
-}
-
-// Returns the absolute file path to the Images print directory.
-function print_images_dir() {
+function image_file_path($filename) {
   return dirname(__FILE__, 2).DIRECTORY_SEPARATOR
       ."Images".DIRECTORY_SEPARATOR
       .read_raceinfo("images-dir", 'Cub Scouts').DIRECTORY_SEPARATOR
-      ."print";
+      .$filename;
 }
 
 function update_period() {

@@ -119,7 +119,7 @@ class PitPassDocument extends PrintableRacerDocument {
   }
 
   protected function DrawLogo($x, $y) {
-    $this->pdf->Image(print_images_dir().DIRECTORY_SEPARATOR.'logo532.png',
+    $this->pdf->Image(image_file_path('emblem.png'),
                       $x, $y, 0.886, 0.886);
   }
 }

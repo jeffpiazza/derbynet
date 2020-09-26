@@ -31,7 +31,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
     // $this->DrawBannerText($x, $y);
 
     // Logo in the lower left
-    $this->pdf->Image(print_images_dir().DIRECTORY_SEPARATOR.'emblem_300.png',
+    $this->pdf->Image(image_file_path('emblem.png'),
                       $x + 0.05, $y + 1.95, 0.5, 0.5);
 
     $this->pdf->DrawSequence($x + 0.25, $y + 0.7,

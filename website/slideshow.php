@@ -11,7 +11,7 @@ require_once('inc/photo-config.inc');
     <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
     <link rel="stylesheet" type="text/css" href="css/slideshow.css"/>
     <script type="text/javascript">
-        var g_title_slide = "<?php echo images_dir(); ?>/kiosks/slideshow_title.png";
+        var g_title_slide = "<?php echo image_file_path('slideshow_title.png'); ?>";
     </script>
     <script type="text/javascript" src="js/slideshow.js"></script>
   </head>

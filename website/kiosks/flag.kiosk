@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>US Flag</title>
+<title>Flag</title>
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
@@ -29,7 +29,7 @@ require_once('inc/banner.inc');
 make_banner('', /* back_button */ false);
 ?>
 
-<img id="flag" src="<?php echo images_dir(); ?>/kiosks/Flag.svg"/>
+<img id="flag" src="image.php/Flag.svg"/>
 
 </body>
 </html>

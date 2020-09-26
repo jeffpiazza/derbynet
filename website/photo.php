@@ -2,6 +2,7 @@
 session_start(); 
 
 require_once('inc/photo-config.inc');
+require_once('inc/path-info.inc');
 
 // URL for a file in one of the repositories is:
 //  photo.php/<repository>/file/<render>/<file-basename>/<cachebreaker>, e.g.
@@ -38,21 +39,7 @@ function parse_photo_url($url_path_info) {
   }
 }
 
-if (isset($_SERVER['PATH_INFO'])) {
-  $path_info = $_SERVER['PATH_INFO'];
-} else if (isset($_SERVER['REQUEST_URI']) && isset($_SERVER['SCRIPT_NAME']) &&
-           substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) == $_SERVER['SCRIPT_NAME']) {
-  $path_info = substr($_SERVER['REQUEST_URI'], strlen($_SERVER['SCRIPT_NAME']));
-} else if (isset($_SERVER['ORIG_PATH_INFO'])) {
-  // Rewrite rules in Apache 2.2 may leave ORIG_PATH_INFO instead of PATH_INFO
-  $path_info = 'photo.php'.$_SERVER['ORIG_PATH_INFO'];
-} else {
-  // Debugging only:
-  var_export($_SERVER);
-  exit(0);
-}
-
-$parsed = parse_photo_url($path_info);
+$parsed = parse_photo_url($path_info = path_info());
 if (!$parsed) {  // Malformed URL
   http_response_code(404);
   echo "Malformed URL\n";

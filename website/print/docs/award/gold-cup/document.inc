@@ -103,7 +103,7 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
     }
 
     if ($this->get_option('logo')) {
-      $path = print_images_dir().DIRECTORY_SEPARATOR.'emblem_600.png';
+      $path = image_file_path('emblem.png');
       $this->pdf->Image($path, $left + 0.25, 6.75, 1.5,1.5);
     }
 

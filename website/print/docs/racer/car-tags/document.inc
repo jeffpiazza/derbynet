@@ -37,7 +37,7 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetFont('Times', '', 15);
     $this->pdf->RotatedCenteredText($left + 1.1, 2.75,  $racer['carname']);
 
-    if ($this->get_option('rank_image')) {
+    if ($this->get_option('rank_image') && is_dir(image_file_path("ranks"))) {
       // 2-inch rank image
       $this->pdf->SetXY($left, 5.5);
       $this->pdf->SetFont('Arial', '', 16);
@@ -66,7 +66,7 @@ class CarTagsDocument extends PrintableRacerDocument {
   // desired.
   static protected function path_to_rank_image(&$racer) {
     $grade = min(6, intval($racer['carnumber'] / 100));
-    return print_images_dir().DIRECTORY_SEPARATOR."ranks".DIRECTORY_SEPARATOR. $grade . '00-series.jpg';
+    return image_file_path("ranks".DIRECTORY_SEPARATOR. $grade . '00-series.jpg');
   }
 
   protected function RotatedCenteredName($cx, $cy, &$racer) {
