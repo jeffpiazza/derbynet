@@ -109,7 +109,7 @@ function inspect_database() {
         $result['schema_status'] = "unknown";
         $result['schema_button'] = 'update';
         $result['schema_message'] = "<p>Schema version is S1".pad3($schema_version)
-            .", but version S1".pad3(expected_schema_version())." would be preferred.</p>\n";
+            .", but <b>version S1".pad3(expected_schema_version())." would be preferred.</b></p>\n";
       }
     } catch (PDOException $p) {
       $result['schema_status'] = "trouble";
