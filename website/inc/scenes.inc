@@ -1,5 +1,9 @@
 <?php
 
+function create_scene_tables() {
+  run_sql_script('scene-tables.inc');
+}
+
 // Returns an array of e.g.
 //   { "sceneid": "4",
 //     "name": "Awards",
@@ -8,33 +12,43 @@
 //   }
 function all_scenes() {
   global $db;
-  $stmt = $db->prepare('SELECT sceneid, name, kiosk_name, page'
-                       .' FROM Scenes LEFT JOIN SceneKiosk USING (sceneid)'
-                       .' ORDER BY Scenes.sortorder,'
-                       .' CASE kiosk_name WHEN \'Main\' THEN \'\' ELSE kiosk_name END');
-  $stmt->execute();
-  $all_scenes = [];
-  $scene = array();
-  foreach ($stmt as $row) {
-    if (!isset($scene['sceneid']) || $row['sceneid'] != $scene['sceneid']) {
-      if (isset($scene['sceneid'])) {
-        $all_scenes[] = $scene;
+  try {
+    $stmt = $db->prepare('SELECT sceneid, name, kiosk_name, page'
+                         .' FROM Scenes LEFT JOIN SceneKiosk USING (sceneid)'
+                         .' ORDER BY Scenes.sortorder,'
+                         .' CASE kiosk_name WHEN \'Main\' THEN \'\' ELSE kiosk_name END');
+    $stmt->execute();
+    $all_scenes = [];
+    $scene = array();
+    foreach ($stmt as $row) {
+      if (!isset($scene['sceneid']) || $row['sceneid'] != $scene['sceneid']) {
+        if (isset($scene['sceneid'])) {
+          $all_scenes[] = $scene;
+        }
+        $scene = array('sceneid' => $row['sceneid'],
+                       'name' => $row['name'],
+                       'kiosks' => array());
       }
-      $scene = array('sceneid' => $row['sceneid'],
-                     'name' => $row['name'],
-                     'kiosks' => array());
+
+      if ($row['kiosk_name']) {
+        $scene['kiosks'][] = array('kiosk_name' => $row['kiosk_name'],
+                                   'page' => $row['page']);
+      }
+    }
+    if (isset($scene['sceneid'])) {
+      $all_scenes[] = $scene;
     }
 
-    if ($row['kiosk_name']) {
-      $scene['kiosks'][] = array('kiosk_name' => $row['kiosk_name'],
-                                 'page' => $row['page']);
+    return $all_scenes;
+  } catch (PDOException $p) {
+    if (is_no_such_table_eception($p)) {
+      create_scene_tables();
+      return array();
+    } else {
+      echo "SQL error code ".$p->getCode()."\n";
+      echo $p;
     }
   }
-  if (isset($scene['sceneid'])) {
-    $all_scenes[] = $scene;
-  }
-
-  return $all_scenes;
 }
 
 // Returns a sorted array of kiosk names used for scenes

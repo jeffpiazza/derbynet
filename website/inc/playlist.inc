@@ -4,10 +4,25 @@ require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
 require_once('inc/autoadvance.inc');
 
+function create_playlist_table() {
+  create_scene_tables();
+  run_sql_script('playlist-table');
+}
+
 function first_playlist_entry() {
-  return read_single_row('SELECT * FROM Playlist'
-                         .' WHERE seq = (SELECT MIN(seq) FROM Playlist)',
-                         array(), PDO::FETCH_ASSOC);
+  try {
+    return read_single_row('SELECT * FROM Playlist'
+                           .' WHERE seq = (SELECT MIN(seq) FROM Playlist)',
+                           array(), PDO::FETCH_ASSOC);
+  } catch (PDOException $p) {
+    if (is_no_such_table_exception($p)) {
+      create_playlist_table();
+      return array();
+    } else {
+      echo "SQL error code ".$p->getCode()."\n";
+      echo $p;
+    }
+  }
 }
 
 function playlist_entry_for($roundid) {

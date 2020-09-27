@@ -36,10 +36,10 @@ require_permission(SET_UP_PERMISSION);
 //   { "brief": "award-presentations",
 //     "full": "kiosks\/award-presentations.kiosk" },
 ///////////////////////////////////
-var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
-                                                     JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_all_scenes = <?php echo json_encode(all_scenes(),
                                           JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
+                                                     JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_current_scene = <?php echo json_encode(read_raceinfo('current_scene', ''),
                                              JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
