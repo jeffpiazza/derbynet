@@ -26,10 +26,20 @@ function first_playlist_entry() {
 }
 
 function playlist_entry_for($roundid) {
-  return read_single_row('SELECT * FROM Playlist'
-                         .' INNER JOIN Rounds USING (classid, round)'
-                         .' WHERE roundid = :roundid',
-                         array(':roundid' => $roundid), PDO::FETCH_ASSOC);
+  try {
+    return read_single_row('SELECT * FROM Playlist'
+                           .' INNER JOIN Rounds USING (classid, round)'
+                           .' WHERE roundid = :roundid',
+                           array(':roundid' => $roundid), PDO::FETCH_ASSOC);
+  } catch (PDOException $p) {
+    if (is_no_such_table_exception($p)) {
+      create_playlist_table();
+      return array();
+    } else {
+      echo "SQL error code ".$p->getCode()."\n";
+      echo $p;
+    }
+  }
 }
 
 // Finds the next queue entry after the given one.

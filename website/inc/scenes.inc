@@ -41,7 +41,7 @@ function all_scenes() {
 
     return $all_scenes;
   } catch (PDOException $p) {
-    if (is_no_such_table_eception($p)) {
+    if (is_no_such_table_exception($p)) {
       create_scene_tables();
       return array();
     } else {
@@ -54,14 +54,24 @@ function all_scenes() {
 // Returns a sorted array of kiosk names used for scenes
 function all_scene_kiosk_names() {
   global $db;
-  $stmt = $db->prepare('SELECT DISTINCT kiosk_name FROM SceneKiosk ORDER BY '
-                       .' CASE kiosk_name WHEN \'Main\' THEN \'\' ELSE kiosk_name END');
-  $stmt->execute();
-  $all_kiosk_names = array();
-  foreach ($stmt as $row) {
-    $all_kiosk_names[] = $row['kiosk_name'];
+  try {
+    $stmt = $db->prepare('SELECT DISTINCT kiosk_name FROM SceneKiosk ORDER BY '
+                         .' CASE kiosk_name WHEN \'Main\' THEN \'\' ELSE kiosk_name END');
+    $stmt->execute();
+    $all_kiosk_names = array();
+    foreach ($stmt as $row) {
+      $all_kiosk_names[] = $row['kiosk_name'];
+    }
+    return $all_kiosk_names;
+  } catch (PDOException $p) {
+    if (is_no_such_table_exception($p)) {
+      create_scene_tables();
+      return array();
+    } else {
+      echo "SQL error code ".$p->getCode()."\n";
+      echo $p;
+    }
   }
-  return $all_kiosk_names;
 }
 
 function apply_scene($sceneid) {
