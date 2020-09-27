@@ -60,6 +60,9 @@ public abstract class Flag<T> {
       = new IntegerFlag("lanes", 0, "Specify number of lanes to report");
   public static final Flag<Integer> pace
       = new IntegerFlag("pace", 0, "Staging pace (seconds between heats)");
+  public static final Flag<Boolean> simulate_has_not_spoken
+      = new BooleanFlag("simulate-has-not-spoken",
+                        "Simulate simulated timer has never spoken");
 
   public static final Flag<String> trigger_file_directory
       = new StringFlag("trigger-file-directory", null,

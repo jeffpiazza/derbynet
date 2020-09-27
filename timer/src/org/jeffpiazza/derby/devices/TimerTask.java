@@ -248,9 +248,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
                 = makeTimerDeviceInstance(timerClass, portWrapper);
             device = maybeProbeOneDevice(device);
             if (device != null) {
-              if (timerGui != null) {
-                timerGui.confirmDevice();
-              }
+              confirmDevice();
               // 'finally' clause will close port, if it's set; since we
               // actually found a timer, we want to leave the port open.
               port = null;
@@ -375,6 +373,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
       throws SerialPortException, TimerDevice.LostConnectionException {
     while (!userIntervened()) {
       device.poll();
+      confirmDevice();
       try {
         Thread.sleep(50); // ms.
       } catch (Exception exc) {
@@ -382,12 +381,23 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     }
   }
 
+  private void confirmDevice() {
+    if (device != null && timerGui != null) {
+      timerGui.confirmDevice(device.hasEverSpoken());
+    }
+  }
   public synchronized TimerDevice device() {
     return device;
   }
 
   @Override
-  public boolean isTimerHealthy() {
-    return device() != null;
+  public int getTimerHealth() {
+    if (device() == null) {
+      return UNHEALTHY;
+    }
+    if (device().hasEverSpoken()) {
+      return HEALTHY;
+    }
+    return PRESUMED_HEALTHY;
   }
 }

@@ -25,8 +25,9 @@ require_once('inc/events.inc');
 //
 // message="FINISHED" & lane1="3.123"&place1="1"&..., etc.
 //
-// message="HEARTBEAT"
+// message="HEARTBEAT" & confirmed=0|1
 //  Response provides message to timer controller
+//  Confirmed means the timer has sent recognizable data.
 //
 // message="MALFUNCTION" & detectable=0|1 & error= message
 //   Signals lost connection or other problem with the timer
@@ -79,7 +80,11 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     if (isset($_POST['options'])) {
       write_raceinfo('timer-options', $_POST['options']);
     }
-    $timer_state->to_state(TIMER_CONNECTED);
+    if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
+      $timer_state->to_state(TIMER_UNCONFIRMED);
+    } else {
+      $timer_state->to_state(TIMER_CONNECTED);
+    }
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
     $timer_state->to_state(TIMER_RUNNING);
@@ -104,9 +109,11 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $timer_state->to_state(TIMER_CONNECTED);
   } else if ($message == 'HEARTBEAT') {
     echo "\n  <success/>\n";
-    // TODO: Capture other state information
     if ($timer_state->unhealthy()) {
       $timer_state->to_state(TIMER_CONNECTED);
+    }
+    if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
+      $timer_state->to_state(TIMER_UNCONFIRMED);
     }
   } else if ($message == 'MALFUNCTION') {
     $error_string = isset($_POST['error']) ? $_POST['error'] : "Malfunction";
@@ -140,13 +147,16 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     if ($current['roundid'] != $timer_current[0] ||
         $current['heat'] != $timer_current[1]) {
       echo "\n <abort />\n";
-      $timer_state->to_state(TIMER_CONNECTED);
+      if ($timer_state->state() != TIMER_UNCONFIRMED) {
+        $timer_state->to_state(TIMER_CONNECTED);
+      }
       write_raceinfo('timer_current', '');
     }
   }
   
   $tstate = $timer_state->state();
-  if ($racing_state && $tstate == TIMER_CONNECTED) {  // i.e., not staging or running
+  if ($racing_state && ($tstate == TIMER_CONNECTED || $tstate == TIMER_UNCONFIRMED)) {
+    // i.e., not staging or running
     $pending = true;
     $mask = 0;
     if ($current['roundid'] == TIMER_TEST_ROUNDID) {
@@ -172,7 +182,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
           .' roundid="'.$current['roundid'].'"'
           .' heat="'.$current['heat'].'"'
           .'/>'."\n";
-      $timer_state->to_state(TIMER_STAGING);
+      if ($tstate == TIMER_CONNECTED) {
+        $timer_state->to_state(TIMER_STAGING);
+      }
       // send_replay_START($current);
       write_raceinfo('timer_current', $current['roundid'].'#'.$current['heat']);
     }

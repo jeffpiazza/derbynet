@@ -17,9 +17,12 @@ public abstract class TimerDeviceBase implements TimerDevice {
   protected int roundid;
   protected int heat;
 
+  protected boolean has_ever_spoken;
+
   protected TimerDeviceBase(SerialPortWrapper portWrapper) {
     this.portWrapper = portWrapper;
     this.roundid = this.heat = 0;
+    this.has_ever_spoken = false;
   }
 
   public SerialPortWrapper getPortWrapper() {
@@ -29,6 +32,11 @@ public abstract class TimerDeviceBase implements TimerDevice {
   @Override
   public boolean canBeIdentified() {
     return true;  // by default
+  }
+
+  @Override
+  public boolean hasEverSpoken() {
+    return has_ever_spoken;
   }
 
   protected void prepare(int roundid, int heat) {

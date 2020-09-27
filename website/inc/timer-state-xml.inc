@@ -18,6 +18,10 @@ function expand_timer_state_status($timer_state) {
     return array('Staging', 'img/status/ok.png');
   } else if ($tstate == TIMER_RUNNING) {
     return array('Race running', 'img/status/ok.png');
+  } else if ($tstate == TIMER_UNHEALTHY) {
+    return array('UNHEALTHY', 'img/status/trouble.png');
+  } else if ($tstate == TIMER_UNCONFIRMED) {
+    return array('UNCONFIRMED', 'img/status/unknown.png');
   } else {
     return array('Unknown ('.$tstate.')', 'img/status/trouble.png');
   }

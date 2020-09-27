@@ -171,7 +171,8 @@ public class TimerMain {
         }
         httpTask.sendIdentified(
             nlanes, timerTask.device().getClass().getSimpleName(),
-            timerTask.device().getTimerIdentifier());
+            timerTask.device().getTimerIdentifier(),
+            timerTask.device().hasEverSpoken());
       }
     }
 

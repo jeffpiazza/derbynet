@@ -24,11 +24,14 @@ public interface Message {
     private int nlanes;
     private String timer;
     private String identifier;
+    private boolean confirmed;
 
-    public Identified(int nlanes, String timer, String identifier) {
+    public Identified(int nlanes, String timer, String identifier,
+                      boolean confirmed) {
       this.nlanes = nlanes;
       this.timer = timer;
       this.identifier = identifier;
+      this.confirmed = confirmed;
     }
 
     public String asParameters() {
@@ -37,6 +40,7 @@ public interface Message {
       sb.append("message=IDENTIFIED");
       sb.append("&lane_count=").append(nlanes);
       sb.append("&timer=").append(timer);
+      sb.append("&confirmed=").append(confirmed ? "1" : "0");
       if (identifier != null) {
         try {
           sb.append("&ident=").append(URLEncoder.encode(identifier, "UTF-8"));
@@ -114,8 +118,14 @@ public interface Message {
   }
 
   public static class Heartbeat implements Message {
+    private boolean confirmed;
+
+    public Heartbeat(boolean confirmed) {
+      this.confirmed = confirmed;
+    }
+
     public String asParameters() {
-      return "message=HEARTBEAT";  // TODO
+      return "message=HEARTBEAT&confirmed=" + (confirmed ? 1 : 0);
     }
   }
 }

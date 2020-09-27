@@ -10,7 +10,7 @@ import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class MiscJunkDevice extends TimerDeviceCommon
-                            implements RemoteStartInterface {
+    implements RemoteStartInterface {
   public MiscJunkDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
 
@@ -82,14 +82,16 @@ public class MiscJunkDevice extends TimerDeviceCommon
     }
     // We just reset the timer, give it 2s to startup
     try {
-       Thread.sleep(2000); // ms.
-    } catch (Exception exc) { }
+      Thread.sleep(2000); // ms.
+    } catch (Exception exc) {
+    }
     portWrapper.write(READ_VERSION);
     long deadline = System.currentTimeMillis() + 500;
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("vert=") >= 0) {
         timerIdentifier = s;
+        has_ever_spoken = true;
         // Responds either "P" or "O"
         portWrapper.writeAndWaitForResponse(RESET, 500);
 
@@ -133,7 +135,8 @@ public class MiscJunkDevice extends TimerDeviceCommon
         Matcher m = resultLine.matcher(line);
         if (m.find()) {
           int lane = Integer.parseInt(m.group(1));
-          LogWriter.serial("Detected result for lane " + lane + " = " + m.group(2));  // TODO
+          LogWriter.serial("Detected result for lane " + lane + " = " + m.group(
+              2));  // TODO
           if (results != null) {
             TimerDeviceUtils.addOneLaneResult(lane, m.group(2), -1, results);
             // Results are sent in lane order, so results are complete when
@@ -185,7 +188,7 @@ public class MiscJunkDevice extends TimerDeviceCommon
       // Upon entering RESULTS_OVERDUE state, we sent FORCE_END_OF_RACE; see
       // onTransition.
       if (portWrapper.millisSinceLastContact() > 1000) {
-	// Track was RACING and we forced the end of race, we need to wait for READY
+        // Track was RACING and we forced the end of race, we need to wait for READY
         // before we start polling.
         throw new LostConnectionException();
       } else if (rsm.millisInCurrentState() > 1000) {

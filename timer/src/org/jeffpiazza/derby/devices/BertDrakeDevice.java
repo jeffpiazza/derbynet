@@ -78,6 +78,7 @@ public class BertDrakeDevice extends TimerDeviceCommon {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.contains("Bert Drake")) {
+        has_ever_spoken = true;
         setUp();
         return true;
       }

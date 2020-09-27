@@ -31,7 +31,11 @@ public class HttpTask implements Runnable {
   // Called when it's time to send a heartbeat to the web server, which we'll
   // do only if the timer is healthy (connected).
   public interface TimerHealthCallback {
-    boolean isTimerHealthy();
+    public static final int UNHEALTHY = 0;
+    public static final int PRESUMED_HEALTHY = 1;
+    public static final int HEALTHY = 2;
+
+    int getTimerHealth();
   }
 
   // Called when a PREPARE_HEAT message is received from the web server
@@ -96,9 +100,11 @@ public class HttpTask implements Runnable {
     }
   }
 
-  public void sendIdentified(int nlanes, String timer, String identifier) {
+  public void sendIdentified(int nlanes, String timer, String identifier,
+                             boolean confirmed) {
     synchronized (queue) {
-      queueMessage(new Message.Identified(nlanes, timer, identifier));
+      queueMessage(new Message.Identified(nlanes, timer, identifier,
+                                          confirmed));
     }
   }
 
@@ -185,11 +191,17 @@ public class HttpTask implements Runnable {
           trace = this.traceQueued;
         } else {
           TimerHealthCallback timerHealth = getTimerHealthCallback();
-          if (timerHealth != null && timerHealth.isTimerHealthy()) {
+          if (timerHealth != null) {
+            int health = timerHealth.getTimerHealth();
             // Send heartbeats only if we've actually identified the timer and
-            // it's healthy.
-            nextMessage = new Message.Heartbeat();
-            log = trace = this.traceHeartbeat;
+            // it's not unhealthy.
+            if (health != TimerHealthCallback.UNHEALTHY) {
+              nextMessage = new Message.Heartbeat(
+                  health == TimerHealthCallback.HEALTHY);
+              log = trace = this.traceHeartbeat;
+            } else {
+              continue;
+            }
           } else {
             continue;
           }

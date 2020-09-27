@@ -10,11 +10,10 @@ import org.jeffpiazza.derby.Message;
 
 // TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
 // More importantly, "V" responds with "Derby Magic v3.00" or some such.
-
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
 public class DerbyMagicDevice extends TimerDeviceCommon
-                              implements RemoteStartInterface {
+    implements RemoteStartInterface {
   private TimerResult result = null;
   private long timeOfFirstResult = 0;
 
@@ -66,6 +65,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
           timerIdentifier = s;
           portWrapper.writeAndDrainResponse(TIMER_RESET, 1, 200);
           setUp();
+          has_ever_spoken = true;
           return true;
         }
       }
@@ -104,6 +104,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
           LogWriter.serial("Detected gate opening");
           // This will be an unexpected state change, if it ever happens
           onGateStateChange(false);
+          has_ever_spoken = true;
           return "";
         }
         return line;
@@ -114,6 +115,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
       public String apply(String line) throws SerialPortException {
         Matcher m = singleLanePattern.matcher(line);
         while (m.find()) {
+          has_ever_spoken = true;
           LogWriter.serial("    Early detector match for (" + m.group() + ")");
           int lane = m.group(1).charAt(0) - '1' + 1;
           String time = m.group(2);
@@ -151,7 +153,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
 
   @Override
   public void remoteStart() throws SerialPortException {
-     portWrapper.write(TRIGGER_START_SOLENOID);
+    portWrapper.write(TRIGGER_START_SOLENOID);
   }
 
   protected void raceFinished() throws SerialPortException {

@@ -81,6 +81,7 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
     while ((s = portWrapper.next(deadline)) != null) {
       // eTekGadget SmartLine Timer v20.06 (B0007)
       if (s.indexOf("eTekGadget SmartLine Timer") >= 0) {
+        has_ever_spoken = true;
         timerIdentifier = s;
 
         portWrapper.write(RESET);

@@ -65,6 +65,10 @@ public interface TimerDevice {
 
   void abortHeat() throws SerialPortException;
 
+  // Returns true if there's ever been any recognized data sent from the device.
+  // There's reason to doubt the identity of a timer if it's never spoken.
+  boolean hasEverSpoken();
+
   // Perform any recurring polling, mainly checking the starting
   // gate status.  Invoke callbacks as necessary.  Throws
   // LostConnectionException if the timer device becomes unresponsive for a

@@ -6,6 +6,8 @@ require_once('inc/data.inc');
 
 define('TIMER_NOT_CONNECTED', 1);  // No recent contact from an authenticated timer
 define('TIMER_SEARCHING', 6);  // derby-timer.jar made contact, but timer hasn't been identified
+define('TIMER_UNCONFIRMED', 7);  // Timer is identified only by the user's claim, and can only be
+                                 // presumed healthy, it's never been heard from.
 define('TIMER_CONNECTED', 2);      // Timer connected, but not doing anything right now
 define('TIMER_STAGING', 3);       // A HEAT-READY message sent to connected timer
 define('TIMER_RUNNING', 4);        // A STARTED message received (but not yet a FINISHED message)

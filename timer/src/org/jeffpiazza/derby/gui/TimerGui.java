@@ -273,10 +273,14 @@ public class TimerGui {
     System.out.println("Scan/Stop Scanning button not implemented");
   }
 
-  public void confirmDevice() {
+  public void confirmDevice(boolean confirmed) {
     components.portList.setSelectionBackground(green);
     components.timerClassList.setSelectionBackground(green);
-    setSerialStatus("Timer device identified", green, icon_ok);
+    if (confirmed) {
+      setSerialStatus("Timer device identified", green, icon_ok);
+    } else {
+      setSerialStatus("Timer device unconfirmed", red, icon_unknown);
+    }
     // TODO components.scanButton.setVisible(false);
   }
 

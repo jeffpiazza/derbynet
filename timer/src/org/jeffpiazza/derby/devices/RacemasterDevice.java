@@ -64,6 +64,7 @@ public class RacemasterDevice extends TimerDeviceBase {
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("JIT, Inc.") >= 0
           || s.indexOf("Racemaster Software") >= 0) {
+        has_ever_spoken = true;
         // This timer includes escape characters in some of its responses,
         // which can cause trouble when encoded as XML, so just filter them out.
         timerIdentifier = s.replace("\033", "");
