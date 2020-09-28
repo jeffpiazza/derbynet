@@ -319,16 +319,14 @@ $(function() { setup_scenes_select_control(); });
 function on_scene_change(event, synthetic) {
   if (!synthetic) {
     var val = $("#scenes-select").val();
-    if (val >= 0) {
-      $.ajax(g_action_url,
-             {type: 'POST',
-              data: {action: 'scene.apply',
-                     sceneid: val},
-              success: function(data) {
-                process_polled_data(data);
-              },
-             });
-    }
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'scene.apply',
+                   sceneid: val},
+            success: function(data) {
+              process_polled_data(data);
+            },
+           });
   }
 }
 

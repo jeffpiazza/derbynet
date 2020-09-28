@@ -16,6 +16,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   }
 
   if (isset($sceneid)) {
+    if ($sceneid < 0) $sceneid = '';
     apply_scene($sceneid);
     echo "<success/>\n";
     require('ajax/query.poll.kiosk.all.inc');
