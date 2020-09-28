@@ -81,7 +81,7 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
 
 
 <div class="block_buttons">
-    <input type="button" data-enhanced="true" id="print-selected"
+    <input type="button" id="print-selected"
            value="Print Selected" onclick="print_selected();"/>
 </div>
 
@@ -91,7 +91,7 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
 
 $radio_count = 0;
 $last_type = '';
-echo "<div class='mradiogroup' data-role='controlgroup'>\n";
+echo "<div class='mradiogroup'>\n";
 foreach ($doc_classes as $c => $details) {
   ++$radio_count;
   $options = $details['options'];
@@ -168,8 +168,8 @@ foreach ($doc_classes as $c => $details) {
     <div id="sortorder-summary-div">
     </div>
 
-    <input type="button" data-enhanced="true" value="Select All" onclick="select_all(true)"/>
-    <input type="button" data-enhanced="true" value="Deselect All" onclick="select_all(false)"/>
+    <input type="button" value="Select All" onclick="select_all(true)"/>
+    <input type="button" value="Deselect All" onclick="select_all(false)"/>
 </div>
 </div>
 

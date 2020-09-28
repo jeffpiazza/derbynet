@@ -50,15 +50,15 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
     <br/>
 
-    <input type="button" value="Add <?php echo group_label(); ?>" data-enhanced="true"
+    <input type="button" value="Add <?php echo group_label(); ?>"
            onclick="show_add_class_modal();" />
 
-    <input type="button" value="Add Aggregate" data-enhanced="true"
+    <input type="button" value="Add Aggregate"
            onclick="show_add_aggregate_modal();" />
 
     <br/>
 
-    <input type="button" value="Close" data-enhanced="true"
+    <input type="button" value="Close"
            onclick="close_edit_all_classes_modal();"/>
   </form>
 </div>
@@ -91,8 +91,8 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     </select>
     <h3>&nbsp;</h3>
 
-    <input type="submit" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
+    <input type="submit"/>
+    <input type="button" value="Cancel"
            onclick="close_add_class_modal();"/>
   </form>
 </div>
@@ -133,18 +133,18 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
       <div id="ranks_container">
       </div>
       <br/>
-      <input type="button" value="Add <?php echo subgroup_label(); ?>" data-enhanced="true"
+      <input type="button" value="Add <?php echo subgroup_label(); ?>"
              onclick="show_add_rank_modal();" />
       <br/>
     </div>
 
-    <input type="submit" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
+    <input type="submit"/>
+    <input type="button" value="Cancel"
            onclick="close_edit_one_class_modal();"/>
 
     <div id="delete_class_extension">
     <input type="button" value="Delete <?php echo group_label(); ?>"
-           class="delete_button" data-enhanced="true"
+           class="delete_button"
            onclick="handle_delete_class();"/>
     </div>
   </form>
@@ -157,8 +157,8 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     <input type="hidden" name="classid"/>
     <input name="name" type="text"/>
 
-    <input type="submit" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
+    <input type="submit"/>
+    <input type="button" value="Cancel"
            onclick="close_add_rank_modal();"/>
   </form>
 </div>
@@ -168,13 +168,13 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
   <form>
     <input id="edit_rank_name" name="name" type="text"/>
 
-    <input type="submit" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
+    <input type="submit"/>
+    <input type="button" value="Cancel"
            onclick="close_edit_one_rank_modal();"/>
 
     <div id="delete_rank_extension">
     <input type="button" value="Delete <?php echo subgroup_label(); ?>"
-           class="delete_button" data-enhanced="true"
+           class="delete_button"
            onclick="handle_delete_rank();"/>
     </div>
   </form>

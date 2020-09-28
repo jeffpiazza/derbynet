@@ -42,7 +42,7 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 </div>
 
 <div class="center-button-up block_buttons">
-<input type="button" value="New Award" data-enhanced="true"
+<input type="button" value="New Award"
        onclick="handle_new_award();"/>
 </div>
 
@@ -107,14 +107,14 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
     </select>
 
     <br/>
-    <input type="submit" data-enhanced="true"/>
+    <input type="submit"/>
 
-    <input type="button" value="Close" data-enhanced="true"
+    <input type="button" value="Close"
            onclick="close_modal('#award_editor_modal');"/>
     <hr/><br/>
 
     <input type="button" class="delete_button" value="Delete Award"
-        data-enhanced="true" onclick="handle_delete_award();"/>
+        onclick="handle_delete_award();"/>
 
   </form>
 </div><!-- award_editor_modal -->

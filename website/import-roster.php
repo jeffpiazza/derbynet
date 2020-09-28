@@ -96,8 +96,7 @@ function all_classes() {
   <div id="new_ranks">
   </div>
   <form>
-    <input type="button" data-enhanced="true" value="Dismiss"
-      onclick='close_modal("#new_ranks_modal");'/>
+    <input type="button" value="Dismiss" onclick='close_modal("#new_ranks_modal");'/>
   </form>
 </div>
 <div class="footer">Or instead: <a href="import-results.php">Import results exported from another race...</a></div>

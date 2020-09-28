@@ -37,7 +37,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
   <div class="control_group heat_control_group">
     <div id="start_race_button_div" class="block_buttons hidden">
-      <input type="button" data-enhanced="true" value="Start Race" onclick="handle_start_race_button()"/>
+      <input type="button" value="Start Race" onclick="handle_start_race_button()"/>
     </div>
     <div class="centered_flipswitch">
       <input type="checkbox" class="flipswitch" name="is-currently-racing" id="is-currently-racing"
@@ -51,14 +51,14 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <img src="img/left-white-60.png"/>
       </div>
 
-      <input type="button" id="manual_results_button" data-enhanced="true" value="Manual Results"
+      <input type="button" id="manual_results_button" value="Manual Results"
         onclick="show_manual_results_modal()" />
 
       <div id="skip_heat_button" class="button_link" onclick="handle_skip_heat_button()">
         <img src="img/right-white-60.png"/>
       </div>
 
-      <input type="button" id="rerun-button" data-enhanced="true" value="Re-Run"
+      <input type="button" id="rerun-button" value="Re-Run"
              data-rerun="none"
              onclick="handle_rerun(this);"/>
     </div>
@@ -66,7 +66,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
   <div id="supplemental-control-group" class="control_group block_buttons new_round_control hidden">
       <div id="add-new-rounds-button" class="hidden">
-          <input type="button" data-enhanced="true" value="Add New Rounds"
+          <input type="button" value="Add New Rounds"
                  onclick="show_choose_new_round_modal()"/>
       </div>
       <div id="now-racing-group-buttons"></div>
@@ -97,10 +97,10 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <h3>Replay Status</h3>
     <p><b id="replay_status">Remote replay status not yet updated</b></p>
     <div id="test_replay" class="block_buttons">
-      <input type="button" data-enhanced="true" value="Trigger Replay" onclick="handle_test_replay();"/>
+      <input type="button" value="Trigger Replay" onclick="handle_test_replay();"/>
     </div>
     <div class="block_buttons">
-      <input type="button" data-enhanced="true" value="Replay Settings" onclick="show_replay_settings_modal();"/>
+      <input type="button" value="Replay Settings" onclick="show_replay_settings_modal();"/>
     </div>
   </div>
 
@@ -111,7 +111,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <div id="playlist-group" class="block_buttons">
     <a class='button_link' href='playlist.php'>Rounds Playlist</a>
     <div id="playlist-start">
-      <input type="button" data-enhanced="true" value="Start Playlist" onclick="handle_start_playlist();"/>
+      <input type="button" value="Start Playlist" onclick="handle_start_playlist();"/>
     </div>
   </div>
 
@@ -139,12 +139,12 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     </select>
 
     <input id="schedule-and-race"
-           type="submit" data-enhanced="true" value="Schedule + Race"
+           type="submit" value="Schedule + Race"
            data-race="true" onclick='mark_clicked($(this));'/>
     <input id="schedule-only"
-           type="submit" data-enhanced="true" value="Schedule Only"
+           type="submit" value="Schedule Only"
            data-race="false" onclick='mark_clicked($(this));'/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="button" value="Cancel"
            onclick='close_modal("#schedule_modal");'/>
   </form>
 </div>
@@ -153,12 +153,12 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <form>
     <input type="hidden" name="action" value="result.write"/>
     <table></table>
-    <input type="button" data-enhanced="true"
+    <input type="button"
            id="discard-results"
            onclick='handle_discard_results_button();'
            value="Discard Results"/>
-    <input type="submit" data-enhanced="true" value="Change"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Change"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#manual_results_modal");'/>
   </form>
 </div>
@@ -201,8 +201,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
         <option selected="selected" value="0.75">0.75x</option>
         <option value="1.00">1x</option>
     </select>
-    <input type="submit" data-enhanced="true" value="Submit"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Submit"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#replay_settings_modal");'/>
   </form>
 </div>
@@ -246,8 +246,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
       </div>
     </div>
 
-    <input type="submit" data-enhanced="true" value="Submit"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Submit"/>
+    <input type="button" value="Cancel"
       onclick='g_new_round_modal_open = false; close_modal("#new_round_modal");'/>
   </form>
 </div>
@@ -257,8 +257,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
        has a schedule, but no heats have been run.  If you want to add or remove racers,
        you need to delete the schedule for this round.  Is that what you would like to do?</p>
   <form>
-    <input type="submit" data-enhanced="true" value="Unschedule"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Unschedule"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#unschedule_modal");'/>
   </form>
 </div>
@@ -269,10 +269,10 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <form>
     <h3><span id="purge_round_name"></span> Round <span id="purge_round_no"></span></h3>
     <p>This round has <span id="purge_results_count"></span> heat(s) with results.</p>
-    <input type="submit" data-enhanced="true" value="Purge Results"/>
+    <input type="submit" value="Purge Results"/>
 
     <p>&nbsp;</p>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="button" value="Cancel"
         onclick='close_modal("#purge_modal");'/>
   </form>
     </div>
@@ -284,10 +284,10 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
        This operation cannot be undone.
        Are you sure that's what you want to do?</p>
 
-    <input type="submit" data-enhanced="true" value="Purge Results"/>
+    <input type="submit" value="Purge Results"/>
 
     <p>&nbsp;</p>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="button" value="Cancel"
       onclick='close_secondary_modal("#purge_confirmation_modal");'/>
   </form>
 </div>
@@ -297,8 +297,8 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
        has no schedule, and no heats have been run.  To choose different racers for this round,
        you need to delete this round and generate a new one.  Is that what you would like to do?</p>
   <form>
-    <input type="submit" data-enhanced="true" value="Delete Round"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Delete Round"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#delete_round_modal");'/>
   </form>
 </div>

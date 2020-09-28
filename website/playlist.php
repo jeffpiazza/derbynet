@@ -159,8 +159,8 @@ $(function() {
       <option value='-1' selected='selected'>Start Next Round</option>
     </select>
 
-    <input type="submit" data-enhanced="true" value="Submit"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Submit"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#add-to-queue-modal");'/>
   </form>
 </div>

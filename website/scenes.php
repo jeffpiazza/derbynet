@@ -69,8 +69,8 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
   <form>
     <h3>Make New Scene</h3>
     <input type="text" id="new_scene_name"/>
-    <input type="submit" data-enhanced="true" value="Create"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Create"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#new_scene_modal");'/>
   </form>
 </div>
@@ -79,8 +79,8 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
   <form>
     <h3>Make New Kiosk Name</h3>
     <input type="text" id="new_kiosk_name"/>
-    <input type="submit" data-enhanced="true" value="Create"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Create"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#new_kiosk_modal");'/>
   </form>
 </div>

@@ -90,7 +90,7 @@ var g_kiosk_page_handlers = {
 
 // Configuration function for parameters of {classids: [...]}
 function configure_class_ids(kiosk, kiosk_select) {
-  $('<input type="button" data-enhanced="true" value="Configure"/>')
+  $('<input type="button" value="Configure"/>')
     .on("click", /* selector */null, /* data: */kiosk,
         /* handler */ show_config_classes_modal)
     .appendTo(kiosk_select);
@@ -112,7 +112,7 @@ function add_classids_description(parameters, kiosk_select) {
 
 // Configuration function for parameters of {title:, classids: [...]}
 function configure_title_and_class_ids(kiosk, kiosk_select) {
-  $('<input type="button" data-enhanced="true" value="Configure"/>')
+  $('<input type="button" value="Configure"/>')
     .on("click", /* selector */null, /* data: */kiosk,
         /* handler */ show_config_title_and_classes_modal)
     .appendTo(kiosk_select);
@@ -251,7 +251,7 @@ function generate_kiosk_control(index, kiosk, pages) {
   kiosk_ident.find(".kiosk_control_name").text(kiosk.name);
   kiosk_ident.find(".kiosk_control_address").text(kiosk.address);
   kiosk_ident.find(".kiosk_control_address").toggleClass("de-emphasize", kiosk.name.length > 0);
-  kiosk_ident.append('<input type="button" data-enhanced="true"'
+  kiosk_ident.append('<input type="button"'
                      + ' onclick="show_kiosk_naming_modal(\''
                      + kiosk.address.replace(/"/g, '&quot;').replace(/'/, "\\'")
                      + '\', \'' + kiosk.name.replace(/"/g, '&quot;').replace(/'/, "\\'")
@@ -275,6 +275,7 @@ function generate_kiosk_control(index, kiosk, pages) {
   }
 
   sel.appendTo(kiosk_select);
+  mobile_select(sel);
 
   var kiosk_config_handler = g_kiosk_page_handlers[kiosk.assigned_page.replace("\\", "/")];
   if (kiosk_config_handler) {
@@ -300,7 +301,7 @@ function setup_scenes_select_control() {
   $("#scenes-select").empty();
   $("#scenes-select").append($("<option/>")
                              .attr('value', -1)
-                             .text(""));
+                             .html("&nbsp;"));
   for (var i = 0; i < g_all_scenes.length; ++i) {
     var scene = g_all_scenes[i];
     $("#scenes-select").append($("<option/>")
@@ -355,7 +356,7 @@ function show_kiosk_naming_modal(address, name) {
   $("#preferred_kiosk_names").empty();
   for (var i = 0; i < g_all_scene_kiosk_names.length; ++i) {
     $("#preferred_kiosk_names")
-      .append($("<div class='ui-btn'/>").text(g_all_scene_kiosk_names[i])
+      .append($("<div class='kiosk-name-prefill-button'/>").text(g_all_scene_kiosk_names[i])
               .on('click', on_click_preferred_name));
   }
   $("#preferred_kiosk_names").trigger('create');

@@ -385,8 +385,7 @@ function on_setup() {
   <label for="inner_url">URL:</label>
   <input type="text" name="inner_url" id="inner_url" size="100"
          value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
-  <input type="button" data-enhanced="true" value="Proceed"
-         onclick="on_proceed();"/>
+  <input type="button" value="Proceed" onclick="on_proceed();"/>
 </div>
 
 </body>

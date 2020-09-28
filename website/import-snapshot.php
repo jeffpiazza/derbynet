@@ -27,7 +27,7 @@ require_permission(SET_UP_PERMISSION);
 <form id="upload-form">
   <input type="hidden" name="action" value="snapshot.put"/>
   <div class="file_target">
-    <input type="file" id="snapshot_file" name="snapshot" data-enhanced="true"/>
+    <input type="file" id="snapshot_file" name="snapshot"/>
     <label for="snapshot_file">
       <div id="drop_img"><img src="img/drop.png"/></div>
       <div id="please_select_message">

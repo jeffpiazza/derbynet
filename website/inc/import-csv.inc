@@ -4,15 +4,14 @@ require_once('inc/banner.inc');
 function make_head_matter_for_import_page() {
   ?>
     <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+    <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
     <?php require('inc/stylesheet.inc'); ?>
     <link rel="stylesheet" type="text/css" href="css/import-csv.css"/>
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/ajax-setup.js"></script>
-    <script type="text/javascript" src="js/mobile-init.js"></script>
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-    <script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/mobile.js"></script>
     <script type="text/javascript" src="js/dashboard-ajax.js"></script>
     <script type="text/javascript" src="js/xlsx.full.min.js"></script>
     <script type="text/javascript" src="js/import-csv.js"></script>
@@ -54,7 +53,7 @@ class ImportCsvGenerator {
   protected function make_import_button($button_label) {
 ?>
   <div id="import_button_div" class="block_buttons hidden">
-    <input type="button" id="import_button" data-enhanced="true" disabled="disabled"
+    <input type="button" id="import_button" disabled="disabled"
            value="<?php echo htmlspecialchars($button_label, ENT_QUOTES, 'UTF-8'); ?>"/>
   </div>
 <?php
@@ -118,7 +117,7 @@ class ImportCsvGenerator {
     </div><!-- controls -->
 
     <div class="file_target">
-      <input type="file" id="csv_file" name="csv_file" data-enhanced="true"/>
+      <input type="file" id="csv_file" name="csv_file"/>
       <label for="csv_file">
         <div id="drop_img"><img src="img/drop.png"/></div>
         <div id="please_select_message">

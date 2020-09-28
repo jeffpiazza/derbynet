@@ -1,3 +1,7 @@
+input[type='text'], input[type='number'] {
+  font-family: sans-serif;
+}
+
 .settings_group {
     padding: 1em;
     border: 2px solid #666666;

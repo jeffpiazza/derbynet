@@ -118,9 +118,9 @@ function populateContentTable(sheetname) {
       $('<th/>').append(
         '<label for="header-row-present">Header row?</label>',
         '<input type="checkbox" name="header-row-present" id="header-row-present"' +
-          ' data-role="flipswitch" checked="checked"/>')
-        .appendTo(table_row)
-        .trigger("create");
+          ' class="flipswitch" checked="checked"/>')
+        .appendTo(table_row);
+      flipswitch(table_row.find('input'));
       table_row.find('input[type="checkbox"]').on("change", handleHeaderRowPresentChange);
     } else {
       table_row.append('<th class="outcome"/>');

@@ -397,11 +397,11 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
   buttons.empty();
 
   if (round.roundid == -1) {
-    buttons.append('<input type="button" data-enhanced="true"'
+    buttons.append('<input type="button"'
                    + ' onclick="handle_master_next_up()" value="Next Up"/>');
   } else {
     if (round.heats_scheduled > 0 && round.heats_run == 0) {
-      buttons.append('<input type="button" data-enhanced="true"'
+      buttons.append('<input type="button"'
                      + ' onclick="handle_unschedule_button(' + round.roundid
                      + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
                      + round.round + ')"'
@@ -409,7 +409,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     } else if (round.racers_unscheduled > 0) {
       if (round.heats_run == 0) {
         if (timer_state.lanes != '' && timer_state.lanes > 0) {
-          buttons.append('<input type="button" data-enhanced="true"'
+          buttons.append('<input type="button"'
                          + ' onclick="show_schedule_modal(' + round.roundid + ')"'
                          + ' value="Schedule"/>');
         } else {
@@ -418,7 +418,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                          "Enter the number of lanes on the <a href='settings.php'>Settings</a> page.</p>");
         }
       } else if (false /* TODO: Reschedule is not ready for prime time */) {
-        buttons.append('<input type="button" data-enhanced="true"' 
+        buttons.append('<input type="button"' 
                        + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
                        + ' value="Reschedule"/>');
       }
@@ -426,7 +426,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
 
     if (round.heats_scheduled == 0 && round.heats_run == 0 &&
         (round.round > 1 || round.aggregate)) {
-      buttons.append('<input type="button" data-enhanced="true"'
+      buttons.append('<input type="button"'
                      + ' onclick="handle_delete_round_button(' + round.roundid
                      + ', \'' + round.classname.replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
                      + round.round + ')"'
@@ -436,17 +436,17 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     if (round.roundid != current.roundid) {
       // TODO: Don't offer 'race' choice for single roundid under master scheduling
       if (round.heats_run > 0) {
-        buttons.append('<input type="button" data-enhanced="true"'
+        buttons.append('<input type="button"'
                        + ' onclick="handle_make_changes_button(' + round.roundid + ')"'
                        + ' value="Make Changes"/>');
       } else if (round.heats_scheduled > 0 && round.heats_run < round.heats_scheduled) {
-        buttons.append('<input type="button" data-enhanced="true"'
+        buttons.append('<input type="button"'
                        + ' onclick="handle_race_button(' + round.roundid + ')"'
                        + ' value="Race"/>');
       }
     }
     if (round.heats_run > 0) {
-        buttons.append('<input type="button" data-enhanced="true"'
+        buttons.append('<input type="button"'
                        + ' onclick="handle_purge_button(' + round.roundid + ', ' + round.heats_run + ')"'
                        + ' value="Repeat Round"/>');
     }
@@ -456,7 +456,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     // TODO: Un-generate a round?  GPRM allows deleting rounds, but
     // apparently not the first round.
     if (false && round.heats_scheduled > 0 && round.heats_run == round.heats_scheduled) {
-      buttons.append('<input type="button" data-enhanced="true"'
+      buttons.append('<input type="button"'
                      + ' onclick="show_new_round_modal(' + round.roundid + ')"'
                      + ' value="New Round"/>');
     }
@@ -708,7 +708,7 @@ function process_coordinator_poll_response(data) {
     $("#now-racing-group")
       .empty()
       .append($("<h3 id='timer-testing-herald'>Simulated racing in progress</h3>")
-              .append("<input class='stop-test' type='button' data-enhanced='true'"
+              .append("<input class='stop-test' type='button'"
                       + " onclick='handle_stop_testing();' value='Stop'/>"));
   } else {
     $('#timer-testing-herald').remove();

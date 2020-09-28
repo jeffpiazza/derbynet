@@ -156,7 +156,7 @@ usort($awards, 'compare_by_sort');
 foreach ($awards as &$row) {
    $classid = isset($row['classid']) ? $row['classid'] : 0;
    $rankid = (isset($row['rankid']) && $use_subgroups) ? $row['rankid'] : 0;
-   echo '<li class="icon-right '.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
+   echo '<li class="icon-right button '.($row['awardtypeid'] == AD_HOC_AWARDTYPEID ? ' adhoc' : '').'"'
         .' onclick="on_choose_award(this);"'
         .' data-awardkey="'.$row['awardkey'].'"'
         .' data-awardtypeid="'.$row['awardtypeid'].'"'
@@ -216,7 +216,7 @@ foreach ($awards as &$row) {
 </div>
 
 <div class="block_buttons">
-    <input type="button" data-enhanced="true" value="Clear" onclick="on_clear_awards()"/>
+    <input type="button" value="Clear" onclick="on_clear_awards()"/>
 </div>
 
 </div>

@@ -438,7 +438,7 @@ function populate_new_round_modals() {
     while (i < completed_rounds.length) {
       if (completed_rounds[i].round == roundno) {
         var round = completed_rounds[i];
-        var button = $('<input type="button" data-enhanced="true"/>');
+        var button = $('<input type="button"/>');
         button.prop('value', round.classname);
         // Although syntactically it looks like a new round variable is created
         // each time through the loop, it's actually just one variable that's
@@ -472,7 +472,7 @@ function populate_new_round_modals() {
     modal.append('<h3>Add Aggregate Round</h3>');
     for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
       var agg = g_ready_aggregate_classes[i];
-      var button = $('<input type="button" data-enhanced="true"/>');
+      var button = $('<input type="button"/>');
       button.prop('value', agg.classname);
       button.prop('data-classid', agg.classid);
       button.on('click', function(event) {
@@ -480,12 +480,12 @@ function populate_new_round_modals() {
       });
       modal.append(button);
     }
-    var button = $('<input type="button" data-enhanced="true" value="Aggregate Round"/>');
+    var button = $('<input type="button" value="Aggregate Round"/>');
     button.on('click', function(event) { handle_new_round_make_aggregate(); });
     modal.append(button);
     flipswitch(multi_flipswitches.find("input[type='checkbox']"));
   }
   modal.append('<h3>&nbsp;</h3>');
-  modal.append('<input type="button" data-enhanced="true" value="Cancel"'
+  modal.append('<input type="button" value="Cancel"'
                + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');
 }

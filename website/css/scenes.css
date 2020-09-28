@@ -4,9 +4,6 @@ div#select-wrap {
   margin-right: auto;
   font-size: 24px;
 }
-div#select-wrap .ui-btn.ui-btn-a {
-  font-size: 24px;
-}
 div.kiosk {
   clear: right;
   background-color: #ffffd0;

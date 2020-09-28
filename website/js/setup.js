@@ -63,10 +63,10 @@ function populate_details(details) {
   function maybe_mark_driver_missing(driver, radio_id) {
     var driver_ok = ($.inArray(driver, details.form_fields.drivers) >= 0);
     if (driver_ok) {
-      $('#' + radio_id).checkboxradio('enable');
+      mobile_radio_enable($('#' + radio_id), true);
       $('label[for="' + radio_id + '"] span.missing_driver').html('');
     } else {
-      $('#' + radio_id).checkboxradio('disable');
+      mobile_radio_enable($('#' + radio_id), false);
       $('label[for="' + radio_id + '"] span.missing_driver').html('(Driver not loaded!)');
     }
   }
@@ -147,7 +147,7 @@ function report_success_xml(data) {
 function show_ezsetup_modal() {
   $('#ez_database_name').val('');
   $('#ez-old-nochoice').prop('selected', 'selected');
-  $('#ez_database_select').selectmenu('refresh');
+  mobile_select_refresh($('#ez_database_select'));
   show_modal("#ezsetup_modal", function(event) {
     handle_ezsetup_modal_submit();
     return false;
@@ -198,7 +198,6 @@ function show_advanced_database_modal() {
   // Merely setting the "checked" attribute doesn't trigger the "change"
   // handler that displays the right extra fields.
   $('input[name="connection_type"][checked]').click();
-  $('input[name="connection_type"]').checkboxradio("refresh");
 }
 
 function handle_advanced_database_modal_submit() {

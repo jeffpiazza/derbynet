@@ -9,7 +9,8 @@ require_once('inc/xbs.inc');
 
 function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
     echo '<label for="passed-'.$racer_id.'">Checked In?</label>';
-    echo '<input type="checkbox" data-role="flipswitch" name="passed-'.$racer_id.'" id="passed-'.$racer_id.'"';
+    echo '<br/>';
+    echo '<input type="checkbox" class="flipswitch" name="passed-'.$racer_id.'" id="passed-'.$racer_id.'"';
     if ($passed) echo ' checked="checked"';
     if ($passed && !have_permission(REVERT_CHECK_IN_PERMISSION)) echo ' disabled="disabled"';
     echo ' data-on-text="Yes" data-off-text="No"';
@@ -55,8 +56,8 @@ function checkin_table_row(&$row, $use_groups, $use_subgroups, $pack_xbs, $n = 0
           .($row['denscheduled'] ? ' den_scheduled' : '')
           .($row['exclude'] ? ' exclude-racer' : '').'">';
 
-    // TODO: Button formatting; data-enhanced="true", but that's pretty unattractive in this table
-    echo '<td><input type="button" value="Change" onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
+    echo '<td><input type="button" class="white-button" value="Change"'
+        .' onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
 
     if ($use_groups) {
       echo '<td id="class-'.$row['racerid'].'"  data-rankid="'.$row['rankid'].'"'
@@ -123,7 +124,7 @@ function checkin_table_row(&$row, $use_groups, $use_subgroups, $pack_xbs, $n = 0
     if ($pack_xbs) {
         echo '<td>';
         echo '<label for="xbs-'.$row['racerid'].'">Exclusively By Scout?</label>';
-        echo '<input type="checkbox" data-role="flipswitch" name="xbs-'.$row['racerid'].'" ';
+        echo '<input type="checkbox" class="flipswitch" name="xbs-'.$row['racerid'].'" ';
         if ($row['xbs']) echo ' checked="checked"';
         echo ' data-on-text="Yes" data-off-text="No"';
         echo ' onchange="handlechange_xbs(this);"/>';

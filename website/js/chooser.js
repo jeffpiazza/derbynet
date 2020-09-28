@@ -16,104 +16,100 @@ function choosing_output_file() { return g_file_chooser_mode == 'file.out'; }
 function choosing_file() { return choosing_output_file(); }
 
 function repopulate_chooser_modal(path) {
-    $("#chooser_directories_above").empty();
-    $("#chooser_directory_content").empty();
-    $.ajax('action.php',
-           {type: 'GET',
-            data: {query: 'file.directory.nodata',
-                   path: path},
-            // Disable the alert from dashboard-ajax.js that would show up for
-            // "unable to list directory"
-            global: false,
-            success: function(data) {
-                var root = data.getElementsByTagName("directory");
-                if (root.length == 0) {
-                    return;
+  console.log("repopulate_chooser_modal with " + path);  // TODO
+  $("#chooser_directories_above").empty();
+  $("#chooser_directory_content").empty();
+  $.ajax('action.php',
+         {type: 'GET',
+          data: {query: 'file.directory.nodata',
+                 path: path},
+          // Disable the alert from dashboard-ajax.js that would show up for
+          // "unable to list directory"
+          global: false,
+          success: function(data) {
+            var root = data.getElementsByTagName("directory");
+            if (root.length == 0) {
+              return;
+            }
+            root = root[0];
+            var path = root.getElementsByTagName("path");
+            if (path.length == 0) {
+              return;
+            }
+            path = path[0].getAttribute("realpath"); // Includes trailing directory separator
+            $("#chooser_directory_path").val(path);
+
+            var chosen = root.getElementsByTagName("chosen");
+            if (chosen.length > 0) {
+              $("#chooser_file_name").val(chosen[0].textContent);
+            }
+
+            var supers = root.getElementsByTagName("base");
+            for (var i = 0; i < supers.length; ++i) {
+              var text = supers[i].textContent;
+              if (text.length == 0) {
+                text = "/";  // TODO Does Windows encounter this case?
+              }
+              $("<option/>").prependTo($("#chooser_directories_above"))
+                .text(text).prop('value', supers[i].getAttribute('path'));
+            }
+
+            var last = $("#chooser_directories_above option").filter(":last");
+            last.attr("selected", "selected");
+            mobile_select_refresh($("#chooser_directories_above"));
+
+            // <file readable writable directory> xyz </file>
+            var files = data.getElementsByTagName("file");
+            for (var i = 0; i < files.length; ++i) {
+              var li = $("<li></li>").appendTo($("#chooser_directory_content"));
+              if (files[i].getAttribute("directory") == "1") {
+                if (files[i].getAttribute("readable") == "1") {
+                  li.text(files[i].textContent)
+                    .addClass('icon-right button')
+                    .on("click", null, path, chooser_visit_subdirectory);
+                  if (files[i].getAttribute("writable") == "0") {
+                    li.addClass('unwritable');
+                  } else {
+                    li.addClass('writable');
+                  }
+                } else {
+                  // If it's not readable, then we can't explore, but show the icon-right icon anyway.
+                  li.text(files[i].textContent)
+                    .addClass("icon-right")
+                    .addClass("unreadable");
                 }
-                root = root[0];
-                var path = root.getElementsByTagName("path");
-                if (path.length == 0) {
-                    return;
+              } else {
+                if (choosing_directory()) {
+                  li.text(files[i].textContent).addClass("ui-li-static");
+                } else {
+                  li.text(files[i].textContent)
+                    .addClass("button")
+                    .on("click", null, path, chooser_select_existing);
                 }
-                path = path[0].getAttribute("realpath"); // Includes trailing directory separator
-                $("#chooser_directory_path").val(path);
+              }
+            }
+            $("#chooser_directory_content li:first").addClass("ui-first-child");
+            $("#chooser_directory_content li:last").addClass("ui-last-child");
 
-                var chosen = root.getElementsByTagName("chosen");
-                if (chosen.length > 0) {
-                    $("#chooser_file_name").val(chosen[0].textContent);
-                }
-
-                var supers = root.getElementsByTagName("base");
-                for (var i = 0; i < supers.length; ++i) {
-                    var text = supers[i].textContent;
-                    if (text.length == 0) {
-                        text = "/";  // TODO Does Windows encounter this case?
-                    }
-                    $("<option/>").prependTo($("#chooser_directories_above"))
-                        .text(text).prop('value', supers[i].getAttribute('path'));
-                }
-
-                var last = $("#chooser_directories_above option").filter(":last");
-                last.attr("selected", "selected");
-                // jQuery Mobile makes the ...-button element from an existing element
-                $("#chooser_directories_above-button span").text(last.text());
-
-                // <file readable writable directory> xyz </file>
-                var files = data.getElementsByTagName("file");
-                for (var i = 0; i < files.length; ++i) {
-                    var li = $("<li></li>").appendTo($("#chooser_directory_content"));
-                    if (files[i].getAttribute("directory") == "1") {
-                        if (files[i].getAttribute("readable") == "1") {
-                            li.append("<a/>");
-                            li.find("a").text(files[i].textContent)
-                            .addClass("ui-btn ui-btn-icon-right ui-icon-carat-r")
-                            .on("click", null, path, chooser_visit_subdirectory);
-                            if (files[i].getAttribute("writable") == "0") {
-                                li.find("a").addClass("unwritable");
-                            } else {
-                                li.find("a").addClass("writable");
-                            }
-                        } else {
-                            // If it's not readable, then we can't explore, but show the icon-right icon anyway.
-                            li.text(files[i].textContent)
-                                .addClass("ui-li-static ui-btn-icon-right ui-icon-carat-r")
-                                .addClass("unreadable");
-                        }
-                    } else {  // Ordinary file, not a directory
-                        if (choosing_directory()) {
-                            li.text(files[i].textContent).addClass("ui-li-static");
-                        } else {
-                            li.append("<a/>");
-                            li.find("a").text(files[i].textContent)
-                                .addClass("ui-btn")
-                                .on("click", null, path, chooser_select_existing);
-                        }
-                    }
-                }
-
-                $("#chooser_modal form").enhanceWithin();
-                $("#chooser_directory_content li:first").addClass("ui-first-child");
-                $("#chooser_directory_content li:last").addClass("ui-last-child");
-
-                $("#chooser_add_directory").off("click");
-                $("#chooser_add_directory").on("click", null, path, chooser_show_add_directory_modal);
-            },
-           });
+            $("#chooser_add_directory").off("click");
+            $("#chooser_add_directory").on("click", null, path, chooser_show_add_directory_modal);
+          },
+         });
 }
 
 function chooser_visit_subdirectory(event) {
-    repopulate_chooser_modal(event.data + event.target.text);
+  repopulate_chooser_modal(event.data + $(event.target).text());
 }
 
 function chooser_visit_superdirectory(event) {
-    repopulate_chooser_modal($(event.target).find(":selected").val());
+  repopulate_chooser_modal($(event.target).find(":selected").val());
 }
 
 function chooser_select_existing(event) {
-    // event.data is the path
-    // event.target.text is the file name
-    $("#chooser_file_name").val(event.target.text);
-    return false;
+  // event.data is the path
+  // event.target.text is the file name
+  $("#chooser_file_name").val($(event.target).text());
+  return false;
 }
 
 function chooser_show_add_directory_modal(event) {

@@ -16,13 +16,12 @@ require_permission(PRESENT_AWARDS_PERMISSION);
 <title>Kiosks</title>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/kiosk-dashboard.css"/>
-<script type="text/javascript" src="js/mobile-init.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/kiosk-dashboard.js"></script>
@@ -89,8 +88,8 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
   </div>
   <div class="reveal block_buttons">
         <h3 <?php if ($standings_state == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
-    <input type="button" data-enhanced="true" value="Reveal One" onclick="handle_reveal1()"/><br/>
-    <input type="button" data-enhanced="true" value="Reveal All" onclick="handle_reveal_all()"/><br/>
+    <input type="button" value="Reveal One" onclick="handle_reveal1()"/><br/>
+    <input type="button" value="Reveal All" onclick="handle_reveal_all()"/><br/>
   </div>
 </div><!-- standings-control -->
 
@@ -104,8 +103,8 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
     <label for="kiosk_name_field">Name for kiosk:</label>
     <div id="preferred_kiosk_names"></div>
     <input type="text" id="kiosk_name_field"/>
-    <input type="submit" data-enhanced="true" value="Assign"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Assign"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#kiosk_modal");'/>
   </form>
 </div>
@@ -136,8 +135,8 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
               .'</label>'."\n";
         }
     ?>
-    <input type="submit" data-enhanced="true" value="Configure Kiosk"/>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="submit" value="Configure Kiosk"/>
+    <input type="button" value="Cancel"
       onclick='close_modal("#config_classes_modal");'/>
   </form>
 </div>

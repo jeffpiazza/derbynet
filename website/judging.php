@@ -15,13 +15,11 @@ require_permission(JUDGING_PERMISSION);
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<!-- jquery.mobile on this page ONLY for the text input in ad hoc award -->
-<script type="text/javascript" src="js/mobile-init.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/judging.js"></script>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/judging.css"/>
 </head>
@@ -94,7 +92,7 @@ Drag awards to racers,<br/>or racers to awards.
 
 <div id="awards">
   <p id="awards-empty">There are currently no awards defined.</p>
-  <ul data-rolex="listview">
+  <ul>
   </ul>
 </div>
 
@@ -146,8 +144,8 @@ Drag awards to racers,<br/>or racers to awards.
     <label for="awardname"><i>Ad hoc</i> award:</label>
     <input type="text" name="awardname" id="racer_awards_awardname"/>
 
-    <input type="submit" data-enhanced="true"/>
-    <input type="button" value="Close" data-enhanced="true"
+    <input type="submit"/>
+    <input type="button" value="Close"
            onclick='close_racer_awards_modal();'/>
   </form>
 </div>

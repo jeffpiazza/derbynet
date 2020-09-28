@@ -8,26 +8,33 @@ function mobile_radio(radios) {
   $(radios).each(function(i, radio) {
     radio = $(radio);
     radio
-      .wrap("<div class='mradio'/>")
+      .wrap($("<div class='mradio'/>").toggleClass('disabled', radio.prop('disabled')))
       .before(function() {
-        var label = $("label[for='" + $(this).attr('id') + "']");
-        if ($(this).is(':checked')) {
-          label.addClass('on');
-        } else {
-          label.addClass('off');
-        }
-        return label;
+        // Relocate the label to come before the radio button
+        return $("label[for='" + $(this).attr('id') + "']");
       })
       .on('change', function() {
-        // Mark all the labels for the same name to be 'off'
-        $("input:radio[name='" + $(this).attr('name') + "']").each(function() {
-          $("label[for='" + $(this).attr('id') + "']")
-            .removeClass('on').addClass('off');
-        });
-        // ... and then mark just this one radio button 'on'
-        $("label[for='" + $(this).attr('id') + "']")
-          .addClass('on').removeClass('off');
+        mobile_radio_refresh($("input:radio[name='" + $(this).attr('name') + "']"));
       });
+  });
+  mobile_radio_refresh(radios);
+}
+function mobile_radio_enable(radios, enable) {
+  $(radios).each(function(i, radio) {
+    radio = $(radio);
+    radio.prop('disabled', !enable);
+    radio.closest('div.mradio').toggleClass('disabled', radio.prop('disabled'));
+  });
+}
+function mobile_radio_refresh(radios) {
+  $(radios).each(function() {
+    if ($(this).is(':checked')) {
+      $("label[for='" + $(this).attr('id') + "']")
+        .removeClass('off').addClass('on');
+    } else {
+      $("label[for='" + $(this).attr('id') + "']")
+        .removeClass('on').addClass('off');
+    }
   });
 }
 
@@ -150,7 +157,7 @@ $(function() {
   // While checkboxes need class='flipswitch' for conversion, <select> and
   // <input type=radio> and <input type=text> elements get converted unless
   // they're marked with a not-mobile class.
-  mobile_select($("select").not("not-mobile"));
-  mobile_radio($("input:radio").not("not-mobile"));
-  mobile_text($("input[type='text'], input[type='number']").not("not-mobile"));
+  mobile_select($("select").not(".not-mobile"));
+  mobile_radio($("input:radio").not(".not-mobile"));
+  mobile_text($("input[type='text'], input[type='number']").not(".not-mobile"));
 });

@@ -241,7 +241,7 @@ $stmt->closeCursor();
 <div id='photo_view_modal' class="modal_dialog hidden block_buttons">
   <img id='photo_view_img'/>
   <br/>
-  <input type="button" value="Close" data-enhanced="true"
+  <input type="button" value="Close"
     onclick='close_modal("#photo_view_modal");'/>
 </div>
 

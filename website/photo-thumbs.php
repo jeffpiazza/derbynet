@@ -70,7 +70,7 @@ function photo_crop_expression($basename) {
 <title>Assign Racer Photos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/jquery.Jcrop.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
@@ -136,7 +136,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 <div class="body-wrapper">
 
 <div class="thumblist">
-<ul data-role="listview" class="ui-listview">
+<ul class="mlistview has-thumbs">
 <?php
 require_once('inc/data.inc');
 
@@ -162,8 +162,8 @@ foreach ($stmt as $rs) {
 				 'racerid' => $rs['racerid'],
 				 'imagefile' => $raw_imagefile);
 
-
-  $css_classes = 'ui-li-static ui-li-has-thumb';
+  // CSS classes control drag and drop behavior
+  $css_classes = '';
   if ($raw_imagefile !== null && $raw_imagefile !== "") {  // If there's an associated photo...
 	$image_filename = basename($raw_imagefile);
 	$racers_by_photo[$image_filename] = $racer;
@@ -235,13 +235,13 @@ if (empty($allfiles)) {
 <div id="work_image"></div>
 
 <p id="crop_instructions">Indicate new crop boundary, <i>then</i> press Crop.</p>
-<input data-enhanced="true" type="button" value="Crop" onclick="cropPhoto(); return false;"/>
-<input data-enhanced="true" type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
-<input data-enhanced="true" type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
-<input data-enhanced="true" type="button" value="Cancel" onclick="close_modal('#photo_crop_modal');"/>
+<input type="button" value="Crop" onclick="cropPhoto(); return false;"/>
+<input type="button" value="Rotate Right" onclick="rotatePhoto(-90); return false;"/>
+<input type="button" value="Rotate Left" onclick="rotatePhoto(90); return false;"/>
+<input type="button" value="Cancel" onclick="close_modal('#photo_crop_modal');"/>
 
 <input type="button" value="Delete"
-    data-enhanced="true" class="delete_button"
+    class="delete_button"
     onclick="on_delete_photo_button(); return false;"/>
 </div>
 
@@ -254,10 +254,10 @@ if (empty($allfiles)) {
   <form>
     <p>Are you sure you want to delete this photo?</p>
 
-    <input type="submit" data-enhanced="true" value="Delete Photo"/>
+    <input type="submit" value="Delete Photo"/>
 
     <p>&nbsp;</p>
-    <input type="button" data-enhanced="true" value="Cancel"
+    <input type="button" value="Cancel"
       onclick='close_secondary_modal("#delete_confirmation_modal");'/>
   </form>
 </div>

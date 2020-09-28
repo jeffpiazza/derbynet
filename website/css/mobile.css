@@ -72,6 +72,12 @@
   z-index: 1;
 }
 
+.mradio.disabled {
+  opacity: .3;
+  cursor: default !important;
+  pointer-events: none;
+}
+
 .mradiogroup {
   border-radius: .3125em;
 }
@@ -149,7 +155,6 @@ div.mselect-inner span {
   white-space: nowrap;
 }
 div.mselect-inner select {
-  /* font-size: 1em; */
   line-height: 1.3;
   font-family: sans-serif;
 
@@ -336,7 +341,7 @@ div.flipswitch.racing.checked {
   width:	48px;
 }
 
-
+/********************************* mlistview *********************************/
 .mlistview {
   margin: 0;
   padding: 0;
@@ -432,18 +437,6 @@ div.flipswitch.racing.checked {
   border-right-width: 0;
 }
 
-.mlistview > li:last-child {
-  border-bottom-width: 1px;
-}
-
-.mlistview.has-alts > li:last-child {
-  border-bottom-width: 0px;
-}
-
-.mlistview.has-alts > li:last-child > a {
-  border-bottom-width: 1px;
-}
-
 .mlistview.has-alts > li > a + a,
 .mlistview.has-alts > li > p + a {
   line-height: 1.3;
@@ -527,10 +520,69 @@ div.flipswitch.racing.checked {
   margin-left: -11px;
 }
 
-/* awards-presentation.php, chooser use li.ui-btn.ui-btn-icon-right.ui-icon-carat-r */
-li.icon-right:after {
+.mlistview.after > li.button:after {
+  /* 68    .ui-icon-carat-r:after */
+    /* background-image */
+  /* 856   .ui-btn-icon-right:after */
+	background-color: 					#666 /*{global-icon-color}*/;
+	background-color: 					rgba(0,0,0,.3) /*{global-icon-disc}*/;
+	background-position: center center;
+	background-repeat: no-repeat;
+	-webkit-border-radius: 1em;
+	border-radius: 1em;
+  /* 1579  .ui-btn-icon-right:after */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 22px;
+	height: 22px;
+  /* 1590  .ui-btn-icon-left:after */
+	top: 50%;
+	margin-top: -11px;
+  /* 1599  .ui-btn-icon-right:after */
+	right: .5625em;
+}
+
+.mlistview > li.button {
+  list-style: none;
+
+  line-height: 1.3;
+  font-family: sans-serif /*{global-font-family}*/;
+
+  font-size: 16px;
+  padding: .7em 1em;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  padding-right: 2.5em;
+
+  font-weight: bold;
+
+  margin: 0;
+  display: block;
+  position: relative;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+
+  border-width: 1px 0 0 0;
+  border-style: solid;
+}
+
+.mlistview > li.button:hover {
+  background-color: #ededed;
+}
+
+
+.mlistview  li.icon-right:after {
+    /* 68 */
   background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20style%3D%22enable-background%3Anew%200%200%2014%2014%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpolygon%20style%3D%22fill%3A%23FFFFFF%3B%22%20points%3D%223.404%2C2.051%208.354%2C7%203.404%2C11.95%205.525%2C14.07%2012.596%2C7%205.525%2C-0.071%20%22%2F%3E%3C%2Fsvg%3E");
 
+  /* 856 */
   background-color: #666 /*{global-icon-color}*/;
   background-color: rgba(0,0,0,.3) /*{global-icon-disc}*/;
   background-position: center center;
@@ -538,18 +590,35 @@ li.icon-right:after {
   -webkit-border-radius: 1em;
   border-radius: 1em;
 
+  /* 1579 */
   content: "";
   position: absolute;
   display: block;
   width: 22px;
   height: 22px;
 
+  /* 1590 */
   top: 50%;
   margin-top: -11px;
 
+  /* 1599 */
   right: .5625em;
 }
 
+
+.mlistview > li:last-child {
+  border-bottom-width: 1px;
+}
+
+.mlistview.has-alts > li:last-child {
+  border-bottom-width: 0px;
+}
+
+.mlistview.has-alts > li:last-child > a {
+  border-bottom-width: 1px;
+}
+
+/***************************** End of mlistview *********************************/
 
 div.mtext {
   /* 802 */
@@ -575,11 +644,6 @@ div.mtext {
   border-color: #ddd;
   color: #333;
   text-shadow: 0 1px 0 #f3f3f3;
-
-  /* 1074 */
-  -webkit-box-shadow: 0 0 12px #3388cc;
-  -moz-box-shadow: 0 0 12px #3388cc;
-  box-shadow: 0 0 12px #3388cc;
 }
 
 div.mtext input[type='text'],
@@ -608,4 +672,12 @@ div.mtext input[type='number'] {
   -webkit-appearance: none;
   -webkit-border-radius: inherit;
   border-radius: inherit;
+}
+
+div.mtext input[type='text']:focus,
+div.mtext input[type='number']:focus {
+  /* 1074 */
+  -webkit-box-shadow: 0 0 12px #3388cc;
+  -moz-box-shadow: 0 0 12px #3388cc;
+  box-shadow: 0 0 12px #3388cc;
 }

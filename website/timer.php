@@ -70,7 +70,6 @@ $(function() {
 <div id="now-racing">
   <label id="n-lanes-label" for="n-lanes">Number of lanes on the track:</label>
   <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
-         data-enhanced="true"
          value="<?php echo get_lane_count(); ?>"/>
 
   <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"

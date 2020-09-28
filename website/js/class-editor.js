@@ -286,7 +286,7 @@ function repopulate_class_list(data) {
     for (var i = 0; i < classes.length; ++i) {
       var cl = classes[i];
 
-      var group_li = $("<li class='ui-li-has-alt'"
+      var group_li = $("<li"
                        + " data-classid='" + cl.getAttribute('classid') + "'"
                        + " data-ntrophies='" + cl.getAttribute('ntrophies') + "'"
                        + " data-count='" + cl.getAttribute('count') + "'"
@@ -294,7 +294,7 @@ function repopulate_class_list(data) {
                        + " data-constituent-of=''"  // Possibly rewritten below
                        + ">"
                        + "<p></p>"
-                       + "<a class='ui-btn ui-btn-icon-notext ui-icon-gear' onclick='edit_one_class(this);'></a>"
+                       + "<a onclick='edit_one_class(this);'></a>"
                        + "</li>").appendTo("#groups");
       var group_p = group_li.find("p");
       $("<span class='class-name'></span>").text(cl.getAttribute('name')).appendTo(group_p);

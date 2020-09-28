@@ -131,10 +131,11 @@ span.trouble {
     padding: 0px 20px;
 }
 
-.tall_modal .ui-input-text input {
+.tall_modal div.mtext input[type='text'] {
     min-height: 1.5em;
     padding: 0.2em;
     line-height: 1em;
+    margin-top: 0px;
 }
 
 .tall_modal .ui-input-text {
@@ -156,7 +157,7 @@ span.trouble {
     float: right;
     width: 19%;
     margin-bottom: 0px;
-    margin-top: 14px;
+    margin-top: 38px;
     padding:5px 5px;
 }
 

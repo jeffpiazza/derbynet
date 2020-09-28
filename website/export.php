@@ -59,7 +59,6 @@ $workbook[] = array('Awards', $awards);
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Export Results</title>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
@@ -103,9 +102,9 @@ function workbook_json() {
 <body>
 <?php make_banner('Export Results'); ?>
 <div class="block_buttons" style="margin-top: 20px;">
-<input type="button" data-enhanced="true" value="As .xlsx" onclick="write_workbook('xlsx');"/>
-<input type="button" data-enhanced="true" value="As .ods" onclick="write_workbook('ods');"/>
-<input type="button" data-enhanced="true" value="As .xls" onclick="write_workbook('xls');"/>
+<input type="button" value="As .xlsx" onclick="write_workbook('xlsx');"/>
+<input type="button" value="As .ods" onclick="write_workbook('ods');"/>
+<input type="button" value="As .xls" onclick="write_workbook('xls');"/>
 </div>
 </body>
 </html>

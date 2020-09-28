@@ -4,13 +4,11 @@
     <input id="chooser_file_name" type="text" data-wrapper-class="chooser_top_text_input"/>
     <select id="chooser_directories_above"></select>
     <div id="chooser_directory_content_container">
-      <ul id="chooser_directory_content" data-role="listview" class="ui-listview"/>
+      <ul id="chooser_directory_content" class="mlistview"/>
     </div>
-    <input id="chooser_add_directory" type="button" data-enhanced="true"
-           value="New Directory"/>
-    <input type="submit" value="Choose" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
-           onclick="close_chooser_modal();"/>
+    <input id="chooser_add_directory" type="button" value="New Directory"/>
+    <input type="submit" value="Choose"/>
+    <input type="button" value="Cancel" onclick="close_chooser_modal();"/>
   </form>
 </div>
 
@@ -18,8 +16,8 @@
   <form>
     <h3>Add New Directory:</h3>
     <input id="chooser_new_directory_name" type="text"/>
-    <input type="submit" value="Choose" data-enhanced="true"/>
-    <input type="button" value="Cancel" data-enhanced="true"
+    <input type="submit" value="Choose"/>
+    <input type="button" value="Cancel"
            onclick="chooser_close_add_directory_modal();"/>
   </form>
 </div>

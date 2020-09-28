@@ -19,7 +19,7 @@ var g_height = 480;
 
 function set_autocrop_state(repo) {
   $("#autocrop").prop('checked', repo == 'head' ? g_autocrop_head : g_autocrop_car);
-  $("#autocrop").flipswitch("refresh");
+  // TODO $("#autocrop").flipswitch("refresh");
 }
 
 function preserve_autocrop_state() {
