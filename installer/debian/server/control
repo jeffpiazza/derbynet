@@ -1,6 +1,6 @@
 Package: derbynet-server
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 5.0-@BUILD@
+Version: 6.0-@BUILD@
 Priority: optional
 Architecture: all
 Depends: nginx,
