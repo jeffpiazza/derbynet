@@ -457,10 +457,10 @@ function populate_new_round_modals() {
                       + '></label>');
         label.text(round.classname);
         flipswitch_div.append(label);
-        flipswitch_div.append(wrap_flipswitch($('<input type="checkbox"'
-                                                + ' id="roundid_' + round.roundid + '"'
-                                                + ' name="roundid_' + round.roundid + '"'
-                                                + ' checked="checked"/>')));
+        flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
+                                + ' id="roundid_' + round.roundid + '"'
+                                + ' name="roundid_' + round.roundid + '"'
+                                + ' checked="checked"/>'));
         multi_flipswitches.append(flipswitch_div);
         completed_rounds.splice(i, 1);
       } else {
@@ -483,10 +483,7 @@ function populate_new_round_modals() {
     var button = $('<input type="button" data-enhanced="true" value="Aggregate Round"/>');
     button.on('click', function(event) { handle_new_round_make_aggregate(); });
     modal.append(button);
-    // Even though we're doing the embellishment explicitly, the create
-    // trigger is still needed to make the flipswitches actually do
-    // anything.
-    multi_flipswitches.trigger("create");
+    flipswitch(multi_flipswitches.find("input[type='checkbox']"));
   }
   modal.append('<h3>&nbsp;</h3>');
   modal.append('<input type="button" data-enhanced="true" value="Cancel"'

@@ -152,5 +152,5 @@ $(function() {
   // they're marked with a not-mobile class.
   mobile_select($("select").not("not-mobile"));
   mobile_radio($("input:radio").not("not-mobile"));
-  mobile_text($("input[type='text']").not("not-mobile"));
+  mobile_text($("input[type='text'], input[type='number']").not("not-mobile"));
 });

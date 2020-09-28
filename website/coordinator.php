@@ -11,17 +11,14 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <title>Race Coordinator Page</title>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.2.css"/>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/coordinator.css"/>
-<script type="text/javascript" src="js/mobile-init.js"></script>
-<!-- For flipswitch and select elements: -->
-<script type="text/javascript" src="js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/wrap-flipswitch.js"></script>
 <script type="text/javascript" src="js/coordinator-controls.js"></script>
 <script type="text/javascript" src="js/coordinator-poll.js"></script>
 </head>
@@ -43,7 +40,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
       <input type="button" data-enhanced="true" value="Start Race" onclick="handle_start_race_button()"/>
     </div>
     <div class="centered_flipswitch">
-      <input type="checkbox" data-role="flipswitch" name="is-currently-racing" id="is-currently-racing"
+      <input type="checkbox" class="flipswitch" name="is-currently-racing" id="is-currently-racing"
         checked="checked"
         data-on-text="Racing" data-off-text="Not Racing"/>
     </div>
@@ -229,7 +226,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <?php if (use_subgroups()) { ?>
       <p>racers from</p>
       <div class="centered_flipswitch">
-        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_single"
+        <input type="checkbox" class="flipswitch" name="bucketed" id="bucketed_single"
                data-on-text="Each <?php echo subgroup_label(); ?>" data-off-text="Overall"/>
       </div>
     <?php } else { ?>
@@ -240,7 +237,7 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
     <div class="multi_den_only">
       <p>racers from</p>
       <div class="centered_flipswitch">
-        <input type="checkbox" data-role="flipswitch" name="bucketed" id="bucketed_multi"
+        <input type="checkbox" class="flipswitch" name="bucketed" id="bucketed_multi"
                data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
       </div>
       <div id="agg_classname_div">

@@ -519,7 +519,6 @@ function generate_current_heat_racers(new_racers, current, nlanes) {
 
   for (var lane = 1; lane <= nlanes; ++lane) {
     var r = racers.find(function(rr) { return rr.lane == lane; });
-    console.log('lane ' + lane); console.log(r);
     var hr = false;
     var nr = false;
     if (holding) {

@@ -582,7 +582,8 @@ div.mtext {
   box-shadow: 0 0 12px #3388cc;
 }
 
-div.mtext input[type='text'] {
+div.mtext input[type='text'],
+div.mtext input[type='number'] {
   /* 742 */
   color: inherit;
   text-shadow: inherit;
