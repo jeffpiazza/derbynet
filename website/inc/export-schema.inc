@@ -54,8 +54,10 @@ if (schema_version() >= 2) {
 if (schema_version() >= 3) {
   $schema['Classes'][] = 'constituents';
   $schema['Classes'][] = 'durable';
+}
 
-  $schema['SceneKiosk'] = array('sceneid', 'kiosk_name', 'page');
+if (schema_version() >= 4) {
+  $schema['SceneKiosk'] = array('scenekioskid', 'sceneid', 'kiosk_name', 'page');
   $schema['Scenes'] = array('sceneid', 'name', 'sortorder');
   $schema['Playlist'] = array('queueid', 'seq', 'classid', 'round',
                               'bucket_limit', 'bucketed', 'n_times_per_lane',

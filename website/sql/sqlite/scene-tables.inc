@@ -31,6 +31,7 @@ array(
 
 
 "CREATE TABLE SceneKiosk ("
+." scenekioskid INTEGER PRIMARY KEY,"
 ." sceneid INTEGER,"
 ." kiosk_name VARCHAR(200),"
 ." page VARCHAR(200)"

@@ -34,12 +34,14 @@ array(
 
 
 "CREATE TABLE SceneKiosk ("
+." scenekioskid INTEGER,"
 ." sceneid INTEGER,"
 ." kiosk_name VARCHAR(200),"
 ." page VARCHAR(200)"
 ")",
 
-"CREATE INDEX PrimaryKey ON SceneKiosk (sceneid, kiosk_name)",
+"CREATE UNIQUE INDEX PrimaryKey On SceneKiosk(scenekioskid)",
+"CREATE INDEX PKey ON SceneKiosk (sceneid, kiosk_name)",
 
   ),
 
