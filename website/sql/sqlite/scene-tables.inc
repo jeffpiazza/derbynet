@@ -59,7 +59,7 @@ make_scene(4, 'Racing', 'kiosks/now-racing.kiosk',
 make_scene(5, 'Awards', 'kiosks/award-presentations.kiosk', '', ''),
 
 make_scene(6, 'Wrap-Up', 'kiosks/standings.kiosk',
-           'kiosks/derbynet.kiosk', 'local/kiosks/feedback.kiosk'),
+           'kiosks/derbynet.kiosk', 'local/kiosks/feedback.kiosk')
 
 );
 ?>
