@@ -39,20 +39,28 @@ if [ -e /etc/php5 ] ; then
         /etc/php5/fpm/php.ini
     echo Restarting php5-fpm
     service php5-fpm restart
-else
+fi
+for INI in `find /etc/php -name php.ini` ; do
     sed -i.pre-derbynet -e "s/^upload_max_filesize = [28]M/upload_max_filesize = $MAX_UPLOAD_SIZE/" \
         -e "s#^post_max_size = [2-8]M#post_max_size = $MAX_UPLOAD_SIZE#" \
-        `find /etc/php -name php.ini`
-    for SVC in  `find /etc/init.d -name php\* -exec basename {} \;` ; do
-        echo Restarting $SVC
-        service $SVC restart
-    done
-fi
+        $INI
+done
+for SVC in  `find /etc/init.d -name php\* -exec basename {} \;` ; do
+    echo Restarting $SVC
+    service $SVC restart
+done
+
 
 ######### Update derbynet location snippet to match PHP version
 
 VAR_RUN=`readlink /var/run`
-SOCKET=`find "$VAR_RUN" -name \*fpm.sock`
+if [ -e /var/run/php-fpm.sock ] ; then
+    SOCKET=/var/run/php-fpm.sock
+else
+    # If two different PHP versions installed, the 'find' might come up with two
+    # candidates; 'tail' picks the last one.
+    SOCKET=`find "$VAR_RUN" -name \*fpm.sock | tail -n 1`
+fi
 sed -i -e"s#/var/run/php5-fpm.sock#$SOCKET#" /etc/nginx/derbynet/location.snippet
 
 ######### Add derbynet location clause if not already there
