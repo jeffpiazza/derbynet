@@ -41,13 +41,13 @@ function populate_details(details) {
     $("#schema_button").prop('disabled', true).attr('value', 'Initialize');
   } else if (details.schema.button == 'initialize') {
     $("#schema_button").prop('disabled', false).attr('value', 'Initialize')
-      .on('click', function() { show_initialize_schema_modal(); });
+      .off('click').on('click', function() { show_initialize_schema_modal(); });
   } else if (details.schema.button == 'update') {
     $("#schema_button").prop('disabled', false).attr('value', 'Update Schema')
-      .on('click', function() { show_update_schema_modal(); });
+      .off('click').on('click', function() { show_update_schema_modal(); });
   } else /* 're-initialize' */ {
     $("#schema_button").prop('disabled', false).attr('value', 'Re-Initialize')
-      .on('click', function() { show_initialize_schema_modal(); });
+      .off('click').on('click', function() { show_initialize_schema_modal(); });
   }
 
   $("#classes_step a.button_link").text("Edit " + details.classes.plural);
