@@ -17,12 +17,3 @@
   margin: 0px;
   font-weight: bold;
 }
-
-.kiosk_wanted {
-  display: inline-block;
-  vertical-align: top;
-}
-
-.kiosk_wanted li {
-  font-size: 3vh;
-}

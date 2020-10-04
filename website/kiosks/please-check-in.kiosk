@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
-<script type="text/javascript" src="js/please-check-in.js"></script>
+<!-- script type="text/javascript" src="js/please-check-in.js"></script -->
 <script type="text/javascript">
  // Instead of dynamically tracking check-ins, we just reload the page every 30
  // seconds to update the list of missing racers.
@@ -15,8 +15,18 @@ $(function () { setInterval(function() { location.reload(true); }, 30000); });
 </script>
 <style>
 body { overflow: hidden; }
-li.first {
-  border-top: 2px solid black;
+.kiosk_heading {
+  border-bottom: 2px solid black;
+}
+.wanted_container {
+  column-width: 250px;
+  position: absolute;
+  top: 100px;
+  bottom: 0;
+}
+
+.wanted_container li {
+  font-size: 3vh;
 }
 </style>
 </head>
