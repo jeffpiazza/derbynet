@@ -3,6 +3,7 @@ require_once('inc/scenes.inc');
 require_once('inc/roster.inc');
 require_once('inc/schedule_one_round.inc');
 require_once('inc/autoadvance.inc');
+require_once('inc/rounds.inc');
 
 function create_playlist_table() {
   create_scene_tables();
@@ -70,27 +71,22 @@ function activate_playlist_entry(&$playlist_entry) {
   if (read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
                                      array(':roundid' => $roundid)) == 0) {
     if ($playlist_entry['round'] == 1) {
-      $is_aggregate = true;
+      $bucketing = $playlist_entry['bucketed'] ? ROSTER_BUCKETED_AGGREGATE : ROSTER_UNBUCKETED;
       $constituent_classids = read_single_value('SELECT constituents FROM Classes'
                                                 .' WHERE classid = :classid',
                                                 array(':classid' => $playlist_entry['classid']));
-      $stmt = $db->prepare('SELECT roundid FROM Rounds r1'
-                           .' WHERE r1.classid IN ('.$constituent_classids.')'
-                           .' AND round = (SELECT MAX(round) FROM Rounds r2'
-                           .'              WHERE r2.classid = r1.classid)');
-      $stmt->execute();
-      $constituent_roundids = implode(',', $stmt->fetchAll(PDO::FETCH_COLUMN));
+      $constituent_roundids = implode(',', highest_rounds($constituent_classids));
     } else {
       // Follow-on round
-      $is_aggregate = false;
+      $bucketing = $playlist_entry['bucketed'] ? ROSTER_BUCKETED_ORGANIC : ROSTER_UNBUCKETED;
       $constituent_roundids = read_single_value('SELECT roundid FROM Rounds'
                                                 .' WHERE classid = :classid'
                                                 .'  AND round = :round',
                                                 array(':classid' => $playlist_entry['classid'],
                                                       ':round' => $playlist_entry['round'] - 1));
     }
-    populate_roster($roundid, $playlist_entry['classid'], $constituent_roundids,
-                    $playlist_entry['bucketed'], $playlist_entry['bucket_limit'], $is_aggregate);
+    populate_roster($bucketing, $roundid, $playlist_entry['classid'], $playlist_entry['bucket_limit'],
+                    explode(',', $constituent_roundids), /* rankids */array());
   }
   if ($playlist_entry['n_times_per_lane'] > 0 &&
       read_single_value('SELECT COUNT(*) FROM RaceChart'

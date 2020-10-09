@@ -95,7 +95,7 @@ function create_aggregate_class($classname, $all_roundids, $durable) {
 
   $constituents = array();
   $stmt = $db->prepare('SELECT DISTINCT classid FROM Rounds'
-                       .'      WHERE roundid IN ('.$all_roundids.')');
+                       .'      WHERE roundid IN ('.implode(',', $all_roundids).')');
   $stmt->execute(array());
   foreach ($stmt as $row) {
     $constituents[] = $row['classid'];

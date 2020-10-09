@@ -3,7 +3,15 @@
 start_response();
 
 if (have_permission(EDIT_RACER_PERMISSION)) {
-  $racerid = $_POST['racer'];
+  if (isset($_POST['racer'])) {
+    $racerid = $_POST['racer'];
+  } else if (isset($_POST['racerid'])) {
+    $racerid = $_POST['racerid'];
+  } else {
+    echo "<failure code='noracer'>No racerid provided.</failure>\n";
+    end_response();
+    exit();
+  }
 
   $assignments = 'SET racerid = :racerid_again';
   $values = array(':racerid' => $racerid,

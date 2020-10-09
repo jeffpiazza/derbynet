@@ -9,6 +9,27 @@ user_login_coordinator
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 
+# Turn on subgroups and split "Lions & Tigers" into 3 subgrouops: "Lions"(1), "Tigers"(6), and "Cougars"(7)
+curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_success
+curl_post action.php "action=rank.edit&name=Lions&rankid=1" | check_success
+curl_post action.php "action=rank.add&classid=1&name=Tigers" | check_success
+curl_post action.php "action=rank.add&classid=1&name=Cougars" | check_success
+
+# Move some Lions & Tigers to Tigers (rankid = 6)
+curl_post action.php "action=racer.edit&rankid=6&racer=6" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=16" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=26" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=46" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=56" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=71" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=76" | check_success
+curl_post action.php "action=racer.edit&rankid=6&racer=81" | check_success
+
+# And 3 "Cougars"
+curl_post action.php "action=racer.edit&rankid=7&racer=26" | check_success
+curl_post action.php "action=racer.edit&rankid=7&racer=36" | check_success
+curl_post action.php "action=racer.edit&rankid=7&racer=41" | check_success
+
 # Check in everyone and race all the rounds
 curl_post action.php "action=racer.bulk&who=all&what=checkin&value=1" | check_success
 
@@ -18,7 +39,8 @@ curl_post action.php "action=schedule.generate&roundid=3" | check_success
 curl_post action.php "action=schedule.generate&roundid=4" | check_success
 curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
-echo Starting run_heat
+
+echo Starting run_heats
 
 curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
 run_heat	1	1	3.488	3.656	3.36	3.518
@@ -112,8 +134,42 @@ run_heat	5	14	3.867	3.704	3.841	3.61
 run_heat	5	15	3.267	3.404	3.357	3.224
 run_heat	5	16	3.646	3.184	3.678	3.263 x
 
+
+# Add a Grand Final by ranks, leaving out rankid=1
+RANK_FINAL=`mktemp`
+curl_post action.php "action=roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&rankid_4=1&rankid_5=1&rankid_6=1&rankid_7=1&classname=Rank%20Final" | tee $RANK_FINAL | check_success
+
+# Check that there are 23 in the roster
+cat $RANK_FINAL | expect_count finalist 23
+
+# Lions(rankid=1): Felton(31) came in first, Carroll(11) second, Owen(61) third, Raymon(66) fourth
+# But they're not among the selected ranks, so these racers should be excluded
+grep finalist $RANK_FINAL | expect_count 'racerid=\"31\"' 0
+grep finalist $RANK_FINAL | expect_count 'racerid=\"11\"' 0
+grep finalist $RANK_FINAL | expect_count 'racerid=\"61\"' 0
+grep finalist $RANK_FINAL | expect_count 'racerid=\"66\"' 0
+
+# Tigers(rankid=6): Ben Bittinger(racerid=6), Toby(76), Kelvin(46), and Daniel(16) came in
+# 3rd, 4th, 5th, and 7th, respectively,
+grep finalist $RANK_FINAL | expect_count 'racerid=\"6\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"76\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"46\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"16\"' 1
+
+# Cougars(rankid=7) only has three racers, and they're all selected
+# Herb(36), Edgardo(26), Jesse(41)
+grep finalist $RANK_FINAL | expect_count 'racerid=\"36\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"26\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"41\"' 1
+
+
+curl_post action.php "action=roster.delete&roundid=6" | check_success
+# Deleting the round (by deleting its roster) seems to leave roundid=6 available
+# for the next 'roster.new' operation, below.
+
 ## Create "Younger Finals" aggregate of roundid 1,2 and race the round
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_success
+
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
 run_heat	6	1	3.103	3.762	3.359	3.471

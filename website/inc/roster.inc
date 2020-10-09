@@ -15,22 +15,37 @@ function make_new_round($classid, $roundno) {
                                  ':roundno' => $roundno));
 }
 
-function populate_roster($new_roundid, $classid, $constituent_roundids,
-                         $bucketed, $bucket_limit, $is_aggregate) {
+define('ROSTER_UNBUCKETED', 0);
+define('ROSTER_BUCKETED_ORGANIC', 1);
+define('ROSTER_BUCKETED_AGGREGATE', 2);
+define('ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP', 3);
+
+// $bucketing: one of the enum constants above.
+// $new_roundid: roundid for the round being populated.
+// $classid: classid for the round's class
+// $bucket_limit: number of racers to choose in each bucket (however determined)
+// $constituent_roundids: array of roundids
+// $rankids: array of rankids for aggregate-round-by-subgroup
+function populate_roster($bucketing, $new_roundid, $classid, $bucket_limit,
+                         $constituent_roundids, $rankids) {
   global $db;
 
   $buckets = array();  // bucketno => array of { racerid , score }
 
-  // If top n across the whole unit or den, bucketno is a constant (1)
-  // If bucketed, bucketno is rankid (for a den) or classid (for aggreate).
-  $bucketno_expr = '1';
-
-  if ($bucketed) {
-    if ($is_aggregate) {
-      $bucketno_expr = 'Result.roundid';
-    } else {
-      $bucketno_expr = 'RegistrationInfo.rankid';
-    }
+  if (count($rankids) == 0) {
+    $and_filter = '';
+  } else {
+    $and_filter = 'AND RegistrationInfo.rankid IN ('.implode(',', $rankids).')';
+  }
+  if ($bucketing == ROSTER_UNBUCKETED) {
+    // If top n across the whole unit or den, bucketno is a constant (1)
+    $bucketno_expr = '1';
+  } else if ($bucketing == ROSTER_BUCKETED_ORGANIC) {
+    $bucketno_expr = 'RegistrationInfo.rankid';
+  } else if ($bucketing == ROSTER_BUCKETED_AGGREGATE) {
+    $bucketno_expr = 'Result.roundid';
+  } else /* ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP */ {
+    $bucketno_expr = 'RegistrationInfo.rankid';
   }
 
   // Rounds(roundid, round, classid)
@@ -43,7 +58,7 @@ function populate_roster($new_roundid, $classid, $constituent_roundids,
                        .'       FROM RaceChart'
                        .'       INNER JOIN Rounds'
                        .'       ON RaceChart.roundid = Rounds.roundid'
-                       .'       WHERE RaceChart.roundid IN ('.$constituent_roundids.')'
+                       .'       WHERE RaceChart.roundid IN ('.implode(',', $constituent_roundids).')'
                        .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
                        // This is basically "GROUP BY racerid"; racerid will
                        // determine Rounds.roundid uniquely, unless a racer is
@@ -52,7 +67,8 @@ function populate_roster($new_roundid, $classid, $constituent_roundids,
                        .'       GROUP BY racerid, Rounds.roundid) AS Result'
                        .' INNER JOIN RegistrationInfo'
                        .'  ON Result.racerid = RegistrationInfo.racerid'
-                       .' WHERE passedinspection = 1 AND exclude = 0'
+                       .' WHERE passedinspection = 1 AND exclude = 0 '
+                       .$and_filter
                        .' ORDER BY score');
   $stmt->execute(array());
   foreach ($stmt as $row) {

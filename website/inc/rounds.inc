@@ -90,6 +90,31 @@ function all_rounds_with_counts($by_class = true) {
   return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Returns map of $classid => $roundid to get the highest-numbered round for each class.
+function class_highest_rounds() {
+  global $db;
+  $stmt = $db->query('SELECT classid, roundid FROM Rounds r1'
+                     .' WHERE round = (SELECT MAX(round) FROM Rounds r2'
+                     .'                WHERE r2.classid = r1.classid)');
+  $stmt->execute();
+  $round_by_class = array();
+  foreach ($stmt as $row) {
+    $round_by_class[$row['classid']] = $row['roundid'];
+  }
+  return $round_by_class;
+}
+
+// Returns array of roundids for highest rounds for passed-in classids.
+function highest_rounds($classids_str) {
+  global $db;
+  $stmt = $db->prepare('SELECT roundid FROM Rounds r'
+                       .' WHERE classid IN ('.$classids_str.')'
+                       .'  AND round = (SELECT MAX(round) FROM Rounds r2'
+                       .'               WHERE r2.classid = r.classid)');
+  $stmt->execute(array());
+  return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+}
+
 // Returns each distinct Rounds entry, except if master scheduling, in which
 // case, one entry per ordinal round (likely just one, or possibly 1st and 2nd).
 function all_schedule_groups() {
