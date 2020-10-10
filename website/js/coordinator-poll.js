@@ -88,6 +88,9 @@ g_new_round_modal_open = false;
 // rounds that have completed.  If the user clicks on the "Add New Round"
 // button, this array is used to populate both the choose_new_round_modal and
 // the new_round_modal dialogs.
+// Each entry is:
+//    {classid, classname, round, roundid, roundname, aggregate, category, subgroups,
+//     heats_run,heats_scheduled,racers_passed,racers_scheduled,racers_unscheduled,roster_size}
 g_completed_rounds = [];
 
 // Roundids of an aggregate rounds
@@ -179,13 +182,33 @@ function parse_racers(data) {
 }
 
 function parse_ready_aggregate_classes(data) {
-  g_ready_aggregate_classes = [];
+  ready_aggregate_classes = [];
   var elts = data.getElementsByTagName("ready-aggregate");
   for (var i = 0; i < elts.length; ++i) {
-    g_ready_aggregate_classes[i] =
+    ready_aggregate_classes[i] =
       {classid: elts[i].getAttribute("classid"),
        classname: elts[i].textContent};
   }
+  return ready_aggregate_classes;
+}
+
+// <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">
+//    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>
+function parse_classes(data) {
+  var elts = data.getElementsByTagName("class");
+  var classes = {};
+  for (var i = 0; i < elts.length; ++i) {
+    var rank_elts = elts[i].getElementsByTagName("rank");
+    var ranks = new Array(rank_elts.length);
+    for (var ri = 0; ri < rank_elts.length; ++ri) {
+      ranks[ri] = {rankid: rank_elts[ri].getAttribute('rankid'),
+                   name: rank_elts[ri].getAttribute('name')};
+    }
+    classes[elts[i].getAttribute('classid')] = {
+                  name: elts[i].getAttribute('name'),
+                  subgroups: ranks};
+  }
+  return classes;
 }
 
 function update_for_last_heat(data, racers) {
@@ -579,7 +602,7 @@ function calculate_totals(rounds) {
           heats_run: total_heats_run};
 }
 
-function offer_new_rounds(rounds) {
+function offer_new_rounds(rounds, classes) {
   if (g_new_round_modal_open) {
     console.log("Skipping offer_new_rounds because g_new_round_modal_open is set");
     return;
@@ -601,6 +624,7 @@ function offer_new_rounds(rounds) {
   for (var classid in highest_rounds) {
     var round = highest_rounds[classid];
     if (round.heats_scheduled > 0 && round.heats_scheduled == round.heats_run) {
+      round.subgroups = classes[classid].subgroups;
       completed_rounds.push(round);
     }
   }
@@ -625,12 +649,12 @@ function process_coordinator_poll_response(data) {
 
   $("#start_race_button_div").toggleClass('hidden',
                                           timer_state.remote_start != "1");
-  
+
+  g_ready_aggregate_classes = parse_ready_aggregate_classes(data);
+
+  var classes = parse_classes(data);
   var rounds = parse_rounds(data);
-
-  parse_ready_aggregate_classes(data);
-
-  offer_new_rounds(rounds);
+  offer_new_rounds(rounds, classes);
 
   if (current.master_schedule) {
     var totals = calculate_totals(rounds);

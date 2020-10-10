@@ -283,41 +283,58 @@ function show_choose_new_round_modal() {
   // There's no submit, or even a form, in this modal; just a bunch
   // of buttons with their own actions:
   //
-  // - handle_new_round_simple to create a follow-on round to an existing round
-  // - handle_new_round_make_aggregate to create an aggregate round ("Grand Final")
+  // - handle_new_round_follow_on to create a follow-on round to an existing round
   // - handle_new_round_aggregate_class to create a first round for an existing aggregate class
+  // - handle_new_round_make_aggregate to create an aggregate round ("Grand Final")
   show_modal("#choose_new_round_modal", function(event) {
     return false;
   });
 }
 
+// When the "aggregate-by" checkbox changes, slide to hide or show
+// constituent-rounds div
+function on_aggregate_by_change() {
+  $("#constituent-rounds").css('margin-left',
+                               $("#aggregate-by-checkbox").is(':checked') ? '-500px' : '0px');
+}
 
-function handle_new_round_simple(roundid) {
+function update_bucketed_checkbox(for_group) {
+  $("#bucketed-checkbox")
+    .attr('data-on-text',
+          $("#bucketed-checkbox").attr(for_group ? 'data-group-text' : 'data-subgroup-text'));
+  flipswitch_refresh($("#bucketed-checkbox"));
+}
+
+
+// Create a follow-on round to an existing round.
+function handle_new_round_follow_on(roundid) {
   close_modal_leave_background("#choose_new_round_modal");
-  $("#new_round_modal div").removeClass("hidden");
-  $("#new_round_modal").removeClass("wide_modal");
-  $(".multi_den_only").addClass("hidden");
-  $("#new_round_modal #new_round_roundid").val(roundid);
-  // For a single-round follow-on round, #bucketed flipswitch won't even be
-  // present unless we're using subgroups.
-  var bucketed = $("#new_round_modal #bucketed_single");
-  if (bucketed) {
-    bucketed.prop('checked', false)
-      .trigger("change", true)
-      .toggleClass('hidden', g_aggregate_rounds.includes(roundid));
-  }
+  $("#new-round-modal div").removeClass("hidden");
+  $(".aggregate-only").addClass("hidden");
+  $("#new-round-modal #new_round_roundid").val(roundid);
 
-  show_modal("#new_round_modal", function(event) {
-    on_submit_new_round_simple();
+  update_bucketed_checkbox(/* for_group */ false);
+  $("#new-round-modal #bucketed-checkbox")
+    .prop('checked', false)
+    .trigger("change", true)
+    .toggleClass('hidden',
+                 !g_use_subgroups &&
+                 g_aggregate_rounds.includes(roundid));
+
+  show_modal("#new-round-modal", function(event) {
+    on_submit_new_round_follow_on(roundid);
     return false;
   });
 }
 
-function on_submit_new_round_simple(roundid) {
-  close_modal("#new_round_modal");
+function on_submit_new_round_follow_on(roundid) {
+  close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: $("#new_round_modal form").serialize(),
+          data: {action: 'roster.new',
+                 roundid: roundid,
+                 top: $("#new-round-top").val(),
+                 bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
             process_coordinator_poll_response(data); }
          });
@@ -327,12 +344,13 @@ function on_submit_new_round_simple(roundid) {
 // finishers in several completed rounds.
 function handle_new_round_make_aggregate() {
   close_modal_leave_background("#choose_new_round_modal");
-  $("#new_round_modal div").removeClass("hidden");
-  $("#new_round_modal").addClass("wide_modal");
-  $(".single_den_only").addClass("hidden");
-  // Have to suspend updates to this dialog while it's open
+  $("#new-round-modal div").removeClass("hidden");
+  $("#aggregate-by-div").toggleClass('hidden', !g_use_subgroups);
+  if (!g_use_subgroups) {
+    $('#aggregate-by-checkbox').prop('checked', false);
+  }
   g_new_round_modal_open = true;
-  show_modal("#new_round_modal", function(event) {
+  show_modal("#new-round-modal", function(event) {
     on_submit_new_round_make_aggregate();
     return false;
   });
@@ -340,13 +358,15 @@ function handle_new_round_make_aggregate() {
 
 function on_submit_new_round_make_aggregate() {
   g_new_round_modal_open = false;
-  close_modal("#new_round_modal");
-
-  console.log($("#new_round_modal form").serialize());
-
+  close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: $("#new_round_modal form").serialize(),
+          data:  'action=roster.new&' +
+                 $("#new-round-common input").serialize() + '&' +
+                 $("#agg-classname-div input").serialize() + '&' +
+                ($("#aggregate-by").is(':checked')
+                 ? $("#constituent-subgroups input").serialize()
+                 : $("#constituent-subgroups input").serialize()),
           success: function(data) { process_coordinator_poll_response(data); }
          });
 }
@@ -354,30 +374,27 @@ function on_submit_new_round_make_aggregate() {
 // Create first round for a pre-defined aggregate class
 function handle_new_round_aggregate_class(classid) {
   close_modal_leave_background("#choose_new_round_modal");
-  $("#new_round_modal div").removeClass("hidden");
-  $("#new_round_modal").removeClass("wide_modal");
-  $(".single_den_only").addClass("hidden");
-  $("#multi_flipswitches").addClass("hidden");
-  $("#agg_classname_div").addClass("hidden");
+  $("#new-round-modal div").removeClass("hidden");
+  $("div.for-choosing-constituents").addClass("hidden");
+  $("#agg-classname-div").addClass("hidden");
   g_new_round_modal_open = true;
-  show_modal("#new_round_modal", function(event) {
+  show_modal("#new-round-modal", function(event) {
     on_submit_new_round_aggregate_class(classid);
     return false;
   });
 }
 
 function on_submit_new_round_aggregate_class(classid) {
-  close_modal("#new_round_modal");
+  close_modal("#new-round-modal");
   g_new_round_modal_open = false;
-  console.log('Bucketed: ' + $("#bucketed_multi").prop('checked'));  // TODO
+
   $.ajax(g_action_url,
          {type: 'POST',
           data: {action: 'roster.new',
                  classid: classid,
-                 top:$("#new_round_top").val(),
-                 bucketed: $("#bucketed_multi").prop('checked') ? 1 : 0},
+                 top: $("#new_round_top").val(),
+                 bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
-            console.log(data);  // TODO
             process_coordinator_poll_response(data); }
          });
 }
@@ -429,8 +446,8 @@ function populate_new_round_modals() {
   var add_aggregate = completed_rounds.length > 1;
   var modal = $("#choose_new_round_modal");
   modal.empty();
-  var multi_flipswitches = $("#multi_flipswitches");
-  multi_flipswitches.empty();
+  var constituent_rounds_div = $("#constituent-rounds").empty();
+  var constituent_subgroups_div = $("#constituent-subgroups").empty();
   while (completed_rounds.length > 0) {
     var roundno = completed_rounds[0].round;
     modal.append('<h3>Add Round ' + (roundno + 1) + '</h3>');
@@ -438,6 +455,7 @@ function populate_new_round_modals() {
     while (i < completed_rounds.length) {
       if (completed_rounds[i].round == roundno) {
         var round = completed_rounds[i];
+        // For completed rounds, offer a button to generate a follow-on round
         var button = $('<input type="button"/>');
         button.prop('value', round.classname);
         // Although syntactically it looks like a new round variable is created
@@ -447,27 +465,40 @@ function populate_new_round_modals() {
         // the button itself.
         button.prop('data-roundid', round.roundid);
         button.on('click', function(event) {
-          handle_new_round_simple($(this).prop('data-roundid'));
+          handle_new_round_follow_on($(this).prop('data-roundid'));
         });
         modal.append(button);
 
+        // A completed round can also be incorporated into a new aggregate round
         var flipswitch_div = $('<div class="flipswitch-div"></div>');
-        var label = $('<label for="roundid_' + round.roundid + '"'
-                      + ' class="aggregate-label"'
-                      + '></label>');
-        label.text(round.classname);
-        flipswitch_div.append(label);
+        flipswitch_div.append($('<label for="roundid_' + round.roundid + '"'
+                                + ' class="aggregate-label"/>').text(round.classname));
         flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
                                 + ' id="roundid_' + round.roundid + '"'
                                 + ' name="roundid_' + round.roundid + '"'
                                 + ' checked="checked"/>'));
-        multi_flipswitches.append(flipswitch_div);
+        constituent_rounds_div.append(flipswitch_div);
+
+        // A completed round gives subgroups to choose from
+        for (var ri = 0; ri < round.subgroups.length; ++ri) {
+          var subgroup = round.subgroups[ri];
+          var flipswitch_div = $('<div class="flipswitch-div"></div>');
+          flipswitch_div.append($('<label for="rankid_' + subgroup.rankid + '"'
+                                  + ' class="aggregate-label"/>').text(subgroup.name));
+          flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
+                                  + ' id="rankid_' + subgroup.rankid + '"'
+                                  + ' name="rankid_' + subgroup.rankid + '"'
+                                  + ' checked="checked"/>'));
+          constituent_subgroups_div.append(flipswitch_div);
+        }
+        
         completed_rounds.splice(i, 1);
       } else {
         ++i;
       }
     }
   }
+
   if (add_aggregate) {
     modal.append('<h3>Add Aggregate Round</h3>');
     for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
@@ -483,7 +514,7 @@ function populate_new_round_modals() {
     var button = $('<input type="button" value="Aggregate Round"/>');
     button.on('click', function(event) { handle_new_round_make_aggregate(); });
     modal.append(button);
-    flipswitch(multi_flipswitches.find("input[type='checkbox']"));
+    flipswitch($("#constituent-div").find("input[type='checkbox']"));
   }
   modal.append('<h3>&nbsp;</h3>');
   modal.append('<input type="button" value="Cancel"'

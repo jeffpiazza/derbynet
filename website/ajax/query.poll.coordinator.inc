@@ -3,16 +3,17 @@
  // $_GET['roundid'] and $_GET['heat'] identify the "current" heat as the
  // coordinator page sees it.
 
+require_once('inc/aggregate_round.inc');
+require_once('inc/classes-xml.inc');
 require_once('inc/current-heat.inc');
 require_once('inc/current-racers.inc');
-require_once('inc/schema_version.inc');
-require_once('inc/aggregate_round.inc');
+require_once('inc/heat-results.inc');
+require_once('inc/last-heat.inc');
+require_once('inc/playlist.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/rounds.inc');
-require_once('inc/playlist.inc');
-require_once('inc/last-heat.inc');
+require_once('inc/schema_version.inc');
 require_once('inc/timer-state-xml.inc');
-require_once('inc/heat-results.inc');
 
 $now_running = get_running_round();
 emit_current_heat($now_running);
@@ -40,6 +41,7 @@ echo '<replay-state'
     .'>';
 echo $msg;
 echo "</replay-state>\n";
+
 ?>
 <?php  // last_heat
 echo last_heat_xml_element()."\n";
@@ -47,6 +49,10 @@ echo last_heat_xml_element()."\n";
 $roundid = isset($_GET['roundid']) ? $_GET['roundid'] : '0';
 $heat = isset($_GET['heat']) ? $_GET['heat'] : '1';
 emit_heat_results($roundid, $heat);
+
+?>
+<?php  // Classes and Subgroups
+emit_all_classes();
 
 ?>
 <?php // Rounds

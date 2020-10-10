@@ -204,7 +204,47 @@ p.last_contact {
   background: #008000;
 }
 
-#new_round_modal .aggregate-label {
+/* Start #new-round-modal */
+#new-round-modal label {
+  display: inline-block;
+  width: 180px;
+  text-align: right;
+}
+
+#aggregate-by-div {
+  margin-bottom: 20px;
+}
+#new-round-top {
+  width: 100px;
+}
+#new-round-top-racers {
+  font-size: 24px;
+}
+#bucketed-div {
+  margin-bottom: 20px;
+}
+
+#constituent-clip {
+  width: 500px;
+  overflow-x: hidden;
+}
+#constituent-rounds,
+#constituent-subgroups {
+  display: inline-block;
+  width: 500px;
+  transition-duration: 0.5s;
+  transition-property: margin-left;
+}
+#constituent-div {
+  width: 1100px;
+}
+
+#new-round-modal label[for=agg-classname] {
+  text-align: left;
+  width: 300px;
+}
+
+#new-round-modal .aggregate-label {
     display: inline-block;
     width: 300px;
     margin-right: 1em;
@@ -212,6 +252,10 @@ p.last_contact {
     font-size: 16px;
     font-weight: bold;
 }
+#new-round-modal input[type=submit] {
+  margin-top: 20px;
+}
+/* End of #new-round-modal */
 
 #manual_results_modal {
   width: 500px;

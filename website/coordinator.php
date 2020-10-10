@@ -21,6 +21,9 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/coordinator-controls.js"></script>
 <script type="text/javascript" src="js/coordinator-poll.js"></script>
+<script type="text/javascript">
+var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
+</script>
 </head>
 <body>
 <?php make_banner('Race Dashboard'); ?>
@@ -211,44 +214,48 @@ require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
   <!-- Populated by script: see offer_new_rounds() -->
 </div>
 
-<div id='new_round_modal' class="modal_dialog block_buttons hidden">
+<div id='new-round-modal' class="modal_dialog wide_modal block_buttons hidden">
   <form>
-    <input type="hidden" name="action" value="roster.new"/>
-    <input type="hidden" name="roundid" id="new_round_roundid"/>
-
-    <div id="multi_flipswitches" class="multi_den_only">
+    <div id='aggregate-by-div' class='aggregate-only for-choosing-constituents'>
+      <label for='aggregate-by-checkbox'>Aggregate by &nbsp;</label>
+      <input id='aggregate-by-checkbox' type='checkbox' class='flipswitch'
+         onchange='on_aggregate_by_change()'
+         data-off-text="<?php echo group_label();?>"
+         data-on-text="<?php echo subgroup_label();?>"/>
     </div>
 
-    <p>Choose top</p>
-    <input type="number" name="top" id="new_round_top" value="3"/>
-
-    <div class="single_den_only">
-    <?php if (use_subgroups()) { ?>
-      <p>racers from</p>
-      <div class="centered_flipswitch">
-        <input type="checkbox" class="flipswitch" name="bucketed" id="bucketed_single"
-               data-on-text="Each <?php echo subgroup_label(); ?>" data-off-text="Overall"/>
+    <div id="new-round-common">
+      <div>
+        <label for='new-round-top'>Choose top &nbsp;</label>
+        <input id='new-round-top' type='number' name="top" value="3" class='not-mobile'/>
+        <span id="new-round-top-racers" class='hidden follow-on-only'>&nbsp; racers</span>
       </div>
-    <?php } else { ?>
-      <p>racers</p>
-    <?php } ?>
+
+      <div id='bucketed-div'>
+        <label for='bucketed-checkbox'>racers from &nbsp;</label>
+        <input id='bucketed-checkbox' type='checkbox' class='flipswitch' name="bucketed"
+                 data-group-text="Each <?php echo group_label(); ?>"
+                 data-subgroup-text="Each <?php echo subgroup_label(); ?>"
+                 data-on-text="Each <?php echo subgroup_label(); ?>"
+                 data-off-text="Overall"/>
+      </div>
     </div>
 
-    <div class="multi_den_only">
-      <p>racers from</p>
-      <div class="centered_flipswitch">
-        <input type="checkbox" class="flipswitch" name="bucketed" id="bucketed_multi"
-               data-on-text="Each <?php echo group_label(); ?>" data-off-text="Overall"/>
-      </div>
-      <div id="agg_classname_div">
-       <p>Name for new round:</p>
-       <input type="text" name="classname" id="agg_classname" value="Grand Finals"/>
+    <div id='agg-classname-div' class='aggregate-only'>
+      <label for='agg-classname'>Name for new round:</label>
+      <input id='agg-classname' type='text' name="classname" value="Grand Finals"/>
+    </div>
+
+    <div id='constituent-clip' class='aggregate-only for-choosing-constituents'>
+      <div id='constituent-div'>
+        <div id='constituent-rounds'></div>
+        <div id='constituent-subgroups'></div>
       </div>
     </div>
 
     <input type="submit" value="Submit"/>
     <input type="button" value="Cancel"
-      onclick='g_new_round_modal_open = false; close_modal("#new_round_modal");'/>
+      onclick='g_new_round_modal_open = false; close_modal("#new-round-modal");'/>
   </form>
 </div>
 

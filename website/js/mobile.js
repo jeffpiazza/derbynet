@@ -79,7 +79,6 @@ function flipswitch(checkboxes) {
     // class string accordingly.
     var classes = checkbox.attr('class');
 
-    var id = checkbox.attr('id');
     var offtext = checkbox.attr('data-off-text') || 'Off';
     var ontext = checkbox.attr('data-on-text') || 'On';
 
@@ -95,25 +94,56 @@ function flipswitch(checkboxes) {
       .on('click', function(event) {
         checkbox.trigger(event);
       });
+    flipswitch_resize_for_text(checkbox);
+  });
+}
 
-    var em = parseInt(checkbox.parent().css('font-size'));
+// Call this when the on/off text changes after the flipswitch has been created.
+function flipswitch_refresh(checkboxes) {
+  $(checkboxes).each(function(i, checkbox) {
+    checkbox = $(checkbox);
+    checkbox.siblings(".off").text(checkbox.attr('data-off-text') || 'Off');
+    checkbox.siblings(".on").text(checkbox.attr('data-on-text') || 'On');
+    flipswitch_resize_for_text(checkbox);
+  });
+}
 
-    var offtext_size = measure_text(offtext, em);
-    var ontext_size = measure_text(ontext, em);
-    var off_shim = 0;
-    var on_shim = 0;
-    var text_size = offtext_size;
-    if (offtext_size > ontext_size) {
-      on_shim = (offtext_size - ontext_size) / 2;
-    } else {
-      off_shim = (ontext_size - offtext_size) / 2;
-      text_size = ontext_size;
-    }
+// Private
+function flipswitch_resize_for_text(checkbox) {
+  var em = parseInt(checkbox.parent().css('font-size'));
 
-    var flip_width = (5.875 - 1.3125) * em + text_size;
-    var checked_flip_padleft = (4.333 - 1.3125) * em + text_size;
-    var checked_text_indent = -((2.6 - 1.3125) * em + text_size - on_shim);
+  var ontext = checkbox.siblings(".on").text();
+  var offtext = checkbox.siblings(".off").text();
 
+  var offtext_size = measure_text(offtext, em);
+  var ontext_size = measure_text(ontext, em);
+  var off_shim = 0;
+  var on_shim = 0;
+  var text_size = offtext_size;
+  if (offtext_size > ontext_size) {
+    on_shim = (offtext_size - ontext_size) / 2;
+  } else {
+    off_shim = (ontext_size - offtext_size) / 2;
+    text_size = ontext_size;
+  }
+
+  var flip_width = (5.875 - 1.3125) * em + text_size;
+  var checked_flip_padleft = (4.333 - 1.3125) * em + text_size;
+  var checked_text_indent = -((2.6 - 1.3125) * em + text_size - on_shim);
+
+  if (checkbox.is(':checked')) {
+    checkbox.parent()
+      .css('width', '1.8125em')
+      .css('padding-left', checked_flip_padleft);
+  } else {
+    checkbox.parent()
+      .css('width', flip_width + 'px')
+      .css('padding-left', '.2708em');
+  }
+  checkbox.parent().find('.on').css('text-indent', checked_text_indent + 'px');
+  checkbox.parent().find('.off').css('text-indent', (em + off_shim) + 'px');
+  // Counting on having this execute AFTER the checkbox has been checked
+  checkbox.parent().on('change', function() {
     if (checkbox.is(':checked')) {
       checkbox.parent()
         .css('width', '1.8125em')
@@ -123,20 +153,6 @@ function flipswitch(checkboxes) {
         .css('width', flip_width + 'px')
         .css('padding-left', '.2708em');
     }
-    checkbox.parent().find('.on').css('text-indent', checked_text_indent + 'px');
-    checkbox.parent().find('.off').css('text-indent', (em + off_shim) + 'px');
-    // Counting on having this execute AFTER the checkbox has been checked
-    checkbox.parent().on('change', function() {
-      if (checkbox.is(':checked')) {
-        checkbox.parent()
-          .css('width', '1.8125em')
-          .css('padding-left', checked_flip_padleft);
-      } else {
-        checkbox.parent()
-          .css('width', flip_width + 'px')
-          .css('padding-left', '.2708em');
-      }
-    });
   });
 }
 
