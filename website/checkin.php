@@ -67,6 +67,9 @@ function column_header($text, $o) {
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
 var g_order = '<?php echo $order; ?>';
+var g_checkin_on_barcode = <?php
+  echo isset($_SESSION['barcode-checkin']) && $_SESSION['barcode-checkin'] ? "true" : "false";
+?>;
 </script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -81,6 +84,9 @@ make_banner('Racer Check-In');
 ?>
 
 <div class="block_buttons">
+  <img src="img/barcode.png" style="position: absolute; left: 16px; top: 80px;"
+      onclick="handle_barcode_button_click()"/>
+
   <input class="bulk_button"
         type="button" value="Bulk"
         onclick='show_bulk_form();'/>
@@ -331,6 +337,19 @@ foreach ($stmt as $rs) {
       <input type="button" value="Cancel"
         onclick='close_secondary_modal("#bulk_details_modal");'/>
     </form>
+</div>
+
+
+<div id="barcode_settings_modal" class="modal_dialog hidden block_buttons">
+  <form>
+    <h2>Barcode Responses</h2>
+    <input name="barcode-handling" id="barcode-handling-radio-checkin" type="radio" value="checkin"/>
+    <label for="barcode-handling-radio-checkin">Check in racer</label>
+    <input name="barcode-handling" id="barcode-handling-radio-locate" type="radio" value="locate"/>
+    <label for="barcode-handling-radio-locate">Locate racer</label>
+
+    <input type="submit" value="Close"/>
+  </form>
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>

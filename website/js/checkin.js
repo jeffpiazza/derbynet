@@ -556,6 +556,35 @@ function sort_checkin_table() {
 	delete row_array;
 }
 
+// g_checkin_on_barcode is set in checkin.php with a value persisted in the PHP
+// session for this user.
+$(function() {
+  $("#barcode-handling-radio-checkin").prop('checked', g_checkin_on_barcode);
+  $("#barcode-handling-radio-locate").prop('checked', !g_checkin_on_barcode);
+  mobile_radio_refresh($("#barcode_settings_modal input[type=radio]"));
+
+  $("#barcode_settings_modal input[type=radio]")
+    .on('change', on_barcode_handling_change);
+});
+function handle_barcode_button_click() {
+  show_modal("#barcode_settings_modal", function(event) {
+    close_modal("#barcode_settings_modal");
+    console.log($("#barcode_settings_modal input[type=radio]:checked"));
+    return false;
+  });
+}
+function on_barcode_handling_change() {
+  g_checkin_on_barcode = $("#barcode-handling-radio-checkin").is(':checked');
+  // Update the session to persist this choice
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'session.write',
+                 'session_barcode-checkin': g_checkin_on_barcode}
+         });
+
+  return false;
+}
+
 function global_keypress(event) {
     if ($(":focus").length == 0) {
         $(document).off("keypress");  // We want future keypresses to go to the search form
@@ -602,65 +631,81 @@ function scroll_and_flash_row(row) {
   $("#find-racer").removeClass("notfound");
 }
 
-// In response to each onchange event for the #find-racer-text control, hide the
-// table rows that don't contain the value string.
-function find_racer() {
-  // If #find-racer-text val starts with PWD, then look up as a barcode, scroll
-  // to the racer, and flash the row
-  var raw_search = $("#find-racer-text").val();
+// Returns true if processed as a barcode scan
+function maybe_barcode(raw_search) {
   if (raw_search.startsWith('PWDid') && raw_search.length == 8) {
     remove_search_highlighting();
     var row = $("tr[data-racerid=" + parseInt(raw_search.substr(5)) + "]");
-    if (row.length == 1) {
-      scroll_and_flash_row(row);
-      return;
-    }
-  }
-  if (raw_search.startsWith('PWD') && raw_search.length == 6) {
+  } else if (raw_search.startsWith('PWD') && raw_search.length == 6) {
     remove_search_highlighting();
     var cell = $("td[data-car-number=" + parseInt(raw_search.substr(3)) + "]");
-    if (cell.length == 1) {
-      scroll_and_flash_row(cell.closest('tr'));
-      return;
-    }
+  } else {
+    return false;
   }
 
-    var search_string = raw_search.toLowerCase();
-    if (search_string.length == 0) {
-        cancel_find_racer();
-    } else {
-        var domain = $("#main_checkin_table tbody tr")
-            .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
-        var find_count = domain.filter(function() {
-                // this = <td> element for firstname, lastname, or car number
-                return $(this).text().toLowerCase().indexOf(search_string) != -1;
-            }).length;
-        if (find_count != 0) {
-            $("#find-racer").removeClass("notfound");
-            remove_search_highlighting();
-            domain.contents().each(function() {
-                    if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
-                        var where = $(this).text().toLowerCase().indexOf(search_string);
-                        if (where != -1) {
-                            var match = this.splitText(where);
-                            match.splitText(search_string.length);
-                            $(match).wrap('<span class="found-racer"></span>');
-                        }
-                    }
-                });
-            $("#find-racer-index").data("index", 1).text(1);
-            $("#find-racer-count").text(find_count);
-            $("#find-racer-message").css({visibility: 'visible'});
-            // Scroll the first selection to the middle of the window
-            $("html, body").animate({scrollTop: $("span.found-racer").offset().top - $(window).height() / 2}, 250);
-        } else {
-            console.log("No match!");
-            $("#find-racer").addClass("notfound");
-            $("#find-racer-index").data("index", 1).text(1);
-            $("#find-racer-count").text(0);
-            $("#find-racer-message").css({visibility: 'hidden'});
+  if (row.length != 1) {
+    return false;
+  }
+  
+  scroll_and_flash_row(row);
+
+  if (g_checkin_on_barcode) {
+    var racerid = row.attr('data-racerid');
+    var cb = $("#passed-" + racerid);
+
+    setTimeout(function() {
+      cb.prop('checked', true);
+      // This will update the flipswitch and post the check-in.
+      cb.change();
+    }, 750);
+  }
+  return true;
+}
+
+// In response to each onchange event for the #find-racer-text control, hide the
+// table rows that don't contain the value string.
+function find_racer() {
+  var raw_search = $("#find-racer-text").val();
+  if (maybe_barcode(raw_search)) {
+    return;
+  }
+
+  var search_string = raw_search.toLowerCase();
+  if (search_string.length == 0) {
+    cancel_find_racer();
+  } else {
+    var domain = $("#main_checkin_table tbody tr")
+        .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
+    var find_count = domain.filter(function() {
+      // this = <td> element for firstname, lastname, or car number
+      return $(this).text().toLowerCase().indexOf(search_string) != -1;
+    }).length;
+    if (find_count != 0) {
+      $("#find-racer").removeClass("notfound");
+      remove_search_highlighting();
+      domain.contents().each(function() {
+        if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
+          var where = $(this).text().toLowerCase().indexOf(search_string);
+          if (where != -1) {
+            var match = this.splitText(where);
+            match.splitText(search_string.length);
+            $(match).wrap('<span class="found-racer"></span>');
+          }
         }
+      });
+      $("#find-racer-index").data("index", 1).text(1);
+      $("#find-racer-count").text(find_count);
+      $("#find-racer-message").css({visibility: 'visible'});
+      // Scroll the first selection to the middle of the window
+      $("html, body").animate({scrollTop: $("span.found-racer").offset().top - $(window).height() / 2}, 250);
+    } else {
+      console.log("No match!");
+      $("#find-racer").addClass("notfound");
+      $("#find-racer-index").data("index", 1).text(1);
+      $("#find-racer-count").text(0);
+      $("#find-racer-message").css({visibility: 'hidden'});
     }
+  }
 }
 
 function scroll_to_nth_found_racer(n) {
