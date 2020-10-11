@@ -338,11 +338,12 @@ function append_playlist_entry_li(entry, all_scenes) {
 function build_rounds(queue, classes) {
   $('#rounds-ul').empty();
 
-  // Maps classid to { highest:, all_queued: }
-  //  all_queued = false if there are any rounds for the class not in the queue
+  // Maps classid to { highest:, offer_additional: }
+  //  offer_additional is true if there no rounds for the class not either
+  //  already in the queue or already completed.
   var per_class = {};
   $.each(classes, function(classid, cl) {
-    per_class[classid] = {highest: 0, all_queued: true};
+    per_class[classid] = {highest: 0, offer_additional: true};
   });
 
   var highest_round = 0;  // Highest round overall
@@ -358,10 +359,12 @@ function build_rounds(queue, classes) {
     }
   });
 
-  // Go through existing rounds
+  // Go through existing rounds to identify highest round per class,
+  // highest round overall
   $.each(g_all_rounds, function(classid, round_entries) {
     $.each(round_entries, function(i, round_entry) {
       round_entry.round = parseInt(round_entry.round);
+      round_entry.heats_scheduled = parseInt(round_entry.heats_scheduled);
       if (round_entry.round > highest_round) {
         highest_round = round_entry.round;
       }
@@ -371,6 +374,7 @@ function build_rounds(queue, classes) {
     });
   });
 
+  // Starting with round 1's, present each round not already in the queue
   var first_ever = true;
   for (var r = 1; r <= highest_round + 1; ++r) {
     var first_in_round = true;
@@ -387,26 +391,32 @@ function build_rounds(queue, classes) {
         }
       });
       if (!in_queue) {
-        var round_exists = find_round(classid, r) ? true : false;
-        if (round_exists /* and !in_queue */) {
-          per_class[classid].all_queued = false;
+        var round_entry = find_round(classid, r);
+        if (round_entry && round_entry.heats_run < round_entry.heats_scheduled) {
+          per_class[classid].offer_additional = false;
         }
 
-        if (round_exists || (per_class[classid].all_queued && per_class[classid].highest == r - 1)) {
+        // Offer the round for adding to the playlist if either:
+        // (1) it's a round that's already created, or
+        // (2) all the rounds for the class are already in the playlist, or have completed
+        if (round_entry || (per_class[classid].offer_additional && per_class[classid].highest == r - 1)) {
           if (first_in_round) {
             $("#rounds-ul").append("<div class='spacer'/>");
             first_in_round = false;
           }
           $("#rounds-ul").append(
             $("<li/>")
-              .text(cl.class + ', Round ' + r)  // TODO roundname
+              .text(round_entry ? round_entry.roundname : (cl.class + ', Round ' + r))
               .attr('data-classid', classid)
               .attr('data-round', r)
               .attr('data-roundid', function() {
-                if (round_exists) {
-                  return round_exists;
+                if (round_entry) {
+                  return round_entry.roundid;
                 }
               })
+              .toggleClass('finished',
+                           round_entry
+                           ? (round_entry.heats_run >= round_entry.heats_scheduled) : false)
               .on('click', on_add_round_to_queue)
           );
         }

@@ -118,6 +118,10 @@ p.squeeze {
   border: 3px blue solid;
 }
 
+#rounds-ul.mlistview > li.finished {
+  background-color: #bbb;
+}
+
 #rounds-ul.mlistview > li > input[type=button] {
   width: 50px;
   font-size: large;
