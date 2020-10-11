@@ -71,8 +71,8 @@ function mainphoto_onload(img) {
       // We assume there's no img.mainphoto under current, because there
       // shouldn't have been any 'next' racer last time.
       // Also assumes g_title_slide defined in main page.
-      current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                     g_title_slide + '"/>');
+      current.append('<img class="mainphoto" onload="mainphoto_onload(this)"'
+                     + ' src="image.php/slideshow_title.png"/>');
       if (kiosk_parameters.title) {
         $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(current);
       }
