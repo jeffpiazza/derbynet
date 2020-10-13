@@ -61,8 +61,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.waitFor(() => { return $("#modal_background").css('display') == 'block'; });
   }
   async function all_modals_closed() {
+    console.log('Awaiting all_modals_closed...');
     await page.waitFor(() => { return $(".modal_frame").not(".hidden").length == 0; });
-    await page.waitFor(() => { return $("#modal_background").css('display') == 'none'; });
+    var v = await page.waitFor(() => { return $("#modal_background").css('display') == 'none'; });
+    console.log('  all_modals_closed success!');
+    return v;
   }
   
   // =================================================== First simulated poll =====================================
@@ -78,6 +81,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                 '         icon="img/status/ok.png">Staging</timer-state>\n' +
                 '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                 '         connected="">NOT CONNECTED</replay-state>\n' +
+                '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                '  </class>\n' +
+                '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                '  </class>\n' +
+                '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                '  </class>\n' +
+                '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                '  </class>\n' +
+                '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                '  </class>\n' +
+                '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                '  </class>\n' +
                 '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                 '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
                       'Lions &amp; Tigers, Round 1</round>\n' +
@@ -186,6 +207,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
+                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                       '  </class>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                        '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
                              'Lions &amp; Tigers, Round 1</round>\n' +
@@ -230,6 +269,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
+                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                       '  </class>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                        '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
                        '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
@@ -269,6 +326,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
+                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                       '  </class>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                        '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
                        '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
@@ -328,6 +403,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
+                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                       '  </class>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                        '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
                        '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
@@ -379,6 +472,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         icon="img/status/ok.png">Staging</timer-state>\n' +
                        '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
                        '         connected="">NOT CONNECTED</replay-state>\n' +
+                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                       '  </class>\n' +
+                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                       '  </class>\n' +
                        '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
                        '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
                        '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
@@ -407,12 +518,12 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   await page.evaluate(() => { $("#choose_new_round_modal input[type='button'][value='Cancel'").click(); });
   await all_modals_closed();
 
-  // Click "Add New Rounds" button, see the dialog, choose a den, see #new_round_modal, dismiss it.
+  // Click "Add New Rounds" button, see the dialog, choose a den, see #new-round-modal, dismiss it.
   await page.evaluate(() => { $("input[type='button'][value='Add New Rounds']").click(); });
   await modal_open("#choose_new_round_modal");
   await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
-  await modal_open("#new_round_modal");
-  await page.evaluate(() => { $("#new_round_modal input[type='button'][value='Cancel']").click(); });
+  await modal_open("#new-round-modal");
+  await page.evaluate(() => { $("#new-round-modal input[type='button'][value='Cancel']").click(); });
   await all_modals_closed();
 
   await fakeAjax.testForAjax(async () => {
@@ -425,13 +536,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     //  Aggregate Round
     //  Cancel
     await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
-    await modal_open("#new_round_modal");
-    await page.evaluate(() => { $("#new_round_modal input[type='number'][name='top']").val('4'); });
-    await page.waitFor(() => { return $(".multi_den_only").hasClass('hidden') && !$(".single_den_only").hasClass('hidden'); });
-    await page.evaluate(() => { $("#new_round_modal input[type='submit']").click(); });
+    await modal_open("#new-round-modal");
+    await page.evaluate(() => { $("#new-round-modal input[type='number'][name='top']").val('4'); });
+    await page.waitFor(() => { return $(".aggregate-only").hasClass('hidden'); });
+    await page.evaluate(() => { $("#new-round-modal input[type='submit']").click(); });
   },
                              {'type': 'POST',
-                              'data': 'action=roster.new&roundid=2&roundid_1=on&roundid_2=on&top=4&classname=Grand+Finals'},
+                              'data': {"action":"roster.new","roundid":2,"top":"4","bucketed":0}
+                             },
                              '<?xml version="1.0" encoding="UTF-8"?>\n' +
                              '<action-response action="roster.new" roundid="2" roundid_1="on" roundid_2="on" top="4" classname="Grand Finals">\n' +
                              '  <finalist racerid="7" bucket_number="1"/>\n' +
@@ -449,8 +561,26 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                              '    <racer lane="5" name="Ian Ives" carname="" carnumber="237" photo="" finishtime="" finishplace=""/>\n' +
                              '    <timer-state lanes="6" last_contact="0" state="1" icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
                              '    <replay-state last_contact="0" state="1" icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
+                             '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+                             '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+                             '  </class>\n' +
+                             '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+                             '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+                             '  </class>\n' +
+                             '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+                             '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+                             '  </class>\n' +
+                             '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+                             '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+                             '  </class>\n' +
+                             '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+                             '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+                             '  </class>\n' +
+                             '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+                             '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+                             '  </class>\n' +
                              '    <round roundid="8" classid="2" class="White\'s Wolves" round="2" roster_size="4"' +
-                             '           passed="4" unscheduled="4" heats_scheduled="0" heats_run="0"/>\n' +
+                             '           passed="4" unscheduled="4" heats_scheduled="0" heats_run="0">WW round 2</round>\n' +
                              '    <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"' +
                              '           passed="5" unscheduled="0" heats_scheduled="5" heats_run="0"/>\n' +
                              '    <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"' +
@@ -513,6 +643,24 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
       '     icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
       '  <replay-state last_contact="1496360776" state="1"' +
       '     icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
+      '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
+      '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
+      '  </class>\n' +
+      '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
+      '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
+      '  </class>\n' +
+      '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
+      '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
+      '  </class>\n' +
+      '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
+      '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
+      '  </class>\n' +
+      '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
+      '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
+      '  </class>\n' +
+      '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
+      '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
+      '  </class>\n' +
       '  <round roundid="7" classid="2" class="White\'s Wolves" round="2" roster_size="3"' +
       '     passed="3" unscheduled="3" heats_scheduled="0" heats_run="0">' +
         'White\'s Wolves</round>\n' +
@@ -636,7 +784,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   assert.includes("east", await page.$eval("#master-schedule-group .scheduling_control img",
                                            img => { return $(img).prop('src'); }));
-  
+
   if (!debugging) {
     await browser.close();
   }

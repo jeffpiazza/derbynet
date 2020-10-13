@@ -659,7 +659,7 @@ function process_coordinator_poll_response(data) {
   if (current.master_schedule) {
     var totals = calculate_totals(rounds);
     totals.roundid = -1;
-    totals.classname = "Interleaved Schedule";
+    totals.roundname = totals.classname = "Interleaved Schedule";
     totals.category = "master-schedule";
 
     if ($("#master-schedule-group .control_group").length == 0) {
