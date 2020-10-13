@@ -26,7 +26,7 @@ curl_post action.php "action=racer.edit&rankid=6&racer=76" | check_success
 curl_post action.php "action=racer.edit&rankid=6&racer=81" | check_success
 
 # And 3 "Cougars"
-curl_post action.php "action=racer.edit&rankid=7&racer=26" | check_success
+curl_post action.php "action=racer.edit&rankid=7&racer=21" | check_success
 curl_post action.php "action=racer.edit&rankid=7&racer=36" | check_success
 curl_post action.php "action=racer.edit&rankid=7&racer=41" | check_success
 
@@ -135,6 +135,26 @@ run_heat	5	15	3.267	3.404	3.357	3.224
 run_heat	5	16	3.646	3.184	3.678	3.263 x
 
 
+# Lions & Tigers standings here:
+#
+# T1 Edgardo (T)   26
+# L  Adolfo (L)    1
+# L  Felton (L)    31
+# L  Carroll (L)  11
+# T2 Ben          6
+# T3 Danial       16
+# L  Levi (L)    51
+# T4 Kelvin    46
+# L  Owen (L)    61
+# T5 Michal    56
+# T6 Toby    76
+# L  Raymon (L)    66
+# C1 Jesse (C)    41
+# C2 Herb (C)    36
+# T7 Rodrigo    71
+# T8 Willard    81
+# C3 Derick (C)    21
+
 # Add a Grand Final by ranks, leaving out rankid=1
 RANK_FINAL=`mktemp`
 curl_post action.php "action=roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&rankid_4=1&rankid_5=1&rankid_6=1&rankid_7=1&classname=Rank%20Final" | tee $RANK_FINAL | check_success
@@ -142,25 +162,24 @@ curl_post action.php "action=roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&r
 # Check that there are 23 in the roster
 cat $RANK_FINAL | expect_count finalist 23
 
-# Lions(rankid=1): Felton(31) came in first, Carroll(11) second, Owen(61) third, Raymon(66) fourth
-# But they're not among the selected ranks, so these racers should be excluded
+# No Lions are included: Adolfo(1), Felton(31), Carroll(11), Levi(51), Owen(61), Raymon(66)
+grep finalist $RANK_FINAL | expect_count 'racerid=\"1\"' 0
 grep finalist $RANK_FINAL | expect_count 'racerid=\"31\"' 0
 grep finalist $RANK_FINAL | expect_count 'racerid=\"11\"' 0
+grep finalist $RANK_FINAL | expect_count 'racerid=\"51\"' 0
 grep finalist $RANK_FINAL | expect_count 'racerid=\"61\"' 0
 grep finalist $RANK_FINAL | expect_count 'racerid=\"66\"' 0
 
-# Tigers(rankid=6): Ben Bittinger(racerid=6), Toby(76), Kelvin(46), and Daniel(16) came in
-# 3rd, 4th, 5th, and 7th, respectively,
-grep finalist $RANK_FINAL | expect_count 'racerid=\"6\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"76\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"46\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"16\"' 1
-
-# Cougars(rankid=7) only has three racers, and they're all selected
-# Herb(36), Edgardo(26), Jesse(41)
-grep finalist $RANK_FINAL | expect_count 'racerid=\"36\"' 1
+# Top 4 Tigers: Edgardo(26), Ben(6), Danial(16), Kelvin(46)
 grep finalist $RANK_FINAL | expect_count 'racerid=\"26\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"6\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"16\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"46\"' 1
+
+# Cougars Jesse(41), Herb(36), Derick(21)
 grep finalist $RANK_FINAL | expect_count 'racerid=\"41\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"36\"' 1
+grep finalist $RANK_FINAL | expect_count 'racerid=\"21\"' 1
 
 
 curl_post action.php "action=roster.delete&roundid=6" | check_success
