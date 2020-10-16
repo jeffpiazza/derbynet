@@ -224,9 +224,17 @@ p.last_contact {
   margin-bottom: 20px;
 }
 
+#new-round-modal label[for=agg-classname] {
+  text-align: left;
+  width: 300px;
+}
+
 #constituent-clip {
   width: 500px;
   overflow-x: hidden;
+}
+#constituent-div {
+  width: 1100px;
 }
 #constituent-rounds,
 #constituent-subgroups {
@@ -234,14 +242,6 @@ p.last_contact {
   width: 500px;
   transition-duration: 0.5s;
   transition-property: margin-left;
-}
-#constituent-div {
-  width: 1100px;
-}
-
-#new-round-modal label[for=agg-classname] {
-  text-align: left;
-  width: 300px;
 }
 
 #new-round-modal .aggregate-label {

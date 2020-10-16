@@ -64,18 +64,23 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 </div>
 
 
-<div id="add_class_modal" class="modal_dialog hidden block_buttons">
+<div id="add_class_modal" class="modal_dialog wide_modal hidden block_buttons">
   <form>
-    <div id="aggregate-only">
-      <h3>Choose 2 or more constituents:</h3>
-      <div id="aggregate-constituents">
-      </div>
-    </div>
     <input type="hidden" name="action" value="class.add"/>
+
+    <div id='aggregate-by-div' class="aggregate-only">
+      <label for='aggregate-by-checkbox'>Aggregate by &nbsp;</label>
+      <input id='aggregate-by-checkbox' type='checkbox' class='flipswitch'
+            onchange='on_aggregate_by_change()'
+            data-off-text="<?php echo group_label();?>"
+            data-on-text="<?php echo subgroup_label();?>"/>
+    </div>
+
     <h3>Add New <?php echo group_label(); ?></h3>
-    <input name="name" type="text"/>
+    <input id='add-class-name' name="name" type="text"/>
+
     <h3>Number of speed trophies:</h3>
-    <select name="ntrophies">
+    <select id='add-class-ntrophies' name="ntrophies">
       <option value="-1" selected="selected">Default</option>
       <option>0</option>
       <option>1</option>
@@ -90,6 +95,13 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
       <option>10</option>
     </select>
     <h3>&nbsp;</h3>
+
+    <div id='constituent-clip' class='aggregate-only'>
+      <div id='constituent-div'>
+        <div id='constituent-classes'></div>
+        <div id='constituent-subgroups'></div>
+      </div>
+    </div>
 
     <input type="submit"/>
     <input type="button" value="Cancel"

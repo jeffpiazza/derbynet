@@ -90,11 +90,19 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
     // TODO: Handle 0 or 1 roundid's provided
   } else {
     $classid = $_POST['classid'];
-    // TODO Worry about schema version?
-    $constituents = read_single_value('SELECT constituents FROM Classes'
-                                      .' WHERE classid = :classid',
-                                      array(':classid' => $classid));
-    $constituent_roundids = highest_rounds($constituents);
+    $details = read_single_row('SELECT'
+                               .(schema_version() >= 3 ? ' constituents,' : ' \'\' AS constituents,')
+                               .(schema_version() >= 5 ? ' rankids' : ' \'\' AS rankids,')
+                               .' FROM Classes'
+                               .' WHERE classid = :classid',
+                               array(':classid' => $classid),
+                               PDO::FETCH_ASSOC);
+
+    $constituent_roundids = highest_rounds($details['constituents']);
+    if (!empty($details['rankids'])) {
+      $rankids = array_filter(explode(',', $details['rankids']), 'strlen');
+      $how_to_bucket = ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP;
+    }
   }
 }
 

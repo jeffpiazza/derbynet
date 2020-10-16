@@ -30,7 +30,14 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
 // QUALIFIER standings: Define qualifier standings for any aggregate class to be
 // the (ordered) union of the standings from the highest round of racing for
 // each constituent class.  (If a constituent class is also a nonracing
-// aggregate class, then its constituent classes are examined in turn.)
+// aggregate class, then its constituent classes are examined in turn.)  The
+// name "qualifier" is to convey the idea that the constituent rounds were
+// "qualifiers" for some kind of grand final round.  That is, the QUALIFIER
+// standings were effectively used to determine participants in the aggregate
+// class' roster.
+//
+// QUALIFIER standings for an aggregate class that includes a list of rankids
+// include only the standings for members of the specified ranks.
 //
 // Finally, the FULL FIELD standings are defined as follows:
 //
@@ -166,6 +173,7 @@ class StandingsOracle {
     global $db;
     $stmt = $db->prepare('SELECT classid, class,'
                          .(schema_version() >= 3 ? ' constituents, ' : '\'\' AS constituents, ')
+                         .(schema_version() >= 5 ? ' rankids, ' : '\'\' AS rankids, ')
                          .' EXISTS(SELECT 1 FROM Rounds WHERE Rounds.classid = Classes.classid'
                          .'        AND NOT EXISTS(SELECT 1 FROM RaceChart'
                          .'                       WHERE RaceChart.roundid = Rounds.roundid))'
@@ -181,6 +189,7 @@ class StandingsOracle {
     $result = array();
     foreach ($stmt as $row) {
       $row['constituents'] = array_filter(explode(',', $row['constituents']), 'strlen');
+      $row['rankids'] = array_filter(explode(',', $row['rankids']), 'strlen');
       if (count($row['constituents'])) {
         ++$this->n_aggregates;
         $this->aggregate_id = $row['classid'];
@@ -346,7 +355,10 @@ class StandingsOracle {
           }
 
           foreach ($cl['rolls_up_to'] as $r) {
-            $add_outcome(stkey_qual($r), $row);
+            $r_cl = $this->class_details[$r];
+            if (count($r_cl['rankids']) == 0 || in_array($row['rankid'], $r_cl['rankids'])) {
+              $add_outcome(stkey_qual($r), $row);
+            }
           }
           // This assigns a full-field result to every scoring round, without
           // regard to whether there are aggregate rounds.

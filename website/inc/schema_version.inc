@@ -5,6 +5,6 @@ function schema_version() {
 }
 
 function expected_schema_version() {
-  return 4;
+  return 5;
 }
 ?>

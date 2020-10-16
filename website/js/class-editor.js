@@ -15,17 +15,19 @@ function close_edit_all_classes_modal() {
     window.location='setup.php';
 }
 
+// Add a new organic (non-aggregate) class
 function show_add_class_modal() {
   $("#add_class_modal input[name='name']").val("");
-  $("#add_class_modal").removeClass("wide_modal");
-  $("#aggregate-only").addClass("hidden");
+  $(".aggregate-only").addClass("hidden");
   $("#add_class_modal input[type='submit']").prop('disabled', false);
 
   show_secondary_modal("#add_class_modal", function () {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: $('#add_class_modal form input').not('#aggregate-constituents input').serialize(),
+            data: 'action=class.add&' +
+                $("#add-class-name").serialize() + '&' +
+                $("#add-class-ntrophies").serialize(),
             success: function (data) {
               reload_class_list();
             }});
@@ -40,15 +42,18 @@ function show_add_class_modal() {
 function maybe_enable_aggregate_create() {
   $("#add_class_modal input[type='submit']")
     .prop('disabled',
-          $("#aggregate-constituents input[type='checkbox']:checked").length < 2);
+          ($("#aggregate-by-checkbox").is(':checked')
+           ? $("#constituent-subgroups input[type='checkbox']:checked").length
+           : $("#constituent-classes input[type='checkbox']:checked").length)
+          < 2);
 }
 
 function show_add_aggregate_modal() {
   $("#add_class_modal input[name='name']").val("");
-  $("#add_class_modal").addClass("wide_modal");
-  $("#aggregate-only").removeClass("hidden");
+  $(".aggregate-only").removeClass('hidden');
+  $("#aggregate-by-div").toggleClass('hidden', !use_subgroups());
 
-  $("#aggregate-constituents input[type='checkbox']")
+  $("#constituent-classes input[type='checkbox']")
     .prop('checked', false)
     .trigger('change', /*synthetic*/true);
 
@@ -58,7 +63,12 @@ function show_add_aggregate_modal() {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: $('#add_class_modal form').serialize(),
+            data:  'action=class.add&' +
+                $("#add-class-name").serialize() + '&' +
+                $("#add-class-ntrophies").serialize() + '&' +
+                ($("#aggregate-by-checkbox").is(':checked')
+                 ? $("#constituent-subgroups input").serialize()
+                 : $("#constituent-classes input").serialize()),
             success: function (data) {
               reload_class_list();
             }});
@@ -150,6 +160,7 @@ function handle_delete_class() {
                   },
             success: function(data) {
               repopulate_class_list(data);
+              repopulate_constituent_classes(data);
             }
            });
   }
@@ -168,6 +179,7 @@ function show_add_rank_modal() {
             data: $("#add_rank_modal form").serialize(),
             success: function(data) {
               repopulate_class_list(data);
+              repopulate_constituent_classes(data);
               hide_ranks_except(classid);
             }});
     return false;
@@ -201,6 +213,7 @@ function show_edit_one_rank_modal(list_item) {
                    name: $("#edit_rank_name").val()},
             success: function(data) {
               repopulate_class_list(data);
+              repopulate_constituent_classes(data);
               hide_ranks_except(classid);
             }});
 
@@ -225,6 +238,7 @@ function handle_delete_rank() {
                   },
             success: function(data) {
               repopulate_class_list(data);
+              repopulate_constituent_classes(data);
               hide_ranks_except(classid);
             }
            });
@@ -237,7 +251,8 @@ function reload_class_list() {
            {type: 'GET',
             data: {query: 'class.list'},
             success: function(data) {
-                repopulate_class_list(data);
+              repopulate_class_list(data);
+              repopulate_constituent_classes(data);
             }});
 }
 
@@ -264,7 +279,6 @@ function populate_rank_list(cl) {
     $("<span class='rank-name'></span>").text(rank.getAttribute('name')).appendTo(rank_p);
     $("<span class='count'></span>").text("(" + rank.getAttribute('count') + ")").appendTo(rank_p);
   }
-  //  rank_ul.listview().listview("refresh");
 
   rank_ul.sortable({stop: function(event, ui) {
       var data = {action: 'rank.order'};
@@ -282,7 +296,6 @@ function repopulate_class_list(data) {
   if (classes.length > 0) {
     $("#ranks_container").empty();
     $("#groups").empty();
-    $("#aggregate-constituents").empty();
     for (var i = 0; i < classes.length; ++i) {
       var cl = classes[i];
 
@@ -303,6 +316,7 @@ function repopulate_class_list(data) {
       if (use_subgroups()) {
         populate_rank_list(cl);
       }
+
       var constituents = cl.getElementsByTagName('constituent');
       if (constituents.length > 0) {
         var constituents_ul = $('<ul></ul>').appendTo(group_li);
@@ -310,24 +324,7 @@ function repopulate_class_list(data) {
           $('<li></li>').text(constituents[ii].getAttribute('name')).appendTo(constituents_ul);
         }
       }
-
-      // For the Create Aggregate modal, add a flipswitch for each existing
-      // class to the list of potential constituents.
-      var flipswitch_div = $('<div class="flipswitch-div"></div>');
-      var label = $('<label for="constituent_' + cl.getAttribute('classid') + '"'
-                    + ' class="constituent-label"'
-                    + '></label>');
-      label.text(cl.getAttribute('name'));
-      flipswitch_div.append(label);
-      flipswitch_div.append($('<input type="checkbox"/>')
-                            .addClass('flipswitch')
-                            .attr('id', "constituent_" + cl.getAttribute('classid'))
-                            .attr('name', "constituent_" + cl.getAttribute('classid')));
-      $("#aggregate-constituents").append(flipswitch_div);
-      flipswitch(flipswitch_div.find("input[type=checkbox]"));
     }
-    $("#aggregate-constituents input[type='checkbox']").on('change', maybe_enable_aggregate_create);
-    $("#aggregate-constituents").trigger("create");
 
     // Mark up constituents so they can't be deleted
     for (var i = 0; i < classes.length; ++i) {
@@ -339,6 +336,52 @@ function repopulate_class_list(data) {
       }
     }
   }
+}
+
+
+// For the Create Aggregate modal, add a flipswitch for each existing
+// class to the list of potential constituents.
+function repopulate_constituent_classes(data) {
+  var classes = data.getElementsByTagName("class");
+  if (classes.length > 0) {
+    $("#constituent-classes").empty();
+    $("#constituent-subgroups").empty();
+    for (var i = 0; i < classes.length; ++i) {
+      var cl = classes[i];
+      $("<div class='flipswitch-div'/>")
+        .appendTo("#constituent-classes")
+        .append($("<label class='constituent-label'/>")
+                .attr('for', 'constituent_' + cl.getAttribute('classid'))
+                .text(cl.getAttribute('name')))
+        .append($("<input type='checkbox' class='flipswitch'/>")
+                .attr('id', 'constituent_' + cl.getAttribute('classid'))
+                .attr('name', 'constituent_' + cl.getAttribute('classid')));
+
+      var ranks = cl.getElementsByTagName("rank");
+      for (var ri = 0; ri < ranks.length; ++ri) {
+        var r = ranks[ri];
+        $("<div class='flipswitch-div'/>")
+          .appendTo("#constituent-subgroups")
+          .append($("<label class='constituent-label'/>")
+                  .attr('for', 'rankid_' + r.getAttribute('rankid'))
+                  .text(r.getAttribute('name')))
+          .append($("<input type='checkbox' class='flipswitch'/>")
+                  .attr('id', 'rankid_' + r.getAttribute('rankid'))
+                  .attr('name', 'rankid_' + r.getAttribute('rankid')));
+      }
+    }
+    // Decorate all the flipswitches
+    flipswitch($("#constituent-div input.flipswitch"));
+    $("#constituent-div input[type='checkbox']").on('change', maybe_enable_aggregate_create);
+  }
+}
+
+// When the "aggregate-by" checkbox changes, slide to hide or show
+// constituent-rounds div
+function on_aggregate_by_change() {
+  $("#constituent-classes").css('margin-left',
+                               $("#aggregate-by-checkbox").is(':checked') ? '-500px' : '0px');
+  maybe_enable_aggregate_create();
 }
 
 $(function () {

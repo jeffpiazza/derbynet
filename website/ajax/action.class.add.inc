@@ -18,11 +18,18 @@ if (have_permission(SET_UP_PERMISSION)) {
     if ($classname == '') {
       echo "<failure code='noname'>No name provided for the new ".group_label()."</failure>\n";
     } else {
+      list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
       $constituents = array();
+      $rankids = array();
       foreach ($_POST as $key => $value) {
         if (substr($key, 0, strlen('constituent_')) == 'constituent_') {
           $constituents[] = substr($key, strlen('constituent_'));
+        } else if (substr($key, 0, strlen('rankid_')) == 'rankid_') {
+          $r = substr($key, strlen('rankid_'));
+          $rankids[] = $r;
+          $constituents[] = $ranks[$r]['classid'];
         }
+        $constituents = array_unique($constituents);
       }
       if (empty($constituents)) {  // Normal class
         $classid = create_class($classname);
@@ -34,9 +41,11 @@ if (have_permission(SET_UP_PERMISSION)) {
         $classid = create_class($classname, /*with_first_round=*/false);
         $stmt = $db->prepare('UPDATE Classes'
                              .' SET constituents = :constituents,'
+                             .' rankids = :rankids,'
                              .' durable = 1'
                              .' WHERE classid = :classid');
         $stmt->execute(array(':constituents' => implode(',', $constituents),
+                             ':rankids' => implode(',', $rankids),
                              ':classid' => $classid));
       }
       if (isset($_POST['ntrophies'])) {
