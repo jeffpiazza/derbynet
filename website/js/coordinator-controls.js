@@ -296,6 +296,7 @@ function show_choose_new_round_modal() {
 function on_aggregate_by_change() {
   $("#constituent-rounds").css('margin-left',
                                $("#aggregate-by-checkbox").is(':checked') ? '-500px' : '0px');
+  update_bucketed_checkbox(!$("#aggregate-by-checkbox").is(':checked'));
 }
 
 function update_bucketed_checkbox(for_group) {
@@ -349,6 +350,9 @@ function handle_new_round_make_aggregate() {
   if (!g_use_subgroups) {
     $('#aggregate-by-checkbox').prop('checked', false);
   }
+
+  update_bucketed_checkbox(/* for_group */ true);
+
   g_new_round_modal_open = true;
   show_modal("#new-round-modal", function(event) {
     on_submit_new_round_make_aggregate();
@@ -364,9 +368,9 @@ function on_submit_new_round_make_aggregate() {
           data:  'action=roster.new&' +
                  $("#new-round-common input").serialize() + '&' +
                  $("#agg-classname-div input").serialize() + '&' +
-                ($("#aggregate-by").is(':checked')
+                ($("#aggregate-by-checkbox").is(':checked')
                  ? $("#constituent-subgroups input").serialize()
-                 : $("#constituent-subgroups input").serialize()),
+                 : $("#constituent-rounds input").serialize()),
           success: function(data) { process_coordinator_poll_response(data); }
          });
 }
@@ -378,6 +382,11 @@ function handle_new_round_aggregate_class(classid) {
   $("div.for-choosing-constituents").addClass("hidden");
   $("#agg-classname-div").addClass("hidden");
   g_new_round_modal_open = true;
+
+  // TODO An existing aggregate class may be subgroup based, in which case
+  // this labeling is wrong.
+  update_bucketed_checkbox(/* for_group */ true);
+
   show_modal("#new-round-modal", function(event) {
     on_submit_new_round_aggregate_class(classid);
     return false;
