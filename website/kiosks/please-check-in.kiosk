@@ -82,5 +82,6 @@ if ($prev_classid >= 0) {
   echo '</div>'."\n";
 }
 ?>
+<?php require('inc/ajax-failure.inc'); ?>
 </body>
 </html>

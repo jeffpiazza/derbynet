@@ -31,5 +31,6 @@ make_banner('', /* back_button */ false);
 
 <img id="flag" src="image.php/Flag.svg"/>
 
+<?php require('inc/ajax-failure.inc'); ?>
 </body>
 </html>

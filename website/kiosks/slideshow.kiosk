@@ -18,5 +18,6 @@
     <div class="next"></div>
   </div>
 
+  <?php require('inc/ajax-failure.inc'); ?>
   </body>
 </html>
