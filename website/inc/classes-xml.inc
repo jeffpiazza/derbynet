@@ -9,11 +9,14 @@ function emit_all_classes() {
     $classes_by_id[$class['classid']] = $class;
   }
   foreach ($all_classes as $class) {
-    echo '<class classid="'.$class['classid'].'"'
-        .' count="'.$class['count'].'"'
-        .' nrounds="'.$class['nrounds_with_results'].'"'
-        .' ntrophies="'.$class['ntrophies'].'"'
-        .' name="'.htmlspecialchars($class['name'], ENT_QUOTES, 'UTF-8').'">'."\n";
+    echo "<class classid=\"$class[classid]\""
+        ." count=\"$class[count]\""
+        ." nrounds=\"$class[nrounds_with_results]\""
+        ." ntrophies=\"$class[ntrophies]\"";
+    if (!empty($class['rankids'])) {
+      echo " aggregate-by-subgroup=\"1\"";
+    }
+    echo " name=\"".htmlspecialchars($class['name'], ENT_QUOTES, 'UTF-8')."\">\n";
     foreach ($class['ranks'] as $rank) {
       echo '  <rank rankid="'.$rank['rankid'].'"'
           .' count="'.$rank['count'].'"'
@@ -27,7 +30,6 @@ function emit_all_classes() {
         .'/>'."\n";
       }
     }
-
     echo '</class>'."\n";
   }
 }

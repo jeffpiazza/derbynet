@@ -187,7 +187,8 @@ function parse_ready_aggregate_classes(data) {
   for (var i = 0; i < elts.length; ++i) {
     ready_aggregate_classes[i] =
       {classid: elts[i].getAttribute("classid"),
-       classname: elts[i].textContent};
+       classname: elts[i].textContent,
+       'by-subgroup': elts[i].getAttribute("by-subgroup") != 0};
   }
   return ready_aggregate_classes;
 }

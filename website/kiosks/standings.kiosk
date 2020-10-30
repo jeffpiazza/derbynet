@@ -28,10 +28,11 @@ body { overflow: hidden; }
 <?php make_banner('Standings', /* back_button */ false); ?>
 <table class="main_table">
 <?php
-write_standings_table_headers();
-write_standings_table_rows(result_summary());
-?>
 
+$standings = new StandingsOracle();
+$standings->write_standings_table();
+
+?>
 </table>
 <?php require('inc/ajax-failure.inc'); ?>
 </body>

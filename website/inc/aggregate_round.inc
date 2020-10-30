@@ -25,11 +25,14 @@ function aggregate_classes() {
   global $db;
   $results = array();
   if (schema_version() >= 3) {
-    $stmt = $db->prepare('SELECT classid, class, constituents, durable, ntrophies FROM Classes'
+    $stmt = $db->prepare('SELECT classid, class, constituents,'
+                         .(schema_version() >= 5 ? ' rankids,' : ' \'\' as rankids,')
+                         .' durable, ntrophies FROM Classes'
                          .' WHERE constituents > \'\''
                          .' ORDER BY sortorder');
   } else {
-    $stmt = $db->prepare('SELECT classid, class, \'\' AS constituents, 0 AS durable,'
+    $stmt = $db->prepare('SELECT classid, class, \'\' AS constituents,'
+                         .' \'\' as rankids, 0 AS durable,'
                          .'   ntrophies FROM Classes'
                          .' WHERE class = \'Grand Finals\''
                          .' ORDER BY sortorder');
@@ -39,7 +42,10 @@ function aggregate_classes() {
   foreach ($stmt as $cl) {
     $results[$cl['classid']] = array('classid' => $cl['classid'],
                                      'class' => $cl['class'],
-                                     'constituents' => explode(',', $cl['constituents']),
+                                     'constituents' =>
+                                         array_filter(explode(',', $cl['constituents']), 'strlen'),
+                                     'rankids' =>
+                                         array_filter(explode(',', $cl['rankids']), 'strlen'),
                                      'durable' => $cl['durable'],
                                      'ntrophies' => $cl['ntrophies']);
   }

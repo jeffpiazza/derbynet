@@ -110,7 +110,11 @@ foreach (aggregate_classes() as $agg_class) {
     }
   }
   if ($ready_to_race) {
-    echo "<ready-aggregate classid=\"$agg_class[classid]\">";
+    echo "<ready-aggregate"
+        ." classid=\"$agg_class[classid]\""
+        ." by-subgroup=\""
+        .(empty($agg_class['rankids']) ? '0' : '1')
+        ."\">";
     echo htmlspecialchars($agg_class['class'], ENT_QUOTES, 'UTF-8');
     echo "</ready-aggregate>\n";
   }

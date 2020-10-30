@@ -28,7 +28,8 @@ g_completed_rounds = [];
 
 // Roundids of an aggregate rounds
 g_aggregate_rounds = [];
-// {classid:, classname:} for each aggregate class for which a first round could be created
+// {classid:, classname:, by-subgroup:} for each aggregate class for which a
+// first round could be created
 g_ready_aggregate_classes = [];
 
 // Controls for current racing group:
@@ -376,16 +377,14 @@ function on_submit_new_round_make_aggregate() {
 }
 
 // Create first round for a pre-defined aggregate class
-function handle_new_round_aggregate_class(classid) {
+function handle_new_round_aggregate_class(classid, by_subgroup) {
   close_modal_leave_background("#choose_new_round_modal");
   $("#new-round-modal div").removeClass("hidden");
   $("div.for-choosing-constituents").addClass("hidden");
   $("#agg-classname-div").addClass("hidden");
   g_new_round_modal_open = true;
 
-  // TODO An existing aggregate class may be subgroup based, in which case
-  // this labeling is wrong.
-  update_bucketed_checkbox(/* for_group */ true);
+  update_bucketed_checkbox(/* for_group */ !by_subgroup);
 
   show_modal("#new-round-modal", function(event) {
     on_submit_new_round_aggregate_class(classid);
@@ -515,8 +514,11 @@ function populate_new_round_modals() {
       var button = $('<input type="button"/>');
       button.prop('value', agg.classname);
       button.prop('data-classid', agg.classid);
+      button.prop('data-by-subgroup', agg['by-subgroup']);
       button.on('click', function(event) {
-        handle_new_round_aggregate_class($(this).prop('data-classid'));
+        handle_new_round_aggregate_class(
+          $(this).prop('data-classid'),
+          $(this).prop('data-by-subgroup'));
       });
       modal.append(button);
     }
