@@ -59,13 +59,21 @@ div.mselect-inner select {
 }
 
 .standings-control .reveal h3 {
-    text-align: center;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.standings-control .reveal #still_hidden {
+  font-size: 1.0em;
+}
+
+.standings-control .reveal input[type="button"] {
+  margin-bottom: 2px;
 }
 
 .kiosk_control_name {
     font-weight: bold;
 }
-
 
 .kiosk_control .de-emphasize {
     font-size: 80%;

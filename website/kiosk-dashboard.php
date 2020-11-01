@@ -50,6 +50,8 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
     <h3>Display standings for:</h3>
     <select id='standings-catalog'>
       <?php
+        $standings = new StandingsOracle();
+
         // This <select> elements lets the operator choose what standings should be displayed on
         // kiosks displaying standings.
         $standings_state =  explode('-', read_raceinfo('standings-message'), 2);
@@ -61,7 +63,14 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 
         if ($current_exposed === '') {
           $current_exposed = 'all';
+          $still_hidden = 'nothing';
         } else {
+          $cat_entry = json_decode($current_catalog_entry, /* assoc */true);
+          $count = $standings->catalog_counts[$cat_entry['key']];
+          if ($current_exposed > $count) {
+            $current_exposed = $count;
+          }
+          $still_hidden = 'highest '.($count - $current_exposed);
           $current_exposed = 'lowest '.$current_exposed;
         }
 
@@ -70,11 +79,11 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
         if ($current_catalog_entry == '') {
           echo '<option selected="selected" disabled="1">Please choose what standings to display</option>';
         }
-    {
-      $standings = new StandingsOracle();
+
       foreach ($standings->standings_catalog() as $entry) {
         $json_entry = json_encode($entry);
         echo '<option data-catalog-entry="'.htmlspecialchars($json_entry, ENT_QUOTES, 'UTF-8').'"';
+        echo ' data-count="'.$standings->catalog_counts[$entry['key']].'"';
         if ($current_catalog_entry == $json_entry) {
           echo ' selected="selected"';
         }
@@ -82,12 +91,18 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
         echo htmlspecialchars($entry['name'], ENT_QUOTES, 'UTF-8');
         echo "</option>\n";
       }
-    }
+
       ?>
     </select>
   </div>
   <div class="reveal block_buttons">
-        <h3 <?php if ($standings_state == '') { echo "class='hidden'"; } ?>>Revealing <span id="current_exposed"><?php echo $current_exposed; ?></span> standing(s).</h3>
+        <h3 <?php if ($standings_state == '') { echo "class='hidden'"; }
+        ?>>Revealing
+           <span id="current_exposed"><?php echo $current_exposed; ?></span>
+           standing(s),
+           <br/>leaving
+           <span id="current_unexposed"><?php echo $still_hidden; ?></span>
+           still hidden.</h3>
     <input type="button" value="Reveal One" onclick="handle_reveal1()"/><br/>
     <input type="button" value="Reveal All" onclick="handle_reveal_all()"/><br/>
   </div>

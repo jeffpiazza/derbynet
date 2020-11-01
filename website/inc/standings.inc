@@ -151,7 +151,8 @@ class StandingsOracle {
     $this->add_rounds_by_class();
 
     $this->result_summary = $this->make_result_summary();
-    $this->all_standings = $this->compute_all_standings();
+    // Writes $this->all_standings
+    $this->compute_all_standings();
   }
 
   private $use_points;
@@ -167,6 +168,8 @@ class StandingsOracle {
 
   public $result_summary;
   public $all_standings;
+  // Maps catalog key to number of entries included in those standings
+  public $catalog_counts;
 
   // Returns classid => { ... }
   private function make_class_details() {
@@ -374,21 +377,21 @@ class StandingsOracle {
       }
     }
 
-    $results = array();
+    $this->all_standings = array();
+    $this->catalog_counts = array();
     foreach ($trackers as $key => &$tracker) {
-      $results[$key] = $tracker->result;
+      $this->all_standings[$key] = $tracker->result;
+      $this->catalog_counts[$key] = $tracker->count();
     }
     foreach ($this->result_summary as &$row) {
       foreach ($row['outcome'] as $key => &$place) {
-        if (count($results[$key][$place]) > 1) {
+        if (count($this->all_standings[$key][$place]) > 1) {
           $place = 'T'.($place + 1);
         } else {
           $place = $place + 1;
         }
       }
     }
-
-    return $results;
   }
 
   function award_ladder_full_field() {
@@ -719,6 +722,7 @@ class StandingsTracker {
   // The number of recorded scores for this tracker.  This lets us "skip ahead"
   // when there are ties.
   private $count = 0;
+  public function count() { return $this->count; }
 
   // $result[$i] gives the racerids for ($i+1)'th place
   // E.g., [[11], [1], [21, 41], [], [31]] to indicate a tie for 3rd place.

@@ -3,6 +3,7 @@
 // how many rows we want not to be hidden, or false if we're trying to display
 // all.  Returns true if it actually reveals a row.
 function maybe_reveal_one_row(rows, goal) {
+  console.log("maybe_reveal_one_row, " + rows.length + " row(s), " + rows.not(".hidden").length + " exposed, " + goal + " goal.");
   if (goal === false || rows.not(".hidden").length < goal) {
     var next = rows.filter(".hidden:last");
     if (next.length > 0) {
@@ -70,7 +71,6 @@ $(function() {
   var poller = {
     exposed: 0,
     catalog_entry: {},
-    group_name: "",  // TODO: supergroup name needs to be in catalog entry
 
     // If scrolling is taking place, this holds the interval object
     scrolling_interval: false,
@@ -105,9 +105,7 @@ $(function() {
                 var catalog_entry_element = data.getElementsByTagName("catalog-entry");
                 if (catalog_entry_element.length > 0) {
                   var entry = JSON.parse(catalog_entry_element[0].getAttribute("json"));
-                  if (entry.kind == poller.catalog_entry.kind && entry.key == poller.catalog_entry.key) {
-                    // No change, nothing to do
-                  } else {
+                  if (entry.key != poller.catalog_entry.key) {
                     poller.catalog_entry = entry;
                     changed = true;
                     stop_scrolling(poller.scrolling_interval);
@@ -133,6 +131,8 @@ $(function() {
 
                 if (changed) {
                   $(".main_table tr").removeClass("first_visible");
+                  $(".main_table").css({'margin-left': 'auto',
+                                        'margin-right': 'auto'});
                   if (poller.reveal_timeout) {
                     clearTimeout(poller.reveal_timeout);
                     poller.reveal_timeout = false;

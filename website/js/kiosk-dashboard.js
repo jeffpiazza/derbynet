@@ -383,11 +383,21 @@ function handle_name_kiosk(address, name) {
 // Controls for the standings display
 //////////////////////////////////////////////////////////////////////////
 function process_standings_reveal_result(data) {
-  var reveal = data.documentElement.getElementsByTagName('standings');
+  var reveal = data.documentElement.getElementsByTagName('reveal');
   if (reveal.length > 0) {
-    var pieces = reveal[0].textContent.split('-');
-    var current_exposed = pieces[2];
-    $("#current_exposed").text(current_exposed == '' ? 'all' : ('lowest ' + current_exposed));
+    var current_exposed = reveal[0].getAttribute('count');
+    console.log('revealed: ' + current_exposed);
+    if (current_exposed === '') {
+      $("#current_exposed").text('all');
+      $("#current_unexposed").text('nothing');
+    } else {
+      var count = $("#standings-catalog option:selected").attr('data-count');
+      if (current_exposed > count) {
+        current_exposed = count;
+      }
+      $("#current_exposed").text('lowest ' + current_exposed);
+      $("#current_unexposed").text('highest ' + (count - current_exposed));
+    }
     $(".standings-control .reveal h3").removeClass('hidden');
   }
 }
