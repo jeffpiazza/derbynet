@@ -31,6 +31,8 @@ function print_selected() {
       options[opt] = parseInt(control.val());
     } else if (opt_data.type == 'string') {
       options[opt] = control.val();
+    } else if (opt_data.type == 'radio') {
+      options[opt] = control.filter(':checked').val();
     } else {
       console.error('Unrecognized option type: ' + opt_data.type);
     }

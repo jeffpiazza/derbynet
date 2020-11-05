@@ -10,7 +10,11 @@ abstract class PrintableRacerDocument {
   // Returns an array of key => {type:, desc:, default:}, with an entry for each
   // option key understood by the document class.
   //
-  // type can be one of 'bool', 'string', 'int'.
+  // type can be one of 'bool', 'string', 'int', or 'radio'.
+  //
+  // If 'radio', then there's an additional field present, values:, containing
+  // an array of {value:, desc:}.  The value of the selected option is returned
+  // as a string.
   abstract function get_available_options();
 
   // Returns a name for the document class
