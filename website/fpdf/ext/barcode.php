@@ -12,6 +12,18 @@ class PDF_Barcode extends PDF_MemImage {
 
     $scale = $w/$code_length;
 
+    $fc = $this->FillColor;
+
+    $d = 10 * $scale;
+    
+    $this->SetFillColor(255, 255, 255);
+    $this->Rect($x, $y - $d / 2, $w, $h + $d, 'F');
+
+    $this->FillColor = $fc;
+    $this->_out($this->FillColor);
+
+    $x += 10 * $scale;
+
     for ($i = 0; $i < strlen($code_string); ++$i) {
       $bar_width = $scale * substr($code_string, $i - 1, 1);
       if ($i % 2 != 0) {
@@ -27,6 +39,17 @@ class PDF_Barcode extends PDF_MemImage {
     $code_length = $this->CodeLength($code_string);
 
     $scale = $h/$code_length;
+
+    $fc = $this->FillColor;
+
+    $d = 10 * $scale;
+    
+    $this->SetFillColor(255, 255, 255);
+    $this->Rect($x - $d / 2, $y, $w + $d, $h, 'F');
+
+    $this->FillColor = $fc;
+    $this->_out($this->FillColor);
+
     $y += $scale * 10;
 
     for ($i = 0; $i < strlen($code_string); ++$i) {

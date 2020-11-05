@@ -26,7 +26,7 @@ class PDF_Sequencer extends PDF_Barcode {
     }
   }
 
-  function CenteredSequence($cx, $y, $sequence) {
+  function SequenceWidth($sequence) {
     $len = 0;
     foreach ($sequence as $item) {
       if (is_string($item)) {
@@ -35,7 +35,11 @@ class PDF_Sequencer extends PDF_Barcode {
         $item->Apply($this);
       }
     }
+    return $len;
+  }
 
+  function CenteredSequence($cx, $y, $sequence) {
+    $len = $this->SequenceWidth($sequence);
     $this->DrawSequence($cx - $len / 2, $y, $sequence);
   }
 
