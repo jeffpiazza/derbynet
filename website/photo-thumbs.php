@@ -46,6 +46,8 @@ function scan_directory($directory, $pattern) {
       closedir($dh);
   }
 
+  asort($files);
+
   return $files;
 }
 

@@ -265,22 +265,26 @@ Dropzone.options.uploadTarget = {
       if (uploaded.length > 0) {
         uploaded = uploaded[0].textContent;
         thumb = thumb[0].textContent;
-        $('.unassigned-photo').each(function() {
-            if ($(this).attr('data-image-filename') > uploaded) {
-              var new_thumb = $('<div class="thumbnail">' +
-                                '<img class="unassigned-photo"/>' +
-                                '</div>');
-              new_thumb.find('img')
-                .attr('data-image-filename', uploaded)
-                .attr('src', thumb)
-                .attr('onclick', 'showPhotoCropModal(this, ' +
-                                      '\'' + g_photo_repo_name + '\', ' +
-                                      '\'' + uploaded + '\', 0)');
-              new_thumb.insertBefore($(this).parent());
-              make_draggable_photo(new_thumb.find('img'));
-              return false;  // exit the loop
-            }
-          });
+        $('.photothumbs h2').remove();
+        var img =
+          $('<img class="unassigned-photo"/>')
+            .attr('data-image-filename', uploaded)
+            .attr('src', thumb)
+            .attr('onclick', 'showPhotoCropModal(this, ' +
+                      '\'' + g_photo_repo_name + '\', ' +
+                      '\'' + uploaded + '\', 0)');
+        img.wrap('<div class="thumbnail"/>')
+          .parent()
+          .appendTo('.photothumbs');
+        make_draggable_photo(img);
+
+        $('.photothumbs').sort(function(a, b) {
+          var aa = a.find('img').attr('data-image-filename');
+          var bb = b.find('img').attr('data-image-filename');
+          if (aa < bb) return -1;
+          if (bb < aa) return  1;
+          return 0;
+        });
       }
       file.previewElement.classList.add("dz-success");
     }
