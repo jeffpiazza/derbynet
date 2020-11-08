@@ -317,6 +317,8 @@ array(
 
 @include_once(sql_file_path('award-type-values')),
 
+@include_once(sql_file_path('balloting')),
+
 array(
 
 // --- Populate basic data

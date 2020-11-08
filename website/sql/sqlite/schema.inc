@@ -168,6 +168,8 @@ make_index("Rounds", "round"),
 
 @include_once(sql_file_path('award-type-values')),
 
+@include_once(sql_file_path('balloting')),
+
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('photos-on-now-racing', 'head')",
