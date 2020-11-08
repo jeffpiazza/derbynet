@@ -85,7 +85,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'scoring' => 'scoring',
                   'now-racing-linger-ms' => 'now-racing-linger-ms',
                   'racing_scene' => 'racing_scene',
-                  'images-dir' => 'images-dir')
+                  'images-dir' => 'images-dir',
+                  'ballot_password' => 'ballot_password')
             as $post_key => $raceinfo_key) {
       if (isset($_POST[$post_key])) {
         ++$num_picked;

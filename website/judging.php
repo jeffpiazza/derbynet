@@ -22,6 +22,11 @@ require_permission(JUDGING_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/judging.css"/>
+<script type="text/javascript">
+$(function() {
+    $("#ballot_password").val(<?php echo json_encode(read_raceinfo('ballot_password', '')); ?>);
+  });
+</script>
 </head>
 <body>
 <?php
@@ -78,8 +83,8 @@ foreach ($db->query($sql) as $rs) {
 
 ?>
 <div id="top_matter" class="block_buttons">
-  <div id="dd-prompt">
-Drag awards to racers,<br/>or racers to awards.
+  <div id="ballot-button-div">
+    <input type='button' value='Manage Ballot' onclick='show_modal($("#ballot_modal"));'/>
   </div>
   <div id="sort_controls">
     Sort racers by:<br/>
@@ -91,6 +96,7 @@ Drag awards to racers,<br/>or racers to awards.
 </div>
 
 <div id="awards">
+  <div id="dd-prompt">Drag awards to racers,<br/>or racers to awards.</div>
   <p id="awards-empty">There are currently no awards defined.</p>
   <ul>
   </ul>
@@ -148,6 +154,31 @@ Drag awards to racers,<br/>or racers to awards.
     <input type="button" value="Close"
            onclick='close_racer_awards_modal();'/>
   </form>
+</div>
+
+<div id="ballot_modal" class="modal_dialog wide_modal hidden block_buttons">
+  <label for='balloting_state'>Balloting is: </label>
+  <input id='balloting_state' type='checkbox' class='flipswitch'
+         data-on-text='Open' data-off-text='Closed'
+  <?php if (read_raceinfo('balloting', 'closed') == 'open') echo "checked='checked'"; ?>/>
+  <div>
+    <label for='ballot_password'>Ballot password:</label>
+    <input id='ballot_password' type='text' class='not-mobile'
+           onchange='on_ballot_password_change()'/>
+  </div>
+  
+  <div id="ballot_modal_awards">
+  </div>
+
+  <input type="button" value="Close" onclick='close_modal($("#ballot_modal"));'/>
+</div>
+
+<div id="ballot_results_modal" class="modal_dialog hidden">
+  <div id="ballot_results_tabulation">
+  </div>
+  <div class="block_buttons">
+    <input type="button" value="Close" onclick='close_modal($("#ballot_results_modal"));'/>
+  </div>
 </div>
 
 </body>

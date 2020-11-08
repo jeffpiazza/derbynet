@@ -7,4 +7,6 @@ function schema_version() {
 function expected_schema_version() {
   return 6;
 }
+
+define('BALLOTING_SCHEMA', 6);  // First schema version to support balloting
 ?>

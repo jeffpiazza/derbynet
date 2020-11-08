@@ -48,7 +48,7 @@
     border: 1px black solid;
 }
 
-#awards a {
+#awards ul a {
     color: black;
     cursor: pointer;
 }
@@ -70,6 +70,14 @@
 #awards .recipient {
     float: right;
 }
+#awards .votes {
+  float: right;
+  margin-top: 10px;
+  margin-right: 5px;
+  border: 1px solid black;
+  padding: 2px;
+}
+
 #racers {
     position: absolute;
     left: 300px;
@@ -147,15 +155,34 @@
     font-size: inherit;
 }
 
-#dd-prompt {
+#ballot_modal_awards {
+  margin-bottom: 35px;
+}
+#ballot_modal_awards label {
+  font-size: 16px;
+  margin-left: 15px;
+  margin-right: 10px;
+}
+#ballot_modal_awards select {
+  font-size: 16px;
+}
+
+#ballot_results_tabulation {
+  margin-top: 20px;
+  margin-bottom: 35px;
+}
+
+#ballot-button-div {
   position: absolute;
   left: 25px;
-  width: 300px;
+}
+
+#dd-prompt {
+  margin-left: 10px;
+  background: #ccc;
   text-align: center;
-  margin-top: 10px;
   font-size: 18px;
   font-weight: bold;
-  background: #ccc;
 }
 
 #sort_controls {

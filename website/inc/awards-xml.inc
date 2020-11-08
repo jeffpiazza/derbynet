@@ -22,6 +22,7 @@ function emit_all_awards($include_ad_hoc) {
   global $db;
   $all_awards = all_awards($include_ad_hoc);
   mark_award_eligibility($all_awards);
+  mark_votes_and_balloting($all_awards);
   foreach ($all_awards as $award) {
     echo '<award';
     echo ' awardid="'.$award['awardid'].'"';
@@ -37,7 +38,18 @@ function emit_all_awards($include_ad_hoc) {
     echo ' lastname="'.htmlspecialchars($award['lastname'], ENT_QUOTES, 'UTF-8').'"';
     echo ' carnumber="'.$award['carnumber'].'"';
     echo ' sort="'.$award['sort'].'"';
-    echo "/>\n";
+    echo ' ballot_depth="'.$award['ballot_depth'].'"';
+    echo '>';
+    foreach ($award['votes'] as $vote) {
+      echo "<vote";
+      echo " racerid=\"$vote[racerid]\"";
+      echo " score=\"$vote[score]\"";
+      echo " carnumber=\"$vote[carnumber]\"";
+      echo ' firstname="'.htmlspecialchars($vote['firstname'], ENT_QUOTES, 'UTF-8').'"';
+      echo ' lastname="'.htmlspecialchars($vote['lastname'], ENT_QUOTES, 'UTF-8').'"';
+      echo "/>";
+    }
+    echo "</award>\n";
   }
 }
 

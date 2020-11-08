@@ -5,14 +5,18 @@
   name
   awardtypeid
   class_and_rank
-  sort  
+  sort
+  ballot_depth (0 for "remove from ballot")
 */
 
 require_once('inc/awards-xml.inc');
+require_once('inc/schema_version.inc');
+require_once('inc/voterid.inc');
 
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
   start_response();
-  if ($_POST['awardid'] == 'new') {
+  $awardid = $_POST['awardid'];
+  if ($awardid == 'new') {
     $params = array(':awardname' => $_POST['name'],
                     ':awardtypeid' => $_POST['awardtypeid']);
     $fields = '';
@@ -51,7 +55,7 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
         .' VALUES(:awardname, :awardtypeid'.$values.')';
   } else {
     $fields = '';
-    $params = array(':awardid' => $_POST['awardid']);
+    $params = array(':awardid' => $awardid);
     if (isset($_POST['name'])) {
       $fields .= ', awardname = :awardname';
       $params[':awardname'] = $_POST['name'];
@@ -79,14 +83,32 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
       $fields .= ', sort = :sort';
       $params[':sort'] = $_POST['sort'];
     }
-    $sql = 'UPDATE Awards SET '.substr($fields, 2)
-        .' WHERE awardid = :awardid';
+    if (strlen($fields) > 2) {
+      $sql = 'UPDATE Awards SET '.substr($fields, 2)
+            .' WHERE awardid = :awardid';
+    } else {
+      $sql = '';
+    }
   }
 
-  echo '<sql>'.$sql.'</sql>'."\n";
   try {
-    $stmt = $db->prepare($sql);
-    $stmt->execute($params);
+    if (!empty($sql)) {
+      echo '<sql>'.$sql.'</sql>'."\n";
+      $stmt = $db->prepare($sql);
+      $stmt->execute($params);
+    }
+
+    if (isset($_POST['ballot_depth'])) {
+      if ($awardid == 'new') {
+        $awardid = read_single_value('SELECT awardid FROM Awards'
+                                     .' WHERE awardname = :awardname'
+                                     .'   AND awardtypeid = :awardtypeid',
+                                     array(':awardname' => $_POST['name'],
+                                           ':awardtypeid' => $_POST['awardtypeid']));
+      }
+      set_ballot_depth($awardid, $_POST['ballot_depth']);
+    }
+    
     echo "<success/>\n";
     emit_award_list(/* include_ad_hoc */ false);
   } catch (Exception $e) {

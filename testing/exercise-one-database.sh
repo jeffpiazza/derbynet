@@ -85,7 +85,10 @@ run_tests() {
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-unused-lanes.sh "$BASE_URL"
 
+    `dirname $0`/test-balloting.sh "$BASE_URL"
+
     SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)
+    echo Taking snapshot in $SNAPSHOT
     curl_get "action.php?query=snapshot.get" > $SNAPSHOT
 
     `dirname $0`/test-import-results.sh "$BASE_URL"

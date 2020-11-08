@@ -1,0 +1,157 @@
+#awards {
+  position: relative;
+  width: 250px;
+  top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-y: auto;
+}
+
+#awards div.ballocode {
+  border: 2px black solid;
+}
+
+#ballot-code-status {
+  width: 30px;
+  margin-left: 30px;
+}
+
+#awards div.please-click {
+  margin-top: 20px;
+}
+
+#awards div.award {
+  min-height: 50px;
+  border: 2px black solid;
+  cursor: pointer;
+}
+
+#awards p.award-name {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 2px;
+  margin-left: 2px;
+  text-align: center;
+}
+
+#awards div.award div.please-vote-for {
+  font-size: small;
+  text-align: center;
+}
+
+div.selection {
+  display: inline;
+}
+
+#awards div.award div.selection {
+  display: block;
+}
+
+div.selection div.carno {
+  display: inline;
+  font-size: large;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+div.selection img {
+  vertical-align: middle;
+  margin-left: 20px;
+}
+
+#racers_modal {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+  padding-top: 5px;
+}
+
+#racers_modal_headline {
+  padding-top: 0;
+}
+
+#racers_modal_headline input[type=button] {
+  position: absolute;
+  right: 15px;
+  width: 100px;
+}
+
+#racers {
+    position: absolute;
+    left: 0px;
+    right: 0;
+    top: 100px;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.ballot_racer {
+    position: relative;
+    display: inline-block;
+    /* Default is vertical-align: baseline, which lines up the bottoms of the images. */
+    vertical-align: top;
+    width: 150px;
+    height: 200px;
+    /* background-image gets set by javascript for speed award winners */
+    /* background-image: url('../img/laurel.png'); */
+    background-image: none;
+    background-repeat: no-repeat;
+}
+.ballot_racer.hidden {
+  display: none;
+}
+
+.ballot_racer img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ballot_racer .carno {
+    text-align: center;
+    width: 100%;
+    font-size: 24px;
+    font-weight: bold;
+}
+.ballot_racer .racer_name,
+.ballot_racer .group_name,
+.ballot_racer .rank_name {
+    text-align: center;
+    width: 100%;
+    font-size: 16px;
+}
+
+#racer_view_modal {
+  width: 800px;
+  padding-left: 0px;
+}
+#racer_view_check {
+  position: absolute;
+  left: 0;
+  width: 110px;
+  font-size: xx-large;
+  font-weight: bold;
+}
+/* TODO Not sure this is doing anything */
+#racer_view_check img {
+  width: 109px;
+}
+#racer_view_carnumber {
+  position: absolute;
+  left: 20px;
+  top: 330px;
+  /* width: 110px; */
+  font-size: 60px;
+  font-weight: bold;
+}
+#racer_view_photo {
+  margin-left: 115px;
+  min-height: 300px;
+}
+
+#full-ballot {
+  color: red;
+  text-align: center;
+}
