@@ -73,9 +73,8 @@ $(function() {
          value="<?php echo get_lane_count(); ?>"/>
   <div>
     <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
-           style="margin-left: 50px; "
            type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
-    <label style="font-size: 18px;" for="reverse-lanes">Number lanes in reverse</label>
+    <label id="reverse-lanes-label" for="reverse-lanes">Number lanes in reverse</label>
   </div>
 
   <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"

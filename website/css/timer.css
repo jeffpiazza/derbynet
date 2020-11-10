@@ -57,6 +57,12 @@ div.test-control label {
   font-family: sans-serif;
   font-size: 24px;
 }
+#reverse-lanes {
+  margin-left: 50px;
+}
+#reverse-lanes-label {
+  font-size: 18px;
+}
 
 
 div#now-racing {
