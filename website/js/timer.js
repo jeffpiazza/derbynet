@@ -35,6 +35,16 @@ $(function() {
   $("#n-lanes").on('keyup mouseup', on_lane_count_change);
 });
 
+function on_reverse_lanes_change() {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'settings.write',
+                 'reverse-lanes': $("#reverse-lanes").is(':checked') ? 1 : 0,
+                 'reverse-lanes-checkbox': 1}
+        });
+}
+$(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
+
 function show_mask() {
   var nlanes = $("#n-lanes").val();
   if (nlanes <= 0) {
@@ -78,6 +88,16 @@ function on_testing_change(event, synthetic) {
   }
 }
 $(function() { $("#test-mode").on('change', on_testing_change); });
+
+function on_send_log_change(event) {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'settings.write',
+                 'timer-send-logs': $("#timer-send-logs").is(':checked') ? 1 : 0,
+                },
+         });
+}
+$(function() { $("#timer-send-logs").on('change', on_send_log_change); });
 
 function update_testing_mode(current) {
   var should_be_checked =

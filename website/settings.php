@@ -91,6 +91,11 @@ $scoring = read_raceinfo('scoring', 0);
                value="<?php echo get_lane_count(); ?>"/>
         <label for="n-lanes">Number of lanes on the track.</label>
       </p>
+      <p>
+        <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
+               type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
+        <label for="reverse-lanes">Number lanes in reverse</label>
+      </p>
 <p>
     <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
            value="<?php echo read_raceinfo('unused-lane-mask', 0); ?>"/>

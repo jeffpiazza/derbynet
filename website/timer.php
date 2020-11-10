@@ -69,8 +69,14 @@ $(function() {
 
 <div id="now-racing">
   <label id="n-lanes-label" for="n-lanes">Number of lanes on the track:</label>
-  <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
+  <input id="n-lanes" name="n-lanes" type="number" class="not-mobile" min="0" max="20"
          value="<?php echo get_lane_count(); ?>"/>
+  <div>
+    <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
+           style="margin-left: 50px; "
+           type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
+    <label style="font-size: 18px;" for="reverse-lanes">Number lanes in reverse</label>
+  </div>
 
   <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
            value="<?php echo read_raceinfo('tt-mask', read_raceinfo('unused-lane-mask', 0)); ?>"/>

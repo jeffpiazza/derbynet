@@ -13,7 +13,33 @@ function compare_by_finishtime(&$lhs, &$rhs) {
 // $_POST['lane1'], $_POST['lane2'], etc. for times
 // Optionally, $_POST['place1'], $_POST['place2'], etc., for places (by lane)
 //
-function write_heat_results() {
+// Returns zero-based array of {time, place}, e.g., with lane 1 result at index 0.
+// Lanes without reported results appear as empty array values.
+function parse_heat_results($nlanes) {
+  $results = array();
+  for ($i = 0; $i < $nlanes; ++$i) {
+    $results[] = array();
+  }
+
+  foreach ($_POST as $key => $value) {
+    if (substr($key, 0, 4) == 'lane') {
+      $lane = intval(substr($key, 4));
+      if (0 < $lane && $lane <= $nlanes) {
+        $results[$lane - 1]['time'] = $value;
+      }
+    } else if (substr($key, 0, 5) == 'place') {
+      $lane = intval(substr($key, 5));
+      if (0 < $lane && $lane <= $nlanes) {
+        $results[$lane - 1]['place'] = $value;
+      }
+    }
+  }
+  return $results;
+}
+
+// $results argument is a zero-based array of {time, place} entries, as produced by
+// parse_heat_results, above.
+function write_heat_results($results) {
   global $db;
 
   $current = get_running_round();
@@ -27,9 +53,12 @@ function write_heat_results() {
     // results because new results are available.)
     timer_test_clear_old_results();
     timer_test_record_heat($heat);
-    foreach ($_POST as $key => $value) {
-      if (substr($key, 0, 4) == 'lane' || substr($key, 0, 5) == 'place') {
-        timer_test_store_result($key, $value);
+    foreach ($results as $lane0 => $value) {
+      if (isset($value['time'])) {
+        timer_test_store_result('lane'.($lane0 + 1), $value['time']);
+      }
+      if (isset($value['place'])) {
+        timer_test_store_result('place'.($lane0 + 1), $value['place']);
       }
     }
     return true;
@@ -62,8 +91,8 @@ function write_heat_results() {
                            'finishplace' => $row['finishplace']);
       // If $_POST doesn't include a new value for finishtime, then leave
       // the old one (if there was one).
-      if (isset($_POST['lane'.$lane])) {
-        $result = $_POST['lane'.$lane];
+      if (isset($results[$lane - 1]['time'])) {
+        $result = $results[$lane - 1]['time'];
         if ($result == '') $result = 0.0;
         $all_times[count($all_times) - 1]['finishtime'] = $result;
       } else {
@@ -72,8 +101,8 @@ function write_heat_results() {
         }
         $all_times_posted = false;
       }
-      if (isset($_POST['place'.$lane])) {
-        $all_times[count($all_times) - 1]['finishplace'] = $_POST['place'.$lane];
+      if (isset($results[$lane - 1]['place'])) {
+        $all_times[count($all_times) - 1]['finishplace'] = $results[$lane - 1]['place'];
       } else {
         $all_places_posted = false;
       }

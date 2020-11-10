@@ -41,7 +41,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     record_event_for_discarded_result($resultid);
   }
 
-  if (write_heat_results()) {
+  if (write_heat_results(parse_heat_results(get_lane_count()))) {
     record_event_sql('INSERT INTO Events(action, roundid, heat) VALUES(:action, :roundid, :heat)',
                      array(':action' => EVENT_HEAT_MANUALLY_ENTERED,
                            ':roundid' => $current['roundid'],

@@ -96,13 +96,23 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       // switch was off.  We should prompt the race coordinator and offer to
       // record these times somewhere.
       echo "\n  <failure code='notracing'>Not racing now.</failure>\n";
-    } else if (write_heat_results()) {
-      send_replay_REPLAY();
-      write_raceinfo('timer_current', '');
-      $current = get_running_round();
-      advance_heat($current, 'next', /* show failure */ false);
-      $racing_state = get_racing_state();
-      echo "\n  <success/>\n";
+    } else {
+      $nlanes = get_lane_count();
+      $results = parse_heat_results($nlanes);
+      if (read_raceinfo_boolean('reverse-lanes')) {
+        $oldresults = $results;  // Copies the array
+        for ($i = 0; $i < $nlanes; ++$i) {
+          $results[$i] = $oldresults[$nlanes - $i - 1];
+        }
+      }
+      if (write_heat_results($results)) {
+        send_replay_REPLAY();
+        write_raceinfo('timer_current', '');
+        $current = get_running_round();
+        advance_heat($current, 'next', /* show failure */ false);
+        $racing_state = get_racing_state();
+        echo "\n  <success/>\n";
+      }
     }
     // If another heat is teed up, we'll immediately change state to
     // TIMER_STAGING, below.
@@ -159,9 +169,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     // i.e., not staging or running
     $pending = true;
     $mask = 0;
+    $nlanes = get_lane_count();
     if ($current['roundid'] == TIMER_TEST_ROUNDID) {
-      $lane_count = get_lane_count();
-      $mask = (1 << $lane_count) - 1 - read_raceinfo('tt-mask', 0);
+      $mask = (1 << $nlanes) - 1 - read_raceinfo('tt-mask', 0);
     } else {
       $stmt = $db->prepare('SELECT lane, finishtime, finishplace FROM RaceChart'
                            .' WHERE roundid = :roundid AND heat = :heat'
@@ -173,6 +183,15 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
           $pending = false;
         }
         $mask |= (1 << ($row['lane'] - 1));
+      }
+    }
+    if (read_raceinfo_boolean('reverse-lanes')) {
+      $oldmask = $mask;
+      $mask = 0;
+      for ($l = 0; $l < $nlanes; ++$l) {
+        if (($oldmask & (1 << $l)) != 0) {
+          $mask |= (1 << ($nlanes - $l - 1));
+        }
       }
     }
     if ($pending) {
