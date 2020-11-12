@@ -19,7 +19,7 @@ function is_aggregate_class(&$class_row) {
   }
 }
 
-// Returns array of {classid, class, constituent, durable, ntrophies} elements,
+// Returns array of {classid, class, constituents, rankids, durable, ntrophies} elements,
 // indexed by classid.
 function aggregate_classes() {
   global $db;

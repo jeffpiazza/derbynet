@@ -20,9 +20,9 @@ function emit_award_types($include_ad_hoc) {
 
 function emit_all_awards($include_ad_hoc) {
   global $db;
-  $agg_classes = aggregate_classes();
-  compute_aggregate_constituents_tc($agg_classes);
-  foreach (all_awards($include_ad_hoc) as $award) {
+  $all_awards = all_awards($include_ad_hoc);
+  mark_award_eligibility($all_awards);
+  foreach ($all_awards as $award) {
     echo '<award';
     echo ' awardid="'.$award['awardid'].'"';
     echo ' awardname="'.htmlspecialchars($award['awardname'], ENT_QUOTES, 'UTF-8').'"';
@@ -35,8 +35,8 @@ function emit_all_awards($include_ad_hoc) {
     // (Otherwise, a racer's eligibility for an award is determined by the
     // classid attribute, which must be either 0 or the same as the racer's
     // native class.)
-    if (isset($award['classid']) && isset($agg_classes[$award['classid']])) {
-      echo ' eligible="'.implode(',', $agg_classes[$award['classid']]['constituents_tc']) .'"';
+    if (count($award['eligible-classids']) > 1) {
+      echo ' eligible="'.implode(',', $award['eligible-classids']) .'"';
     }
     echo ' rankid="'.@$award['rankid'].'"';
     echo ' racerid="'.$award['racerid'].'"';

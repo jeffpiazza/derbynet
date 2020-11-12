@@ -201,4 +201,36 @@ function add_speed_awards(&$awards) {
   return $reserved_overall;
 }
 
+// For each award, add eligible-classids and eligible-rankids fields.
+function mark_award_eligibility(&$awards) {
+  list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+  $agg_classes = aggregate_classes();
+  compute_aggregate_constituents_tc($agg_classes);
+  foreach ($awards as &$award) {
+    // For awards on aggregate classes, the award can be given to any members of
+    // the native classes that comprise the aggregate class, perhaps indirectly.
+    if ($award['classid'] == 0) {
+      $award['eligible-classids'] = $classseq;  // All classids
+    } else if (isset($agg_classes[$award['classid']])) {
+      $agg = &$agg_classes[$award['classid']];
+      $award['eligible-classids'] = $agg['constituents_tc'];
+    } else {
+      $award['eligible-classids'] = array($award['classid']);
+    }
+
+    if ($award['rankid'] != 0) {
+      $award['eligible-rankids'] = array($award['rankid']);
+    } else if ($award['classid'] != 0 && isset($agg_classes[$award['classid']])) {
+      $agg = &$agg_classes[$award['classid']];
+      if (count($agg['rankids']) > 0) {
+        $award['eligible-rankids'] = $agg['rankids'];
+      } else {
+        $award['eligible-rankids'] = $rankseq;  // All rankids
+      }
+    } else {
+      $award['eligible-rankids'] = $rankseq;  // All rankids
+    }
+  }
+}
+
 ?>
