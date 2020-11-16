@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>org.jeffpiazza.derbynet.after-macos-upgrade</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>LaunchOnlyOnce</key>
+    <true/>
+
+    <key>OnDemand</key>
+    <false/>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/maintenance/DerbyNet/after-macos-upgrade.sh</string>
+    </array>
+</dict>
+</plist>

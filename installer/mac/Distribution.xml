@@ -5,6 +5,8 @@
     <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
     <pkg-ref id="org.jeffpiazza.derbynet.extras"/>
     <options require-scripts="false"/>
+    <!-- welcome file="welcome.html"/ -->
+    <background file="emblem.png" alignment="bottomleft"/>
     <conclusion file="README.html"/>
     <choices-outline>
             <line choice="org.jeffpiazza.derbynet.website"/>

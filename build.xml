@@ -199,7 +199,7 @@
         <arg value="--root"/>
         <arg value="ROOT"/>
         <arg value="--scripts"/>
-        <arg value="installer/mac/scripts/webserver"/>
+        <arg value="installer/mac/webserver/scripts"/>
         <arg value="--identifier"/>
         <arg value="org.jeffpiazza.derbynet.website"/>
         <arg value="--version"/>
@@ -255,16 +255,30 @@
 
 <target name="mac.installer.extras" if="is_mac">
     <mkdir dir="ROOT/Applications/DerbyNet/extras"/>
-    <copy todir="ROOT/Applications/DerbyNet">
-        <fileset dir="installer/mac/scripts/webserver">
+    <mkdir dir="ROOT/Applications/DerbyNet/maintenance"/>
+    <copy todir="ROOT/Applications/DerbyNet/maintenance">
+        <fileset dir="installer/mac/extras/maintenance">
+            <include name="after-macos-upgrade.sh"/>
+            <include name="stop-apache.sh"/>
+        </fileset>
+        <fileset dir="installer/mac/webserver/scripts">
             <include name="create-or-update-php-ini.sh"/>
             <include name="update-apache-config.sh"/>
         </fileset>
     </copy>
+    <copy todir="ROOT/Library/LaunchDaemons">
+        <fileset dir="installer/mac">
+            <include name="org.jeffpiazza.derbynet.after-macos-upgrade.plist"/>
+        </fileset>
+    </copy>
     <chmod perm="+x"
-           file="ROOT/Applications/DerbyNet/create-or-update-php-ini.sh"/>
+           file="ROOT/Applications/DerbyNet/maintenance/after-macos-upgrade.sh"/>
     <chmod perm="+x"
-           file="ROOT/Applications/DerbyNet/update-apache-config.sh"/>
+           file="ROOT/Applications/DerbyNet/maintenance/stop-apache.sh"/>
+    <chmod perm="+x"
+           file="ROOT/Applications/DerbyNet/maintenance/create-or-update-php-ini.sh"/>
+    <chmod perm="+x"
+           file="ROOT/Applications/DerbyNet/maintenance/update-apache-config.sh"/>
     <copy todir="ROOT/Applications/DerbyNet/extras">
         <fileset dir="extras"/>
     </copy>
@@ -288,7 +302,10 @@
                  generated-build-date.inc,
                  release-series, generated-commit-hash.inc">
     <mkdir dir="RESOURCES"/>
+    <copy file="website/Images/Generic/emblem.png" todir="RESOURCES"/>
+    <!-- copy file="installer/mac/welcome.html" todir="RESOURCES"/ -->
     <copy file="installer/mac/README.html" todir="RESOURCES"/>
+
     <exec executable="/usr/bin/productbuild">
         <arg value="--distribution"/>
         <arg value="installer/mac/Distribution.xml"/>

@@ -6,4 +6,8 @@
 ./update-apache-config.sh
 ./maybe-rewrite-index-html.sh
 
+# Make Apache run after (every) restart
+launchctl enable system/org.apache.httpd
+
+
 open http://localhost/derbynet
