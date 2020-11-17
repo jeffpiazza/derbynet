@@ -151,10 +151,12 @@ public class ClientSession {
     // This code will block until a response is actually received.  That should
     // be OK as long as there's a thread dedicated to handling requests in
     // this session.
-    if (connection.getResponseCode() == 200) {
+    final int responseCode = connection.getResponseCode();
+    if (responseCode == 200) {
       return parseResponse(connection.getInputStream());
     }
 
+    LogWriter.httpResponse("Server responded with " + responseCode);
     return null;
   }
 

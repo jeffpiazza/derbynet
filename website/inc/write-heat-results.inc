@@ -71,6 +71,12 @@ function write_heat_results($results) {
     // General strategy for problems should be: reject results, but log them
     // somewhere that can be presented on coordinator dashboard.
 
+    if ((isset($_POST['roundid']) && $_POST['roundid'] != $roundid) ||
+        (isset($_POST['heat']) && $_POST['heat'] != $heat)) {
+      echo "<failure code='wrong-heat'>Expecting heat results for roundid $roundid and heat $heat</failure>";
+      return false;
+    }
+
     $all_times = array();  // array of {resultid, lane, finishtime, finishplace} for scheduled lanes
     $all_times_posted = true;
     $all_places_posted = true;

@@ -56,11 +56,23 @@ function send_replay_message($cmd) {
   global $db;
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
-    // TODO: The trouble here is that the RaceInfo table's ItemValue may not be long enough for what we need,
-    // including file names
-    $db->beginTransaction();
-    write_raceinfo('replay_queue', read_raceinfo('replay_queue', '').$cmd."\n");
-    $db->commit();
+    // TODO: The trouble here is that the RaceInfo table's ItemValue may not be
+    // long enough for what we need, including file names
+    try {
+      if ($db->beginTransaction()) {
+        try {
+          write_raceinfo('replay_queue', read_raceinfo('replay_queue', '').$cmd."\n");
+          $db->commit();
+        } catch (PDOException $e) {
+          $db->rollBack();
+          error_log("send_replay_message: transaction rolled back: " + $e);
+        }
+      } else {
+        error_log("send_replay_message: beginTransaction returns false");
+      }
+    } catch (PDOException $e) {
+        error_log("send_replay_message: beginTransaction throws " + $e);
+    }
     $db->setAttribute(PDO::ATTR_AUTOCOMMIT);
     return true;
   } else {
