@@ -73,6 +73,27 @@ curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="
 curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'sort="3"'
 curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="4"'
 
+## Create "Younger" aggregate class of classes 1,2
+curl_post action.php "action=class.add&constituent_1=1&constituent_2=1&name=Younger" | check_success
+## Create an award for the aggregate class.  Award rankid won't matter for an aggregate class award.
+curl_post action.php "action=award.edit&awardid=new&awardtypeid=2&name=AggClass%20Award&class_and_rank=8,8" | check_success
+
+curl_post action.php "action=award.winner&awardid=6&racerid=48" | check_failure
+curl_post action.php "action=award.winner&awardid=6&racerid=1" | check_success
+
+## Create an empty subgroup for Lions & Tigers
+curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_success
+curl_post action.php "action=rank.add&name=Private&classid=1" | check_success
+## Create an "aggregate" class comprising only the new Private rankid
+curl_post action.php "action=class.add&rankid_8=1&name=AggExclusive" | check_success
+## Create an award for that exclusive (empty) class
+curl_post action.php "action=award.edit&awardid=new&awardtypeid=2&name=Exclusive&class_and_rank=1,8" | check_success
+
+curl_post action.php "action=award.winner&awardid=7&racerid=1" | check_failure
+# Move racer 1 to the previously empty subgroup and now the award can be granted
+curl_post action.php "action=racer.edit&racer=1&rankid=8" | check_success
+curl_post action.php "action=award.winner&awardid=7&racerid=1" | check_success
+
 # Try some ad-hoc awards
 # 21 = Derek Dreier, car 121
 # 12 = Christopher Chauncey, car 212
@@ -87,12 +108,17 @@ curl_get "action.php?query=award.list&adhoc=0" | expect_count 'Glittery' 0
 
 # Ad hoc awards aren't supposed to affect numbering for named awards
 curl_post action.php "action=award.edit&awardid=new&awardtypeid=4&name=NewFourth" | check_success
-curl_get "action.php?query=award.list" | grep NewFourth | expect_one 'sort="5"'
+curl_get "action.php?query=award.list" | grep NewFourth | expect_one 'sort="7"'
 
 # There's no current award at the very beginning, but we don't want to enforce
 # that this test has to be run at the very beginning.
 #
 # curl_get "action.php?query=award.current" | check_failure
+
+# The presence of two aggregate classes would make second-fastest-in-pack (speed-2)
+# not meaningful.
+curl_post action.php "action=class.delete&classid=9" | check_success
+curl_post action.php "action=class.delete&classid=8" | check_success
 
 curl_post action.php "action=award.present&key=speed-2" | check_success
 curl_get "action.php?query=award.current" | expect_count '<award ' 1

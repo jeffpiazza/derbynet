@@ -29,15 +29,8 @@ function emit_all_awards($include_ad_hoc) {
     echo ' awardtypeid="'.$award['awardtypeid'].'"';
     echo ' adhoc="'.($award['awardtypeid'] == AD_HOC_AWARDTYPEID ? 1 : 0).'"';
     echo ' classid="'.@$award['classid'].'"';
-    // For awards on aggregate classes, the award can be given to any members of
-    // the native classes that comprise the aggregate class, perhaps indirectly.
-    // For these cases, the 'eligible' attribute names all those native classes.
-    // (Otherwise, a racer's eligibility for an award is determined by the
-    // classid attribute, which must be either 0 or the same as the racer's
-    // native class.)
-    if (count($award['eligible-classids']) > 1) {
-      echo ' eligible="'.implode(',', $award['eligible-classids']) .'"';
-    }
+    echo ' eligible-classids="'.implode(',', $award['eligible-classids']).'"';
+    echo ' eligible-rankids="'.implode(',', $award['eligible-rankids']).'"';
     echo ' rankid="'.@$award['rankid'].'"';
     echo ' racerid="'.$award['racerid'].'"';
     echo ' firstname="'.htmlspecialchars($award['firstname'], ENT_QUOTES, 'UTF-8').'"';

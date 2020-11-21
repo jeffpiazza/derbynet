@@ -46,6 +46,8 @@ if (count($keys) >= 2) {
     $awards = array();
     add_speed_awards($awards);
 
+    // echo "<speed-awards>".json_encode($awards, JSON_PRETTY_PRINT | JSON_HEX_TAG | JSON_HEX_AMP)."</speed-awards>\n";
+
     if (count($keys) == 4) {
       $rankid = $keys[3];
       $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',

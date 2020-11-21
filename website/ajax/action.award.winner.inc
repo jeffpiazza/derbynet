@@ -29,12 +29,19 @@ if (have_permission(JUDGING_PERMISSION)) {
           $agg_classes = aggregate_classes();
           if (isset($agg_classes[$award_classid])) {
             compute_aggregate_constituents_tc($agg_classes);
-            if (in_array($racer_classid,
-                         $agg_classes[$award_classid]['constituents_tc'])) {
+            $agg = $agg_classes[$award_classid];
+            if (in_array($racer_classid, $agg['constituents_tc'])) {
               // Racer is a member of one of the constituent classes, and so is
               // eligible for the award.  Express this by removing the award
               // class restriction that gets tested below.
               $award_classid = 0;
+            }
+            if (count($agg['rankids']) == 0 || in_array($racer_rankid, $agg['rankids'])) {
+              echo "<rank-eligible>$award_rankid $racer_rankid ".json_encode($agg)."</rank-eligible>\n";  // TODO
+              $award_rankid = 0;
+            } else {
+              echo "<rank-eligible>FAIL $award_rankid $racer_rankid ".json_encode($agg['rankids'])."</rank-eligible>\n";  // TODO
+              $award_rankid = -1;
             }
           }
         }
@@ -47,7 +54,7 @@ if (have_permission(JUDGING_PERMISSION)) {
           echo "<failure code='wrong-class'>Award is for a different class</failure>\n";
         } else if (isset($award_rankid) && $award_rankid != 0 && $award_rankid != $racer_rankid) {
           $ok = false;
-          echo "<failure code='wrong-class'>Award is for a different subgroup</failure>\n";
+          echo "<failure code='wrong-subgroup'>Award is for a different subgroup</failure>\n";
         }
       }
     }

@@ -5,26 +5,24 @@
 //    "unacceptable-hover-wrong-class"
 function award_assignment_hover_class(award_li, racer_div) {
   // racer_div has data-racerid
-  // award_li has data-awardid, awardname, awardtypeid, classid, class, rankid, rank, racerid (0)
+  // award_li has data-awardid, data-awardname, data-awardtypeid,
+  //    data-classid, data-class, data-rankid, data-rank,
+  //    data-eligible-classids, data-eligible-rankids, data-racerid (0)
   if (award_li.attr('data-racerid') != 0) {
     return "unacceptable-hover-filled";
   }
-  var classid = award_li.attr('data-classid');
-  var rankid = award_li.attr('data-rankid');
-  var eligible = award_li.attr('data-eligible');
-  if (typeof eligible == typeof undefined || eligible === false) {
-    eligible = '';
+  var eligible_classids = award_li.attr('data-eligible-classids');
+  if (typeof eligible_classids == typeof undefined || eligible_classids === false) {
+    eligible_classids = '';
   }
-  
-  if (eligible != '') {
-    // If eligible is present, it's a list of classids, and classid is NOT used
-    classid = 0;
+  var eligible_rankids = award_li.attr('attr-eligible-rankids');
+  if (typeof eligible_rankids == typeof undefined || eligible_rankids === false) {
+    eligible_rankids = '';
   }
-  
-  if (eligible != '' &&
-          !eligible.split(',').includes(racer_div.find('div.group_name').attr('data-classid')) ||
-      (classid != 0 && classid != racer_div.find('div.group_name').attr('data-classid')) ||
-      (rankid != 0 && rankid != racer_div.find('div.subgroup_name').attr('data-rankid'))) {
+  if ((eligible_classids != '' &&
+       !eligible_classids.split(',').includes(racer_div.find('div.group_name').attr('data-classid'))) ||
+      (eligible_rankids != '' &&
+       !eligible_rankids.split(',').includes(racer_div.find('div.group_name').attr('data-rankid')))) {
     return "unacceptable-hover-wrong-class";
   }
 
@@ -180,9 +178,11 @@ function update_awards(dataxml) {
           $(this).find('.classname').text(classname);
         }
 
-        if ($(this).attr("data-eligible") != awards[i].getAttribute("eligible")) {
-          console.log("Writing data-eligible: " + awards[i].getAttribute("eligible"));  // TODO
-          $(this).attr("data-eligible", awards[i].getAttribute("eligible"));
+        if ($(this).attr("data-eligible-classids") != awards[i].getAttribute("eligible-classids")) {
+          $(this).attr("data-eligible-classids", awards[i].getAttribute("eligible-classids"));
+        }
+        if ($(this).attr("data-eligible-rankids") != awards[i].getAttribute("eligible-rankids")) {
+          $(this).attr("data-eligible-rankids", awards[i].getAttribute("eligible-rankids"));
         }
 
         if ($(this).attr("data-rankid") != awards[i].getAttribute("rankid")) {
