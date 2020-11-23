@@ -67,9 +67,9 @@ function column_header($text, $o) {
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
 var g_order = '<?php echo $order; ?>';
-var g_checkin_on_barcode = <?php
-  echo isset($_SESSION['barcode-checkin']) && $_SESSION['barcode-checkin'] ? "true" : "false";
-?>;
+var g_action_on_barcode = "<?php
+  echo isset($_SESSION['barcode-action']) ? $_SESSION['barcode-action'] : "locate";
+?>";
 </script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -343,10 +343,14 @@ foreach ($stmt as $rs) {
 <div id="barcode_settings_modal" class="modal_dialog hidden block_buttons">
   <form>
     <h2>Barcode Responses</h2>
-    <input name="barcode-handling" id="barcode-handling-radio-checkin" type="radio" value="checkin"/>
-    <label for="barcode-handling-radio-checkin">Check in racer</label>
-    <input name="barcode-handling" id="barcode-handling-radio-locate" type="radio" value="locate"/>
-    <label for="barcode-handling-radio-locate">Locate racer</label>
+    <input id="barcode-handling-locate" name="barcode-handling" type="radio" value="locate"/>
+    <label for="barcode-handling-locate">Locate racer</label>
+    <input id="barcode-handling-checkin" name="barcode-handling" type="radio" value="checkin"/>
+    <label for="barcode-handling-checkin">Check in racer</label>
+    <input id="barcode-handling-racer" name="barcode-handling" type="radio" value="racer-photo"/>
+    <label for="barcode-handling-racer">Capture racer photo</label>
+    <input id="barcode-handling-car" name="barcode-handling" type="radio" value="car-photo"/>
+    <label for="barcode-handling-car">Capture car photo</label>
 
     <input type="submit" value="Close"/>
   </form>

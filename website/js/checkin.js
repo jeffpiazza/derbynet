@@ -556,11 +556,11 @@ function sort_checkin_table() {
 	delete row_array;
 }
 
-// g_checkin_on_barcode is set in checkin.php with a value persisted in the PHP
+// g_action_on_barcode is set in checkin.php with a value persisted in the PHP
 // session for this user.
 $(function() {
-  $("#barcode-handling-radio-checkin").prop('checked', g_checkin_on_barcode);
-  $("#barcode-handling-radio-locate").prop('checked', !g_checkin_on_barcode);
+  $("input[name='barcode-handling']").prop('checked', false);
+  $("input[name='barcode-handling'][value='" + g_action_on_barcode + "']").prop('checked', 'checked');
   mobile_radio_refresh($("#barcode_settings_modal input[type=radio]"));
 
   $("#barcode_settings_modal input[type=radio]")
@@ -574,12 +574,12 @@ function handle_barcode_button_click() {
   });
 }
 function on_barcode_handling_change() {
-  g_checkin_on_barcode = $("#barcode-handling-radio-checkin").is(':checked');
+  g_action_on_barcode = $("input[name='barcode-handling']:checked").val();
   // Update the session to persist this choice
   $.ajax(g_action_url,
          {type: 'POST',
           data: {action: 'session.write',
-                 'session_barcode-checkin': g_checkin_on_barcode}
+                 'session_barcode-action': g_action_on_barcode}
          });
 
   return false;
@@ -639,6 +639,7 @@ function maybe_barcode(raw_search) {
   } else if (raw_search.startsWith('PWD') && raw_search.length == 6) {
     remove_search_highlighting();
     var cell = $("td[data-car-number=" + parseInt(raw_search.substr(3)) + "]");
+    var row = cell.closest('tr');
   } else {
     return false;
   }
@@ -648,9 +649,11 @@ function maybe_barcode(raw_search) {
   }
   
   scroll_and_flash_row(row);
+  console.log(g_action_on_barcode);
 
-  if (g_checkin_on_barcode) {
-    var racerid = row.attr('data-racerid');
+  var racerid = row.attr('data-racerid');
+  if (g_action_on_barcode == "locate") {
+  } else if (g_action_on_barcode == "checkin") {
     var cb = $("#passed-" + racerid);
 
     setTimeout(function() {
@@ -658,7 +661,14 @@ function maybe_barcode(raw_search) {
       // This will update the flipswitch and post the check-in.
       cb.change();
     }, 750);
+  } else {  // racer-photo, car-photo
+    var repo = g_action_on_barcode == "racer-photo" ? "head" : "car";
+    setTimeout(function() {
+      console.log('show_photo_modal ' + racerid + ', ' + repo);
+      show_photo_modal(racerid, repo);
+    }, 750);
   }
+
   return true;
 }
 
