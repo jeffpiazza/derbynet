@@ -8,8 +8,6 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
-
 curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1234.jpg" | check_failure
 # For demo purposes, we want at least one car photo assigned early in the process
 curl_post action.php "action=photo.assign&repo=car&racer=1&photo=Car-1637.jpg" | check_success

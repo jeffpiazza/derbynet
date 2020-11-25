@@ -27,3 +27,5 @@ curl_post action.php \
 
 # `dirname $0`/test-awards.sh "$BASE_URL" basic
 `dirname $0`/test-photo-assignments.sh "$BASE_URL"
+
+curl_post action.php "action=settings.write&n-lanes=4" | check_success
