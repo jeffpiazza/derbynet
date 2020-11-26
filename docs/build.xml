@@ -73,6 +73,7 @@
      <make-pdf file="Photo Upload Options.fodt"/>
      <make-pdf file="Webcams and Secure Contexts.fodt"/>
      <make-pdf file="Live Streaming DerbyNet.fodt"/>
+     <make-pdf file="Online Balloting in DerbyNet.fodt"/>
  </target>
 
  <target name="advanced-topics" depends="make-dist-dir">
