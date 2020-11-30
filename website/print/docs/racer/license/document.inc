@@ -13,6 +13,9 @@ class DriversLicenseDocument extends PrintableRacerDocument {
       'use_barcode' => array('type' => 'bool',
                              'desc' => 'Include barcode',
                              'default' => true),
+      'date_of_issue' => array('type' => 'string',
+                               'desc' => 'Date of Issue',
+                               'default' => date('F j, Y')),
       );
   }
 
@@ -24,6 +27,8 @@ class DriversLicenseDocument extends PrintableRacerDocument {
   }
 
   function DrawOneAt($x, $y, &$racer) {
+    $issue_date = new DateTimeImmutable($this->get_option('date_of_issue'));
+    
     $this->pdf->RoundedRect($x, $y, 3.5, 2.5, 0.125);
 
     $this->DrawBanner($x, $y);
@@ -68,7 +73,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
 //                                   new SetFontTag('Times', 'B', 10), 'Must follow Cub Scout Law'));
     $this->pdf->DrawSequence($x + 0.75, $y + 2.25,
                              array(new SetFontTag('Times', '', 10), 'Date of Issue: ',
-                                   new SetFontTag('Times', 'B', 10), date('l, F j, Y')));
+                                   new SetFontTag('Times', 'B', 10), $issue_date->format('l, F j, Y')));
 
     $this->pdf->SetFillColor(0x02, 0x38, 0x82);
     $this->pdf->Rect($x + 0.625, $y + 2.285, 2.75, 0.15, 'F');
