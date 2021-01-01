@@ -12,6 +12,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ClientSession {
   private CookieManager manager;
@@ -20,6 +21,24 @@ public class ClientSession {
 
   private static final List<String> kTimerLogHeaders = new ArrayList<String>(
       Arrays.asList("Content-Type", "text/plain"));
+
+  public static class HttpException extends IOException {
+    public HttpException(int responseCode, String responseMessage) {
+      this.responseCode = responseCode;
+      this.responseMessage = responseMessage;
+    }
+
+    public HttpException(HttpURLConnection connection) throws IOException {
+      this(connection.getResponseCode(), connection.getResponseMessage());
+    }
+
+    public final int responseCode;
+    public final String responseMessage;
+
+    public String getMessage() {
+      return "HTTP response " + responseCode + " (" + responseMessage + ")";
+    }
+  }
 
   public ClientSession(String base_url) {
     String lowercase_url = base_url.toLowerCase();
@@ -45,7 +64,7 @@ public class ClientSession {
   // variations of the original URL, or return false if there are no more.
   // This implementation considers only one variation.
   private boolean makeUrlVariation() {
-    if (base_url == original_base_url) {  // ptr equality OK for this
+    if (base_url.equals(original_base_url)) {
       if (base_url.endsWith("/derbynet/")) {
         base_url = base_url.substring(0, base_url.lastIndexOf("derbynet/"));
       } else {
@@ -83,11 +102,26 @@ public class ClientSession {
 
   private Element doPostWithVariations(String url_path, String body)
       throws IOException {
-    Element result;
+    Element result = null;
+    HttpException firstException = null;
 
-    do {
+    try {
       result = doPost(url_path, null, body);
-    } while (result == null && makeUrlVariation());
+    } catch (HttpException he) {
+      firstException = he;
+    }
+
+    while (result == null && makeUrlVariation()) {
+      try {
+        result = doPost(url_path, null, body);
+      } catch (HttpException he) {
+        LogWriter.info("For variation, ignoring exception " + he.toString());
+      }
+    }
+
+    if (result == null && firstException != null) {
+      throw firstException;
+    }
 
     return result;
   }
@@ -99,52 +133,101 @@ public class ClientSession {
 
   private Element doPost(URL url, List<String> headers, String body)
       throws IOException {
-    // TODO Sun Security Validator failed
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("POST");
-    connection.addRequestProperty("User-Agent",
-                                  "derby-timer.jar/" + Version.get());
-    if (headers != null) {
-      for (int i = 0; i < headers.size(); i += 2) {
-        connection.addRequestProperty(headers.get(i), headers.get(i + 1));
-      }
-    }
-
-    connection.setDoOutput(true);
-    OutputStreamWriter writer
-        = new OutputStreamWriter(connection.getOutputStream());
-    writer.write(body);
-    writer.flush();
-    writer.close(); // writer.close() may block.
-
-    return getResponse(connection);
+    return makeRequest(url, "POST", headers, body);
   }
 
   public Element doQueryWithVariations(String q) throws IOException {
-    Element result;
+    Element result = null;
+    HttpException firstException = null;
 
-    do {
-      result = doQuery(q);
-    } while (result == null && makeUrlVariation());
+    try {
+      result = doQuery(new URL(base_url + "action.php?query=" + q));
+    } catch (HttpException he) {
+      firstException = he;
+    }
+
+    while (result == null && makeUrlVariation()) {
+      try {
+        result = doQuery(new URL(base_url + "action.php?query=" + q));
+      } catch (HttpException he) {
+        LogWriter.info("For variation, ignoring exception " + he.toString());
+      }
+    }
+
+    if (result == null && firstException != null) {
+      throw firstException;
+    }
 
     return result;
   }
 
-  public Element doQuery(String q) throws IOException {
-    return doQuery(new URL(base_url + "action.php?query=" + q));
-  }
-
-  public Element doQuery(String q, String params) throws IOException {
-    return doQuery(new URL(base_url + "action.php?query=" + q + "&" + params));
-  }
-
   // Overridden by SimulatedClientSession
   protected Element doQuery(URL url) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    connection.setRequestMethod("GET");
-    connection.addRequestProperty("User-Agent",
-                                  "derby-timer.jar/" + Version.get());
+    return makeRequest(url, "GET", null, null);
+  }
+
+  private Element makeRequest(URL url, String method, List<String> headers,
+                              String body) throws IOException {
+    HttpURLConnection connection;
+    do {
+      connection = (HttpURLConnection) url.openConnection();
+
+      connection.setRequestMethod(method);
+      connection.addRequestProperty("User-Agent",
+                                    "derby-timer.jar/" + Version.get());
+      if (headers != null) {
+        for (int i = 0; i < headers.size(); i += 2) {
+          connection.addRequestProperty(headers.get(i), headers.get(i + 1));
+        }
+      }
+
+      if (body != null) {
+        connection.setDoOutput(true);
+        OutputStreamWriter writer
+            = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(body);
+        writer.flush();
+        writer.close(); // writer.close() may block.
+      }
+    } while ((url = urlFromRedirection(connection)) != null);
+
     return getResponse(connection);
+  }
+
+  private URL urlFromRedirection(HttpURLConnection connection) {
+    try {
+      if (300 <= connection.getResponseCode()
+          && connection.getResponseCode() < 400) {
+        String location = connection.getHeaderField("Location");
+        LogWriter.info(
+            "HTTP Redirect: " + connection.getResponseCode() + " ("
+            + connection.getResponseMessage() + ") to " + location);
+
+        maybeUpdateBaseUrlFromRedirection(connection.getURL(), location);
+        return new URL(location);
+      }
+    } catch (IOException ex) {
+      LogWriter.info("Failed to process redirection: " + ex.getMessage());
+    }
+
+    return null;
+  }
+
+  private void maybeUpdateBaseUrlFromRedirection(
+      URL url, String redirect_string) {
+    String url_string = url.toString();
+    if (!url_string.startsWith(base_url)) {
+      LogWriter.info("Original URL " + url_string
+          + " doesn't agree with base_url " + base_url);
+      return;
+    }
+    String tail = url_string.substring(base_url.length());
+
+    if (redirect_string.endsWith(tail)) {
+      base_url = redirect_string.substring(
+          0, redirect_string.length() - tail.length());
+      LogWriter.info("Updating base URL to " + base_url);
+    }
   }
 
   private Element getResponse(HttpURLConnection connection) throws IOException {
@@ -156,8 +239,7 @@ public class ClientSession {
       return parseResponse(connection.getInputStream());
     }
 
-    LogWriter.httpResponse("Server responded with " + responseCode);
-    return null;
+    throw new HttpException(connection);
   }
 
   protected Element parseResponse(String s) throws IOException {
@@ -170,16 +252,9 @@ public class ClientSession {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
-      try {
-        return db.parse(inputStream).getDocumentElement();
-      } catch (Exception e) {
-        LogWriter.stacktrace(e);
-        System.err.println("Failed");
-        e.printStackTrace();
-      }
+      return db.parse(inputStream).getDocumentElement();
     } catch (Exception e) {
       LogWriter.stacktrace(e);
-      e.printStackTrace();
     }
     LogWriter.httpResponse("Unparseable response for message");
     inputStream.reset();

@@ -72,6 +72,10 @@ public class TimerMain {
 
     ConnectorImpl connector = new ConnectorImpl(Flag.trace_messages.value());
 
+    if (Flag.insecure.value()) {
+      HttpsSecurityDisabler.disableHttpsSecurity();
+    }
+
     SimulatedClientSession simulatedSession
         = Flag.simulate_host.value() ? new SimulatedClientSession() : null;
     try {

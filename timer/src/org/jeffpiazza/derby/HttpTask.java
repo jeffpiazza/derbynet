@@ -78,7 +78,7 @@ public class HttpTask implements Runnable {
           }
         } catch (UnknownHostException e) {
           callback.onLoginFailed("Unknown host");
-        } catch (IOException e) {
+        } catch (IOException e) {  // Including ClientSession.HttpException
           callback.onLoginFailed(e.getMessage());
         }
 
@@ -221,6 +221,8 @@ public class HttpTask implements Runnable {
               LogWriter.httpMessage(params);
             }
             response = session.sendTimerMessage(params);
+          } catch (ClientSession.HttpException he) {
+            LogWriter.httpResponse(he.getMessage());
           } catch (Throwable t) {
             LogWriter.trace("Unable to send HTTP message " + params);
             LogWriter.stacktrace(t);

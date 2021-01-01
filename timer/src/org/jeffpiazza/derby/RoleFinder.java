@@ -80,7 +80,6 @@ public class RoleFinder {
       }
     } catch (IOException e) {
       gui.roleFinderFailed(e.getMessage());
-      e.printStackTrace();  // TODO
     } finally {
       synchronized (this) {
         if (succeeded && gui != null) {

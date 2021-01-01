@@ -13,6 +13,11 @@ public abstract class Flag<T> {
   public static final Flag<Boolean> headless
       = new BooleanFlag("x", "Run headless, without GUI.");
 
+  public static final Flag<Boolean> insecure
+      = new BooleanFlag("insecure",
+                        "Ignore any HTTPS certificate problems.  (Use with"
+                        + " caution!)");
+
   public static final Flag<String> logdir
       = new StringFlag("logdir", null, "Write log files in <directory>");
 
