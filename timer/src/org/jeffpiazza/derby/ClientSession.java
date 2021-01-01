@@ -12,7 +12,6 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class ClientSession {
   private CookieManager manager;
@@ -23,20 +22,29 @@ public class ClientSession {
       Arrays.asList("Content-Type", "text/plain"));
 
   public static class HttpException extends IOException {
-    public HttpException(int responseCode, String responseMessage) {
+    public HttpException(int responseCode, String responseMessage, URL url) {
       this.responseCode = responseCode;
       this.responseMessage = responseMessage;
+      this.url = url;
     }
 
     public HttpException(HttpURLConnection connection) throws IOException {
-      this(connection.getResponseCode(), connection.getResponseMessage());
+      this(connection.getResponseCode(), connection.getResponseMessage(),
+           connection.getURL());
     }
 
     public final int responseCode;
     public final String responseMessage;
+    public final URL url;
 
     public String getMessage() {
+      return "HTTP response " + responseCode + " (" + responseMessage
+          + ") for " + url;
+    }
+
+    public String getBriefMessage() {
       return "HTTP response " + responseCode + " (" + responseMessage + ")";
+
     }
   }
 
@@ -102,33 +110,16 @@ public class ClientSession {
 
   private Element doPostWithVariations(String url_path, String body)
       throws IOException {
-    Element result = null;
-    HttpException firstException = null;
+    return makeRequestWithVariations(url_path, "POST", null, body);
+  }
 
-    try {
-      result = doPost(url_path, null, body);
-    } catch (HttpException he) {
-      firstException = he;
-    }
-
-    while (result == null && makeUrlVariation()) {
-      try {
-        result = doPost(url_path, null, body);
-      } catch (HttpException he) {
-        LogWriter.info("For variation, ignoring exception " + he.toString());
-      }
-    }
-
-    if (result == null && firstException != null) {
-      throw firstException;
-    }
-
-    return result;
+  private URL fullUrl(String url_path) throws MalformedURLException {
+    return new URL(base_url + url_path);
   }
 
   private Element doPost(String url_path, List<String> headers, String body)
       throws IOException {
-    return doPost(new URL(base_url + url_path), headers, body);
+    return doPost(fullUrl(url_path), headers, body);
   }
 
   private Element doPost(URL url, List<String> headers, String body)
@@ -137,20 +128,31 @@ public class ClientSession {
   }
 
   public Element doQueryWithVariations(String q) throws IOException {
+    return makeRequestWithVariations("action.php?query=" + q, "GET", null, null);
+  }
+
+  // Overridden by SimulatedClientSession
+  protected Element doQuery(URL url) throws IOException {
+    return makeRequest(url, "GET", null, null);
+  }
+
+  public Element makeRequestWithVariations(String url_path, String method,
+                                           List<String> headers, String body)
+      throws IOException {
     Element result = null;
     HttpException firstException = null;
 
     try {
-      result = doQuery(new URL(base_url + "action.php?query=" + q));
+      result = makeRequest(fullUrl(url_path), method, headers, body);
     } catch (HttpException he) {
       firstException = he;
     }
 
     while (result == null && makeUrlVariation()) {
       try {
-        result = doQuery(new URL(base_url + "action.php?query=" + q));
+        result = makeRequest(fullUrl(url_path), method, headers, body);
       } catch (HttpException he) {
-        LogWriter.info("For variation, ignoring exception " + he.toString());
+        LogWriter.info("Ignoring for variation: " + he.getMessage());
       }
     }
 
@@ -159,11 +161,6 @@ public class ClientSession {
     }
 
     return result;
-  }
-
-  // Overridden by SimulatedClientSession
-  protected Element doQuery(URL url) throws IOException {
-    return makeRequest(url, "GET", null, null);
   }
 
   private Element makeRequest(URL url, String method, List<String> headers,

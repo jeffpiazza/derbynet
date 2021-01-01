@@ -78,8 +78,12 @@ public class RoleFinder {
           }
         }
       }
+    } catch (ClientSession.HttpException he) {
+      gui.roleFinderFailed(he.getBriefMessage());
+      LogWriter.info("RoleFinder failed: " + he.getMessage());
     } catch (IOException e) {
       gui.roleFinderFailed(e.getMessage());
+      LogWriter.info("RoleFinder failed: " + e.getMessage());
     } finally {
       synchronized (this) {
         if (succeeded && gui != null) {
