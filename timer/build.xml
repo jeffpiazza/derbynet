@@ -2,6 +2,8 @@
     <description>
         Timer manager for pinewood derby software
     </description>
+   <!-- NOTE The default target does NOT perform a clean build; do an explicit
+        'clean' when in doubt. -->
   <!-- set global properties for this build -->
   <property name="src" location="src"/>
   <property name="build" location="build"/>
