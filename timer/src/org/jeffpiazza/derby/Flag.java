@@ -50,6 +50,12 @@ public abstract class Flag<T> {
                      "How long after race over before timer will be reset,"
                      + " default 10s.  (For SmartLine, DerbyMagic, NewBold,"
                      + " and BertDrake.)");
+
+  public static final Flag<Long> newline_expected_ms
+      = new LongFlag("newline-expected-ms", 200,
+                     "After this many milliseconds, assume an unterminated line"
+                     + " from the timer is complete (0 = wait forever).");
+
   // Issue #35: Reject gate state changes that don't last "reasonably" long.
   // To do that, don't record a gate state change until it's aged a bit.
   //

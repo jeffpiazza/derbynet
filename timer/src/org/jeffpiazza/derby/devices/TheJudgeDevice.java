@@ -8,6 +8,8 @@ import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
+// TheJudge sends newlines at the start of a line, rather than at the end, which
+// means we have to do all the matching in the early detector.
 /*
 Race Number 14
 Checking valid lanes....
@@ -60,30 +62,20 @@ public class TheJudgeDevice extends TimerDeviceBase {
     return false;
   }
 
-  private static final String CLAIMED = "CLAIMED ";
-
   private static final Pattern numberOfLanesPattern = Pattern.compile(
       "Number of Lanes:?\\s+(\\d)");
   private static final Pattern startRacePattern = Pattern.compile("^G[oO]!?$");
   private static final Pattern singleLanePattern = Pattern.compile(
-      "^Lane\\s+(\\d)\\s+(\\d+\\.\\d+)\\s(.*)?$");
+      "^Lane\\s+(\\d)\\s+0*(\\d+\\.\\d+)(\\s.*)?$");
   private static final Pattern raceOverPattern = Pattern.compile("Race Over.*");
-  private static final Pattern claimedPattern = Pattern.compile(CLAIMED + ".*");
 
-  // Logging of the output from the timer will show whatever was returned from
-  // the early detector for each line, rather than what was actually sent from
-  // the device.  We have to put up with the "CLAIMED " markers if we want to
-  // err on the side of seeing what came from the timer, plus annotations.
   private void setUp() {
-    portWrapper.registerEarlyDetector(new TimerDeviceUtils.SplittingDetector(
-        new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m;
-        if (matched(claimedPattern, line) != null) {
-          return line;
-        } else if (matched(startRacePattern, line) != null) {
+        if (matched(startRacePattern, line) != null) {
           raceStarted();
-          return CLAIMED + line;
+          return "";
         } else if ((m = matched(singleLanePattern, line)) != null) {
           int lane = Integer.parseInt(m.group(1));
           if (result == null) {
@@ -101,6 +93,7 @@ public class TheJudgeDevice extends TimerDeviceBase {
             // one digit ahead of decimal.  (A DNF result doesn't show up until
             // the timer expires, about 25 seconds or so.)  Cap times at just
             // under 10 seconds.
+            LogWriter.info("Converting " + time + " to 9.9999");
             time = "9.9999";
           }
           result.setLane(lane, time);
@@ -108,16 +101,16 @@ public class TheJudgeDevice extends TimerDeviceBase {
             invokeRaceFinishedCallback(roundid, heat, result.toArray());
             roundid = heat = 0;
           }
-          return CLAIMED + line;
+          return "";
         } else if (matched(raceOverPattern, line) != null) {
           // invokeRaceFinishedCallback(roundid, heat, result.toArray());
           roundid = heat = 0;
-          return CLAIMED + line;
+          return "";
         }
 
         return line;
       }
-    }));
+    });
   }
 
   private int numberOfLanes = 0;
@@ -169,16 +162,15 @@ public class TheJudgeDevice extends TimerDeviceBase {
       if ((m = matched(numberOfLanesPattern, line)) != null) {
         numberOfLanes = Integer.parseInt(m.group(1));
         LogWriter.serial("Identified " + numberOfLanes + " lane(s).");
-      } else if ((m = matched(claimedPattern, line)) == null) {
+      } else {
         LogWriter.serial("Ignored: \"" + line + "\"");
       }
     }
   }
 
   private void raceStarted() {
-    int nlanes = numberOfLanes;
-    if (nlanes == 0) {
-      nlanes = 6;
+    if (numberOfLanes == 0) {
+      numberOfLanes = 6;
       LogWriter.serial("Lane count not received; forcing 6 lanes");
     }
     invokeRaceStartedCallback();

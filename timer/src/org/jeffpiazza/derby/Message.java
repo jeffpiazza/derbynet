@@ -84,6 +84,7 @@ public interface Message {
         if (results[i] != null) {
           String time = results[i].time;
           if (time == null) {
+            LogWriter.serial("Lane " + (i + 1) + ": substituting 9.9999 for missing time");
             time = "9.9999";
           }
           sb.append("&lane").append(i + 1).append("=").append(time);

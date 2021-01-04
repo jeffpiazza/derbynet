@@ -233,16 +233,16 @@ public class HttpTask implements Runnable {
         }
       }
 
-      if (!ClientSession.wasSuccessful(response)) {
-        continue;
-      }
-
-      if (traceResponses) {
-        if (trace) {
-          StdoutMessageTrace.httpResponse(nextMessage, response);
-        }
-        if (log) {
-          LogWriter.httpResponse(response);
+      if (ClientSession.wasSuccessful(response)) {
+        // We don't really change behavior (other than logging) for an
+        // unsuccessful response
+        if (traceResponses) {
+          if (trace) {
+            StdoutMessageTrace.httpResponse(nextMessage, response);
+          }
+          if (log) {
+            LogWriter.httpResponse(response);
+          }
         }
       }
 
