@@ -25,6 +25,20 @@
     padding-top: 15px;
 }
 
+#offer_fake,
+#remind_fake {
+  float: right;
+  margin-top: 8px;
+  margin-right: 8px;
+  width: 300px;
+  border: 4px blue solid;
+}
+#offer_fake p,
+#remind_fake p {
+  font-size: 20px;
+  text-align: center;
+}
+
 #schema_step {
   min-height: 130px;
 }
@@ -63,6 +77,17 @@
 
 #schema_step .lower .step_details p {
   margin-top: 0px;
+}
+
+.step_details a {
+  display: inline-block;
+  background: black;
+  color: white;
+  height: 15px;
+  padding: 5px;
+  border-radius: 0.4em;
+  text-decoration: none;
+  line-height: 1.0;
 }
 
 #purge_operation {

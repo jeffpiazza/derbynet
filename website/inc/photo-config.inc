@@ -288,6 +288,9 @@ class PhotoRender {
         return NULL;
       }
       $source_file_path = $source->file_path($image_name);
+      if (substr($source_file_path, -4) == '.svg') {
+        return $source_file_path;
+      }
       if ($this->max_height() == 0 && $this->max_width() == 0) {
         return $source_file_path;
       } else {

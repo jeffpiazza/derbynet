@@ -65,6 +65,15 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 //]]>
 </script>
 
+<div id="offer_fake" class="block_buttons">
+  <p>For experimenting, you might want to make a</p>
+  <a class="button_link" href="fakeroster.php">Fake Roster</a>
+</div>
+
+<div id="remind_fake" class="block_buttons">
+<p>To remove the fake roster data, re-initialize the database, or click "Purge Data" and delete racers.</p>
+</div>
+
 <!-- Database -->
 <div id="database_step" class="step_div">
   <div class="status_icon"><img/></div>
@@ -153,10 +162,10 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   </div>
 
   <div class="step_details">
-    <p>If you're fortunate enough to have multiple screens for DerbyNet, scenes can help 
-       make managing them easier.</p>
+    <p>Scenes make it easier to manage multiple kiosks.</p>
   </div>
 </div>
+
 
 <?php require_once('inc/ajax-failure.inc'); ?>
 

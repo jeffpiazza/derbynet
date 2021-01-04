@@ -4,6 +4,24 @@ require_once('inc/sql-script.inc');
 require_once('inc/locked.inc');
 require_once('inc/details-for-setup-page.inc');
 
+function remove_fake_images($dir) {
+  $dh = @opendir($dir);
+  if ($dh !== false) {
+    while (($filename = readdir($dh)) !== false) {
+      if ($filename == '.' || $filename == '..') {
+        continue;
+      }
+      $path = $dir.DIRECTORY_SEPARATOR.$filename;
+      if (is_dir($path)) {
+        remove_fake_images($path);
+      } else if (preg_match("/^fake_[0-9]*\\.svg$/", $filename)) {
+        @unlink($path);
+      }
+    }
+    closedir($dh);
+  }
+}
+
 start_response();
 
 if (!have_permission(SET_UP_PERMISSION)) {
@@ -21,6 +39,12 @@ if (!have_permission(SET_UP_PERMISSION)) {
       $car_photo_dir = read_raceinfo('car-photo-directory');
       $nlanes = get_lane_count();
       $values_found = true;
+      if (is_dir($photo_dir)) {
+        remove_fake_images($photo_dir);
+      }
+      if (is_dir($car_photo_dir)) {
+        remove_fake_images($car_photo_dir);
+      }
     } catch (PDOException $p) {
       // If the database has no schema or the wrong schema, don't worry about
       // this.

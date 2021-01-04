@@ -86,6 +86,7 @@ function inspect_database() {
       $result['nresults'] = read_single_value('SELECT COUNT(DISTINCT heat) FROM RaceChart'
                                               .' WHERE finishtime IS NOT NULL'
                                               .'  OR finishplace IS NOT NULL');
+      $result['fake-racers'] = read_raceinfo('fake-racers', 0);
 
       $sorting_field = 'sortorder';
       if ($schema_version < 2) { $sorting_field = 'class'; }
@@ -102,8 +103,9 @@ function inspect_database() {
         $result['schema_message'] =
             "<p>Schema version is S1".pad3($schema_version).", as expected."
             .(!locked_settings() ? "<br/>"
-              ."(If you have a previously-captured database snapshot,"
-              ." you can <a href='import-snapshot.php'>import it here.</a>)" : "")
+              ." You can <a href='import-snapshot.php'>Import a database</a>"
+              ." if you previously captured one."
+              : "")
             ."</p>\n";
       } else {
         $result['schema_status'] = "unknown";
@@ -277,6 +279,8 @@ function build_setup_page_details() {
                                 'nheats' => $schema['nheats'],
                                 'nresults' => $schema['nresults']),
                'roster' => array('status' => $schema['nracers'] == 0 ? "unknown" : "ok",
+                                 'count' => $schema['nracers'],
+                                 'fake' => $schema['fake-racers'],
                                  'details' =>
                                  "<p>There ".plural_to_be($schema['nracers'], "racer", "racers")." registered."
                                  ."  (Visit the <a href=\"checkin.php\">Check-In page</a>"

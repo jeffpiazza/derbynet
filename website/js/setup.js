@@ -60,6 +60,9 @@ function populate_details(details) {
   $("#settings_step div.step_details").html(details.settings.details);
   $("#playlist_step div.step_details").html(details.playlist.details);
 
+  $("#offer_fake").toggleClass('hidden', details.roster.count > 0);
+  $("#remind_fake").toggleClass('hidden', details.roster.fake == 0);
+  
   function maybe_mark_driver_missing(driver, radio_id) {
     var driver_ok = ($.inArray(driver, details.form_fields.drivers) >= 0);
     if (driver_ok) {
