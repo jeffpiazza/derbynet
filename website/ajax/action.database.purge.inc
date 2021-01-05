@@ -9,6 +9,7 @@
 // $_POST['roundid'] may accompany results, schedules
 
 require_once('inc/details-for-setup-page.inc');
+require_once('inc/fake_images.inc');
 
 start_response();
 
@@ -36,6 +37,8 @@ if (!have_permission(SET_UP_PERMISSION)) {
   $db->exec('DELETE FROM RaceChart');
   $db->exec('DELETE FROM Roster');
   $db->exec('DELETE FROM RegistrationInfo');
+  remove_fake_car_and_racer_images();
+  delete_from_raceinfo('fake-racers');
 } else if ($_POST['purge'] == 'awards') {
   $db->exec('DELETE FROM Awards');
 } else {

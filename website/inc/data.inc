@@ -111,6 +111,12 @@ function write_raceinfo($key, $val) {
 					   ':value' => $val));
 }
 
+function delete_from_raceinfo($key) {
+  global $db;
+  $stmt = $db->prepare('DELETE FROM RaceInfo WHERE itemkey = :key');
+  $stmt->execute(array(':key' => $key));
+}
+
 function use_groups() {
   return read_single_value('SELECT COUNT(*) FROM Classes') > 1;
 }
