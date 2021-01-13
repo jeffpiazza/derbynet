@@ -111,6 +111,9 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 <div id="kiosk_control_group" class="kiosk_control_group">
 </div>
 
+<div class="block_buttons" style="width: 300px;">
+  <a class="button_link" href="kiosk.php" target="_blank">New Kiosk Window</a>
+</div>
 <?php require_once('inc/ajax-failure.inc'); ?>
 
 <div id='kiosk_modal' class="modal_dialog hidden block_buttons">
