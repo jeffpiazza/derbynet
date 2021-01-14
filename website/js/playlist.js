@@ -50,7 +50,12 @@ function setup_racing_scene_control(all_scenes, current_scene) {
 }
 
 function on_open_playlist_entry(evt) {
-  console.trace(); console.log(evt);
+  if ($(evt.target).is('select')) {
+    // This prevents collapsing the collapsible part in response to a click on
+    // one of the <select> elements.
+    return true;
+  }
+
   var li = $(this).closest('li');
   var closed = li.find(".collapsible").css("display") == "none";
 
