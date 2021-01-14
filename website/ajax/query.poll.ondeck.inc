@@ -76,8 +76,13 @@ emit_current_heat($now_running);
 <?php
 $next = get_next_heat($now_running, 'next');
 if ($next !== false) {
-  echo '  <next-heat roundid="'.$next['roundid'].'" heat="'.$next['heat'].'"/>'."\n";
-} else { echo "<no-next-heat/>\n"; }
+  echo "  <next-heat roundid=\"$next[roundid]\" heat=\"$next[heat]\"/>\n";
+}
+
+$prev = get_next_heat($now_running, 'prev');
+if ($prev !== false) {
+  echo "  <prev-heat roundid=\"$prev[roundid]\" heat=\"$prev[heat]\"/>\n";
+}
 ?>
   <lanes n="<?php echo get_lane_count_from_results(); ?>"/>
   <options update-period="<?php echo update_period(); ?>"

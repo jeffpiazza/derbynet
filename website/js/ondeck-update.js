@@ -78,17 +78,23 @@ function process_new_schedules(newly_scheduled, index, completed) {
 // Looking for the #heat_{roundid}_{heat} row, if there is one.  (ondeck, but
 // not racer-results.)  Even if we're using master scheduling, the row will be
 // labeled with roundid, not tbodyid.
-function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
+function notice_change_current_heat(roundid, heat, next_roundid, next_heat, prev_roundid, prev_heat) {
   // Scroll if necessary to see the heat AFTER current heat, but only if the
   // previously-current heat was visible.
   if (roundid != g_update_status.current.roundid ||
       heat != g_update_status.current.heat) {
-    // If the page is newly loaded, no row will have been marked .curheat, and
-    // so we'll always scroll the first time.
-	var vis = true;
+	var vis;
 	var curheat = $(".curheat");
-	if (curheat.length > 0)
+    if (curheat.length == 0) {
+      // If the page is newly loaded, no row will have been marked .curheat, and
+      // so we'll always scroll the first time.
+      vis = true;
+    } else if (g_focus) {
+      // If ?focus query parameter was provided, then ALWAYS auto-scroll
+      vis = true;
+    } else {
 	  vis = is_visible(curheat[0]);
+    }
 	curheat.removeClass("curheat");
 	curheat = $("#heat_" + roundid + "_" + heat);
 	curheat.addClass("curheat");
@@ -96,12 +102,26 @@ function notice_change_current_heat(roundid, heat, next_roundid, next_heat) {
 
     var nextheat = $("#heat_" + next_roundid + "_" + next_heat);
     nextheat.addClass("nextheat");
-	if (!nextheat[0]) {
-      // If we're running the last heat, then there may not be a next heat.
-	  nextheat = curheat;
-	}
-    let scroll_target = g_focus_current ? curheat[0] : nextheat[0];
-    if (vis && scroll_target) {
+
+    if (g_focus) {
+      // If ?focus query parameter was provided, then ALWAYS auto-scroll
+      var scroll_target = curheat[0];
+      if (g_focus == 'previous') {
+        var prevheat = $("#heat_" + prev_roundid + "_" + prev_heat);
+        if (prevheat[0]) {
+          scroll_target = prevheat[0];
+        }
+      } else if (g_focus == 'next') {
+        if (nextheat[0]) {
+          scroll_target = nextheat[0];
+        }
+      }
+      setTimeout(function() { scroll_to_current(scroll_target); }, 250);
+    } else if (vis) {
+      if (!nextheat[0]) {
+        nextheat = curheat;
+      }
+      var scroll_target = nextheat[0];
       setTimeout(function() { scroll_to_current(scroll_target); }, 250);
     }
 	g_update_status.current.roundid = roundid;
@@ -152,20 +172,24 @@ function process_response_from_current(summary) {
   }
 
   var next_heat_xml = summary.getElementsByTagName("next-heat")[0];
+  var prev_heat_xml = summary.getElementsByTagName("prev-heat")[0];
 
-  process_new_schedules(summary.getElementsByTagName("has_new_schedule"),
-                        0,
-                        function () {
-                          notice_change_current_tbody(current.tbodyid, current.round,
-                                                      current.classname);
-                          notice_change_current_heat(current.roundid, current.heat,
-                                                     next_heat_xml ? next_heat_xml.getAttribute("roundid") : 0,
-                                                     next_heat_xml ? next_heat_xml.getAttribute("heat") : 0);
-                          process_update_elements(summary.getElementsByTagName("update"));
+  process_new_schedules(
+    summary.getElementsByTagName("has_new_schedule"), 0,
+    function () {
+      notice_change_current_tbody(current.tbodyid, current.round,
+                                  current.classname);
+      notice_change_current_heat(current.roundid, current.heat,
+                                 next_heat_xml ? next_heat_xml.getAttribute("roundid") : 0,
+                                 next_heat_xml ? next_heat_xml.getAttribute("heat") : 0,
+                                 prev_heat_xml ? prev_heat_xml.getAttribute("roundid") : 0,
+                                 prev_heat_xml ? prev_heat_xml.getAttribute("heat") : 0
+                                );
+      process_update_elements(summary.getElementsByTagName("update"));
 
-                          g_update_status.last_update_time = high_water.getAttribute("completed");
-                          g_update_status.high_water_resultid = high_water.getAttribute("resultid");
-                        });
+      g_update_status.last_update_time = high_water.getAttribute("completed");
+      g_update_status.high_water_resultid = high_water.getAttribute("resultid");
+    });
 }
 
 // True if any part of el is visible (vertically; doesn't check horizontally).
@@ -182,7 +206,7 @@ function scroll_to_current(el) {
   var rect = el.getBoundingClientRect();
   var w = $(window).height();
 
-  if (rect.bottom > w) {  // Off-screen by being below.
+  if (rect.bottom > w || rect.top < 0) {  // Off-screen by being below.
     $(window).scrollTop($(window).scrollTop()
                         + (rect.top + rect.bottom)/2
                         - $(window).height()/2);
