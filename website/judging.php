@@ -170,6 +170,8 @@ foreach ($db->query($sql) as $rs) {
   <div id="ballot_modal_awards">
   </div>
 
+  <p class="usage-hint">Removing an award from the ballot will clear any votes for that award, perhaps from testing.  The award can be immediately re-added to the ballot if desired.</p>
+  
   <input type="button" value="Close" onclick='close_modal($("#ballot_modal"));'/>
 </div>
 

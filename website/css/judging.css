@@ -159,12 +159,18 @@
   margin-bottom: 35px;
 }
 #ballot_modal_awards label {
-  font-size: 16px;
+  font-size: 18px;
   margin-left: 15px;
   margin-right: 10px;
 }
 #ballot_modal_awards select {
+  font-size: 20px;
+}
+#ballot_modal .usage-hint {
+  margin-left: 50px;
+  margin-right: 50px;
   font-size: 16px;
+  margin-bottom: 30px;
 }
 
 #ballot_results_tabulation {
