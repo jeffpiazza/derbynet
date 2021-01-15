@@ -71,7 +71,7 @@ var Lineup = {
   // When the current heat differs from what we're presently displaying,
   // we get a <current-heat/> element, plus some number of <racer>
   // elements identifying the new heat's contestants.
-  process_new_lineup: function(now_racing) {
+  process_new_lineup: function(now_racing, row_height) {
     var current = now_racing.getElementsByTagName("current-heat")[0];
     if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
       Overlay.show('#timer_overlay');
@@ -145,7 +145,10 @@ var Lineup = {
           $('[data-lane="' + lane + '"] .name div').text(r.getAttribute('name'));
           if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
             $('[data-lane="' + lane + '"] .photo').html(
-              '<img src="' + r.getAttribute('photo') + '"/>');
+              $('<img/>')
+                .attr('src', r.getAttribute('photo'))
+                .css('max-height', row_height)
+            );
           }
 
           if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
@@ -169,7 +172,10 @@ var Lineup = {
             if ($('[data-lane="' + lane + '"] .photo img').length == 0) {
               // A window resize, below, may have removed the <img/> element on an interim basis
               $('[data-lane="' + lane + '"] .photo').html(
-                '<img src="' + r.getAttribute('photo') + '"/>');
+                $('<img/>')
+                  .attr('src', r.getAttribute('photo'))
+                  .css('max-height', row_height)
+              );
             }
             if (r.getAttribute('photo') != $('[data-lane="' + lane + '"] .photo img').attr('src')) {
               $('[data-lane="' + lane + '"] .photo img').attr('src', r.getAttribute('photo'));
@@ -321,7 +327,7 @@ var Poller = {
                      heat: heat,
                      'row-height': row_height},
               success: function(data) {
-                process_polling_result(data);
+                process_polling_result(data, row_height);
               },
               error: function() {
                 Poller.queue_next_request(roundid, heat);
@@ -351,7 +357,7 @@ var Poller = {
 // in order, building a mapping from the reported place to the matching lane.
 //
 
-function process_polling_result(now_racing) {
+function process_polling_result(now_racing, row_height) {
   var heat_results = now_racing.getElementsByTagName("heat-result");
   if (heat_results.length > 0) {
     var place_to_lane = new Array();  // place => lane
@@ -381,13 +387,13 @@ function process_polling_result(now_racing) {
         // Need to continue to poll for repeat-animation, just not
         // accept new participants for 10 seconds.
         Lineup.start_display_linger();
-        Lineup.process_new_lineup(now_racing);
+        Lineup.process_new_lineup(now_racing, row_height);
       });
     } else {
-      Lineup.process_new_lineup(now_racing);
+      Lineup.process_new_lineup(now_racing, row_height);
     }
   } else {
-    Lineup.process_new_lineup(now_racing);
+    Lineup.process_new_lineup(now_racing, row_height);
   }
 }
 

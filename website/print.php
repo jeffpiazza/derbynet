@@ -193,6 +193,11 @@ foreach ($doc_classes as $c => $details) {
 <div id="subjects-context">
   <div id="subjects-scroll">
     <div id="subject-racers" class="block_buttons">
+    <?php
+        if (read_raceinfo('fake-racers') == 'yes') {
+          echo "<h3 style='text-align: center; color: red;'>Photos for fake racers<br/>do not render in printables</h3>\n";
+        }
+      ?>
       <table></table>
     </div>
     <div id="subject-awards" class="block_buttons hidden">

@@ -115,6 +115,9 @@ function flipswitch_resize_for_text(checkbox) {
   var ontext = checkbox.siblings(".on").text();
   var offtext = checkbox.siblings(".off").text();
 
+  // console.log('flipswitch em = ' + em);
+  // console.log('ontext = ' + ontext);
+
   var offtext_size = measure_text(offtext, em);
   var ontext_size = measure_text(ontext, em);
   var off_shim = 0;

@@ -32,6 +32,11 @@ td .racer {
   font-size: small;
 }
 
+img.racer-photo {
+  float: left;
+  height: 68px;
+}
+
 tbody tr:first-child th {
   padding-top: 10px;
 }
@@ -75,6 +80,11 @@ th.nrows4 img {
 .ondeck_photo {
     display: none;
 }
+.ondeck_photo img {
+  /* RENDER_ONDECK */
+  max-height: 100px;
+  max-width: 200px;
+}
 
 .curheat .ondeck_photo.populated,
 .nextheat .ondeck_photo.populated,
@@ -92,4 +102,9 @@ th.nrows4 img {
 #photo_view_modal {
   width: 650px;
   text-align: center;
+}
+
+#photo_view_modal img {
+  max-width: 600px;
+  max-height: 600px;
 }

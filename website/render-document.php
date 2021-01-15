@@ -73,5 +73,15 @@ function convert_strings(&$row) {
   }
 }
 
+function clean_fake_photos(&$row) {
+  // "Fake" roster includes svg files, but fpdf doesn't support them
+  if (isset($row['imagefile']) && substr($row['imagefile'], -4) == '.svg') {
+    $row['imagefile'] = '';
+  }
+  if (isset($row['carphoto']) && substr($row['carphoto'], -4) == '.svg') {
+    $row['carphoto'] = '';
+  }
+}
+
 require_once('print/render/'.$inc.'.inc');
 ?>

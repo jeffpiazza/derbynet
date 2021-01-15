@@ -87,7 +87,8 @@ function process_racer_list(data) {
         .on('change', function() { update_print_button(); });
       $("<td></td>").appendTo(tr);  // Car number
       $("<td></td>").appendTo(tr);  // Racer name
-      $("<td class='photo-column'></td>").appendTo(tr).append("<img></img>");
+      $("<td class='photo-column'></td>").appendTo(tr)
+        .append($("<img/>").css('max-height', /* RENDER_LISTVIEW */ 80));
       tr.on("click", on_tr_click);
     }
     var cells = tr.find("td");

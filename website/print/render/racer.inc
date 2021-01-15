@@ -57,6 +57,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       $row = $rs->fetch(PDO::FETCH_ASSOC);
       if ($row) {
         convert_strings($row);
+        clean_fake_photos($row);
         foreach ($row as $key => $val) {
           $racer[$key] = $val;
         }
@@ -80,6 +81,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
     function draw_one_racer(&$racer) {
       global $doc;
       convert_strings($racer);
+      clean_fake_photos($racer);
       $racer['barcode'] = 'PWDid'.sprintf('%03d', $racer['racerid']);
       $doc->DrawOne($racer);
     }
