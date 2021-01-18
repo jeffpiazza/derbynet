@@ -7,6 +7,8 @@ abstract class PrintableRacerDocument {
   protected $layout;
   protected $options;  // Contents vary by document type
 
+  protected $ok = true;
+
   // Returns an array of key => {type:, desc:, default:}, with an entry for each
   // option key understood by the document class.
   //
@@ -50,12 +52,29 @@ abstract class PrintableRacerDocument {
   abstract function DrawOneAt($left, $top, &$racer);
 
   public function DrawOne(&$racer) {
-    $xy = $this->layout->NextTopLeft();
-    $this->DrawOneAt($xy['x'], $xy['y'], $racer);
+    if ($this->ok) {
+      $xy = $this->layout->NextTopLeft();
+      try {
+        $this->DrawOneAt($xy['x'], $xy['y'], $racer);
+      } catch (Exception $ex) {
+        $this->ok = false;
+        echo "<p class='error'>An exception occurred in processing for <b>"
+            .htmlspecialchars($racer['firstname']." ".$racer['lastname'], ENT_QUOTES, 'UTF-8')
+            ." ($racer[carnumber])</b>:";
+        while ($ex) {
+          echo "<br/>";
+          echo "&nbsp; <b>".$ex->getMessage()."</b>";
+          $ex = $ex->getPrevious();
+        }
+        echo "</p>";
+      }
+    }
   }
 
   public function Output() {
-    $this->pdf->Output();
+    if ($this->ok) {
+      $this->pdf->Output();
+    }
   }
 
   protected function initialize_pdf($orientation, $unit, $size) {

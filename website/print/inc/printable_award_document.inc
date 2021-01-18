@@ -7,6 +7,8 @@ abstract class PrintableAwardDocument {
   protected $layout;
   protected $options;  // Contents vary by document type
 
+  protected $ok = true;
+
   abstract function get_available_options();
   abstract function name();
 
@@ -35,12 +37,28 @@ abstract class PrintableAwardDocument {
   abstract function DrawOneAt($left, $top, &$award);
 
   public function DrawOne(&$award) {
-    $xy = $this->layout->NextTopLeft();
-    $this->DrawOneAt($xy['x'], $xy['y'], $award);
+    if ($this->ok) {
+      $xy = $this->layout->NextTopLeft();
+      try {
+        $this->DrawOneAt($xy['x'], $xy['y'], $award);
+      } catch (Exception $ex) {
+        $this->ok = false;
+        echo "<p class='error'>An exception occurred in processing for <b>"
+            .htmlspecialchars($award['awardname'], ENT_QUOTES, 'UTF-8')."</b>:";
+        while ($ex) {
+          echo "<br/>";
+          echo "&nbsp; <b>".$ex->getMessage()."</b>";
+          $ex = $ex->getPrevious();
+        }
+        echo "</p>";
+      }
+    }
   }
 
   public function Output() {
-    $this->pdf->Output();
+    if ($this->ok) {
+      $this->pdf->Output();
+    }
   }
 
   protected function initialize_pdf($orientation, $unit, $size) {
