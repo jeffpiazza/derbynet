@@ -38,7 +38,7 @@ public class OlderFastTrackDevice extends TimerDeviceBase {
   public static final int MAX_LANES = 6;
 
   public static String toHumanString() {
-    return "Older FastTrack (P series)";
+    return "FastTrack P-series";
   }
 
   @Override

@@ -58,7 +58,7 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
   }
 
   public static String toHumanString() {
-    return "SmartLine/eTekGadget/BestTrack \"The Champ\"";
+    return "\"The Champ\" (SmartLine/eTekGadget/BestTrack)";
   }
 
   public boolean probe() throws SerialPortException {

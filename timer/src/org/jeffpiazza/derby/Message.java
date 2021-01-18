@@ -23,13 +23,15 @@ public interface Message {
   public static class Identified implements Message {
     private int nlanes;
     private String timer;
+    private String humanName;
     private String identifier;
     private boolean confirmed;
 
-    public Identified(int nlanes, String timer, String identifier,
-                      boolean confirmed) {
+    public Identified(int nlanes, String timer, String humanName,
+                      String identifier, boolean confirmed) {
       this.nlanes = nlanes;
       this.timer = timer;
+      this.humanName = humanName;
       this.identifier = identifier;
       this.confirmed = confirmed;
     }
@@ -41,6 +43,12 @@ public interface Message {
       sb.append("&lane_count=").append(nlanes);
       sb.append("&timer=").append(timer);
       sb.append("&confirmed=").append(confirmed ? "1" : "0");
+      if (humanName != null) {
+        try {
+          sb.append("&human=").append(URLEncoder.encode(humanName, "UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+        }
+      }
       if (identifier != null) {
         try {
           sb.append("&ident=").append(URLEncoder.encode(identifier, "UTF-8"));
@@ -84,7 +92,8 @@ public interface Message {
         if (results[i] != null) {
           String time = results[i].time;
           if (time == null) {
-            LogWriter.serial("Lane " + (i + 1) + ": substituting 9.9999 for missing time");
+            LogWriter.serial(
+                "Lane " + (i + 1) + ": substituting 9.9999 for missing time");
             time = "9.9999";
           }
           sb.append("&lane").append(i + 1).append("=").append(time);

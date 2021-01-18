@@ -165,18 +165,19 @@ public class TimerMain {
     }
 
     private void maybeWireTogether() {
-      if (httpTask != null && timerTask != null && timerTask.device() != null) {
+      TimerDevice device = timerTask.device();
+      if (httpTask != null && timerTask != null && device != null) {
         wireTogether(httpTask, timerTask, traceMessages);
         int nlanes = 0;
         try {
-          nlanes = timerTask.device().getNumberOfLanes();
+          nlanes = device.getNumberOfLanes();
         } catch (SerialPortException e) {
           LogWriter.stacktrace(e);
         }
-        httpTask.sendIdentified(
-            nlanes, timerTask.device().getClass().getSimpleName(),
-            timerTask.device().getTimerIdentifier(),
-            timerTask.device().hasEverSpoken());
+        httpTask.sendIdentified(nlanes, device.getClass().getSimpleName(),
+                                device.humanName(),
+                                device.getTimerIdentifier(),
+                                device.hasEverSpoken());
       }
     }
 

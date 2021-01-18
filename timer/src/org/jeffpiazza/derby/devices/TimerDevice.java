@@ -53,6 +53,7 @@ public interface TimerDevice {
   // Returns 0 if can't tell/don't know
   int getNumberOfLanes() throws SerialPortException;
   String getTimerIdentifier();
+  String humanName();
 
   void registerRaceStartedCallback(RaceStartedCallback cb);
   void registerRaceFinishedCallback(RaceFinishedCallback cb);

@@ -52,7 +52,7 @@ public class FastTrackDevice extends TimerDeviceCommon {
   }
 
   public static String toHumanString() {
-    return "FastTrack timer";
+    return "FastTrack K-series";
   }
 
   public static final int MAX_LANES = 6;

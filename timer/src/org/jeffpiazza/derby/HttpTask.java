@@ -100,10 +100,10 @@ public class HttpTask implements Runnable {
     }
   }
 
-  public void sendIdentified(int nlanes, String timer, String identifier,
-                             boolean confirmed) {
+  public void sendIdentified(int nlanes, String timer, String humanName,
+                             String identifier, boolean confirmed) {
     synchronized (queue) {
-      queueMessage(new Message.Identified(nlanes, timer, identifier,
+      queueMessage(new Message.Identified(nlanes, timer, humanName, identifier,
                                           confirmed));
     }
   }

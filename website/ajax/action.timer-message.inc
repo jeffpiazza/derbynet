@@ -13,11 +13,12 @@ require_once('inc/events.inc');
 // message="HELLO"
 // Initial message from timer controller
 //
-// message="IDENTIFIED" & lane_count= & timer= & ident= & options=
+// message="IDENTIFIED" & lane_count= & timer= & human= & ident= & options=
 // Sent when timer controller discovers/identifies the timer.
 // timer= is the Java class name of the TimerDevice class that recognizes the
 //     timer.
-// ident= is the identifier string (if any) from the timer.
+// human= is the human-friendly name of the device/manufacturer
+// ident= is the specific identifier string (if any) from the timer (serial number, etc.).
 // options= is any extra detail about this particular timer.
 //
 // message="STARTED"
@@ -73,6 +74,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     }
     if (isset($_POST['timer'])) {
       write_raceinfo('timer-type', $_POST['timer']);
+    }
+    if (isset($_POST['human'])) {
+      write_raceinfo('timer-human', $_POST['human']);
     }
     if (isset($_POST['ident'])) {
       write_raceinfo('timer-ident', $_POST['ident']);

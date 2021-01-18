@@ -37,6 +37,10 @@ public class RacemasterDevice extends TimerDeviceBase {
     super(portWrapper);
   }
 
+  public static String toHumanString() {
+    return "JIT Racemaster";
+  }
+
   private static final int kDeadlineMs = 10000;
 
   private String timerIdentifier;

@@ -45,6 +45,7 @@ function emit_timer_state() {
 function emit_timer_details() {
   echo "<timer-details";
   echo " type=\"".htmlspecialchars(read_raceinfo('timer-type', ''), ENT_QUOTES, 'UTF-8')."\"";
+  echo " human=\"".htmlspecialchars(read_raceinfo('timer-human', ''), ENT_QUOTES, 'UTF-8')."\"";
   echo " ident=\"".htmlspecialchars(read_raceinfo('timer-ident', ''), ENT_QUOTES, 'UTF-8')."\"";
   // echo " options=\"".htmlspecialchars(read_raceinfo('timer-options', ''), ENT_QUOTES, 'UTF-8')."\"";
   echo "/>\n";

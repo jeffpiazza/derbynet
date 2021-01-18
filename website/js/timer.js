@@ -115,7 +115,9 @@ function update_timer_summary(tstate) {
 
 function update_timer_details(details) {
   $("#timer-details").empty();
-  if (details.getAttribute('type')) {
+  if (details.getAttribute('human')) {
+    $("<p></p>").text(details.getAttribute('human')).appendTo($("#timer-details"));
+  } else if (details.getAttribute('type')) {
     $("<p></p>").text(details.getAttribute('type')).appendTo($("#timer-details"));
   }
   if (details.getAttribute('ident')) {

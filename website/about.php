@@ -222,9 +222,13 @@ if (isset($db)) {
       echo "<p>";
       echo htmlspecialchars($timer, ENT_QUOTES, 'UTF-8');
 
+      $timer_human = read_raceinfo('timer-humant');
+      if ($timer_human) {
+        echo " $timer_human";
+      }
       $timer_ident = read_raceinfo('timer-ident');
       if ($timer_ident) {
-        echo " (".$timer_ident.")";
+        echo " ($timer_ident)";
       }
       echo "</p>\n";
     }

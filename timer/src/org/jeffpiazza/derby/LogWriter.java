@@ -134,6 +134,21 @@ public class LogWriter {
     }
   }
 
+  public static void pauseLogging() {
+    if (writer != null) {
+      writer.close();
+      writer = null;
+    }
+  }
+  public static void resumeLogging() {
+    if (writer == null) {
+      try {
+        makeLogFile();
+      } catch (IOException ex) {
+      }
+    }
+  }
+
   private static void makeLogFile() throws IOException {
     final String yyyymmdd_hhmm = (new SimpleDateFormat("yyyyMMdd-HHmm")).format(
         Calendar.getInstance().getTime());

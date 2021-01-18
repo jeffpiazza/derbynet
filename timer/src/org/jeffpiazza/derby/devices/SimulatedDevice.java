@@ -23,7 +23,7 @@ public class SimulatedDevice extends TimerDeviceBase
   }
 
   public static String toHumanString() {
-    return "Simulated Timer Device";
+    return "Simulated Timer";
   }
 
   @Override

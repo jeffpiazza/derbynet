@@ -25,6 +25,11 @@ public abstract class TimerDeviceBase implements TimerDevice {
     this.has_ever_spoken = false;
   }
 
+  @Override
+  public String humanName() {
+    return AllDeviceTypes.toHumanString(this.getClass());
+  }
+
   public SerialPortWrapper getPortWrapper() {
     return portWrapper;
   }
