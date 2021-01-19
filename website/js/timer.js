@@ -45,6 +45,13 @@ function on_reverse_lanes_change() {
 }
 $(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
 
+function handle_start_race_button() {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'timer.remote-start'}
+         });
+}
+
 function show_mask() {
   var nlanes = $("#n-lanes").val();
   if (nlanes <= 0) {
@@ -111,6 +118,8 @@ function update_testing_mode(current) {
 function update_timer_summary(tstate) {
   $("#timer_status_text").text(tstate.textContent);
   $("#timer_summary_icon").attr('src', tstate.getAttribute("icon"));
+  $("#start_race_button_div").toggleClass('hidden',
+                                          tstate.getAttribute("remote_start") != "1");
 }
 
 function update_timer_details(details) {

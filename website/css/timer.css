@@ -64,6 +64,13 @@ div.test-control label {
   font-size: 18px;
 }
 
+#start_race_button_div {
+  width: 550px;
+}
+#start_race_button_div input[type='button'] {
+  background: #008000;
+}
+
 
 div#now-racing {
   margin-top: 20px;

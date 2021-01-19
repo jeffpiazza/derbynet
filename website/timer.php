@@ -87,6 +87,11 @@ $(function() {
         <th>Place</th>
     </tr>
   </table>
+
+  <div id="start_race_button_div" class="block_buttons hidden">
+    <input type="button" value="Start Race" onclick="handle_start_race_button()"/>
+  </div>
+
 </div>
 
 </body>
