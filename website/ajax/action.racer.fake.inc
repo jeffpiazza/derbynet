@@ -15,12 +15,12 @@ define('FAKE_RACER_IMAGES', 'fake-racer-images/racers');
 define('FAKE_CAR_IMAGES', 'fake-racer-images/cars');
 
 function fake_group_name($g) {
-  if ($g == 1) return 'Lions';
-  if ($g == 2) return 'Tigers';
-  if ($g == 3) return 'Wolves';
-  if ($g == 4) return 'Bears';
-  if ($g == 5) return 'Webelos';
-  return 'Group '.$g;
+  if ($g == 1) return 'Fake Lions';
+  if ($g == 2) return 'Fake Tigers';
+  if ($g == 3) return 'Fake Wolves';
+  if ($g == 4) return 'Fake Bears';
+  if ($g == 5) return 'Fake Webelos';
+  return 'Fake Group '.$g;
 }
 
 start_response();
@@ -77,7 +77,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   if ($_POST['check_in']) {
     $db->exec('UPDATE RegistrationInfo SET passedinspection = 1');
   }
-  write_raceinfo('fake-racers', 'yes');
+  write_raceinfo('fake-racers', 1);
 
   echo "<success/>\n";
 } else {
