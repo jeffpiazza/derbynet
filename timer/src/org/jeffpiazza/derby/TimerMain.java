@@ -165,7 +165,7 @@ public class TimerMain {
     }
 
     private void maybeWireTogether() {
-      TimerDevice device = timerTask.device();
+      TimerDevice device = timerTask != null ? timerTask.device() : null;
       if (httpTask != null && timerTask != null && device != null) {
         wireTogether(httpTask, timerTask, traceMessages);
         int nlanes = 0;
