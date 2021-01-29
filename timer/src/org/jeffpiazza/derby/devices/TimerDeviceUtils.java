@@ -10,9 +10,9 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class TimerDeviceUtils {
   private static final Pattern finishPattern = Pattern.compile(
-      "([A-F]=(\\d\\.\\d+).?)( [A-F]=(\\d\\.\\d+).?)*$");
+      "([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$");
   private static final Pattern singleLanePattern = Pattern.compile(
-      "([A-F])=(\\d\\.\\d+)([^ ]?)");
+      "([A-Z])=(\\d\\.\\d+)([^ ]?)");
   private static final Pattern zeroesPattern = Pattern.compile("^0\\.0+$");
 
   // Each island of carriage-return and/or newlines yields a pair of integers
