@@ -61,6 +61,11 @@
         </fileset>
         <!--zipgroupfileset dir="lib" includes="*.jar" /--> 
         <zipgroupfileset dir="${lib}" includes="jssc.jar"/>
+        <!-- For no apparently good reason,  jssc.jar now references slf4j,
+             which results in an ugly runtime warning about not having
+             configured a facility no one asked for.  This silences the
+             warning. -->
+        <zipgroupfileset dir="${lib}" includes="slf4j-nop-1.7.30.jar"/>
     </jar>
   </target>
 
