@@ -43,7 +43,8 @@ public class TimerMain {
       System.exit(0);
     }
 
-    String base_url = null;
+    String base_url = CustomUrlFinder.getCustomUrl();  // Likely null
+    // A URL on the command line takes precedence over URL from the jar
     if (consumed_args < args.length && args[consumed_args].charAt(0) != '-') {
       base_url = args[consumed_args];
       ++consumed_args;
