@@ -36,15 +36,15 @@ if (warn_no_timer()) {
 $now_running = get_running_round();
 emit_current_heat($now_running);
 
+$time_format = get_finishtime_formatting_string();
 // This lets the js reserve room for the right number of digits
-  echo "<zero zero='".sprintf($time_format, 0.0)."'/>\n";
+echo "<zero zero='".sprintf($time_format, 0.0)."'/>\n";
 
 if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
   echo "<timer-test/>\n";
   if ($roundid == TIMER_TEST_ROUNDID) {
     $tt = timer_test_recorded_results();
     echo "<raw>";echo json_encode($tt);echo "</raw>\n";  // TODO
-    $time_format = get_finishtime_formatting_string();
     foreach ($tt['results'] as $r) {
       echo "<heat-result lane='$r[lane]' ";
       if (isset($r['time'])) {
