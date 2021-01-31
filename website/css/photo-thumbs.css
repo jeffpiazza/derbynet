@@ -36,6 +36,15 @@ body { margin: 0; }
   width: 150px;
   height: 150px;
 }
+.thumbnail img {
+  max-width: 150px;
+  max-height: 150px;
+}
+img.unassigned-photo,
+img.ui-draggable-dragging {
+  max-width: 150px;
+  max-height: 150px;
+}
 
 .thumbnail.hidden {
    display: none;

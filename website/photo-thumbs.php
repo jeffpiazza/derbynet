@@ -52,7 +52,7 @@ function scan_directory($directory, $pattern) {
 }
 
 $allfiles = scan_directory($photo_repository->directory(),
-						   "/(jpg|jpeg|png|gif|bmp)/i");
+						   "/(jpg|jpeg|png|gif|bmp|svg)\$/i");
 
 // Returns a javascript expression, suitable for onclick, to perform cropping of a particular photo.
 function photo_crop_expression($basename) {
