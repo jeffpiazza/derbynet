@@ -1,7 +1,8 @@
 <?php
 
 $all_scheduler_data = array(1 => array(), 2 => array(), 3 => array(),
-                            4 => array(), 5 => array(), 6 => array());
+                            4 => array(), 5 => array(), 6 => array(),
+                            7 => array(), 8 => array());
 
 function make_scheduler_data($nlanes, $ncars, $generators, ...$permutation_sets) {
   global $all_scheduler_data;
@@ -15,6 +16,7 @@ require_once('inc/generators/3-lanes.inc');
 require_once('inc/generators/4-lanes.inc');
 require_once('inc/generators/5-lanes.inc');
 require_once('inc/generators/6-lanes.inc');
+require_once('inc/generators/8-lanes.inc');
 
 // Returns an array of generators, appropriate for $nlanes and $ncars.
 function get_scheduler_data($nlanes, $ncars, $max_runs_per_car) {  
