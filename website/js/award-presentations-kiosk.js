@@ -1,7 +1,8 @@
 // Whether or not to show confetti is a kiosk parameter.
-var g_confetti = false;
+// g_confetti defined in award-presentations.kiosk
 $(function() {
   KioskPoller.param_callback = function(parameters) {
+    console.log("Poller:");console.log(parameters);
     if (!parameters.hasOwnProperty('confetti')) {
       parameters.confetti = true;
     }

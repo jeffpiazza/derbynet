@@ -8,6 +8,12 @@
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
+<script type="text/javascript">
+ var g_confetti = <?php
+    $confetti = isset($_GET['confetti']) ? $_GET['confetti'] : true;
+    echo $confetti ? "true" : "false";
+ ?>;
+</script>
 <script type="text/javascript" src="js/award-presentations-kiosk.js"></script>
 </head>
 <body>
