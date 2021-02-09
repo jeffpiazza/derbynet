@@ -25,6 +25,10 @@ public abstract class TimerDeviceCommon
     super(portWrapper);
     this.rsm = new RacingStateMachine(gate_state_is_knowable, this);
     this.gateWatcher = gateWatcher;
+
+    if (Flag.no_gate_watcher.value()) {
+      setGateStateNotKnowable();  // Sets gateWatcher to null
+    }
   }
 
   // Several timers support lane masking with a "clear mask" command followed

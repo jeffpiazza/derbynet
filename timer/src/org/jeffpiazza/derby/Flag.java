@@ -75,6 +75,10 @@ public abstract class Flag<T> {
       = new BooleanFlag("simulate-has-not-spoken",
                         "Simulate simulated timer has never spoken");
 
+  public static final Flag<Boolean> no_gate_watcher
+      = new BooleanFlag("no-gate-watcher",
+          "Disable interrogation of timer's gate state.");
+
   public static final Flag<String> trigger_file_directory
       = new StringFlag("trigger-file-directory", null,
                        "Directory into which signaling files, heat-started and "
@@ -96,6 +100,9 @@ public abstract class Flag<T> {
   public static final Flag<Boolean> skip_read_features
       = new BooleanFlag("skip-read-features",
                         "FastTrack: Don't attempt reading features");
+  public static final Flag<Boolean> fasttrack_automatic_gate_release
+      = new BooleanFlag("fasttrack-automatic-gate-release",
+                       "FastTrack light tree and automatic gate release installed");
 
   public Flag(String name, T value, String description) {
     this.name = name;

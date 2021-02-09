@@ -6,8 +6,35 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 import java.util.regex.Matcher;
 import org.jeffpiazza.derby.Flag;
+import org.jeffpiazza.derby.LogWriter;
 
-public class FastTrackDevice extends TimerDeviceCommon {
+/*
+From the Micro Wizard himself:
+
+The FastTrack timer has 1 pin, 1 bit that is the laser gate bit.  This is
+connected to a pin on the RJ-11 cable that goes to the start.
+
+Our automatic release gate uses the same cable and so these commands can interact
+with that gate as well.  However it uses the laser bit in a different way than the
+laser gate.
+
+LO - Sets that bit low
+LN - Sets that bit high
+LG - Sets high for 1 second, then low
+LR - Sets high until the switch is released, then low
+
+When our automatic release gate is connected the laser gate bit is now used as a
+command to release the cars.  So when you send the LR command the start gate will
+begin its sequence to release the cars.
+
+The preferred command for releasing the automatic release gate is with the LG
+command, although LR could work as could LN.  All the commands were put in here so
+that people could make their own release gates and software and make it work with
+our cable.
+
+*/
+public class FastTrackDevice extends TimerDeviceCommon implements
+    RemoteStartInterface {
   public FastTrackDevice(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
@@ -142,7 +169,22 @@ public class FastTrackDevice extends TimerDeviceCommon {
                 'A', 2);
     // Even without gate polling available, send a single reset command as
     // part of the preparation for the next heat
-    portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 500);
+    if (!Flag.fasttrack_automatic_gate_release.value()) {
+      portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 500);
+    }
+  }
+
+  @Override
+  public boolean hasRemoteStart() {
+    return Flag.fasttrack_automatic_gate_release.value();
+  }
+
+  @Override
+  public void remoteStart() throws SerialPortException {
+    if (Flag.fasttrack_automatic_gate_release.value()) {
+      LogWriter.serial("Sending remoteStart " + MicroWizard.PULSE_LASER_BIT);
+      portWrapper.writeAndDrainResponse(MicroWizard.PULSE_LASER_BIT, 2, 500);
+    }
   }
 
   // K2 timer may report DNFs as 0.000
@@ -178,9 +220,10 @@ public class FastTrackDevice extends TimerDeviceCommon {
       // If the gate state option is disabled, then we don't want to be
       // continuously resetting the laser gate, because we could receive results
       // at any instant, and they'd be disrupted by the reset dialog.
-      if (System.currentTimeMillis() >= displayHoldUntilMillis()) {
-        portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 2000);
-      }
+      if (System.currentTimeMillis() >= displayHoldUntilMillis())
+        if (!Flag.fasttrack_automatic_gate_release.value()) {
+          portWrapper.writeAndDrainResponse(MicroWizard.RESET_LASER_GATE, 2, 2000);
+        }
       checkConnection();
     }
   }

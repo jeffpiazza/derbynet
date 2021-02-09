@@ -8,7 +8,8 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class MicroWizard {
   public static final String PULSE_LASER_BIT = "LG";
-  // LG actually starts the timer, but after a brief pause
+  // LG actually starts the timer, but after a brief pause.  More importantly,
+  // it triggers the automatic gate release, if installed.
   public static final String RESET_LASER_GATE = "LR";
   // LR appears to be the real "reset" command for the timer
   public static final String LANE_MASK = "M"; // + A to mask out lane 1, B lane 2, etc.
