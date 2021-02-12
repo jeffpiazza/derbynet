@@ -56,6 +56,10 @@ public abstract class Flag<T> {
                      "After this many milliseconds, assume an unterminated line"
                      + " from the timer is complete (0 = wait forever).");
 
+  public static final Flag<Boolean> assert_rts_dtr
+      = new BooleanFlag("assert-rts-dtr",
+          "EXPERIMENTAL Initially assert RTS and DTR lines on serial port by default.");
+
   // Issue #35: Reject gate state changes that don't last "reasonably" long.
   // To do that, don't record a gate state change until it's aged a bit.
   //
@@ -130,6 +134,10 @@ public abstract class Flag<T> {
     for (int i = 0; i < all_flags.size(); ++i) {
       System.err.println(all_flags.get(i).usage_string());
     }
+  }
+
+  public static Flag[] allFlags() {
+    return all_flags.toArray(new Flag[all_flags.size()]);
   }
 
   public abstract int maybeParseCommandLine(String[] args, int argc);

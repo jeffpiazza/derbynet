@@ -77,11 +77,18 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   // These xxxPortXxx methods are the only ones that interact directly with the
-  // SerialPort member.å
+  // SerialPort member.
   public boolean setPortParams(int baudRate, int dataBits, int stopBits,
                                int parity, boolean setRTS, boolean setDTR)
       throws SerialPortException {
     return port.setParams(baudRate, dataBits, stopBits, parity, setRTS, setDTR);
+  }
+
+  public boolean setPortParams(int baudRate, int dataBits, int stopBits,
+                               int parity) throws SerialPortException {
+    return setPortParams(baudRate, dataBits, stopBits, parity,
+                         Flag.assert_rts_dtr.value(),
+                         Flag.assert_rts_dtr.value());
   }
 
   public void closePort() throws SerialPortException {
@@ -280,7 +287,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
       synchronized (leftover) {
         if (leftover.length() > 0 && Flag.newline_expected_ms.value() > 0
             && System.currentTimeMillis() - last_char_received
-                 > Flag.newline_expected_ms.value()) {
+            > Flag.newline_expected_ms.value()) {
           s = applyDetectors(leftover);
           leftover = "";
           if (s.length() == 0) {

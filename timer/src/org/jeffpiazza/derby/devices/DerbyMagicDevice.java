@@ -50,9 +50,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
       if (!portWrapper.setPortParams(baudrate,
                                      SerialPort.DATABITS_8,
                                      SerialPort.STOPBITS_1,
-                                     SerialPort.PARITY_NONE,
-                                     /* rts */ false,
-                                     /* dtr */ false)) {
+                                     SerialPort.PARITY_NONE)) {
         continue;
       }
 
@@ -77,9 +75,7 @@ public class DerbyMagicDevice extends TimerDeviceCommon
     if (!portWrapper.setPortParams(baudrate,
                                    SerialPort.DATABITS_8,
                                    SerialPort.STOPBITS_1,
-                                   SerialPort.PARITY_NONE,
-                                   /* rts */ false,
-                                   /* dtr */ false)) {
+                                   SerialPort.PARITY_NONE)) {
       return false;
     }
 

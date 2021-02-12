@@ -22,6 +22,7 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
   private static final String SET_PLACE_CHARACTER_BANG = "op3\r";
   private static final String READ_AUTO_RESET = "or\r";
   private static final String RESET_REVERSE_LANES = "ov0\r";
+  private static final String RESET_DTX000_MODE = "ox0\r";
 
   private static final String RESET = "r\r";
   private static final String FORCE_END_OF_RACE = "ra\r";
@@ -65,15 +66,13 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
     if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
                                    SerialPort.DATABITS_8,
                                    SerialPort.STOPBITS_1,
-                                   SerialPort.PARITY_NONE,
-                                   /* rts */ false,
-                                   /* dtr */ false)) {
+                                   SerialPort.PARITY_NONE)) {
       return false;
     }
 
+    // Just forcing a new line, don't care about response.
     portWrapper.writeAndDrainResponse("\r");
 
-    // Just forcing a new line, don't care about response.
     portWrapper.write(READ_VERSION);
 
     long deadline = System.currentTimeMillis() + 2000;
@@ -87,7 +86,8 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
         portWrapper.write(RESET);
 
         String nl = portWrapper.writeAndWaitForResponse(READ_LANE_COUNT, 500);
-        if ('0' < nl.charAt(0) && nl.charAt(0) <= '9') {
+        if (nl != null && nl.length() > 0 &&
+            '0' < nl.charAt(0) && nl.charAt(0) <= '9') {
           this.numberOfLanes = nl.charAt(0) - '0';
           LogWriter.serial(this.numberOfLanes + " lane(s) reported.");
         }

@@ -75,9 +75,7 @@ public class MiscJunkDevice extends TimerDeviceCommon
     if (!portWrapper.setPortParams(SerialPort.BAUDRATE_9600,
                                    SerialPort.DATABITS_8,
                                    SerialPort.STOPBITS_1,
-                                   SerialPort.PARITY_NONE,
-                                   /* rts */ false,
-                                   /* dtr */ false)) {
+                                   SerialPort.PARITY_NONE)) {
       return false;
     }
     // We just reset the timer, give it 2s to startup

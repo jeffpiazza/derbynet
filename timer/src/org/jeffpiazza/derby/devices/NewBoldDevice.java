@@ -43,9 +43,7 @@ public class NewBoldDevice extends TimerDeviceBase {
     if (portWrapper.setPortParams(SerialPort.BAUDRATE_1200,
                                   SerialPort.DATABITS_7,
                                   SerialPort.STOPBITS_2,
-                                  SerialPort.PARITY_NONE,
-                                  /* rts */ false,
-                                  /* dtr */ false)) {
+                                  SerialPort.PARITY_NONE)) {
       portWrapper.write(" ");  // Reset timer
       return true;
     }
