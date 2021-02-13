@@ -11,6 +11,7 @@ import org.jeffpiazza.derby.HttpTask;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.AllSerialPorts;
 import org.jeffpiazza.derby.Connector;
+import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.RecordingSerialPortWrapper;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.gui.TimerGui;

@@ -319,6 +319,8 @@ array(
 
 @include_once(sql_file_path('balloting')),
 
+@include_once(sql_file_path('timer-settings')),
+
 array(
 
 // --- Populate basic data

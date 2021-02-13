@@ -246,37 +246,45 @@ public class HttpTask implements Runnable {
         }
       }
 
-      NodeList remote_logs = response.getElementsByTagName("remote-log");
-      if (remote_logs.getLength() > 0) {
-        LogWriter.setRemoteLogging(Boolean.parseBoolean(
-            ((Element) remote_logs.item(0)).getAttribute("send")));
-      }
+      decodeResponse(response);
+    }
+  }
 
-      if (response.getElementsByTagName("abort").getLength() > 0) {
-        AbortHeatCallback cb = getAbortHeatCallback();
-        if (cb != null) {
-          cb.onAbortHeat();
-        }
-      }
+  private void decodeResponse(Element response) {
+    NodeList remote_logs = response.getElementsByTagName("remote-log");
+    if (remote_logs.getLength() > 0) {
+      LogWriter.setRemoteLogging(Boolean.parseBoolean(
+          ((Element) remote_logs.item(0)).getAttribute("send")));
+    }
 
-      NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
-      if (heatReadyNodes.getLength() > 0) {
-        HeatReadyCallback cb = getHeatReadyCallback();
-        if (cb != null) {
-          Element heatReady = (Element) heatReadyNodes.item(0);
-          int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
-          int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
-          int heat = parseIntOrZero(heatReady.getAttribute("heat"));
-          cb.onHeatReady(roundid, heat, lanemask);
-        }
+    if (response.getElementsByTagName("abort").getLength() > 0) {
+      AbortHeatCallback cb = getAbortHeatCallback();
+      if (cb != null) {
+        cb.onAbortHeat();
       }
+    }
 
-      if (response.getElementsByTagName("remote-start").getLength() > 0) {
-        RemoteStartCallback cb = getRemoteStartCallback();
-        if (cb != null) {
-          cb.remoteStart();
-        }
+    NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
+    if (heatReadyNodes.getLength() > 0) {
+      HeatReadyCallback cb = getHeatReadyCallback();
+      if (cb != null) {
+        Element heatReady = (Element) heatReadyNodes.item(0);
+        int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
+        int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
+        int heat = parseIntOrZero(heatReady.getAttribute("heat"));
+        cb.onHeatReady(roundid, heat, lanemask);
       }
+    }
+
+    if (response.getElementsByTagName("remote-start").getLength() > 0) {
+      RemoteStartCallback cb = getRemoteStartCallback();
+      if (cb != null) {
+        cb.remoteStart();
+      }
+    }
+
+    if (response.getElementsByTagName("query").getLength() > 0) {
+      queueMessage(new Message.Flags());
     }
   }
 }

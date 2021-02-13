@@ -5,8 +5,9 @@ function schema_version() {
 }
 
 function expected_schema_version() {
-  return 6;
+  return 7;
 }
 
 define('BALLOTING_SCHEMA', 6);  // First schema version to support balloting
+define('TIMER_SETTINGS_SCHEMA', 7);
 ?>

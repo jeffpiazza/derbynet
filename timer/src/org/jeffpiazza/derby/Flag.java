@@ -144,6 +144,8 @@ public abstract class Flag<T> {
 
   public abstract boolean maybeParseXml(Element flag_element);
 
+  public abstract String typeName();
+
   public String name() {
     return name;
   }
@@ -151,6 +153,8 @@ public abstract class Flag<T> {
   public T value() {
     return value;
   }
+
+  public String description() { return description; }
 
   public String usage_string() {
     return "   -" + name() + ": " + description;
@@ -164,6 +168,7 @@ public abstract class Flag<T> {
     public BooleanFlag(String name, String description) {
       super(name, Boolean.FALSE, description);
     }
+    public String typeName() { return "bool"; }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {
@@ -191,6 +196,7 @@ public abstract class Flag<T> {
     public StringFlag(String name, String value, String description) {
       super(name, value, description);
     }
+    public String typeName() { return "string"; }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {
@@ -214,6 +220,7 @@ public abstract class Flag<T> {
     public LongFlag(String name, Long value, String description) {
       super(name, value, description);
     }
+    public String typeName() { return "long"; }
 
     public LongFlag(String name, long value, String description) {
       super(name, new Long(value), description);
@@ -241,6 +248,7 @@ public abstract class Flag<T> {
     public IntegerFlag(String name, Integer value, String description) {
       super(name, value, description);
     }
+    public String typeName() { return "int"; }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {

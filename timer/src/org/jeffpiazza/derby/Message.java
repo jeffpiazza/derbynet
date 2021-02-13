@@ -2,6 +2,10 @@ package org.jeffpiazza.derby;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jeffpiazza.derby.devices.AllDeviceTypes;
+import org.jeffpiazza.derby.devices.TimerDevice;
 
 // TODO: Heartbeat should supply whatever ancillary information
 // the timer supports (reset button pressed, lane blocked, etc.)
@@ -136,6 +140,35 @@ public interface Message {
 
     public String asParameters() {
       return "message=HEARTBEAT&confirmed=" + (confirmed ? 1 : 0);
+    }
+  }
+
+  public static class Flags implements Message {
+    public String asParameters() {
+      StringBuilder sb = new StringBuilder("message=FLAGS");
+      try {
+        for (Flag flag : Flag.allFlags()) {
+          sb.append("&flag-").append(flag.name()).append("=");
+          sb.append(flag.typeName()).append(":");
+          sb.append(URLEncoder.encode(flag.value() == null ? "null" : flag.value().toString(), "UTF-8"));
+          sb.append("&desc-").append(flag.name()).append("=");
+          sb.append(URLEncoder.encode("" + flag.description(), "UTF-8"));
+        }
+        sb.append("&ports=");
+        boolean first_port = true;
+        for (String port : AllSerialPorts.getNames()) {
+          sb.append(URLEncoder.encode((first_port ? "" : ",") + port, "UTF-8"));
+          first_port = false;
+        }
+        for (Class<? extends TimerDevice> devclass : AllDeviceTypes.allDeviceClasses) {
+          sb.append("&device-").append(devclass.getSimpleName()).append("=");
+          sb.append(URLEncoder.encode(AllDeviceTypes.toHumanString(devclass), "UTF-8"));
+        }
+      } catch (UnsupportedEncodingException ex) {  // Won't happen
+        return null;
+      }
+
+      return sb.toString();
     }
   }
 }

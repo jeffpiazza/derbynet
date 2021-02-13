@@ -7,6 +7,7 @@ require_once('inc/autoadvance.inc');
 require_once('inc/replay.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/events.inc');
+require_once('inc/timer-flags.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -32,6 +33,9 @@ require_once('inc/events.inc');
 //
 // message="MALFUNCTION" & detectable=0|1 & error= message
 //   Signals lost connection or other problem with the timer
+//
+// message="FLAGS" & many parameters
+//   Reports ports, devices, and flag settings from the timer jar
 
 // Web-service-to-timer-controller messages:
 //
@@ -65,6 +69,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     // timer log file (which we may well never create).
     write_raceinfo("timer-log", tempnam(sys_get_temp_dir(), "timer-"));
     echo "\n  <success/>\n";
+    echo "    <query/>\n";
   } else if ($message == 'IDENTIFIED') {
     if (isset($_POST['lane_count']) && $_POST['lane_count'] > 0) {
       write_raceinfo('reported_lane_count', $_POST['lane_count']);
@@ -148,6 +153,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       $timer_state->set_unhealthy(isset($_POST['error']) ? $_POST['error'] : "Malfunction");
     }
     set_racing_state(false);
+  } else if ($message == 'FLAGS') {
+    decode_timer_flags($_POST);
+    echo "\n  <success/>\n";
   } else {
     echo "\n  <failure code='notunderstood'>Message "
         .htmlspecialchars($message, ENT_QUOTES, 'UTF-8')
