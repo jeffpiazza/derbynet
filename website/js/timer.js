@@ -128,14 +128,50 @@ function on_flag_change_bool(evt) {
   close_modal("#timer_settings_modal");
 }
 
+function on_flag_input_text(evt) {
+  var target = $(evt.target);
+  target.closest('td').find('div.controls')
+    .toggleClass('hidden', target.val() == target.attr('original'));
+}
+function on_flag_check(evt) {
+  var target = $(evt.target);
+  var input = target.closest('td').find('input[type="text"]');
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'timer.assign-flag',
+                 flag: input.attr('data-flag'),
+                 value: input.val()
+                }});
+  close_modal("#timer_settings_modal");
+}
+function on_flag_cross(evt) {
+  var target = $(evt.target);
+  var input = target.closest('td').find('input[type="text"]');
+  input.val(input.attr('original'));
+  on_flag_input_text({target: input});
+}
 
 function make_flag_control(f, td) {
-  if (f.getAttribute('type') == 'bool') {
+  var t = f.getAttribute('type');
+  if (t == 'bool') {
     td.append($('<input type="checkbox" class="flipswitch"'
                 + (f.getAttribute('value') != 'false' ? ' checked="checked"' : '')
                 + '/>')
               .attr('data-flag', f.getAttribute('name'))
               .on('change', on_flag_change_bool));
+  } else if (t == 'string' || t == 'int' || t == 'long') {
+    // td.append($("<p/>").text(f.getAttribute('value')))
+    //   .append($("<input type='button' value='Edit'/>"));
+    td.append($("<input type='text'/>")
+              .attr('data-flag', f.getAttribute('name'))
+              .attr('value', f.getAttribute('value'))
+              .attr('original', f.getAttribute('value'))
+              .on('input change', on_flag_input_text)
+              .css('width', '160px'));  // TODO
+    td.append($("<div class='controls hidden'></div>")
+              .append($("<img src='img/small-check.png'/>").on('click', on_flag_check))
+              .append("&nbsp;")
+              .append($("<img src='img/small-cross.png'/>").on('click', on_flag_cross)));
   } else {
     td.text(f.getAttribute('value'));
   }
