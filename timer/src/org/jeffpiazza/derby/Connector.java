@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby;
 
 import org.jeffpiazza.derby.devices.TimerTask;
+import org.jeffpiazza.derby.gui.TimerGui;
 
 // A Connector is what joins the HttpTask (talking to the web server) with
 // the TimerDevice (talking to the physical timer).  When both are available, the connector wires them together
@@ -8,4 +9,5 @@ import org.jeffpiazza.derby.devices.TimerTask;
 public interface Connector {
   void setHttpTask(HttpTask httpTask);
   void setTimerTask(TimerTask deviceTask);
+  void setTimerGui(TimerGui gui);
 }

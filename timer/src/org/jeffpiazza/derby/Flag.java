@@ -8,111 +8,119 @@ public abstract class Flag<T> {
   private static List<Flag> all_flags = new ArrayList<Flag>();
 
   public static final Flag<Boolean> version
-      = new BooleanFlag("v", "Show version");
+      = BooleanFlag.readonly("v", "Show version");
 
   public static final Flag<Boolean> headless
-      = new BooleanFlag("x", "Run headless, without GUI.");
+      = BooleanFlag.readonly("x", "Run headless, without GUI.");
 
   public static final Flag<Boolean> insecure
-      = new BooleanFlag("insecure",
-                        "Ignore any HTTPS certificate problems.  (Use with"
-                        + " caution!)");
+      = BooleanFlag.settable("insecure",
+                             "Ignore any HTTPS certificate problems.  (Use with"
+                             + " caution!)");
 
   public static final Flag<String> logdir
-      = new StringFlag("logdir", null, "Write log files in <directory>");
+      = StringFlag.readonly("logdir", null, "Write log files in <directory>");
 
   public static final Flag<Boolean> trace_messages
-      = new BooleanFlag("t", "Trace non-heartbeat messages sent");
+      = BooleanFlag.settable("t", "Trace non-heartbeat messages sent");
   public static final Flag<Boolean> trace_heartbeats
-      = new BooleanFlag("th", "Trace heartbeat messages sent");
+      = BooleanFlag.settable("th", "Trace heartbeat messages sent");
   public static final Flag<Boolean> trace_responses
-      = new BooleanFlag("r", "Trace responses to traced messages");
+      = BooleanFlag.settable("r", "Trace responses to traced messages");
 
   public static final Flag<String> username
-      = new StringFlag("u", "Timer",
-                       "Specify username for authenticating to web server");
+      = StringFlag.readonly("u", "Timer",
+                            "Specify username for authenticating to web server");
   public static final Flag<String> password
-      = new StringFlag("p", "",
-                       "Specify password for authenticating to web server");
+      = StringFlag.readonly("p", "",
+                            "Specify password for authenticating to web server");
   public static final Flag<String> portname
-      = new StringFlag("n", null,
-                       "Use specified port name instead of searching");
+      = StringFlag.readonly("n", null,
+                            "Use specified port name instead of searching");
   public static final Flag<String> devicename
-      = new StringFlag("d", null,
-                       "Use specified device instead of trying to identify");
+      = StringFlag.readonly("d", null,
+                            "Use specified device instead of trying to identify");
 
   public static final Flag<Boolean> ignore_place
-      = new BooleanFlag("ignore-place",
-                        "Discard any place indications from timer");
+      = BooleanFlag.settable("ignore-place",
+                             "Discard any place indications from timer");
 
   public static final Flag<Long> delay_reset_after_race
-      = new LongFlag("delay-reset-after-race", 10,
-                     "How long after race over before timer will be reset,"
-                     + " default 10s.  (For SmartLine, DerbyMagic, NewBold,"
-                     + " and BertDrake.)");
+      = LongFlag.settable("delay-reset-after-race", 10,
+                          "How long after race over before timer will be reset,"
+                          + " default 10s.  (For SmartLine, DerbyMagic, NewBold,"
+                          + " and BertDrake.)");
 
   public static final Flag<Long> newline_expected_ms
-      = new LongFlag("newline-expected-ms", 200,
-                     "After this many milliseconds, assume an unterminated line"
-                     + " from the timer is complete (0 = wait forever).");
+      = LongFlag.settable("newline-expected-ms", 200,
+                          "After this many milliseconds, assume an unterminated line"
+                          + " from the timer is complete (0 = wait forever).");
 
   public static final Flag<Boolean> assert_rts_dtr
-      = new BooleanFlag("assert-rts-dtr",
-          "EXPERIMENTAL Initially assert RTS and DTR lines on serial port by default.");
+      = BooleanFlag.settable("assert-rts-dtr",
+                             "EXPERIMENTAL Initially assert RTS and DTR lines on serial port by default.");
 
   // Issue #35: Reject gate state changes that don't last "reasonably" long.
   // To do that, don't record a gate state change until it's aged a bit.
   //
   public static final Flag<Long> min_gate_time
-      = new LongFlag("min-gate-time", 0,
-                     "Ignore gate transitions shorter than <milliseconds>");
+      = LongFlag.settable("min-gate-time", 0,
+                          "Ignore gate transitions shorter than <milliseconds>");
 
   public static final Flag<Boolean> simulate_timer
-      = new BooleanFlag("simulate-timer", "Simulate timer device (for testing)");
+      = BooleanFlag.readonly("simulate-timer",
+                             "Simulate timer device (for testing)");
   public static final Flag<Boolean> simulate_host
-      = new BooleanFlag("simulate-host", "Exercise timer with simulated host");
+      = BooleanFlag.readonly("simulate-host",
+                             "Exercise timer with simulated host");
   public static final Flag<Integer> lanes
-      = new IntegerFlag("lanes", 0, "Specify number of lanes to report");
+      = IntegerFlag.readonly("lanes", 0, "Specify number of lanes to report");
   public static final Flag<Integer> pace
-      = new IntegerFlag("pace", 0, "Staging pace (seconds between heats)");
+      = IntegerFlag.settable("pace", 0,
+                             "Simulation staging pace (seconds between heats)");
   public static final Flag<Boolean> simulate_has_not_spoken
-      = new BooleanFlag("simulate-has-not-spoken",
-                        "Simulate simulated timer has never spoken");
+      = BooleanFlag.readonly("simulate-has-not-spoken",
+                             "Simulate simulated timer has never spoken");
 
   public static final Flag<Boolean> no_gate_watcher
-      = new BooleanFlag("no-gate-watcher",
-          "Disable interrogation of timer's gate state.");
+      = BooleanFlag.settable("no-gate-watcher",
+                             "Disable interrogation of timer's gate state.");
 
   public static final Flag<String> trigger_file_directory
-      = new StringFlag("trigger-file-directory", null,
-                       "Directory into which signaling files, heat-started and "
-                       + "heat-finished, will be written in response to "
-                       + "timer events.");
+      = StringFlag.settable("trigger-file-directory", null,
+                            "Directory into which signaling files, heat-started and "
+                            + "heat-finished, will be written in response to "
+                            + "timer events.");
   public static final Flag<Boolean> record
-      = new BooleanFlag("record", null);
+      = BooleanFlag.readonly("record", null);
   public static final Flag<String> playback
-      = new StringFlag("playback", null, null);
+      = StringFlag.readonly("playback", null, null);
 
   public static final Flag<Integer> reset_after_start
-      = new IntegerFlag("reset-after-start", 10,
-                        "TheJudge: Reset timer <nsec> seconds after heat "
-                        + "start, default 10");
+      = IntegerFlag.settable("reset-after-start", 10,
+                             "TheJudge: Reset timer <nsec> seconds after heat "
+                             + "start, default 10");
 
   public static final Flag<Boolean> skip_enhanced_format
-      = new BooleanFlag("skip-enhanced-format",
-                        "FastTrack: Don't attempt enhanced format command");
+      = BooleanFlag.settable("skip-enhanced-format",
+                             "FastTrack: Don't attempt enhanced format command");
   public static final Flag<Boolean> skip_read_features
-      = new BooleanFlag("skip-read-features",
-                        "FastTrack: Don't attempt reading features");
+      = BooleanFlag.settable("skip-read-features",
+                             "FastTrack: Don't attempt reading features");
   public static final Flag<Boolean> fasttrack_automatic_gate_release
-      = new BooleanFlag("fasttrack-automatic-gate-release",
-                       "FastTrack light tree and automatic gate release installed");
+      = BooleanFlag.settable("fasttrack-automatic-gate-release",
+                             "FastTrack light tree and automatic gate release installed");
 
   public Flag(String name, T value, String description) {
     this.name = name;
     this.value = value;
     this.description = description;
     all_flags.add(this);
+  }
+
+  public Flag(String name, T value, String description, boolean settable) {
+    this(name, value, description);
+    this.is_settable = settable;
   }
 
   public static int parseCommandLineFlags(String[] args, int argc) {
@@ -140,11 +148,20 @@ public abstract class Flag<T> {
     return all_flags.toArray(new Flag[all_flags.size()]);
   }
 
+  public static void assignFlag(String flag, String value) {
+    for (Flag f : all_flags) {
+      if (f.name().equals(flag)) {
+        f.setValueText(value);
+        return;
+      }
+    }
+  }
+
   public abstract int maybeParseCommandLine(String[] args, int argc);
 
-  public abstract boolean maybeParseXml(Element flag_element);
-
   public abstract String typeName();
+
+  public abstract void setValueText(String valueText);
 
   public String name() {
     return name;
@@ -154,7 +171,13 @@ public abstract class Flag<T> {
     return value;
   }
 
-  public String description() { return description; }
+  public String description() {
+    return description;
+  }
+
+  public boolean is_settable() {
+    return is_settable;
+  }
 
   public String usage_string() {
     return "   -" + name() + ": " + description;
@@ -163,12 +186,28 @@ public abstract class Flag<T> {
   protected final String name;
   protected T value;
   private String description;
+  protected boolean is_settable;
 
   public static class BooleanFlag extends Flag<Boolean> {
-    public BooleanFlag(String name, String description) {
-      super(name, Boolean.FALSE, description);
+    public static BooleanFlag settable(String name, String description) {
+      return new BooleanFlag(name, description, true);
     }
-    public String typeName() { return "bool"; }
+
+    public static BooleanFlag readonly(String name, String description) {
+      return new BooleanFlag(name, description, false);
+    }
+
+    private BooleanFlag(String name, String description, boolean settable) {
+      super(name, Boolean.FALSE, description, settable);
+    }
+
+    public String typeName() {
+      return "bool";
+    }
+
+    public void setValueText(String valueText) {
+      value = !valueText.equals("false");
+    }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {
@@ -185,18 +224,31 @@ public abstract class Flag<T> {
       }
       return argc;
     }
-
-    @Override
-    public boolean maybeParseXml(Element flag_element) {
-      return false;  // TODO
-    }
   }
 
   public static class StringFlag extends Flag<String> {
-    public StringFlag(String name, String value, String description) {
-      super(name, value, description);
+    public static StringFlag readonly(String name, String value,
+                                      String description) {
+      return new StringFlag(name, value, description, false);
     }
-    public String typeName() { return "string"; }
+
+    public static StringFlag settable(String name, String value,
+                                      String description) {
+      return new StringFlag(name, value, description, true);
+    }
+
+    private StringFlag(String name, String value,
+                       String description, boolean settable) {
+      super(name, value, description, settable);
+    }
+
+    public String typeName() {
+      return "string";
+    }
+
+    public void setValueText(String valueText) {
+      value = valueText;
+    }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {
@@ -209,21 +261,41 @@ public abstract class Flag<T> {
       }
       return argc;
     }
-
-    @Override
-    public boolean maybeParseXml(Element flag_element) {
-      return false;  // TODO
-    }
   }
 
   public static class LongFlag extends Flag<Long> {
-    public LongFlag(String name, Long value, String description) {
-      super(name, value, description);
+    public static LongFlag readonly(String name, Long value, String description) {
+      return new LongFlag(name, value, description, false);
     }
-    public String typeName() { return "long"; }
 
-    public LongFlag(String name, long value, String description) {
-      super(name, new Long(value), description);
+    public static LongFlag settable(String name, Long value, String description) {
+      return new LongFlag(name, value, description, true);
+    }
+
+    public static LongFlag readonly(String name, long value, String description) {
+      return new LongFlag(name, value, description, false);
+    }
+
+    public static LongFlag settable(String name, long value, String description) {
+      return new LongFlag(name, value, description, true);
+    }
+
+    private LongFlag(String name, Long value,
+                     String description, boolean settable) {
+      super(name, value, description, settable);
+    }
+
+    public String typeName() {
+      return "long";
+    }
+
+    public void setValueText(String valueText) {
+      try {
+        value = Long.parseLong(valueText);
+      } catch (NumberFormatException nfe) {
+        LogWriter.info(name() + " value failed to parse: " + valueText);
+        System.err.println(name() + " value failed to parse: " + valueText);
+      }
     }
 
     @Override
@@ -232,23 +304,41 @@ public abstract class Flag<T> {
         return argc;
       }
       if (args[argc].equals("-" + name)) {
-        value = Long.parseLong(args[argc + 1]);
+        setValueText(args[argc + 1]);
         return argc + 2;
       }
       return argc;
-    }
-
-    @Override
-    public boolean maybeParseXml(Element flag_element) {
-      return false;  // TODO
     }
   }
 
   public static class IntegerFlag extends Flag<Integer> {
-    public IntegerFlag(String name, Integer value, String description) {
-      super(name, value, description);
+    public static IntegerFlag readonly(String name, Integer value,
+                                       String description) {
+      return new IntegerFlag(name, value, description, false);
     }
-    public String typeName() { return "int"; }
+
+    public static IntegerFlag settable(String name, Integer value,
+                                       String description) {
+      return new IntegerFlag(name, value, description, true);
+    }
+
+    private IntegerFlag(String name, Integer value,
+                        String description, boolean settable) {
+      super(name, value, description, settable);
+    }
+
+    public String typeName() {
+      return "int";
+    }
+
+    public void setValueText(String valueText) {
+      try {
+        value = Integer.parseInt(valueText);
+      } catch (NumberFormatException nfe) {
+        LogWriter.info(name() + " value failed to parse: " + valueText);
+        System.err.println(name() + " value failed to parse: " + valueText);
+      }
+    }
 
     @Override
     public int maybeParseCommandLine(String[] args, int argc) {
@@ -256,15 +346,10 @@ public abstract class Flag<T> {
         return argc;
       }
       if (args[argc].equals("-" + name)) {
-        value = Integer.parseInt(args[argc + 1]);
+        setValueText(args[argc + 1]);
         return argc + 2;
       }
       return argc;
-    }
-
-    @Override
-    public boolean maybeParseXml(Element flag_element) {
-      return false;  // TODO
     }
   }
 }

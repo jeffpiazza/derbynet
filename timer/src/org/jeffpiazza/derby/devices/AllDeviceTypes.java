@@ -34,7 +34,22 @@ public class AllDeviceTypes {
     for (Class<? extends TimerDevice> cl : allDeviceClasses) {
       String human = toHumanString(cl);
       System.err.println("         " + cl.getSimpleName()
-                         + (human == null ? "" : (": " + human)));
+          + (human == null ? "" : (": " + human)));
     }
+  }
+
+  public static Class<? extends TimerDevice> getDeviceClass(String className) {
+    if (className.isEmpty()) {
+      return null;
+    }
+    for (Class<? extends TimerDevice> cl : allDeviceClasses) {
+      if (cl.getName().toLowerCase().endsWith(className.toLowerCase())) {
+        return cl;
+      }
+    }
+    System.err.println(
+        "**** No device classes match " + className
+        + "; use -h option to get a list of recognized classes");
+    return null;
   }
 }

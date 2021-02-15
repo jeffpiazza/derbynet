@@ -64,6 +64,7 @@ div.test-control label {
   font-size: 18px;
 }
 
+#timer_settings_button_div,
 #start_race_button_div {
   width: 550px;
 }
@@ -88,3 +89,14 @@ table#lanes td {
 table#lanes td.time {
   text-align: right;
 }
+
+
+#timer_settings_modal {
+  top: 10px;
+}
+#timer_settings_port,
+#timer_settings_device {
+  display: inline-block;
+  width: 49%;
+}
+

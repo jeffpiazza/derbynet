@@ -18,6 +18,9 @@ public class HttpTask implements Runnable {
   private HeatReadyCallback heatReadyCallback;
   private AbortHeatCallback abortHeatCallback;
   private RemoteStartCallback remoteStartCallback;
+  private AssignPortCallback assignPortCallback;
+  private AssignDeviceCallback assignDeviceCallback;
+
   // Print queued Messages when actually sent.
   private boolean traceQueued;
   // Print heartbeat Messages when actually sent.
@@ -60,11 +63,22 @@ public class HttpTask implements Runnable {
     void onLoginFailed(String message);
   }
 
+  public interface AssignPortCallback {
+    void onAssignPort(String portName);
+  }
+
+  public interface AssignDeviceCallback {
+    void onAssignDevice(String deviceName);
+  }
+
   // When a ClientSession and credentials are available, start() launches
   // the HttpTask in a new Thread.
   public static void start(final ClientSession session,
                            final Connector connector,
                            final LoginCallback callback) {
+    // TODO This gets called by RoleFinder and by the timer GUI directly,
+    // resulting in two HELLO messages to the server.  Need to figure out why.
+    // (new RuntimeException("Starting HttpTask")).printStackTrace();
     LogWriter.setClientSession(session);
     (new Thread() {
       @Override
@@ -154,6 +168,23 @@ public class HttpTask implements Runnable {
     return cb != null && cb.hasRemoteStart();
   }
 
+  protected synchronized void registerAssignPortCallback(AssignPortCallback cb) {
+    this.assignPortCallback = cb;
+  }
+
+  protected synchronized AssignPortCallback getAssignPortCallback() {
+    return assignPortCallback;
+  }
+
+  protected synchronized void registerAssignDeviceCallback(
+      AssignDeviceCallback cb) {
+    this.assignDeviceCallback = cb;
+  }
+
+  protected synchronized AssignDeviceCallback getAssignDeviceCallback() {
+    return assignDeviceCallback;
+  }
+
   private static int parseIntOrZero(String attr) {
     if (attr.isEmpty()) {
       return 0;
@@ -192,17 +223,10 @@ public class HttpTask implements Runnable {
         } else {
           TimerHealthCallback timerHealth = getTimerHealthCallback();
           if (timerHealth != null) {
-            int health = timerHealth.getTimerHealth();
-            // Send heartbeats only if we've actually identified the timer and
-            // it's not unhealthy.
-            if (health != TimerHealthCallback.UNHEALTHY) {
-              nextMessage = new Message.Heartbeat(
-                  health == TimerHealthCallback.HEALTHY);
-              log = trace = this.traceHeartbeat;
-            } else {
-              continue;
-            }
+            nextMessage = new Message.Heartbeat(timerHealth.getTimerHealth());
+            log = trace = this.traceHeartbeat;
           } else {
+            // This really shouldn't arise: we always register a timer health callback
             continue;
           }
         }
@@ -218,7 +242,11 @@ public class HttpTask implements Runnable {
               StdoutMessageTrace.httpMessage(params);
             }
             if (log) {
-              LogWriter.httpMessage(params);
+              if (nextMessage.getClass() == Message.Flags.class) {
+                LogWriter.httpMessage("message=FLAGS&...");
+              } else {
+                LogWriter.httpMessage(params);
+              }
             }
             response = session.sendTimerMessage(params);
           } catch (ClientSession.HttpException he) {
@@ -251,10 +279,10 @@ public class HttpTask implements Runnable {
   }
 
   private void decodeResponse(Element response) {
-    NodeList remote_logs = response.getElementsByTagName("remote-log");
-    if (remote_logs.getLength() > 0) {
+    NodeList nodes = response.getElementsByTagName("remote-log");
+    if (nodes.getLength() > 0) {
       LogWriter.setRemoteLogging(Boolean.parseBoolean(
-          ((Element) remote_logs.item(0)).getAttribute("send")));
+          ((Element) nodes.item(0)).getAttribute("send")));
     }
 
     if (response.getElementsByTagName("abort").getLength() > 0) {
@@ -264,11 +292,10 @@ public class HttpTask implements Runnable {
       }
     }
 
-    NodeList heatReadyNodes = response.getElementsByTagName("heat-ready");
-    if (heatReadyNodes.getLength() > 0) {
+    if ((nodes = response.getElementsByTagName("heat-ready")).getLength() > 0) {
       HeatReadyCallback cb = getHeatReadyCallback();
       if (cb != null) {
-        Element heatReady = (Element) heatReadyNodes.item(0);
+        Element heatReady = (Element) nodes.item(0);
         int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
         int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
         int heat = parseIntOrZero(heatReady.getAttribute("heat"));
@@ -283,7 +310,35 @@ public class HttpTask implements Runnable {
       }
     }
 
+    nodes = response.getElementsByTagName("assign-flag");
+    for (int i = 0; i < nodes.getLength(); ++i) {
+      Element assignment = (Element) nodes.item(0);
+      String flagName = assignment.getAttribute("flag");
+      String value = assignment.getAttribute("value");
+      LogWriter.httpResponse("assign-flag " + flagName + ": " + value);
+      Flag.assignFlag(flagName, value);
+    }
+
+    if ((nodes = response.getElementsByTagName("assign-port")).getLength() > 0) {
+      String portName = ((Element) nodes.item(0)).getAttribute("port");
+      LogWriter.httpResponse("assign-port " + portName);
+      AssignPortCallback cb = getAssignPortCallback();
+      if (cb != null) {
+        cb.onAssignPort(portName);
+      }
+    }
+
+    if ((nodes = response.getElementsByTagName("assign-device")).getLength() > 0) {
+      String deviceName = ((Element) nodes.item(0)).getAttribute("device");
+      LogWriter.httpResponse("assign-device " + deviceName);
+      AssignDeviceCallback cb = getAssignDeviceCallback();
+      if (cb != null) {
+        cb.onAssignDevice(deviceName);
+      }
+    }
+
     if (response.getElementsByTagName("query").getLength() > 0) {
+      LogWriter.httpResponse("query");
       queueMessage(new Message.Flags());
     }
   }

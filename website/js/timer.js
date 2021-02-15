@@ -45,6 +45,103 @@ function on_reverse_lanes_change() {
 }
 $(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
 
+function handle_timer_settings_button() {
+  $.ajax('action.php',
+         {type: 'GET',
+          data: {query: 'timer.settings'},
+          success: function(data) {
+            open_timer_settings_modal(data);
+          }});
+}
+
+function open_timer_settings_modal(data) {
+  var ports = data.documentElement.getElementsByTagName('ports');
+  if (ports.length > 0) {
+    ports = ports[0].getAttribute('value').split(',');
+  } else {
+    ports = [];
+  }
+  $("#timer_settings_port select").empty();
+  $("#timer_settings_port select").append("<option value='' selected='selected'>Auto Port</option>");
+  for (var i = 0; i < ports.length; ++i) {
+      $("<option/>")
+        .attr('value', ports[i])
+        .text(ports[i])
+        .appendTo($("#timer_settings_port select"));
+    }
+
+  var devices = data.documentElement.getElementsByTagName('device');
+  $("#timer_settings_device select").empty();
+  $("#timer_settings_device select").append("<option value='' selected='selected'>Auto Device</option>");
+  for (var i = 0; i < devices.length; ++i) {
+    $("<option/>")
+      .attr('value', devices[i].getAttribute('name'))
+      .text(devices[i].textContent)
+      .appendTo($("#timer_settings_device select"));
+  }
+  
+  var flags = data.documentElement.getElementsByTagName('flag');
+  $("#timer_settings_modal_flags").empty();
+  for (var i = 0; i < flags.length; ++i) {
+    var f = flags[i];
+    $("#timer_settings_modal_flags").append(
+      $("<tr/>")
+        .append($("<td/>").text(f.getAttribute('name')))
+        .append($("<td/>").text(f.textContent))
+        .append(make_flag_control(f, $("<td/>")))
+    );
+  }
+
+  flipswitch($("#timer_settings_modal").find("input[type='checkbox']"));
+  mobile_select_refresh($("#timer_settings_modal select"));
+
+  show_modal("#timer_settings_modal", function(event) {});
+}
+
+function on_port_change(evt) {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'timer.assign-port',
+                 port: $("#timer_settings_port select")
+                        .find('option:selected').attr('value')
+                }});
+}
+$(function() { $("#timer_settings_port select").on('change', on_port_change); });
+
+function on_device_change(evt) {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'timer.assign-device',
+                 device: $("#timer_settings_device select")
+                           .find('option:selected').attr('value')
+                }});
+}
+$(function() { $("#timer_settings_device select").on('change', on_device_change); });
+
+function on_flag_change_bool(evt) {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'timer.assign-flag',
+                 flag: $(evt.target).attr('data-flag'),
+                 value: $(evt.target).is(':checked') ? 'true' : 'false'
+                }});
+  close_modal("#timer_settings_modal");
+}
+
+
+function make_flag_control(f, td) {
+  if (f.getAttribute('type') == 'bool') {
+    td.append($('<input type="checkbox" class="flipswitch"'
+                + (f.getAttribute('value') != 'false' ? ' checked="checked"' : '')
+                + '/>')
+              .attr('data-flag', f.getAttribute('name'))
+              .on('change', on_flag_change_bool));
+  } else {
+    td.text(f.getAttribute('value'));
+  }
+  return td;
+}
+
 function handle_start_race_button() {
   $.ajax('action.php',
          {type: 'POST',
@@ -106,19 +203,26 @@ function on_send_log_change(event) {
 }
 $(function() { $("#timer-send-logs").on('change', on_send_log_change); });
 
+function is_in_testing_mode(current) {
+  if (! current) {
+    return false;
+  }
+  return current.getAttribute('roundid') == -100 &&
+    current.getAttribute('now-racing') == 1;
+}
 function update_testing_mode(current) {
-  var should_be_checked =
-      current.getAttribute('roundid') == -100 && current.getAttribute('now-racing') == 1;
+  var should_be_checked = is_in_testing_mode(current);
   if ($("#test-mode").is(':checked') != should_be_checked) {
     $("#test-mode").prop('checked', should_be_checked);
     $("#test-mode").trigger('change', /*synthetic*/true);
   }
 }
 
-function update_timer_summary(tstate) {
+function update_timer_summary(tstate, current) {
   $("#timer_status_text").text(tstate.textContent);
   $("#timer_summary_icon").attr('src', tstate.getAttribute("icon"));
   $("#start_race_button_div").toggleClass('hidden',
+                                          !is_in_testing_mode(current) ||
                                           tstate.getAttribute("remote_start") != "1");
 }
 
@@ -145,8 +249,9 @@ $(function() {
             data: {query: 'poll.timer.test'},
             success: function(data) {
               var tstate = data.documentElement.getElementsByTagName('timer-state');
+              var current = data.documentElement.getElementsByTagName('current-heat');
               if (tstate.length > 0) {
-                update_timer_summary(tstate[0]);
+                update_timer_summary(tstate[0], current.length > 0 ? current[0] : undefined);
               }
               var details = data.documentElement.getElementsByTagName('timer-details');
               if (details.length > 0) {
@@ -157,7 +262,6 @@ $(function() {
                 $("table#lanes td.time, table#lanes td.place").text("");
                 heat_showing = tt_results[0].getAttribute('heat')
               }
-              var current = data.documentElement.getElementsByTagName('current-heat');
               if (current.length > 0) {
                 update_testing_mode(current[0]);
               }

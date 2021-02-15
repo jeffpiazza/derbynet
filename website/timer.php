@@ -20,6 +20,7 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/timer.js"></script>
 <script type="text/javascript">
 $(function() {
@@ -88,10 +89,29 @@ $(function() {
     </tr>
   </table>
 
+  <div id="timer_settings_button_div" class="block_buttons">
+    <input type="button" value="Timer Settings" onclick="handle_timer_settings_button()"/>
+  </div>
+
   <div id="start_race_button_div" class="block_buttons hidden">
     <input type="button" value="Start Race" onclick="handle_start_race_button()"/>
   </div>
 
+</div>
+
+<div id='timer_settings_modal' class='modal_dialog wide_modal hidden block_buttons'>
+  <div id='timer_settings_port_and_device'>
+    <div id='timer_settings_port'>
+      <select></select>
+    </div>
+    <div id='timer_settings_device'>
+      <select></select>
+    </div>
+  </div>
+
+  <table id="timer_settings_modal_flags"></table>
+  <input type="button" value="Cancel"
+      onclick='close_modal("#timer_settings_modal");'/>
 </div>
 
 </body>

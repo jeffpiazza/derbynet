@@ -2,10 +2,9 @@ package org.jeffpiazza.derby;
 
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.TimerDevice;
+import org.jeffpiazza.derby.devices.TimerTask;
 
 // TODO: Heartbeat should supply whatever ancillary information
 // the timer supports (reset button pressed, lane blocked, etc.)
@@ -132,14 +131,17 @@ public interface Message {
   }
 
   public static class Heartbeat implements Message {
-    private boolean confirmed;
+    private int health;
 
-    public Heartbeat(boolean confirmed) {
-      this.confirmed = confirmed;
+    public Heartbeat(int health) {
+      this.health = health;
     }
 
     public String asParameters() {
-      return "message=HEARTBEAT&confirmed=" + (confirmed ? 1 : 0);
+      return "message=HEARTBEAT&"
+          + (health == TimerTask.UNHEALTHY ? "unhealthy"
+             : health == TimerTask.HEALTHY ? "confirmed=1"
+               : "confirmed=0");
     }
   }
 

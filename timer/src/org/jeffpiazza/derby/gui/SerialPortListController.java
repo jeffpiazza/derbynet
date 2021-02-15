@@ -9,7 +9,9 @@ import org.jeffpiazza.derby.devices.TimerTask;
 
 public class SerialPortListController implements ListSelectionListener {
   private JList<SerialPortListElement> portList;
-  private boolean userChoosing = true;  // Access via synchronized getter/setter
+ // userChoosing tells valueChanged whether it's being called in response to
+  // the user explicitly clicking, or just the scan updating the UI.
+   private boolean userChoosing = true;  // Access via synchronized getter/setter
   private TimerTask timerTask;
 
   public SerialPortListController(JList<SerialPortListElement> portList) {
@@ -32,17 +34,21 @@ public class SerialPortListController implements ListSelectionListener {
 
   public void setSerialPort(String portName) {
     ListModel<SerialPortListElement> model = portList.getModel();
-    for (int i = 0; i < model.getSize(); ++i) {
-      if (model.getElementAt(i).portName().equals(portName)) {
-        setUserChoosing(false);
-        try {
-          portList.setSelectedIndex(i);
-        } finally {
-          setUserChoosing(true);
+    if (portName == null) {
+      portList.clearSelection();
+    } else {
+      for (int i = 0; i < model.getSize(); ++i) {
+        if (model.getElementAt(i).portName().equals(portName)) {
+          setUserChoosing(false);
+          try {
+            portList.setSelectedIndex(i);
+          } finally {
+            setUserChoosing(true);
+          }
+          // We're about to try opening, so assume success
+          portList.getSelectedValue().setWontOpen(false);
+          return;
         }
-        // We're about to try opening, so assume success
-        portList.getSelectedValue().setWontOpen(false);
-        return;
       }
     }
   }

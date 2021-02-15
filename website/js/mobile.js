@@ -55,9 +55,11 @@ function mobile_select(selects) {
 }
 
 // Update appearance to match the current selection
-function mobile_select_refresh(select) {
-  select = $(select);
-  select.prev("span").text(select.find("option:selected").text());
+function mobile_select_refresh(selects) {
+  $(selects).each(function(i, select) {
+    select = $(select);
+    select.prev("span").text(select.find("option:selected").text());
+  });
 }
 
 function mobile_text(texts) {

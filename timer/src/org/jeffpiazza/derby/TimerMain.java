@@ -102,6 +102,7 @@ public class TimerMain {
                      }
                    });
       }
+      connector.setTimerGui(timerGui);
 
       TimerTask timerTask = new TimerTask(Flag.portname.value(),
                                           Flag.devicename.value(), timerGui,
@@ -147,10 +148,16 @@ public class TimerMain {
   public static class ConnectorImpl implements Connector {
     private HttpTask httpTask;
     private TimerTask timerTask;
+    private TimerGui timerGui;
     private boolean traceMessages;
 
     public ConnectorImpl(boolean traceMessages) {
       this.traceMessages = traceMessages;
+    }
+
+    @Override
+    public void setTimerGui(TimerGui gui) {
+      this.timerGui = gui;
     }
 
     @Override
@@ -166,8 +173,12 @@ public class TimerMain {
     }
 
     private void maybeWireTogether() {
-      TimerDevice device = timerTask != null ? timerTask.device() : null;
-      if (httpTask != null && timerTask != null && device != null) {
+      if (httpTask == null || timerTask == null) {
+        return;
+      }
+      prewire(httpTask, timerTask, timerGui);
+      TimerDevice device = timerTask.device();
+      if (device != null) {
         wireTogether(httpTask, timerTask, traceMessages);
         int nlanes = 0;
         try {
@@ -182,6 +193,37 @@ public class TimerMain {
       }
     }
 
+    public static void prewire(final HttpTask httpTask,
+                               final TimerTask timerTask,
+                               final TimerGui timerGui) {
+      httpTask.registerTimerHealthCallback(timerTask);
+
+      httpTask.registerAssignPortCallback(new HttpTask.AssignPortCallback() {
+        @Override
+        public void onAssignPort(String portName) {
+          if (timerGui != null) {
+            timerGui.setSerialPort(portName);
+          }
+          timerTask.userChoosesSerialPort(portName);
+          LogWriter.info("Assigned port " + portName);
+        }
+      });
+
+      httpTask.registerAssignDeviceCallback(
+          new HttpTask.AssignDeviceCallback() {
+        @Override
+        public void onAssignDevice(String deviceName) {
+          Class<? extends TimerDevice> cl
+              = AllDeviceTypes.getDeviceClass(deviceName);
+          if (timerGui != null) {
+            timerGui.setTimerClass(cl);
+          }
+          timerTask.userChoosesTimerClass(cl);
+          LogWriter.info("Assigned device " + deviceName);
+        }
+      });
+    }
+
     // Registers callbacks that allow the httpTask and timer device to
     // communicate asynchronously.
     public static void wireTogether(final HttpTask httpTask,
@@ -190,8 +232,6 @@ public class TimerMain {
       if (traceMessages) {
         StdoutMessageTrace.trace("Timer detected.");
       }
-
-      httpTask.registerTimerHealthCallback(timerTask);
 
       httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
         public void onHeatReady(int roundid, int heat, int laneMask) {

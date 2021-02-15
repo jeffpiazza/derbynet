@@ -27,9 +27,10 @@ require_once('inc/timer-flags.inc');
 //
 // message="FINISHED" & lane1="3.123"&place1="1"&..., etc.
 //
-// message="HEARTBEAT" & confirmed=0|1
-//  Response provides message to timer controller
-//  Confirmed means the timer has sent recognizable data.
+// message="HEARTBEAT" & confirmed=0|1 (healthy implied) & unhealthy
+// Unhealthy means the timer is (still) unhealthy; this message should have been preceded by
+//  a HELLO (for initial search) or MALFUNCTION message.
+// If unhealthy not present, then confirmed=1 means the timer has sent recognizable data.
 //
 // message="MALFUNCTION" & detectable=0|1 & error= message
 //   Signals lost connection or other problem with the timer
@@ -128,11 +129,16 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $timer_state->to_state(TIMER_CONNECTED);
   } else if ($message == 'HEARTBEAT') {
     echo "\n  <success/>\n";
-    if ($timer_state->unhealthy()) {
-      $timer_state->to_state(TIMER_CONNECTED);
-    }
-    if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
+    if (isset($_POST['unhealthy'])) {
+      // Probably a no-op
+      if (!$timer_state->unhealthy()) {
+        $timer_state->to_state(TIMER_SEARCHING);
+      }
+    } else if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
       $timer_state->to_state(TIMER_UNCONFIRMED);
+    } else if ($timer_state->unhealthy()) {
+      // A good heartbeat converts unhealthy back to connected
+      $timer_state->to_state(TIMER_CONNECTED);
     }
   } else if ($message == 'MALFUNCTION') {
     $error_string = isset($_POST['error']) ? $_POST['error'] : "Malfunction";
@@ -221,6 +227,8 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     }
   }
 
+  send_timer_assignments();
+  
   if (remote_start_pending()) {
     echo '  <remote-start/>'."\n";
   }
