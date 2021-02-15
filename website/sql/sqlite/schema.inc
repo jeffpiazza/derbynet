@@ -170,7 +170,7 @@ make_index("Rounds", "round"),
 
 @include_once(sql_file_path('balloting')),
 
-@include_once(sql_file_path('timer-settings'));
+@include_once(sql_file_path('timer-settings')),
 
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
