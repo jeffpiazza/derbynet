@@ -150,11 +150,14 @@ public interface Message {
       StringBuilder sb = new StringBuilder("message=FLAGS");
       try {
         for (Flag flag : Flag.allFlags()) {
-          sb.append("&flag-").append(flag.name()).append("=");
-          sb.append(flag.typeName()).append(":");
-          sb.append(URLEncoder.encode(flag.value() == null ? "null" : flag.value().toString(), "UTF-8"));
-          sb.append("&desc-").append(flag.name()).append("=");
-          sb.append(URLEncoder.encode("" + flag.description(), "UTF-8"));
+          if (flag.is_settable()) {
+            sb.append("&flag-").append(flag.name()).append("=");
+            sb.append(flag.typeName()).append(":");
+            sb.append(URLEncoder.encode(flag.value() == null ? "null" : flag.
+                value().toString(), "UTF-8"));
+            sb.append("&desc-").append(flag.name()).append("=");
+            sb.append(URLEncoder.encode("" + flag.description(), "UTF-8"));
+          }
         }
         sb.append("&ports=");
         boolean first_port = true;
