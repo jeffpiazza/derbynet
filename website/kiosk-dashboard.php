@@ -145,6 +145,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 
         foreach ($stmt as $row) {
           echo '<input type="checkbox" name="class-'.$row['classid'].'"'
+               .' class="flipswitch"'
                .' id="config-class-'.$row['classid'].'"'
                .' data-classid="'.$row['classid'].'"'
                .'/>'."\n";

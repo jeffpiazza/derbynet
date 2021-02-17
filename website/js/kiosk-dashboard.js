@@ -74,7 +74,8 @@ var g_kiosk_page_handlers = {
       if (!kiosk.parameters.hasOwnProperty('confetti')) {
         kiosk.parameters.confetti = true;
       }
-      $('<input type="checkbox" id="' + k_id + '" />')
+      $("<input type='checkbox' class='flipswitch'/>")
+        .attr('id', k_id)
         .prop('checked',  kiosk.parameters.confetti)
         .on("change", /*selector*/null, /*data*/kiosk,
             /*handler*/function (event) {
@@ -484,7 +485,6 @@ function populate_classids(parameters) {
   } else {
     $("#config_classes_modal input[type='checkbox']").prop("checked", true);
   }
-  $("#config_classes_modal input[type='checkbox']").checkboxradio("refresh");
 }
 
 // Extract classids from user's choices in the UI
