@@ -49,5 +49,13 @@ if (schema_version() < 6) {
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '6')";
 }
 
+if (schema_version() < 7) {
+  $updates = array_merge($updates,
+                         @include_once(sql_file_path('timer-settings')));
+
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '7')";
+}
+
 return $updates;
 ?>
