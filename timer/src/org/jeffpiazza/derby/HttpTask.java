@@ -21,12 +21,6 @@ public class HttpTask implements Runnable {
   private AssignPortCallback assignPortCallback;
   private AssignDeviceCallback assignDeviceCallback;
 
-  // Print queued Messages when actually sent.
-  private boolean traceQueued;
-  // Print heartbeat Messages when actually sent.
-  private boolean traceHeartbeat;
-  private boolean traceResponses;
-
   public static final long heartbeatPace = 500;  // ms.
 
   // Callbacks all get invoked from the thread running HttpTask.  They're
@@ -219,12 +213,12 @@ public class HttpTask implements Runnable {
         }
         if (queue.size() > 0) {
           nextMessage = queue.remove(0);
-          trace = this.traceQueued;
+          trace = Flag.trace_messages.value();
         } else {
           TimerHealthCallback timerHealth = getTimerHealthCallback();
           if (timerHealth != null) {
             nextMessage = new Message.Heartbeat(timerHealth.getTimerHealth());
-            log = trace = this.traceHeartbeat;
+            log = trace = Flag.trace_heartbeats.value();
           } else {
             // This really shouldn't arise: we always register a timer health callback
             continue;
@@ -264,7 +258,7 @@ public class HttpTask implements Runnable {
       if (ClientSession.wasSuccessful(response)) {
         // We don't really change behavior (other than logging) for an
         // unsuccessful response
-        if (traceResponses) {
+        if (Flag.trace_responses.value()) {
           if (trace) {
             StdoutMessageTrace.httpResponse(nextMessage, response);
           }
@@ -286,6 +280,7 @@ public class HttpTask implements Runnable {
     }
 
     if (response.getElementsByTagName("abort").getLength() > 0) {
+      LogWriter.httpResponse("<abort>");
       AbortHeatCallback cb = getAbortHeatCallback();
       if (cb != null) {
         cb.onAbortHeat();
@@ -293,17 +288,20 @@ public class HttpTask implements Runnable {
     }
 
     if ((nodes = response.getElementsByTagName("heat-ready")).getLength() > 0) {
+      Element heatReady = (Element) nodes.item(0);
+      int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
+      int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
+      int heat = parseIntOrZero(heatReady.getAttribute("heat"));
+      LogWriter.httpResponse(
+          "<heat-ready: roundid=" + roundid + ", heat=" + heat + ">");
       HeatReadyCallback cb = getHeatReadyCallback();
       if (cb != null) {
-        Element heatReady = (Element) nodes.item(0);
-        int lanemask = parseIntOrZero(heatReady.getAttribute("lane-mask"));
-        int roundid = parseIntOrZero(heatReady.getAttribute("roundid"));
-        int heat = parseIntOrZero(heatReady.getAttribute("heat"));
         cb.onHeatReady(roundid, heat, lanemask);
       }
     }
 
     if (response.getElementsByTagName("remote-start").getLength() > 0) {
+      LogWriter.httpResponse("<remote-start>");
       RemoteStartCallback cb = getRemoteStartCallback();
       if (cb != null) {
         cb.remoteStart();
@@ -315,13 +313,13 @@ public class HttpTask implements Runnable {
       Element assignment = (Element) nodes.item(0);
       String flagName = assignment.getAttribute("flag");
       String value = assignment.getAttribute("value");
-      LogWriter.httpResponse("assign-flag " + flagName + ": " + value);
+      LogWriter.httpResponse("<assign-flag " + flagName + ": " + value + ">");
       Flag.assignFlag(flagName, value);
     }
 
     if ((nodes = response.getElementsByTagName("assign-port")).getLength() > 0) {
       String portName = ((Element) nodes.item(0)).getAttribute("port");
-      LogWriter.httpResponse("assign-port " + portName);
+      LogWriter.httpResponse("<assign-port " + portName + ">");
       AssignPortCallback cb = getAssignPortCallback();
       if (cb != null) {
         cb.onAssignPort(portName);
@@ -330,7 +328,7 @@ public class HttpTask implements Runnable {
 
     if ((nodes = response.getElementsByTagName("assign-device")).getLength() > 0) {
       String deviceName = ((Element) nodes.item(0)).getAttribute("device");
-      LogWriter.httpResponse("assign-device " + deviceName);
+      LogWriter.httpResponse("<assign-device " + deviceName + ">");
       AssignDeviceCallback cb = getAssignDeviceCallback();
       if (cb != null) {
         cb.onAssignDevice(deviceName);
@@ -338,7 +336,7 @@ public class HttpTask implements Runnable {
     }
 
     if (response.getElementsByTagName("query").getLength() > 0) {
-      LogWriter.httpResponse("query");
+      LogWriter.httpResponse("<query>");
       queueMessage(new Message.Flags());
     }
   }

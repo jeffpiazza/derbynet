@@ -13,20 +13,24 @@ public abstract class Flag<T> {
   public static final Flag<Boolean> headless
       = BooleanFlag.readonly("x", "Run headless, without GUI.");
 
-  public static final Flag<Boolean> insecure
-      = BooleanFlag.settable("insecure",
-                             "Ignore any HTTPS certificate problems.  (Use with"
-                             + " caution!)");
-
-  public static final Flag<String> logdir
-      = StringFlag.readonly("logdir", null, "Write log files in <directory>");
-
   public static final Flag<Boolean> trace_messages
       = BooleanFlag.settable("t", "Trace non-heartbeat messages sent");
   public static final Flag<Boolean> trace_heartbeats
       = BooleanFlag.settable("th", "Trace heartbeat messages sent");
   public static final Flag<Boolean> trace_responses
       = BooleanFlag.settable("r", "Trace responses to traced messages");
+
+  public static final Flag<String> logdir
+      = StringFlag.readonly("logdir", null, "Write log files in <directory>");
+
+  public static final Flag<Boolean> mark_ignored_timer_responses
+      = BooleanFlag.settable("mark_ignored_timer_responses",
+                             "Mark in the log timer responses that were ignored");
+
+  public static final Flag<Boolean> insecure
+      = BooleanFlag.settable("insecure",
+                             "Ignore any HTTPS certificate problems.  (Use with"
+                             + " caution!)");
 
   public static final Flag<String> username
       = StringFlag.readonly("u", "Timer",

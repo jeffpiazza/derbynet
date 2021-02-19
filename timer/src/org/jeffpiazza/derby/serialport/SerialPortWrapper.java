@@ -318,10 +318,12 @@ public class SerialPortWrapper implements SerialPortEventListener {
     while (System.currentTimeMillis() < deadline) {
       synchronized (queue) {
         if (queue.size() >= expectedLines) {
-          for (String s : queue) {
-            LogWriter.serial("DRAINED: " + s);
+          if (Flag.mark_ignored_timer_responses.value()) {
+            for (String s : queue) {
+              LogWriter.serial("DRAINED: " + s);
+            }
           }
-          queue.clear();
+          queue.subList(0, expectedLines).clear();
           return;
         }
       }
