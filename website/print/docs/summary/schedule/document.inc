@@ -12,6 +12,12 @@ class ScheduleDocument extends PrintableSummaryDocument {
     return array();
   }
 
+  // array with keys:
+  //  'left_header_width' in inches
+  //  'cell_width' in inches
+  //  'racer_font' in points
+  protected $sizes;
+  
   function StartDocument() {
     $this->initialize_pdf('P', 'in', 'Letter');
   }
@@ -19,7 +25,7 @@ class ScheduleDocument extends PrintableSummaryDocument {
   function Byes($n) {
     while ($n > 0) {
       $this->pdf->SetFont('Times', '', 10);
-      $this->pdf->Cell(1.00, 0.5, 'Bye', 1, 0, "C");
+      $this->pdf->Cell($this->sizes['cell_width'], 0.5, 'Bye', 1, 0, "C");
       --$n;
     }
   }
@@ -36,6 +42,19 @@ class ScheduleDocument extends PrintableSummaryDocument {
     $this->pdf->AddPage();
 
     $nlanes = get_lane_count_from_results();
+    // At 8 lanes, the default box sizes make the schedule run off the
+    // right-hand edge, so they need to be "squeezed" a bit.
+    if ($nlanes <= 6) {
+      $this->sizes = array(
+        'left_header_width' => 1.25,
+        'cell_width' => 1.00,
+        'racer_font' => 8);
+    } else {
+      $this->sizes = array(
+        'left_header_width' => 0.75,
+        'cell_width' => 0.84,
+        'racer_font' => 7);
+    }
     $use_master_sched = use_master_sched();
     $name_style = read_raceinfo('name-style', FULL_NAME);
 
@@ -83,7 +102,8 @@ class ScheduleDocument extends PrintableSummaryDocument {
           $lane = 0;
           $this->Newline();
           $this->pdf->SetFont('Times', '', 15);
-          $this->pdf->Cell(1.25, 0.5, 'Heat '.$seq, /* border */ 0, /* ln */ 0, "R");
+          $this->pdf->Cell($this->sizes['left_header_width'], 0.5,
+                           'Heat '.$seq, /* border */ 0, /* ln */ 0, "R");
         }
         $new_lane = $rs['lane'];
         $this->Byes($new_lane - $lane - 1);
@@ -92,12 +112,12 @@ class ScheduleDocument extends PrintableSummaryDocument {
         $y = $this->pdf->GetY();
 
         $this->pdf->SetXY($x, $y + 0.165);
-        $this->pdf->SetFont('Times', '', '8');
-        $this->pdf->Cell(1.00, 0.5, convert($rs['firstname'].' '.$rs['lastname']), 0, 0, "C");
+        $this->pdf->SetFont('Times', '', $this->sizes['racer_font']);
+        $this->pdf->Cell($this->sizes['cell_width'], 0.5, convert($rs['firstname'].' '.$rs['lastname']), 0, 0, "C");
         
         $this->pdf->SetXY($x, $y);        
         $this->pdf->SetFont('Times', '', 15);
-        $this->pdf->Cell(1.00, 0.5, $rs['carnumber'],
+        $this->pdf->Cell($this->sizes['cell_width'], 0.5, $rs['carnumber'],
                          /* border */ 1, /* ln */ 0, "C");
 
         $lane = $new_lane;
