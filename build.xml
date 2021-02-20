@@ -175,6 +175,7 @@
 
   <target name="timer-jar" depends="generated"
           description="Builds the jar file for derby-timer">
+      <ant dir="${timer-dir}" target="clean"/>
       <ant dir="${timer-dir}"/>
   </target>
 
