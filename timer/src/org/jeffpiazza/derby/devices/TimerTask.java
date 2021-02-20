@@ -93,6 +93,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
       try {
         connector.setTimerTask(this);
         device = identifyTimerDevice();
+        // Let the connector know we've (possibly) identified the device
+        connector.setTimerTask(this);
         runDevicePollingLoop();
       } catch (TimerDevice.LostConnectionException lce) {
         System.err.println("Lost connection!");
