@@ -6,6 +6,7 @@ require_once('inc/authorize.inc');
 // Note that schema_version doesn't load data.inc
 require_once('inc/schema_version.inc');
 require_once('inc/banner.inc');
+require_once('inc/locked.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -56,6 +57,7 @@ window.onload = function() {
 
 .main-body {
   margin-right: 350px;
+  margin-left: 20px;
 }
 
 .capture-link {
@@ -82,14 +84,13 @@ window.onload = function() {
 <p class='advert'><b>DerbyNet</b> is the free, open-source, multi-screen race management system for Pinewood Derby-style racing.  It's used by packs and other groups all around the country, and around the globe!
 Check us out <a href="http://jeffpiazza.github.io/derbynet/">on GitHub!</a></p>
 
-
-
 <?php
-$addrs = gethostbynamel(gethostname());
-if (count($addrs) == 0) {
-  echo "<p>The local IP address for this server can't be determined.</p>\n";
-} else {
-  echo '<p>It looks like you can use ';
+$urls = preferred_urls();
+if ($urls === false) {
+  // gethostname() may be something like "instance-1", possibly with a non-routable IP.
+  $addrs = gethostbynamel(gethostname());
+  $urls = array();
+
   // IIS apparently doesn't set REQUEST_URI.
   if (isset($_SERVER['REQUEST_URI'])) {
 	$uri = dirname($_SERVER['REQUEST_URI']);
@@ -97,12 +98,21 @@ if (count($addrs) == 0) {
 	$uri = '/...';
   }
 
-  $naddrs = count($addrs);
-  for ($i = 0; $i < $naddrs; ++$i) {
+  for ($i = 0; $i < count($addrs); ++$i) {
+    $urls[] = "http://".$addrs[$i].$uri;
+  }
+}
+
+
+if (count($urls) == 0) {
+  echo "<p>The local IP address for this server can't be determined.</p>\n";
+} else {
+  echo '<p>It looks like you can use ';
+  for ($i = 0; $i < count($urls); ++$i) {
     if ($i > 0) {
       echo ' or ';
     }
-    echo "<span class='ip_addr'>http://".$addrs[$i].$uri."</span>";
+    echo "<span class='ip_addr'>".$urls[$i]."</span>";
   }
   echo " as the URL for connecting other local devices to this server.</p>\n";
 }

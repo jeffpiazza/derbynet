@@ -9,4 +9,18 @@ function locked_settings() {
   return file_exists($configdir.DIRECTORY_SEPARATOR.'settings.lock');
 }
 
+function preferred_urls() {
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  try {
+    // If present, the config-url should contain the whole url, e.g.,
+    //  http://my-host.com/with/a/long/path
+    $v = file_get_contents($configdir.DIRECTORY_SEPARATOR."config-url");
+    if ($v !== false) {
+      return array(trim($v));
+    }
+  } catch (Exception $p) {
+  }
+  return false;
+}
+
 ?>
