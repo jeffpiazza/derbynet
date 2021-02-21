@@ -358,7 +358,7 @@ function setup_webcam() {
 	  crop_width: g_width,
 	  crop_height: g_height,
   };
-  if (g_cameraIndex < g_cameras.length) {
+  if (g_cameraIndex < g_cameras.length && g_cameras[g_cameraIndex]) {
 	settings['constraints'] = {
 	  deviceId: {exact: g_cameras[g_cameraIndex]}
 	};
