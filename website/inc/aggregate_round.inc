@@ -142,5 +142,16 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                        .' AND (SELECT COUNT(*) FROM Rounds'
                        .'      WHERE classid = Classes.classid) <= 1');
   $stmt->execute(array(':classid' => $classid));
+
+  // Clean up any playlist entries for the deleted class.  When activated, a
+  // playlist entry for a nonexistent class will create a new round for the
+  // class, which can lead to some confusion.  (This actually removes Playlist
+  // entries for any non-existent class, not just $classid.)
+  $stmt = $db->prepare('DELETE FROM Playlist'
+                       .' WHERE NOT EXISTS('
+                       .    'SELECT 1 FROM Classes'
+                       .    ' WHERE classid = Playlist.classid'
+                       .')');
+  $db->execute(array());
 }
 ?>

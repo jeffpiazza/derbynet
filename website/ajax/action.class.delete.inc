@@ -58,6 +58,13 @@ if (have_permission(SET_UP_PERMISSION)) {
       }
     }
     if ($ok) {
+      $stmt = $db->prepare('DELETE FROM Playlist WHERE classid = :classid');
+      if (!$stmt->execute(array(':classid' => $classid))) {
+        echo "\n<failure code='delete-rounds'>Unable to delete Playlist entries</failure>\n";
+        $ok = false;
+      }
+    }
+    if ($ok) {
       $stmt = $db->prepare('DELETE FROM Classes WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         echo "\n<failure code='delete-classes'>Unable to delete Classes entries</failure>\n";
