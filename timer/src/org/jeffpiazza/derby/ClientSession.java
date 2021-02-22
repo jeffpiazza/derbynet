@@ -49,6 +49,7 @@ public class ClientSession {
   }
 
   public ClientSession(String base_url) {
+    LogWriter.info("Attempting connection to " + base_url);
     String lowercase_url = base_url.toLowerCase();
     if (!lowercase_url.startsWith("http://")
         && !lowercase_url.startsWith("https://")) {

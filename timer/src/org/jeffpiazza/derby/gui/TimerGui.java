@@ -209,8 +209,7 @@ public class TimerGui {
 
   private void startHttpTask(ClientSession clientSession) {
     setHttpStatus("Logging in...", black, icon_unknown);
-    HttpTask.start(                   clientSession,
-                   connector,
+    HttpTask.start(clientSession, connector,
                    new HttpTask.LoginCallback() {
                  @Override
                  public void onLoginSuccess() {

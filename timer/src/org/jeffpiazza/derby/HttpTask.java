@@ -106,6 +106,7 @@ public class HttpTask implements Runnable {
     synchronized (queue) {
       queueMessage(new Message.Hello());
     }
+    LogWriter.info("Connection established to " + session.getBaseUrl());
   }
 
   public void sendIdentified(int nlanes, String timer, String humanName,

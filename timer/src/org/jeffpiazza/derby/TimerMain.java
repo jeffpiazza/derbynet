@@ -43,16 +43,26 @@ public class TimerMain {
       System.exit(0);
     }
 
-    String base_url = CustomUrlFinder.getCustomUrl();  // Likely null
-    // A URL on the command line takes precedence over URL from the jar
+    String cmd_line_url = null;
     if (consumed_args < args.length && args[consumed_args].charAt(0) != '-') {
-      base_url = args[consumed_args];
-      ++consumed_args;
+      cmd_line_url = args[consumed_args++];
     }
 
     if (consumed_args < args.length) {
       usage();
       System.exit(1);
+    }
+
+    makeLogWriter();
+
+    String base_url = CustomUrlFinder.getCustomUrl();  // Likely null
+    if (base_url != null) {
+      LogWriter.info("Custom URL: " + base_url);
+    }
+    // A URL on the command line takes precedence over URL from the jar
+    if (cmd_line_url != null) {
+      base_url = cmd_line_url;
+      LogWriter.info("URL from the command line: " + base_url);
     }
 
     if (Flag.headless.value()) {
@@ -62,7 +72,6 @@ public class TimerMain {
       }
     }
 
-    makeLogWriter();
     if (args.length > 0) {
       LogWriter.info("===== Command Line Arguments ==========");
       for (String arg : args) {
