@@ -158,7 +158,6 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     } else {
       $timer_state->set_unhealthy(isset($_POST['error']) ? $_POST['error'] : "Malfunction");
     }
-    set_racing_state(false);
   } else if ($message == 'FLAGS') {
     decode_timer_flags($_POST);
     echo "\n  <success/>\n";
