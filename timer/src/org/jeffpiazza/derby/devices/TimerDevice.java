@@ -23,6 +23,8 @@ public interface TimerDevice {
     void raceStarted();
   }
 
+  // Callback to report the full heat result.  results is expected to contain
+  // an entry for each non-masked lane in the heat.
   public interface RaceFinishedCallback {
     void raceFinished(int roundid, int heat, Message.LaneResult[] results);
   }

@@ -86,10 +86,10 @@ public class ClientSession {
     return false;
   }
 
-  public Element login() throws IOException {
+  public Element login(String role, String password) throws IOException {
     return doPostWithVariations("action.php",
-                                "action=login&name=" + Flag.username.value()
-                                + "&password=" + Flag.password.value());
+                                "action=login&name=" + role
+                                + "&password=" + password);
   }
 
   public Element sendTimerMessage(String messageAndParams) throws IOException {

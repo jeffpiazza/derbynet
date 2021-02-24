@@ -1,13 +1,8 @@
 package org.jeffpiazza.derby;
 
-import java.io.File;
-import jssc.*;
-import org.jeffpiazza.derby.devices.TimerDevice;
-import org.jeffpiazza.derby.gui.TimerGui;
-
 import javax.swing.*;
+import org.jeffpiazza.derby.gui.TimerGui;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
-import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.TimerTask;
 
 // Three threads for three "actors":
@@ -98,6 +93,8 @@ public class TimerMain {
               : simulatedSession;
         LogWriter.setClientSession(clientSession);
         HttpTask.start(clientSession, connector,
+                       Flag.username.value(),
+                       Flag.password.value(),
                        new HttpTask.LoginCallback() {
                      @Override
                      public void onLoginSuccess() {
@@ -140,11 +137,11 @@ public class TimerMain {
         timerGui.show();
       }
     });
+    timerGui.setRoleAndPassword(Flag.username.value(),
+                                Flag.password.value());
     if (base_url != null) {
       timerGui.setUrl(base_url);
     }
-    timerGui.setRoleAndPassword(Flag.username.value(),
-                                Flag.password.value());
     if (simulatedSession != null) {
       timerGui.setClientSession(simulatedSession);
     }

@@ -20,11 +20,11 @@ public class SimulatedClientSession extends ClientSession {
   }
 
   @Override
-  public Element login() throws IOException {
+  public Element login(String role, String password) throws IOException {
     return parseResponse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        + "<action-response action=\"login\" name=\"" + Flag.username.value() + "\""
+        + "<action-response action=\"login\" name=\"" + role + "\""
         + " password=\"...\">\n"
-        + "<success>" + Flag.username.value() + "</success>\n"
+        + "<success>" + role + "</success>\n"
         + "</action-response>");
   }
 

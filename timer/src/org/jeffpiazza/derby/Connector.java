@@ -70,8 +70,8 @@ public class Connector {
     httpTask.registerAssignDeviceCallback(new HttpTask.AssignDeviceCallback() {
       @Override
       public void onAssignDevice(String deviceName) {
-        Class<? extends TimerDevice> cl = AllDeviceTypes.getDeviceClass(
-            deviceName);
+        Class<? extends TimerDevice> cl =
+            AllDeviceTypes.getDeviceClass(deviceName);
         if (timerGui != null) {
           timerGui.setTimerClass(cl);
         }
@@ -92,8 +92,8 @@ public class Connector {
           timerTask.device().prepareHeat(roundid, heat, laneMask);
         } catch (Throwable t) {
           LogWriter.stacktrace(t);
-          httpTask.queueMessage(new Message.Malfunction(false,
-                                                        "Can't ready timer."));
+          httpTask.queueMessage(
+              new Message.Malfunction(false, "Can't ready timer."));
         }
       }
     });
@@ -132,13 +132,14 @@ public class Connector {
         }
       }
     });
-    timerTask.device().
-        registerRaceStartedCallback(new TimerDevice.RaceStartedCallback() {
+    timerTask.device().registerRaceStartedCallback(
+        new TimerDevice.RaceStartedCallback() {
           public void raceStarted() {
             if (Flag.trigger_file_directory.value != null) {
               try {
                 (new File(new File(Flag.trigger_file_directory.value),
-                          "heat-started")).createNewFile();
+                          "heat-started"))
+                    .createNewFile();
               } catch (Throwable t) {
                 LogWriter.info("Failed to create /tmp/heat-started: " + t.
                     getMessage());
@@ -150,14 +151,15 @@ public class Connector {
             }
           }
         });
-    timerTask.device().
-        registerRaceFinishedCallback(new TimerDevice.RaceFinishedCallback() {
+    timerTask.device().registerRaceFinishedCallback(
+        new TimerDevice.RaceFinishedCallback() {
           public void raceFinished(int roundid, int heat,
                                    Message.LaneResult[] results) {
             if (Flag.trigger_file_directory.value != null) {
               try {
                 (new File(new File(Flag.trigger_file_directory.value),
-                          "heat-finished")).createNewFile();
+                          "heat-finished"))
+                    .createNewFile();
               } catch (Throwable t) {
                 LogWriter.info("Failed to create /tmp/heat-finished: " + t.
                     getMessage());
@@ -165,14 +167,12 @@ public class Connector {
             }
             // Rely on recipient to ignore if not expecting any results
             try {
-              httpTask.
-                  queueMessage(new Message.Finished(roundid, heat, results));
+              httpTask.queueMessage(new Message.Finished(roundid, heat, results));
             } catch (Throwable t) {
             }
           }
         });
-    timerTask.device().
-        registerTimerMalfunctionCallback(
+    timerTask.device().registerTimerMalfunctionCallback(
             new TimerDevice.TimerMalfunctionCallback() {
           public void malfunction(boolean detectable, String msg) {
             try {

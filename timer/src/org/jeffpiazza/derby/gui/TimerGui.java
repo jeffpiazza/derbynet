@@ -22,6 +22,9 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
   private Connector connector;
   private RoleFinder roleFinder;
   private boolean rolesPopulated = false;
+  // If non-null, use this role for the first login attempt, even if it's not
+  // one of the available choices
+  private String requestedRole = null;
 
   private TimerClassListController timerClassListController;
   private SerialPortListController portListController;
@@ -78,37 +81,10 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
     onConnectButtonClick();
   }
 
-  // Called by TimerMain to receive role and/or password if presented on the
-  // command line.  We wait for any running role finder to finish, and, if
-  // it was successful, to treat these arguments as the user's choice through
-  // the UI.
   public void setRoleAndPassword(String role, String password) {
     components.roleComboBox.setSelectedItem(role);
     components.passwordField.setText(password);
-
-    (new Thread() {
-      @Override
-      public void run() {
-        // Wait for RoleFinder to finish populating roles.  If there's no
-        // RoleFinder, then give up (there's no URL, or the RoleFinder failed).
-        while (!rolesPopulated()) {
-          if (getRoleFinder() == null) {
-            return;
-          }
-          synchronized (TimerGui.this) {
-            try {
-              TimerGui.this.wait();
-            } catch (InterruptedException ex) {
-            }
-          }
-        }
-
-        RoleFinder roleFinder = getRoleFinder();
-        if (roleFinder != null) {
-          startHttpTask(roleFinder.getSession());
-        }
-      }
-    }).start();
+    this.requestedRole = role;
   }
 
   // This is mainly used to introduce a SimulatedClientSession and skip all the
@@ -213,22 +189,6 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
     setRolesPopulated(false);
   }
 
-  private void startHttpTask(ClientSession clientSession) {
-    setHttpStatus("Logging in...", black, icon_unknown);
-    HttpTask.start(clientSession, connector,
-                   new HttpTask.LoginCallback() {
-                 @Override
-                 public void onLoginSuccess() {
-                   setHttpStatus("Connected", green, icon_ok);
-                 }
-
-                 @Override
-                 public void onLoginFailed(String message) {
-                   setHttpStatus("Unsuccessful login", red, icon_trouble);
-                 }
-               });
-  }
-
   @Override
   public void rolesFound(ArrayList<String> roles, ClientSession session) {
     components.urlField.setText(session.getBaseUrl());
@@ -248,10 +208,37 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
     }
   }
 
+  @Override
   public synchronized void roleFinderFailed(String message) {
     LogWriter.info("RoleFinder failed: " + message);
     setHttpStatus(message, red, icon_trouble);
     roleFinder = null;
+  }
+
+  private void startHttpTask(ClientSession clientSession) {
+    String role = (String) components.roleComboBox.getSelectedItem();
+    if (requestedRole != null) {
+      // Setting the combobox may not have any effect if requestedRole doesn't
+      // match one of the roles from the server, but try it for login anyway.
+      components.roleComboBox.setSelectedItem(requestedRole);
+      role = requestedRole;
+      requestedRole = null;  // Only try it once
+    }
+    setHttpStatus("Logging in...", black, icon_unknown);
+    HttpTask.start(clientSession, connector,
+                   (String) components.roleComboBox.getSelectedItem(),
+                   String.valueOf(components.passwordField.getPassword()),
+                   new HttpTask.LoginCallback() {
+                 @Override
+                 public void onLoginSuccess() {
+                   setHttpStatus("Connected", green, icon_ok);
+                 }
+
+                 @Override
+                 public void onLoginFailed(String message) {
+                   setHttpStatus("Unsuccessful login", red, icon_trouble);
+                 }
+               });
   }
 
   public void updateSerialPorts(TimerTask timerTask, String[] portNames) {

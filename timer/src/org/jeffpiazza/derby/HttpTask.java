@@ -70,6 +70,7 @@ public class HttpTask implements Runnable {
   // the HttpTask in a new Thread.
   public static void start(final ClientSession session,
                            final Connector connector,
+                           final String role, final String password,
                            final LoginCallback callback) {
     // TODO This gets called by RoleFinder and by the timer GUI directly,
     // resulting in two HELLO messages to the server.  Need to figure out why.
@@ -79,7 +80,7 @@ public class HttpTask implements Runnable {
       public void run() {
         boolean login_ok = false;
         try {
-          Element login_response = session.login();
+          Element login_response = session.login(role, password);
           login_ok = ClientSession.wasSuccessful(login_response);
           if (!login_ok) {
             callback.onLoginFailed("Login failed");
