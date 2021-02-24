@@ -204,7 +204,7 @@ public class ClientSession {
         maybeUpdateBaseUrlFromRedirection(connection.getURL(), location);
         return new URL(location);
       }
-    } catch (IOException ex) {
+    } catch (Throwable ex) {
       LogWriter.info("Failed to process redirection: " + ex.getMessage());
     }
 
@@ -221,10 +221,14 @@ public class ClientSession {
     }
     String tail = url_string.substring(base_url.length());
 
+    // Redirect may include query parameters for a GET
     if (redirect_string.endsWith(tail)) {
       base_url = redirect_string.substring(
           0, redirect_string.length() - tail.length());
       LogWriter.info("Updating base URL to " + base_url);
+    } else {
+      LogWriter.info("Original URL " + url_string
+          + " doesn't agree with tail  of redirect " + redirect_string);
     }
   }
 

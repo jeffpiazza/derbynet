@@ -12,6 +12,7 @@ import java.util.ArrayList;
 // queue remains empty.
 public class HttpTask implements Runnable {
   private ClientSession session;
+  private boolean shouldExit = false;
   // Messages waiting to be sent to web server
   private final ArrayList<Message> queue;
   private TimerHealthCallback timerHealthCallback;
@@ -72,7 +73,6 @@ public class HttpTask implements Runnable {
                            final LoginCallback callback) {
     // TODO This gets called by RoleFinder and by the timer GUI directly,
     // resulting in two HELLO messages to the server.  Need to figure out why.
-    // (new RuntimeException("Starting HttpTask")).printStackTrace();
     LogWriter.setClientSession(session);
     (new Thread() {
       @Override
@@ -125,6 +125,9 @@ public class HttpTask implements Runnable {
       queue.notifyAll();
     }
   }
+
+  public synchronized void setShouldExit() { shouldExit = true; }
+  private synchronized boolean getShouldExit() { return shouldExit; }
 
   public synchronized void registerTimerHealthCallback(TimerHealthCallback cb) {
     this.timerHealthCallback = cb;
@@ -215,6 +218,8 @@ public class HttpTask implements Runnable {
         if (queue.size() > 0) {
           nextMessage = queue.remove(0);
           trace = Flag.trace_messages.value();
+        } else if (getShouldExit()) {
+          return;
         } else {
           TimerHealthCallback timerHealth = getTimerHealthCallback();
           if (timerHealth != null) {

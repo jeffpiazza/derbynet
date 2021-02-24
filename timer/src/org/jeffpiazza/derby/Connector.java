@@ -21,8 +21,12 @@ public class Connector {
   }
 
   public synchronized void setHttpTask(HttpTask httpTask) {
+    HttpTask originalHttpTask = this.httpTask;
     this.httpTask = httpTask;
     maybeWireTogether();
+    if (originalHttpTask != null) {
+      originalHttpTask.setShouldExit();
+    }
   }
 
   public synchronized void setTimerTask(TimerTask deviceTask) {
