@@ -152,6 +152,6 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                        .    'SELECT 1 FROM Classes'
                        .    ' WHERE classid = Playlist.classid'
                        .')');
-  $db->execute(array());
+  $stmt->execute(array());
 }
 ?>
