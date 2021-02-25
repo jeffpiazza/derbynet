@@ -31,6 +31,17 @@ public class TimerMain {
   }
 
   public static void main(String[] args) {
+    String[] customArgs = Customizer.getCustomArgs();
+    if (customArgs != null) {
+      int consumed = Flag.parseCommandLineFlags(customArgs, 0);
+      if (consumed != customArgs.length) {
+        System.err.println("Only " + consumed + " customized args parse:");
+        for (String a : customArgs) {
+          System.err.println("  " + a);
+        }
+        System.exit(1);
+      }
+    }
     int consumed_args = Flag.parseCommandLineFlags(args, 0);
 
     if (Flag.version.value()) {
@@ -50,7 +61,7 @@ public class TimerMain {
 
     makeLogWriter();
 
-    String base_url = CustomUrlFinder.getCustomUrl();  // Likely null
+    String base_url = Customizer.getCustomUrl();  // Likely null
     if (base_url != null) {
       LogWriter.info("Custom URL: " + base_url);
     }
@@ -63,8 +74,17 @@ public class TimerMain {
     if (Flag.headless.value()) {
       if (base_url == null && !Flag.simulate_host.value()) {
         usage();
+        System.err.println("**** URL is required for headless mode ****");
         System.exit(1);
       }
+    }
+
+    if (customArgs != null && customArgs.length > 0) {
+      LogWriter.info("===== Arguments From Jar ==============");
+      for (String arg : customArgs) {
+        LogWriter.info(arg);
+      }
+      LogWriter.info("=======================================");
     }
 
     if (args.length > 0) {
