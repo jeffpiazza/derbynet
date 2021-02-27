@@ -32,9 +32,43 @@ staged_heat4 101 121 141 111
 run_heat_place 1 1   2 3 4 1
 staged_heat4 111 131 101 121
 run_heat_place 1 2   1 4 2 3
+
 # Report times for this heat, let timer-message compute places
+# First we have a tie for last place in the heat, as for a couple of DNFs;
+# neither racer gets any points for the heat
 staged_heat4 121 141 111 131
+run_heat 1 3   9.9999 3.2 3.1 9.9999
+
+user_login_coordinator
+# Check the points for each racer in the heat: # heats, total points
+curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>5</td>"
+curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
+curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
+curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
+curl_post action.php "action=heat.rerun&heat=last" | check_success
+user_login_timer
+
+# Now re-run with a tie for first place
+run_heat 1 3   3.3 3.1 3.1 3.4
+
+user_login_coordinator
+curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
+curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
+curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>11</td>"
+curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
+curl_post action.php "action=heat.rerun&heat=last" | check_success
+user_login_timer
+
+# Finally, re-run the heat again, now with four good times:
 run_heat 1 3   3.3 3.2 3.1 3.4
+
+user_login_coordinator
+curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
+curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
+curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
+curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
+user_login_timer
+
 staged_heat4 131 101 121 141
 run_heat_place 1 4   4 1 2 3
 
@@ -149,6 +183,8 @@ staged_heat4 121 101 111 141
 run_heat_place 6 3   4 1 2 3
 staged_heat4 141 121 101 111
 run_heat_place 6 4   1 2 3 4  x
+
+
 
 # Usage: curl_text standings.php | for_roundid 1 | ...
 function for_roundid() {

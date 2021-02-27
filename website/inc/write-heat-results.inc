@@ -102,9 +102,6 @@ function write_heat_results($results) {
         if ($result == '') $result = 0.0;
         $all_times[count($all_times) - 1]['finishtime'] = $result;
       } else {
-        if (!isset($all_times[count($all_times) - 1]['finishtime'])) {
-          $all_times[count($all_times) - 1]['finishtime'] = DNF_TIME;
-        }
         $all_times_posted = false;
       }
       if (isset($results[$lane - 1]['place'])) {
@@ -119,10 +116,20 @@ function write_heat_results($results) {
       // Make up finish places based on finish times, if finish places weren't
       // included in the post.  The $all_times_posted test is to avoid computing
       // places if not all times were reported.
-      usort($all_times, 'compare_by_finishtime');  // Now index gives finish place - 1
-      for ($i = 0; $i < count($all_times); ++$i) {
-        if (isset($all_times[$i]['finishtime'])) {
-          $all_times[$i]['finishplace'] = 1 + $i;
+      usort($all_times, 'compare_by_finishtime');  // Now, index gives finish place - 1, except for ties
+
+      $place = count($all_times);
+      for ($p = $place; $p > 0; --$p) {
+        if (!isset($all_times[$p - 1]['finishtime'])) {
+          // TODO Can this happen?
+          echo "\n<broken>\n";
+          continue;
+        }
+        $all_times[$p - 1]['finishplace'] = $place;
+        if ($p > 1 && $all_times[$p - 1]['finishtime'] == $all_times[$p - 2]['finishtime']) {
+          // Tie; don't decrement $place
+        } else {
+          $place = $p - 1;
         }
       }
     }
