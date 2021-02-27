@@ -89,9 +89,10 @@ public class DerbyMagicDevice extends TimerDeviceCommon
   // Timer sends individual lane results as each car crosses the finish line.
   // Each result is <lane>=<time><place>, where <lane> is the lane number,
   // <time> is time (0.0000-9.9999), and <place> is a punctuation charactter,
-  // ! for first, " for second, # for third, etc.
+  // !=1st, "=2nd, #=3rd, $=4th, %=5th, &=6th, *=7th, @=8th
+  // (even though @ doesn't follow in ASCII order)
   private static final Pattern singleLanePattern = Pattern.compile(
-      "([1-8])=(\\d\\.\\d+)([!-/]) *");
+      "([1-8])=(\\d\\.\\d+)([!-/:-@]) *");
 
   protected void setUp() {
     portWrapper.registerDetector(new SerialPortWrapper.Detector() {
