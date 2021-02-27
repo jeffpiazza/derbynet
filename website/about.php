@@ -82,7 +82,7 @@ window.onload = function() {
 <h1>About DerbyNet</h1>
 
 <p class='advert'><b>DerbyNet</b> is the free, open-source, multi-screen race management system for Pinewood Derby-style racing.  It's used by packs and other groups all around the country, and around the globe!
-Check us out <a href="http://jeffpiazza.github.io/derbynet/">on GitHub!</a></p>
+Check us out <a href="http://jeffpiazza.github.io/derbynet/" target="_blank">on GitHub!</a></p>
 
 <?php
 $urls = preferred_urls();
