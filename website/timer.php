@@ -97,6 +97,10 @@ $(function() {
     <input type="button" value="Start Race" onclick="handle_start_race_button()"/>
   </div>
 
+  <div id="fake_timer_div" class="block_buttons hidden">
+    <a class="button_link" href="fake-timer.php" target="_blank">Fake Timer</a>
+  </div>
+
 </div>
 
 <div id='timer_settings_modal' class='modal_dialog wide_modal hidden block_buttons'>

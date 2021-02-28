@@ -65,7 +65,8 @@ div.test-control label {
 }
 
 #timer_settings_button_div,
-#start_race_button_div {
+#start_race_button_div,
+#fake_timer_div {
   width: 550px;
 }
 #start_race_button_div input[type='button'] {

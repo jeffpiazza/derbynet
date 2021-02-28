@@ -260,6 +260,8 @@ function update_timer_summary(tstate, current) {
   $("#start_race_button_div").toggleClass('hidden',
                                           !is_in_testing_mode(current) ||
                                           tstate.getAttribute("remote_start") != "1");
+  // Offer the fake timer only if no other timer is connected.
+  $("#fake_timer_div").toggleClass('hidden', tstate.getAttribute('state') != "1");
 }
 
 function update_timer_details(details) {
