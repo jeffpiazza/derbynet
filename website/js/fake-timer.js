@@ -121,6 +121,9 @@ function start_timer() {
 
 $(function() { reset_timer(); });
 
+function show_not_racing() {
+  $('#summary').html("Not racing.");
+}
 
 function process_timer_messages(data) {
   data = $(data);
@@ -130,7 +133,7 @@ function process_timer_messages(data) {
 
   var abort = data.find('abort');
   if (abort.length > 0) {
-    $('#summary').html("Not racing.");
+    show_not_racing();
     reset_timer();
     $('#start-button').prop('disabled', true);
     g_pending_heat = 0;
@@ -178,8 +181,9 @@ function send_identified() {
                  lane_count: 6,
                  timer: 'FakeTimer',
                  human: 'Fake Timer',
-                 ident: '(Ident TBD)',
-                 options: '(Options TBD)'},
+                 // ident: '(Ident TBD)',
+                 // options: 'fake:true'
+                },
           success: function(data) {
             process_timer_messages(data);
           }
@@ -223,7 +227,7 @@ function send_finished() {
          {type: 'POST',
           data: data,
           success: function(data) {
-            $("#summary").text('Not racing.');  // Will be immediately changed back, most likely.
+            show_not_racing();  // Will be immediately changed back, most likely.
             process_timer_messages(data);
           }
          });

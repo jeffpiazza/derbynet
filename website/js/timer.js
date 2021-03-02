@@ -254,14 +254,15 @@ function update_testing_mode(current) {
   }
 }
 
-function update_timer_summary(tstate, current) {
+function update_timer_summary(tstate, details, current) {
   $("#timer_status_text").text(tstate.textContent);
   $("#timer_summary_icon").attr('src', tstate.getAttribute("icon"));
   $("#start_race_button_div").toggleClass('hidden',
                                           !is_in_testing_mode(current) ||
                                           tstate.getAttribute("remote_start") != "1");
   // Offer the fake timer only if no other timer is connected.
-  $("#fake_timer_div").toggleClass('hidden', tstate.getAttribute('state') != "1");
+  $("#fake_timer_div").toggleClass('hidden',
+                                   tstate.getAttribute('state') != "1");
 }
 
 function update_timer_details(details) {
@@ -288,10 +289,12 @@ $(function() {
             success: function(data) {
               var tstate = data.documentElement.getElementsByTagName('timer-state');
               var current = data.documentElement.getElementsByTagName('current-heat');
-              if (tstate.length > 0) {
-                update_timer_summary(tstate[0], current.length > 0 ? current[0] : undefined);
-              }
               var details = data.documentElement.getElementsByTagName('timer-details');
+              if (tstate.length > 0) {
+                update_timer_summary(tstate[0],
+                                     details.length > 0 ? details[0] : undefined,
+                                     current.length > 0 ? current[0] : undefined);
+              }
               if (details.length > 0) {
                 update_timer_details(details[0]);
               }

@@ -80,20 +80,23 @@ p#summary {
 </style>
 </head>
 <body>
-<?php make_banner('Fake Timer', 'timer.php'); ?>
+<?php make_banner('Fake Timer', false /* no back button */); ?>
 
 <p class='frontmatter'>This page simulates the behavior of a timer connected to the DerbyNet server.
 It's intended to allow you to get a feel for using DerbyNet without having to connect
 a real timer.</p>
 
-<p class='frontmatter'>The fake timer operates <b>only while this page is open</b>.</p>
+<p class='frontmatter'>The fake timer operates <b>only while this page is open</b>,
+and <b>only when
+<a href="coordinator.php" target="_blank">"Racing"</a> or
+<a href="timer.php" target="_blank">"Simulated Racing"</a> is underway.</b></p>
 
 <p class='frontmatter'>We <b><i>strongly</i></b> encourage connecting and testing your real timer
 before the day of your actual race.</p>
 
 <div id='lane-count-div'>
   <label for="lane-count">Number of lanes on the track:</label>
-  <input id="lane-count" type="number" class="not-mobile" min="0" max="8"
+  <input id="lane-count" type="number" class="not-mobile" min="2" max="8"
          value="<?php echo get_lane_count(); ?>"/>
 </div>
 

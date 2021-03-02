@@ -20,7 +20,7 @@ require_once('inc/timer-flags.inc');
 //     timer.
 // human= is the human-friendly name of the device/manufacturer
 // ident= is the specific identifier string (if any) from the timer (serial number, etc.).
-// options= is any extra detail about this particular timer.
+// options= is any extra detail about this particular timer, in a comma-separated key:value pairs
 //
 // message="STARTED"
 // Sent when gate opens
