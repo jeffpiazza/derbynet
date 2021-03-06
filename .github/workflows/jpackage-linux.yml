@@ -31,6 +31,3 @@ jobs:
         --input timer/dist/lib
         --main-jar derby-timer.jar
         --main-class org.jeffpiazza.derby.TimerMain
-        
-        
-ain
