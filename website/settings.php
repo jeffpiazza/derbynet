@@ -7,6 +7,7 @@ require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/name-mangler.inc');
 require_once('inc/photos-on-now-racing.inc');
+require_once('inc/pick_image_set.inc');
 require_once('inc/xbs.inc');
 
 require_permission(SET_UP_PERMISSION);
@@ -135,34 +136,6 @@ Lanes available for scheduling:</p>
       <img src="img/settings-groups.png"/>
     </div>
     <div class="settings_group_settings">
-      <p>Use Image Set:<br/>
-        <?php
-            $current = read_raceinfo('images-dir', 'Generic');
-            $image_directories = @scandir(image_base_dir());
-            if ($image_directories !== false) {
-              usort($image_directories,
-                    function($a, $b) {
-                      if ($a == 'Generic') return -1;
-                      if ($b == 'Generic') return 1;
-                      if ($a < $b) return -1;
-                      if ($a > $b) return 1;
-                      return 0; });
-              $i = 0;
-              foreach ($image_directories as $img_dir) {
-                if ($img_dir[0] == '.') continue;
-                echo "<input type='radio' name='images-dir' class='not-mobile'";
-                echo " value='".htmlspecialchars($img_dir, ENT_QUOTES, 'UTF-8')."'";
-                if ($img_dir == $current) {
-                  echo " checked='checked'";
-                }
-                echo " id='images-dir-$i'/>\n";
-                echo "<label for='images-dir-$i'>".htmlspecialchars($img_dir, ENT_QUOTES, 'UTF-8')."</label>\n";
-                ++$i;
-              }
-            }
-        ?>
-      </p>
-
       <p>
         <input id="supergroup-label" name="supergroup-label" type="text" class="not-mobile"
                value="<?php echo supergroup_label(); ?>"/>
@@ -192,6 +165,7 @@ Lanes available for scheduling:</p>
         echo $name_style == FIRST_NAME_LAST_INITIAL ? ' checked="checked"' : '';
         ?>/><label for="name-style-1">First name and last initial</label>
       </p>
+
     </div>
   </div>
 
@@ -264,7 +238,12 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
       <img src="img/settings-photos.png"/>
     </div>
 
+
     <div class="settings_group_settings">
+      <p id='images-dir-p'>
+        <label for='images-dir'>Image set:</label>
+        <?php emit_images_dir_select("id='images-dir' name='images-dir'"); ?>
+      </p>
       <p><b>Now Racing</b> display:<br/>&nbsp;&nbsp;
         <input type="radio" name="photos-on-now-racing" value="0"
                     id="now-racing-photos-0" class="not-mobile"<?php

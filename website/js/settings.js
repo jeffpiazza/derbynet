@@ -151,7 +151,7 @@ $(function() {
   $("#group-label").on("keyup mouseup", on_label_change);
   $("#subgroup-label").on("keyup mouseup", on_label_change);
 
-  $('#settings_form input').on('change', function(e) {
+  $('#settings_form input, #settings_form select').on('change', function(e) {
     PostSettingChange($(this));
   });
   $('#settings_form input[type!="checkbox"]').on('input', function(e) {
