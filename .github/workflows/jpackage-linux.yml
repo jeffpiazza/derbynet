@@ -21,11 +21,12 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 15
-    - name: Build with Ant
+    - name: Build jar file with Ant
       run: ant -noinput -buildfile timer/build.xml
-    - name: JPackage
+    - name: jpackage
       run: >
-        jpackage --type deb 
+        jpackage
+        --type app-image
         --name derby-timer
         --verbose 
         --input timer/dist/lib
