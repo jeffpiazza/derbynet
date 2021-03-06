@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Ant
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
 
-name: JPackage Linux
+name: JPackage MacOS
 
 on:
   workflow_dispatch
@@ -26,9 +26,14 @@ jobs:
     - name: jpackage
       run: >
         jpackage
-        --type app-image
+        --type pkg
         --name derby-timer
         --verbose 
         --input timer/dist/lib
         --main-jar derby-timer.jar
         --main-class org.jeffpiazza.derby.TimerMain
+    - name: upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-without-markdown
+        path: derby-timer*.pkg
