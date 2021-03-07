@@ -133,9 +133,12 @@ class EventFormatter {
     case EVENT_TIMER_MALFUNCTION:
       return 'Timer Malfunction: '.$event['other'];
       break;
+    case EVENT_TIMER_RESULT_REFUSED:
+      return 'Refused result, lane '.$event['lane'].': '.$event['other'];
     case EVENT_RESULT_DISCARDED: {
-      return 'Discarded result for lane '.$event['lane']
-             .': car '.htmlspecialchars($this->RacerName($event), ENT_QUOTES, 'UTF-8');
+      return 'Discarded: lane '.$event['lane']
+             .', car '.htmlspecialchars($this->RacerName($event), ENT_QUOTES, 'UTF-8')
+      .': '.$event['other'];
       break;
     }
     case EVENT_HEAT_COMPLETED: {
@@ -155,7 +158,7 @@ class EventFormatter {
                                .' FROM RegistrationInfo'
                                .' WHERE racerid = :racerid',
                                array(':racerid' => $event['racerid']));
-      return $racer[0].' '.$racer[1].' '.$racer[2];
+      return $racer[0].', '.$racer[1].' '.$racer[2];
   }
   
   private function HeatName(&$event) {
@@ -184,6 +187,7 @@ $event = $event_stmt->fetch();
 $heat_stmt = $db->prepare('SELECT roundid, class, heat, completed'
                           .' FROM RaceChart'
                           .' INNER JOIN Classes ON RaceChart.classid = Classes.classid'
+                          .' WHERE COALESCE(completed, \'\') <> \'\''
                           .' GROUP BY roundid, heat'
                           .' ORDER BY completed');
 $heat_stmt->execute();

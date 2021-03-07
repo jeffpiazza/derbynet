@@ -37,12 +37,15 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
                            ':heat' => $current['heat']));
   }
 
-  foreach ($all_resultids as $resultid) {
-    record_event_for_discarded_result($resultid);
-  }
+  record_event_for_discarded_heat('WHERE roundid = :roundid AND heat = :heat'
+                                  .' AND completed IS NOT NULL AND completed != \'\''
+                                  .' AND finishtime IS NOT NULL AND finishplace IS NOT NULL',
+                                  array(':roundid' => $current['roundid'],
+                                        ':heat' => $current['heat']));
 
   if (write_heat_results(parse_heat_results(get_lane_count()))) {
-    record_event_sql('INSERT INTO Events(action, roundid, heat) VALUES(:action, :roundid, :heat)',
+    record_event_sql('INSERT INTO Events(tstamp, action, roundid, heat)'
+                     .' VALUES('.dbnow_expr().', :action, :roundid, :heat)',
                      array(':action' => EVENT_HEAT_MANUALLY_ENTERED,
                            ':roundid' => $current['roundid'],
                            ':heat' => $current['heat']));

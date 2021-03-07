@@ -2,6 +2,7 @@
 
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
+require_once('inc/ordinals.inc');
 
 // The 'Events' table provides a history of important changes in the data.
 // All entries populate seq, tstamp, and action fields.
@@ -15,6 +16,8 @@ define('EVENT_RACER_PHOTO_ASSIGN', 2);
 define('EVENT_CAR_PHOTO_ASSIGN', 3);
 
 define('EVENT_TIMER_MALFUNCTION', 20);
+// A 'FINISHED' message arrived when not in a racing state (
+define('EVENT_TIMER_RESULT_REFUSED', 25);
 
 // A racer's heat result was discarded (we record the value that was discarded,
 // in case questions arise later).  (racerid, roundid, heat, lane, other)
@@ -61,13 +64,13 @@ function record_event($action, $racerid, $other = '') {
 }
 
 // Call this BEFORE rewriting a heat result
-function record_event_for_discarded_result($resultid) {
-  $old_result = read_single_row('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
-                                .' FROM RaceChart'
-                                .' WHERE resultid = :resultid',
-                                array(':resultid' => $resultid),
-                                PDO::FETCH_ASSOC);
-  if ($old_result !== false) {
+// $where is a WHERE clause against RaceChart for results being discarded.
+function record_event_for_discarded_heat($where, $params) {
+  global $db;
+  $stmt = $db->prepare('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
+                       .' FROM RaceChart '.$where);
+  $stmt->execute($params);
+  foreach ($stmt as $old_result) {
     record_event_sql('INSERT INTO Events(tstamp, action, racerid, roundid, heat, lane, other)'
                      .' VALUES('.dbnow_expr().', :action, :racerid, :roundid, :heat, :lane, :other)',
                      array(':action' => EVENT_RESULT_DISCARDED,
@@ -75,11 +78,30 @@ function record_event_for_discarded_result($resultid) {
                            ':roundid' => $old_result['roundid'],
                            ':heat' => $old_result['heat'],
                            ':lane' => $old_result['lane'],
-                           ':other' => $old_result['finishtime'].' ('.$old_result['finishplace'].')'));
+                           ':other' => $old_result['finishtime']
+                           .' ('.ordinal($old_result['finishplace']).')'));
   }
 }
 
-
+// $results maps lane to {time, place}
+function record_event_for_refused_result($results) {
+  foreach ($results as $lane => $r) {
+    if ($r) {
+      $other = '';
+      if (isset($r['time'])) {
+        $other .= $r['time'];
+      }
+      if (isset($r['place'])) {
+        $other .= ' ('.ordinal($r['place']).')';
+      }
+      record_event_sql('INSERT INTO Events(tstamp, action, lane, other)'
+                       .' VALUES('.dbnow_expr().', :action, :lane, :other)',
+                       array(':action' => EVENT_TIMER_RESULT_REFUSED,
+                             ':lane' => $lane + 1,
+                             ':other' => $other));
+    }
+  }
+}
 
 // Returns an array of racer records, in the order in which they had the
 // specified event action recorded

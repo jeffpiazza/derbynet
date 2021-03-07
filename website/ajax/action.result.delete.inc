@@ -30,8 +30,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     }
   }
 
-  $resultid = read_single_value('SELECT resultid FROM RaceChart'.$where, $params);
-  record_event_for_discarded_result($resultid);
+  record_event_for_discarded_heat($where, $params);
 
   $sql .= $where;
   $stmt = $db->prepare($sql);

@@ -101,20 +101,21 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     send_replay_RACE_STARTS();
     echo "\n  <success/>\n";
   } else if ($message == 'FINISHED') {
+    $nlanes = get_lane_count();
+    $results = parse_heat_results($nlanes);
+    if (read_raceinfo_boolean('reverse-lanes')) {
+      $oldresults = $results;  // Copies the array
+      for ($i = 0; $i < $nlanes; ++$i) {
+        $results[$i] = $oldresults[$nlanes - $i - 1];
+      }
+    }
     if (!$racing_state) {
       // TODO This might be a test run, or an actual race run while the "racing"
       // switch was off.  We should prompt the race coordinator and offer to
       // record these times somewhere.
       echo "\n  <failure code='notracing'>Not racing now.</failure>\n";
+      record_event_for_refused_result($results);
     } else {
-      $nlanes = get_lane_count();
-      $results = parse_heat_results($nlanes);
-      if (read_raceinfo_boolean('reverse-lanes')) {
-        $oldresults = $results;  // Copies the array
-        for ($i = 0; $i < $nlanes; ++$i) {
-          $results[$i] = $oldresults[$nlanes - $i - 1];
-        }
-      }
       if (write_heat_results($results)) {
         send_replay_REPLAY();
         write_raceinfo('timer_current', '');
