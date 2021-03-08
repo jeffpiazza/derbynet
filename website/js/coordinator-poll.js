@@ -354,7 +354,7 @@ function generate_scheduling_control_group(round, current, timer_state) {
                       + '<span data-name="n_heats_scheduled"></span> heats scheduled, '
                       + '<span data-name="n_heats_run"></span> run.'
                       + '</p>'))
-      .append('<div class="racers progress">'
+      .append('<div class="racers heats progress">'
               + (show_checkins
                  ? "<div class='bar2'>"
                  + "<div class='bar1'></div>"
