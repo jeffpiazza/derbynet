@@ -154,28 +154,19 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_details"></div>
 </div>
 
-<!-- Scenes and Racing Playlist -->
-<div id="scenes_step" class="step_div">
-  <div class="status_icon"><img src="img/status/ok.png"/></div>
+<div id="directions_step" class="step_div">
+  <div class="status_icon"></div>
   <div class="step_button block_buttons">
-    <a class="button_link" href="scenes.php">Scenes</a>
   </div>
-
   <div class="step_details">
-    <p>Scenes make it easier to manage multiple kiosks.</p>
+    <p>You may also want to visit
+        the <a class="button_link" href="scenes.php?back=setup.php">Scene Editor</a>
+        or the <a class="button_link" href="playlist.php?back=setup.php">Playlist Editor</a></p>
   </div>
 </div>
 
 
 <?php require_once('inc/ajax-failure.inc'); ?>
-
-<div id="playlist_step" class="step_div">
-  <div class="status_icon"><img src="img/status/ok.png"/></div>
-  <div class="step_button block_buttons">
-    <a class="button_link" href="playlist.php?back=setup.php">Rounds Playlist</a>
-  </div>
-  <div class="step_details"></div>
-</div>
 
 <div id="ezsetup_modal" class="modal_dialog hidden block_buttons">
   <form>

@@ -37,6 +37,10 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 <body>
 <?php make_banner('Kiosks'); ?>
 
+<div class="block_buttons" style="float: right; width: 300px;">
+<a class="button_link" href="scenes.php">Scene Editor</a>
+</div>
+
 <div id="scenes-control">
   <label for="scenes-select">Current scene:</label>
   <div id="select-wrap">

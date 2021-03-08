@@ -1,4 +1,7 @@
 <?php @session_start();
+
+// $_GET['back'] if "Back" button should go to another page, otherwise kiosk-coordinator.php.
+
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
@@ -47,7 +50,7 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
 </script>
 </head>
 <body>
-<?php make_banner('Scenes', 'setup.php'); ?>
+<?php make_banner('Scenes', isset($_GET['back']) ? $_GET['back'] : 'kiosk-dashboard.php'); ?>
 
 <div id="select-wrap" class="block_buttons">
  <!-- block_buttons for  .block_buttons option  css rule -->
@@ -59,7 +62,7 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
 </div>
 
 <div class="block_buttons">
-  <input type="button" id="add_kiosk_button" value="Add Kiosk"
+  <input type="button" id="add_kiosk_button" value="Add Kiosk Name"
          onclick='on_add_kiosk()'/>
   <input type="button" id="delete_scene_button" class="delete_button" value="Delete Scene"
          onclick='on_delete_scene()'/>
