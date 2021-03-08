@@ -1,0 +1,38 @@
+
+name: JPackage Win
+
+on: 
+  workflow_dispatch:
+    inputs:
+      jar_url:
+        description: 'URL for retrieving derby-timer.jar file.'
+        required: true
+
+jobs:
+  jpackage_win:
+    runs-on: windows-latest
+    steps:
+    - name: Set up JDK
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 15
+
+    - name: Download jar
+      run: curl -s -S --output derby-timer.jar "${{ github.event.inputs.jar_url }}"
+
+    - name: jpackage
+      run: >
+        jpackage
+        # app-image, exe, msi
+        --type exe
+        --name derby-timer
+        --verbose 
+        --input .
+        --main-jar derby-timer.jar
+        --main-class org.jeffpiazza.derby.TimerMain
+
+      - name: upload
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-jar
+          path: derby-timer*.exe

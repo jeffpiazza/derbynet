@@ -35,5 +35,5 @@ jobs:
     - name: upload
       uses: actions/upload-artifact@v2
       with:
-        name: dist-without-markdown
+        name: macos-jar
         path: derby-timer*.pkg
