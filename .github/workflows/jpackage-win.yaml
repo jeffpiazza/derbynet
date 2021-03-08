@@ -31,8 +31,8 @@ jobs:
         --main-jar derby-timer.jar
         --main-class org.jeffpiazza.derby.TimerMain
 
-      - name: upload
-        uses: actions/upload-artifact@v2
-        with:
-          name: windows-jar
-          path: derby-timer*.exe
+    - name: upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-jar
+        path: derby-timer*.exe
