@@ -20,10 +20,10 @@ jobs:
     - name: Download jar
       run: curl -s -S --output derby-timer.jar "${{ github.event.inputs.jar_url }}"
 
+      # Windows jpackage types: app-image, exe, msi
     - name: jpackage
       run: >
         jpackage
-        # app-image, exe, msi
         --type exe
         --name derby-timer
         --verbose 
