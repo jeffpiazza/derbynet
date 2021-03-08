@@ -5,6 +5,7 @@
 // Won't allow deleting the last rank within the class (delete the class instead).
 // Won't allow deleting a rank with racers.
 require_once('inc/classes-xml.inc');
+require_once('inc/events.inc');
 
 $rankid = $_POST['rankid'];
 
@@ -34,6 +35,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
 
     if ($ok) {
+      record_event_delete_rank(-1, $rankid);
       $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
       if (!$stmt->execute(array(':rankid' => $rankid))) {
         echo "\n<failure code='delete-ranks'>Unable to delete Ranks entries</failure>\n";

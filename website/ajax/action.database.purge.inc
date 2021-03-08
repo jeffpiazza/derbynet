@@ -10,12 +10,14 @@
 
 require_once('inc/details-for-setup-page.inc');
 require_once('inc/fake_images.inc');
+require_once('inc/events.inc');
 
 start_response();
 
 if (!have_permission(SET_UP_PERMISSION)) {
   not_authorized_body();
 } else if ($_POST['purge'] == 'results') {
+  record_event_purge(EVENT_PURGE_RESULTS);
   $sql = 'UPDATE RaceChart SET finishtime = NULL, finishplace = NULL, completed = NULL';
   if (isset($_POST['roundid'])) {
     $stmt = $db->prepare($sql.' WHERE roundid = :roundid');
@@ -25,6 +27,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     $db->exec($sql);
   }
 } else if ($_POST['purge'] == 'schedules') {
+  record_event_purge(EVENT_PURGE_SCHEDULES);
   $sql = 'DELETE FROM RaceChart';
   if (isset($_POST['roundid'])) {
     $stmt = $db->prepare($sql.' WHERE roundid = :roundid');
@@ -33,6 +36,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     $db->exec($sql);
   }
 } else if ($_POST['purge'] == 'racers') {
+  record_event_purge(EVENT_PURGE_RACERS);
   $db->exec('UPDATE Awards SET racerid = 0');
   $db->exec('DELETE FROM RaceChart');
   $db->exec('DELETE FROM Roster');
@@ -44,6 +48,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
   }
   delete_from_raceinfo('fake-racers');
 } else if ($_POST['purge'] == 'awards') {
+  record_event_purge(EVENT_PURGE_AWARDS);
   $db->exec('DELETE FROM Awards');
 } else {
   echo "<failure code='not-recognized'>Unrecognized purge operation: "

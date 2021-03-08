@@ -47,12 +47,14 @@ table.event-history tr.event td {
 
 table.event-history tr.event-identifier td {
   border-top-width: 2px;
-  background: #ffdddd;
 }
 
 table.event-history tr.event-explanation td {
-  background: #ffdddd;
   border-bottom-width: 2px;
+}
+
+table.event-history tr.event.irregular td {
+  background: #ffdddd;
 }
 
 table.event-history tr.event td:first-child {
@@ -148,6 +150,38 @@ class EventFormatter {
     case EVENT_HEAT_MANUALLY_ENTERED:
       return 'Manually entered result';
       break;
+
+    case EVENT_CLASS_ADDED:
+      return 'Created group '.htmlspecialchars($event['other'], ENT_QUOTES, 'UTF-8')
+          .' ('.$event['classid'].')';
+    case EVENT_CLASS_DELETED:
+      return 'Deleted group '.$event['classid'];
+    case EVENT_RANK_ADDED:
+      return 'Created subgroup '.htmlspecialchars($event['other'], ENT_QUOTES, 'UTF-8')
+          .' ('.$event['rankid'].' in group '.$event['classid'].')';
+    case EVENT_RANK_DELETED:
+      return "Deleted subgroup $event[rankid] from group $event[classid]";
+    case EVENT_ROUND_ADDED:
+      return "Created $event[other] for group $event[classid] (roundid $event[roundid])";
+    case EVENT_ROUND_DELETED:
+      return "Deleted round $event[roundid] for group $event[classid]";
+    case EVENT_SCHEDULE_ADDED:
+      return "Generated schedule for round $event[roundid]";
+    case EVENT_SCHEDULE_DELETED:
+      return "Deleted schedule for round $event[roundid] $event[other]";
+
+    case EVENT_PURGE_RESULTS:
+      return "Purged race results";
+    case EVENT_PURGE_SCHEDULES:
+      return "Purged schedules";
+    case EVENT_PURGE_RACERS:
+      return "Purged racers";
+    case EVENT_PURGE_AWARDS:
+      return "Purged awards";
+      
+    case EVENT_ROUND_DELETED:
+      return "Delete round $event[roundid]: $event[other]";
+
     default:
       return json_encode($event);
     }
@@ -177,7 +211,7 @@ class EventFormatter {
 $event_formatter = new EventFormatter;
 
 
-$event_stmt = $db->prepare('SELECT action, tstamp, roundid, heat, racerid, lane, other'
+$event_stmt = $db->prepare('SELECT tstamp, action, racerid, classid, rankid, roundid, heat, lane, other'
                            .' FROM Events'
                            .' WHERE action > 10'
                            .' ORDER BY tstamp, lane');
@@ -220,16 +254,17 @@ while ($event !== false || $heat !== false) {
   }
 
   if ($event !== false && ($heat === false || $event['tstamp'] <= $heat['completed'])) {
-    echo "<tr class='event event-identifier'>";
+    $irregular = $event['action'] == 100 || $event['action'] >= 300 ? 'irregular' : '';
+    echo "<tr class='event $irregular event-identifier'>";
     echo "<td>".htmlspecialchars($event_formatter->HeatIdentifier($event), ENT_QUOTES, 'UTF-8')."</td>";
     echo "<td>".$event['tstamp']."</td>";
     echo "<td></td>";
     echo "</tr>\n";
-    echo "<tr class='event event-explanation'><td colspan='3'>";
+    echo "<tr class='event $irregular event-explanation'><td colspan='3'>";
 
     echo $event_formatter->Format($event);
 
-    echo "<br/>\n";
+    // echo "<br/>\n";
 
     echo "</td>";
     echo "</tr>\n";

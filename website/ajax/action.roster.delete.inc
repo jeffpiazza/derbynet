@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/aggregate_round.inc');
+require_once('inc/events.inc');
 
 start_response();
 
@@ -24,6 +25,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     echo "<failure code='scheduled'>Heats are scheduled for this round; remove before proceeding</failure>\n";
   } else {
     $roundid = $_POST['roundid'];
+    record_event_delete_round(-1, $roundid);
     $stmt = $db->prepare('DELETE FROM Roster WHERE roundid = :roundid');
     $stmt->execute(array(':roundid' => $roundid));
 

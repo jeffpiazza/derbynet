@@ -2,6 +2,7 @@
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
+require_once('inc/events.inc');
 
 define('UNSPECIFIED_CLASS', '* Not specified');
 define('UNSPECIFIED_RANK', '* Not specified');
@@ -81,6 +82,7 @@ function create_class($classname, $with_first_round = true) {
   $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
                                array(':classname' => $classname));
   if (schema_version() >= 2) {
+    record_event_create_class($classid, $classname);
     $stmt = $db->prepare('UPDATE Classes'
                          .' SET sortorder = :sortorder'
                          .' WHERE classid = :classid');
@@ -98,6 +100,7 @@ function create_class($classname, $with_first_round = true) {
                          .'  WHERE Rounds.classid = Classes.classid'
                          .'    AND Rounds.round = 1)');
     $stmt->execute(array(':classid' => $classid));
+    record_event_create_round(-1, $classid, 1);
   }
 
   return $classid;
@@ -131,6 +134,7 @@ function find_or_create_rank($rankname, $classid) {
                                 array(':rankname' => $rankname,
                                       ':classid' => $classid));
     if (schema_version() >= 2) {
+      record_event_create_rank($classid, $rankid, $rankname);
       $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
                                   array(':classid' => $classid));
       $stmt = $db->prepare('UPDATE Ranks'

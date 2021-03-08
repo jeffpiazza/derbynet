@@ -5,6 +5,7 @@
 // Deletes all the ranks within the class, as well as all race results and scheduled rounds for the class.
 require_once('inc/classes-xml.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/events.inc');
 
 $classid = $_POST['classid'];
 
@@ -34,6 +35,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
     
     if ($ok) {
+      record_event_delete_rank($classid, -1);
       $stmt = $db->prepare('DELETE FROM Ranks WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         echo "\n<failure code='delete-ranks'>Unable to delete Ranks entries</failure>\n";
@@ -49,8 +51,12 @@ if (have_permission(SET_UP_PERMISSION)) {
         echo "\n<failure code='delete-racechart'>Unable to delete RaceChart entries</failure>\n";
         $ok = false;
       }
+      if ($stmt->rowCount() > 0) {
+        record_event_delete_schedule(-1, "Deleting class $classid");
+      }
     }
     if ($ok) {
+      record_event_delete_round($classid, -1);
       $stmt = $db->prepare('DELETE FROM Rounds  WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         echo "\n<failure code='delete-rounds'>Unable to delete Rounds entries</failure>\n";
@@ -69,6 +75,9 @@ if (have_permission(SET_UP_PERMISSION)) {
       if (!$stmt->execute(array(':classid' => $classid))) {
         echo "\n<failure code='delete-classes'>Unable to delete Classes entries</failure>\n";
         $ok = false;
+      }
+      if ($stmt->rowCount() > 0) {
+        record_event_delete_class($classid);
       }
     }
     if ($ok) {

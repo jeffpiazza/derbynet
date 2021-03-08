@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/standings.inc');
+require_once('inc/events.inc');
 
 function make_new_round($classid, $roundno) {
   global $db;
@@ -8,11 +9,13 @@ function make_new_round($classid, $roundno) {
                        .' VALUES(:classid, :roundno, 0, 0)');
   $stmt->execute(array(':classid' => $classid,
                        ':roundno' => $roundno));
-  return read_single_value('SELECT roundid FROM Rounds'
-                           .' WHERE round = :roundno'
-                           .'  AND classid = :classid',
-                           array(':classid' => $classid,
-                                 ':roundno' => $roundno));
+  $roundid = read_single_value('SELECT roundid FROM Rounds'
+                               .' WHERE round = :roundno'
+                               .'  AND classid = :classid',
+                               array(':classid' => $classid,
+                                     ':roundno' => $roundno));
+  record_event_create_round($roundid, $classid, $roundno);
+  return $roundid;
 }
 
 define('ROSTER_UNBUCKETED', 0);

@@ -3,6 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/newracer.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/events.inc');
 
 // An aggregate round is one which draws from multiple prior rounds.  An
 // aggregate class is created by scheduling an aggregate round, or by explicit
@@ -142,6 +143,9 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                        .' AND (SELECT COUNT(*) FROM Rounds'
                        .'      WHERE classid = Classes.classid) <= 1');
   $stmt->execute(array(':classid' => $classid));
+  if ($stmt->rowCount() > 0) {
+    record_event_delete_class($classid);
+  }
 
   // Clean up any playlist entries for the deleted class.  When activated, a
   // playlist entry for a nonexistent class will create a new round for the

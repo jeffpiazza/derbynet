@@ -73,7 +73,7 @@ curl_get "action.php?query=award.list" | grep 'awardid="5"' | expect_one 'sort="
 curl_get "action.php?query=award.list" | grep 'awardid="2"' | expect_one 'sort="3"'
 curl_get "action.php?query=award.list" | grep 'awardid="1"' | expect_one 'sort="4"'
 
-## Create "Younger" aggregate class of classes 1,2
+## Create "Younger" aggregate class of classes 1,2.  Should give classid=8
 curl_post action.php "action=class.add&constituent_1=1&constituent_2=1&name=Younger" | check_success
 ## Create an award for the aggregate class.  Award rankid won't matter for an aggregate class award.
 curl_post action.php "action=award.edit&awardid=new&awardtypeid=2&name=AggClass%20Award&class_and_rank=8,8" | check_success

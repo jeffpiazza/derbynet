@@ -13,6 +13,7 @@
 require_once('inc/schedule_rough.inc');
 require_once('inc/schedule_ordered.inc');
 require_once('inc/schedule_utils.inc');
+require_once('inc/events.inc');
 
 // Returns roster, where roster[sequence] = racerid,
 // 0 <= sequence < number of racers in roundid.
@@ -49,6 +50,7 @@ function form_chart(&$schedule, &$roster) {
 // Writes the race chart entries into the database.
 function write_chart($roundid, &$heats) {
   global $db;
+  record_event_create_schedule($roundid);
   $db->exec('DELETE FROM RaceChart WHERE roundid = '.$roundid);
   $classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = '.$roundid);
   $stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid, classid)'

@@ -7,6 +7,7 @@ require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once('inc/classes-xml.inc');
 require_once(sql_file_path('column-widths'));
+require_once('inc/events.inc');
 
 start_response();
 
@@ -29,6 +30,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                                   array(':rankname' => $rankname,
                                         ':classid' => $classid));
       if (schema_version() >= 2) {
+        record_event_create_rank($classid, $rankid, $rankname);
         $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
                                     array(':classid' => $classid));
         $stmt = $db->prepare('UPDATE Ranks'
