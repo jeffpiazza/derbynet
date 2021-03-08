@@ -20,19 +20,35 @@ jobs:
     - name: Download jar
       run: curl -s -S --output derby-timer.jar "${{ github.event.inputs.jar_url }}"
 
-      # Windows jpackage types: app-image, exe, msi
-    - name: jpackage
+      # Windows jpackage offers these types: app-image, exe, msi
+    - name: jpackage msi
       run: >
         jpackage
-        --type exe
+        --type msi
         --name derby-timer
         --verbose 
         --input .
         --main-jar derby-timer.jar
         --main-class org.jeffpiazza.derby.TimerMain
 
-    - name: upload
+    - name: upload msi
       uses: actions/upload-artifact@v2
       with:
-        name: windows-jar
-        path: derby-timer*.exe
+        name: windows-msi
+        path: derby-timer*.msi
+
+    - name: jpackage app-image
+      run: >
+        jpackage
+        --type app-image
+        --name derby-timer
+        --verbose 
+        --input .
+        --main-jar derby-timer.jar
+        --main-class org.jeffpiazza.derby.TimerMain
+
+    - name: upload app-image
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-app-image
+        path: derby-timer*
