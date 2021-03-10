@@ -12,6 +12,9 @@ class PitPassDocument extends PrintableRacerDocument {
                                     'desc' => '8-1/2 x 11, 4-up'),
                               array('value' => '4x6',
                                     'desc' => '4x6'))),
+      'date_of_issue' => array('type' => 'string',
+                               'desc' => 'Date of issue, to be included in frame',
+                               'default' => date('F j, Y')),
       'with_logo' => array('type' => 'bool',
                            'desc' => 'Include logo image in frame',
                            'default' => true),
@@ -123,7 +126,7 @@ class PitPassDocument extends PrintableRacerDocument {
     $this->pdf->Rect($x + (3.825 - $w) / 2, $y + $this->y_coords['date-rect'], $w, 0.30, 'F'); 
     $this->pdf->SetFont('Helvetica', 'BI', 10);
     $this->pdf->SetTextColor(128, 0, 0);
-    $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['date'], date('F j, Y'));
+    $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['date'], $this->get_option('date_of_issue'));
   }
 
   // $y is the top of the background box.
