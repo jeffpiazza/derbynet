@@ -203,7 +203,8 @@ foreach ($stmt as $rs) {
            .' data-rank="'.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8').'"'
            .'>'
            .htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8')
-          .' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8')
+           .($use_subgroups
+             ? ' / '.htmlspecialchars($rs['rank'], ENT_QUOTES, 'UTF-8') : '')
 	       .'</option>';
       if ($rs['classid'] != $last_classid) {
         $ranks_and_classes .= "\n".'<option value="c'.$rs['classid'].'">'
