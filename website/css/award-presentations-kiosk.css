@@ -3,8 +3,7 @@ p.award-racer {
     line-height: 0.4; /* times font-size */
 }
 
-.award-racer .firstname,
-.award-racer .lastname {
+.award-racer .recipient{
     font-weight: bold;
 }
 

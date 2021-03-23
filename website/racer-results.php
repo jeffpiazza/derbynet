@@ -125,7 +125,7 @@ function write_rr($racer_label, $roundid, $racer_cells, $nrows) {
   echo $rrow;
 }
 
-$name_style = read_raceinfo('name-style', FULL_NAME);
+$name_style = read_name_style();
 $time_format = get_finishtime_formatting_string();
 
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -53,8 +53,7 @@ var AwardPoller = {
             awardname: award_xml.getAttribute('awardname'),
             carnumber: award_xml.getAttribute('carnumber'),
             carname: award_xml.getAttribute('carname'),
-            firstname: award_xml.getAttribute('firstname'),
-            lastname: award_xml.getAttribute('lastname'),
+            recipient: award_xml.getAttribute('recipient'),
             subgroup: award_xml.getAttribute('subgroup'),
             headphoto: award_xml.getAttribute('headphoto'),
             carphoto: award_xml.getAttribute('carphoto')};
@@ -73,8 +72,7 @@ var AwardPoller = {
 
       $("#awardname").text(award.awardname);
       $("#carnumber").text(award.carnumber);
-      $("#firstname").text(award.firstname);
-      $("#lastname").text(award.lastname);
+      $("#recipient").text(award.recipient);
       if (award.carname && award.carname.length > 0) {
         $("#carname").text(award.carname);
         $("#carname").css('display', 'block');

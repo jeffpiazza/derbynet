@@ -8,10 +8,12 @@ require_once('inc/photo-config.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/awards.inc');
+require_once('inc/name-mangler.inc');
 
 $key = read_raceinfo('current_award_key', '');
 $use_subgroups = use_subgroups();
 $reveal = read_raceinfo_boolean('reveal_current_award');
+$name_style = read_name_style();
 
 // award-<awardid>
 // speed-<place>
@@ -103,8 +105,7 @@ if (isset($stmt)) {
       .' reveal="'.($reveal ? "true" : "false").'"'
       .' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"'
       .' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
-      .' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"'
-      .' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"'
+      .' recipient="'.htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8').'"'
       .' classname="'.htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'"'
       .($use_subgroups ?
        ' subgroup="'.htmlspecialchars(@$row['rank'], ENT_QUOTES, 'UTF-8').'"' : '')

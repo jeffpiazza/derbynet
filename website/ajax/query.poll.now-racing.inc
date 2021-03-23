@@ -75,7 +75,7 @@ if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
     }
   }
 
-  emit_current_racers($now_running, read_raceinfo('name-style', FULL_NAME), $render);
+  emit_current_racers($now_running, read_name_style(), $render);
 }
 ?>
 </now-racing>

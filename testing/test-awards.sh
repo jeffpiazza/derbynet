@@ -6,12 +6,12 @@ source `dirname $0`/common.sh
 
 if [ "$2" = "basic" ] ; then
     # Basic racing
-    SECOND_TEST=' firstname="Kris"'
-    THIRD_TEST=' lastname="Burling"'
+    SECOND_TEST=' recipient="Kris Kaba"'
+    THIRD_TEST=' recipient="Blake Burling"'
 else
     # Master schedule racing
-    SECOND_TEST=' firstname="Ben"'
-    THIRD_TEST=' lastname="Halfacre"'
+    SECOND_TEST=' recipient="Ben Bittinger"'
+    THIRD_TEST=' recipient="Herb Halfacre"'
 fi
 
 user_login_coordinator

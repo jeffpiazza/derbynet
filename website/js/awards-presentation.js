@@ -93,8 +93,7 @@ function parse_award(data) {
           awardname: award_xml.getAttribute('awardname'),
           carnumber: award_xml.getAttribute('carnumber'),
           carname: award_xml.getAttribute('carname'),
-          firstname: award_xml.getAttribute('firstname'),
-          lastname: award_xml.getAttribute('lastname'),
+          recipient: award_xml.getAttribute('recipient'),
           classname: award_xml.getAttribute('classname'),
           subgroup: award_xml.getAttribute('subgroup'),
           headphoto: award_xml.getAttribute('headphoto'),
@@ -114,8 +113,7 @@ function initialize_award_controls() {
                        awardname: '',
                        carnumber: '',
                        carname: '',
-                       firstname: '',
-                       lastname: '',
+                       recipient: '',
                        classname: '',
                        subgroup: '',
                        headphoto: '',
@@ -124,7 +122,7 @@ function initialize_award_controls() {
               $(".presenter-inner").removeClass('hidden');
             }
             $("#awardname").text(award['awardname']);
-            $("#recipient").text(award['firstname'] + ' ' + award['lastname']);
+            $("#recipient").text(award['recipient']);
             $("#carnumber").text(award['carnumber'] ? 'Car number ' + award['carnumber'] : '');
             $("#carname").text(award['carname']);
             $("#classname").text(award['classname']);

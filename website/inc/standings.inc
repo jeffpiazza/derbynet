@@ -492,7 +492,7 @@ class StandingsOracle {
   //    td.col-insuper with the full field standing
 
   private function write_standings_table_rows() {
-    $name_style = read_raceinfo('name-style', FULL_NAME);
+    $name_style = read_name_style();
     $show_car_name = show_car_name_in_standings();
     $time_format = get_finishtime_formatting_string();
 

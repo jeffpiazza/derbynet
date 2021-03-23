@@ -12,7 +12,7 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
 
 function export_standings(callable $out, $key, $presentation,
                           &$result_summary) {
-  $name_style = read_raceinfo('name-style', FULL_NAME);
+  $name_style = read_name_style();
   $use_groups = use_groups();
   $use_subgroups = use_subgroups();
   $show_car_name = show_car_name_in_standings();

@@ -7,10 +7,13 @@ require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
+require_once('inc/name-mangler.inc');
 require_once('inc/awards.inc');
 require_once('inc/aggregate_round.inc');
 
 require_permission(PRESENT_AWARDS_PERMISSION);
+
+$name_style = read_name_style();
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -163,8 +166,7 @@ foreach ($awards as &$row) {
         .' data-classid="'.$classid.'"'  // 0 except for class-level award
         .' data-rankid="'.$rankid.'"'  // 0 except for rank-level award
         .' data-awardname="'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'"'
-        .' data-recipient="'.htmlspecialchars($row['firstname'].' '.$row['lastname'],
-                                              ENT_QUOTES, 'UTF-8').'"'
+        .' data-recipient="'.htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8').'"'
         .' data-carnumber="'.$row['carnumber'].'"'
         .' data-carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"'
         .($classid == 0 ? '' :
@@ -174,7 +176,7 @@ foreach ($awards as &$row) {
         .'>';
     echo '<span>'.htmlspecialchars($row['awardname'], ENT_QUOTES, 'UTF-8').'</span>';
     echo '<p><strong>'.$row['carnumber'].':</strong> ';
-    echo htmlspecialchars($row['firstname'].' '.$row['lastname'], ENT_QUOTES, 'UTF-8');
+    echo htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8');
     echo '</p>';
     echo '</li>';
 }

@@ -159,7 +159,7 @@ function maybe_mark_photos_populated($heat_row, $photo_in_heat) {
   return $heat_row;
 }
 
-$name_style = read_raceinfo('name-style', FULL_NAME);
+$name_style = read_name_style();
 
 $rs = $stmt->fetch(PDO::FETCH_ASSOC);
 foreach ($groups as $group) {

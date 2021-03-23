@@ -63,7 +63,7 @@ $show_car_photos_on_deck = read_raceinfo_boolean('show-cars-on-deck');
 $show_racer_photos_rr = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos_rr = read_raceinfo_boolean('show-car-photos-rr');
 $locked_settings = locked_settings();
-$name_style = read_raceinfo('name-style', FULL_NAME);
+$name_style = read_name_style();
 $finish_formatting = get_finishtime_formatting_string();
 if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
   write_raceinfo('scoring', 1);

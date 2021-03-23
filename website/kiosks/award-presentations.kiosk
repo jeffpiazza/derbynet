@@ -27,8 +27,7 @@
   <div class="reveal" id="award-racer-text">
     <p class="award-racer"><span class="car-number" id="carnumber"></span></p>
     <p class="award-racer">
-      <span class="firstname" id="firstname"></span>
-      <span class="lastname" id="lastname"></span>
+      <span class="recipient" id="recipient"></span>
     </p>
     <p class="award-racer"><span class="car-name" id="carname"></span></p>
     <p class="award-racer"><span class="subgroup" id="subgroup"></span></p>

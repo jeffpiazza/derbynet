@@ -56,7 +56,7 @@ class ScheduleDocument extends PrintableSummaryDocument {
         'racer_font' => 7);
     }
     $use_master_sched = use_master_sched();
-    $name_style = read_raceinfo('name-style', FULL_NAME);
+    $name_style = read_name_style();
 
     // array of {round, groupid, roundname},
     $groups = all_schedule_groups();

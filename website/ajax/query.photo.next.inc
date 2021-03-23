@@ -39,7 +39,7 @@ function write_main_photo(&$row, $attribute_name, &$repositories) {
   return false;  // Don't also inset the inset
 }
 
-$name_style = read_raceinfo('name-style', FULL_NAME);
+$name_style = read_name_style();
 
 // If working with a GPRM database, the 'imagefile' field carries the only photo.
 // If working with a DerbyNet database, 'imagefile' field carries the inset photo, and 'carphoto' is the main photo.
