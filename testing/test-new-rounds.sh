@@ -19,11 +19,13 @@ curl_post action.php "action=roster.new&roundid=1&top=3" | check_success
 if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 3 ]; then
     test_fails Expecting 3 finalists
 fi
+# <new-round roundid="xxx"/>
+ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
 
-# The new round should be roundid=7, which is now deletable
-curl_post action.php "action=roster.delete&roundid=7" | check_success
+# The new round should be roundid=8, which is now deletable
+curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
 # roundid=7 is now gone, so second deletion fails
-curl_post action.php "action=roster.delete&roundid=7" | check_failure
+curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_failure
 
 # Top 3 from each rank in roundid=2
 curl_post action.php "action=roster.new&roundid=2&top=3&bucketed=1" | check_success

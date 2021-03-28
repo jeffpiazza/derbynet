@@ -134,7 +134,7 @@ function parse_rounds(data) {
                      classname: round_xml.getAttribute('class'),
                      roundname: round_xml.textContent,
                      aggregate: round_xml.getAttribute('aggregate') == "" ? 0
-                              : round_xml.getAttribute('aggregate'),
+                             : 1*round_xml.getAttribute('aggregate'),
                      round: 1*round_xml.getAttribute('round'),
                      roster_size: 1*round_xml.getAttribute('roster_size'),
                      racers_passed: 1*round_xml.getAttribute('passed'),
