@@ -3,7 +3,7 @@ Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
 Version: 6.0-@BUILD@
 Priority: optional
 Architecture: all
-Depends: jarwrapper
+Depends: jarwrapper, default-jre | java9-runtime
 Replaces: derbynet (<= 3.0-1), derbynet-extras (<= 5.0-962)
 Breaks: derbynet (<= 3.0-1)
 Enhances: derbynet-server

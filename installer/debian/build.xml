@@ -182,12 +182,12 @@
                 <include name="usr/share/derbynet/docs"/>
                 <include name="usr/share/derbynet/docs/Timer Operation.pdf"/>
                 <include name="usr/share/derbynet/scripts"/>
-                <include name="usr/share/derbynet/scripts/derby-timer.sh"/>
             </tarfileset>
             <!-- This second tarfileset sets executable permissions for these
                  files. -->
             <tarfileset dir="${debian-root}" filemode="755">
                 <include name="usr/bin/**"/>
+                <include name="usr/share/derbynet/scripts/derby-timer.sh"/>
             </tarfileset>
         </tar>
 
