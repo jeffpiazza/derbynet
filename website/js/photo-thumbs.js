@@ -238,7 +238,7 @@ function on_delete_photo_button() {
                    repo: photo_data.repo,
                    photo: photo_data.basename},
             success: function (data) {
-              location.reload(true);
+              location.replace(location.href);
             }});
     close_modal('#photo_crop_modal');
   });
