@@ -5,6 +5,7 @@
 //    (That's the only thing they affect, though.)
 //  row-height is used for constructing photo URLs, if any, so photos will be
 //    the right size.
+//  repo overrides the now-racing repo
 //
 // Returns:
 //   <now-racing roundid= heat= >
@@ -68,7 +69,14 @@ if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
 
   $render = false;
   if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
-    $photos = read_photos_on_now_racing();
+    if (isset($_GET['repo'])) {
+      $photos = $_GET['repo'];
+      if (!photo_repository($photos)) {
+        $photos = 0;
+      }
+    } else {
+      $photos = read_photos_on_now_racing();
+    }
     if ($photos) {
       $render_name = (2 * $_GET['row-height']).'x'.$_GET['row-height'];
       $render = photo_repository($photos)->lookup_or_any($render_name);
