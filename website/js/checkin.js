@@ -723,33 +723,40 @@ function scroll_to_nth_found_racer(n) {
     $("html, body").animate({scrollTop: found.offset().top - $(window).height() / 2}, 250);
 }
 
+// inc = 1 for next found racer, -1 for previous
+function next_or_previous_found_racer(inc) {
+  var count = $("#find-racer-index").data("index");
+  if (inc > 0 && count < $("span.found-racer").length) {
+    ++count;
+  } else if (inc < 0 && count > 1) {
+    --count;
+  } else {
+    return;
+  }
+
+  $("#find-racer-index").data("index", count).text(count);
+  scroll_to_nth_found_racer(count);
+}
+
 function intercept_arrow_key(event) {
-    switch (event.which) {
-    case 38:  // up
-        {
-            var count = $("#find-racer-index").data("index");
-            if (count > 1) {
-                --count;
-                $("#find-racer-index").data("index", count).text(count);
-                scroll_to_nth_found_racer(count);
-                event.preventDefault();
-                return;
-            }
-        }
-        break;
-    case 40: // down
-        {
-            var count = $("#find-racer-index").data("index");
-            if (count < $("span.found-racer").length) {
-                ++count;
-                $("#find-racer-index").data("index", count).text(count);
-                scroll_to_nth_found_racer(count);
-                event.preventDefault();
-                return;
-            }
-        }
-        break;
-    }
+  switch (event.which) {
+  case 38:  // up
+    next_or_previous_found_racer(-1);
+    event.preventDefault();
+    break;
+  case 40: // down
+    next_or_previous_found_racer(+1);
+    event.preventDefault();
+    break;
+  case 9:  // tab or shift-tab
+    next_or_previous_found_racer(event.shiftKey ? -1 : +1);
+    event.preventDefault();
+    break;
+  case 27:  // esc
+    cancel_find_racer();
+    event.preventDefault();
+    break;
+  }
 }
 
 $(function() {
