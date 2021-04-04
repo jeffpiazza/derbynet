@@ -14,7 +14,11 @@ function preferred_urls() {
   try {
     // If present, the config-url should contain the whole url, e.g.,
     //  http://my-host.com/with/a/long/path
-    $v = file_get_contents($configdir.DIRECTORY_SEPARATOR."config-url");
+    $config_url_file = $configdir.DIRECTORY_SEPARATOR."config-url";
+    if (!file_exists($config_url_file)) {
+      return false;
+    }
+    $v = file_get_contents($config_url_file);
     if ($v !== false) {
       return array(trim($v));
     }
