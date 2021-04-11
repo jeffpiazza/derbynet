@@ -130,6 +130,7 @@ public class TimerDeviceUtils {
     return results;
   }
 
+  // If place is not reported by the timer, pass -1 as place.
   public static void addOneLaneResult(int lane, String time, int place,
                                       ArrayList<Message.LaneResult> results) {
     if (results.size() < lane) {

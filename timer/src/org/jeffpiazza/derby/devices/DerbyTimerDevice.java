@@ -56,15 +56,17 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.equals("RESET")) {
         s = portWrapper.next(deadline);
-        Matcher m = readyNLanesPattern.matcher(s);
-        if (m.find()) {
-          has_ever_spoken = true;
-          laneCount = Integer.parseInt(m.group(1));
-          timerIdentifier = s;
-        }
+        if (s != null) {
+          Matcher m = readyNLanesPattern.matcher(s);
+          if (m.find()) {
+            has_ever_spoken = true;
+            laneCount = Integer.parseInt(m.group(1));
+            timerIdentifier = s;
+          }
 
-        setUp();
-        return true;
+          setUp();
+          return true;
+        }
       }
     }
 
@@ -118,7 +120,7 @@ public class DerbyTimerDevice extends TimerDeviceTypical {
             int lane = Integer.parseInt(m.group(1));
             String time = m.group(2);
             if (results != null) {
-              TimerDeviceUtils.addOneLaneResult(lane, time, nresults, results);
+              TimerDeviceUtils.addOneLaneResult(lane, time, -1, results);
             }
             ++nresults;
             return "";
