@@ -31,6 +31,12 @@ staged_heat6 - 141 111 131 101 -
 
 
 # Use every other lane, 101010 = 42
+# Writing settings with unraced schedule will fail:
+curl_post action.php "action=settings.write&unused-lane-mask=42" | check_failure
+# Previously we selected different heats but didn't race any of them, so the
+# schedule can just be removed.
+curl_post action.php "action=schedule.unschedule&roundid=1" | check_success
+
 curl_post action.php "action=settings.write&unused-lane-mask=42" | check_success
 curl_post action.php "action=schedule.generate&roundid=2" | check_success
 curl_post action.php "action=heat.select&roundid=2&now_racing=0" | check_success

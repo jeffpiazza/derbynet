@@ -32,10 +32,10 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }
 
+  // ===========================================================================
+  // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
+  // $_POST key => RaceInfo.itemkey
   if (!$failures) {
-    // ===========================================================================
-    // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
-    // $_POST key => RaceInfo.itemkey
     foreach(array('do-use-subgroups' => 'use-subgroups',
                   'one-trophy-per' => 'one-trophy-per',
                   'reverse-lanes' => 'reverse-lanes',
@@ -56,10 +56,22 @@ if (have_permission(SET_UP_PERMISSION)) {
         write_raceinfo($raceinfo_key, @$_POST[$post_key] ? '1' : '0');
       }
     }
+  }
 
-    // ===========================================================================
-    // Non-checkbox settings
-    // $_POST key => RaceInfo.itemkey
+  // ===========================================================================
+  // Non-checkbox settings
+  // $_POST key => RaceInfo.itemkey
+  if ((isset($_POST['n-lanes']) &&
+       $_POST['n-lanes'] != read_raceinfo('lane_count')) ||
+      (isset($_POST['unused-lane-mask']) &&
+       $_POST['unused-lane-mask'] != read_raceinfo('unused-lane-mask'))) {
+    if (read_single_value('SELECT COUNT(*) FROM RaceChart'
+                          .' WHERE COALESCE(completed, \'\') = \'\'') > 0) {
+      echo "<failure code='already-scheduled'>Remove unraced schedules before changing lane counts.</failure>";
+      $failures = true;
+    }
+  }
+  if (!$failures) {
     foreach(array('n-lanes' => 'lane_count',
                   'track-length' => 'track-length',
                   'n-pack-trophies' => 'n-pack-trophies',

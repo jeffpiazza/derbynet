@@ -19,6 +19,9 @@ function on_lane_count_change() {
 }
 
 function on_lane_click(event) {
+  if ($("#unused-lane-mask").prop('disabled')) {
+    return;
+  }
   var mask = $("#unused-lane-mask").val();
   var target = $(event.currentTarget);
   var bit = target.attr('data-bit');

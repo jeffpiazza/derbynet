@@ -11,6 +11,9 @@ require_once('inc/pick_image_set.inc');
 require_once('inc/xbs.inc');
 
 require_permission(SET_UP_PERMISSION);
+
+$schedules_exist = read_single_value('SELECT COUNT(*) FROM RaceChart'
+                                     .' WHERE COALESCE(completed, \'\') = \'\'');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +23,27 @@ require_permission(SET_UP_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/chooser.css"/>
 <link rel="stylesheet" type="text/css" href="css/settings.css"/>
+<?php if ($schedules_exist) { ?>
+<style type="text/css">
+ .track-settings {
+    border-left: 30px solid red;
+    padding-left: 30px;
+    background-color: #ff8080;
+    /* background-image */
+ }
+.track-settings .warning {
+   display: block;
+   visibility: visible;
+   width: 100px;
+   padding: 11px;
+   margin-top: 0px;
+   float: right;
+   font-size: 18px;
+   font-weight: bold;
+   background-color: red;
+}
+</style>
+<?php } ?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
@@ -86,25 +110,28 @@ $scoring = read_raceinfo('scoring', 0);
         <label title="Enable this if you plan to enter times manually or use with GPRM. It will remove the warning from the 'now racing' dashboard regarding the timer not being connected.">
                Warn when timer not connected</label>
       </p>
-      <p>
-        <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
-               class="not-mobile"
-               value="<?php echo get_lane_count(); ?>"/>
-        <label for="n-lanes">Number of lanes on the track.</label>
-      </p>
+      <div class="track-settings">
+        <p class="warning hidden">Racing schedules already exist.</p>
+        <p>
+          <input id="n-lanes" name="n-lanes" type="number" min="0" max="20"
+                 class="not-mobile" <?php if ($schedules_exist) echo 'disabled="disabled"'; ?>
+                 value="<?php echo get_lane_count(); ?>"/>
+          <label for="n-lanes">Number of lanes on the track.</label>
+        </p>
+        <p>
+          <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
+                <?php if ($schedules_exist) echo 'disabled="disabled"'; ?>
+                value="<?php echo read_raceinfo('unused-lane-mask', 0); ?>"/>
+          Lanes available for scheduling:</p>
+        <p>
+          <span id="lanes-in-use"></span>
+        </p>
+      </div>
       <p>
         <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
                type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
         <label for="reverse-lanes">Number lanes in reverse</label>
       </p>
-<p>
-    <input type="hidden" id="unused-lane-mask" name="unused-lane-mask"
-           value="<?php echo read_raceinfo('unused-lane-mask', 0); ?>"/>
-Lanes available for scheduling:</p>
-<p>
-<span id="lanes-in-use">
-</span>
-</p>
       <p>
         <input id="track-length" name="track-length" type="number" min="0" max="999"
                class="not-mobile"
