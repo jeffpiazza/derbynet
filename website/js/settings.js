@@ -32,6 +32,12 @@ function on_lane_click(event) {
   PostSettingChange($("#unused-lane-mask"));
 }
 
+function on_linger_time_change() {
+  $("#now-racing-linger-ms").val($("#now-racing-linger-sec").val() * 1000);
+  PostSettingChange($("#now-racing-linger-ms"));
+  return false;
+}
+
 function on_max_runs_change() {
   $("#max-runs-per-car").val(document.getElementById('max-runs').checked ? 1 : 0);
   PostSettingChange($("#max-runs-per-car"));
@@ -124,6 +130,9 @@ var PostSettingChange;
   }
 
   PostSettingChange = function(input) {
+    if ($(input).hasClass('do-not-post')) {
+      return;
+    }
     var name = input.attr('name');
     if (typeof name == 'undefined' || name === false) {
       return;
@@ -149,6 +158,8 @@ $(function() {
 
   $("#n-lanes").on("keyup mouseup", on_lane_count_change);
   on_lane_count_change();
+
+  $("#now-racing-linger-sec").on("keyup mouseup", on_linger_time_change);
 
   $("#supergroup-label").on("keyup mouseup", on_label_change);
   $("#group-label").on("keyup mouseup", on_label_change);

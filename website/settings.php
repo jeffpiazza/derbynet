@@ -74,8 +74,6 @@ function photo_directory_base() {
 <?php
 make_banner('Settings', 'setup.php');
 
-$experimental_settings = isset($_GET['experimental']);
-
 $use_subgroups = use_subgroups();
 $use_xbs = read_raceinfo_boolean('use-xbs');
 $xbs_award = read_raceinfo('xbs-award', 'Exclusively By Scout');
@@ -148,13 +146,14 @@ $scoring = read_raceinfo('scoring', 0);
         echo $finish_formatting == "%6.4f" ? ' checked="checked"' : '';
         ?>/><label for="finish-formatting-4">5 digits (0.0001)</label>
       </p>
-    <?php if ($experimental_settings) { ?>
       <p>
-         <label for="now-racing-linger-ms">Linger time on last heat (ms.)</label>
-         <input type="number" id="now-racing-linger-ms" name="now-racing-linger-ms"
-                value="<?php echo read_raceinfo('now-racing-linger-ms', 10000); ?>"/>
+      <label for="now-racing-linger-sec">Previous heat linger time (sec.) for "Now Racing"</label>
+         <input type="hidden" id="now-racing-linger-ms" name="now-racing-linger-ms"
+           value="<?php echo read_raceinfo('now-racing-linger-ms', 10000); ?>"/>
+         <input type="number" id="now-racing-linger-sec" name="now-racing-linger-sec"
+                value="<?php echo sprintf("%0.1f", read_raceinfo('now-racing-linger-ms', 10000) / 1000); ?>"
+           step="0.1" class="do-not-post not-mobile" style="width: 100px;"/>
       </p>
-    <?php } ?>
     </div>
   </div>
 
