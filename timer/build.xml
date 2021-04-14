@@ -31,6 +31,8 @@
         <classpath>
             <pathelement path="${src}"/>
             <pathelement location="${lib}/jssc.jar"/>
+            <pathelement location="${lib}/Java-WebSocket-1.5.2.jar"/>
+            <pathelement location="${lib}/json-20210307.jar"/>
         </classpath>
     </javac>
   </target>
@@ -66,6 +68,8 @@
              configured a facility no one asked for.  This silences the
              warning. -->
         <zipgroupfileset dir="${lib}" includes="slf4j-nop-1.7.30.jar"/>
+        <zipgroupfileset dir="${lib}" includes="Java-WebSocket-1.5.2.jar"/>
+        <zipgroupfileset dir="${lib}" includes="json-20210307.jar"/>
     </jar>
   </target>
 

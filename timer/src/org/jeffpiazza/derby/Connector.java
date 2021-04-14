@@ -1,6 +1,6 @@
 package org.jeffpiazza.derby;
 
-import java.io.File;
+import java.util.ArrayList;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
@@ -15,6 +15,8 @@ public class Connector {
   private HttpTask httpTask;
   private TimerTask timerTask;
   private TimerGui timerGui;
+  private ArrayList<TimerDevice.RaceStartedCallback> raceStartedCallbacks;
+  private ArrayList<TimerDevice.RaceFinishedCallback> raceFinishedCallbacks;
 
   public void setTimerGui(TimerGui gui) {
     this.timerGui = gui;
@@ -34,6 +36,22 @@ public class Connector {
     maybeWireTogether();
   }
 
+  public synchronized void addRaceStartedCallback(
+      TimerDevice.RaceStartedCallback callback) {
+    if (raceStartedCallbacks == null) {
+      raceStartedCallbacks = new ArrayList<TimerDevice.RaceStartedCallback>();
+    }
+    raceStartedCallbacks.add(callback);
+  }
+
+  public synchronized void addRaceFinishedCallback(
+      TimerDevice.RaceFinishedCallback callback) {
+    if (raceFinishedCallbacks == null) {
+      raceFinishedCallbacks = new ArrayList<TimerDevice.RaceFinishedCallback>();
+    }
+    raceFinishedCallbacks.add(callback);
+  }
+
   private void maybeWireTogether() {
     if (httpTask == null || timerTask == null) {
       return;
@@ -41,7 +59,8 @@ public class Connector {
     prewire(httpTask, timerTask, timerGui);
     TimerDevice device = timerTask.device();
     if (device != null) {
-      wireTogether(httpTask, timerTask);
+      wireTogether(httpTask, timerTask,
+                   raceStartedCallbacks, raceFinishedCallbacks);
       int nlanes = 0;
       try {
         nlanes = device.getNumberOfLanes();
@@ -60,9 +79,6 @@ public class Connector {
     httpTask.registerAssignPortCallback(new HttpTask.AssignPortCallback() {
       @Override
       public void onAssignPort(String portName) {
-        if (timerGui != null) {
-          timerGui.setSerialPort(portName);
-        }
         timerTask.userChoosesSerialPort(portName);
         LogWriter.info("Assigned port " + portName);
       }
@@ -70,8 +86,8 @@ public class Connector {
     httpTask.registerAssignDeviceCallback(new HttpTask.AssignDeviceCallback() {
       @Override
       public void onAssignDevice(String deviceName) {
-        Class<? extends TimerDevice> cl =
-            AllDeviceTypes.getDeviceClass(deviceName);
+        Class<? extends TimerDevice> cl
+            = AllDeviceTypes.getDeviceClass(deviceName);
         if (timerGui != null) {
           timerGui.setTimerClass(cl);
         }
@@ -83,8 +99,11 @@ public class Connector {
 
   // Registers callbacks that allow the httpTask and timer device to
   // communicate asynchronously.
-  private static void wireTogether(final HttpTask httpTask,
-                                   final TimerTask timerTask) {
+  private static void wireTogether(
+      final HttpTask httpTask,
+      final TimerTask timerTask,
+      final ArrayList<TimerDevice.RaceStartedCallback> raceStartedCallbacks,
+      final ArrayList<TimerDevice.RaceFinishedCallback> raceFinishedCallbacks) {
     StdoutMessageTrace.trace("Timer-Server connection established.");
     httpTask.registerHeatReadyCallback(new HttpTask.HeatReadyCallback() {
       public void onHeatReady(int roundid, int heat, int laneMask) {
@@ -134,52 +153,42 @@ public class Connector {
     });
     timerTask.device().registerRaceStartedCallback(
         new TimerDevice.RaceStartedCallback() {
-          public void raceStarted() {
-            if (Flag.trigger_file_directory.value != null) {
-              try {
-                (new File(new File(Flag.trigger_file_directory.value),
-                          "heat-started"))
-                    .createNewFile();
-              } catch (Throwable t) {
-                LogWriter.info("Failed to create /tmp/heat-started: " + t.
-                    getMessage());
-              }
-            }
-            try {
-              httpTask.queueMessage(new Message.Started());
-            } catch (Throwable t) {
-            }
+      public void raceStarted() {
+        try {
+          httpTask.queueMessage(new Message.Started());
+        } catch (Throwable t) {
+        }
+        if (raceStartedCallbacks != null) {
+          for (TimerDevice.RaceStartedCallback cb : raceStartedCallbacks) {
+            cb.raceStarted();
           }
-        });
+        }
+      }
+    });
     timerTask.device().registerRaceFinishedCallback(
         new TimerDevice.RaceFinishedCallback() {
-          public void raceFinished(int roundid, int heat,
-                                   Message.LaneResult[] results) {
-            if (Flag.trigger_file_directory.value != null) {
-              try {
-                (new File(new File(Flag.trigger_file_directory.value),
-                          "heat-finished"))
-                    .createNewFile();
-              } catch (Throwable t) {
-                LogWriter.info("Failed to create /tmp/heat-finished: " + t.
-                    getMessage());
-              }
-            }
-            // Rely on recipient to ignore if not expecting any results
-            try {
-              httpTask.queueMessage(new Message.Finished(roundid, heat, results));
-            } catch (Throwable t) {
-            }
+      public void raceFinished(int roundid, int heat,
+                               Message.LaneResult[] results) {
+        // Rely on recipient to ignore if not expecting any results
+        try {
+          httpTask.queueMessage(new Message.Finished(roundid, heat, results));
+        } catch (Throwable t) {
+        }
+        if (raceFinishedCallbacks != null) {
+          for (TimerDevice.RaceFinishedCallback cb : raceFinishedCallbacks) {
+            cb.raceFinished(roundid, heat, results);
           }
-        });
+        }
+      }
+    });
     timerTask.device().registerTimerMalfunctionCallback(
-            new TimerDevice.TimerMalfunctionCallback() {
-          public void malfunction(boolean detectable, String msg) {
-            try {
-              httpTask.queueMessage(new Message.Malfunction(detectable, msg));
-            } catch (Throwable t) {
-            }
-          }
-        });
+        new TimerDevice.TimerMalfunctionCallback() {
+      public void malfunction(boolean detectable, String msg) {
+        try {
+          httpTask.queueMessage(new Message.Malfunction(detectable, msg));
+        } catch (Throwable t) {
+        }
+      }
+    });
   }
 }

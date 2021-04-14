@@ -90,6 +90,25 @@ public abstract class Flag<T> {
       = BooleanFlag.settable("no-gate-watcher",
                              "Disable interrogation of timer's gate state.");
 
+  public static final Flag<String> obs_uri
+      = StringFlag.settable("obs-uri", null,
+                            "URI, e.g. ws://derbynet.local:4444, for OBS "
+                            + "websocket, to which to send hotkey events for "
+                            + "heat start and heat finish");
+  public static final Flag<String> obs_password
+      = StringFlag.settable("obs-password", "",
+                             "Password for OBS websocket, if any.");
+  public static final Flag<String> obs_start
+      = StringFlag.settable("obs-start", null,
+                            "Hotkey name to be sent to OBS websocket when a heat "
+                            + "starts.  If first character is '@', instead names "
+                            + "a file containing an aribtrary OBS websocket request.");
+  public static final Flag<String> obs_finish
+      = StringFlag.settable("obs-finish", null,
+                            "Hotkey name to be sent to OBS websocket when a heat "
+                            + "ends.  If first character is '@', instead names "
+                            + "a file containing an aribtrary OBS websocket request.");
+
   public static final Flag<String> trigger_file_directory
       = StringFlag.settable("trigger-file-directory", null,
                             "Directory into which signaling files, heat-started and "
