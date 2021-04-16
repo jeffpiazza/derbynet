@@ -98,7 +98,19 @@ function handle_test_replay() {
            });
 }
 
-function show_manual_results_modal() {
+function trigger_replay() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'replay.trigger'}
+         });
+}
+
+// Present the modal for entering manual heat results.
+//
+// If should_trigger_replay is true, and there aren't any existing results for
+// this heat, then trigger a replay event as we're present the manual results
+// modal.
+function on_manual_results_button_click(should_trigger_replay) {
     // g_current_heat_racers: lane, name, carnumber, finishtime, finishplace
     var racer_table = $("#manual_results_modal table");
     racer_table.empty();
@@ -121,9 +133,12 @@ function show_manual_results_modal() {
     }
 
     if (any_results) {
-        $("#discard-results").removeClass("hidden");
+      $("#discard-results").removeClass("hidden");
     } else {
-        $("#discard-results").addClass("hidden");
+      if (should_trigger_replay) {
+        trigger_replay();
+      }
+      $("#discard-results").addClass("hidden");
     }
 
     show_modal("#manual_results_modal", function(event) {
