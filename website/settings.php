@@ -28,15 +28,17 @@ $schedules_exist = read_single_value('SELECT COUNT(*) FROM RaceChart'
  .track-settings {
     border-left: 30px solid red;
     padding-left: 30px;
-    background-color: #ff8080;
-    /* background-image */
+    border-top: 5px solid red;
+    border-bottom: 5px solid red;
  }
-.track-settings .warning {
+
+.settings_group .track-settings .warning {
    display: block;
    visibility: visible;
    width: 100px;
    padding: 11px;
-   margin-top: 0px;
+   /* margin-top: 0px; */
+   margin-right: 0px;
    float: right;
    font-size: 18px;
    font-weight: bold;
