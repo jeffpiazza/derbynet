@@ -86,7 +86,7 @@ function on_vote_choose(event) {
             update_awards(data);
           }
          });
-  close_modal("#ballot_results_tabulation");
+  close_modal("#ballot_results_modal");
 }
 
 function on_votes_click(event) {
