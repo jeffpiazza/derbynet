@@ -336,19 +336,6 @@ Dropzone.options.photoDrop = {
   },
 };
 
-// Re-writes the global g_cameras
-async function enumerate_cameras() {
-  g_cameras = new Array();
-  await navigator.mediaDevices.enumerateDevices()
-  .then(function(devices) {
-    devices.forEach(function(device) {
-      if (device.kind == "videoinput") {
-        g_cameras.push(device.deviceId);
-      }
-    });
-  });
-}
-
 function setup_webcam() {
   var settings = {
 	  width: g_width,
@@ -366,19 +353,24 @@ function setup_webcam() {
   Webcam.set(settings);
 }
 
-async function handle_switch_camera() {
-  await enumerate_cameras();
-  g_cameraIndex++;
-  if (g_cameraIndex >= g_cameras.length) {
-    g_cameraIndex = 0;
+window.addEventListener('orientationchange', function() {
+  if (screen.width < screen.height) {
+    g_width = 480;
+    g_height = 640;
+  } else {
+    g_width = 640;
+    g_height = 480;
   }
 
   Webcam.reset();
   setup_webcam();
   Webcam.attach('#preview');
-}
+});
 
-async function show_photo_modal(racerid, repo) {
+// ***********************
+// Original definition, minus the enumerate_cameras call.  On modern browsers,
+// this gets redefined, below, to use ES6-only features.
+function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
   var lastname = $('#lastname-' + racerid).text();
   $("#racer_photo_name").text(firstname + ' ' + lastname);
@@ -405,25 +397,10 @@ async function show_photo_modal(racerid, repo) {
 
   arm_webcam_dialog();
 
-  await enumerate_cameras();
   Webcam.reset();
   setup_webcam();
   Webcam.attach('#preview');
 }
-
-window.addEventListener('orientationchange', function() {
-  if (screen.width < screen.height) {
-    g_width = 480;
-    g_height = 640;
-  } else {
-    g_width = 640;
-    g_height = 480;
-  }
-
-  Webcam.reset();
-  setup_webcam();
-  Webcam.attach('#preview');
-});
 
 function show_racer_photo_modal(racerid) {
   show_photo_modal(racerid, 'head');

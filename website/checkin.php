@@ -77,6 +77,7 @@ var g_action_on_barcode = "<?php
 <script type="text/javascript" src="js/webcam.js"></script>
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
+<script type="text/javascript" src="js/checkin-es6.js"></script>
 </head>
 <body>
 <?php
