@@ -87,8 +87,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public boolean setPortParams(int baudRate, int dataBits, int stopBits,
                                int parity) throws SerialPortException {
     return setPortParams(baudRate, dataBits, stopBits, parity,
-                         Flag.assert_rts_dtr.value(),
-                         Flag.assert_rts_dtr.value());
+                         !Flag.clear_rts_dtr.value(),
+                         !Flag.clear_rts_dtr.value());
   }
 
   public void closePort() throws SerialPortException {

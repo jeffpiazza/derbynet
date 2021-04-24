@@ -60,9 +60,9 @@ public abstract class Flag<T> {
                           "After this many milliseconds, assume an unterminated line"
                           + " from the timer is complete (0 = wait forever).");
 
-  public static final Flag<Boolean> assert_rts_dtr
-      = BooleanFlag.settable("assert-rts-dtr",
-                             "EXPERIMENTAL Initially assert RTS and DTR lines on serial port by default.");
+  public static final Flag<Boolean> clear_rts_dtr
+      = BooleanFlag.settable("clear-rts-dtr",
+                             "EXPERIMENTAL Initially clear RTS and DTR lines on serial port by default.");
 
   // Issue #35: Reject gate state changes that don't last "reasonably" long.
   // To do that, don't record a gate state change until it's aged a bit.
