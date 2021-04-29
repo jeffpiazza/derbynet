@@ -415,7 +415,7 @@ function on_submit_new_round_aggregate_class(classid) {
          {type: 'POST',
           data: {action: 'roster.new',
                  classid: classid,
-                 top: $("#new_round_top").val(),
+                 top: $("#new-round-top").val(),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
             process_coordinator_poll_response(data); }
