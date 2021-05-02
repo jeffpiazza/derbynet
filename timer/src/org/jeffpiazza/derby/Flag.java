@@ -49,6 +49,10 @@ public abstract class Flag<T> {
       = BooleanFlag.settable("ignore-place",
                              "Discard any place indications from timer");
 
+  public static final Flag<Boolean> beta_test
+      = BooleanFlag.settable("beta-test",
+                             "Exercise new timer code");
+
   public static final Flag<Long> delay_reset_after_race
       = LongFlag.settable("delay-reset-after-race", 10,
                           "How long after race over before timer will be reset,"
@@ -97,7 +101,7 @@ public abstract class Flag<T> {
                             + "heat start and heat finish");
   public static final Flag<String> obs_password
       = StringFlag.settable("obs-password", "",
-                             "Password for OBS websocket, if any.");
+                            "Password for OBS websocket, if any.");
   public static final Flag<String> obs_start
       = StringFlag.settable("obs-start", null,
                             "Hotkey name to be sent to OBS websocket when a heat "

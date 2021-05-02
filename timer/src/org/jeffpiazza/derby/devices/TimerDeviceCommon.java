@@ -59,7 +59,6 @@ public abstract class TimerDeviceCommon
     }
   }
 
-
   // System time at which raceFinished was last called.
   private long lastFinishTime = 0;
   private int pendingLaneMask = 0;
@@ -212,35 +211,41 @@ public abstract class TimerDeviceCommon
   public void poll() throws SerialPortException, LostConnectionException {
     maybeProcessPendingLaneMask();
 
+    maybeSynthesizeGateClosedEvent(
+        gateWatcher != null && gateWatcher.getGateIsClosed());
+
     RacingStateMachine.State state = rsm.state();
+
+    whileInState(rsm.state());
+
+    if (gateWatcher != null && okToDoGateCheck(state)) {
+      boolean closed = gateWatcher.getGateIsClosed();
+      if (closed != gateWatcher.updateGateIsClosed()) {
+        onGateStateChange(!closed);
+      }
+    }
+  }
+
+  protected boolean okToDoGateCheck(RacingStateMachine.State state) {
+    // Don't check the gate state while a race is running, and only check
+    // occasionally when we're idle; otherwise, check constantly while
+    // waiting for a race to start.
+    boolean doGateCheck = state != RacingStateMachine.State.RUNNING;
+    if (doGateCheck && state == RacingStateMachine.State.IDLE) {
+      // At IDLE, only need to check gate occasionally, to confirm the
+      // connection still works
+      doGateCheck = portWrapper.millisSinceLastCommand() > 500;
+    }
+    return doGateCheck;
+  }
+
+  protected void maybeSynthesizeGateClosedEvent(boolean gateIsClosed)
+      throws SerialPortException {
     // If the gate is already closed when a PREPARE_HEAT message was delivered,
     // the PREPARE_HEAT will have left us in a MARK state, but we need to
     // make a GATE_CLOSED event to move ahead to SET.
-    if (state == RacingStateMachine.State.MARK && gateWatcher != null
-        && gateWatcher.getGateIsClosed()) {
+    if (rsm.state() == RacingStateMachine.State.MARK && gateIsClosed) {
       rsm.onEvent(RacingStateMachine.Event.GATE_CLOSED);
-      state = rsm.state();
-    }
-
-    whileInState(state);
-
-    if (gateWatcher != null) {
-      // Don't check the gate state while a race is running, and only check
-      // occasionally when we're idle; otherwise, check constantly while
-      // waiting for a race to start.
-      boolean doCheckGate = state != RacingStateMachine.State.RUNNING;
-      if (doCheckGate && state == RacingStateMachine.State.IDLE) {
-        // At IDLE, only need to check gate occasionally, to confirm the
-        // connection still works
-        doCheckGate = portWrapper.millisSinceLastCommand() > 500;
-      }
-
-      if (doCheckGate) {
-        boolean closed = gateWatcher.getGateIsClosed();
-        if (closed != gateWatcher.updateGateIsClosed()) {
-          onGateStateChange(!closed);
-        }
-      }
     }
   }
 

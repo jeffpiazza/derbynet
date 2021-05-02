@@ -36,7 +36,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     this.connector = connector;
 
     timerClasses = new ChoosableList<Class<? extends TimerDevice>>(
-        AllDeviceTypes.allDeviceClasses);
+        AllDeviceTypes.allTimerDeviceClasses());
     if (devicename != null) {
       timerClasses.choose(AllDeviceTypes.getDeviceClass(devicename));
     }
@@ -350,12 +350,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
       Constructor<? extends TimerDevice> constructor
           = deviceClass.getConstructor(SerialPortWrapper.class);
       return constructor.newInstance(portWrapper);
-    } catch (NoSuchMethodException ex) {
-    } catch (SecurityException ex) {
-    } catch (InstantiationException ex) {
-    } catch (IllegalAccessException ex) {
-    } catch (IllegalArgumentException ex) {
-    } catch (InvocationTargetException ex) {
+    } catch (Throwable ex) {
+      LogWriter.stacktrace(ex);
     }
     return null;
   }

@@ -152,8 +152,8 @@ public class SimulatedDevice extends TimerDeviceBase
       Message.LaneResult[] results = new Message.LaneResult[nlanes];
       for (int lane = 0; lanemask != 0; ++lane) {
         if ((lanemask & (1 << lane)) != 0) {
-          results[lane] = new Message.LaneResult();
-          results[lane].time = decimalFormat.format(2.0 + (Math.random() * 2.0));
+          results[lane] = new Message.LaneResult(
+              decimalFormat.format(2.0 + (Math.random() * 2.0)));
           lanemask ^= (1 << lane);
         }
       }

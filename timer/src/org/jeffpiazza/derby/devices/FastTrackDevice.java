@@ -107,10 +107,10 @@ public class FastTrackDevice extends TimerDeviceCommon implements
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Micro Wizard") >= 0 || s.indexOf("MICRO WIZARD") >= 0) {
-        timerIdentifier = s;
         has_ever_spoken = true;
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
+          timerIdentifier = s;
           // Clean up the timer state and capture some details into the log
           portWrapper.
               writeAndDrainResponse(MicroWizard.RESET_ELIMINATOR_MODE, 2, 1000);

@@ -39,13 +39,13 @@ public class TimerResult {
     laneMask &= ~(1 << lane);
   }
 
-  int mask() { return laneMask; }  // For debugging
+  public int mask() { return laneMask; }  // For debugging
 
-  boolean isFilled() {
+  public boolean isFilled() {
     return laneMask == 0;
   }
 
-  Message.LaneResult[] toArray() {
+  public Message.LaneResult[] toArray() {
     return results.toArray(new Message.LaneResult[results.size()]);
   }
 }

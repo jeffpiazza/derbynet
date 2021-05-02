@@ -25,6 +25,9 @@ import org.jeffpiazza.derby.devices.TimerDevice;
 //
 public class SerialPortWrapper implements SerialPortEventListener {
   private SerialPort port;
+  // A sequence of end-of-line characters that should be written
+  // at the end of each write().
+  private String end_of_line = "";
   // Received characters that don't yet make up a complete line, i.e., still
   // waiting for a newline character.
   private String leftover;
@@ -89,6 +92,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return setPortParams(baudRate, dataBits, stopBits, parity,
                          !Flag.clear_rts_dtr.value(),
                          !Flag.clear_rts_dtr.value());
+  }
+
+  public void setEndOfLine(String end_of_line) {
+    this.end_of_line = end_of_line;
   }
 
   public void closePort() throws SerialPortException {
@@ -241,7 +248,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public void write(String s) throws SerialPortException {
     LogWriter.serialOut(s);
     last_command = System.currentTimeMillis();
-    writeStringToPort(s);
+    writeStringToPort(s + end_of_line);
   }
 
   // These are unsatisfactory, because it's not a certainty that
@@ -256,10 +263,6 @@ public class SerialPortWrapper implements SerialPortEventListener {
     clear();
     write(cmd);
     return next(System.currentTimeMillis() + timeout);
-  }
-
-  public String next() {
-    return next(System.currentTimeMillis() + 500);
   }
 
   public String next(long deadline) {

@@ -73,6 +73,18 @@ public interface Message {
   public static class LaneResult {
     public String time;
     public int place;  // 0 if not known/stated
+
+    public LaneResult() {
+    }
+
+    public LaneResult(String time) {
+      this.time = time;
+    }
+
+    public LaneResult(String time, int place) {
+      this.time = time;
+      this.place = place;
+    }
   }
 
   public static class Finished implements Message {
@@ -165,9 +177,11 @@ public interface Message {
           sb.append(URLEncoder.encode((first_port ? "" : ",") + port, "UTF-8"));
           first_port = false;
         }
-        for (Class<? extends TimerDevice> devclass : AllDeviceTypes.allDeviceClasses) {
+        for (Class<? extends TimerDevice> devclass
+             : AllDeviceTypes.allTimerDeviceClasses()) {
           sb.append("&device-").append(devclass.getSimpleName()).append("=");
-          sb.append(URLEncoder.encode(AllDeviceTypes.toHumanString(devclass), "UTF-8"));
+          sb.append(URLEncoder.encode(AllDeviceTypes.toHumanString(devclass),
+                                      "UTF-8"));
         }
       } catch (UnsupportedEncodingException ex) {  // Won't happen
         return null;

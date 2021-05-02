@@ -88,8 +88,7 @@ public class TimerDeviceUtils {
     Matcher m = singleLanePattern.matcher(line);
     for (int i = start; i < end && m.find(i); i = m.end() + 1) {
       int index = m.group(1).charAt(0) - 'A';
-      results[index] = new Message.LaneResult();
-      results[index].time = m.group(2);
+      results[index] = new Message.LaneResult(m.group(2));
       if (m.group(3).length() > 0) {
         results[index].place = m.group(3).charAt(0) - '!' + 1;
       }
@@ -106,8 +105,7 @@ public class TimerDeviceUtils {
       m = singleLanePattern.matcher(line);
       for (int i = 0; i < line.length() && m.find(i); i = m.end() + 1) {
         int index = m.group(1).charAt(0) - 'A';
-        results[index] = new Message.LaneResult();
-        results[index].time = m.group(2);
+        results[index] = new Message.LaneResult(m.group(2));
         if (m.group(3).length() > 0) {
           results[index].place = m.group(3).charAt(0) - '!' + 1;
         }
@@ -139,8 +137,6 @@ public class TimerDeviceUtils {
         results.add(null);
       }
     }
-    results.set(lane - 1, new Message.LaneResult());
-    ((Message.LaneResult) results.get(lane - 1)).place = (1 + place);
-    ((Message.LaneResult) results.get(lane - 1)).time = time;
+    results.set(lane - 1, new Message.LaneResult(time, 1 + place));
   }
 }
