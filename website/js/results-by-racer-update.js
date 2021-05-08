@@ -50,12 +50,13 @@ function rewrite_table_sections(rounds, index, completed) {
     var roundid = round.getAttribute('roundid');
     var tbody = $("#tbody_" + roundid);
 
-    if (tbody.attr('data-signature') != round.textContent) {
+    if (round.textContent && tbody.attr('data-signature') != round.textContent) {
       if (tbody.length == 0) {
         console.log("Reloading page for new roundid " + round.textContent);
         // Wholly-new roundid implies added a new round; just reload rather than
         // try to guess where the new tbody should go.
         location.reload(true);
+        return;
       }
       console.log("tbody load for " + roundid
                   + " because old " + tbody.attr('data-signature') + ' != new ' + round.textContent);
