@@ -18,7 +18,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     super(portWrapper);
     this.profile = profile;
 
-    portWrapper.setEndOfLine(profile.end_of_line);
+    portWrapper.setEndOfLine(profile.options.end_of_line);
   }
 
   @Override
@@ -62,12 +62,12 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
     lanemask = laneMask;
-    if (lastFinishTime == 0 || profile.display_hold_time_ms == 0) {
+    if (lastFinishTime == 0 || profile.options.display_hold_time_ms == 0) {
       Event.trigger(Event.PREPARE_HEAT_RECEIVED);
     } else {
       // This will defer acting on the prepareHeat message until some
       // minimum amount of time after the last heat finished.
-      queue.addAt(lastFinishTime + profile.display_hold_time_ms,
+      queue.addAt(lastFinishTime + profile.options.display_hold_time_ms,
                   Event.PREPARE_HEAT_RECEIVED);
     }
   }
@@ -173,7 +173,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       if (profile.heat_prep != null) {
         if (profile.heat_prep.unmask_command != null) {
           portWrapper.write(profile.heat_prep.unmask_command);
-          int nlanes = Math.max(detected_lane_count, profile.max_lanes);
+          int nlanes = Math.max(detected_lane_count, profile.options.max_lanes);
           for (int lane = 0; lane < nlanes; ++lane) {
             if ((lanemask & (1 << lane)) == 0) {
               drainForMs();
@@ -218,8 +218,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         roundid = heat = 0;
         break;
       case RACE_STARTED:
-        if (profile.max_running_time_ms != 0) {
-          overdueTime = System.currentTimeMillis() + profile.max_running_time_ms;
+        if (profile.options.max_running_time_ms != 0) {
+          overdueTime = System.currentTimeMillis()
+              + profile.options.max_running_time_ms;
         }
         invokeRaceStartedCallback();
         break;
