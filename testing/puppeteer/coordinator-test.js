@@ -52,18 +52,38 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.evaluate((selector) => { $(selector).click(); }, selector);
     
     // Wait for control group to open
-    await page.waitFor((selector) => { console.log(selector + " height = " +  $(selector).height()); return $(selector).height() > 150; }, {}, selector);
+    await page.waitForFunction((selector) => {
+      console.log(selector + " height = " +  $(selector).height());
+      return $(selector).height() > 150;
+    },
+                               {}, selector);
   }
 
   async function modal_open(selector) {
-    await page.waitFor((selector) => { return !$(selector).closest(".modal_frame").hasClass('hidden'); },
+    await page.waitForFunction((selector) => {
+      return !$(selector).closest(".modal_frame").hasClass('hidden');
+    },
                        {}, selector);
-    await page.waitFor(() => { return $("#modal_background").css('display') == 'block'; });
+    await page.waitForFunction(() => { return $("#modal_background").css('display') == 'block'; });
   }
   async function all_modals_closed() {
-    console.log('Awaiting all_modals_closed...');
-    await page.waitFor(() => { return $(".modal_frame").not(".hidden").length == 0; });
-    var v = await page.waitFor(() => { return $("#modal_background").css('display') == 'none'; });
+    await page.waitForFunction(() => {
+      if ($(".modal_frame").not(".hidden").length > 0) {
+        console.log("Forcing " + $(".modal_frame").not(".hidden").length + " modal(s) closed.");
+        $(".modal_frame").addClass('hidden')
+          .find(".modal_dialog").css({'display': 'none'});
+      }
+      return $(".modal_frame").not(".hidden").length == 0;
+    }, 100);
+    var v = await page.waitForFunction(() => {
+      if ($("#modal_background").css('display') != 'none') {
+        // For some reason, the fadeOut in do_close_modal sometimes seems to get starved for
+        // processing, causing the waitForFunction to fail.
+        console.log("modal_background display = " + $("#modal_background").css('display'));
+        $("#modal_background").css('display', 'none');
+      }
+      return $("#modal_background").css('display') == 'none';
+    }, 100);
     console.log('  all_modals_closed success!');
     return v;
   }
@@ -245,8 +265,8 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                              'TheLastClass, Round 1</round>\n' +
                        '</coordinator_poll>');
   
-  await page.waitFor(() => { return !$("#is-currently-racing").prop('checked'); });
-  await page.waitFor(() => {
+  await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
+  await page.waitForFunction(() => {
     return $("#now-racing-group .heat-text h3").text() == "Heat 4 of 4";
   });
 
@@ -301,8 +321,8 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
                        '</coordinator_poll>');
 
-  await page.waitFor(() => { return !$("#is-currently-racing").prop('checked'); });
-  await page.waitFor(() => {
+  await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
+  await page.waitForFunction(() => {
     return $("#now-racing-group .heat-text h3").text() == "Heat 3 of 4";
   });
 
@@ -358,14 +378,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
                        '</coordinator_poll>');
 
-  await page.waitFor(() => { return $("#is-currently-racing").prop('checked'); });
+  await page.waitForFunction(() => { return $("#is-currently-racing").prop('checked'); });
   }
 
   // After manual results:
   var manual_results = await page.$("input[type='button'][value='Manual Results']");
   await fakeAjax.testForAjax(async () => {
     manual_results.click();
-    await page.waitFor(() => {
+    await page.waitForFunction(() => {
       var manual_results_modal = $("#manual_results_modal");
       return !manual_results_modal.hasClass('hidden') && manual_results_modal.css('opacity') >= 1;
     });
@@ -377,7 +397,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
     // Re-open the #manual_results_modal
     manual_results.click();
-    await page.waitFor(() => {
+    await page.waitForFunction(() => {
       var manual_results_modal = $("#manual_results_modal");
       return !manual_results_modal.hasClass('hidden') && manual_results_modal.css('opacity') >= 1;
     });
@@ -438,7 +458,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   // Check manual results dialog dismissed
   await all_modals_closed();
 
-  await page.waitFor(() => {
+  await page.waitForFunction(() => {
     var row1 = $("#now-racing-group table tr")[1];
     var cell1_3 = $(row1).find("td")[3];
     var row2 = $("#now-racing-group table tr")[2];
@@ -448,7 +468,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   // Re-open the #manual_results_modal
   manual_results.click();
-  await page.waitFor(() => {
+  await page.waitForFunction(() => {
     var manual_results_modal = $("#manual_results_modal");
     return !manual_results_modal.hasClass('hidden') && manual_results_modal.css('opacity') >= 1;
   });
@@ -504,7 +524,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
                        '</coordinator_poll>');
 
-  await page.waitFor(() => {
+  await page.waitForFunction(() => {
     var row1 = $("#now-racing-group table tr")[1];
     var cell1_3 = $(row1).find("td")[3];
     var row2 = $("#now-racing-group table tr")[2];
@@ -538,7 +558,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.evaluate(() => { $($("#choose_new_round_modal input[type='button']")[1]).click(); });
     await modal_open("#new-round-modal");
     await page.evaluate(() => { $("#new-round-modal input[type='number'][name='top']").val('4'); });
-    await page.waitFor(() => { return $(".aggregate-only").hasClass('hidden'); });
+    await page.waitForFunction(() => { return $(".aggregate-only").hasClass('hidden'); });
     await page.evaluate(() => { $("#new-round-modal input[type='submit']").click(); });
   },
                              {'type': 'POST',
@@ -609,14 +629,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
       $(".control_group[data-roundid='5'] input[type='button'][value='Schedule']").click();
     });
     // Wait for the modal to appear
-    await page.waitFor(() => {
+    await page.waitForFunction(() => {
       var schedule_modal = $("#schedule_modal");
       return !schedule_modal.hasClass('hidden') && schedule_modal.css('opacity') >= 1;
     });
     // Click the Schedule + Race button
     var dialog_schedule_and_race =
-        await page.waitFor("#schedule_modal input[type='submit'][data-race='true']",
-                           {visible: true});
+        await page.waitForSelector("#schedule_modal input[type='submit'][data-race='true']",
+                                   {visible: true});
     await dialog_schedule_and_race.click();
   },
                        {'type': 'POST',
@@ -776,11 +796,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   assert.includes("south", await page.$eval("#master-schedule-group .scheduling_control img",
                                             img => { return $(img).prop('src'); }));
 
-  var master_schedule_group = await page.waitFor("#master-schedule-group .scheduling_control");
+  var master_schedule_group = await page.waitForSelector("#master-schedule-group .scheduling_control");
   master_schedule_group.click();
 
-  await page.waitFor(() => { return $('#master-schedule-group .scheduling_control img').prop('src')
-                             .indexOf("east") > 0; });
+  await page.waitForFunction(() => { return $('#master-schedule-group .scheduling_control img').prop('src')
+                                         .indexOf("east") > 0; });
 
   assert.includes("east", await page.$eval("#master-schedule-group .scheduling_control img",
                                            img => { return $(img).prop('src'); }));
