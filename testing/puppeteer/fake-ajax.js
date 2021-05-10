@@ -5,6 +5,7 @@ const assert = require('./assert.js');
 var fakeAjax = {
   _expected_config: {},
   _return_value: false,
+  _return_value_is_json: false,
   _pending: false,  // A Promise that resolves when expectation is met.
   _resolve: false,  // The resolve function for the _pending promise
   _reject: false,   // The reject function for the _pending promise
@@ -21,6 +22,16 @@ var fakeAjax = {
     assert.equal(this._expected_config, config);
     clearTimeout(this._timeout_id);
     this._resolve(true);
+
+    // DOMParser isn't available in onAjax, so for XML, onAjax returns a string
+    // and uses DOMParser in the $.ajax replacement (in installOn).  For JSON,
+    // onAjax can return a JSON object directly.
+    if (this._return_value_is_json) {
+      var v = JSON.parse(this._return_value);
+      // console.log(v);
+      return v;
+    }
+
     return this._return_value;
   },
 
@@ -48,9 +59,12 @@ var fakeAjax = {
   installOn: async function(page) {
     await page.evaluate(() => {
       $.ajax = async function (url, config) {
-        var xml = await window.onAjax(url, config); 
-        if (xml) {
-          config.success((new DOMParser()).parseFromString(xml, 'text/xml'));
+        var data = await window.onAjax(url, config);
+        if (typeof data == 'string') {
+          data = (new DOMParser()).parseFromString(data, 'text/xml');
+        }
+        if (data) {
+          config.success(data);
         }
       };
     });
@@ -68,6 +82,14 @@ var fakeAjax = {
   // no other outcomes possible except a timeout.  Waiting for the Promise
   // amounts to waiting for a matching ajax call to occur.
   testForAjax: async function(actions, expected_call, return_value) {
+    this._return_value_is_json = false;
+    this.expect(expected_call, return_value);
+    await actions();
+    await this.completion();
+  },
+
+  testForJson: async function(actions, expected_call, return_value) {
+    this._return_value_is_json = true;
     this.expect(expected_call, return_value);
     await actions();
     await this.completion();

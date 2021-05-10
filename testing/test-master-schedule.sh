@@ -66,14 +66,14 @@ curl_post action.php "action=schedule.generate&roundid=4" | check_success
 # Can't schedule Arrows, because no one's checked in
 curl_post action.php "action=schedule.generate&roundid=5" | check_failure
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 1" | \
     expect_eq true
 
-curl_post action.php "action=heat.select&heat=next-up&now_racing=0" | check_success
-curl_post action.php "action=heat.select&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&heat=next-up&now_racing=0" | check_jsuccess
+curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 1 and .heat == 1" | \
     expect_eq true
 
@@ -126,7 +126,7 @@ run_heat 2 13 3.9767 3.6456 2.2947 3.7196    x
 # Expecting NO heat-ready:
 cat $DEBUG_CURL | expect_count "<heat-ready[ />]" 0
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false" | \
     expect_eq true
 
@@ -136,23 +136,23 @@ user_login_coordinator
 curl_post action.php "action=roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
  | check_success
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2 and .heat == 13" | \
     expect_eq true
 
 curl_post action.php "action=schedule.generate&roundid=8" | check_success
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 8 and .heat == 1" | \
     expect_eq true
 
-curl_post action.php "action=heat.select&heat=next-up&now_racing=0" | check_success
-curl_post action.php "action=heat.select&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&heat=next-up&now_racing=0" | check_jsuccess
+curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
 
 run_heat 8 1  3 2 1 4
 
 # Next heat is Grand Finals heat 2
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 8 and .heat == 2" | \
     expect_eq true
 

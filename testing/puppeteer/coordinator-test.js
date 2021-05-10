@@ -313,15 +313,13 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   
   assert.equal(true, await page.$eval("#is-currently-racing", r => { return $(r).prop('checked'); }));
 
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     var skip_button = await page.$("#skip_heat_button");
     skip_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'heat.select',
+                        'data': {'action': 'json.heat.select',
                                  'heat': 'next'}},
-                       '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
                              "\"use_points\": false,\n" +
@@ -370,10 +368,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 17,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"name\": \"Lions & Tigers\",\n" +
                     "\"subgroups\": [{\"rankid\": 1,\n" +
                                    "\"count\": 17,\n" +
-                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                                   "\"name\": \"Lions & Tigers\"}]},\n" +
                    "{\"classid\": 2,\n" +
                     "\"count\": 18,\n" +
                     "\"nrounds\": 1,\n" +
@@ -402,10 +400,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 15,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Arrows &lt;#5&lt;--&lt;&lt;\",\n" +
+                    "\"name\": \"Arrows <<--<<\",\n" +
                     "\"subgroups\": [{\"rankid\": 5,\n" +
                                    "\"count\": 15,\n" +
-                                   "\"name\": \"Arrows &lt;#6&lt;--&lt;&lt;\"}]},\n" +
+                                   "\"name\": \"Arrows <<--<<\"}]},\n" +
                    "{\"classid\": 7,\n" +
                     "\"count\": 0,\n" +
                     "\"nrounds\": 1,\n" +
@@ -416,14 +414,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                    "\"name\": \"TheLastClass\"}]}],\n" +
        "\"rounds\": [{\"roundid\": 1,\n" +
                    "\"classid\": 1,\n" +
-                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"class\": \"Lions & Tigers\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 17,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 0,\n" +
                    "\"heats_scheduled\": 5,\n" +
                    "\"heats_run\": 5,\n" +
-                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                   "\"name\": \"Lions & Tigers, Round 1\"},\n" +
                   "{\"roundid\": 2,\n" +
                    "\"classid\": 2,\n" +
                    "\"class\": \"White\'s Wolves\",\n" +
@@ -456,14 +454,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
                   "{\"roundid\": 5,\n" +
                    "\"classid\": 5,\n" +
-                   "\"class\": \"Arrows &lt;#7&lt;--&lt;&lt;\",\n" +
+                   "\"class\": \"Arrows <<--<<\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 16,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 5,\n" +
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
-                   "\"name\": \"Arrows &lt;#8&lt;--&lt;&lt;, Round 1\"},\n" +
+                   "\"name\": \"Arrows <<--<<, Round 1\"},\n" +
                   "{\"roundid\": 7,\n" +
                    "\"classid\": 7,\n" +
                    "\"class\": \"TheLastClass\",\n" +
@@ -474,8 +472,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>');
+                             "}");
   
   await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitForFunction(() => {
@@ -483,15 +480,13 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   });
 
   // After "Previous Heat" button jumps back to heat 3
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     var prev_button = await page.$("#prev_heat_button");
     prev_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'heat.select',
+                        'data': {'action': 'json.heat.select',
                                  'heat': 'prev'}},
-                       '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -540,10 +535,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 17,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"name\": \"Lions & Tigers\",\n" +
                     "\"subgroups\": [{\"rankid\": 1,\n" +
                                    "\"count\": 17,\n" +
-                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                                   "\"name\": \"Lions & Tigers\"}]},\n" +
                    "{\"classid\": 2,\n" +
                     "\"count\": 18,\n" +
                     "\"nrounds\": 1,\n" +
@@ -572,10 +567,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 15,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Arrows &lt;#9&lt;--&lt;&lt;\",\n" +
+                    "\"name\": \"Arrows <<--<<\",\n" +
                     "\"subgroups\": [{\"rankid\": 1,\n" +
                                    "\"count\": 15,\n" +
-                                   "\"name\": \"Arrows &lt;#10&lt;--&lt;&lt;\"}]},\n" +
+                                   "\"name\": \"Arrows <<--<<\"}]},\n" +
                    "{\"classid\": 7,\n" +
                     "\"count\": 0,\n" +
                     "\"nrounds\": 1,\n" +
@@ -586,14 +581,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                    "\"name\": \"TheLastClass\"}]}],\n" +
        "\"rounds\": [{\"roundid\": 1,\n" +
                    "\"classid\": 1,\n" +
-                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"class\": \"Lions & Tigers\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 17,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 0,\n" +
                    "\"heats_scheduled\": 5,\n" +
                    "\"heats_run\": 5,\n" +
-                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                   "\"name\": \"Lions & Tigers, Round 1\"},\n" +
                   "{\"roundid\": 2,\n" +
                    "\"classid\": 2,\n" +
                    "\"class\": \"White\'s Wolves\",\n" +
@@ -626,14 +621,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
                   "{\"roundid\": 5,\n" +
                    "\"classid\": 5,\n" +
-                   "\"class\": \"Arrows &lt;#11&lt;--&lt;&lt;\",\n" +
+                   "\"class\": \"Arrows <<--<<\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 16,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 5,\n" +
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
-                   "\"name\": \"Arrows &lt;#12&lt;--&lt;&lt;, Round 1\"},\n" +
+                   "\"name\": \"Arrows <<--<<, Round 1\"},\n" +
                   "{\"roundid\": 7,\n" +
                    "\"classid\": 7,\n" +
                    "\"class\": \"TheLastClass\",\n" +
@@ -644,8 +639,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>');
+                             "}");
 
   await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitForFunction(() => {
@@ -654,15 +648,13 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   if (false) {
   // Click "Now Racing" button to resume racing
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     var racing_button = await page.$(".ui-flipswitch > #is-currently-racing");
     racing_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'heat.select',
+                        'data': {'action': 'json.heat.select',
                                  'now_racing': 1}},
-                       '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -710,10 +702,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 17,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"name\": \"Lions & Tigers\",\n" +
                     "\"subgroups\": [{\"rankid\": 1,\n" +
                                    "\"count\": 17,\n" +
-                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                                   "\"name\": \"Lions & Tigers\"}]},\n" +
                    "{\"classid\": 2,\n" +
                     "\"count\": 18,\n" +
                     "\"nrounds\": 1,\n" +
@@ -742,10 +734,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 15,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Arrows &lt;#13&lt;--&lt;&lt;\",\n" +
+                    "\"name\": \"Arrows <<--<<\",\n" +
                     "\"subgroups\": [{\"rankid\": 1,\n" +
                                    "\"count\": 15,\n" +
-                                   "\"name\": \"Arrows &lt;#14&lt;--&lt;&lt;\"}]},\n" +
+                                   "\"name\": \"Arrows <<--<<\"}]},\n" +
                    "{\"classid\": 7,\n" +
                     "\"count\": 0,\n" +
                     "\"nrounds\": 1,\n" +
@@ -756,14 +748,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                    "\"name\": \"TheLastClass\"}]}],\n" +
        "\"rounds\": [{\"roundid\": 1,\n" +
                    "\"classid\": 1,\n" +
-                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"class\": \"Lions & Tigers\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 17,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 0,\n" +
                    "\"heats_scheduled\": 5,\n" +
                    "\"heats_run\": 5,\n" +
-                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                   "\"name\": \"Lions & Tigers, Round 1\"},\n" +
                   "{\"roundid\": 2,\n" +
                    "\"classid\": 2,\n" +
                    "\"class\": \"White\'s Wolves\",\n" +
@@ -796,14 +788,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
                   "{\"roundid\": 5,\n" +
                    "\"classid\": 5,\n" +
-                   "\"class\": \"Arrows &lt;#15&lt;--&lt;&lt;\",\n" +
+                   "\"class\": \"Arrows <<--<<\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 16,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 5,\n" +
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
-                   "\"name\": \"Arrows &lt;#16&lt;--&lt;&lt;, Round 1\"},\n" +
+                   "\"name\": \"Arrows <<--<<, Round 1\"},\n" +
                   "{\"roundid\": 7,\n" +
                    "\"classid\": 7,\n" +
                    "\"class\": \"TheLastClass\",\n" +
@@ -814,8 +806,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>');
+                             "}");
 
   await page.waitForFunction(() => { return $("#is-currently-racing").prop('checked'); });
   }
@@ -933,10 +924,10 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 15,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Arrows &lt;#17&lt;--&lt;&lt;\",\n" +
+                    "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
                     "\"subgroups\": [{\"rankid\": 5,\n" +
                                    "\"count\": 15,\n" +
-                                   "\"name\": \"Arrows &lt;#18&lt;--&lt;&lt;\"}]},\n" +
+                                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\"}]},\n" +
                    "{\"classid\": 7,\n" +
                     "\"count\": 0,\n" +
                     "\"nrounds\": 1,\n" +
@@ -987,14 +978,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
                   "{\"roundid\": 5,\n" +
                    "\"classid\": 5,\n" +
-                   "\"class\": \"Arrows &lt;#19&lt;--&lt;&lt;\",\n" +
+                   "\"class\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
                    "\"round\": 1,\n" +
                    "\"roster_size\": 16,\n" +
                    "\"passed\": 5,\n" +
                    "\"unscheduled\": 5,\n" +
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
-                   "\"name\": \"Arrows &lt;#20&lt;--&lt;&lt;, Round 1\"},\n" +
+                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;, Round 1\"},\n" +
                   "{\"roundid\": 7,\n" +
                    "\"classid\": 7,\n" +
                    "\"class\": \"TheLastClass\",\n" +
@@ -1116,7 +1107,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                     "\"count\": 15,\n" +
                     "\"nrounds\": 1,\n" +
                     "\"ntrophies\": -1,\n" +
-                    "\"name\": \"Arrows &lt;#21&lt;--&lt;&lt;\",\n" +
+                    "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
                     "\"subgroups\": [{\"rankid\": 5,\n" +
                                    "\"count\": 15,\n" +
                                    "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\"}]},\n" +

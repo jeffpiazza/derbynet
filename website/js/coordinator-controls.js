@@ -45,9 +45,9 @@ function handle_isracing_change(event, scripted) {
     if (!g_updating_current_round) {
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'heat.select',
+                data: {action: 'json.heat.select',
                        now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
-                success: function(data) { process_coordinator_poll_response(data); }
+                success: function(json) { process_coordinator_poll_json(json); }
                });
     }
 }
@@ -56,18 +56,18 @@ $(function() { $("#is-currently-racing").on("change", handle_isracing_change); }
 function handle_skip_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.select',
+            data: {action: 'json.heat.select',
                    heat: 'next'},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(json) { process_coordinator_poll_json(json); }
            });
 }
 
 function handle_previous_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.select',
+            data: {action: 'json.heat.select',
                    heat: 'prev'},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(json) { process_coordinator_poll_json(json); }
            });
 }
 
@@ -222,12 +222,12 @@ function handle_reschedule_button(roundid) {
 function handle_race_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.select',
+            data: {action: 'json.heat.select',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 1},
-            success: function(data) { process_coordinator_poll_response(data); }
-           });
+            success: function(json) { process_coordinator_poll_json(json); }
+            });
 }
 
 function handle_unschedule_button(roundid, classname, round) {
@@ -263,11 +263,11 @@ function handle_delete_round_button(roundid, classname, round) {
 function handle_make_changes_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.select',
+            data: {action: 'json.heat.select',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 0},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(json) { process_coordinator_poll_json(json); }
            });
 }
 
@@ -441,10 +441,10 @@ function handle_replay_settings_submit() {
 function handle_master_next_up() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.select',
+            data: {action: 'json.heat.select',
                    heat: 'next-up',
                    now_racing: 0},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(json) { process_coordinator_poll_json(json); }
            });
 }
 

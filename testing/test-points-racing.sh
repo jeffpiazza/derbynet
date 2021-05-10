@@ -22,7 +22,7 @@ curl_post action.php "action=settings.write&n-lanes=4" | check_success
 ### Schedule roundid 1
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 # Racing for roundid=1: 5 heats
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
@@ -73,15 +73,15 @@ staged_heat4 131 101 121 141
 run_heat_place 1 4   4 1 2 3
 
 user_login_coordinator
-curl_json "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
+curl_getj "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
 curl_post action.php "action=heat.rerun&heat=last" | check_success
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.["last-heat"] == "recoverable" and 
         (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
     expect_eq true
 
 curl_post action.php "action=heat.reinstate" | grep 'last[_-]heat' | expect_one none
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.racers | 
         all((.finishplace==1 and (.name | test("Adolfo.*"))) or 
             (.finishplace==2 and .name == "Derick Dreier") or 
@@ -89,7 +89,7 @@ curl_json "action.php?query=json.poll.coordinator" | \
             (.finishplace==4 and .name == "Felton Fouche"))' | \
     expect_eq true
 
-curl_post action.php "action=heat.select&heat=next&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&heat=next&now_racing=1" | check_jsuccess
 user_login_timer
 
 
@@ -177,7 +177,7 @@ fi
 
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 # Racing for roundid=6: 4 heats
-curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
 
 staged_heat4 111 141 121 101
 run_heat_place 6 1   2 3 4 1

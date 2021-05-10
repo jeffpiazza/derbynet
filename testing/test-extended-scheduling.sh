@@ -205,10 +205,10 @@ curl_post action.php "action=racer.import&firstname=F-1198&lastname=L-1198&class
 curl_post action.php "action=racer.import&firstname=F-1199&lastname=L-1199&classname=TheTwoHundred&carnumber=1199" | check_success
 curl_post action.php "action=racer.import&firstname=F-1200&lastname=L-1200&classname=TheTwoHundred&carnumber=1200" | check_success
 
-TWO_HUNDRED_CLASS=$(curl_json "action.php?query=json.poll.coordinator" \
+TWO_HUNDRED_CLASS=$(curl_getj "action.php?query=json.poll.coordinator" \
                         | jq '.rounds | map(select(.class == "TheTwoHundred"))[0].classid')
 
-TWO_HUNDRED_ROUNDID=$(curl_json "action.php?query=json.poll.coordinator" \
+TWO_HUNDRED_ROUNDID=$(curl_getj "action.php?query=json.poll.coordinator" \
                         | jq '.rounds | map(select(.class == "TheTwoHundred"))[0].roundid')
 
 RACERID_1050=$(curl_get "action.php?query=racer.list" \

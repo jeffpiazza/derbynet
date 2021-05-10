@@ -18,7 +18,7 @@ curl_post action.php "action=schedule.generate&roundid=4" | check_success
 curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
 
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 run_heat	1	1	3.488	3.656	3.36	3.518
 run_heat	1	2	3.393	3.273	3.346	3.293
 run_heat	1	3	3.339	3.698	3.844	3.465
@@ -57,7 +57,7 @@ run_heat	1	17	3.819	3.065	3.761	3.551  x
 # T8 Willard    81
 # C3 Derick (C)    21
 
-curl_post action.php "action=heat.select&roundid=2&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=2&now_racing=1" | check_jsuccess
 run_heat	2	1	3.711	3.108	3.42	3.463
 run_heat	2	2	3.397	3.019	3.792	3.081
 run_heat	2	3	3.71	3.874	3.474	3.757
@@ -95,7 +95,7 @@ run_heat	2	17	3.642	3.182	3.571	3.311 x
 # Royce(72)
 # Elliot Eastman(27)
 
-curl_post action.php "action=heat.select&roundid=3&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=3&now_racing=1" | check_jsuccess
 run_heat	3	1	3.848	3.865	3.25	3.017
 run_heat	3	2	3.507	3.105	3.551	3.748
 run_heat	3	3	3.897	3.681	3.482	3.398
@@ -133,7 +133,7 @@ run_heat	3	16	3.535	3.205	3.207	3.249 x
 # Antoine Akiyama(3)
 
 
-curl_post action.php "action=heat.select&roundid=4&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=4&now_racing=1" | check_jsuccess
 run_heat	4	1	3.756	3.737	3.639	3.892
 run_heat	4	2	3.141	3.306	3.742	3.087
 run_heat	4	3	3.197	3.532	3.436	3.064
@@ -171,7 +171,7 @@ run_heat	4	16	3.499	3.468	3.388	3.281 x
 # Philip(64)
 
 
-curl_post action.php "action=heat.select&roundid=5&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=5&now_racing=1" | check_jsuccess
 run_heat	5	1	3.315	3.62	3.242	3.455
 run_heat	5	2	3.773	3.022	3.638	3.08
 run_heat	5	3	3.698	3.597	3.512	3.853

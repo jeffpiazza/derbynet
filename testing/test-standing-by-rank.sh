@@ -61,7 +61,7 @@ curl_post action.php "action=racer.pass&value=1&racer=20" | check_success
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 
 # Fast Lions    1.100
 # Slow Tigers   5.500

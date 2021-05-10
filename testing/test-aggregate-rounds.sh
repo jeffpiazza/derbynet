@@ -68,7 +68,7 @@ curl_post action.php "action=roster.delete&roundid=6" | check_success
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_success
 
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
-curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
 run_heat	6	1	3.103	3.762	3.359	3.471
 run_heat	6	2	3.757	3.635	3.085	3.328
 run_heat	6	3	3.586	3.749	3.095	3.494
@@ -81,7 +81,7 @@ run_heat	6	8	3.000	3.477	3.67	3.512 x
 ## Create "Older Finals" aggregate of roundid 3,4,5, and race
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_success
 curl_post action.php "action=schedule.generate&roundid=7" | check_success
-curl_post action.php "action=heat.select&roundid=7&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=7&now_racing=1" | check_jsuccess
 run_heat	7	1	3.85	3.145	3.849	3.288
 run_heat	7	2	3.706	3.212	3.343	3.711
 run_heat	7	3	3.282	3.51	3.703	3.653
@@ -98,7 +98,7 @@ run_heat	7	12	3.563	3.857	3.255	3.742 x
 ## Race a second round of Older Finals
 curl_post action.php "action=roster.new&top=8&roundid=7" | check_success
 curl_post action.php "action=schedule.generate&roundid=8" | check_success
-curl_post action.php "action=heat.select&roundid=8&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=8&now_racing=1" | check_jsuccess
 
 run_heat	8	1	3.862	3.887	3.162	3.234
 run_heat	8	2	3.329	3.401	3.554	3.015
@@ -112,7 +112,7 @@ run_heat	8	8	3.028	3.104	3.049	3.301 x
 ## Create a final final of the other two GF's
 curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_success
 curl_post action.php "action=schedule.generate&roundid=9" | check_success
-curl_post action.php "action=heat.select&roundid=9&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=9&now_racing=1" | check_jsuccess
 
 run_heat	9	1	3.061	3.857	3.565	3.674
 run_heat	9	2	3.825	3.672	3.592	3.106

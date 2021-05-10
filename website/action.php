@@ -34,6 +34,10 @@ function json_failure($code, $description) {
                             'description' => $description));
 }
 
+function json_not_authorized() {
+  json_failure('notauthorized', "Not authorized -- please see race coordinator.");
+}
+
 if (empty($_POST) && empty($_GET)) {
   echo '<!DOCTYPE html><html><head><title>Not a Page</title></head><body><h1>This is not a page.</h1></body></html>';
   exit(1);

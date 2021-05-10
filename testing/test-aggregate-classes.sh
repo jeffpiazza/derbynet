@@ -40,7 +40,7 @@ curl_post action.php "action=racer.edit&rankid=8&racer=87" | check_success
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 
 # Outlaw round: these are intentionally much faster
-curl_post action.php "action=heat.select&roundid=6&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
 run_heat	6	1	2.488	2.656	2.36	2.518
 run_heat	6	2	2.393	2.273	2.346	2.293
 run_heat	6	3	2.339	2.698	2.844	2.465

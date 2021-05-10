@@ -38,14 +38,14 @@ curl_post action.php "action=photo" | check_failure
 curl_post action.php "action=replay-test" | check_failure
 curl_post action.php "action=schedule.reschedule" | check_failure
 curl_post action.php "action=schedule.generate" | check_failure
-curl_post action.php "action=heat.select" | check_failure
+curl_postj action.php "action=json.heat.select" | check_jfailure
 curl_post action.php "action=timer-message" | check_failure
 curl_post action.php "action=award.xbs" | check_failure
 
 # Queries don't answer "<success/>" or "<failure/>", so there's really
 # nothing to check other than that they parse as XML.
 curl_get "action.php?query=class.list" > /dev/null
-curl_json "action.php?query=json.poll.coordinator" | jq . > /dev/null
+curl_getj "action.php?query=json.poll.coordinator" | jq . > /dev/null
 curl_get "action.php?query=kiosk.poll" > /dev/null
 curl_get "action.php?query=poll.kiosk.all" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null

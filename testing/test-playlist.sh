@@ -51,7 +51,7 @@ curl_post action.php "action=playlist.new&classid=3&round=1&n_times_per_lane=1&c
 curl_post action.php "action=playlist.new&classid=4&round=1&top=3&bucketed=0&n_times_per_lane=2" | check_success
 
 # Race roundid=1:
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
@@ -64,14 +64,14 @@ echo "Waiting for scene change to take effect..."
 sleep 11s
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2" | \
     expect_eq true
 
 curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_success
 
 # Race roundid=2:
-curl_post action.php "action=heat.select&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
@@ -83,7 +83,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.4
 # No scene change, move right into round 3
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" | \
     expect_eq true
 
@@ -95,26 +95,26 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.4
 # No scene change, move right into round 4, which picks a roster
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
 
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" | \
     expect_eq true
 
 # First heat: 203 v. 201
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | all((.lane == 1 and .carnumber == \"203\") or 
                       (.lane == 2 and .carnumber == \"201\"))" | \
     expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Second heat: 302 v. 203
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | all((.lane == 1 and .carnumber == \"302\") or 
                       (.lane == 2 and .carnumber == \"203\"))" | \
     expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Third heat: 201 v. 302
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | all((.lane == 1 and .carnumber == \"201\") or 
                       (.lane == 2 and .carnumber == \"302\"))" | \
     expect_eq true

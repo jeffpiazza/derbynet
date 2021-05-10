@@ -9,4 +9,4 @@ if [ "$2" = "" ]; then
     exit
 fi
 
-curl_json "action.php?$2"
+curl_getj "action.php?$2"

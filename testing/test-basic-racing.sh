@@ -20,7 +20,7 @@ curl_post action.php "action=schedule.generate&roundid=3" | check_success
 curl_post action.php "action=racer.delete&racer=21" | check_failure
 
 ### Racing for roundid=1: 5 heats
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
@@ -39,7 +39,7 @@ run_heat 1 5 2.9661 3.9673 3.5686 3.8388    x
 
 ### Racing for roundid=2: 5 heats
 user_login_coordinator
-curl_post action.php "action=heat.select&roundid=2&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=2&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
@@ -49,15 +49,15 @@ run_heat 2 1 2.6149 2.0731 3.0402 3.7937
 run_heat 2 2 2.9945 3.4571 2.1867 2.3447
 
 user_login_coordinator
-curl_json "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
+curl_getj "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
 curl_post action.php "action=heat.rerun&heat=last" | check_success
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.["last-heat"] == "recoverable" and 
         (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
     expect_eq true
 
 curl_post action.php "action=heat.reinstate" | grep last-heat | expect_one none
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.racers |
         all((.finishtime == "2.994" and (.name | test("Darrell.*"))) or 
             (.finishtime == "3.457" and .name == "Ian Ives") or
@@ -65,7 +65,7 @@ curl_json "action.php?query=json.poll.coordinator" | \
             (.finishtime == "2.345" and .name == "Elliot Eastman"))' | \
     expect_eq true
 
-curl_post action.php "action=heat.select&heat=next&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&heat=next&now_racing=1" | check_jsuccess
 user_login_timer
 
 run_heat 2 3 2.4901 2.0838 3.6469 2.1003
@@ -79,7 +79,7 @@ curl_post action.php "action=racer.pass&racer=23&value=0" | check_success
 curl_post action.php "action=racer.pass&racer=33&value=0" | check_success
 curl_post action.php "action=schedule.generate&roundid=3" | check_success
 
-curl_post action.php "action=heat.select&roundid=3&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=3&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
@@ -101,13 +101,13 @@ curl_post action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&
 [ `curl_get checkin.php | grep car-number-5 | grep -c '>999</td>'` -eq 1 ] || test_fails Car number change
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
-curl_post action.php "action=heat.select&roundid=1&heat=1&now_racing=0" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess
 curl_post action.php "action=result.write&lane2=8.888" | check_success
-curl_post action.php "action=heat.select&roundid=1&heat=2" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&heat=2" | check_jsuccess
 curl_post action.php "action=result.write&lane4=8.888" | check_success
-curl_post action.php "action=heat.select&roundid=1&heat=3" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&heat=3" | check_jsuccess
 curl_post action.php "action=result.write&lane1=8.888" | check_success
-curl_post action.php "action=heat.select&roundid=1&heat=4" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&heat=4" | check_jsuccess
 curl_post action.php "action=result.write&lane3=8.888" | check_success
 
 # For roundid 4, schedule two appearances per lane per racer
@@ -116,7 +116,7 @@ curl_post action.php "action=schedule.generate&roundid=4&n_times_per_lane=2" | c
 curl_post action.php "action=schedule.generate&roundid=5" | check_success
 
 ### Racing for roundid=4
-curl_post action.php "action=heat.select&roundid=4&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=4&now_racing=1" | check_jsuccess
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
@@ -131,7 +131,7 @@ run_heat 4 8 3.6487 3.0060 3.9589 3.6175    x
 
 ### Racing for roundid=5
 user_login_coordinator
-curl_post action.php "action=heat.select&roundid=5&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=5&now_racing=1" | check_jsuccess
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 

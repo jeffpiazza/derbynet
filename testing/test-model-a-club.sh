@@ -25,23 +25,23 @@ curl_post action.php "action=racer.bulk&what=number&who=all&start=101" | check_s
 curl_post action.php "action=settings.write&n-lanes=3&max-runs-per-car=1" | check_success
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 curl_get "action.php?query=poll.now-racing" | expect_one 'number-of-heats="34"'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="1"' | expect_one 'Racer-1 Racer-1'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="2"' | expect_one 'Racer-2 Racer-2'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="3"' | expect_one 'Racer-3 Racer-3'
 
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 curl_get "action.php?query=poll.now-racing" | grep 'lane="1"' | expect_one 'Racer-4 Racer-4'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="2"' | expect_one 'Racer-5 Racer-5'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="3"' | expect_one 'Racer-6 Racer-6'
 
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 curl_get "action.php?query=poll.now-racing" | grep 'lane="1"' | expect_one 'Racer-7 Racer-7'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="2"' | expect_one 'Racer-8 Racer-8'
 curl_get "action.php?query=poll.now-racing" | grep 'lane="3"' | expect_one 'Racer-9 Racer-9'
 
-curl_post action.php "action=heat.select&heat=34" | check_success
+curl_postj action.php "action=json.heat.select&heat=34" | check_jsuccess
 curl_get "action.php?query=poll.now-racing" | grep 'lane="1"' | expect_one 'Racer-100 Racer-100'
 curl_get "action.php?query=poll.now-racing" | expect_count 'lane="2"' 0
 curl_get "action.php?query=poll.now-racing" | expect_count 'lane="3"' 0

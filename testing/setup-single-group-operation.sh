@@ -44,4 +44,4 @@ curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | chec
 
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
 
-curl_post action.php "action=heat.select&roundid=1&now_racing=1" | check_success
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess

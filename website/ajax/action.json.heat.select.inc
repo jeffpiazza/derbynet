@@ -22,8 +22,6 @@ require_once('inc/autoadvance.inc');
 require_once('inc/racing-state.inc');
 require_once('inc/scenes.inc');
 
-start_response();
-
 $ok = true;
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
@@ -43,7 +41,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       $heat = $_POST['heat'];
     }
 
-    if (!advance_heat($current, $heat, /* report_failure: */true)) {
+    if (!advance_heat($current, $heat, /* report_failure: */'json')) {
       $ok = false;
     }
   }
@@ -57,28 +55,25 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       // This 'if' test is to control the wording of the failure
       // message from clicking the 'race' button for a heat whose
       // first result already has data.
-      if (isset($_POST['roundid'])) {
-        echo "<failure code='cant_race'>"
-            ."The first heat in this group has already been run.  Please choose a heat without results."
-            ."</failure>\n";
-      } else {
-        echo "<failure code='cant_race'>"
-            ."To start racing mode, there must be a valid current heat without results."
-            ."</failure>\n";
-      }
       $ok = false;
+      if (isset($_POST['roundid'])) {
+        json_failure('cant_race',
+                     "The first heat in this group has already been run.  "
+                     + "Please choose a heat without results.");
+      } else {
+        json_failure('cant_race',
+                     "To start racing mode, there must be a valid current heat without results.");
+      }
     }
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
   $ok = false;
 }
 
 if ($ok) {
-  echo "<success/>\n";
+  json_success();
 }
 
-require('ajax/query.poll.coordinator.inc');
-
-end_response();
+require('ajax/query.json.poll.coordinator.inc');
 ?>

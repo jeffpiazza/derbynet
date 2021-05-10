@@ -17,18 +17,18 @@ curl_post action.php "action=settings.write&n-lanes=6" | check_success
 #  (Also confirm that max-runs-per-car=0, as opposed to unset, works as expected.)
 curl_post action.php "action=settings.write&unused-lane-mask=33&max-runs-per-car=0" | check_success
 curl_post action.php "action=schedule.generate&roundid=1" | check_success
-curl_post action.php "action=heat.select&roundid=1&now_racing=0" | check_success
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_postj action.php "action=json.heat.select&roundid=1&now_racing=0" | check_jsuccess
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 1 or .lane == 6)) | length" | \
     expect_eq 0
 staged_heat6 - 101 121 141 111 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 - 111 131 101 121 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 - 121 141 111 131 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 - 131 101 121 141 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 - 141 111 131 101 -
 
 
@@ -41,18 +41,18 @@ curl_post action.php "action=schedule.unschedule&roundid=1" | check_success
 
 curl_post action.php "action=settings.write&unused-lane-mask=42" | check_success
 curl_post action.php "action=schedule.generate&roundid=2" | check_success
-curl_post action.php "action=heat.select&roundid=2&now_racing=0" | check_success
-curl_json "action.php?query=json.poll.coordinator" | \
+curl_postj action.php "action=json.heat.select&roundid=2&now_racing=0" | check_jsuccess
+curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 2 or .lane == 4 or .lane == 6)) | length" | \
     expect_eq 0
 staged_heat6 207 - 227 - 247 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 217 - 237 - 207 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 227 - 247 - 217 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 237 - 207 - 227 -
-curl_post action.php "action=heat.select&heat=next" | check_success
+curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
 staged_heat6 247 - 217 - 237 -
 
 

@@ -54,7 +54,7 @@ function curl_text() {
         | sed -e 's/&nbsp;/ /g' | tee -a $OUTPUT_CURL
 }
 
-function curl_json() {
+function curl_getj() {
 	echo ' ' ' ' ' ' $1 >&2
 	echo    >> $OUTPUT_CURL
 	echo $1 >> $OUTPUT_CURL
@@ -70,6 +70,15 @@ function curl_post() {
 	echo    >> $OUTPUT_CURL
 	curl --location -d "$2" -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
 		| xmllint --format - | tee -a $OUTPUT_CURL
+}
+
+function curl_postj() {
+	echo ' ' ' ' ' ' post $1 $2 >&2
+	echo    >> $OUTPUT_CURL
+	echo post $1 $2 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -d "$2" -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+		| tee -a $OUTPUT_CURL
 }
 
 # curl_photo $1=url_tail $2=MD5digest
@@ -165,6 +174,15 @@ function check_success() {
 	fi
 }
 
+function check_jsuccess() {
+	# Expecting stdin
+    OK=1
+    jq -e '.outcome.summary == "success"' >/dev/null || OK=0
+	if [ $OK -eq 0 ]; then
+        test_fails
+	fi
+}
+
 # Some actions are expected to fail, i.e., produce a 
 # <failure ...>...</failure>
 # response.  The test fails if that's not the case.
@@ -172,6 +190,15 @@ function check_failure() {
 	# Expecting stdin
     OK=0
 	grep -c "<failure[ />]" > /dev/null && OK=1
+	if [ $OK -eq 0 ]; then
+        test_fails EXPECTING ACTION TO FAIL
+	fi
+}
+
+function check_jfailure() {
+	# Expecting stdin
+    OK=0
+    jq -e '.outcome.summary == "failure"' >/dev/null && OK=1
 	if [ $OK -eq 0 ]; then
         test_fails EXPECTING ACTION TO FAIL
 	fi
@@ -207,7 +234,7 @@ function run_heat() {
     LANE4=$6
     SKIP_CHECK_HEAT_READY=$7
 
-    curl_json "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
         expect_eq true
     
@@ -228,7 +255,7 @@ function run_heat_place() {
     PLACE4=$6
     SKIP_CHECK_HEAT_READY=$7
 
-    curl_json "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
         expect_eq true
 
@@ -241,7 +268,7 @@ function run_heat_place() {
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
 function staged_heat4() {
-    curl_json "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".racers | \
             (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
             (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
@@ -252,7 +279,7 @@ function staged_heat4() {
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno> <lane5-carno> <lane6-carno>
 function staged_heat6() {
-    curl_json "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".racers | \
             (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
             (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
