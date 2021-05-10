@@ -63,8 +63,10 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.0
 echo "Waiting for scene change to take effect..."
 sleep 11s
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.2.
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one now-racing=.0.
+
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2" | \
+    expect_eq true
 
 curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_success
 
@@ -80,8 +82,10 @@ curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.40" | check_success
 # No scene change, move right into round 3
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.3.
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one now-racing=.1.
+
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" | \
+    expect_eq true
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
@@ -90,19 +94,27 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.4
 
 # No scene change, move right into round 4, which picks a roster
 curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one roundid=.4.
-curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one now-racing=.1.
+
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" | \
+    expect_eq true
 
 # First heat: 203 v. 201
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.1.' | expect_one carnumber=.203.
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.2.' | expect_one carnumber=.201.
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".racers | all((.lane == 1 and .carnumber == \"203\") or 
+                      (.lane == 2 and .carnumber == \"201\"))" | \
+    expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Second heat: 302 v. 203
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.1.' | expect_one carnumber=.302.
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.2.' | expect_one carnumber=.203.
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".racers | all((.lane == 1 and .carnumber == \"302\") or 
+                      (.lane == 2 and .carnumber == \"203\"))" | \
+    expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Third heat: 201 v. 302
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.1.' | expect_one carnumber=.201.
-curl_get "action.php?query=poll.coordinator" | grep 'racer lane=.2.' | expect_one carnumber=.302.
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq ".racers | all((.lane == 1 and .carnumber == \"201\") or 
+                      (.lane == 2 and .carnumber == \"302\"))" | \
+    expect_eq true

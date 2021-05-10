@@ -70,9 +70,9 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.waitForFunction(() => {
       if ($(".modal_frame").not(".hidden").length > 0) {
         console.log("Forcing " + $(".modal_frame").not(".hidden").length + " modal(s) closed.");
-        $(".modal_frame").addClass('hidden')
-          .find(".modal_dialog").css({'display': 'none'});
+        $(".modal_frame").addClass('hidden');
       }
+      $(".modal_fram .modal_dialog").css('display', 'none');
       return $(".modal_frame").not(".hidden").length == 0;
     }, 100);
     var v = await page.waitForFunction(() => {
@@ -89,55 +89,159 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   }
   
   // =================================================== First simulated poll =====================================
-  await page.evaluate(function(xml) { process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
-                '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                '<coordinator_poll>\n' +
-                '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
-                '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
-                '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
-                '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                '         connected="">NOT CONNECTED</replay-state>\n' +
-                '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                '  </class>\n' +
-                '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                '  </class>\n' +
-                '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                '  </class>\n' +
-                '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                '  </class>\n' +
-                '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                '  </class>\n' +
-                '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                '  </class>\n' +
-                '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
-                      'Lions &amp; Tigers, Round 1</round>\n' +
-                '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
-                      'White\'s Wolves, Round 1</round>\n' +
-                '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2">' +
-                      'Bears and Frèr, Round 1</round>\n' +
-                '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0">' +
-                      'Webelos (&quot;Webes</round>\n' +
-                '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
-                      'Arrows &lt;&lt;--&lt;&lt;</round>\n' +
-                '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
-                      'TheLastClass, Round 1</round>\n' +
-                '</coordinator_poll>');
+  await page.evaluate(function(json) { process_coordinator_poll_json(JSON.parse(json)); },
+      "{\"current-heat\": {\"now_racing\": true,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                      "\"classid\": 3,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 3,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions & Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions & Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows <<--<<\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows <<--<<\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions & Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions & Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows <<--<<\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows <<--<<, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                      "}");
 
   assert.equal({"now-racing":[3],
                 "ready-to-race":[],
@@ -217,53 +321,161 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                         'data': {'action': 'heat.select',
                                  'heat': 'next'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                       '                tbodyid="3" heat="4" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="2" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="3" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="4" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                       '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                       '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                       '         connected="">NOT CONNECTED</replay-state>\n' +
-                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                       '  </class>\n' +
-                       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
-                             'Lions &amp; Tigers, Round 1</round>\n' +
-                       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5">' +
-                             'White\'s Wolves, Round 1</round>\n' +
-                       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2">' +
-                             'Bears and Frèr, Round 1</round>\n' +
-                       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0">' +
-                             'Webelos (&quot;Webes, Round 1</round>\n' +
-                       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
-                             'Arrows &lt;&lt;--&lt;&lt;, Round 1</round>\n' +
-                       '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
-                             'TheLastClass, Round 1</round>\n' +
-                       '</coordinator_poll>');
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": false,\n" +
+                        "\"use_master_sched\": false,\n" +
+                             "\"use_points\": false,\n" +
+                             "\"marker\": 327,\n" +
+                        "\"classid\": 3,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 4,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 2,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 4,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;#5&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 5,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;#6&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;#7&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;#8&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>');
   
   await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitForFunction(() => {
@@ -279,47 +491,161 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                         'data': {'action': 'heat.select',
                                  'heat': 'prev'}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                       '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                       '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                       '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                       '         connected="">NOT CONNECTED</replay-state>\n' +
-                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                       '  </class>\n' +
-                       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
-                       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                       '</coordinator_poll>');
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": false,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                             "\"classid\": 3,\n" +
+                             "\"marker\": 497,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 3,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;#9&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;#10&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;#11&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;#12&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>');
 
   await page.waitForFunction(() => { return !$("#is-currently-racing").prop('checked'); });
   await page.waitForFunction(() => {
@@ -336,47 +662,160 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                         'data': {'action': 'heat.select',
                                  'now_racing': 1}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                       '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                       '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                       '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                       '         connected="">NOT CONNECTED</replay-state>\n' +
-                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                       '  </class>\n' +
-                       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
-                       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                       '</coordinator_poll>');
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": true,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                        "\"classid\": 3,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 3,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;#13&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;#14&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;#15&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;#16&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>');
 
   await page.waitForFunction(() => { return $("#is-currently-racing").prop('checked'); });
   }
@@ -413,47 +852,161 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                        {'type': 'POST',
                         'data': 'action=result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                       '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="1.234" finishplace="1"/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="2.34" finishplace="2"/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="4.321" finishplace="3"/>\n' +
-                       '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                       '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                       '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                       '         connected="">NOT CONNECTED</replay-state>\n' +
-                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                       '  </class>\n' +
-                       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
-                       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                       '</coordinator_poll>');
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": true,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                             "\"classid\": 3,\n" +
+                             "\"marker\": 856,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 3,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"1.234\",\n" +
+                   "\"finishplace\": 1},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"2.34\",\n" +
+                   "\"finishplace\": 2},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"4.321\",\n" +
+                   "\"finishplace\": 3}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;#17&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 5,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;#18&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;#19&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;#20&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>');
 
   // Check manual results dialog dismissed
   await all_modals_closed();
@@ -482,47 +1035,161 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                  "roundid": "current",
                                  "heat": "current"}},
                        '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<coordinator_poll>\n' +
-                       '  <current-heat now-racing="1" use-master-sched="0" use-points="0" classid="3" roundid="3" round="1"' +
-                       '                tbodyid="3" heat="3" number-of-heats="4">Bears and Frèr</current-heat>\n' +
-                       '  <racer lane="1" name="Juan Jacobsen" carname="" carnumber="343" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="2" name="Jeffress Jamison" carname="" carnumber="139" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <racer lane="3" name="Antoine Akiyama" carname="" carnumber="303" photo="" finishtime="" finishplace=""/>\n' +
-                       '  <timer-state lanes="4" last_contact="1526246081" state="3"\n' +
-                       '         icon="img/status/ok.png">Staging</timer-state>\n' +
-                       '  <replay-state last_contact="0" state="1" icon="img/status/not_connected.png"\n' +
-                       '         connected="">NOT CONNECTED</replay-state>\n' +
-                       '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                       '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                       '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                       '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                       '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                       '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                       '  </class>\n' +
-                       '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                       '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                       '  </class>\n' +
-                       '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"\n' +
-                       '         passed="5" unscheduled="0" heats_scheduled="5" heats_run="5"/>\n' +
-                       '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"\n' +
-                       '         passed="3" unscheduled="0" heats_scheduled="4" heats_run="2"/>\n' +
-                       '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"\n' +
-                       '         passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"\n' +
-                       '         passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
-                       '  <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"\n' +
-                       '         passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                       '</coordinator_poll>');
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": true,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                             "\"classid\": 3,\n" +
+                             "\"marker\": 1038,\n" +
+                        "\"roundid\": 3,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 3,\n" +
+                        "\"heat\": 3,\n" +
+                        "\"number-of-heats\": 4,\n" +
+                      "\"class\": \"Bears and Frèr\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Juan Jacobsen\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"343\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Jeffress Jamison\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"139\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Antoine Akiyama\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"303\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;#21&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 5,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>');
 
   await page.waitForFunction(() => {
     var row1 = $("#now-racing-group table tr")[1];
@@ -573,47 +1240,160 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                              '  <non-finalist racerid="47" bucket_number="1"/>\n' +
                              '  <new-round roundid="8"/>\n' +
                              '  <success/>\n' +
-                             '  <coordinator_poll>\n' +
-                             '    <current-heat now-racing="0" use-master-sched="0" use-points="0" classid="2" roundid="2"' +
-                             '                  round="1" tbodyid="2" heat="5" number-of-heats="5">White\'s Wolves</current-heat>\n' +
-                             '    <racer lane="1" name="Kelvin Knapp" carname="" carnumber="247" photo="" finishtime="" finishplace=""/>\n' +
-                             '    <racer lane="3" name="Darrell &amp; Darrell Delaughter" carname="" carnumber="217" photo="" finishtime="" finishplace=""/>\n' +
-                             '    <racer lane="5" name="Ian Ives" carname="" carnumber="237" photo="" finishtime="" finishplace=""/>\n' +
-                             '    <timer-state lanes="6" last_contact="0" state="1" icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
-                             '    <replay-state last_contact="0" state="1" icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
-                             '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-                             '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-                             '  </class>\n' +
-                             '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-                             '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-                             '  </class>\n' +
-                             '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-                             '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-                             '  </class>\n' +
-                             '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-                             '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-                             '  </class>\n' +
-                             '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-                             '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-                             '  </class>\n' +
-                             '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-                             '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-                             '  </class>\n' +
-                             '    <round roundid="8" classid="2" class="White\'s Wolves" round="2" roster_size="4"' +
-                             '           passed="4" unscheduled="4" heats_scheduled="0" heats_run="0">WW round 2</round>\n' +
-                             '    <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"' +
-                             '           passed="5" unscheduled="0" heats_scheduled="5" heats_run="0"/>\n' +
-                             '    <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="18"' +
-                             '           passed="5" unscheduled="0" heats_scheduled="5" heats_run="0"/>\n' +
-                             '    <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="17"' +
-                             '           passed="6" unscheduled="6" heats_scheduled="0" heats_run="0"/>\n' +
-                             '    <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="15"' +
-                             '           passed="2" unscheduled="2" heats_scheduled="0" heats_run="0"/>\n' +
-                             '    <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"' +
-                             '           passed="5" unscheduled="5" heats_scheduled="0" heats_run="0"/>\n' +
-                             '    <round roundid="7" classid="7" class="TheLastClass" round="1" roster_size="0"' +
-                             '           passed="0" unscheduled="0" heats_scheduled="0" heats_run="0"/>\n' +
-                             '  </coordinator_poll>\n' +
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": false,\n" +
+                        "\"use_master_sched\": false,\n" +
+                        "\"use_points\": false,\n" +
+                             "\"classid\": 2,\n" +
+                        "\"roundid\": 2,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 2,\n" +
+                        "\"heat\": 5,\n" +
+                        "\"number-of-heats\": 5,\n" +
+                      "\"class\": \"White\'s Wolves\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Kelvin Knapp\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"247\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Darrell &amp; Darrell Delaughter\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"217\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"},\n" +
+                  "{\"lane\": 5,\n" +
+                   "\"name\": \"Ian Ives\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"237\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"\",\n" +
+                   "\"finishplace\": \"\"}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 5,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                  "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 18,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 5,\n" +
+                   "\"heats_run\": 5,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 2,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 15,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 2,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 7,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"}]\n" +
+                             "}" +
+                             '</coordinator_poll></document>' +
                              '</action-response>');
 
   // TODO Try creating a new aggregate round
@@ -648,64 +1428,188 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   // ================================= Simulated poll =============================================================
 
     var poll_result = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-      '<coordinator_poll>\n' +
-      '  <current-heat now-racing="1" use-master-sched="1" use-points="0" classid="2" roundid="2" round="1"' +
-      '     tbodyid="1" heat="13" number-of-heats="13">White\'s Wolves</current-heat>\n' +
-      '  <racer lane="1" name="Willard Woolfolk" carname="" carnumber="282"' +
-      '     photo="" finishtime="3.977" finishplace="4"/>\n' +
-      '  <racer lane="2" name="Blake Burling" carname="" carnumber="207"' +
-      '     photo="" finishtime="3.646" finishplace="2"/>\n' +
-      '  <racer lane="3" name="Elliot Eastman" carname="" carnumber="227"' +
-      '     photo="" finishtime="2.295" finishplace="1"/>\n' +
-      '  <racer lane="4" name="Dexter Dawes" carname="" carnumber="222"' +
-      '     photo="" finishtime="3.720" finishplace="3"/>\n' +
-      '  <timer-state lanes="4" last_contact="1496356697" state="1"' +
-      '     icon="img/status/not_connected.png">NOT CONNECTED</timer-state>\n' +
-      '  <replay-state last_contact="1496360776" state="1"' +
-      '     icon="img/status/not_connected.png" connected="">NOT CONNECTED</replay-state>\n' +
-      '  <class classid="1" count="17" nrounds="1" ntrophies="-1" name="Lions &amp; Tigers">\n' +
-      '    <rank rankid="1" count="17" name="Lions &amp; Tigers"/>\n' +
-      '  </class>\n' +
-      '  <class classid="2" count="18" nrounds="1" ntrophies="-1" name="White\'s Wolves">\n' +
-      '    <rank rankid="2" count="18" name="White\'s Wolves"/>\n' +
-      '  </class>\n' +
-      '  <class classid="3" count="17" nrounds="1" ntrophies="-1" name="Bears and Frèr">\n' +
-      '    <rank rankid="3" count="17" name="Bears and Frèr"/>\n' +
-      '  </class>\n' +
-      '  <class classid="4" count="16" nrounds="1" ntrophies="-1" name="Webelos (&quot;Webes">\n' +
-      '    <rank rankid="4" count="16" name="Webelos (&quot;Webes"/>\n' +
-      '  </class>\n' +
-      '  <class classid="5" count="15" nrounds="1" ntrophies="-1" name="Arrows &lt;&lt;--&lt;&lt;">\n' +
-      '    <rank rankid="5" count="15" name="Arrows &lt;&lt;--&lt;&lt;"/>\n' +
-      '  </class>\n' +
-      '  <class classid="7" count="0" nrounds="0" ntrophies="-1" name="TheLastClass">\n' +
-      '    <rank rankid="7" count="0" name="TheLastClass"/>\n' +
-      '  </class>\n' +
-      '  <round roundid="7" classid="2" class="White\'s Wolves" round="2" roster_size="3"' +
-      '     passed="3" unscheduled="3" heats_scheduled="0" heats_run="0">' +
-        'White\'s Wolves</round>\n' +
-      '  <round roundid="1" classid="1" class="Lions &amp; Tigers" round="1" roster_size="17"' +
-      '     passed="17" unscheduled="0" heats_scheduled="17" heats_run="17">' +
-        'Lions &amp; Tigers, Round 1</round>\n' +
-      '  <round roundid="2" classid="2" class="White\'s Wolves" round="1" roster_size="17"' +
-      '     passed="13" unscheduled="0" heats_scheduled="13" heats_run="13">' +
-        'White\'s Wolves, Round 1</round>\n' +
-      '  <round roundid="3" classid="3" class="Bears and Frèr" round="1" roster_size="16"' +
-      '     passed="2" unscheduled="0" heats_scheduled="4" heats_run="4">' +
-        'Bears and Frèr</round>\n' +
-      '  <round roundid="4" classid="4" class="Webelos (&quot;Webes" round="1" roster_size="16"' +
-      '     passed="3" unscheduled="0" heats_scheduled="4" heats_run="4">' +
-        'Webelos (&quot;Webes, Round 1</round>\n' +
-      '  <round roundid="5" classid="5" class="Arrows &lt;&lt;--&lt;&lt;" round="1" roster_size="16"' +
-      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
-        'Arrows &lt;&lt;--&lt;&lt;, Round 1</round>\n' +
-      '  <round roundid="6" classid="6" class="TheLastClass" round="1" roster_size="0"' +
-      '     passed="0" unscheduled="0" heats_scheduled="0" heats_run="0">' +
-        'TheLastClass, Round 1</round>\n' +
-      '  <round roundid="8" classid="7" class="Grand Finals" aggregate="1" round="1" roster_size="5"' +
-      '     passed="5" unscheduled="5" heats_scheduled="0" heats_run="0">' +
-        'Grand Finals, Round 1</round>\n' +
-      '</coordinator_poll>';
+                       '<document><coordinator_poll>\n' +
+      "{\"current-heat\": {\"now_racing\": true,\n" +
+                        "\"use_master_sched\": true,\n" +
+                        "\"use_points\": false,\n" +
+                             "\"classid\": 2,\n" +
+                        "\"roundid\": 2,\n" +
+                        "\"round\": 1,\n" +
+                        "\"tbodyid\": 2,\n" +
+                        "\"heat\": 13,\n" +
+                        "\"number-of-heats\": 13,\n" +
+                      "\"class\": \"White\'s Wolves\"},\n" +
+       "\"heat-results\": [],\n" +
+       "\"ready-aggregate\": [],\n" +
+       "\"racers\": [{\"lane\": 1,\n" +
+                   "\"name\": \"Willard Woolfolk\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"282\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"3.977\",\n" +
+                   "\"finishplace\": 4},\n" +
+                  "{\"lane\": 2,\n" +
+                   "\"name\": \"Blake Burling\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"207\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"3.646\",\n" +
+                   "\"finishplace\": 2},\n" +
+                  "{\"lane\": 3,\n" +
+                   "\"name\": \"Elliot Eastman\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"227\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"2.295\",\n" +
+                   "\"finishplace\": 1},\n" +
+                  "{\"lane\": 4,\n" +
+                   "\"name\": \"Dexter Dawes\",\n" +
+                   "\"carname\": \"\",\n" +
+                   "\"carnumber\": \"222\",\n" +
+                   "\"photo\": \"\",\n" +
+                   "\"finishtime\": \"3.720\",\n" +
+                   "\"finishplace\": 3}],\n" +
+       "\"timer-state\": {\"lanes\": 4,\n" +
+                       "\"last_contact\": 1526246081,\n" +
+                       "\"state\": 3,\n" +
+                       "\"icon\": \"img/status/ok.png\",\n" +
+                       "\"message\": \"Staging\"},\n" +
+       "\"replay-state\": {\"last_contact\": 0,\n" +
+                        "\"state\": 1,\n" +
+                        "\"icon\": \"img/status/not_connected.png\",\n" +
+                        "\"connected\": false,\n" +
+                        "\"message\": \"NOT CONNECTED\"},\n" +
+       "\"classes\": [{\"classid\": 1,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Lions &amp; Tigers\",\n" +
+                    "\"subgroups\": [{\"rankid\": 1,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Lions &amp; Tigers\"}]},\n" +
+                   "{\"classid\": 2,\n" +
+                    "\"count\": 18,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"White\'s Wolves\",\n" +
+                    "\"subgroups\": [{\"rankid\": 2,\n" +
+                                   "\"count\": 18,\n" +
+                                   "\"name\": \"White\'s Wolves\"}]},\n" +
+                   "{\"classid\": 3,\n" +
+                    "\"count\": 17,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Bears and Frèr\",\n" +
+                    "\"subgroups\": [{\"rankid\": 3,\n" +
+                                   "\"count\": 17,\n" +
+                                   "\"name\": \"Bears and Frèr\"}]},\n" +
+                   "{\"classid\": 4,\n" +
+                    "\"count\": 16,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Webelos (\\\"Webes\",\n" +
+                    "\"subgroups\": [{\"rankid\": 4,\n" +
+                                   "\"count\": 16,\n" +
+                                   "\"name\": \"Webelos (\\\"Webes\"}]},\n" +
+                   "{\"classid\": 5,\n" +
+                    "\"count\": 15,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
+                    "\"subgroups\": [{\"rankid\": 5,\n" +
+                                   "\"count\": 15,\n" +
+                                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;\"}]},\n" +
+                   "{\"classid\": 7,\n" +
+                    "\"count\": 0,\n" +
+                    "\"nrounds\": 1,\n" +
+                    "\"ntrophies\": -1,\n" +
+                    "\"name\": \"TheLastClass\",\n" +
+                    "\"subgroups\": [{\"rankid\": 7,\n" +
+                                   "\"count\": 0,\n" +
+                                   "\"name\": \"TheLastClass\"}]}],\n" +
+       "\"rounds\": [{\"roundid\": 7,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 2,\n" +
+                   "\"roster_size\": 3,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 3,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"White\'s Wolves, Round 2\"},\n" +
+                  "{\"roundid\": 1,\n" +
+                   "\"classid\": 1,\n" +
+                   "\"class\": \"Lions &amp; Tigers\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 17,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 17,\n" +
+                   "\"heats_run\": 17,\n" +
+                   "\"name\": \"Lions &amp; Tigers, Round 1\"},\n" +
+                 "{\"roundid\": 2,\n" +
+                   "\"classid\": 2,\n" +
+                   "\"class\": \"White\'s Wolves\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 17,\n" +
+                   "\"passed\": 13,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 13,\n" +
+                   "\"heats_run\": 13,\n" +
+                   "\"name\": \"White\'s Wolves, Round 1\"},\n" +
+                  "{\"roundid\": 3,\n" +
+                   "\"classid\": 3,\n" +
+                   "\"class\": \"Bears and Frèr\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 2,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 4,\n" +
+                   "\"name\": \"Bears and Frèr, Round 1\"},\n" +
+                  "{\"roundid\": 4,\n" +
+                   "\"classid\": 4,\n" +
+                   "\"class\": \"Webelos (\\\"Webes\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 3,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 4,\n" +
+                   "\"heats_run\": 4,\n" +
+                   "\"name\": \"Webelos (\\\"Webes, Round 1\"},\n" +
+                  "{\"roundid\": 5,\n" +
+                   "\"classid\": 5,\n" +
+                   "\"class\": \"Arrows &lt;&lt;--&lt;&lt;\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 16,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Arrows &lt;&lt;--&lt;&lt;, Round 1\"},\n" +
+                  "{\"roundid\": 6,\n" +
+                   "\"classid\": 6,\n" +
+                   "\"class\": \"TheLastClass\",\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 0,\n" +
+                   "\"passed\": 0,\n" +
+                   "\"unscheduled\": 0,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"TheLastClass, Round 1\"},\n" +
+                  "{\"roundid\": 8,\n" +
+                   "\"classid\": 7,\n" +
+                   "\"class\": \"Grand Finals\",\n" +
+                   "\"aggregate\": true,\n" +
+                   "\"round\": 1,\n" +
+                   "\"roster_size\": 5,\n" +
+                   "\"passed\": 5,\n" +
+                   "\"unscheduled\": 5,\n" +
+                   "\"heats_scheduled\": 0,\n" +
+                   "\"heats_run\": 0,\n" +
+                   "\"name\": \"Grand Finals, Round 1\"}]\n" +
+                             "}" +
+        '</coordinator_poll></document>';
 
   await page.evaluate(function(xml) {
     process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
@@ -805,7 +1709,9 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   assert.includes("east", await page.$eval("#master-schedule-group .scheduling_control img",
                                            img => { return $(img).prop('src'); }));
 
-  if (!debugging) {
+  if (debugging) {
+    console.log('End of test (would close browser if not debugging)');
+  } else {
     await browser.close();
   }
 });

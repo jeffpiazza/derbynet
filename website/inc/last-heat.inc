@@ -9,7 +9,6 @@
 // where <laneN> is EITHER a finish time or a finish place, depending.
 
 function record_last_heat($roundid, $heat) {
-  echo "<record_last_heat>roundid=$roundid heat=$heat</record_last_heat>\n";  // TODO
   write_raceinfo('last_heat', implode('#', array($roundid, $heat)));
 }
 

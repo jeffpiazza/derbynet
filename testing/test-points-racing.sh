@@ -73,17 +73,21 @@ staged_heat4 131 101 121 141
 run_heat_place 1 4   4 1 2 3
 
 user_login_coordinator
-curl_get "action.php?query=poll.coordinator" | grep last_heat | expect_one available
+curl_json "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
 curl_post action.php "action=heat.rerun&heat=last" | check_success
-curl_get "action.php?query=poll.coordinator" | grep last_heat | expect_one recoverable
-curl_get "action.php?query=poll.coordinator" | expect_count 'finishtime=.. ' 4
-curl_get "action.php?query=poll.coordinator" | expect_count 'finishplace=../' 4
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq '.["last-heat"] == "recoverable" and 
+        (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
+    expect_eq true
 
-curl_post action.php "action=heat.reinstate" | grep last_heat | expect_one none
-curl_get "action.php?query=poll.coordinator" | grep "Felton Fouche" | expect_one 'finishplace=.4.'
-curl_get "action.php?query=poll.coordinator" | grep "Adolfo" | expect_one 'finishplace=.1.'
-curl_get "action.php?query=poll.coordinator" | grep "Derick Dreier" | expect_one 'finishplace=.2.'
-curl_get "action.php?query=poll.coordinator" | grep "Jesse Jara" | expect_one 'finishplace=.3.'
+curl_post action.php "action=heat.reinstate" | grep 'last[_-]heat' | expect_one none
+curl_json "action.php?query=json.poll.coordinator" | \
+    jq '.racers | 
+        all((.finishplace==1 and (.name | test("Adolfo.*"))) or 
+            (.finishplace==2 and .name == "Derick Dreier") or 
+            (.finishplace==3 and .name == "Jesse Jara") or 
+            (.finishplace==4 and .name == "Felton Fouche"))' | \
+    expect_eq true
 
 curl_post action.php "action=heat.select&heat=next&now_racing=1" | check_success
 user_login_timer

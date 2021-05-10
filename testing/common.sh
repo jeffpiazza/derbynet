@@ -19,7 +19,7 @@ COOKIES_CURL="`dirname $0`/cookies.curl"
 function header() {
     echo '###################### ' `caller 1 | cut -f3 -d\ ` ' #######################'
 }
-header
+# header
 
 function stacktrace() {
     while caller $((n++)); do :; done;
@@ -52,6 +52,15 @@ function curl_text() {
 	echo    >> $OUTPUT_CURL
 	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
         | sed -e 's/&nbsp;/ /g' | tee -a $OUTPUT_CURL
+}
+
+function curl_json() {
+	echo ' ' ' ' ' ' $1 >&2
+	echo    >> $OUTPUT_CURL
+	echo $1 >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+	curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
+        | tee -a $OUTPUT_CURL
 }
 
 function curl_post() {
@@ -197,9 +206,11 @@ function run_heat() {
     LANE3=$5
     LANE4=$6
     SKIP_CHECK_HEAT_READY=$7
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "now-racing=\"1\""
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "roundid=\"$ROUNDID\""
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "heat=\"$HEAT\""
+
+    curl_json "action.php?query=json.poll.coordinator" | \
+        jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
+        expect_eq true
+    
     curl_post action.php "action=timer-message&message=STARTED" | check_success
     curl_post action.php "action=timer-message&message=FINISHED&lane1=$LANE1&lane2=$LANE2&lane3=$LANE3&lane4=$LANE4" | check_success
     if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
@@ -216,9 +227,11 @@ function run_heat_place() {
     PLACE3=$5
     PLACE4=$6
     SKIP_CHECK_HEAT_READY=$7
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "now-racing=\"1\""
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "roundid=\"$ROUNDID\""
-    curl_get "action.php?query=poll.coordinator" | grep current-heat | expect_one "heat=\"$HEAT\""
+
+    curl_json "action.php?query=json.poll.coordinator" | \
+        jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
+        expect_eq true
+
     curl_post action.php "action=timer-message&message=STARTED" | check_success
     curl_post action.php "action=timer-message&message=FINISHED&place1=$PLACE1&place2=$PLACE2&place3=$PLACE3&place4=$PLACE4" | check_success
     if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
@@ -228,18 +241,24 @@ function run_heat_place() {
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
 function staged_heat4() {
-    [ "$1" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="1"' | expect_one "carnumber=\"$1\""
-    [ "$2" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="2"' | expect_one "carnumber=\"$2\""
-    [ "$3" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="3"' | expect_one "carnumber=\"$3\""
-    [ "$4" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="4"' | expect_one "carnumber=\"$4\""
+    curl_json "action.php?query=json.poll.coordinator" | \
+        jq ".racers | \
+            (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
+            (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
+            (\"$3\" == \"-\" or map(select ( .lane == 3 ))[0].carnumber == \"$3\") and \
+            (\"$4\" == \"-\" or map(select ( .lane == 4 ))[0].carnumber == \"$4\")" | \
+        expect_eq true
 }
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno> <lane5-carno> <lane6-carno>
 function staged_heat6() {
-    [ "$1" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="1"' | expect_one "carnumber=\"$1\""
-    [ "$2" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="2"' | expect_one "carnumber=\"$2\""
-    [ "$3" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="3"' | expect_one "carnumber=\"$3\""
-    [ "$4" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="4"' | expect_one "carnumber=\"$4\""
-    [ "$5" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="5"' | expect_one "carnumber=\"$5\""
-    [ "$6" == "-" ] || curl_get "action.php?query=poll.coordinator" | grep 'racer lane="6"' | expect_one "carnumber=\"$6\""
+    curl_json "action.php?query=json.poll.coordinator" | \
+        jq ".racers | \
+            (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
+            (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
+            (\"$3\" == \"-\" or map(select ( .lane == 3 ))[0].carnumber == \"$3\") and \
+            (\"$4\" == \"-\" or map(select ( .lane == 4 ))[0].carnumber == \"$4\") and \
+            (\"$5\" == \"-\" or map(select ( .lane == 5 ))[0].carnumber == \"$5\") and \
+            (\"$6\" == \"-\" or map(select ( .lane == 6 ))[0].carnumber == \"$6\")" | \
+        expect_eq true
 }

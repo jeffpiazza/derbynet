@@ -28,7 +28,7 @@ g_completed_rounds = [];
 
 // Roundids of an aggregate rounds
 g_aggregate_rounds = [];
-// {classid:, classname:, by-subgroup:} for each aggregate class for which a
+// {classid:, class:, by-subgroup:} for each aggregate class for which a
 // first round could be created
 g_ready_aggregate_classes = [];
 
@@ -480,7 +480,7 @@ function populate_new_round_modals() {
         var round = completed_rounds[i];
         // For completed rounds, offer a button to generate a follow-on round
         var button = $('<input type="button"/>');
-        button.prop('value', round.classname);
+        button.prop('value', round['class']);
         // Although syntactically it looks like a new round variable is created
         // each time through the loop, it's actually just one variable that's
         // reused/assigned each time.  Capturing that reused variable in the on-click
@@ -495,7 +495,7 @@ function populate_new_round_modals() {
         // A completed round can also be incorporated into a new aggregate round
         var flipswitch_div = $('<div class="flipswitch-div"></div>');
         flipswitch_div.append($('<label for="roundid_' + round.roundid + '"'
-                                + ' class="aggregate-label"/>').text(round.classname));
+                                + ' class="aggregate-label"/>').text(round['class']));
         flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
                                 + ' id="roundid_' + round.roundid + '"'
                                 + ' name="roundid_' + round.roundid + '"'
@@ -527,7 +527,7 @@ function populate_new_round_modals() {
     for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
       var agg = g_ready_aggregate_classes[i];
       var button = $('<input type="button"/>');
-      button.prop('value', agg.classname);
+      button.prop('value', agg['class']);
       button.prop('data-classid', agg.classid);
       button.prop('data-by-subgroup', agg['by-subgroup']);
       button.on('click', function(event) {

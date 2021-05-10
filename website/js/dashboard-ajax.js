@@ -12,6 +12,11 @@ $(window).bind("beforeunload", function() { g_unloading = true; });
 // Note that this doesn't run if the $.ajax call has a 'success:' callback that
 // generates an error.
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+  for (var i = 0; i < options.dataTypes.length; ++i) {
+    if (options.dataTypes[i] == 'json') {
+      return;
+    }
+  }
   var fail = xmldoc.documentElement.getElementsByTagName("failure");
   if (fail && fail.length > 0) {
     console.log(xmldoc);
@@ -21,6 +26,11 @@ $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
 
 // <reload/> element
 $(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+  for (var i = 0; i < options.dataTypes.length; ++i) {
+    if (options.dataTypes[i] == 'json') {
+      return;
+    }
+  }
 	var reload = xmldoc.documentElement.getElementsByTagName("reload");
 	if (reload && reload.length > 0) {
         console.log('ajaxSuccess event: reloading page');
