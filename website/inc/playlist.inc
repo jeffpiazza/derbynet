@@ -85,8 +85,9 @@ function activate_playlist_entry(&$playlist_entry) {
                                                 array(':classid' => $playlist_entry['classid'],
                                                       ':round' => $playlist_entry['round'] - 1));
     }
+    $finalists = array();
     populate_roster($bucketing, $roundid, $playlist_entry['classid'], $playlist_entry['bucket_limit'],
-                    explode(',', $constituent_roundids), /* rankids */array());
+                    explode(',', $constituent_roundids), /* rankids */array(), $finalists);
   }
   if ($playlist_entry['n_times_per_lane'] > 0 &&
       read_single_value('SELECT COUNT(*) FROM RaceChart'

@@ -40,8 +40,6 @@
 // from the requested subgroups.)
 
 
-start_response();
-
 require_once('inc/classes.inc');
 require_once('inc/newracer.inc');
 require_once('inc/aggregate_round.inc');
@@ -125,14 +123,14 @@ if ($new_roundid) {
   $new_roundid = make_new_round($classid, $new_round);
 }
 
+$finalists = array();
 populate_roster($bucketed ? $how_to_bucket : ROSTER_UNBUCKETED, $new_roundid, $classid, $bucket_limit,
-                $constituent_roundids, $rankids);
+                $constituent_roundids, $rankids, $finalists);
+json_out('finalists', $finalists);
 
-echo "<new-round roundid=\"".$new_roundid."\"/>\n";
-echo "<success/>\n";
+json_out('new-round', array('roundid' => $new_roundid + 0));
+json_success();
 
-require('ajax/query.poll.coordinator.inc');
-
-end_response();
+require('ajax/query.json.poll.coordinator.inc');
 
 ?>

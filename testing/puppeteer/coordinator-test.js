@@ -1204,7 +1204,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   await page.evaluate(() => { $("#new-round-modal input[type='button'][value='Cancel']").click(); });
   await all_modals_closed();
 
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     await page.evaluate(() => { $("input[type='button'][value='Add New Rounds']").click(); });
     await modal_open("#choose_new_round_modal");
 
@@ -1220,18 +1220,8 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.evaluate(() => { $("#new-round-modal input[type='submit']").click(); });
   },
                              {'type': 'POST',
-                              'data': {"action":"roster.new","roundid":2,"top":"4","bucketed":0}
+                              'data': {"action":"json.roster.new","roundid":2,"top":"4","bucketed":0}
                              },
-                             '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                             '<action-response action="roster.new" roundid="2" roundid_1="on" roundid_2="on" top="4" classname="Grand Finals">\n' +
-                             '  <finalist racerid="7" bucket_number="1"/>\n' +
-                             '  <finalist racerid="17" bucket_number="1"/>\n' +
-                             '  <finalist racerid="27" bucket_number="1"/>\n' +
-                             '  <finalist racerid="37" bucket_number="1"/>\n' +
-                             '  <non-finalist racerid="47" bucket_number="1"/>\n' +
-                             '  <new-round roundid="8"/>\n' +
-                             '  <success/>\n' +
-                       '<document><coordinator_poll>\n' +
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -1383,9 +1373,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>' +
-                             '</action-response>');
+                             "}");
 
   // TODO Try creating a new aggregate round
 

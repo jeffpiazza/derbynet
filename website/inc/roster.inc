@@ -30,7 +30,7 @@ define('ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP', 3);
 // $constituent_roundids: array of roundids
 // $rankids: array of rankids for aggregate-round-by-subgroup
 function populate_roster($bucketing, $new_roundid, $classid, $bucket_limit,
-                         $constituent_roundids, $rankids) {
+                         $constituent_roundids, $rankids, &$finalists) {
   global $db;
 
   $buckets = array();  // bucketno => array of { racerid , score }
@@ -83,7 +83,10 @@ function populate_roster($bucketing, $new_roundid, $classid, $bucket_limit,
     if ($n_in_bucket < $bucket_limit ||
         // If there's a tie for third when picking top 3, include additional finalists
         $buckets[$bucketno][$n_in_bucket - 1]['score'] >= $row['score']) {
-      echo "<finalist racerid=\"$row[racerid]\" bucket_number=\"".$bucketno."\" score=\"$row[score]\"/>\n";
+
+      $finalists[] = array('racerid' => $row['racerid'] + 0,
+                           'bucket-nuber' => $bucketno + 0,
+                           'score' => $row['score'] + 0);
       $buckets[$bucketno][] = array('racerid' => $row['racerid'], 'score' => $row['score']);
     }
   }

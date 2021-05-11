@@ -19,7 +19,7 @@ COOKIES_CURL="`dirname $0`/cookies.curl"
 function header() {
     echo '###################### ' `caller 1 | cut -f3 -d\ ` ' #######################'
 }
-# header
+header
 
 function stacktrace() {
     while caller $((n++)); do :; done;
@@ -179,6 +179,7 @@ function check_jsuccess() {
     OK=1
     jq -e '.outcome.summary == "success"' >/dev/null || OK=0
 	if [ $OK -eq 0 ]; then
+        echo Tail failed
         test_fails
 	fi
 }

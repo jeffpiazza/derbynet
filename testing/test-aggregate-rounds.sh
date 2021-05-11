@@ -35,37 +35,35 @@ curl_post action.php "action=racer.edit&rankid=7&racer=41" | check_success
 
 # Add a Grand Final by ranks, leaving out rankid=1
 RANK_FINAL=`mktemp`
-curl_post action.php "action=roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&rankid_4=1&rankid_5=1&rankid_6=1&rankid_7=1&classname=Rank%20Final" | tee $RANK_FINAL | check_success
+curl_postj action.php "action=json.roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&rankid_4=1&rankid_5=1&rankid_6=1&rankid_7=1&classname=Rank%20Final" | tee $RANK_FINAL | check_jsuccess
 
 # Check that there are 23 in the roster
-cat $RANK_FINAL | expect_count finalist 23
+jq '.finalists | length' $RANK_FINAL | expect_eq 23
 
 # No Lions are included: Adolfo(1), Felton(31), Carroll(11), Levi(51), Owen(61), Raymon(66)
-grep finalist $RANK_FINAL | expect_count 'racerid=\"1\"' 0
-grep finalist $RANK_FINAL | expect_count 'racerid=\"31\"' 0
-grep finalist $RANK_FINAL | expect_count 'racerid=\"11\"' 0
-grep finalist $RANK_FINAL | expect_count 'racerid=\"51\"' 0
-grep finalist $RANK_FINAL | expect_count 'racerid=\"61\"' 0
-grep finalist $RANK_FINAL | expect_count 'racerid=\"66\"' 0
+jq -e '.finalists | map(select(.racerid == 1)) | length' $RANK_FINAL | expect_eq 0
+jq -e '.finalists | map(select(.racerid == 31)) | length' $RANK_FINAL | expect_eq 0
+jq -e '.finalists | map(select(.racerid == 51)) | length' $RANK_FINAL | expect_eq 0
+jq -e '.finalists | map(select(.racerid == 61)) | length' $RANK_FINAL | expect_eq 0
+jq -e '.finalists | map(select(.racerid == 66)) | length' $RANK_FINAL | expect_eq 0
 
 # Top 4 Tigers: Edgardo(26), Ben(6), Danial(16), Kelvin(46)
-grep finalist $RANK_FINAL | expect_count 'racerid=\"26\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"6\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"16\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"46\"' 1
+jq -e '.finalists | map(select(.racerid == 26)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(select(.racerid == 6)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(select(.racerid == 16)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(select(.racerid == 46)) | length' $RANK_FINAL | expect_eq 1
 
 # Cougars Jesse(41), Herb(36), Derick(21)
-grep finalist $RANK_FINAL | expect_count 'racerid=\"41\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"36\"' 1
-grep finalist $RANK_FINAL | expect_count 'racerid=\"21\"' 1
-
+jq -e '.finalists | map(select(.racerid == 41)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(select(.racerid == 36)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(select(.racerid == 21)) | length' $RANK_FINAL | expect_eq 1
 
 curl_post action.php "action=roster.delete&roundid=6" | check_success
 # Deleting the round (by deleting its roster) seems to leave roundid=6 available
 # for the next 'roster.new' operation, below.
 
 ## Create "Younger Finals" aggregate of roundid 1,2 and race the round
-curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_success
+curl_postj action.php "action=json.roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_jsuccess
 
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
@@ -79,7 +77,7 @@ run_heat	6	7	3.685	3.136	3.737	3.419
 run_heat	6	8	3.000	3.477	3.67	3.512 x
 
 ## Create "Older Finals" aggregate of roundid 3,4,5, and race
-curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_success
+curl_postj action.php "action=json.roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_jsuccess
 curl_post action.php "action=schedule.generate&roundid=7" | check_success
 curl_postj action.php "action=json.heat.select&roundid=7&now_racing=1" | check_jsuccess
 run_heat	7	1	3.85	3.145	3.849	3.288
@@ -96,7 +94,7 @@ run_heat	7	11	3.003	3.79	3.47	3.199
 run_heat	7	12	3.563	3.857	3.255	3.742 x
 
 ## Race a second round of Older Finals
-curl_post action.php "action=roster.new&top=8&roundid=7" | check_success
+curl_postj action.php "action=json.roster.new&top=8&roundid=7" | check_jsuccess
 curl_post action.php "action=schedule.generate&roundid=8" | check_success
 curl_postj action.php "action=json.heat.select&roundid=8&now_racing=1" | check_jsuccess
 
@@ -110,7 +108,7 @@ run_heat	8	7	3.37	3.512	3.448	3.486
 run_heat	8	8	3.028	3.104	3.049	3.301 x
 
 ## Create a final final of the other two GF's
-curl_post action.php "action=roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_success
+curl_postj action.php "action=json.roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_jsuccess
 curl_post action.php "action=schedule.generate&roundid=9" | check_success
 curl_postj action.php "action=json.heat.select&roundid=9&now_racing=1" | check_jsuccess
 

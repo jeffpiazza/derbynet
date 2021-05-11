@@ -15,12 +15,9 @@ user_login_coordinator
 curl_post action.php "action=roster.delete&roundid=8" | check_failure
 
 # Top 3 from roundid=1
-curl_post action.php "action=roster.new&roundid=1&top=3" | check_success
-if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 3 ]; then
-    test_fails Expecting 3 finalists
-fi
-# <new-round roundid="xxx"/>
-ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
+curl_postj action.php "action=json.roster.new&roundid=1&top=3" | check_jsuccess
+jq '.finalists | length' $DEBUG_CURL | expect_eq 3
+ROUNDID=`jq '.["new-round"].roundid' $DEBUG_CURL`
 
 # The new round should be roundid=8, which is now deletable
 curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
@@ -28,33 +25,26 @@ curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
 curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_failure
 
 # Top 3 from each rank in roundid=2
-curl_post action.php "action=roster.new&roundid=2&top=3&bucketed=1" | check_success
+curl_postj action.php "action=json.roster.new&roundid=2&top=3&bucketed=1" | check_jsuccess
 # TODO: The test data doesn't track subgroups, so there's effectively no
 # difference between the bucketed and non-bucketed version.
-if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 3 ]; then
-    test_fails Expecting 3 finalists
-fi
+jq '.finalists | length' $DEBUG_CURL | expect_eq 3
 
 # Grand Finals round, 4 from each den
 # In test-basic-checkins, Bears & Freres only have 2 racers, so it's a total of 14 racers
 # In test-master-schedule, Bears & Freres have 2 racers, and Webelos only 3, so it's a total of 13 finalists
-curl_post action.php "action=roster.new&roundid=&top=4&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
- | check_success
-if [ "`grep -c '<finalist' $DEBUG_CURL`" -lt 13 -o \
-     "`grep -c '<finalist' $DEBUG_CURL`" -gt 14 ]; then
-    test_fails Expecting 13 or 14 finalists, not `grep -c '<finalist' $DEBUG_CURL`
-fi
+curl_postj action.php "action=json.roster.new&roundid=&top=4&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
+ | check_jsuccess
+jq '.finalists | length == 13 or length == 14' $DEBUG_CURL | expect_eq true
 
-# <new-round roundid="xxx"/>
-ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
+ROUNDID=$(jq '.["new-round"].roundid' $DEBUG_CURL)
 
 curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
 
 # Grand Finals round, top 5 overall
-curl_post action.php "action=roster.new&roundid=&top=5&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals-2" | check_success
-if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 5 ]; then
-    test_fails Expecting 5 finalists
-fi
+curl_postj action.php "action=json.roster.new&roundid=&top=5&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals-2" | check_jsuccess
+jq '.finalists | length' $DEBUG_CURL | expect_eq 5
 
-ROUNDID=`grep '<new-round' $DEBUG_CURL | sed -e 's/.* roundid=.\([0-9][0-9]*\).*/\1/'`
+ROUNDID=$(jq '.["new-round"].roundid' $DEBUG_CURL)
 curl_post action.php "action=roster.delete&roundid=$ROUNDID" | check_success
+

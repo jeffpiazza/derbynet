@@ -170,10 +170,8 @@ curl_get "action.php?query=award.current" | expect_count '<award ' 0
 
 
 # Generate a next round of top 3, where there's a tie for third -- take 4 finalists
-curl_post action.php "action=roster.new&roundid=1&top=3" | check_success
-if [ "`grep -c '<finalist' $DEBUG_CURL`" -ne 4 ]; then
-    test_fails Expecting 4 finalists
-fi
+curl_postj action.php "action=json.roster.new&roundid=1&top=3" | check_jsuccess
+jq -e '.finalists | length == 4' $DEBUG_CURL >/dev/null || test_fails Expecting 4 finalists
 
 curl_post action.php "action=schedule.generate&roundid=6" | check_success
 # Racing for roundid=6: 4 heats

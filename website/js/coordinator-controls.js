@@ -348,12 +348,12 @@ function on_submit_new_round_follow_on(roundid) {
   close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'roster.new',
+          data: {action: 'json.roster.new',
                  roundid: roundid,
                  top: $("#new-round-top").val(),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
-            process_coordinator_poll_response(data); }
+            process_coordinator_poll_json(data); }
          });
 }
 
@@ -381,13 +381,13 @@ function on_submit_new_round_make_aggregate() {
   close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data:  'action=roster.new&' +
+          data:  'action=json.roster.new&' +
                  $("#new-round-common input").serialize() + '&' +
                  $("#agg-classname-div input").serialize() + '&' +
                 ($("#aggregate-by-checkbox").is(':checked')
                  ? $("#constituent-subgroups input").serialize()
                  : $("#constituent-rounds input").serialize()),
-          success: function(data) { process_coordinator_poll_response(data); }
+          success: function(data) { process_coordinator_poll_json(data); }
          });
 }
 
@@ -413,12 +413,12 @@ function on_submit_new_round_aggregate_class(classid) {
 
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'roster.new',
+          data: {action: 'json.roster.new',
                  classid: classid,
                  top: $("#new-round-top").val(),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
-            process_coordinator_poll_response(data); }
+            process_coordinator_poll_json(data); }
          });
 }
 

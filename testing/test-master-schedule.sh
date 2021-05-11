@@ -133,8 +133,8 @@ curl_getj "action.php?query=json.poll.coordinator" | \
 user_login_coordinator
 # Now create a aggregate round, 3 from each den.
 # (Bears/Freres have only 2 racers and Webelos only 3.)
-curl_post action.php "action=roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
- | check_success
+curl_postj action.php "action=json.roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
+ | check_jsuccess
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2 and .heat == 13" | \
