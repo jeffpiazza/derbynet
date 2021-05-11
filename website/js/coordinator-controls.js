@@ -237,9 +237,9 @@ function handle_unschedule_button(roundid, classname, round) {
         close_modal("#unschedule_modal");
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'schedule.unschedule',
+                data: {action: 'json.schedule.unschedule',
                        roundid: roundid},
-                success: function(data) { process_coordinator_poll_response(data); }
+                success: function(data) { process_coordinator_poll_json(data); }
                });
         return false;
     });

@@ -256,7 +256,7 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "lane=.6." \
     | expect_count "racerid=.$RACERID_1100." 6
 
-curl_post action.php "action=schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 1 lane, 200 racers, 6 runs each
 curl_post action.php "action=settings.write&n-lanes=1" | check_success
@@ -277,7 +277,7 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "lane=.1." \
     | expect_count "racerid=.$RACERID_1100." 6
 
-curl_post action.php "action=schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 6 lanes, 3 racers, 6 runs each: 36 heats with 3 racers in each
 curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
@@ -302,7 +302,7 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "lane=.1." \
     | expect_count "racerid=.$RACERID_1100." 6
 
-curl_post action.php "action=schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 6 lanes, 8 racers, 6 runs each: 48 heats
 curl_post action.php "action=racer.pass&racer=$RACERID_1060" | check_success
@@ -328,4 +328,4 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "lane=.1." \
     | expect_count "racerid=.$RACERID_1100." 6
 
-curl_post action.php "action=schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
