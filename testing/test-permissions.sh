@@ -24,9 +24,9 @@ fi
 
 curl_post action.php "action=kiosk.assign" | check_failure
 
-curl_post action.php "action=result.delete" | check_failure
+curl_postj action.php "action=json.result.delete" | check_jfailure
 curl_post action.php "action=racer.edit" | check_failure
-curl_post action.php "action=result.write" | check_failure
+curl_postj action.php "action=json.result.write" | check_jfailure
 curl_post action.php "action=racer.import" | check_failure
 
 # curl_post action.php "action=login" | check_failure

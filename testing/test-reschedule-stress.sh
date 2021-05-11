@@ -53,7 +53,7 @@ function do_reschedule() {
 }
 
 function cleanup() {
-    curl_post action.php "action=result.delete&roundid=1" | check_success
+    curl_postj action.php "action=json.result.delete&roundid=1" | check_jsuccess
     curl_postj action.php "action=json.schedule.unschedule&roundid=1" | check_jsuccess
 }
 

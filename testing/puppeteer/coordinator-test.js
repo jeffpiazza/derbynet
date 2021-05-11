@@ -813,7 +813,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   // After manual results:
   var manual_results = await page.$("input[type='button'][value='Manual Results']");
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     manual_results.click();
     await page.waitForFunction(() => {
       var manual_results_modal = $("#manual_results_modal");
@@ -841,9 +841,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     });
   },
                        {'type': 'POST',
-                        'data': 'action=result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
-                       '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
+                        'data': 'action=json.result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -996,8 +994,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>');
+                             "}");
 
   // Check manual results dialog dismissed
   await all_modals_closed();
@@ -1017,16 +1014,14 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     return !manual_results_modal.hasClass('hidden') && manual_results_modal.css('opacity') >= 1;
   });
 
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     await page.evaluate(() => { $("#discard-results").click(); });
     await all_modals_closed();
   },
                        {'type': 'POST',
-                        'data': {"action": "result.delete",
+                        'data': {"action": "json.result.delete",
                                  "roundid": "current",
                                  "heat": "current"}},
-                       '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -1179,8 +1174,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"TheLastClass, Round 1\"}]\n" +
-                             "}" +
-                             '</coordinator_poll></document>');
+                             "}");
 
   await page.waitForFunction(() => {
     var row1 = $("#now-racing-group table tr")[1];

@@ -102,13 +102,13 @@ curl_post action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
 curl_postj action.php "action=json.heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess
-curl_post action.php "action=result.write&lane2=8.888" | check_success
+curl_postj action.php "action=json.result.write&lane2=8.888" | check_jsuccess
 curl_postj action.php "action=json.heat.select&roundid=1&heat=2" | check_jsuccess
-curl_post action.php "action=result.write&lane4=8.888" | check_success
+curl_postj action.php "action=json.result.write&lane4=8.888" | check_jsuccess
 curl_postj action.php "action=json.heat.select&roundid=1&heat=3" | check_jsuccess
-curl_post action.php "action=result.write&lane1=8.888" | check_success
+curl_postj action.php "action=json.result.write&lane1=8.888" | check_jsuccess
 curl_postj action.php "action=json.heat.select&roundid=1&heat=4" | check_jsuccess
-curl_post action.php "action=result.write&lane3=8.888" | check_success
+curl_postj action.php "action=json.result.write&lane3=8.888" | check_jsuccess
 
 # For roundid 4, schedule two appearances per lane per racer
 curl_postj action.php "action=json.schedule.generate&roundid=4&n_times_per_lane=2" | check_jsuccess

@@ -156,7 +156,7 @@ var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
 
 <div id='manual_results_modal' class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="result.write"/>
+    <input type="hidden" name="action" value="json.result.write"/>
     <table></table>
     <input type="button"
            id="discard-results"

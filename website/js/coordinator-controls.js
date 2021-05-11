@@ -152,7 +152,7 @@ function handle_manual_results_submit( ) {
     $.ajax(g_action_url,
            {type: 'POST',
             data: $("#manual_results_modal form").serialize(),
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(data) { process_coordinator_poll_json(data); }
            });
 }
 
@@ -166,10 +166,10 @@ function handle_discard_results_button() {
             // the user chose.  If current-heat changes while
             // manual-results dialog is open, maybe close the dialog
             // and start over?
-            data: {action: 'result.delete',
+            data: {action: 'json.result.delete',
                    roundid: 'current',
                    heat: 'current'},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(data) { process_coordinator_poll_json(data); }
            });
 }
 
