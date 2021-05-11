@@ -243,8 +243,8 @@ function is_in_testing_mode(current) {
   if (! current) {
     return false;
   }
-  return current.getAttribute('roundid') == -100 &&
-    current.getAttribute('now-racing') == 1;
+  return current.roundid == -100 &&
+    current["now-racing"] == 1;
 }
 function update_testing_mode(current) {
   var should_be_checked = is_in_testing_mode(current);
@@ -255,28 +255,27 @@ function update_testing_mode(current) {
 }
 
 function update_timer_summary(tstate, details, current) {
-  $("#timer_status_text").text(tstate.textContent);
-  $("#timer_summary_icon").attr('src', tstate.getAttribute("icon"));
+  $("#timer_status_text").text(tstate.message);
+  $("#timer_summary_icon").attr('src', tstate.icon);
   $("#start_race_button_div").toggleClass('hidden',
                                           !is_in_testing_mode(current) ||
-                                          tstate.getAttribute("remote_start") != "1");
+                                          tstate["remote-start"] != "1");
   // Offer the fake timer only if no other timer is connected.
-  $("#fake_timer_div").toggleClass('hidden',
-                                   tstate.getAttribute('state') != "1");
+  $("#fake_timer_div").toggleClass('hidden', tstate.state != "1");
 }
 
 function update_timer_details(details) {
   $("#timer-details").empty();
-  if (details.getAttribute('human')) {
-    $("<p></p>").text(details.getAttribute('human')).appendTo($("#timer-details"));
-  } else if (details.getAttribute('type')) {
-    $("<p></p>").text(details.getAttribute('type')).appendTo($("#timer-details"));
+  if (details.human) {
+    $("<p></p>").text(detailshuman).appendTo($("#timer-details"));
+  } else if (details.type) {
+    $("<p></p>").text(detailstype).appendTo($("#timer-details"));
   }
-  if (details.getAttribute('ident')) {
-    $("<p></p>").text(details.getAttribute('ident')).appendTo($("#timer-details"));
+  if (details.ident) {
+    $("<p></p>").text(details.ident).appendTo($("#timer-details"));
   }
-  if (details.getAttribute('options')) {
-    $("<p></p>").text(details.getAttribute('options')).appendTo($("#timer-details"));
+  if (details.options) {
+    $("<p></p>").text(details.options).appendTo($("#timer-details"));
   }
 }
 
@@ -285,42 +284,29 @@ $(function() {
   setInterval(function() {
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'poll.timer.test'},
+            data: {query: 'json.poll.timer.test'},
             success: function(data) {
-              var tstate = data.documentElement.getElementsByTagName('timer-state');
-              var current = data.documentElement.getElementsByTagName('current-heat');
-              var details = data.documentElement.getElementsByTagName('timer-details');
-              if (tstate.length > 0) {
-                update_timer_summary(tstate[0],
-                                     details.length > 0 ? details[0] : undefined,
-                                     current.length > 0 ? current[0] : undefined);
-              }
-              if (details.length > 0) {
-                update_timer_details(details[0]);
-              }
-              var tt_results = data.documentElement.getElementsByTagName('tt-results');
-              if (tt_results.length > 0 && tt_results[0].getAttribute('heat') != heat_showing) {
+              var tstate = data["timer-state"];
+              var current = data["current-heat"];
+              var details = data["timer-details"];
+              update_timer_summary(tstate, details, current);
+              update_timer_details(details);
+              if (data.tt.heat != heat_showing) {
                 $("table#lanes td.time, table#lanes td.place").text("");
-                heat_showing = tt_results[0].getAttribute('heat')
+                heat_showing = data.tt.heat;
               }
-              if (current.length > 0) {
-                update_testing_mode(current[0]);
-              }
-              var tt_mask = data.documentElement.getElementsByTagName('tt-mask');
-              if (tt_mask.length > 0) {
-                $("#unused-lane-mask").val(tt_mask[0].textContent);
-                show_mask();
-              }
-              var tt = data.documentElement.getElementsByTagName('tt');
+              update_testing_mode(current);
+              $("#unused-lane-mask").val(data.tt.mask);
+              show_mask();
+
+              var tt = data.tt.results;
               for (var i = 0; i < tt.length; ++i) {
-                var lane = tt[i].getAttribute('lane');
-                var time = tt[i].getAttribute('time');
-                if (time) {
-                  $("table#lanes tr.lane[data-lane=" + lane + "] td.time").text(time);
+                var lane = tt[i].lane;
+                if (tt[i].hasOwnProperty('time')) {
+                  $("table#lanes tr.lane[data-lane=" + lane + "] td.time").text(tt[i].time);
                 }
-                var place = tt[i].getAttribute('place');
-                if (place) {
-                  $("table#lanes tr.lane[data-lane=" + lane + "] td.place").text(place);
+                if (tt[i].hasOwnProperty('place')) {
+                  $("table#lanes tr.lane[data-lane=" + lane + "] td.place").text(tt[i].place);
                 }
               }
             }
