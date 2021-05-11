@@ -23,7 +23,7 @@ curl_post action.php "action=racer.bulk&what=checkin&who=all&value=1" | check_su
 curl_post action.php "action=racer.bulk&what=number&who=all&start=101" | check_success
 
 curl_post action.php "action=settings.write&n-lanes=3&max-runs-per-car=1" | check_success
-curl_post action.php "action=schedule.generate&roundid=1" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 curl_get "action.php?query=poll.now-racing" | expect_one 'number-of-heats="34"'

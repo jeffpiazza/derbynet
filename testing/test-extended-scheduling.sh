@@ -233,7 +233,7 @@ curl_post action.php "action=racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_C
 # 6 lanes, 200 racers, 6 runs each = 1200 heats to schedule
 curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
 # Takes about 15s on my laptop
-curl_post action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "<result " \
@@ -260,7 +260,7 @@ curl_post action.php "action=schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" |
 
 # 1 lane, 200 racers, 6 runs each
 curl_post action.php "action=settings.write&n-lanes=1" | check_success
-curl_post action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "<result " \
@@ -285,7 +285,7 @@ curl_post action.php "action=racer.bulk&what=checkin&value=0&who=c$TWO_HUNDRED_C
 curl_post action.php "action=racer.pass&racer=$RACERID_1100" | check_success
 curl_post action.php "action=racer.pass&racer=$RACERID_1050" | check_success
 curl_post action.php "action=racer.pass&racer=$RACERID_1150" | check_success
-curl_post action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "<result " \
@@ -311,7 +311,7 @@ curl_post action.php "action=racer.pass&racer=$RACERID_1080" | check_success
 curl_post action.php "action=racer.pass&racer=$RACERID_1090" | check_success
 curl_post action.php "action=racer.pass&racer=$RACERID_1110" | check_success
 
-curl_post action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_success
+curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
     | grep "<result " \

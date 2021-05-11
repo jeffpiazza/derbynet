@@ -86,8 +86,8 @@ function make_ordered_schedule($nlanes, $ncars, $n_times_per_lane,
         if ($rough[$rough_i]) {
           $score = rate_next_heat($prev_heat, count($ordered), $rough[$rough_i],
                                   $appearances);
-          if ($trace > 1) {
-            echo "<rating score='".$score."' index='".$rough_i."'/>";
+          if ($trace) {
+            $trace[] = array('score' => $score, 'index' => $rough_i);
           }
           if ($score < $best_heat_score - 0.00001) {
             $best_heat_score = $score;
@@ -97,9 +97,9 @@ function make_ordered_schedule($nlanes, $ncars, $n_times_per_lane,
       }
 
       if ($trace) {
-        echo "<ordered rough_index='".$best_heat_index."' score='".$best_heat_score."'>";
-        echo json_encode($rough[$best_heat_index]);
-        echo "</ordered>\n";
+        $trace[] = array('rough-index' => $best_heat_index,
+                         'score' => $best_heat_score,
+                         'ordered' => $rough[$best_heat_index]);
       }
       
       $prev_heat = $rough[$best_heat_index];

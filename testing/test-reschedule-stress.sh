@@ -37,7 +37,7 @@ function setup_schedule() {
         curl_post action.php "action=racer.pass&racer=$i" | check_success
     done
 
-    curl_post action.php "action=schedule.generate&roundid=1" | check_success
+    curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
     # RacerX
     curl_post action.php "action=racer.pass&racer=101&value=1" | check_success
     # RacerY

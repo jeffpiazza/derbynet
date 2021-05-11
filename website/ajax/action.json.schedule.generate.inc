@@ -6,7 +6,7 @@
 $roundid = $_POST['roundid'];
 $n_times_per_lane = isset($_POST['n_times_per_lane']) ? $_POST['n_times_per_lane'] : 1;
 
-$trace = !isset($_POST['trace']) ? 0 : ($_POST['trace'] == 'v' ? 2 : 1);
+$trace = !isset($_POST['trace']) ? false : array('trace');
 
 //
 // Normally we use max-runs-per-car = 0, so that each car runs once per lane.
@@ -25,28 +25,29 @@ require_once('inc/autoadvance.inc');
 require_once('inc/schedule_utils.inc');
 require_once('inc/schedule_one_round.inc');
 
-start_response();
-
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   // $nlanes reports the number of physical lanes, even if some won't be used.
   $nlanes = read_raceinfo('lane_count', 0);
   // For generating the schedule, we care about the number of lanes actually in use.
   $nlanes -= count_one_bits(read_raceinfo('unused-lane-mask', 0));
   if ($nlanes <= 0) {
-	echo '<failure code="nlanes">Number of lanes hasn\'t been determined.</failure>';
+    json_failure('nlanes', 'Number of lanes hasn\'t been determined.');
 // TODO
 //  } else if (!isset($all_generators[$nlanes])) {
-//    echo '<failure code="too-many-lanes">Lane scheduling is only available for up to '
-//    .max(array_keys($all_generators)).' lanes.</failure>';
+//    json_failure('too-many-lanes', 'Lane scheduling is only available for up to '
+//    .max(array_keys($all_generators)).' lanes.');
   } else if (results_exist($roundid)) {
-	echo '<failure code="results-exist">Race results already exist for this round</failure>';
+    json_failure('results-exist', 'Race results already exist for this round');
   } else {
 	if (schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace)) {
-      echo '<success/>';
-      require('ajax/query.poll.coordinator.inc');
+      json_success();
+      if ($trace) {
+        json_out('trace', $trace);
+      }
+      require('ajax/query.json.poll.coordinator.inc');
     } else {
-      echo '<failure code="too-few-racers">There need to be at least two racers checked in'
-      .' to generate a schedule.</failure>';
+      json_failure('too-few-racers', 'There need to be at least two racers checked in'
+                   .' to generate a schedule.');
     }
   }
 
@@ -56,8 +57,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     advance_heat($current, 'next-up', /* report failure */ false);
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
 
-end_response();
 ?>

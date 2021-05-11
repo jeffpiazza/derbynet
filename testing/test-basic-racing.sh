@@ -12,9 +12,9 @@ curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | chec
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
 
 ### Schedule first round for 3 of the classes
-curl_post action.php "action=schedule.generate&roundid=1" | check_success
-curl_post action.php "action=schedule.generate&roundid=2" | check_success
-curl_post action.php "action=schedule.generate&roundid=3" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
+curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
+curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
 
 # Can't delete a racer who's in a schedule
 curl_post action.php "action=racer.delete&racer=21" | check_failure
@@ -77,7 +77,7 @@ user_login_coordinator
 curl_post action.php "action=racer.pass&racer=13&value=0" | check_success
 curl_post action.php "action=racer.pass&racer=23&value=0" | check_success
 curl_post action.php "action=racer.pass&racer=33&value=0" | check_success
-curl_post action.php "action=schedule.generate&roundid=3" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
 
 curl_postj action.php "action=json.heat.select&roundid=3&now_racing=1" | check_jsuccess
 
@@ -111,9 +111,9 @@ curl_postj action.php "action=json.heat.select&roundid=1&heat=4" | check_jsucces
 curl_post action.php "action=result.write&lane3=8.888" | check_success
 
 # For roundid 4, schedule two appearances per lane per racer
-curl_post action.php "action=schedule.generate&roundid=4&n_times_per_lane=2" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=4&n_times_per_lane=2" | check_jsuccess
 # Schedule for roundid 5
-curl_post action.php "action=schedule.generate&roundid=5" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jsuccess
 
 ### Racing for roundid=4
 curl_postj action.php "action=json.heat.select&roundid=4&now_racing=1" | check_jsuccess

@@ -37,7 +37,7 @@ curl_post action.php "action=racer.edit&rankid=8&racer=87" | check_success
 
 `dirname $0`/run-scout-heats.sh "$BASE_URL"
 
-curl_post action.php "action=schedule.generate&roundid=6" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=6" | check_jsuccess
 
 # Outlaw round: these are intentionally much faster
 curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess

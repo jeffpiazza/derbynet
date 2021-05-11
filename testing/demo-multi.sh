@@ -58,11 +58,11 @@ while true ; do
   user_login_coordinator
 
   # Schedule Round 1
-  curl_post action.php "action=schedule.generate&roundid=1" | check_success
-  # curl_post action.php "action=schedule.generate&roundid=2" | check_success
-  # curl_post action.php "action=schedule.generate&roundid=3" | check_success
-  # curl_post action.php "action=schedule.generate&roundid=4" | check_success
-  # curl_post action.php "action=schedule.generate&roundid=5" | check_success
+  curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
+  # curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
+  # curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
+  # curl_postj action.php "action=json.schedule.generate&roundid=4" | check_jsuccess
+  # curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jsuccess
 
   # Start racing
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success

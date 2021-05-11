@@ -59,12 +59,12 @@ curl_post action.php "action=racer.pass&racer=49&value=1" | check_success
 # 4/4 = 1 ratio for Webelos
 
 # Schedule dens
-curl_post action.php "action=schedule.generate&roundid=1" | check_success
-curl_post action.php "action=schedule.generate&roundid=2" | check_success
-curl_post action.php "action=schedule.generate&roundid=3" | check_success
-curl_post action.php "action=schedule.generate&roundid=4" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
+curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
+curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
+curl_postj action.php "action=json.schedule.generate&roundid=4" | check_jsuccess
 # Can't schedule Arrows, because no one's checked in
-curl_post action.php "action=schedule.generate&roundid=5" | check_failure
+curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jfailure
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 1" | \
@@ -140,7 +140,7 @@ curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2 and .heat == 13" | \
     expect_eq true
 
-curl_post action.php "action=schedule.generate&roundid=8" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=8" | check_jsuccess
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 8 and .heat == 1" | \

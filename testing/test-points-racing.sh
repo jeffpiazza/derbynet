@@ -20,7 +20,7 @@ curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
 
 ### Schedule roundid 1
-curl_post action.php "action=schedule.generate&roundid=1" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 # Racing for roundid=1: 5 heats
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
 
@@ -173,7 +173,7 @@ curl_get "action.php?query=award.current" | expect_count '<award ' 0
 curl_postj action.php "action=json.roster.new&roundid=1&top=3" | check_jsuccess
 jq -e '.finalists | length == 4' $DEBUG_CURL >/dev/null || test_fails Expecting 4 finalists
 
-curl_post action.php "action=schedule.generate&roundid=6" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=6" | check_jsuccess
 # Racing for roundid=6: 4 heats
 curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
 

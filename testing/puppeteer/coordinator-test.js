@@ -1380,7 +1380,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   // TODO input[type='button'][value='Replay Settings']
   
   // =============================== Schedule a new round by clicking buttons =====================================
-  await fakeAjax.testForAjax(async () => {
+  await fakeAjax.testForJson(async () => {
     // Click control group to expose schedule button
     await open_scheduling_control_group(".control_group[data-roundid='5']");
     // Click Schedule button to open schedule modal
@@ -1399,7 +1399,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await dialog_schedule_and_race.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'schedule.generate',
+                        'data': {'action': 'json.schedule.generate',
                                  'roundid': 5,
                                  'n_times_per_lane': '1' } },
                          false);  // No xml response

@@ -199,12 +199,12 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
     close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'schedule.generate',
+            data: {action: 'json.schedule.generate',
                    roundid: roundid,
                    n_times_per_lane: n_times_per_lane},
             success: function(data) {
-              process_coordinator_poll_response(data);
-              if (then_race && data.getElementsByTagName('success').length > 0) {
+              process_coordinator_poll_json(data);
+              if (then_race && data.outcome.summary == "success") {
                 handle_race_button(roundid);
               }
             }

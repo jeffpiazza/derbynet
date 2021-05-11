@@ -16,7 +16,7 @@ curl_post action.php "action=settings.write&n-lanes=6" | check_success
 # Make six lanes down to 4, 100001 = 33
 #  (Also confirm that max-runs-per-car=0, as opposed to unset, works as expected.)
 curl_post action.php "action=settings.write&unused-lane-mask=33&max-runs-per-car=0" | check_success
-curl_post action.php "action=schedule.generate&roundid=1" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=0" | check_jsuccess
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 1 or .lane == 6)) | length" | \
@@ -40,7 +40,7 @@ curl_post action.php "action=settings.write&unused-lane-mask=42" | check_failure
 curl_post action.php "action=schedule.unschedule&roundid=1" | check_success
 
 curl_post action.php "action=settings.write&unused-lane-mask=42" | check_success
-curl_post action.php "action=schedule.generate&roundid=2" | check_success
+curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
 curl_postj action.php "action=json.heat.select&roundid=2&now_racing=0" | check_jsuccess
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 2 or .lane == 4 or .lane == 6)) | length" | \
