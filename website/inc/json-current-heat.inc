@@ -12,7 +12,7 @@ function json_current_heat(&$now_running) {
     'heat' => @$now_running['heat'] + 0,
     'number-of-heats' => read_single_value('SELECT MAX(heat) FROM RaceChart'
                                            .' WHERE roundid = :roundid',
-                                           array(':roundid' => @$now_running['roundid']), 0));
+                                           array(':roundid' => @$now_running['roundid']), 0) + 0);
   if (use_groups()) {
     $current_heat['class'] = @$now_running['class'];
   }

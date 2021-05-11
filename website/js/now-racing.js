@@ -72,16 +72,16 @@ var Lineup = {
   // we get a <current-heat/> element, plus some number of <racer>
   // elements identifying the new heat's contestants.
   process_new_lineup: function(now_racing, row_height) {
-    var current = now_racing.getElementsByTagName("current-heat")[0];
-    if (now_racing.getElementsByTagName('timer-trouble').length > 0) {
+    var current = now_racing["current-heat"];
+    if (now_racing.hasOwnProperty('timer-trouble')) {
       Overlay.show('#timer_overlay');
-    } else if (current.getAttribute("now-racing") == "0" && this.ok_to_change()) {
+    } else if (current["now-racing"] == 0 && this.ok_to_change()) {
       Overlay.show('#paused_overlay');
     } else {
       Overlay.clear();
     }
 
-    if (now_racing.getElementsByTagName('timer-test').length > 0) {
+    if (now_racing.hasOwnProperty('timer-test')) {
       // Overlay.show('#testing_overlay');
       if ($('td.test-only').length == 0) {
         $(".no-test").addClass('hidden');
@@ -100,29 +100,29 @@ var Lineup = {
     // We always need to notice an increase in the number of heat-results, in
     // case they get cleared before the ok_to_change() test lets us update the
     // screen.
-    var new_heat_results = now_racing.getElementsByTagName("heat-result").length;
+    var new_heat_results = now_racing["heat-results"].length;
     if (new_heat_results > this.previous_heat_results) {
       this.previous_heat_results = new_heat_results;
     }
 
     if (this.ok_to_change()) {
-      var new_roundid = current.getAttribute("roundid");
-      var new_heat = current.getAttribute("heat");
+      var new_roundid = current.roundid;
+      var new_heat = current.heat;
       var is_new_heat = new_roundid != this.roundid || new_heat != this.heat
           || new_heat_results < this.previous_heat_results;
       this.roundid = new_roundid;
       this.heat = new_heat;
       this.previous_heat_results = new_heat_results;
 
-      var nheats = current.getAttribute('number-of-heats');
+      var nheats = current['number-of-heats'];
       if (nheats) {
-        var round_class_name = current.textContent;
+        var round_class_name = current.name;
         $('.banner_title').text((round_class_name ? round_class_name + ', ' : '')
                                 + 'Heat ' + this.heat + ' of ' + nheats);
       }
 
-      var racers = now_racing.getElementsByTagName("racer");
-      var zero = now_racing.getElementsByTagName('zero')[0].getAttribute('zero');
+      var racers = now_racing.racers;
+      var zero = now_racing.zero;
 
       if (is_new_heat && racers.length > 0) {
         FlyerAnimation.enable_flyers();
@@ -139,46 +139,46 @@ var Lineup = {
         $('[data-lane] .photo img').remove();
         for (var i = 0; i < racers.length; ++i) {
           var r = racers[i];
-          var lane = r.getAttribute('lane');
+          var lane = r.lane;
           $('[data-lane="' + lane + '"] .lane').text(lane);
           $('[data-lane="' + lane + '"] .name').html('<div></div>');
-          $('[data-lane="' + lane + '"] .name div').text(r.getAttribute('name'));
-          if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
+          $('[data-lane="' + lane + '"] .name div').text(r.name);
+          if (r.hasOwnProperty('photo') && r.photo != '') {
             $('[data-lane="' + lane + '"] .photo').html(
               $('<img/>')
-                .attr('src', r.getAttribute('photo'))
+                .attr('src', r.photo)
                 .css('max-height', row_height)
             );
           }
 
-          if (r.hasAttribute('carname') && r.getAttribute('carname') != '') {
+          if (r.hasOwnProperty('carname') && r.carname != '') {
             $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
-            $('#carname-' + lane).text('"' + r.getAttribute('carname') + '"');
+            $('#carname-' + lane).text('"' + r.carname + '"');
           }
-          if (r.hasAttribute('subgroup')) {
+          if (r.hasOwnProperty('subgroup')) {
             $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
-            $('#subgroup-' + lane).text(r.getAttribute('subgroup'));
+            $('#subgroup-' + lane).text(r.subgroup);
           }
 
-          $('[data-lane="' + lane + '"] .carnumber').text(r.getAttribute('carnumber'));
+          $('[data-lane="' + lane + '"] .carnumber').text(r.carnumber);
         }
       } else if (racers.length > 0) {
 
         // Same heat, but possibly updated photo paths
         for (var i = 0; i < racers.length; ++i) {
           var r = racers[i];
-          var lane = r.getAttribute('lane');
-          if (r.hasAttribute('photo') && r.getAttribute('photo') != '') {
+          var lane = r.lane;
+          if (r.hasOwnProperty('photo') && r.photo != '') {
             if ($('[data-lane="' + lane + '"] .photo img').length == 0) {
               // A window resize, below, may have removed the <img/> element on an interim basis
               $('[data-lane="' + lane + '"] .photo').html(
                 $('<img/>')
-                  .attr('src', r.getAttribute('photo'))
+                  .attr('src', r.photo)
                   .css('max-height', row_height)
               );
             }
-            if (r.getAttribute('photo') != $('[data-lane="' + lane + '"] .photo img').attr('src')) {
-              $('[data-lane="' + lane + '"] .photo img').attr('src', r.getAttribute('photo'));
+            if (r.photo != $('[data-lane="' + lane + '"] .photo img').attr('src')) {
+              $('[data-lane="' + lane + '"] .photo img').attr('src', r.photo);
             }
           } else {
             $('[data-lane="' + lane + '"] .photo').empty();
@@ -322,7 +322,7 @@ var Poller = {
       this.time_of_last_request = (new Date()).valueOf();
       $.ajax('action.php',
              {type: 'GET',
-              data: {query: 'poll.now-racing',
+              data: {query: 'json.poll.now-racing',
                      roundid: roundid,
                      heat: heat,
                      'row-height': row_height},
@@ -349,35 +349,32 @@ var Poller = {
   }
 };
 
-// See ajax/query.poll.now-racing.inc for XML format
-
 // Processes the top-level <now-racing> element.
 //
-// Walks through each of the <heat-result lane= time= place= speed=> elements,
+// Walks through each of the heat-result {lane= time= place= speed=} elements,
 // in order, building a mapping from the reported place to the matching lane.
 //
-
 function process_polling_result(now_racing, row_height) {
-  var heat_results = now_racing.getElementsByTagName("heat-result");
+  var heat_results = now_racing["heat-results"];
   if (heat_results.length > 0) {
     var place_to_lane = new Array();  // place => lane
     for (var i = 0; i < heat_results.length; ++i) {
       var hr = heat_results[i];
-      var lane = hr.getAttribute('lane');
-      var place = hr.getAttribute('place');
+      var lane = hr.lane;
+      var place = hr.place;
       place_to_lane[parseInt(place)] = lane;
 
       $('[data-lane="' + lane + '"] .time')
         .css({opacity: 100})
-        .text(hr.getAttribute('time'));
+        .text(hr.time);
       if (FlyerAnimation.ok_to_animate) {
         $('[data-lane="' + lane + '"] .place').css({opacity: 0});
       }
       $('[data-lane="' + lane + '"] .place span').text(place);
-      if (hr.getAttribute('speed') != '') {
+      if (hr.speed != '') {
         $('[data-lane="' + lane + '"] .speed')
           .css({opacity: 100})
-          .text(hr.getAttribute('speed'));
+          .text(hr.speed);
       }
     }
 

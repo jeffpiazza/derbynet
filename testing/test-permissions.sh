@@ -50,7 +50,7 @@ curl_get "action.php?query=kiosk.poll" > /dev/null
 curl_get "action.php?query=poll.kiosk.all" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=poll.ondeck" > /dev/null
-curl_get "action.php?query=poll.now-racing" > /dev/null
+curl_getj "action.php?query=json.poll.now-racing" > /dev/null
 
 cat >coordinator.index.tmp <<EOF
           <a class="button_link before_button" href="setup.php">Set-Up</a>
