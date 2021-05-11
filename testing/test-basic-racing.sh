@@ -50,13 +50,13 @@ run_heat 2 2 2.9945 3.4571 2.1867 2.3447
 
 user_login_coordinator
 curl_getj "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
-curl_post action.php "action=heat.rerun&heat=last" | check_success
+curl_postj action.php "action=json.heat.rerun&heat=last" | check_jsuccess
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.["last-heat"] == "recoverable" and 
         (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
     expect_eq true
 
-curl_post action.php "action=heat.reinstate" | grep last-heat | expect_one none
+curl_postj action.php "action=json.heat.reinstate" | grep last-heat | expect_one none
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.racers |
         all((.finishtime == "2.994" and (.name | test("Darrell.*"))) or 

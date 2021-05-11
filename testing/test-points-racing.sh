@@ -45,7 +45,7 @@ curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>5</td>"
 curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
 curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
 curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
-curl_post action.php "action=heat.rerun&heat=last" | check_success
+curl_postj action.php "action=json.heat.rerun&heat=last" | check_jsuccess
 user_login_timer
 
 # Now re-run with a tie for first place
@@ -56,7 +56,7 @@ curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
 curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
 curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>11</td>"
 curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
-curl_post action.php "action=heat.rerun&heat=last" | check_success
+curl_postj action.php "action=json.heat.rerun&heat=last" | check_jsuccess
 user_login_timer
 
 # Finally, re-run the heat again, now with four good times:
@@ -74,13 +74,13 @@ run_heat_place 1 4   4 1 2 3
 
 user_login_coordinator
 curl_getj "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
-curl_post action.php "action=heat.rerun&heat=last" | check_success
+curl_postj action.php "action=json.heat.rerun&heat=last" | check_jsuccess
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.["last-heat"] == "recoverable" and 
         (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
     expect_eq true
 
-curl_post action.php "action=heat.reinstate" | grep 'last[_-]heat' | expect_one none
+curl_postj action.php "action=json.heat.reinstate" | grep 'last[_-]heat' | expect_one none
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.racers | 
         all((.finishplace==1 and (.name | test("Adolfo.*"))) or 

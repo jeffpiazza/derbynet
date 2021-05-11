@@ -77,15 +77,15 @@ function handle_rerun(button) {
   if (rerun_type == 'current' || rerun_type == 'available') {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.rerun',
+            data: {action: 'json.heat.rerun',
                    heat: rerun_type == 'current' ? 'current' : 'last'},
-            success: function(data) { process_coordinator_poll_response(data); }
+            success: function(data) { process_coordinator_poll_json(data); }
            });
   } else if (rerun_type = 'recoverable') {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'heat.reinstate'},
-            success: function(data) { process_coordinator_poll_response(data); }
+            data: {action: 'json.heat.reinstate'},
+            success: function(data) { process_coordinator_poll_json(data); }
            });
   }
 }
