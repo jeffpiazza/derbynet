@@ -252,9 +252,9 @@ function handle_delete_round_button(roundid, classname, round) {
         close_modal("#delete_round_modal");
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'roster.delete',
+                data: {action: 'json.roster.delete',
                        roundid: roundid},
-                success: function(data) { process_coordinator_poll_response(data); }
+                success: function(data) { process_coordinator_poll_json(data); }
                });
         return false;
     });

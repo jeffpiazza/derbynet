@@ -58,7 +58,7 @@ jq -e '.finalists | map(select(.racerid == 41)) | length' $RANK_FINAL | expect_e
 jq -e '.finalists | map(select(.racerid == 36)) | length' $RANK_FINAL | expect_eq 1
 jq -e '.finalists | map(select(.racerid == 21)) | length' $RANK_FINAL | expect_eq 1
 
-curl_post action.php "action=roster.delete&roundid=6" | check_success
+curl_postj action.php "action=json.roster.delete&roundid=6" | check_jsuccess
 # Deleting the round (by deleting its roster) seems to leave roundid=6 available
 # for the next 'roster.new' operation, below.
 

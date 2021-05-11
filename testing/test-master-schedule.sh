@@ -161,7 +161,7 @@ curl_get "action.php?query=class.list" | expect_one 'Grand Finals'
 # Unschedule and remove Grand Finals round
 curl_post action.php "action=result.delete&roundid=8&heat=1" | check_success
 curl_post action.php "action=schedule.unschedule&roundid=8" | check_success
-curl_post action.php "action=roster.delete&roundid=8" | check_success
+curl_postj action.php "action=json.roster.delete&roundid=8" | check_jsuccess
 
 curl_get "action.php?query=class.list" | expect_count 'Grand Finals' 0
 curl_get "action.php?query=class.list" | expect_count 'classid=.8.' 0

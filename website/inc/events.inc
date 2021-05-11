@@ -143,7 +143,7 @@ function record_event_delete_round($classid, $roundid) {
   }
 
   record_event_sql('INSERT INTO Events(tstamp, action, roundid, classid, other)'
-                   .' VALUE('.dbnow_expr().', :action, :roundid, :classid, :other)',
+                   .' VALUES('.dbnow_expr().', :action, :roundid, :classid, :other)',
                    array(':action' => EVENT_ROUND_DELETED,
                          ':roundid' => $roundid,
                          ':classid' => $classid,
