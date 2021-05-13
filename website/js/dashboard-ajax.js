@@ -11,27 +11,36 @@ $(window).bind("beforeunload", function() { g_unloading = true; });
 
 // Note that this doesn't run if the $.ajax call has a 'success:' callback that
 // generates an error.
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+$(document).ajaxSuccess(function(event, xhr, options, data) {
   for (var i = 0; i < options.dataTypes.length; ++i) {
     if (options.dataTypes[i] == 'json') {
+      if (data.hasOwnProperty('outcome') && data.outcome.hasOwnProperty('summary')
+          && data.outcome.summary == 'failure') {
+        console.log(data);
+        alert("Action failed: " + data.outcome.description);
+      }
       return;
     }
   }
-  var fail = xmldoc.documentElement.getElementsByTagName("failure");
+  var fail = data.documentElement.getElementsByTagName("failure");
   if (fail && fail.length > 0) {
-    console.log(xmldoc);
+    console.log(data);
     alert("Action failed: " + fail[0].textContent);
   }
 });
 
 // <reload/> element
-$(document).ajaxSuccess(function(event, xhr, options, xmldoc) {
+$(document).ajaxSuccess(function(event, xhr, options, data) {
   for (var i = 0; i < options.dataTypes.length; ++i) {
     if (options.dataTypes[i] == 'json') {
+      if (data.hasOwnProperty('reload') && data.reload) {
+        console.log(data);
+        location.reload(true);
+      }
       return;
     }
   }
-	var reload = xmldoc.documentElement.getElementsByTagName("reload");
+	var reload = data.documentElement.getElementsByTagName("reload");
 	if (reload && reload.length > 0) {
         console.log('ajaxSuccess event: reloading page');
 		location.reload(true);

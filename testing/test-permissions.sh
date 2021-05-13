@@ -40,7 +40,7 @@ curl_post action.php "action=schedule.reschedule" | check_failure
 curl_postj action.php "action=json.schedule.generate" | check_jfailure
 curl_postj action.php "action=json.heat.select" | check_jfailure
 curl_post action.php "action=timer-message" | check_failure
-curl_post action.php "action=award.xbs" | check_failure
+curl_postj action.php "action=json.award.xbs" | check_jfailure
 
 # Queries don't answer "<success/>" or "<failure/>", so there's really
 # nothing to check other than that they parse as XML.

@@ -59,7 +59,7 @@ function handlechange_xbs(cb) {
 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'award.xbs',
+            data: {action: 'json.award.xbs',
                    racer: racer,
                    value: value},
            });

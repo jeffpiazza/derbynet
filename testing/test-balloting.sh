@@ -11,11 +11,11 @@ user_login_coordinator
 `dirname $0`/import-roster.sh "$BASE_URL"
 curl_post action.php "action=racer.bulk&what=checkin&who=all" | check_success
 
-curl_post action.php "action=award.import&awardname=Best%20in%20Show&awardtype=Design%20Trophy" | check_success
-curl_post action.php "action=award.import&awardname=Consolation%20Prize&awardtype=Design%20Trophy" | check_success
-curl_post action.php "action=award.import&awardname=Sore%20Loser&awardtype=Design%20Trophy" | check_success
+curl_postj action.php "action=json.award.import&awardname=Best%20in%20Show&awardtype=Design%20Trophy" | check_jsuccess
+curl_postj action.php "action=json.award.import&awardname=Consolation%20Prize&awardtype=Design%20Trophy" | check_jsuccess
+curl_postj action.php "action=json.award.import&awardname=Sore%20Loser&awardtype=Design%20Trophy" | check_jsuccess
 
-curl_post action.php "action=award.import&awardname=Best%20Wolf&classname=White's%20Wolves&awardtype=Design%20Trophy" | check_success
+curl_postj action.php "action=json.award.import&awardname=Best%20Wolf&classname=White's%20Wolves&awardtype=Design%20Trophy" | check_jsuccess
 
 
 # awardid 1 : Best in Show

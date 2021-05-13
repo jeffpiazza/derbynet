@@ -391,21 +391,36 @@ function uploadTableRowsFrom(row, action, parameter_names, failures) {
            {type: 'POST',
             data: params,
             global: false,  // Be sure that a failure doesn't present a modal alert
-            success: function(xmldoc) {
-              var ok = xmldoc.documentElement.getElementsByTagName("success");
-              if (ok && ok.length > 0) {
-                $('[data-row="' + row + '"] th').append('<span class="ok_outcome">OK</span>');
-                var warning = xmldoc.documentElement.getElementsByTagName("warning");
-                if (warning && warning.length > 0) {
-                  $('<span class="warning"></span>').appendTo('[data-row="' + row + '"] th')
-                    .text(warning[0].childNodes[0].nodeValue);
+            success: function(data) {
+              if (action.includes('json')) {
+                if (data.outcome.summary == 'success') {
+                  $('[data-row="' + row + '"] th').append('<span class="ok_outcome">OK</span>');
+                  if (data.hasOwnProperty('warning')) {
+                    $('<span class="warning"></span>')
+                      .appendTo('[data-row="' + row + '"] th')
+                      .text(data.warning);
+                  }
+                } else {
+                  ++failures;
+                  $('[data-row="' + row + '"] th').append('<span class="failed_outcome">FAILED </span>');
+                  $('[data-row="' + row + '"] th').append(data.outcome.description);
                 }
               } else {
-                ++failures;
-                $('[data-row="' + row + '"] th').append('<span class="failed_outcome">FAILED </span>');
-                var fail = xmldoc.documentElement.getElementsByTagName("failure");
-                if (fail && fail.length > 0) {
-                  $('[data-row="' + row + '"] th').append(fail[0].childNodes[0].nodeValue);
+                var ok = data.documentElement.getElementsByTagName("success");
+                if (ok && ok.length > 0) {
+                  $('[data-row="' + row + '"] th').append('<span class="ok_outcome">OK</span>');
+                  var warning = data.documentElement.getElementsByTagName("warning");
+                  if (warning && warning.length > 0) {
+                    $('<span class="warning"></span>').appendTo('[data-row="' + row + '"] th')
+                      .text(warning[0].childNodes[0].nodeValue);
+                  }
+                } else {
+                  ++failures;
+                  $('[data-row="' + row + '"] th').append('<span class="failed_outcome">FAILED </span>');
+                  var fail = data.documentElement.getElementsByTagName("failure");
+                  if (fail && fail.length > 0) {
+                    $('[data-row="' + row + '"] th').append(fail[0].childNodes[0].nodeValue);
+                  }
                 }
               }
               uploadTableRowsFrom(row + 1, action, parameter_names, failures);

@@ -37,25 +37,6 @@ function describe_sql_short($sql, &$params) {
 
 function take_action_silently($sql, $params) {
   global $db;
-  if (false) {  // Turn this on for debugging actions gone wrong.  Best to make
-                // sure there's a CheckinAudit table in that case.
-    $log_sql = describe_sql_short($sql, $params);
-
-    try {
-      $stmt = $db->prepare('INSERT INTO CheckinAudit(tstamp, stmt) VALUES('.dbnow_expr().', :logsql)');
-      @$stmt->execute(array(':logsql' => $log_sql));
-    } catch (PDOException $p) {
-      echo '<audit-failed>'.$log_sql.'</audit-failed>'."\n";  // TODO
-      // What to do here?  Most likely it's a GPRM database that just doesn't have
-      // an audit table.  We could try to create the table and try again, but the
-      // risk seems to outweigh the benefit.
-      //
-      // if (is_no_such_table_exception($p)) {
-      //   run_sql_script('audit-table');
-      // }
-    }
-  }
-
   $stmt = $db->prepare($sql);
   // This retry loop is to overcome a suspected SQLITE_BUSY or SQLITE_LOCKED
   // condition, should it arise.
@@ -98,15 +79,6 @@ function not_authorized() {
 	start_response();
 	not_authorized_body();
 	end_response();
-}
-
-
-function take_action_if_permitted($sql, $params, $permission, $body_xml = '') {
-	if (have_permission($permission)) {
-		take_action($sql, $params, $body_xml);
-	} else {
-		not_authorized();
-	}
 }
 
 ?>

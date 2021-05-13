@@ -149,10 +149,10 @@ curl_get "action.php?query=standings.reveal" | expect_one '<catalog-entry json="
 
 # Rank-specific awards:
 
-curl_post action.php "action=award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_success
-curl_post action.php "action=award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_success
-curl_post action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_success
-curl_post action.php "action=award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_failure
+curl_postj action.php "action=json.award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_jsuccess
+curl_postj action.php "action=json.award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=json.award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_jsuccess
+curl_postj action.php "action=json.award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_jfailure
 
 curl_postj action.php "action=json.award.winner&awardid=1&racerid=2" | check_jfailure
 curl_postj action.php "action=json.award.winner&awardid=1&racerid=1" | check_jsuccess
