@@ -18,7 +18,7 @@ function onFileContentLoaded(file) {
 
 $(function() {
   $('#import_button').click(function() {
-    uploadTableRowsWithParameters('result.import',
+    uploadTableRowsWithParameters('json.result.import',
                                   ['class', 'round', 'heat', 'lane', 'firstname', 'lastname', 'carnumber',
                                    'finishtime', 'finishplace', 'completed']);
   });
