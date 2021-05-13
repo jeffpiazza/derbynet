@@ -4,9 +4,8 @@
 // <n> is the sequential order, e.g. the value of $_POST['awardid_1'] is the awardid which
 // should have sort=1
 
-require_once('inc/awards-xml.inc');
-
-start_response();
+require_once('inc/json-awards.inc');
+require_once('inc/json-classes.inc');
 
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
   foreach ($_POST as $key => $val) {
@@ -16,11 +15,9 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
                            ':awardid' => $val));
     }
   }
-  echo "<success/>\n";
-  emit_award_list(/* include_ad_hoc */ false);
+  json_success();
+  json_out_awards(false);
 } else {
-  echo "<failure code='permission'>Not authorized</failure>\n";
+  json_not_authorized();
 }
-
-end_response();
 ?>

@@ -154,19 +154,19 @@ curl_post action.php "action=award.import&awardname=Most%20Tigerific&awardtype=O
 curl_post action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_success
 curl_post action.php "action=award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_failure
 
-curl_post action.php "action=award.winner&awardid=1&racerid=2" | check_failure
-curl_post action.php "action=award.winner&awardid=1&racerid=1" | check_success
+curl_postj action.php "action=json.award.winner&awardid=1&racerid=2" | check_jfailure
+curl_postj action.php "action=json.award.winner&awardid=1&racerid=1" | check_jsuccess
 
 curl_post action.php "action=settings.write&n-rank-trophies=3" | check_success
 
-curl_post action.php "action=award.present&key=speed-3-1-2" | check_success
-curl_get "action.php?query=award.current" | expect_one '3rd Fastest in Tigers'
-curl_get "action.php?query=award.current" | expect_one Thanh
+curl_postj action.php "action=json.award.present&key=speed-3-1-2" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in Tigers'
+curl_getj "action.php?query=json.award.current" | expect_one Thanh
 
-curl_post action.php "action=award.present&key=speed-3-1" | check_success
-curl_get "action.php?query=award.current" | expect_one '3rd Fastest in ThePack'
-curl_get "action.php?query=award.current" | expect_one Jefferys
+curl_postj action.php "action=json.award.present&key=speed-3-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in ThePack'
+curl_getj "action.php?query=json.award.current" | expect_one Jefferys
 
-curl_post action.php "action=award.present&key=speed-3" | check_success
-curl_get "action.php?query=award.current" | expect_one '3rd Fastest in Pack'
-curl_get "action.php?query=award.current" | expect_one Jefferys
+curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in Pack'
+curl_getj "action.php?query=json.award.current" | expect_one Jefferys

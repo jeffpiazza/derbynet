@@ -145,7 +145,7 @@ foreach ($db->query($sql) as $rs) {
   </ul>
 
   <form id="racer_awards_form">
-    <input type="hidden" name="action" value="award.adhoc"/>
+    <input type="hidden" name="action" value="json.award.adhoc"/>
     <input type="hidden" name="racerid" value="" id="racer_awards_racerid"/>
     <label for="awardname"><i>Ad hoc</i> award:</label>
     <input type="text" name="awardname" id="racer_awards_awardname"/>

@@ -142,23 +142,23 @@ run_heat 5 4 2.7886 3.5121 3.8979 2.0171   x
 
 user_login_coordinator
 
-curl_post action.php "action=award.present&key=speed-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Elliot
-curl_post action.php "action=award.present&key=speed-2" | check_success
-curl_get "action.php?query=award.current" | expect_one Kris
-curl_post action.php "action=award.present&key=speed-3" | check_success
-curl_get "action.php?query=award.current" | expect_one Blake
+curl_postj action.php "action=json.award.present&key=speed-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Elliot
+curl_postj action.php "action=json.award.present&key=speed-2" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Kris
+curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Blake
 
-curl_post action.php "action=award.present&key=speed-1-4" | check_success
-curl_get "action.php?query=award.current" | expect_one Kaba
-curl_post action.php "action=award.present&key=speed-2-4" | check_success
-curl_get "action.php?query=award.current" | expect_one Zuzu
-curl_post action.php "action=award.present&key=speed-3-4" | check_success
-curl_get "action.php?query=award.current" | expect_one Byron
+curl_postj action.php "action=json.award.present&key=speed-1-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Kaba
+curl_postj action.php "action=json.award.present&key=speed-2-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Zuzu
+curl_postj action.php "action=json.award.present&key=speed-3-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Byron
 
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
-curl_post action.php "action=award.present&key=speed-2-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Asher
+curl_postj action.php "action=json.award.present&key=speed-2-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Asher
 
 # Issue#87: make sure the awards presentation page populates for speed awards
 curl_get awards-presentation.php | expect_one "<option data-classid=.1.>Lions &amp; Tigers</option>"
@@ -169,17 +169,17 @@ curl_post action.php "action=settings.write&one-trophy-per=1&one-trophy-per-chec
 # five 3rd-place trophies in this case.
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 5
 
-curl_post action.php "action=award.present&key=speed-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Elliot
-curl_post action.php "action=award.present&key=speed-2" | check_success
-curl_get "action.php?query=award.current" | expect_one Kris
-curl_post action.php "action=award.present&key=speed-3" | check_success
-curl_get "action.php?query=award.current" | expect_one Blake
+curl_postj action.php "action=json.award.present&key=speed-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Elliot
+curl_postj action.php "action=json.award.present&key=speed-2" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Kris
+curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Blake
 
-curl_post action.php "action=award.present&key=speed-1-4" | check_success
-curl_get "action.php?query=award.current" | expect_one Zuzu
-curl_post action.php "action=award.present&key=speed-2-4" | check_success
-curl_get "action.php?query=award.current" | expect_one Byron
+curl_postj action.php "action=json.award.present&key=speed-1-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Zuzu
+curl_postj action.php "action=json.award.present&key=speed-2-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Byron
 
 # Issue#97: confirm lane bias calculation isn't broken
 curl_get history.php | expect_one "<td>1.757 sample variance.</td>"

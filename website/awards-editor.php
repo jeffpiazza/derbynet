@@ -64,7 +64,7 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 <div id="award_editor_modal" class="modal_dialog hidden block_buttons">
   <form id="award_editor_form">
-    <input type="hidden" name="action" value="award.edit"/>
+    <input type="hidden" name="action" value="json.award.edit"/>
     <input type="hidden" name="awardid" value=""/>
     <label for="name">Award Name:</label>
     <input name="name" type="text"/>

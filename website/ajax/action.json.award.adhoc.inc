@@ -1,6 +1,6 @@
 <?php
 
-require_once('inc/awards-xml.inc');
+require_once('inc/json-awards.inc');
 
 // $_POST['racerid']
 // $_POST['awardname']
@@ -8,8 +8,6 @@ require_once('inc/awards-xml.inc');
 // If awardname is blank, any ad hoc award for this racer is removed.
 
 if (have_permission(JUDGING_PERMISSION)) {
-  start_response();
-
   // Remove old award, if any
   $stmt = $db->prepare("DELETE FROM Awards WHERE awardtypeid = (SELECT awardtypeid FROM AwardTypes WHERE awardtype = 'Ad Hoc')"
                        ." AND racerid = :racerid");
@@ -34,11 +32,9 @@ if (have_permission(JUDGING_PERMISSION)) {
                          ':awardname' => $_POST['awardname']));
   }
 
-  echo "<success/>\n";
-  emit_award_list(/* include_ad_hoc */ true);
-
-  end_response();
+  json_success();
+  json_out_awards(true);
 } else {
-  not_authorized();
+  json_not_authorized();
 }
 ?>

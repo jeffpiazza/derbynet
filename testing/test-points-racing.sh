@@ -111,8 +111,8 @@ run_heat_place 1 5   2 1 4 3  x
 # 131         Felton         Fouche      16                 4
 
 user_login_coordinator
-curl_post action.php "action=award.present&key=speed-2-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Asher
+curl_postj action.php "action=json.award.present&key=speed-2-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Asher
 
 curl_get "action.php?query=poll.ondeck" | grep 'resultid="1"' | expect_one 'result="2nd"'
 curl_get "action.php?query=poll.ondeck" | grep 'resultid="4"' | expect_one 'result="1st"'
@@ -140,33 +140,33 @@ curl_text "export.php" | sed -n -e '/START_JSON/,/END_JSON/ p' | tail -2 | head 
     expect_one '[5,"131","Felton Fouche","","Lions \u0026 Tigers",5,"4","4","4th","4th"]'
 
 # award presentation when there's a tie for 3rd
-curl_post action.php "action=award.present&key=speed-3a-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Derick
-curl_post action.php "action=award.present&key=speed-3b-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Jesse
+curl_postj action.php "action=json.award.present&key=speed-3a-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Derick
+curl_postj action.php "action=json.award.present&key=speed-3b-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Jesse
 
 # There are only two tied for 3rd place, not a third
-curl_post action.php "action=award.present&key=speed-3c-1" | check_success
-curl_get "action.php?query=award.current" | expect_count '<award ' 0
+curl_postj action.php "action=json.award.present&key=speed-3c-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
 
 # There's no fourth place when there's a tie for 3rd
-curl_post action.php "action=award.present&key=speed-4-1" | check_success
-curl_get "action.php?query=award.current" | expect_count '<award ' 0
+curl_postj action.php "action=json.award.present&key=speed-4-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
 
 # One-trophy-per-racer means Felton takes 1st place in Lions
 curl_post action.php "action=settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_success
-curl_post action.php "action=award.present&key=speed-3a" | check_success
-curl_get "action.php?query=award.current" | expect_one Derick
-curl_post action.php "action=award.present&key=speed-3b" | check_success
-curl_get "action.php?query=award.current" | expect_one Jesse
-curl_post action.php "action=award.present&key=speed-3c" | check_success
-curl_get "action.php?query=award.current" | expect_count '<award ' 0
-curl_post action.php "action=award.present&key=speed-4" | check_success
-curl_get "action.php?query=award.current" | expect_count '<award ' 0
-curl_post action.php "action=award.present&key=speed-1-1" | check_success
-curl_get "action.php?query=award.current" | expect_one Felton
-curl_post action.php "action=award.present&key=speed-2-1" | check_success
-curl_get "action.php?query=award.current" | expect_count '<award ' 0
+curl_postj action.php "action=json.award.present&key=speed-3a" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Derick
+curl_postj action.php "action=json.award.present&key=speed-3b" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Jesse
+curl_postj action.php "action=json.award.present&key=speed-3c" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
+curl_postj action.php "action=json.award.present&key=speed-4" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
+curl_postj action.php "action=json.award.present&key=speed-1-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | expect_one Felton
+curl_postj action.php "action=json.award.present&key=speed-2-1" | check_jsuccess
+curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
 
 
 # Generate a next round of top 3, where there's a tie for third -- take 4 finalists

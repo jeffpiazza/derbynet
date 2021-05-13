@@ -10,8 +10,6 @@
 
 // If present, $_POST['reveal'] is 0 or 1
 
-start_response();
-
 require_once('inc/photo-config.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
@@ -28,11 +26,9 @@ if (have_permission(PRESENT_AWARDS_PERMISSION)) {
     $successful = true;
   }
   if ($successful) {
-    echo "<success/>\n";
+    json_success();
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

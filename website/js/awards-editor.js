@@ -1,39 +1,38 @@
 // TODO Ordering in the face of speed trophies?
 
-function awardtypeid_to_awardtype(awardtypeid, dataxml) {
-  var types = dataxml.getElementsByTagName('awardtype');
-  for (var i = 0; i < types.length; ++i) {
-    if (types[i].getAttribute("awardtypeid") == awardtypeid) {
-      return types[i].getAttribute("awardtype");
+function awardtypeid_to_awardtype(awardtypeid, awardtypes) {
+  for (var i = 0; i < awardtypes.length; ++i) {
+    if (awardtypes[i].awardtypeid == awardtypeid) {
+      return awardtypes[i].awardtype;
     }
   }
   return "Can't resolve awardtypeid " + awardtypeid;
 }
 
-function classid_to_class(classid, dataxml) {
+function classid_to_class(classid, classes) {
   if (classid == 0) return "";
-  var types = dataxml.getElementsByTagName('class');
-  for (var i = 0; i < types.length; ++i) {
-    if (types[i].getAttribute("classid") == classid) {
-      return types[i].getAttribute("name");
+  for (var i = 0; i < classes.length; ++i) {
+    if (classes[i].classid == classid) {
+      return classes[i].name;
     }
   }
   return "Can't resolve classid " + classid;
 }
 
-function rankid_to_rank(rankid, dataxml) {
+function rankid_to_rank(rankid, classes) {
   if (rankid == 0) return "";
-  var types = dataxml.getElementsByTagName('rank');
-  for (var i = 0; i < types.length; ++i) {
-    if (types[i].getAttribute("rankid") == rankid) {
-      return types[i].getAttribute("name");
+  for (var i = 0; i < classes.length; ++i) {
+    for (var j = 0; j < classes[i].subgroups.length; ++j) {
+      if (classes[i].subgroups[j].rankid == rankid) {
+        return classes[i].subgroups[j].name;
+      }
     }
   }
   return "Can't resolve rankid " + rankid;
 }
 
-function update_awards(dataxml) {
-  var awards = dataxml.getElementsByTagName('award');
+function update_awards(data) {
+  var awards = data.awards;
 
   if ($("#all_awards li").length < awards.length) {
     while ($("#all_awards li").length < awards.length) {
@@ -59,40 +58,39 @@ function update_awards(dataxml) {
     if (i >= awards.length) {
       $(this).remove();
     } else {
-      $(this).attr("data-awardid", awards[i].getAttribute("awardid"));
-      if ($(this).attr("data-awardname") != awards[i].getAttribute("awardname")) {
-        $(this).find('span.awardname').text(awards[i].getAttribute("awardname"));
-        $(this).attr("data-awardname", awards[i].getAttribute("awardname"));
+      $(this).attr("data-awardid", awards[i].awardid);
+      if ($(this).attr("data-awardname") != awards[i].awardname) {
+        $(this).find('span.awardname').text(awards[i].awardname);
+        $(this).attr("data-awardname", awards[i].awardname);
       }
-      if ($(this).attr("data-awardtypeid") != awards[i].getAttribute("awardtypeid")) {
-        $(this).attr("data-awardtypeid", awards[i].getAttribute("awardtypeid"));
+      if ($(this).attr("data-awardtypeid") != awards[i].awardtypeid) {
+        $(this).attr("data-awardtypeid", awards[i].awardtypeid);
         $(this).find('.awardtype').text(
-          awardtypeid_to_awardtype(awards[i].getAttribute("awardtypeid"), dataxml));
+          awardtypeid_to_awardtype(awards[i].awardtypeid, data['award-types']));
       }
 
-      if ($(this).attr("data-classid") != awards[i].getAttribute("classid")) {
-        $(this).attr("data-classid", awards[i].getAttribute("classid"));
-        var classname = classid_to_class(awards[i].getAttribute("classid"), dataxml);
+      if ($(this).attr("data-classid") != awards[i].classid) {
+        $(this).attr("data-classid", awards[i].classid);
+        var classname = classid_to_class(awards[i].classid, data.classes);
         $(this).attr("data-class", classname);
         $(this).find('.classname').text(classname);
       }
       
-      if ($(this).attr("data-rankid") != awards[i].getAttribute("rankid")) {
-        var rankid = awards[i].getAttribute("rankid");
+      if ($(this).attr("data-rankid") != awards[i].rankid) {
+        var rankid = awards[i].rankid;
         $(this).attr("data-rankid", rankid);
-        var rankname = rankid_to_rank(rankid, dataxml);
+        var rankname = rankid_to_rank(rankid, data.classes);
         $(this).attr("data-rank", rankname);
         if (rankid != 0) {
           $(this).find('.rankname').text(rankname + ', ');
         }
       }
 
-      if ($(this).attr("data-racerid") != awards[i].getAttribute("racerid")) {
-        $(this).attr("data-racerid", awards[i].getAttribute("racerid"));
+      if ($(this).attr("data-racerid") != awards[i].racerid) {
+        $(this).attr("data-racerid", awards[i].racerid);
         $(this).find('.recipient')
           .empty()
-          .text(awards[i].getAttribute("firstname") + " " +
-                awards[i].getAttribute("lastname"));
+          .text(awards[i].firstname + " " + awards[i].lastname);
       }
     }
   });
@@ -109,6 +107,7 @@ function handle_new_award() {
     close_modal('#award_editor_modal');
     $.ajax(g_action_url,
            {type: 'POST',
+            // json.award.edit
             data: $('#award_editor_form').serialize(),
             success: function(data) {
               update_awards(data);
@@ -135,6 +134,7 @@ function handle_edit_award(list_item) {
     close_modal('#award_editor_modal');
     $.ajax(g_action_url,
            {type: 'POST',
+            // json.award.edit
             data: $('#award_editor_form').serialize(),
             success: function(data) {
               update_awards(data);
@@ -149,7 +149,7 @@ function handle_delete_award() {
   if (confirm('Really delete award "' + $('#award_editor_form input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'award.delete',
+            data: {action: 'json.award.delete',
                    awardid: $('#award_editor_form input[name="awardid"]').val()},
             success: function(data) {
               update_awards(data);
@@ -161,7 +161,7 @@ function handle_delete_award() {
 
 $(function() {
   $("#all_awards").sortable({stop: function(event, ui) {
-    var data = {action: 'award.order'};
+    var data = {action: 'json.award.order'};
     $("#all_awards li").each(function (i) {
       data['awardid_' + (i + 1)] = $(this).attr('data-awardid');
     });
@@ -178,7 +178,7 @@ $(function() {
   // TODO Poll on this, not just this one time
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'award.list',
+          data: {query: 'json.award.list',
                  adhoc: '0'},
           success: function(data) {
             update_awards(data);

@@ -23,11 +23,11 @@ curl_post action.php "action=award.import&awardname=Best%20Wolf&classname=White'
 # awardid 3 : Sore Loser
 # awardid 4 : Best Wolf
 
-curl_post action.php "action=award.edit&awardid=1&sort=1&ballot_depth=3" | check_success
-curl_post action.php "action=award.edit&awardid=2&ballot_depth=3" | check_success
-curl_post action.php "action=award.edit&awardid=2&ballot_depth=0" | check_success
-curl_post action.php "action=award.edit&awardid=3&sort=2&ballot_depth=2" | check_success
-curl_post action.php "action=award.edit&awardid=4&sort=3&ballot_depth=1" | check_success
+curl_postj action.php "action=json.award.edit&awardid=1&sort=1&ballot_depth=3" | check_jsuccess
+curl_postj action.php "action=json.award.edit&awardid=2&ballot_depth=3" | check_jsuccess
+curl_postj action.php "action=json.award.edit&awardid=2&ballot_depth=0" | check_jsuccess
+curl_postj action.php "action=json.award.edit&awardid=3&sort=2&ballot_depth=2" | check_jsuccess
+curl_postj action.php "action=json.award.edit&awardid=4&sort=3&ballot_depth=1" | check_jsuccess
 
 # Voting not yet open
 curl_post action.php "action=vote.cast&awardid=3&votes=[12,36]" | check_failure

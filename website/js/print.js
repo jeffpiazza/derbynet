@@ -109,8 +109,8 @@ function process_racer_list(data) {
 // Returns a table mapping awardtypeid's (as strings) to awardtype names
 function make_award_types(data) {
   var awardtypes = {};
-  $.each(data.getElementsByTagName('awardtype'), function(index, awardtype) {
-    awardtypes[awardtype.getAttribute('awardtypeid')] = awardtype.getAttribute('awardtype');
+  $.each(data['award-types'], function(index, awardtype) {
+    awardtypes[awardtype.awardtypeid] = awardtype.awardtype;
   });
   return awardtypes;
 }
@@ -120,11 +120,11 @@ function make_award_types(data) {
 //   'r' + rankid -> rank name
 function make_classes_and_ranks(data) {
   var classes_and_ranks = {};
-  $.each(data.getElementsByTagName('class'), function(index, cl) {
-    classes_and_ranks['c' + cl.getAttribute('classid')] = cl.getAttribute('name');
-  });
-  $.each(data.getElementsByTagName('rank'), function(index, rank) {
-    classes_and_ranks['r' + rank.getAttribute('rankid')] = rank.getAttribute('name');
+  $.each(data.classes, function(index, cl) {
+    classes_and_ranks['c' + cl.classid] = cl.name;
+    $.each(cl.subgroups, function(index, rank) {
+      classes_and_ranks['r' + rank.rankid] = rank.name;
+    });
   });
   return classes_and_ranks;
 }
@@ -132,10 +132,9 @@ function make_classes_and_ranks(data) {
 function process_award_list(data) {
   var awardtypes = make_award_types(data);
   var classes_and_ranks = make_classes_and_ranks(data);
-  var awards = data.getElementsByTagName('award');
   var table = $("div#subject-awards table");
-  $.each(awards, function(index, award) {
-    var awardid = award.getAttribute('awardid');
+  $.each(data.awards, function(index, award) {
+    var awardid = award.awardid;
     var rows = table.find("tr");
     var tr;
     if (rows.length > index &&
@@ -161,11 +160,11 @@ function process_award_list(data) {
       $("<td></td>").appendTo(tr);  // Recipient
     }
     var cells = tr.find("td");
-    tr.find(".awardname").text(award.getAttribute('awardname'));
-    tr.find(".awardtype").text(awardtypes[award.getAttribute('awardtypeid')]);
-    tr.find(".classname").text(classes_and_ranks['c' + award.getAttribute('classid')]);
+    tr.find(".awardname").text(award.awardname);
+    tr.find(".awardtype").text(awardtypes[award.awardtypeid]);
+    tr.find(".classname").text(classes_and_ranks['c' + award.classid]);
     // TODO ranks
-    $(cells[3]).text(award.getAttribute('firstname') + ' ' + award.getAttribute('lastname'));
+    $(cells[3]).text(award.firstname + ' ' + award.lastname);
   });
 }
 
@@ -206,7 +205,7 @@ function poll() {
          });
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "award.list",
+          data: {query: "json.award.list",
                  adhoc: 1},
           success: function(data) {
             process_award_list(data);

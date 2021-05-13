@@ -9,12 +9,11 @@
   ballot_depth (0 for "remove from ballot")
 */
 
-require_once('inc/awards-xml.inc');
+require_once('inc/json-awards.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/voterid.inc');
 
 if (have_permission(EDIT_AWARDS_PERMISSION)) {
-  start_response();
   $awardid = $_POST['awardid'];
   if ($awardid == 'new') {
     $params = array(':awardname' => $_POST['name'],
@@ -93,7 +92,6 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
 
   try {
     if (!empty($sql)) {
-      echo '<sql>'.$sql.'</sql>'."\n";
       $stmt = $db->prepare($sql);
       $stmt->execute($params);
     }
@@ -108,14 +106,13 @@ if (have_permission(EDIT_AWARDS_PERMISSION)) {
       }
       set_ballot_depth($awardid, $_POST['ballot_depth']);
     }
-    
-    echo "<success/>\n";
-    emit_award_list(/* include_ad_hoc */ false);
+
+    json_success();
+    json_out_awards(false);
   } catch (Exception $e) {
-    echo "<failure code='sql'>".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')."</failure>\n";
+    json_failure('sql', $e->getMessage());
   }
-  end_response();
-} else {
-  not_authorized();
+ } else {
+  json_not_authorized();
 }
 ?>

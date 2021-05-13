@@ -144,7 +144,7 @@ while true ; do
   ########## Awards Presentations ##############
   curl_post action.php "action=kiosk.assign&all=kiosks/award-presentations.kiosk" | check_success
   sleep 6s
-  curl_post action.php "action=award.present&key=speed-1-1" | check_success
+  curl_postj action.php "action=json.award.present&key=speed-1-1" | check_jsuccess
   sleep 15s
 
   ########## DerbyNet ##############

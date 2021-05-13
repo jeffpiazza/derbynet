@@ -19,7 +19,7 @@ COOKIES_CURL="`dirname $0`/cookies.curl"
 function header() {
     echo '###################### ' `caller 1 | cut -f3 -d\ ` ' #######################'
 }
-header
+[ "$NOANNOUNCE" = "" ] && header
 
 function stacktrace() {
     while caller $((n++)); do :; done;
@@ -55,7 +55,7 @@ function curl_text() {
 }
 
 function curl_getj() {
-	echo ' ' ' ' ' ' $1 >&2
+	[ "$NOANNOUNCE" = "" ] && echo ' ' ' ' ' ' $1 >&2
 	echo    >> $OUTPUT_CURL
 	echo $1 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
@@ -73,7 +73,7 @@ function curl_post() {
 }
 
 function curl_postj() {
-	echo ' ' ' ' ' ' post $1 $2 >&2
+	[ "$NOANNOUNCE" = "" ] && echo ' ' ' ' ' ' post $1 $2 >&2
 	echo    >> $OUTPUT_CURL
 	echo post $1 $2 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
