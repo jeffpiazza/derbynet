@@ -1,6 +1,6 @@
 <?php
 
-start_response();
+$ok = true;
 
 if (have_permission(EDIT_RACER_PERMISSION)) {
   if (isset($_POST['racer'])) {
@@ -8,23 +8,21 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   } else if (isset($_POST['racerid'])) {
     $racerid = $_POST['racerid'];
   } else {
-    echo "<failure code='noracer'>No racerid provided.</failure>\n";
-    end_response();
-    exit();
+    json_failure('noracer', "No racerid provided.");
+    $ok = false;
   }
 
   $assignments = 'SET racerid = :racerid_again';
   $values = array(':racerid' => $racerid,
                   ':racerid_again' => $racerid);
 
-  if (isset($_POST['rankid'])) {
+  if ($ok && isset($_POST['rankid'])) {
     $rankid = $_POST['rankid'];
     $classid = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
                                  array(':rankid' => $rankid));
     if (!$classid) {
-      echo '<failure>No class for rankid '.$rankid.'</checkin>';
-      end_response();
-      exit();
+      json_failure('noclass', "No class for rankid $rankid");
+      $ok = false;
     }
 
     $assignments .= ', rankid = :rankid';
@@ -40,7 +38,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     $assignments .= ', lastname = :lastname';
     $values[':lastname'] = trim($_POST['lastname']);
   }
-  if (isset($_POST['carno'])) {
+  if ($ok && isset($_POST['carno'])) {
     $assignments .= ', carnumber = :carnumber';
     $values[':carnumber'] = trim($_POST['carno']);
     if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
@@ -48,7 +46,7 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
                           .' AND racerid <> :racerid',
                           array(':carnumber' => $values[':carnumber'],
                                 ':racerid' => $racerid)) > 0) {
-      echo "<warning>Duplicate car number ".$values[':carnumber']."</warning>\n";
+      json_out('warning', array("Duplicate car number $values[carnumber]"));
     }
   }
   if (isset($_POST['carname'])) {
@@ -60,17 +58,18 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     $values[':exclude'] = $_POST['exclude'];
   }
 
-  $new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
-                                   array(':classid' => $classid));
+  if ($ok) {
+    $new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
+                                     array(':classid' => $classid));
 
-  $old_classid = read_single_value('SELECT classid FROM RegistrationInfo WHERE racerid = :racerid',
-                                   array(':racerid' => $racerid));
-  $old_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
-                                   array(':classid' => $old_classid));
+    $old_classid = read_single_value('SELECT classid FROM RegistrationInfo WHERE racerid = :racerid',
+                                     array(':racerid' => $racerid));
+    $old_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
+                                     array(':classid' => $old_classid));
 
-  $ok = true;
-  $ok = take_action_silently('UPDATE RegistrationInfo '.$assignments
-                             .' WHERE racerid = :racerid', $values);
+    $ok = take_action_silently('UPDATE RegistrationInfo '.$assignments
+                               .' WHERE racerid = :racerid', $values);
+  }
   if ($ok && isset($classid)) {
     $ok = take_action_silently('UPDATE Roster'
                                .' SET roundid = :new_roundid,'
@@ -84,15 +83,11 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   }
 
   if ($ok) {
-    echo'<success/>'.$body_xml;
+    json_success();
   } else {
-    $info = $db->errorInfo();
-    echo '<failure code="sql'.$info[0].'-'.$info[1].'">'
-    .$sql.' failed: '.$info[2].' [EOM]</failure>';
+    json_failure('sql', "$info[0]-$info[1] $sql failed: $info[2]");
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

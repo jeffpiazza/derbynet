@@ -21,19 +21,19 @@ curl_post action.php "action=rank.add&classid=6&name=Desperados" | check_success
 # Des 8
 
 # Move to parents(rankid=7)
-curl_post action.php "action=racer.edit&rankid=7&racer=92" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=90" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=86" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=84" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=88" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=85" | check_success
-curl_post action.php "action=racer.edit&rankid=7&racer=93" | check_success
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=92" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=90" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=86" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=84" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=88" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=85" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=7&racer=93" | check_jsuccess
 
 # Move to Desperado(rankid=8)
-curl_post action.php "action=racer.edit&rankid=8&racer=83" | check_success
-curl_post action.php "action=racer.edit&rankid=8&racer=91" | check_success
-curl_post action.php "action=racer.edit&rankid=8&racer=94" | check_success
-curl_post action.php "action=racer.edit&rankid=8&racer=87" | check_success
+curl_postj action.php "action=json.racer.edit&rankid=8&racer=83" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=8&racer=91" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=8&racer=94" | check_jsuccess
+curl_postj action.php "action=json.racer.edit&rankid=8&racer=87" | check_jsuccess
 
 `dirname $0`/run-scout-heats.sh "$BASE_URL"
 

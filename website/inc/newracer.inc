@@ -26,13 +26,12 @@ function insert_new_racer($values) {
       $max_carnumber = $values['rankid'] * 100;
     }
     $values['carnumber'] = $max_carnumber + 1;
-    echo "<chosen-carnumber>".$values['carnumber']."</chosen-carnumber>\n";
   }
 
   if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
                         .' WHERE carnumber = :carnumber',
                         array(':carnumber' => $values['carnumber'])) > 0) {
-    echo "<warning>Duplicate car number ".$values['carnumber']."</warning>\n";
+    json_out('warnings', array("Duplicate car number $values[carnumber]"));
   }
 
   $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, carname,'

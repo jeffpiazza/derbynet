@@ -119,7 +119,25 @@ make_banner('Racer Check-In');
   </tr>
 </thead>
 
-<tbody>
+<tbody id="main_tbody">
+
+</tbody>
+</table>
+<div class="block_buttons">
+<?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
+      <input type="button" value="New Racer"
+        onclick='show_new_racer_form();'/>
+<?php } ?>
+</div>
+
+<script>
+function addrow0(racer) {
+  add_table_row('#main_tbody', racer,
+                <?php echo $use_groups ? "true" : "false"; ?>,
+                <?php echo $use_subgroups ? "true" : "false"; ?>,
+                <?php echo $xbs ? json_encode($xbs_award_name) : "false"; ?>);
+}
+
 <?php
 
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
@@ -148,18 +166,14 @@ $n = 1;
 foreach ($stmt as $rs) {
   // TODO
   $rs['rankseq'] = $ranks[$rs['rankid']]['seq'];
-  checkin_table_row($rs, $use_groups, $use_subgroups, $xbs, $n);
+  // json_encode replaces / in a string with \/ sequence
+  echo "addrow0(".str_replace(array("&", "<", "\\/", ">", "'"),
+                              array("\u0026", "\u003c", "\u002f", "\u003e", "\u0027"),
+                              json_encode(json_table_row($rs, $n))).");\n";
+
   ++$n;
 }
-?>
-</tbody>
-</table>
-<div class="block_buttons">
-<?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
-      <input type="button" value="New Racer"
-        onclick='show_new_racer_form();'/>
-<?php } ?>
-</div>
+?></script>
 
 
 <div id='edit_racer_modal' class="modal_dialog hidden block_buttons">

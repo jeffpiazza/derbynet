@@ -16,8 +16,6 @@ function as_boolean($val) {
   return $val != 'n';
 }
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
 
   // $fields tells what parameters we expect, and whether each is required.
@@ -62,13 +60,13 @@ if (have_permission(SET_UP_PERMISSION)) {
 
   foreach ($fields as $fieldname => $required) {
     if ($required && !isset($_POST[$fieldname])) {
-      echo '<failure code="missingrequired">Missing required field '.$fieldname.'</failure>';
+      json_failure('missingrequired', "Missing required field $fieldname.");
       $ok = false;
       break;
     }
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
   $ok = false;
 }
 
@@ -81,7 +79,7 @@ if ($ok) {
   $classid = find_or_create_class($classname);
   if (!empty(read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
                                array(':classid' => $classid)))) {
-    echo '<failure code="aggregate">Aggregate classes cannot contain direct members</failure>';
+    json_failure('aggregate', "Aggregate classes cannot contain direct members.");
     $ok = false;
   }
 }
@@ -106,8 +104,6 @@ if ($ok) {
                          'classid' => $classid,
                          'exclude' => $exclude));
 
-  echo '<success/>';
+  json_success();
 }
-
-end_response();
 ?>

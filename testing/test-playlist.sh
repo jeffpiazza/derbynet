@@ -11,9 +11,9 @@ user_login_coordinator
 # $1 = car number
 # $2 = classname
 function make_racer() {
-    curl_post action.php \
-              "action=racer.import&firstname=First$1&lastname=Last$1&classname=$2&carnumber=$1" \
-        | check_success
+    curl_postj action.php \
+              "action=json.racer.import&firstname=First$1&lastname=Last$1&classname=$2&carnumber=$1" \
+        | check_jsuccess
 }
 
 make_racer 101 Den1

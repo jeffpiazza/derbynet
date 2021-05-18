@@ -33,36 +33,36 @@ function preserve_autocrop_state() {
 
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
-    // cb is the checkbox element, with name "passed-" plus the racer id, e.g., passed-1234
-    if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
-	    cb.checked = true;
-	    return;
-    }
-    // 7 = length of "passed-" prefix
-    var racer = cb.name.substring(7);
-    var value = cb.checked ? 1 : 0;
+  // cb is the checkbox element, with name "passed-" plus the racer id, e.g., passed-1234
+  if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
+	cb.checked = true;
+	return;
+  }
+  // 7 = length of "passed-" prefix
+  var racer = cb.name.substring(7);
+  var value = cb.checked ? 1 : 0;
 
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'racer.pass',
-                   racer: racer,
-                   value: value},
-           });
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'racer.pass',
+                 racer: racer,
+                 value: value},
+         });
 }
 
 // This executes when a checkbox for "Exclusively by Scout" is clicked.
 function handlechange_xbs(cb) {
-    // cb is the checkbox element, with name "xbs-" plus the racer id, e.g., xbs-1234
-    // 4 = length of "xbs-" prefix
-    var racer = cb.name.substring(4);
-    var value = cb.checked ? 1 : 0;
+  // cb is the checkbox element, with name "xbs-" plus the racer id, e.g., xbs-1234
+  // 4 = length of "xbs-" prefix
+  var racer = cb.name.substring(4);
+  var value = cb.checked ? 1 : 0;
 
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'json.award.xbs',
-                   racer: racer,
-                   value: value},
-           });
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'json.award.xbs',
+                 racer: racer,
+                 value: value},
+         });
 }
 
 function show_edit_racer_form(racerid) {
@@ -88,14 +88,14 @@ function show_edit_racer_form(racerid) {
   // to cause an update.
   edit_rank.change();
 
-  $("#eligible").prop("checked", $('#lastname-' + racerid).attr("data-exclude") == 0);
+  $("#eligible").prop("checked", ! $('#lastname-' + racerid).prop("data-exclude"));
   $("#eligible").trigger("change", true);
 
   $("#delete_racer_extension").removeClass('hidden');
 
   show_modal("#edit_racer_modal", function(event) {
-      handle_edit_racer();
-      return false;
+    handle_edit_racer();
+    return false;
   });
 
   $("#edit_carno").focus();
@@ -118,8 +118,8 @@ function show_new_racer_form() {
   $("#delete_racer_extension").addClass('hidden');
   
   show_modal("#edit_racer_modal", function(event) {
-      handle_edit_racer();
-      return false;
+    handle_edit_racer();
+    return false;
   });
 }
 
@@ -144,7 +144,7 @@ function handle_edit_racer() {
 
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: racerid >= 0 ? 'racer.edit' : 'racer.new',
+          data: {action: racerid >= 0 ? 'json.racer.edit' : 'json.racer.add',
                  racer: racerid,
                  firstname: new_firstname,
                  lastname: new_lastname,
@@ -152,40 +152,30 @@ function handle_edit_racer() {
                  carname: new_carname,
                  rankid: new_rankid,
                  exclude: exclude},
-            success: function(data) {
-                var warnings = data.getElementsByTagName('warning');
-                if (warnings && warnings.length > 0) {
-                  window.alert("WARNING: " + warnings[0].childNodes[0].nodeValue);
-                }
-                var new_row_elements = data.getElementsByTagName('new-row');
-                if (new_row_elements.length > 0) {
-	                tb = $(".main_table tbody");
-                    for (var j = 0; j < new_row_elements.length; ++j) {
-                        var tr_elements = new_row_elements[j].getElementsByTagName('tr');
-                        for (var jj = 0; jj < tr_elements.length; ++jj) {
-                            var new_tr = document.createElement('tr');
-	                        tb.get(0).appendChild(new_tr);
-                            new_tr.outerHTML = (new XMLSerializer()).serializeToString(tr_elements[jj]);
-                            tb.trigger('create');
-                        }
-                    }
-                } else {
-                    $("#firstname-" + racerid).text(new_firstname);
-                    var ln = $("#lastname-" + racerid);
-                    ln.text(new_lastname);
-                    ln.attr("data-exclude", exclude);
-                    ln.parents('tr').toggleClass('exclude-racer', exclude == 1);
-                    $("#car-number-" + racerid).text(new_carno);
-                    $("#car-name-" + racerid).text(new_carname);
+          success: function(data) {
+            if (data.hasOwnProperty('warnings')) {
+              window.alert("WARNING: " + data.warnings[0]);
+            }
+            if (data.hasOwnProperty('new-row')) {
+              $("#main_tbody").append(addrow0(data['new-row']))
+                .trigger('create');
+            } else {
+              $("#firstname-" + racerid).text(new_firstname);
+              var ln = $("#lastname-" + racerid);
+              ln.text(new_lastname);
+              ln.attr("data-exclude", exclude);
+              ln.parents('tr').toggleClass('exclude', exclude);
+              $("#car-number-" + racerid).text(new_carno);
+              $("#car-name-" + racerid).text(new_carname);
 
-                    $('#class-' + racerid).attr('data-rankid', new_rankid);
-                    $('#class-' + racerid).text(new_classname);
-                    $('#rank-' + racerid).text(new_rankname);
-                }
+              $('#class-' + racerid).attr('data-rankid', new_rankid);
+              $('#class-' + racerid).text(new_classname);
+              $('#rank-' + racerid).text(new_rankname);
+            }
 
-                sort_checkin_table();
-            },
-           });
+            sort_checkin_table();
+          },
+         });
 }
 
 function handle_delete_racer() {
@@ -211,7 +201,7 @@ function handle_delete_racer() {
 
 function show_bulk_form() {
   show_modal("#bulk_modal", function(event) {
-      return false;
+    return false;
   });
 }
 
@@ -251,11 +241,11 @@ function bulk_numbering() {
                    start: $("#bulk_numbering_start").val(),
                    renumber: $("#renumber").is(':checked') ? 1 : 0},
            });
-                  
+    
     return false;
   });
 }
-  
+
 function bulk_eligibility() {
   close_modal("#bulk_modal");
   $("#bulk_details_title").text("Bulk Eligibility");
@@ -272,15 +262,15 @@ function bulk_eligibility() {
                    who: $("#bulk_who").val(),
                    value: $("#bulk_eligible").is(':checked') ? 1 : 0},
            });
-                  
+    
     return false;
   });
 }
 
 function disable_preview(msg) {
   var preview = $("#preview").html('<h2>Webcam Disabled</h2>')
-    .css({'border': '2px solid black',
-          'background': '#d2d2d2'});
+      .css({'border': '2px solid black',
+            'background': '#d2d2d2'});
   $("<p></p>").text(msg).css({'font-size': '18px'}).appendTo(preview);
 
   if (window.location.protocol == 'http:') {
@@ -338,12 +328,12 @@ Dropzone.options.photoDrop = {
 
 function setup_webcam() {
   var settings = {
-	  width: g_width,
-	  height: g_height,
-	  dest_width: g_width,
-	  dest_height: g_height,
-	  crop_width: g_width,
-	  crop_height: g_height,
+	width: g_width,
+	height: g_height,
+	dest_width: g_width,
+	dest_height: g_height,
+	crop_width: g_width,
+	crop_height: g_height,
   };
   if (g_cameraIndex < g_cameras.length && g_cameras[g_cameraIndex]) {
 	settings['constraints'] = {
@@ -387,7 +377,7 @@ function show_photo_modal(racerid, repo) {
   show_modal("#photo_modal", function() {
     preserve_autocrop_state();
     take_snapshot(racerid, repo, lastname + '-' + firstname);
-      return false;
+    return false;
   });
 
   if (screen.width < screen.height) {
@@ -501,36 +491,36 @@ function sorting_key(row) {
             row.getElementsByClassName('sort-lastname')[0].innerHTML,
             row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else if (g_order == 'car') {
-      // carnumber (numeric), lastname, firstname
-      return [parseInt(row.getElementsByClassName('sort-car-number')[0].innerHTML),
-              row.getElementsByClassName('sort-lastname')[0].innerHTML,
-              row.getElementsByClassName('sort-firstname')[0].innerHTML]
+    // carnumber (numeric), lastname, firstname
+    return [parseInt(row.getElementsByClassName('sort-car-number')[0].innerHTML),
+            row.getElementsByClassName('sort-lastname')[0].innerHTML,
+            row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else /* 'name' */ {
-      // lastname, firstname
-      return [row.getElementsByClassName('sort-lastname')[0].innerHTML,
-              row.getElementsByClassName('sort-firstname')[0].innerHTML]
+    // lastname, firstname
+    return [row.getElementsByClassName('sort-lastname')[0].innerHTML,
+            row.getElementsByClassName('sort-firstname')[0].innerHTML]
   }
 }
 
 function sort_checkin_table() {
-	row_array = [];
-    rows = $(".main_table tbody").get(0).getElementsByTagName('tr');
+  row_array = [];
+  rows = $("#main_tbody").get(0).getElementsByTagName('tr');
 
-	for (var j = 0; j < rows.length; ++j) {
-	    row_array[row_array.length] = [sorting_key(rows[j]), rows[j]];
-	}
+  for (var j = 0; j < rows.length; ++j) {
+	row_array[row_array.length] = [sorting_key(rows[j]), rows[j]];
+  }
 
-	row_array.sort(compare_first);
+  row_array.sort(compare_first);
 
-	tb = $(".main_table tbody").get(0);
+  tb = $("#main_tbody").get(0);
 
-	for (var j = 0; j < row_array.length; ++j) {
-        row_array[j][1].classList.remove('d' + (j & 1));
-        row_array[j][1].classList.add('d' + ((j + 1) & 1));
-	    tb.appendChild(row_array[j][1]);
-	}
+  for (var j = 0; j < row_array.length; ++j) {
+    row_array[j][1].classList.remove('d' + (j & 1));
+    row_array[j][1].classList.add('d' + ((j + 1) & 1));
+	tb.appendChild(row_array[j][1]);
+  }
 
-	delete row_array;
+  delete row_array;
 }
 
 // g_action_on_barcode is set in checkin.php with a value persisted in the PHP
@@ -563,29 +553,29 @@ function on_barcode_handling_change() {
 }
 
 function global_keypress(event) {
-    if ($(":focus").length == 0) {
-        $(document).off("keypress");  // We want future keypresses to go to the search form
-        $("#find-racer-text").focus();
-    }
+  if ($(":focus").length == 0) {
+    $(document).off("keypress");  // We want future keypresses to go to the search form
+    $("#find-racer-text").focus();
+  }
 }
 
 function remove_search_highlighting() {
-    $("span.found-racer").each(function() {
-        var p = $(this).parent();
-        $(this).contents().unwrap();
-        p.get()[0].normalize();
-    });
+  $("span.found-racer").each(function() {
+    var p = $(this).parent();
+    $(this).contents().unwrap();
+    p.get()[0].normalize();
+  });
 }
 
 function cancel_find_racer() {
-    $("#find-racer-text").val("");
-    $("#find-racer").removeClass("notfound");
-    $("#find-racer-index").data("index", 1).text(1);
-    $("#find-racer-count").text(0);
-    $("#find-racer-message").css({visibility: 'hidden'});
-    // TODO $("#find-racer").addClass("hidden");
-    remove_search_highlighting();
-    $(document).on("keypress", global_keypress);
+  $("#find-racer-text").val("");
+  $("#find-racer").removeClass("notfound");
+  $("#find-racer-index").data("index", 1).text(1);
+  $("#find-racer-count").text(0);
+  $("#find-racer-message").css({visibility: 'hidden'});
+  // TODO $("#find-racer").addClass("hidden");
+  remove_search_highlighting();
+  $(document).on("keypress", global_keypress);
 }
 
 function scroll_and_flash_row(row) {
@@ -696,8 +686,8 @@ function find_racer() {
 }
 
 function scroll_to_nth_found_racer(n) {
-    var found = $("span.found-racer").eq(n - 1);
-    $("html, body").animate({scrollTop: found.offset().top - $(window).height() / 2}, 250);
+  var found = $("span.found-racer").eq(n - 1);
+  $("html, body").animate({scrollTop: found.offset().top - $(window).height() / 2}, 250);
 }
 
 // inc = 1 for next found racer, -1 for previous
@@ -737,12 +727,105 @@ function intercept_arrow_key(event) {
 }
 
 $(function() {
-    $(document).on("keypress", global_keypress);
-    $("#find-racer-text").on("input", find_racer)
-                         .on("keydown", intercept_arrow_key);
-    // jquery mobile would add a distracting "blue glow" around the input form
-    // after the text input receives focus.  Ugh.
+  $(document).on("keypress", global_keypress);
+  $("#find-racer-text").on("input", find_racer)
+    .on("keydown", intercept_arrow_key);
+  // jquery mobile would add a distracting "blue glow" around the input form
+  // after the text input receives focus.  Ugh.
   $("#find-racer-text").off('focus');
 
   $("thead a[data-order]").on('click', handle_sorting_event);
 });
+
+
+// TODO We might be in a better position to know the row number (and parity)
+// than the server (which sends rowno).
+function make_table_row(racer, use_groups, use_subgroups, xbs) {
+  var tr = $('<tr/>').prop('data-racerid', racer.racerid)
+      .addClass('d' + (racer.rowno & 1))
+      .toggleClass('den_scheduled', racer.denscheduled)
+      .toggleClass('exclude', racer.exclude);
+  tr.append($('<td>')
+            .append('<input type="button" class="white-button" value="Change"' +
+                    ' onclick="show_edit_racer_form(' + racer.racerid + ')"/>'));
+
+  if (use_groups) {
+    tr.append($('<td/>').prop('id', 'class-' + racer.racerid)
+              .prop('data-rankid', racer.rankid)
+              .prop('data-rankseq', racer.rankseq)
+              .text(racer['class']));
+  }
+
+  if (use_subgroups) {
+    tr.append($('<td/>').prop('id', 'rank-' + racer.racerid)
+              .text(racer.rank));
+  }
+
+  tr.append($('<td class="sort-car-number"/>')
+            .prop('data-car-number', racer.carnumber)
+            .prop('id', 'car-number-' + racer.racerid)
+            .text(racer.carnumber));
+
+  tr.append($('<td/>').prop('id', 'photo-' + racer.racerid)
+            .append($('<a href="javascript:show_racer_photo_modal(' + racer.racerid + ')"/>')
+                    .append($('<img class="checkin-photo" data-repo="head"/>')
+                            .prop('src', racer.headshot)))
+            .append($('<a href="javascript:show_car_photo_modal(' + racer.racerid + ')"/>')
+                    .append($('<img class="checkin-photo" data-repo="car"/>')
+                            .prop('src', racer.carphoto))));
+
+  tr.append($('<td class="sort-lastname"/>')
+            .prop('id', 'lastname-' + racer.racerid)
+            .prop('data-exclude', racer.exclude)
+            .text(racer.lastname));
+  tr.append($('<td class="sort-firstname"/>')
+            .prop('id', 'firstname-' + racer.racerid)
+            .text(racer.firstname));
+  tr.append($('<td/>')
+            .prop('id', 'car-name-' + racer.racerid)
+            .text(racer.carname));
+
+  var checkin = $('<td class="checkin-status"/>').appendTo(tr);
+  if (racer.scheduled) {
+    if (racer.passed) {
+      checkin.text('Racing');
+    } else {
+      checkin.text('Scheduled but not passed');
+    }
+  } else {
+    checkin.append($('<label/>')
+                   .prop('for', 'passed-' + racer.racerid)
+                   .text('Checked In?'));
+    checkin.append('<br/>');
+    checkin.append($('<input type="checkbox" class="flipswitch"/>')
+                   .prop('id', 'passed-' + racer.racerid)
+                   .prop('name', 'passed-' + racer.racerid)
+                   .prop('checked', racer.passed)
+                   // prop onchange doesn't seem to allow a string, but attr does
+                   .attr('onchange', 'handlechange_passed(this, ' +
+                         JSON.stringify(racer.firstname + ' ' + racer.lastname) +
+                         ')'));
+    if (racer.denscheduled) {
+      checkin.append(' Late!');
+    }
+  }
+
+  if (xbs) {
+    tr.append($('<td/>')
+              .append($('<label/>')
+                      .prop('for', 'xbs-' + racer.racerid)
+                      .text(xbs + '?'))
+              .append($('<input type="checkbox" class="flipswitch"/>')
+                      .prop('name', 'xbs-' + racer.racerid)
+                      .prop('checked', racer.xbs)
+                      .prop('data-on-text', 'Yes')
+                      .prop('data-off-text', 'No')
+                      .prop('onchange', 'handlechange_xbs(this);')));
+  }
+
+  return tr;
+}
+
+function add_table_row(tbody, racer, use_groups, use_subgroups, xbs) {
+  $(tbody).append(make_table_row(racer, use_groups, use_subgroups, xbs));
+}

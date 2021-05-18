@@ -107,6 +107,10 @@ run_tests() {
     fi
 
     rm $SNAPSHOT
+
+    tput setaf 2  # green text
+    echo "<<<<<<<<<<<<<<<<<<<<<<<< Test run complete >>>>>>>>>>>>>>>>>>>>>>>>"
+    tput setaf 0  # black text
 }
 
 rm `dirname $0`/*.curl 2>&1 || true

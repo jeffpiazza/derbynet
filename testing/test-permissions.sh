@@ -25,12 +25,12 @@ fi
 curl_post action.php "action=kiosk.assign" | check_failure
 
 curl_postj action.php "action=json.result.delete" | check_jfailure
-curl_post action.php "action=racer.edit" | check_failure
+curl_postj action.php "action=json.racer.edit" | check_jfailure
 curl_postj action.php "action=json.result.write" | check_jfailure
-curl_post action.php "action=racer.import" | check_failure
+curl_postj action.php "action=json.racer.import" | check_jfailure
 
 # curl_post action.php "action=login" | check_failure
-curl_post action.php "action=racer.new" | check_failure
+curl_postj action.php "action=json.racer.add" | check_jfailure
 curl_post action.php "action=racer.pass" | check_failure
 curl_post action.php "action=photo" | check_failure
 # TODO Replay application registers itself without credentials, a security weakness.

@@ -1,0 +1,522 @@
+[
+  {
+    "matchers": [{
+      "internal": [{
+        "args": [
+          1,
+          2
+        ],
+        "pattern": " *([A-Z])=(\\d\\.\\d+)([^ ]?)",
+        "event": "LANE_RESULT"
+      }],
+      "pattern": "([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$"
+    }],
+    "name": "\"The Champ\" (SmartLine/BestTrack)",
+    "options": {
+      "max_lanes": 6,
+      "eol": "\r",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": [
+      "r",
+      "or",
+      "ol",
+      "od",
+      "op",
+      "rs",
+      "ol0",
+      "op3"
+    ]},
+    "prober": {
+      "responses": ["eTekGadget SmartLine Timer"],
+      "pre_probe": "org.jeffpiazza.derby.timer.Profile$CommandSequence@c4437c4",
+      "probe": "v"
+    },
+    "setup_queries": [{
+      "matchers": [{
+        "pattern": "^(\\d)$",
+        "event": "LANE_COUNT"
+      }],
+      "command": "on"
+    }],
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [
+        {
+          "pattern": "^0$",
+          "event": "GATE_CLOSED"
+        },
+        {
+          "pattern": "^1$",
+          "event": "GATE_OPEN"
+        }
+      ],
+      "command": "rs"
+    },
+    "heat_prep": {
+      "unmask": "om0",
+      "lane": "1",
+      "mask": "om"
+    },
+    "on": {
+      "RACE_STARTED": {"commands": ["rg"]},
+      "OVERDUE": {"commands": ["ra"]}
+    }
+  },
+  {
+    "matchers": [
+      {
+        "internal": [{
+          "args": [
+            1,
+            2
+          ],
+          "pattern": " *([A-Z])=(\\d\\.\\d+)([^ ]?)",
+          "event": "LANE_RESULT"
+        }],
+        "pattern": "([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$"
+      },
+      {
+        "pattern": "RG0",
+        "event": "GATE_OPEN"
+      },
+      {
+        "pattern": "RG1",
+        "event": "GATE_CLOSED"
+      }
+    ],
+    "name": "FastTrack K-series",
+    "options": {
+      "max_lanes": 6,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": [
+      "RE",
+      "N1",
+      "N2",
+      "RF"
+    ]},
+    "prober": {
+      "responses": [
+        "Micro Wizard|MICRO WIZARD",
+        "^K"
+      ],
+      "probe": "RV"
+    },
+    "poll": {"MARK": {"commands": ["LR"]}},
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [],
+      "command": "RG"
+    },
+    "heat_prep": {
+      "unmask": "MG",
+      "lane": "A",
+      "mask": "M"
+    }
+  },
+  {
+    "matchers": [{
+      "internal": [{
+        "args": [
+          1,
+          2
+        ],
+        "pattern": " *([A-Z])=(\\d\\.\\d+)([^ ]?)",
+        "event": "LANE_RESULT"
+      }],
+      "pattern": "([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$"
+    }],
+    "name": "FastTrack P-series",
+    "options": {
+      "max_lanes": 6,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": ["RF"]},
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    }
+  },
+  {
+    "matchers": [
+      {
+        "args": [1],
+        "pattern": "Number of Lanes:?\\s+(\\d)",
+        "event": "LANE_COUNT"
+      },
+      {
+        "pattern": "^G[oO]!?$",
+        "event": "RACE_STARTED"
+      },
+      {
+        "args": [
+          1,
+          2
+        ],
+        "pattern": "^Lane\\s+(\\d)\\s+0*(\\d+\\.\\d+)(\\s.*)?$",
+        "event": "LANE_RESULT"
+      },
+      {
+        "pattern": "Race Over.*",
+        "event": "RACE_FINISHED"
+      }
+    ],
+    "name": "The Judge (New Directions)",
+    "options": {
+      "max_lanes": 0,
+      "eol": "\r",
+      "max_running_time_ms": 10,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": []},
+    "prober": {
+      "responses": ["Checking Valid Lanes"],
+      "probe": "*"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [],
+      "command": "rs"
+    },
+    "heat_prep": {
+      "unmask": "om0",
+      "lane": "1",
+      "mask": "om"
+    },
+    "on": {"OVERDUE": {"commands": ["*"]}}
+  },
+  {
+    "matchers": [{
+      "args": [
+        1,
+        2
+      ],
+      "pattern": "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)",
+      "event": "LANE_RESULT"
+    }],
+    "name": "NewBold DT, TURBO, or DerbyStick",
+    "options": {
+      "max_lanes": 0,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": [" "]},
+    "params": {
+      "baud": 1200,
+      "data": 7,
+      "stop": 2,
+      "parity": 0
+    },
+    "heat_prep": {"reset": " "}
+  },
+  {
+    "matchers": [
+      {
+        "args": [1],
+        "pattern": "^READY\\s*(\\d+)\\s+LANES",
+        "event": "LANE_COUNT"
+      },
+      {
+        "args": [
+          1,
+          2
+        ],
+        "pattern": "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)",
+        "event": "LANE_RESULT"
+      },
+      {
+        "pattern": "^RACE$",
+        "event": "RACE_STARTED"
+      }
+    ],
+    "name": "Derby Timer",
+    "options": {
+      "max_lanes": 0,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "prober": {
+      "responses": [
+        "^RESET$",
+        "^READY\\s*(\\d+)\\s+LANES"
+      ],
+      "probe": "R"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [
+        {
+          "pattern": "^U$",
+          "event": "GATE_CLOSED"
+        },
+        {
+          "pattern": "^D$",
+          "event": "GATE_OPEN"
+        }
+      ],
+      "command": "G"
+    },
+    "heat_prep": {
+      "unmask": "C",
+      "lane": "1",
+      "mask": "M"
+    },
+    "on": {"OVERDUE": {"commands": ["F"]}}
+  },
+  {
+    "matchers": [
+      {
+        "args": [1],
+        "pattern": "numl=(\\d)",
+        "event": "LANE_COUNT"
+      },
+      {
+        "pattern": "^B$",
+        "event": "RACE_STARTED"
+      },
+      {
+        "args": [
+          1,
+          2
+        ],
+        "pattern": "(\\d) - (\\d+\\.\\d+)",
+        "event": "LANE_RESULT"
+      }
+    ],
+    "remote_start": {
+      "has_remote_start": true,
+      "command": "S"
+    },
+    "name": "PDT timer (https://www.dfgtec.com/pdt)",
+    "options": {
+      "max_lanes": 0,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": [
+      "R",
+      "N"
+    ]},
+    "prober": {
+      "responses": ["vert="],
+      "pre_probe": "org.jeffpiazza.derby.timer.Profile$CommandSequence@433c675d",
+      "probe": "V"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [
+        {
+          "pattern": "O",
+          "event": "GATE_OPEN"
+        },
+        {
+          "pattern": "\\.",
+          "event": "GATE_CLOSED"
+        }
+      ],
+      "command": "G"
+    },
+    "heat_prep": {
+      "unmask": "U",
+      "lane": "1",
+      "mask": "M"
+    },
+    "on": {"OVERDUE": {"commands": ["F"]}}
+  },
+  {
+    "matchers": [
+      {
+        "pattern": "^B$",
+        "event": "RACE_STARTED"
+      },
+      {
+        "args": [
+          1,
+          2,
+          3
+        ],
+        "pattern": "([1-8])=(\\d\\.\\d+)([!-/:-@])? *",
+        "event": "LANE_RESULT"
+      }
+    ],
+    "remote_start": {
+      "has_remote_start": true,
+      "command": "S"
+    },
+    "name": "Derby Magic timer",
+    "options": {
+      "max_lanes": 8,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": ["R"]},
+    "prober": {
+      "responses": ["Derby Magic"],
+      "probe": "V"
+    },
+    "params": {
+      "baud": 19200,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    }
+  },
+  {
+    "matchers": [
+      {
+        "pattern": "^B$",
+        "event": "RACE_STARTED"
+      },
+      {
+        "args": [
+          1,
+          2,
+          3
+        ],
+        "pattern": "([1-8])=(\\d\\.\\d+)([!-/:-@])? *",
+        "event": "LANE_RESULT"
+      }
+    ],
+    "remote_start": {
+      "has_remote_start": true,
+      "command": "S"
+    },
+    "name": "Derby Magic timer",
+    "options": {
+      "max_lanes": 8,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": ["R"]},
+    "prober": {
+      "responses": ["Derby Magic"],
+      "probe": "V"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    }
+  },
+  {
+    "matchers": [
+      {
+        "pattern": "^B$",
+        "event": "GATE_OPEN"
+      },
+      {
+        "args": [
+          1,
+          2
+        ],
+        "pattern": "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)",
+        "event": "LANE_RESULT"
+      }
+    ],
+    "name": "Bert Drake timer",
+    "options": {
+      "max_lanes": 0,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "prober": {
+      "responses": ["Bert Drake"],
+      "pre_probe": "org.jeffpiazza.derby.timer.Profile$CommandSequence@3f91beef",
+      "probe": "V"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "gate_watcher": {
+      "matchers": [
+        {
+          "pattern": "^Gc$",
+          "event": "GATE_CLOSED"
+        },
+        {
+          "pattern": "^Go$",
+          "event": "GATE_OPEN"
+        }
+      ],
+      "command": "C"
+    },
+    "heat_prep": {"reset": "R"},
+    "on": {"OVERDUE": {"commands": ["F"]}}
+  },
+  {
+    "matchers": [{
+      "args": [
+        1,
+        2
+      ],
+      "pattern": "^.*Place Single Lane Number:\\s*(\\d+)\\s+Time in Seconds:\\s*(\\d+\\.\\d{4,})",
+      "event": "LANE_RESULT"
+    }],
+    "name": "JIT Racemaster",
+    "options": {
+      "max_lanes": 0,
+      "eol": "",
+      "max_running_time_ms": 11000,
+      "display_hold_time_ms": 10000
+    },
+    "setup": {"commands": ["L"]},
+    "prober": {
+      "responses": [
+        "JIT, Inc",
+        "Racemaster Software",
+        "^Software Version"
+      ],
+      "probe": "V"
+    },
+    "params": {
+      "baud": 9600,
+      "data": 8,
+      "stop": 1,
+      "parity": 0
+    },
+    "heat_prep": {"reset": "R"}
+  }
+]

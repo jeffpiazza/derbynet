@@ -127,7 +127,7 @@ input.white-button {
   margin-left: 75px;
 }
 
-tr.exclude-racer td.checkin-status {
+tr.exclude td.checkin-status {
   background-image: url('../img/no-trophy.png');
   background-repeat: no-repeat;
 }

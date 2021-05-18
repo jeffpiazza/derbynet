@@ -33,14 +33,14 @@ curl_post action.php "action=racer.pass&racer=47&value=1" | check_success
 curl_post action.php "action=racer.pass&racer=49&value=1" | check_success
 
 # Exclude car 111
-curl_post action.php "action=racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=1" | check_success
+curl_postj action.php "action=json.racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=1" | check_jsuccess
 
 # Change a racer's den
-curl_post action.php "action=racer.edit&racer=39&firstname=Jeffress&lastname=Jamison&carno=139&carname=&rankid=3" | check_success
+curl_postj action.php "action=json.racer.edit&racer=39&firstname=Jeffress&lastname=Jamison&carno=139&carname=&rankid=3" | check_jsuccess
 
 # TODO: There was a bug that the new-row returned from this was basically empty; this doesn't test that
 #
 # After changing a den, adding a new racer used to be a bug (extra Roster row).
 # The effect was observable extra entries for heats that included the
 # den-changed racer.
-curl_post action.php "action=racer.new&firstname=Fred&lastname=Flintstone&carno=789&carname=&rankid=2" | check_success
+curl_postj action.php "action=json.racer.add&firstname=Fred&lastname=Flintstone&carno=789&carname=&rankid=2" | check_jsuccess

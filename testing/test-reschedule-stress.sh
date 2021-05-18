@@ -17,13 +17,13 @@ user_login_coordinator
 `dirname $0`/reset-database.sh "$BASE_URL"
 
 for i in $(seq 1 100) ; do
-    curl_post action.php \
-         "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class" | check_success
+    curl_postj action.php \
+         "action=json.racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class" | check_jsuccess
 done
 curl_post action.php "action=racer.bulk&what=number&who=all&start=101" | check_success
 
-curl_post action.php "action=racer.import&firstname=RacerX&lastname=RacerX&classname=Unwashed-Class" | check_success
-curl_post action.php "action=racer.import&firstname=RacerY&lastname=RacerY&classname=Unwashed-Class" | check_success
+curl_postj action.php "action=json.racer.import&firstname=RacerX&lastname=RacerX&classname=Unwashed-Class" | check_jsuccess
+curl_postj action.php "action=json.racer.import&firstname=RacerY&lastname=RacerY&classname=Unwashed-Class" | check_jsuccess
 
 
 function setup_schedule() {

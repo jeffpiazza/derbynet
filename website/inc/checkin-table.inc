@@ -5,21 +5,7 @@ require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/xbs.inc');
 
-// These functions construct each row of the main table on the check-in page.
-
-function checkin_flipswitch($racer_id, $first_name, $last_name, $passed) {
-    echo '<label for="passed-'.$racer_id.'">Checked In?</label>';
-    echo '<br/>';
-    echo '<input type="checkbox" class="flipswitch" name="passed-'.$racer_id.'" id="passed-'.$racer_id.'"';
-    if ($passed) echo ' checked="checked"';
-    if ($passed && !have_permission(REVERT_CHECK_IN_PERMISSION)) echo ' disabled="disabled"';
-    echo ' data-on-text="Yes" data-off-text="No"';
-    echo ' onchange=\'handlechange_passed(this, '
-        .htmlspecialchars(json_encode($first_name.' '.$last_name), ENT_QUOTES, 'UTF-8')
-        .');\'/>';
-}
-
-function checkin_table_row_for_id($racerid) {
+function json_table_row_for_id($racerid) {
   $xbs_award_name = xbs_award();
   $row = read_single_row(
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
@@ -40,96 +26,38 @@ function checkin_table_row_for_id($racerid) {
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
   $row['rankseq'] = $ranks[$row['rankid']]['seq'];
 
-  checkin_table_row($row, use_groups(), use_subgroups(), !empty($xbs_award_name));
+  return json_table_row($row, use_groups(), use_subgroups(), !empty($xbs_award_name));
 }
 
-// $row[]: racerid, firstname, lastname, carnumber, carname, class, rank, rankid, rankseq,
-//             passedinspection, imagefile, exclude
-//             (rankseq comes from classes_and_ranks' ordering of ranks)
-//         xbs - whether this racer has an exclusively-by-scout award
-//         scheduled - whether this racer has any RaceChart entries
-//         denscheduled - whether any racer in this racer's class have any RaceChart entries
-// $pack_xbs: whether exclusively-by-scout awards are shown in this table
-// $use_subgroups: whether rank information is relevant
-function checkin_table_row(&$row, $use_groups, $use_subgroups, $pack_xbs, $n = 0) {
-    echo '<tr data-racerid="'.$row['racerid'].'" class="d'.($n & 1)
-          .($row['denscheduled'] ? ' den_scheduled' : '')
-          .($row['exclude'] ? ' exclude-racer' : '').'">';
+function json_table_row(&$row, $n = 0) {
+  return array(
+    'racerid' => $row['racerid'],
+    'rowno' => $n,
+    'denscheduled' => $row['denscheduled'] ? true : false,
+    'exclude' => $row['exclude'] ? true : false,
 
-    echo '<td><input type="button" class="white-button" value="Change"'
-        .' onclick=\'show_edit_racer_form('.$row['racerid'].');\'/></td>';
+    'classid' => $row['classid'],
+    'class' => $row['class'],
+    'rankid' => $row['rankid'],
+    'rank' => $row['rank'],
+    'rankseq' => $row['rankseq'],
 
-    if ($use_groups) {
-      echo '<td id="class-'.$row['racerid'].'"  data-rankid="'.$row['rankid'].'"'
-          .' data-rankseq="'.$row['rankseq'].'">'
-          .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'</td>';
-    }
-
-    if ($use_subgroups)
-      echo '<td id="rank-'.$row['racerid'].'">'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'</td>';
-
-    echo '<td class="sort-car-number"'
-        .' data-car-number="'.$row['carnumber'].'"'
-        .' id="car-number-'.$row['racerid'].'">'
-        .$row['carnumber']
-        .'</td>';
-
-    echo '<td id="photo-'.$row['racerid'].'">';
-
-    echo '<a href="javascript:show_racer_photo_modal('.$row['racerid'].')">'
-          .'<img class="checkin-photo" data-repo="head" src="'
-          .($row[headshots()->column_name()]
-          ? headshots()->url_for_racer($row, RENDER_CHECKIN)
-          : 'img/photo-headshot.png')
-        .'"/>'
-        .'</a>';
-
-    // TODO - This causes repeated reads.
-    // The issue is presumably null carphoto values
-    if (schema_version() >= 2) {
-      echo '<a href="javascript:show_car_photo_modal('.$row['racerid'].')">'
-          .'<img class="checkin-photo" data-repo="car" src="'
-          .($row[car_photo_repository()->column_name()]
+    'carnumber' => $row['carnumber'],
+    'headshot' => $row[headshots()->column_name()]
+            ? headshots()->url_for_racer($row, RENDER_CHECKIN)
+            : 'img/photo-headshot.png',
+    'carphoto' => schema_version() >= 2 && $row[car_photo_repository()->column_name()]
             ? car_photo_repository()->url_for_racer($row, RENDER_CHECKIN)
-            : 'img/photo-car.png')
-          .'"/>'
-        .'</a>';
-    }
+            : 'img/photo-car.png',
 
-    echo '</td>';
+    'firstname' => $row['firstname'],
+    'lastname' => $row['lastname'],
+    'carname' => $row['carname'],
 
-    echo '<td class="sort-lastname" id="lastname-'.$row['racerid'].'" data-exclude="'.$row['exclude'].'">'
-        .htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'</td>';
-    echo '<td class="sort-firstname" id="firstname-'.$row['racerid'].'">'
-        .htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'</td>';
+    'scheduled' => $row['scheduled'] ? true : false,
+    'passed' => $row['passedinspection'] ? true : false,
 
-    echo '<td id="car-name-'.$row['racerid'].'">'
-        .htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'</td>';
-
-    // If a race schedule exists for this racer, don't offer the option to un-pass through this interface.
-    // Instead, have go through unscheduling (if that's possible) and then un-pass
-    echo '<td class="checkin-status">';
-    if ($row['scheduled']) {
-        if ($row['passedinspection']) {
-            echo 'Racing';
-        } else {
-            echo 'Scheduled but not passed';
-        }
-    } else {
-        checkin_flipswitch($row['racerid'], $row['firstname'], $row['lastname'], $row['passedinspection']);
-        if ($row['denscheduled']) echo ' Late!';
-    }
-    echo '</td>';
-
-    if ($pack_xbs) {
-        echo '<td>';
-        echo '<label for="xbs-'.$row['racerid'].'">Exclusively By Scout?</label>';
-        echo '<input type="checkbox" class="flipswitch" name="xbs-'.$row['racerid'].'" ';
-        if ($row['xbs']) echo ' checked="checked"';
-        echo ' data-on-text="Yes" data-off-text="No"';
-        echo ' onchange="handlechange_xbs(this);"/>';
-        echo '</td>';
-    }
-    echo '</tr>'."\n";
+    'xbs' => $row['xbs']);
 }
+
 ?>

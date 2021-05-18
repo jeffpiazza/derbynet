@@ -13,7 +13,7 @@ user_login_coordinator
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
 
 # Reinstate car 111
-curl_post action.php "action=racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=0" | check_success
+curl_postj action.php "action=json.racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=0" | check_jsuccess
 
 curl_post action.php "action=settings.write&use-points=1&use-points-checkbox" | check_success
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
