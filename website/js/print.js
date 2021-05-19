@@ -67,10 +67,9 @@ function on_tr_click(event) {
 }
 
 function process_racer_list(data) {
-  var racers = data.getElementsByTagName('racer');
   var table = $("div#subject-racers table");
-  $.each(racers, function (index, racer) {
-    var racerid = racer.getAttribute("racerid");
+  $.each(data.racers, function (index, racer) {
+    var racerid = racer.racerid;
     var rows = table.find("tr");
     var tr;
     if (rows.length > index &&
@@ -92,9 +91,9 @@ function process_racer_list(data) {
       tr.on("click", on_tr_click);
     }
     var cells = tr.find("td");
-    $(cells[1]).text(racer.getAttribute("carnumber"));
-    $(cells[2]).text(racer.getAttribute("firstname") + " " + racer.getAttribute("lastname"));
-    $(cells[3]).find("img").prop("src", racer.getAttribute("headshot"));
+    $(cells[1]).text(racer.carnumber);
+    $(cells[2]).text(racer.firstname + " " + racer.lastname);
+    $(cells[3]).find("img").prop("src", racer.headshot);
   });
 
   // Chop off any extra rows, but first preserve checkbox settings for any moved racers
@@ -173,7 +172,7 @@ function handle_sortorder_racers_change() {
   // display actually reflects that.
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "racer.list",
+          data: {query: "json.racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
             process_racer_list(data);
@@ -185,7 +184,7 @@ function handle_sortorder_awards_change() {
   /*
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "racer.list",
+          data: {query: "json.racer.list",
                  order: $("#sortorder").val()},
           success: function(data) {
             process_racer_list(data);
@@ -197,7 +196,7 @@ function handle_sortorder_awards_change() {
 function poll() {
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "racer.list",
+          data: {query: "json.racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
             process_racer_list(data);

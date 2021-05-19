@@ -166,28 +166,25 @@ function car_number_for_racerid(racerid) {
 
 
 function get_ballot() {
-  console.log("get_ballot: " + $("#password_input").val());
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'ballot.get',
+          data: {query: 'json.ballot.get',
                  password: $("#password_input").val()},
           success: function(data) {
-            console.log(data);
-            var failures = data.getElementsByTagName("failure");
             var password_modal_showing =
                 $("#password_modal").closest('.modal_frame').length > 0 &&
                 !$("#password_modal").closest('.modal_frame').is(".hidden");
-            if (failures.length == 0) {
-              g_ballot = JSON.parse(data.getElementsByTagName("ballot")[0].textContent);
-              close_modal("#password_modal");
-              set_up_ballot();
-            } else {
+            if (data.hasOwnProperty('failure')) {
               $("#awards div[data-awardid]").addClass('hidden');
-              if (failures[0].getAttribute('code') == 'password') {
+              if (data.failure.code == 'password') {
                 if (!password_modal_showing) {
                   show_modal("#password_modal", function() { get_ballot(); return false; });
                 }
               }
+            } else {
+              g_ballot = data.ballot;
+              close_modal("#password_modal");
+              set_up_ballot();
             }
           }
          });

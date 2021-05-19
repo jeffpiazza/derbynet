@@ -211,22 +211,22 @@ TWO_HUNDRED_CLASS=$(curl_getj "action.php?query=json.poll.coordinator" \
 TWO_HUNDRED_ROUNDID=$(curl_getj "action.php?query=json.poll.coordinator" \
                         | jq '.rounds | map(select(.class == "TheTwoHundred"))[0].roundid')
 
-RACERID_1050=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1050 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1060=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1060 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1070=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1070 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1080=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1080 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1090=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1090 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1100=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1100 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1110=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1110 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
-RACERID_1150=$(curl_get "action.php?query=racer.list" \
-                          | grep F-1150 | sed -e "s/.*racerid=.\([0-9][0-9]*\).*/\1/")
+RACERID_1050=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1050" ))[0].racerid')
+RACERID_1060=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1060" ))[0].racerid')
+RACERID_1070=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1070" ))[0].racerid')
+RACERID_1080=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1080" ))[0].racerid')
+RACERID_1090=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1090" ))[0].racerid')
+RACERID_1100=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1100" ))[0].racerid')
+RACERID_1110=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1110" ))[0].racerid')
+RACERID_1150=$(curl_getj "action.php?query=json.racer.list" | \
+                         jq '.racers | map(select( .firstname == "F-1150" ))[0].racerid')
 
 curl_post action.php "action=racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_CLASS" | check_success
 

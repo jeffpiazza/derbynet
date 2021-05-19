@@ -390,7 +390,7 @@ $(function() {
   $("#balloting_state").on('change', function() {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'ballot.open',
+            data: {action: 'json.ballot.open',
                    state: $("#balloting_state").is(':checked') ? "open" : "closed" }
            });
   });

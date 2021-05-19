@@ -46,13 +46,13 @@ function vote_tabulations() {
   $tab = array();
   foreach ($stmt as $row) {
     if (count($tab) == 0 || $row['awardid'] != $tab[count($tab) - 1]['awardid']) {
-      $tab[] = array('awardid' => $row['awardid'],
+      $tab[] = array('awardid' => $row['awardid'] + 0,
                      'awardname' => $row['awardname'],
                      'recipient' => $row['recipient'],  // Racer id of current recipient, 0=none
                      'candidates' => array());
     }
     $tab[count($tab) - 1]['candidates'][] =
-        array('score' => $row['score'],
+        array('score' => $row['score'] + 0,
               'carnumber' => $row['carnumber'],
               'firstname' => $row['firstname'],
               'lastname' => $row['lastname']);

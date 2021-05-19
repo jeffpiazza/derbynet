@@ -51,24 +51,22 @@ $sql = 'SELECT racerid, firstname, lastname, carnumber, carname, imagefile,'
 
 $stmt = $db->query($sql);
 
-echo "<racers>\n";
+$racers = array();
 foreach ($stmt as $row) {
-  echo '  <racer';
-  echo ' racerid="'.$row['racerid'].'"';
-  echo ' firstname="'.htmlspecialchars($row['firstname'], ENT_QUOTES, 'UTF-8').'"';
-  echo ' lastname="'.htmlspecialchars($row['lastname'], ENT_QUOTES, 'UTF-8').'"';
-  echo ' carnumber="'.$row['carnumber'].'"';
-  echo ' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"';
-  echo ' headshot="'.$headshot_render->render_url($row['imagefile']).'"';
-  echo ' car_photo="'.$carphoto_render->render_url($row['imagefile']).'"';
-  echo ' classid="'.$row['classid'].'"';
-  echo ' class="'.htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8').'"';
-  echo ' rankid="'.$row['rankid'].'"';
-  echo ' rank="'.htmlspecialchars($row['rank'], ENT_QUOTES, 'UTF-8').'"';
-  echo ' passed="'.$row['passedinspection'].'"';
-  echo ' exclude="'.$row['exclude'].'"';
-  echo ' seq="'.$row['seq'].'"';
-  echo "/>\n";
+  $racers[] = array('racerid' => $row['racerid'] + 0,
+                    'firstname' => $row['firstname'],
+                    'lastname' => $row['lastname'],
+                    'carnumber' => $row['carnumber'],
+                    'carname' => $row['carname'],
+                    'headshot' => $headshot_render->render_url($row['imagefile']),
+                    'car_photo' => $carphoto_render->render_url($row['imagefile']),
+                    'classid' => $row['classid'] + 0,
+                    'class' => $row['class'],
+                    'rankid' => $row['rankid'] + 0,
+                    'rank' => $row['rank'],
+                    'passed' => $row['passedinspection'] ? true : false,
+                    'seq' => $row['seq']);
 }
-echo "</racers>\n";
+json_out('racers', $racers);
+
 ?>

@@ -100,9 +100,9 @@ curl_postj action.php "action=json.racer.import&firstname=Willard&lastname=Woolf
 # Import one last entry and then immediately delete
 curl_postj action.php "action=json.racer.import&firstname=Soon&lastname=ToGo&classname=White's Wolves&carnumber=283" | check_jsuccess
 
-curl_get "action.php?query=racer.list" | expect_one 'ToGo'
+curl_getj "action.php?query=json.racer.list" | expect_one 'ToGo'
 curl_post action.php "action=racer.delete&racer=83" | check_success
-curl_get "action.php?query=racer.list" | expect_count 'ToGo' 0
+curl_getj "action.php?query=json.racer.list" | expect_count 'ToGo' 0
 
 curl_post action.php "action=racer.bulk&what=number&who=c4&start=501&renumber=1" | check_success
 

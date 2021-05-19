@@ -32,7 +32,7 @@ curl_postj action.php "action=json.award.edit&awardid=4&sort=3&ballot_depth=1" |
 # Voting not yet open
 curl_post action.php "action=vote.cast&awardid=3&votes=[12,36]" | check_failure
 
-curl_post action.php "action=ballot.open&state=open" | check_success
+curl_postj action.php "action=json.ballot.open&state=open" | check_jsuccess
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[16,42]" | check_success
 # The same voter selecting different candidates doesn't add to the original choices
@@ -46,12 +46,24 @@ rm $COOKIES_CURL
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[19,37]" | check_success
 
-curl_get "action.php?query=ballot.results" | grep 'score=.2.' | expect_one 'Ian Ives'
-curl_get "action.php?query=ballot.results" | expect_count 'carnumber=.136.' 0 # racer 36 (vote rejected)
-curl_get "action.php?query=ballot.results" | expect_count 'carnumber=.242.' 0 # racer 42 (vote overwritten)
+curl_getj "action.php?query=json.ballot.results" | \
+    jq '.awards | .[].candidates | .[] | select(.score == 2).firstname' | \
+    expect_eq '"Ian"'
+
+curl_getj "action.php?query=json.ballot.results" | \
+    jq '.awards | any( .candidates |  any( .carnumber == "136" ))' | \
+    expect_eq false  # racer 36 (vote rejected)
+
+curl_getj "action.php?query=json.ballot.results" | \
+    jq '.awards | any( .candidates |  any( .carnumber == "242" ))' | \
+    expect_eq false  # racer 42 (vote overwritten)
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[36]" | check_success
-curl_get "action.php?query=ballot.results" | expect_one 'carnumber=.136.'
+curl_getj "action.php?query=json.ballot.results" | \
+    jq '.awards | any( .candidates |  any( .carnumber == "136" ))' | \
+    expect_eq true
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[42]" | check_success
-curl_get "action.php?query=ballot.results" | expect_one 'carnumber=.242.'
+curl_getj "action.php?query=json.ballot.results" | \
+    jq '.awards | any( .candidates |  any( .carnumber == "242" ))' | \
+    expect_eq true
