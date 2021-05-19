@@ -1,13 +1,13 @@
 <?php
-
-require_once('inc/action-helpers.inc');
+/*
+{original:, path:, base-paths: [{path, basename}, ...], files: [{file:, readable:, writable:, isdir:}, ...]}
+*/
 
 if (!isset($_GET['path'])) {
-   echo '<failure code="nopath">No PATH query argument provided</failure>'."\n";
+  json_failure('nopath', "No PATH query argument provided");
 } else {
   $dirpath = $_GET['path'];
-
-  echo '<directory original="'.htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8').'">'."\n";
+  json_out('original', $dirpath);
 
   while (is_link($dirpath)) {
     $dirpath = readlink($dirpath);
@@ -16,9 +16,9 @@ if (!isset($_GET['path'])) {
   if (is_file($dirpath)) {
     $basename = pathinfo($dirpath, PATHINFO_BASENAME);
     $dirpath = pathinfo($dirpath, PATHINFO_DIRNAME);
-    echo "<chosen>".htmlspecialchars($basename, ENT_QUOTES, 'UTF-8')."</chosen>\n";
+    json_out('chosen', $basename);
   }
-
+  
   while (true) {
     if ($dirpath === "") {
       $dirpath = DIRECTORY_SEPARATOR;
@@ -27,9 +27,7 @@ if (!isset($_GET['path'])) {
     if ($files !== false) {
       break;
     }
-    echo "  <failure code='unable'>"
-         ."Unable to list directory ".htmlspecialchars($dirpath, ENT_QUOTES, 'UTF-8')
-         ."</failure>\n";
+    json_failure('unable', "Unable to list directory $dirpath");
     $info = pathinfo($dirpath, PATHINFO_DIRNAME);
     if ($dirpath == $info) {
       // Nothing left
@@ -47,13 +45,14 @@ if (!isset($_GET['path'])) {
   if (substr($realpath, -1) !== DIRECTORY_SEPARATOR) {
     $realpath .= DIRECTORY_SEPARATOR;
   }
-  echo '<path realpath="'.htmlspecialchars($realpath, ENT_QUOTES, 'UTF-8').'"/>'."\n";
+  json_out('path', $realpath);
 
+  $base_paths = array();
   $superpath = $realpath;
   while ($superpath !== "") {
     $basename = pathinfo($superpath, PATHINFO_BASENAME);
-    echo '  <base path="'.htmlspecialchars($superpath, ENT_QUOTES, 'UTF-8').'">'
-        .htmlspecialchars($basename, ENT_QUOTES, 'UTF-8').'</base>'."\n";
+    $base_paths[] = array('path' => $superpath,
+                          'basename' => $basename);
     $info = pathinfo($superpath, PATHINFO_DIRNAME);
     if ($superpath == $info) {
       break;
@@ -61,24 +60,22 @@ if (!isset($_GET['path'])) {
       $superpath = $info;
     }
   }
+  json_out('base-paths', $base_paths);
 
+  $file_list = array();
   if ($files === false) {
-  } else {  
+  } else {
     foreach ($files as $file) {
       // if ($file != "." && $file != "..") {
       if (substr($file, 0, 1) != ".") {
         $path = $dirpath . $file;
-        echo '  <file'
-            .' readable="'.intval(is_readable($path)).'"'
-            .' writable="'.intval(is_writable($path)).'"'
-            .' directory="'.intval(is_dir($path)).'"'
-            .'>';
-        echo htmlspecialchars($file, ENT_QUOTES, 'UTF-8');
-        echo '</file>'."\n";
+        $file_list[] = array('file' => $file,
+                             'readable' => is_readable($path),
+                             'writable' => is_writable($path),
+                             'isdir' => is_dir($path));
       }
     }
   }
-
-  echo "</directory>\n";
+  json_out('files', $file_list);
 }
 ?>
