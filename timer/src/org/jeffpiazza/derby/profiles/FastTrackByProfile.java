@@ -60,10 +60,7 @@ public class FastTrackByProfile extends TimerDeviceWithProfile {
         .setup(Flag.skip_enhanced_format.value()
                ? new String[]{"RE", "N1", "RF"}
                : new String[]{"RE", "N1", "N2", "RF"})
-        .match("([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$",
-               new Profile.Detector(
-                   " *([A-Z])=(\\d\\.\\d+)([^ ]?)",
-                   Event.LANE_RESULT, 1, 2))
+        .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .match("RG0", Event.GATE_OPEN)
         .match("RG1", Event.GATE_CLOSED)
         .heat_prep("MG", "M", 'A')

@@ -35,10 +35,7 @@ public class ChampByProfile extends TimerDeviceWithProfile {
         .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT))
         .max_running_time_ms(11000)
         .heat_prep("om0", "om", '1')
-        .match("([A-Z]=(\\d\\.\\d+).?)( [A-Z]=(\\d\\.\\d+).?)*$",
-                 new Profile.Detector(
-                     " *([A-Z])=(\\d\\.\\d+)([^ ]?)",
-                     Event.LANE_RESULT, 1, 2))
+        .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .gate_watcher("rs" /* READ_START_SWITCH */,
                         new Profile.Detector("^0$", Event.GATE_CLOSED),
                         new Profile.Detector("^1$", Event.GATE_OPEN))
