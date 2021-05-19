@@ -2,12 +2,10 @@
 
 $seek = $_GET['seek'];
 
-echo "<timer-log>\n";
-
 $timer_log_name = read_raceinfo('timer-log', '');
 $log = $timer_log_name ? fopen($timer_log_name, 'r') : false;
 if ($log === false) {
-  echo "<failure code='nolog'>No log file $timer_log_name</failure>";
+  json_failure('nolog', "No log file $timer_log_name");
   $size = 0;
 } else {
   $stat = fstat($log);
@@ -20,14 +18,10 @@ if ($log === false) {
     $data = fread($log, $size - $seek);
     flock($log, LOCK_UN);
     fclose($log);
-    echo "<file-data>";
-    echo htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-    echo "</file-data>\n";
+    json_out('file-data', $data);
   }
 }
 
-echo "<file-size size=\"$size\"/>\n";
-
-echo "</timer-log>";
+json_out('file-size', $size);
 
 ?>

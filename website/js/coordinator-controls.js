@@ -37,7 +37,7 @@ g_ready_aggregate_classes = [];
 function handle_start_race_button() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'timer.remote-start'}
+          data: {action: 'json.timer.remote-start'}
          });
 }
 
@@ -451,7 +451,7 @@ function handle_master_next_up() {
 function handle_stop_testing() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'timer.test',
+          data: {action: 'json.timer.test',
                  'test-mode': 0},
          });
 }

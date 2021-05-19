@@ -48,46 +48,45 @@ $(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
 function handle_timer_settings_button() {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'timer.settings'},
+          data: {query: 'json.timer.settings'},
           success: function(data) {
             open_timer_settings_modal(data);
           }});
 }
 
 function open_timer_settings_modal(data) {
-  var ports = data.documentElement.getElementsByTagName('ports');
-  if (ports.length > 0) {
-    ports = ports[0].getAttribute('value').split(',');
-  } else {
-    ports = [];
+  var ports = [];
+  if (data.hasOwnProperty('ports')) {
+    ports = data.ports.split(',');
   }
+  
   $("#timer_settings_port select").empty();
   $("#timer_settings_port select").append("<option value='' selected='selected'>Auto Port</option>");
   for (var i = 0; i < ports.length; ++i) {
-      $("<option/>")
-        .attr('value', ports[i])
-        .text(ports[i])
-        .appendTo($("#timer_settings_port select"));
-    }
+    $("<option/>")
+      .attr('value', ports[i])
+      .text(ports[i])
+      .appendTo($("#timer_settings_port select"));
+  }
 
-  var devices = data.documentElement.getElementsByTagName('device');
+  var devices = data.devices;
   $("#timer_settings_device select").empty();
   $("#timer_settings_device select").append("<option value='' selected='selected'>Auto Device</option>");
   for (var i = 0; i < devices.length; ++i) {
     $("<option/>")
-      .attr('value', devices[i].getAttribute('name'))
-      .text(devices[i].textContent)
+      .attr('value', devices[i].name)
+      .text(devices[i].description)
       .appendTo($("#timer_settings_device select"));
   }
   
-  var flags = data.documentElement.getElementsByTagName('flag');
+  var flags = data.flags;
   $("#timer_settings_modal_flags").empty();
   for (var i = 0; i < flags.length; ++i) {
     var f = flags[i];
     $("#timer_settings_modal_flags").append(
       $("<tr/>")
-        .append($("<td/>").text(f.getAttribute('name')))
-        .append($("<td/>").text(f.textContent))
+        .append($("<td/>").text(f.name))
+        .append($("<td/>").text(f.description))
         .append(make_flag_control(f, $("<td/>")))
     );
   }
@@ -101,7 +100,7 @@ function open_timer_settings_modal(data) {
 function on_port_change(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'timer.assign-port',
+          data: {action: 'json.timer.assign-port',
                  port: $("#timer_settings_port select")
                         .find('option:selected').attr('value')
                 }});
@@ -111,7 +110,7 @@ $(function() { $("#timer_settings_port select").on('change', on_port_change); })
 function on_device_change(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'timer.assign-device',
+          data: {action: 'json.timer.assign-device',
                  device: $("#timer_settings_device select")
                            .find('option:selected').attr('value')
                 }});
@@ -121,7 +120,7 @@ $(function() { $("#timer_settings_device select").on('change', on_device_change)
 function on_flag_change_bool(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'timer.assign-flag',
+          data: {action: 'json.timer.assign-flag',
                  flag: $(evt.target).attr('data-flag'),
                  value: $(evt.target).is(':checked') ? 'true' : 'false'
                 }});
@@ -138,7 +137,7 @@ function on_flag_check(evt) {
   var input = target.closest('td').find('input[type="text"]');
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'timer.assign-flag',
+          data: {action: 'json.timer.assign-flag',
                  flag: input.attr('data-flag'),
                  value: input.val()
                 }});
@@ -152,20 +151,20 @@ function on_flag_cross(evt) {
 }
 
 function make_flag_control(f, td) {
-  var t = f.getAttribute('type');
+  var t = f.type;
   if (t == 'bool') {
     td.append($('<input type="checkbox" class="flipswitch"'
-                + (f.getAttribute('value') != 'false' ? ' checked="checked"' : '')
+                + (f.value != 'false' ? ' checked="checked"' : '')
                 + '/>')
-              .attr('data-flag', f.getAttribute('name'))
+              .attr('data-flag', f.name)
               .on('change', on_flag_change_bool));
   } else if (t == 'string' || t == 'int' || t == 'long') {
     // td.append($("<p/>").text(f.getAttribute('value')))
     //   .append($("<input type='button' value='Edit'/>"));
     td.append($("<input type='text'/>")
-              .attr('data-flag', f.getAttribute('name'))
-              .attr('value', f.getAttribute('value'))
-              .attr('original', f.getAttribute('value'))
+              .attr('data-flag', f.name)
+              .attr('value', f.value)
+              .attr('original', f.value)
               .on('input change', on_flag_input_text)
               .css('width', '160px'));  // TODO
     td.append($("<div class='controls hidden'></div>")
@@ -181,7 +180,7 @@ function make_flag_control(f, td) {
 function handle_start_race_button() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'timer.remote-start'}
+          data: {action: 'json.timer.remote-start'}
          });
 }
 
@@ -212,7 +211,7 @@ function on_mask_click(event) {
 
   $.ajax("action.php",
          {type: 'POST',
-          data: {action: 'timer.test',
+          data: {action: 'json.timer.test',
                  'tt-mask': mask}
          });
 }
@@ -221,7 +220,7 @@ function on_testing_change(event, synthetic) {
   if (!synthetic) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'timer.test',
+            data: {action: 'json.timer.test',
                    'test-mode': $("#test-mode").is(':checked') ? 1 : 0,
                   },
            });
@@ -244,7 +243,7 @@ function is_in_testing_mode(current) {
     return false;
   }
   return current.roundid == -100 &&
-    current["now-racing"] == 1;
+    current["now-racing"];
 }
 function update_testing_mode(current) {
   var should_be_checked = is_in_testing_mode(current);
@@ -259,7 +258,7 @@ function update_timer_summary(tstate, details, current) {
   $("#timer_summary_icon").attr('src', tstate.icon);
   $("#start_race_button_div").toggleClass('hidden',
                                           !is_in_testing_mode(current) ||
-                                          tstate["remote-start"] != "1");
+                                          !tstate["remote-start"]);
   // Offer the fake timer only if no other timer is connected.
   $("#fake_timer_div").toggleClass('hidden', tstate.state != "1");
 }
@@ -267,9 +266,9 @@ function update_timer_summary(tstate, details, current) {
 function update_timer_details(details) {
   $("#timer-details").empty();
   if (details.human) {
-    $("<p></p>").text(detailshuman).appendTo($("#timer-details"));
+    $("<p></p>").text(details.human).appendTo($("#timer-details"));
   } else if (details.type) {
-    $("<p></p>").text(detailstype).appendTo($("#timer-details"));
+    $("<p></p>").text(details.type).appendTo($("#timer-details"));
   }
   if (details.ident) {
     $("<p></p>").text(details.ident).appendTo($("#timer-details"));
@@ -318,33 +317,29 @@ $(function() {
 function poll_for_timer_log(seek, timeout) {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'timer.log',
+          data: {query: 'json.timer.log',
                  seek: seek},
           success: function(data) {
-             var file_data = data.documentElement.getElementsByTagName('file-data');
-             if (file_data && file_data.length > 0) {
-               file_data = file_data[0];
-               $("#log_text").append(
-                 document.createTextNode(file_data.textContent));
-               $("#log_container").scrollTop($("#log_container").scrollTop()
-                                             + $("#log_text")[0].getBoundingClientRect().bottom
-                                             - $("#log_container").height());
-               timeout = 50;
-             } else {
-               timeout = 2 * timeout;
-               if (timeout > 1000) {
-                 timeout = 1000;
-               }
-             }
+            if (data.hasOwnProperty('file-data')) {
+              $("#log_text").append(document.createTextNode(data['file-data']));
+              $("#log_container").scrollTop($("#log_container").scrollTop()
+                                            + $("#log_text")[0].getBoundingClientRect().bottom
+                                            - $("#log_container").height());
+              timeout = 50;
+            } else {
+              timeout = 2 * timeout;
+              if (timeout > 1000) {
+                timeout = 1000;
+              }
+            }
 
-             var file_size_elt  = data.documentElement.getElementsByTagName('file-size');
-             if (file_size_elt && file_size_elt.length > 0) {
-               seek = file_size_elt[0].getAttribute('size');
-             } else {
-               seek = 0;
-             }
-             setTimeout(function() { poll_for_timer_log(seek, timeout); }, timeout);
-           }
+            if (data.hasOwnProperty('file-size')) {
+              seek = data['file-size'];
+            } else {
+              seek = 0;
+            }
+            setTimeout(function() { poll_for_timer_log(seek, timeout); }, timeout);
+          }
          });
 }
 

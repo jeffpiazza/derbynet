@@ -94,6 +94,7 @@ table#lanes td.time {
 
 #timer_settings_modal {
   top: 10px;
+  width: 800px;
 }
 #timer_settings_port,
 #timer_settings_device {
