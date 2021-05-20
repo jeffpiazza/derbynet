@@ -3,8 +3,6 @@
 // <n> is the sequential order, e.g. the value of $_POST['classid_1'] is the classid which
 // should have sortorder=1
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, strlen('classid_')) == 'classid_') {
@@ -13,10 +11,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                            ':classid' => $val));
     }
   }
-  echo "<success/>\n";
+  json_success();
 } else {
-  echo "<failure code='permission'>Not authorized</failure>\n";
+  json_failure('permission', "Not authorized");
 }
-
-end_response();
 ?>

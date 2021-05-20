@@ -66,7 +66,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 
 <div id="add_class_modal" class="modal_dialog wide_modal hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="class.add"/>
+    <input type="hidden" name="action" value="json.class.add"/>
 
     <div id='aggregate-by-div' class="aggregate-only">
       <label for='aggregate-by-checkbox'>Aggregate by &nbsp;</label>
@@ -165,7 +165,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
 <div id="add_rank_modal" class="modal_dialog hidden block_buttons">
   <h3>Add New <?php echo subgroup_label(); ?></h3>
   <form>
-    <input type="hidden" name="action" value="rank.add"/>
+    <input type="hidden" name="action" value="json.rank.add"/>
     <input type="hidden" name="classid"/>
     <input name="name" type="text"/>
 

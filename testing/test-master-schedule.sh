@@ -156,12 +156,13 @@ curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 8 and .heat == 2" | \
     expect_eq true
 
-curl_get "action.php?query=class.list" | expect_one 'Grand Finals'
+curl_getj "action.php?query=json.class.list" | expect_one 'Grand Finals'
 
 # Unschedule and remove Grand Finals round
 curl_postj action.php "action=json.result.delete&roundid=8&heat=1" | check_jsuccess
 curl_postj action.php "action=json.schedule.unschedule&roundid=8" | check_jsuccess
 curl_postj action.php "action=json.roster.delete&roundid=8" | check_jsuccess
 
-curl_get "action.php?query=class.list" | expect_count 'Grand Finals' 0
-curl_get "action.php?query=class.list" | expect_count 'classid=.8.' 0
+curl_getj "action.php?query=json.class.list" | expect_count 'Grand Finals' 0
+curl_getj "action.php?query=json.class.list" | \
+    jq '.classes | all(.classid != 8)' | expect_eq true

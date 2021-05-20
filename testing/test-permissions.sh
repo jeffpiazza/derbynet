@@ -44,7 +44,7 @@ curl_postj action.php "action=json.award.xbs" | check_jfailure
 
 # Queries don't answer "<success/>" or "<failure/>", so there's really
 # nothing to check other than that they parse as XML.
-curl_get "action.php?query=class.list" > /dev/null
+curl_getj "action.php?query=json.class.list" > /dev/null
 curl_getj "action.php?query=json.poll.coordinator" | jq . > /dev/null
 curl_get "action.php?query=kiosk.poll" > /dev/null
 curl_get "action.php?query=poll.kiosk.all" > /dev/null

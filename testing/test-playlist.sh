@@ -24,7 +24,7 @@ make_racer 203 Den2
 make_racer 301 Den3
 make_racer 302 Den3
 
-curl_post action.php "action=class.add&name=TwoThree&constituent_2&constituent_3" | check_success
+curl_postj action.php "action=json.class.add&name=TwoThree&constituent_2&constituent_3" | check_jsuccess
 
 curl_post action.php "action=racer.bulk&who=all&what=checkin" | check_success
 

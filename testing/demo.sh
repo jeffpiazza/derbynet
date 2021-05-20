@@ -31,13 +31,13 @@ while true ; do
   `dirname $0`/checkin-all.sh "$BASE_URL"
   sleep 15s
 
-  curl_post action.php "action=class.edit&classid=1&name=Tigers" | check_success
-  curl_post action.php "action=class.edit&classid=2&name=Wolves" | check_success
-  curl_post action.php "action=class.edit&classid=3&name=Bears" | check_success
-  curl_post action.php "action=class.edit&classid=4&name=Webelos%20I" | check_success
-  curl_post action.php "action=class.edit&classid=5&name=Webelos%20II" | check_success
+  curl_postj action.php "action=json.class.edit&classid=1&name=Tigers" | check_jsuccess
+  curl_postj action.php "action=json.class.edit&classid=2&name=Wolves" | check_jsuccess
+  curl_postj action.php "action=json.class.edit&classid=3&name=Bears" | check_jsuccess
+  curl_postj action.php "action=json.class.edit&classid=4&name=Webelos%20I" | check_jsuccess
+  curl_postj action.php "action=json.class.edit&classid=5&name=Webelos%20II" | check_jsuccess
 
-  curl_post action.php "action=class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_success
+  curl_postj action.php "action=json.class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_jsuccess
 
   # Start the timer
   user_login_timer

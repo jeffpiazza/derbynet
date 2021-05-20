@@ -10,13 +10,11 @@ require_once(sql_file_path('column-widths'));
 require_once('inc/newracer.inc');
 require_once('inc/classes.inc');
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['name'])) {
     $classname = substr(trim($_POST['name']), 0, CLASS_COLUMN_WIDTH);
     if ($classname == '') {
-      echo "<failure code='noname'>No name provided for the new ".group_label()."</failure>\n";
+      json_failure('noname', "No name provided for the new ".group_label());
     } else {
       list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
       $constituents = array();
@@ -51,14 +49,12 @@ if (have_permission(SET_UP_PERMISSION)) {
       if (isset($_POST['ntrophies'])) {
         update_ntrophies($classid, $_POST['ntrophies']);
       }
-      echo "<success/>\n";
+      json_success();
     }
   } else {
-    echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";
+    json_failure('missing-args', "Unrecognized argument signature");
   }
 } else {
-  echo "<failure code='permission'>Not authorized</failure>\n";
+  json_failure('permission', "Not authorized");
 }
-
-end_response();
 ?>

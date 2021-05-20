@@ -6,8 +6,6 @@
 
 require_once('inc/classes.inc');
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['classid']) && isset($_POST['name'])) {
     $stmt = $db->prepare('UPDATE Classes SET class = :name WHERE classid = :classid');
@@ -16,13 +14,11 @@ if (have_permission(SET_UP_PERMISSION)) {
     if (isset($_POST['ntrophies'])) {
       update_ntrophies($_POST['classid'], $_POST['ntrophies']);
     }
-    echo "<success/>\n";
+    json_success();
   } else {
-    echo "<failure code='missing-args'>Unrecognized argument signature</failure>\n";
+    json_failure('missing-args', "Unrecognized argument signature");
   }
 } else {
-  echo "<failure code='permission'>Not authorized</failure>\n";
+  json_failure('permission', "Not authorized");
 }
-
-end_response();
 ?>

@@ -98,7 +98,7 @@ curl_getj "action.php?query=json.award.list" | \
                           expect_eq true
 
 ## Create "Younger" aggregate class of classes 1,2.  Should give classid=8
-curl_post action.php "action=class.add&constituent_1=1&constituent_2=1&name=Younger" | check_success
+curl_postj action.php "action=json.class.add&constituent_1=1&constituent_2=1&name=Younger" | check_jsuccess
 ## Create an award for the aggregate class.  Award rankid won't matter for an aggregate class award.
 curl_postj action.php "action=json.award.edit&awardid=new&awardtypeid=2&name=AggClass%20Award&class_and_rank=8,8" | check_jsuccess
 
@@ -107,9 +107,9 @@ curl_postj action.php "action=json.award.winner&awardid=6&racerid=1" | check_jsu
 
 ## Create an empty subgroup for Lions & Tigers
 curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_success
-curl_post action.php "action=rank.add&name=Private&classid=1" | check_success
+curl_postj action.php "action=json.rank.add&name=Private&classid=1" | check_jsuccess
 ## Create an "aggregate" class comprising only the new Private rankid
-curl_post action.php "action=class.add&rankid_8=1&name=AggExclusive" | check_success
+curl_postj action.php "action=json.class.add&rankid_8=1&name=AggExclusive" | check_jsuccess
 ## Create an award for that exclusive (empty) class
 curl_postj action.php "action=json.award.edit&awardid=new&awardtypeid=2&name=Exclusive&class_and_rank=1,8" | check_jsuccess
 
@@ -143,8 +143,8 @@ curl_getj "action.php?query=json.award.list" | \
 
 # The presence of two aggregate classes would make second-fastest-in-pack (speed-2)
 # not meaningful.
-curl_postj action.php "action=class.delete&classid=9" | check_success
-curl_post action.php "action=class.delete&classid=8" | check_success
+curl_postj action.php "action=json.class.delete&classid=9" | check_jsuccess
+curl_postj action.php "action=json.class.delete&classid=8" | check_jsuccess
 
 curl_postj action.php "action=json.award.present&key=speed-2" | check_jsuccess
 curl_getj "action.php?query=json.award.current" | \

@@ -11,9 +11,9 @@ user_login_coordinator
 
 # Turn on subgroups and split "Lions & Tigers" into 3 subgrouops: "Lions"(1), "Tigers"(6), and "Cougars"(7)
 curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_success
-curl_post action.php "action=rank.edit&name=Lions&rankid=1" | check_success
-curl_post action.php "action=rank.add&classid=1&name=Tigers" | check_success
-curl_post action.php "action=rank.add&classid=1&name=Cougars" | check_success
+curl_postj action.php "action=json.rank.edit&name=Lions&rankid=1" | check_jsuccess
+curl_postj action.php "action=json.rank.add&classid=1&name=Tigers" | check_jsuccess
+curl_postj action.php "action=json.rank.add&classid=1&name=Cougars" | check_jsuccess
 
 # Move some Lions & Tigers to Tigers (rankid = 6)
 curl_postj action.php "action=json.racer.edit&rankid=6&racer=6" | check_jsuccess

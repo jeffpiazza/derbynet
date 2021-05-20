@@ -25,7 +25,7 @@ function show_add_class_modal() {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: 'action=class.add&' +
+            data: 'action=json.class.add&' +
                 $("#add-class-name").serialize() + '&' +
                 $("#add-class-ntrophies").serialize(),
             success: function (data) {
@@ -63,7 +63,7 @@ function show_add_aggregate_modal() {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data:  'action=class.add&' +
+            data:  'action=json.class.add&' +
                 $("#add-class-name").serialize() + '&' +
                 $("#add-class-ntrophies").serialize() + '&' +
                 ($("#aggregate-by-checkbox").is(':checked')
@@ -132,7 +132,7 @@ function show_edit_one_class_modal(list_item) {
     show_secondary_modal("#edit_one_class_modal", function () {
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'class.edit',
+                data: {action: 'json.class.edit',
                        classid: list_item.attr('data-classid'),
                        name: $("#edit_class_name").val(),
                        ntrophies: $("#edit_class_ntrophies").val()},
@@ -155,7 +155,7 @@ function handle_delete_class() {
               + ' "' + $('#edit_one_class_modal input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'class.delete',
+            data: {action: 'json.class.delete',
                    classid: $("#edit_class_name").attr('data-classid')
                   },
             success: function(data) {
@@ -208,7 +208,7 @@ function show_edit_one_rank_modal(list_item) {
   show_tertiary_modal("#edit_one_rank_modal", function() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'rank.edit',
+            data: {action: 'json.rank.edit',
                    rankid: list_item.attr('data-rankid'),
                    name: $("#edit_rank_name").val()},
             success: function(data) {
@@ -233,7 +233,7 @@ function handle_delete_rank() {
               + ' "' + $("#edit_rank_name").val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'rank.delete',
+            data: {action: 'json.rank.delete',
                    rankid: $("#edit_rank_name").attr('data-rankid')
                   },
             success: function(data) {
@@ -249,7 +249,7 @@ function handle_delete_rank() {
 function reload_class_list() {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'class.list'},
+            data: {query: 'json.class.list'},
             success: function(data) {
               repopulate_class_list(data);
               repopulate_constituent_classes(data);
@@ -260,28 +260,28 @@ function reload_class_list() {
 // edit_one_class modal.
 function populate_rank_list(cl) {
   $("#edit_ranks_extension").removeClass('hidden');
-  var classid = cl.getAttribute('classid');
+  var classid = cl.classid;
   var rank_ul = $("<ul class='mlistview has-alts'></ul>")
-      .attr('data-classid', cl.getAttribute('classid'))
+      .attr('data-classid', cl.classid)
       .appendTo("#ranks_container");
 
-  var ranks = cl.getElementsByTagName("rank");
+  var ranks = cl.subgroups;
   for (var ri = 0; ri < ranks.length; ++ri) {
     var rank = ranks[ri];
     var rank_li = $("<li"
-                    + " data-rankid='" + rank.getAttribute('rankid') + "'"
-                    + " data-count='" + rank.getAttribute('count') + "'"
+                    + " data-rankid='" + rank.rankid + "'"
+                    + " data-count='" + rank.count + "'"
                     + ">"
                     + "<p class='rank'></p>"
                     + "<a onclick='edit_one_rank(this);'></a>"
                     + "</li>").appendTo(rank_ul);
     var rank_p = rank_li.find("p");
-    $("<span class='rank-name'></span>").text(rank.getAttribute('name')).appendTo(rank_p);
-    $("<span class='count'></span>").text("(" + rank.getAttribute('count') + ")").appendTo(rank_p);
+    $("<span class='rank-name'></span>").text(rank.name).appendTo(rank_p);
+    $("<span class='count'></span>").text("(" + rank.count + ")").appendTo(rank_p);
   }
 
   rank_ul.sortable({stop: function(event, ui) {
-      var data = {action: 'rank.order'};
+      var data = {action: 'json.rank.order'};
       $("#ranks_container ul[data-classid=" + classid + "] li").each(function(i) {
         data['rankid_' + (i + 1)] = $(this).attr('data-rankid');
       });
@@ -292,47 +292,46 @@ function populate_rank_list(cl) {
 }
 
 function repopulate_class_list(data) {
-  var classes = data.getElementsByTagName("class");
-  if (classes.length > 0) {
-    $("#ranks_container").empty();
-    $("#groups").empty();
-    for (var i = 0; i < classes.length; ++i) {
-      var cl = classes[i];
+  var classes = data.classes;
+  $("#ranks_container").empty();
+  $("#groups").empty();
+  for (var i = 0; i < classes.length; ++i) {
+    var cl = classes[i];
+    var group_li = $("<li"
+                     + " data-classid='" + cl.classid + "'"
+                     + " data-ntrophies='" + cl.ntrophies + "'"
+                     + " data-count='" + cl.count + "'"
+                     + " data-nrounds='" + cl.nrounds + "'"
+                     + " data-constituent-of=''"  // Possibly rewritten below
+                     + ">"
+                     + "<p></p>"
+                     + "<a onclick='edit_one_class(this);'></a>"
+                     + "</li>").appendTo("#groups");
+    var group_p = group_li.find("p");
+    $("<span class='class-name'></span>").text(cl.name).appendTo(group_p);
+    $("<span class='count'></span>").text("(" + cl.count + ")").appendTo(group_p);
 
-      var group_li = $("<li"
-                       + " data-classid='" + cl.getAttribute('classid') + "'"
-                       + " data-ntrophies='" + cl.getAttribute('ntrophies') + "'"
-                       + " data-count='" + cl.getAttribute('count') + "'"
-                       + " data-nrounds='" + cl.getAttribute('nrounds') + "'"
-                       + " data-constituent-of=''"  // Possibly rewritten below
-                       + ">"
-                       + "<p></p>"
-                       + "<a onclick='edit_one_class(this);'></a>"
-                       + "</li>").appendTo("#groups");
-      var group_p = group_li.find("p");
-      $("<span class='class-name'></span>").text(cl.getAttribute('name')).appendTo(group_p);
-      $("<span class='count'></span>").text("(" + cl.getAttribute('count') + ")").appendTo(group_p);
-
-      if (use_subgroups()) {
-        populate_rank_list(cl);
-      }
-
-      var constituents = cl.getElementsByTagName('constituent');
-      if (constituents.length > 0) {
-        var constituents_ul = $('<ul></ul>').appendTo(group_li);
-        for (var ii = 0; ii < constituents.length; ++ii) {
-          $('<li></li>').text(constituents[ii].getAttribute('name')).appendTo(constituents_ul);
-        }
-      }
+    if (use_subgroups()) {
+      populate_rank_list(cl);
     }
 
-    // Mark up constituents so they can't be deleted
-    for (var i = 0; i < classes.length; ++i) {
-      var cl = classes[i];
-      var constituents = cl.getElementsByTagName('constituent');
+    if (cl.hasOwnProperty('constituents')) {
+      var constituents = cl.constituents;
+      var constituents_ul = $('<ul></ul>').appendTo(group_li);
       for (var ii = 0; ii < constituents.length; ++ii) {
-        $("#groups li[data-classid=" + constituents[ii].getAttribute('classid') + "]")
-          .attr('data-constituent-of', cl.getAttribute('name'));
+        $('<li></li>').text(constituents[ii].name).appendTo(constituents_ul);
+      }
+    }
+  }
+
+  // Mark up constituents so they can't be deleted
+  for (var i = 0; i < classes.length; ++i) {
+    var cl = classes[i];
+    if (cl.hasOwnProperty('constituents')) {
+      var constituents = cl.constituents;
+      for (var ii = 0; ii < constituents.length; ++ii) {
+        $("#groups li[data-classid=" + constituents[ii].classid + "]")
+          .attr('data-constituent-of', cl.name);
       }
     }
   }
@@ -342,38 +341,36 @@ function repopulate_class_list(data) {
 // For the Create Aggregate modal, add a flipswitch for each existing
 // class to the list of potential constituents.
 function repopulate_constituent_classes(data) {
-  var classes = data.getElementsByTagName("class");
-  if (classes.length > 0) {
-    $("#constituent-classes").empty();
-    $("#constituent-subgroups").empty();
-    for (var i = 0; i < classes.length; ++i) {
-      var cl = classes[i];
-      $("<div class='flipswitch-div'/>")
-        .appendTo("#constituent-classes")
-        .append($("<label class='constituent-label'/>")
-                .attr('for', 'constituent_' + cl.getAttribute('classid'))
-                .text(cl.getAttribute('name')))
-        .append($("<input type='checkbox' class='flipswitch'/>")
-                .attr('id', 'constituent_' + cl.getAttribute('classid'))
-                .attr('name', 'constituent_' + cl.getAttribute('classid')));
+  var classes = data.classes;
+  $("#constituent-classes").empty();
+  $("#constituent-subgroups").empty();
+  for (var i = 0; i < classes.length; ++i) {
+    var cl = classes[i];
+    $("<div class='flipswitch-div'/>")
+      .appendTo("#constituent-classes")
+      .append($("<label class='constituent-label'/>")
+              .attr('for', 'constituent_' + cl.classid)
+              .text(cl.name))
+      .append($("<input type='checkbox' class='flipswitch'/>")
+              .attr('id', 'constituent_' + cl.classid)
+              .attr('name', 'constituent_' + cl.classid));
 
-      var ranks = cl.getElementsByTagName("rank");
-      for (var ri = 0; ri < ranks.length; ++ri) {
-        var r = ranks[ri];
-        $("<div class='flipswitch-div'/>")
-          .appendTo("#constituent-subgroups")
-          .append($("<label class='constituent-label'/>")
-                  .attr('for', 'rankid_' + r.getAttribute('rankid'))
-                  .text(r.getAttribute('name')))
-          .append($("<input type='checkbox' class='flipswitch'/>")
-                  .attr('id', 'rankid_' + r.getAttribute('rankid'))
-                  .attr('name', 'rankid_' + r.getAttribute('rankid')));
-      }
+    var ranks = cl.subgroups;
+    for (var ri = 0; ri < ranks.length; ++ri) {
+      var r = ranks[ri];
+      $("<div class='flipswitch-div'/>")
+        .appendTo("#constituent-subgroups")
+        .append($("<label class='constituent-label'/>")
+                .attr('for', 'rankid_' + r.rankid)
+                .text(r.name))
+        .append($("<input type='checkbox' class='flipswitch'/>")
+                .attr('id', 'rankid_' + r.rankid)
+                .attr('name', 'rankid_' + r.rankid));
     }
-    // Decorate all the flipswitches
-    flipswitch($("#constituent-div input.flipswitch"));
-    $("#constituent-div input[type='checkbox']").on('change', maybe_enable_aggregate_create);
   }
+  // Decorate all the flipswitches
+  flipswitch($("#constituent-div input.flipswitch"));
+  $("#constituent-div input[type='checkbox']").on('change', maybe_enable_aggregate_create);
 }
 
 // When the "aggregate-by" checkbox changes, slide to hide or show
@@ -386,7 +383,7 @@ function on_aggregate_by_change() {
 
 $(function () {
     $("#groups").sortable({stop: function(event, ui) {
-      var data = {action: 'class.order'};
+      var data = {action: 'json.class.order'};
       $("#edit_all_classes_modal ul li").each(function(i) {
         data['classid_' + (i + 1)] = $(this).attr('data-classid');
       });
