@@ -51,19 +51,19 @@ curl_getj "action.php?query=json.ballot.results" | \
     expect_eq '"Ian"'
 
 curl_getj "action.php?query=json.ballot.results" | \
-    jq '.awards | any( .candidates |  any( .carnumber == "136" ))' | \
+    jq '.awards | any( .candidates |  any( .carnumber == 136 ))' | \
     expect_eq false  # racer 36 (vote rejected)
 
 curl_getj "action.php?query=json.ballot.results" | \
-    jq '.awards | any( .candidates |  any( .carnumber == "242" ))' | \
+    jq '.awards | any( .candidates |  any( .carnumber == 242 ))' | \
     expect_eq false  # racer 42 (vote overwritten)
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[36]" | check_success
 curl_getj "action.php?query=json.ballot.results" | \
-    jq '.awards | any( .candidates |  any( .carnumber == "136" ))' | \
+    jq '.awards | any( .candidates |  any( .carnumber == 136 ))' | \
     expect_eq true
 
 curl_post action.php "action=vote.cast&awardid=3&votes=[42]" | check_success
 curl_getj "action.php?query=json.ballot.results" | \
-    jq '.awards | any( .candidates |  any( .carnumber == "242" ))' | \
+    jq '.awards | any( .candidates |  any( .carnumber == 242 ))' | \
     expect_eq true

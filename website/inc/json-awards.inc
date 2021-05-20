@@ -14,7 +14,7 @@ function json_award_types($include_ad_hoc) {
   $awardtypes = array();
   if ($stmt) {
     foreach ($stmt as $atype) {
-      $awardtypes[] = array('awardtypeid' => $atype['awardtypeid'] + 0,
+      $awardtypes[] = array('awardtypeid' => $atype['awardtypeid'],
                             'awardtype' => $atype['awardtype']);
     }
   }
@@ -30,27 +30,27 @@ function json_all_awards($include_ad_hoc) {
   foreach ($all_awards as $award) {
     $votes = array();
     foreach ($award['votes'] as $vote) {
-      $votes[] = array('racerid' => $vote['racerid'] + 0,
-                       'score' => $vote['score'] + 0,
+      $votes[] = array('racerid' => $vote['racerid'],
+                       'score' => $vote['score'],
                        'carnumber' => $vote['carnumber'],
                        'firstname' => $vote['firstname'],
                        'lastname' => $vote['lastname']);
     }
-    $jawards[] = array('awardid' => $award['awardid'] + 0,
+    $jawards[] = array('awardid' => $award['awardid'],
                        'awardname' => $award['awardname'],
                        'awardtype' => $award['awardtype'],
-                       'awardtypeid' => $award['awardtypeid'] + 0,
+                       'awardtypeid' => $award['awardtypeid'],
                        'adhoc' => ($award['awardtypeid'] == AD_HOC_AWARDTYPEID),
-                       'classid' => @$award['classid'] + 0,
+                       'classid' => @$award['classid'],
                        'eligible-classids' => $award['eligible-classids'],
                        'eligible-rankids' => $award['eligible-rankids'],
-                       'rankid' => @$award['rankid'] + 0,
-                       'racerid' => $award['racerid'] + 0,
+                       'rankid' => @$award['rankid'],
+                       'racerid' => $award['racerid'],
                        'firstname' => $award['firstname'] ? $award['firstname'] : '',
                        'lastname' => $award['lastname'] ? $award['lastname'] : '',
                        'carnumber' => $award['carnumber'],
-                       'sort' => $award['sort'] + 0,
-                       'ballot_depth' => $award['ballot_depth'] + 0,
+                       'sort' => $award['sort'],
+                       'ballot_depth' => $award['ballot_depth'],
                        'votes' => $votes);
   }
   return $jawards;
@@ -62,16 +62,16 @@ function json_speed_awards() {
   $jawards = array();
   foreach ($awards as $award) {
     $a = array('type' => 'speed-award',  // TODO
-               'racerid' => $award['racerid'] + 0,
+               'racerid' => $award['racerid'],
                'key' => $award['awardkey'],
-               'place' => $award['place'] + 0);
+               'place' => $award['place']);
     if (isset($award['rankid'])) {
       $a['category'] = 'subgroup';
-      $a['classid'] = $award['classid'] + 0;
-      $a['rankid'] = $award['rankid'] + 0;
+      $a['classid'] = $award['classid'];
+      $a['rankid'] = $award['rankid'];
     } else if (isset($award['classid'])) {
       $a['category'] = 'group';
-      $a['classid'] = $award['classid'] + 0;
+      $a['classid'] = $award['classid'];
     } else {
       $a['category'] = 'supergroup';
     }

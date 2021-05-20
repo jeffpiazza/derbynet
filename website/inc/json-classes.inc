@@ -18,10 +18,10 @@ function json_all_classes() {
 
   foreach ($all_classes as $class) {
     $cl = array(
-      'classid' => $class['classid'] + 0,
-      'count' => $class['count'] + 0,
-      'nrounds' => $class['nrounds_with_results'] + 0,
-      'ntrophies' => $class['ntrophies'] + 0,
+      'classid' => $class['classid'],
+      'count' => $class['count'],
+      'nrounds' => $class['nrounds_with_results'],
+      'ntrophies' => $class['ntrophies'],
       'name' => $class['name']);
     if (!empty($class['rankids'])) {
       $cl['aggregate-by-subgroup'] = true;
@@ -29,8 +29,8 @@ function json_all_classes() {
     $cl['subgroups'] = array();
     foreach ($class['ranks'] as $rank) {
       $cl['subgroups'][] = array(
-        'rankid' => $rank['rankid'] + 0,
-        'count' => $rank['count'] + 0,
+        'rankid' => $rank['rankid'],
+        'count' => $rank['count'],
         'name' => $rank['name']);
     }
     if (!empty($class['constituents'])) {

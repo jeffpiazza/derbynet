@@ -47,7 +47,7 @@ foreach (aggregate_classes() as $agg_class) {
   }
   if ($ready_to_race) {
     $json_out['ready-aggregate'][] = array(
-      'classid' => $agg_class['classid'] + 0,
+      'classid' => $agg_class['classid'],
       'by-subgroup' => empty($agg_class['rankids']) ? false : true,
       'class' => $agg_class['class']);
   }

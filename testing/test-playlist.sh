@@ -101,20 +101,20 @@ curl_getj "action.php?query=json.poll.coordinator" | \
 
 # First heat: 203 v. 201
 curl_getj "action.php?query=json.poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == \"203\") or 
-                      (.lane == 2 and .carnumber == \"201\"))" | \
+    jq ".racers | all((.lane == 1 and .carnumber == 203) or 
+                      (.lane == 2 and .carnumber == 201))" | \
     expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Second heat: 302 v. 203
 curl_getj "action.php?query=json.poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == \"302\") or 
-                      (.lane == 2 and .carnumber == \"203\"))" | \
+    jq ".racers | all((.lane == 1 and .carnumber == 302) or 
+                      (.lane == 2 and .carnumber == 203))" | \
     expect_eq true
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Third heat: 201 v. 302
 curl_getj "action.php?query=json.poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == \"201\") or 
-                      (.lane == 2 and .carnumber == \"302\"))" | \
+    jq ".racers | all((.lane == 1 and .carnumber == 201) or 
+                      (.lane == 2 and .carnumber == 302))" | \
     expect_eq true

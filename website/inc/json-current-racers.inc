@@ -32,13 +32,13 @@ function json_current_racers(&$now_running, $name_style, $photo_render) {
 
   foreach ($stmt as $row) {
     $racer = array(
-      'lane' => $row['lane'] + 0,
+      'lane' => $row['lane'],
       'name' => mangled_name($row, $name_style),
       'carname' => $row['carname'],
       'carnumber' => $row['carnumber'],
       'photo' => $photo_render ? $photo_render->url_for_row($row) : '',
       'finishtime' => $row['finishtime'] ? sprintf($time_format, $row['finishtime']) : '',
-      'finishplace' => $row['finishplace'] ? $row['finishplace'] + 0 : '');
+      'finishplace' => $row['finishplace'] ? $row['finishplace'] : '');
     if ($use_subgroups) {
       $racer['subgroup'] = $row['rank'];
     }

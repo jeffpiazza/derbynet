@@ -218,8 +218,7 @@ function add_round_to_queue(classid, round, roster_params) {
           success: function(data) {
             if (data.hasOwnProperty('queue-entry')) {
               var entry = data['queue-entry'];
-              entry.round = parseInt(entry.round);
-              entry.seq = parseInt(entry.seq);
+              console.log(entry);
               g_queue.push(entry);
               append_playlist_entry_li(entry, g_all_scenes);
               maybe_change_playlist_message();

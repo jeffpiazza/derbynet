@@ -22,16 +22,16 @@ function json_all_rounds() {
   foreach ($rounds as $round) {
     $roundid = $round['roundid'];
     $r = array(
-      'roundid' => $roundid + 0,
-      'classid' => $round['classid'] + 0,
+      'roundid' => $roundid,
+      'classid' => $round['classid'],
       'class' => $round['class'],
-      'round' => $round['round'] + 0,
+      'round' => $round['round'],
       'aggregate' => $round['aggregate'] ? true : false,
-      'roster_size' => $round['roster_size'] + 0,
-      'passed' => $round['passed'] + 0,
-      'unscheduled' => $round['unscheduled'] + 0,
-      'heats_scheduled' => $round['heats_scheduled'] + 0,
-      'heats_run' => $round['heats_run'] + 0,
+      'roster_size' => $round['roster_size'],
+      'passed' => $round['passed'],
+      'unscheduled' => $round['unscheduled'],
+      'heats_scheduled' => $round['heats_scheduled'],
+      'heats_run' => $round['heats_run'],
       'name' => $round['roundname']);
     if ($roundid['roundid'] == $next_roundid) {
       $r['next-round'] = true;

@@ -128,7 +128,7 @@ populate_roster($bucketed ? $how_to_bucket : ROSTER_UNBUCKETED, $new_roundid, $c
                 $constituent_roundids, $rankids, $finalists);
 json_out('finalists', $finalists);
 
-json_out('new-round', array('roundid' => $new_roundid + 0));
+json_out('new-round', array('roundid' => $new_roundid));
 json_success();
 
 require('ajax/query.json.poll.coordinator.inc');

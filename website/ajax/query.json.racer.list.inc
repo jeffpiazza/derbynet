@@ -53,16 +53,16 @@ $stmt = $db->query($sql);
 
 $racers = array();
 foreach ($stmt as $row) {
-  $racers[] = array('racerid' => $row['racerid'] + 0,
+  $racers[] = array('racerid' => $row['racerid'],
                     'firstname' => $row['firstname'],
                     'lastname' => $row['lastname'],
                     'carnumber' => $row['carnumber'],
                     'carname' => $row['carname'],
                     'headshot' => $headshot_render->render_url($row['imagefile']),
                     'car_photo' => $carphoto_render->render_url($row['imagefile']),
-                    'classid' => $row['classid'] + 0,
+                    'classid' => $row['classid'],
                     'class' => $row['class'],
-                    'rankid' => $row['rankid'] + 0,
+                    'rankid' => $row['rankid'],
                     'rank' => $row['rank'],
                     'passed' => $row['passedinspection'] ? true : false,
                     'seq' => $row['seq']);

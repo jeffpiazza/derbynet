@@ -21,15 +21,15 @@ curl_postj action.php "action=json.heat.select&roundid=1&now_racing=0" | check_j
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 1 or .lane == 6)) | length" | \
     expect_eq 0
-staged_heat6 - 101 121 141 111 -
+staged_heat6 0 101 121 141 111 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 - 111 131 101 121 -
+staged_heat6 0 111 131 101 121 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 - 121 141 111 131 -
+staged_heat6 0 121 141 111 131 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 - 131 101 121 141 -
+staged_heat6 0 131 101 121 141 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 - 141 111 131 101 -
+staged_heat6 0 141 111 131 101 0
 
 
 # Use every other lane, 101010 = 42
@@ -45,15 +45,15 @@ curl_postj action.php "action=json.heat.select&roundid=2&now_racing=0" | check_j
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".racers | map(select(.lane == 2 or .lane == 4 or .lane == 6)) | length" | \
     expect_eq 0
-staged_heat6 207 - 227 - 247 -
+staged_heat6 207 0 227 0 247 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 217 - 237 - 207 -
+staged_heat6 217 0 237 0 207 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 227 - 247 - 217 -
+staged_heat6 227 0 247 0 217 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 237 - 207 - 227 -
+staged_heat6 237 0 207 0 227 0
 curl_postj action.php "action=json.heat.select&heat=next" | check_jsuccess
-staged_heat6 247 - 217 - 237 -
+staged_heat6 247 0 217 0 237 0
 
 
 

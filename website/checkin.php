@@ -166,11 +166,9 @@ $n = 1;
 foreach ($stmt as $rs) {
   // TODO
   $rs['rankseq'] = $ranks[$rs['rankid']]['seq'];
-  // json_encode replaces / in a string with \/ sequence
-  echo "addrow0(".str_replace(array("&", "<", "\\/", ">", "'"),
-                              array("\u0026", "\u003c", "\u002f", "\u003e", "\u0027"),
-                              json_encode(json_table_row($rs, $n))).");\n";
-
+  echo "addrow0(".json_encode(json_table_row($rs, $n),
+                              JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
+                              JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS).");\n";
   ++$n;
 }
 ?></script>

@@ -73,18 +73,17 @@ $prefix = $is_action ? 'action' : 'query';
 if (!@include 'ajax/'.$prefix.'.'.$inc.'.inc') {
   if ($in_json) {
     json_failure('unrecognized', "Unrecognized $prefix: $inc");
-    echo json_encode($json_out, JSON_PRETTY_PRINT);
-    echo "\n";
   } else {
     start_response();
     echo '<failure code="unrecognized">Unrecognized '.$prefix.': '.$inc.'</failure>';
     end_response();
   }
-} else {
-  if ($in_json) {
-    echo json_encode($json_out, JSON_PRETTY_PRINT);
-    echo "\n";
-  }
 }
+
+if ($in_json) {
+  echo json_encode($json_out, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+  echo "\n";
+}
+
 
 ?>

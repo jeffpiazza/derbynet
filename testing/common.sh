@@ -268,13 +268,14 @@ function run_heat_place() {
 }
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
+#  "Bye" lanes are given as 0's
 function staged_heat4() {
     curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".racers | \
-            (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
-            (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
-            (\"$3\" == \"-\" or map(select ( .lane == 3 ))[0].carnumber == \"$3\") and \
-            (\"$4\" == \"-\" or map(select ( .lane == 4 ))[0].carnumber == \"$4\")" | \
+            ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
+            ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \
+            ($3 == 0 or map(select ( .lane == 3 ))[0].carnumber == $3) and \
+            ($4 == 0 or map(select ( .lane == 4 ))[0].carnumber == $4)" | \
         expect_eq true
 }
 
@@ -282,11 +283,11 @@ function staged_heat4() {
 function staged_heat6() {
     curl_getj "action.php?query=json.poll.coordinator" | \
         jq ".racers | \
-            (\"$1\" == \"-\" or map(select ( .lane == 1 ))[0].carnumber == \"$1\") and \
-            (\"$2\" == \"-\" or map(select ( .lane == 2 ))[0].carnumber == \"$2\") and \
-            (\"$3\" == \"-\" or map(select ( .lane == 3 ))[0].carnumber == \"$3\") and \
-            (\"$4\" == \"-\" or map(select ( .lane == 4 ))[0].carnumber == \"$4\") and \
-            (\"$5\" == \"-\" or map(select ( .lane == 5 ))[0].carnumber == \"$5\") and \
-            (\"$6\" == \"-\" or map(select ( .lane == 6 ))[0].carnumber == \"$6\")" | \
+            ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
+            ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \
+            ($3 == 0 or map(select ( .lane == 3 ))[0].carnumber == $3) and \
+            ($4 == 0 or map(select ( .lane == 4 ))[0].carnumber == $4) and \
+            ($5 == 0 or map(select ( .lane == 5 ))[0].carnumber == $5) and \
+            ($6 == 0 or map(select ( .lane == 6 ))[0].carnumber == $6)" | \
         expect_eq true
 }

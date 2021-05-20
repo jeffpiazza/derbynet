@@ -59,10 +59,10 @@ curl_getj "action.php?query=json.poll.coordinator" | \
 curl_postj action.php "action=json.heat.reinstate" | grep last-heat | expect_one none
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq '.racers |
-        all((.finishtime == "2.994" and (.name | test("Darrell.*"))) or 
-            (.finishtime == "3.457" and .name == "Ian Ives") or
-            (.finishtime == "2.187" and .name == "Blake Burling") or
-            (.finishtime == "2.345" and .name == "Elliot Eastman"))' | \
+        all((.finishtime == 2.994 and (.name | test("Darrell.*"))) or 
+            (.finishtime == 3.457 and .name == "Ian Ives") or
+            (.finishtime == 2.187 and .name == "Blake Burling") or
+            (.finishtime == 2.345 and .name == "Elliot Eastman"))' | \
     expect_eq true
 
 curl_postj action.php "action=json.heat.select&heat=next&now_racing=1" | check_jsuccess
@@ -94,12 +94,12 @@ run_heat 3 4 -      9.9999 2.7565 3.0264   x
 user_login_coordinator
 ### Editing racers
 
-[ `curl_get checkin.php | grep '"racerid":"5"' | grep -c '"class":"Arrows'` -eq 1 ] || test_fails Initial class
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Arrows'` -eq 1 ] || test_fails Initial class
 curl_postj action.php "action=json.racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_jsuccess
-[ `curl_get checkin.php | grep '"racerid":"5"' | grep -c '"firstname":"Zuzu"'` -eq 1 ] || test_fails Firstname change
-[ `curl_get checkin.php | grep '"racerid":"5"' | grep -c '"lastname":"Zingelo"'` -eq 1 ] || test_fails Lastname change
-[ `curl_get checkin.php | grep '"racerid":"5"' | grep -c '"class":"Webelos'` -eq 1 ] || test_fails Class change
-[ `curl_get checkin.php | grep '"racerid":"5"' | grep -c '"carnumber":"999"'` -eq 1 ] || test_fails Car number change
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"firstname":"Zuzu"'` -eq 1 ] || test_fails Firstname change
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"lastname":"Zingelo"'` -eq 1 ] || test_fails Lastname change
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Webelos'` -eq 1 ] || test_fails Class change
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"carnumber":999'` -eq 1 ] || test_fails Car number change
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
 curl_postj action.php "action=json.heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess

@@ -11,8 +11,8 @@ function json_timer_state() {
   $tstate = $timer_state->state();
 
   return array(
-    'lanes' => get_lane_count() + 0,
-    'last-contact' => $timer_state->last_contact() + 0,
+    'lanes' => get_lane_count(),
+    'last-contact' => $timer_state->last_contact(),
     'state' => $tstate,
     'icon' => $icon,
     'remote-start' => has_remote_start() ? true : false,
