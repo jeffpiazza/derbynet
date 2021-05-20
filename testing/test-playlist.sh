@@ -45,10 +45,10 @@ curl_post action.php "action=settings.write&racing_scene=4" | check_success
 
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 
-curl_post action.php "action=playlist.new&classid=1&round=1&sceneid_at_finish=5" | check_success
-curl_post action.php "action=playlist.new&classid=2&round=1&n_times_per_lane=1&continue_racing=1" | check_success
-curl_post action.php "action=playlist.new&classid=3&round=1&n_times_per_lane=1&continue_racing=1" | check_success
-curl_post action.php "action=playlist.new&classid=4&round=1&top=3&bucketed=0&n_times_per_lane=2" | check_success
+curl_postj action.php "action=json.playlist.add&classid=1&round=1&sceneid_at_finish=5" | check_jsuccess
+curl_postj action.php "action=json.playlist.add&classid=2&round=1&n_times_per_lane=1&continue_racing=1" | check_jsuccess
+curl_postj action.php "action=json.playlist.add&classid=3&round=1&n_times_per_lane=1&continue_racing=1" | check_jsuccess
+curl_postj action.php "action=json.playlist.add&classid=4&round=1&top=3&bucketed=0&n_times_per_lane=2" | check_jsuccess
 
 # Race roundid=1:
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess

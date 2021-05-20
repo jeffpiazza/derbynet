@@ -1,8 +1,6 @@
 <?php
 // $_POST['queueid_1'] = (first queue entry), ...
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, strlen('queueid_')) == 'queueid_') {
@@ -11,10 +9,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                            ':queueid' => $val));
     }
   }
-  echo "<success/>\n";
+  json_success();
 } else {
-  echo "<failure code='permission'>Not authorized</failure>\n";
+  json_not_authorized();
 }
-
-end_response();
 ?>

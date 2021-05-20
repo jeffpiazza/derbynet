@@ -11,18 +11,16 @@
 // $_POST['n_times_per_lane']
 // $_POST['sceneid_at_finish'] or $_POST['continue_racing'] or nothing
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
   if (!isset($_POST['classid'])) {
-    echo "<failure code='no_classid'>No classid</failure>\n";
+    json_failure('no_classid', "No classid");
     $ok = false;
   } else {
     $classid = $_POST['classid'];
   }
   if (!isset($_POST['round'])) {
-    echo "<failure code='no_round'>No round</failure>\n";
+    json_failure('no_round', "No round");
     $ok = false;
   } else {
     $round = $_POST['round'];
@@ -72,8 +70,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                          ':n_times_per_lane' => $n_times_per_lane,
                          ':sceneid_at_finish' => $sceneid_at_finish,
                          ':continue_racing' => $continue_racing));
-    echo "<success/>\n";
-    echo "<queue-entry>".json_encode(
+    json_out('queue-entry',
       read_single_row('SELECT queueid, seq, Playlist.classid, Playlist.round,'
                       .' bucket_limit, bucketed,'
                       .' n_times_per_lane, sceneid_at_finish, continue_racing,'
@@ -84,13 +81,11 @@ if (have_permission(SET_UP_PERMISSION)) {
                                            'Playlist.classid = Classes.classid')
                       .' WHERE seq = :seq',
                       array(':seq' => $new_seq),
-                      PDO::FETCH_ASSOC),
-      JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT)."</queue-entry>\n";
+                      PDO::FETCH_ASSOC));
+    json_success();
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 
 ?>

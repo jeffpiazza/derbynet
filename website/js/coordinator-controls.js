@@ -459,7 +459,7 @@ function handle_stop_testing() {
 function handle_start_playlist() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'playlist.start'}
+          data: {action: 'json.playlist.start'}
          });
 }
 

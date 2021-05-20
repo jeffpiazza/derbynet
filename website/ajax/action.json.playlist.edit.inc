@@ -10,8 +10,6 @@
 // $_POST['continue_racing'] or
 // nothing (stop)
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
 
@@ -34,11 +32,9 @@ if (have_permission(SET_UP_PERMISSION)) {
                        ':ntimes' => $n_times_per_lane,
                        ':sceneid' => $sceneid_at_finish,
                        ':continue' => $continue_racing));
-  echo "<success/>\n";
+  json_success();
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 
 ?>
