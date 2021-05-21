@@ -8,7 +8,8 @@
 
 // Intended for demo mode:
 // $_POST['all'] to choose a page to display on all kiosks
-start_response();
+
+require_once('inc/kiosks.inc');
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if (isset($_POST['page']) || isset($_POST['params'])) {
@@ -52,11 +53,13 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     $stmt->execute(array(':page' => $_POST['all']));
   }
 
-  echo "<success/>\n";
-  require('ajax/query.poll.kiosk.all.inc');
-} else {
-  not_authorized_body();
-}
+  json_success();
 
-end_response();
+  json_out('current-scene', read_raceinfo('current-scene', ''));
+
+  json_out('kiosks', all_kiosks());
+  json_out('kiosk-pages', all_kiosk_pages());
+} else {
+  json_not_authorized();
+}
 ?>

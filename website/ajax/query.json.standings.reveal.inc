@@ -10,7 +10,7 @@ if (count($state) < 2) {
 $exposed = $state[0];
 $entry = $state[1];
 
-?><standings-reveal>
-  <catalog-entry json="<?php echo htmlspecialchars($entry, ENT_QUOTES, 'UTF-8'); ?>"/>
-  <exposed count="<?php echo $exposed; ?>"/>
-</standings-reveal>
+json_out('catalog-entry', $entry);
+json_out('exposed', $exposed);
+
+?>

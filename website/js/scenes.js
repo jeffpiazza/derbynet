@@ -104,12 +104,11 @@ function on_new_scene() {
       var name = $("#new_scene_name").val();
       $.ajax('action.php',
              {type: 'POST',
-              data: {action: 'scene.new',
+              data: {action: 'json.scene.add',
                      name: name},
               success: function(data) {
-                var sceneid = data.getElementsByTagName('scene');
-                if (sceneid.length > 0) {
-                  sceneid = sceneid[0].getAttribute('id');
+                if (data.hasOwnProperty('scene-id')) {
+                  var sceneid = data['scene-id'];
                   g_all_scenes.push({sceneid: sceneid,
                                      name: name,
                                      kiosks: []});
@@ -138,7 +137,7 @@ function on_page_change(event, synthetic) {
   if (!synthetic) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'scene.setkiosk',
+            data: {action: 'json.scene.setkiosk',
                    sceneid: $("#scenes-select").val(),
                    kiosk_name: kdiv.attr('data-kiosk'),
                    page:  page.full}
@@ -187,7 +186,7 @@ function on_add_kiosk() {
 function on_delete_scene() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'scene.delete',
+          data: {action: 'json.scene.delete',
                  sceneid: g_current_scene},
           success: function(data) {
             var scene_index = g_all_scenes.findIndex((s) => s.sceneid == g_current_scene);

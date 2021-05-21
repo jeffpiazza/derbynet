@@ -4,8 +4,6 @@ $sceneid = $_POST['sceneid'];
 $kiosk_name = $_POST['kiosk_name'];
 $page = $_POST['page'];
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   $prev = read_single_value('SELECT page FROM SceneKiosk'
                             .' WHERE sceneid = :sceneid'
@@ -33,10 +31,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                          ':kiosk_name' => $kiosk_name));
   }
 
-  echo "<success/>\n";
+  json_success();
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

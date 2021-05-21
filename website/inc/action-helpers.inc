@@ -2,11 +2,6 @@
 require_once('inc/permissions.inc');
 require_once('inc/authorize.inc');
 
-
-function xml_for_reload() {
-  return '<reload>1</reload>';
-}
-
 function start_response() {
   echo '<action-response';
   foreach ($_POST as $attr => $val) {

@@ -30,10 +30,10 @@ curl_postj action.php "action=json.racer.bulk&who=all&what=checkin" | check_jsuc
 
 KIOSK1=FAKE-KIOSK1
 
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/identify.kiosk
-curl_post action.php "action=kiosk.assign&address=$KIOSK1&name=Main" | check_success
-curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/welcome.kiosk" | check_success
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/welcome.kiosk
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one identify.kiosk
+curl_postj action.php "action=json.kiosk.assign&address=$KIOSK1&name=Main" | check_jsuccess
+curl_postj action.php "action=json.kiosk.assign&address=$KIOSK1&page=kiosks/welcome.kiosk" | check_jsuccess
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one welcome.kiosk
 
 # Assuming Den1's first round is roundid = 1, etc.
 #
@@ -52,7 +52,7 @@ curl_postj action.php "action=json.playlist.add&classid=4&round=1&top=3&bucketed
 
 # Race roundid=1:
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
@@ -62,17 +62,17 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.0
 # racing.  After a brief pause, we should see the scene switched to Awards
 echo "Waiting for scene change to take effect..."
 sleep 11s
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/award-presentations.kiosk
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one award-presentations.kiosk
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2" | \
     expect_eq true
 
-curl_post action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_success
+curl_postj action.php "action=json.kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_jsuccess
 
 # Race roundid=2:
 curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one kiosks/now-racing.kiosk
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
@@ -81,7 +81,7 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.3
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.40" | check_success
 # No scene change, move right into round 3
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" | \
@@ -93,7 +93,7 @@ curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.40" | check_success
 
 # No scene change, move right into round 4, which picks a roster
-curl_get "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one "kiosks/now-racing.kiosk"
+curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_getj "action.php?query=json.poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" | \

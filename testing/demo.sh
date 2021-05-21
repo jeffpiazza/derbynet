@@ -17,14 +17,14 @@ while true ; do
   # kiosk page will re-poll every 5s
   sleep 6s
   ########## Please Check In ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/please-check-in.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/please-check-in.kiosk" | check_jsuccess
 
   `dirname $0`/import-roster.sh $BASE_URL
   `dirname $0`/test-photo-assignments.sh $BASE_URL
   sleep 6s
 
   ########## Slideshow ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/slideshow.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/slideshow.kiosk" | check_jsuccess
 
   curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
@@ -53,7 +53,7 @@ while true ; do
   # curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jsuccess
 
   ########## On Deck ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/ondeck.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/ondeck.kiosk" | check_jsuccess
 
   # Start racing
   curl_postj action.php "action=json.heat.select&now_racing=1&roundid=1" | check_jsuccess
@@ -83,7 +83,7 @@ while true ; do
 
   user_login_coordinator
   ########## Now-Racing ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/now-racing.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/now-racing.kiosk" | check_jsuccess
 
   user_login_timer
   curl_post action.php "action=timer-message&message=STARTED" | check_success
@@ -109,7 +109,7 @@ while true ; do
 
   ########## Results-By-Racer ##############
   user_login_coordinator
-  curl_post action.php "action=kiosk.assign&all=kiosks/results-by-racer.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/results-by-racer.kiosk" | check_jsuccess
   user_login_timer
 
   curl_post action.php "action=timer-message&message=STARTED" | check_success
@@ -142,12 +142,12 @@ while true ; do
   sleep 3s
 
   ########## Awards Presentations ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/award-presentations.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/award-presentations.kiosk" | check_jsuccess
   sleep 6s
   curl_postj action.php "action=json.award.present&key=speed-1-1" | check_jsuccess
   sleep 15s
 
   ########## DerbyNet ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/derbynet.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/derbynet.kiosk" | check_jsuccess
   sleep 30s
 done

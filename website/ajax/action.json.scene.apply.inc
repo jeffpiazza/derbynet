@@ -1,9 +1,8 @@
 <?php
 // $_POST['sceneid'] OR $_POST['name'] to select the scene
 
+require_once('inc/kiosks.inc');
 require_once('inc/scenes.inc');
-
-start_response();
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   if (isset($_POST['sceneid'])) {
@@ -12,18 +11,21 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     $sceneid = read_single_value('SELECT sceneid FROM Scenes WHERE name = :name',
                                  array(':name' => $_POST['name']));
   } else {
-    echo "<failure>No scene specified</failure>";
+    json_failure('no-scene', "No scene specified");
   }
 
   if (isset($sceneid)) {
     if ($sceneid < 0) $sceneid = '';
     apply_scene($sceneid);
-    echo "<success/>\n";
-    require('ajax/query.poll.kiosk.all.inc');
+
+    json_success();
+
+    json_out('current-scene', read_raceinfo('current-scene', ''));
+
+    json_out('kiosks', all_kiosks());
+    json_out('kiosk-pages', all_kiosk_pages());
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

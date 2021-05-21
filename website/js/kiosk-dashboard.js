@@ -7,7 +7,7 @@ var g_unclaimed_scene_kiosk_names;
 function poll_kiosk_all() {
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'poll.kiosk.all'},
+          data: {query: 'json.poll.kiosk.all'},
           success: function(data) {
             setTimeout(poll_kiosk_all, 2000);
             process_polled_data(data);
@@ -43,7 +43,7 @@ $(function() { poll_kiosk_all(); });
 // init_found = function() {}
 //
 // Adds any controls desired for custom configuration
-//    kiosk describes the kiosk: {name:, address:, last_contact:, assigned_page:, parameters:}
+//    kiosk describes the kiosk: {name:, address:, last_contact:, page:, parameters:}
 //    kiosk_select is the <div> to which the page handler should add any desired
 //        configuration controls (e.g., a Configure button that activates a
 //        modal dialog).
@@ -80,7 +80,7 @@ var g_kiosk_page_handlers = {
         .on("change", /*selector*/null, /*data*/kiosk,
             /*handler*/function (event) {
               var checked = $(event.target).is(':checked');
-              var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
+              var kiosk = event.data;  // {name:, address:, page:, parameters: }
               post_new_params(kiosk, {confetti: checked});
             })
         .appendTo(kiosk_select);
@@ -145,12 +145,15 @@ function hash_string(hash, str) {
 }
 
 function process_polled_data(data) {
-  var pages = parse_kiosk_pages(data);
-  var kiosks = parse_kiosks(data);
+  var pages = data['kiosk-pages'];
+  var kiosks = data['kiosks'];
+  for (var i = 0; i < kiosks.length; ++i) {
+    kiosks[i].properties = kiosks[i].hasOwnProperty('parameters') && kiosks[i].parameters
+      ? JSON.parse(kiosks[i].parameters) : {};
+  }
 
-  var current_scene = data.getElementsByTagName("current-scene");
-  if (current_scene.length > 0) {
-    current_scene = current_scene[0].getAttribute("id");
+  if (data.hasOwnProperty('current-scene')) {
+    current_scene = data['current-scene'];
     if (current_scene != g_current_scene) {
       g_current_scene = current_scene;
       $("#scenes-select")
@@ -165,7 +168,7 @@ function process_polled_data(data) {
     hash = hash_string(hash, kiosk.name);
     hash = hash_string(hash, kiosk.address);
     hash = hash_string(hash, kiosk.last_contact);
-    hash = hash_string(hash, kiosk.assigned_page);
+    hash = hash_string(hash, kiosk.page);
     hash = hash_string(hash, JSON.stringify(kiosk.parameters));
   }
   if (hash != g_kiosk_hash) {
@@ -177,7 +180,7 @@ function process_polled_data(data) {
 }
 
 // pages: array of {brief:, path:}
-// kiosks: array of {name:, address:, last_contact:, assigned_page:, parameters:}
+// kiosks: array of {name:, address:, last_contact:, page:, parameters:}
 function generate_kiosk_control_group(pages, kiosks) {
   for (var kiosk_page in g_kiosk_page_handlers) {
     var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
@@ -208,39 +211,9 @@ function update_kiosk_names(kiosks) {
     .toggleClass('red-text', name_count < kiosks.length);
 }
 
-// Returns an array of entries, {brief:, path:}, describing each available kiosk page.
-// (brief is the kiosk file name only, path is the full path to access it.)
-function parse_kiosk_pages(data) {
-  var kiosk_pages_xml = data.getElementsByTagName("kiosk-page");
-  var kiosk_pages = new Array(kiosk_pages_xml.length);
-  for (var i = 0; i < kiosk_pages_xml.length; ++i) {
-    kiosk_pages[i] = {brief: kiosk_pages_xml[i].getAttribute('brief'),
-                      path: kiosk_pages_xml[i].textContent};
-  }
-  return kiosk_pages;
-}
-
-// Returns an array of entries for each known kiosk currently connected to the server.
-// {name:, address:, last_contact:, assigned_page:, parameters:}
-function parse_kiosks(data) {
-  var kiosks_xml = data.getElementsByTagName("kiosk");
-  var kiosks = new Array(kiosks_xml.length);
-  for (var i = 0; i < kiosks_xml.length; ++i) {
-    var kiosk_xml = kiosks_xml[i];
-    var param_string = kiosk_xml.getElementsByTagName("parameters")[0].textContent;
-    kiosks[i] = {name: kiosk_xml.getElementsByTagName("name")[0].textContent,
-                 address: kiosk_xml.getElementsByTagName("address")[0].textContent,
-                 last_contact: kiosk_xml.getElementsByTagName("last_contact")[0].textContent,
-                 assigned_page: kiosk_xml.getElementsByTagName("assigned_page")[0].textContent,
-                 parameters: param_string ? JSON.parse(param_string) : {}
-                };
-  }
-  return kiosks;
-}
-
 // Generates a block of controls for a single kiosk.
 // index is just a sequential counter used for making unique control names.
-// kiosk describes the kiosk's state: {name:, address:, last_contact:, assigned_page:, parameters:}
+// kiosk describes the kiosk's state: {name:, address:, last_contact:, page:, parameters:}
 // pages is an array of {path:, brief:} objects, as produced by parse_kiosk_pages.
 function generate_kiosk_control(index, kiosk, pages) {
   var kiosk_control = $("<div class=\"block_buttons control_group kiosk_control\"/>");
@@ -269,7 +242,7 @@ function generate_kiosk_control(index, kiosk, pages) {
               + "/>");
   for (var i = 0; i < pages.length; ++i) {
     opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
-    if (kiosk.assigned_page == pages[i].path) {
+    if (kiosk.page == pages[i].path) {
       opt.prop("selected", true);
     }
     sel.append(opt);
@@ -278,7 +251,7 @@ function generate_kiosk_control(index, kiosk, pages) {
   sel.appendTo(kiosk_select);
   mobile_select(sel);
 
-  var kiosk_config_handler = g_kiosk_page_handlers[kiosk.assigned_page.replace("\\", "/")];
+  var kiosk_config_handler = g_kiosk_page_handlers[kiosk.page.replace("\\", "/")];
   if (kiosk_config_handler) {
     if ('init_found' in kiosk_config_handler) {
       kiosk_config_handler.init_found();
@@ -323,7 +296,7 @@ function on_scene_change(event, synthetic) {
     var val = $("#scenes-select").val();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'scene.apply',
+            data: {action: 'json.scene.apply',
                    sceneid: val},
             success: function(data) {
               process_polled_data(data);
@@ -336,7 +309,7 @@ function on_scene_change(event, synthetic) {
 function handle_assign_kiosk_page_change(sel) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'kiosk.assign',
+          data: {action: 'json.kiosk.assign',
                  address: sel.getAttribute('data-kiosk-address'),
                  page: sel.value},
           success: function(data) {
@@ -371,7 +344,7 @@ function handle_name_kiosk(address, name) {
   close_modal("#kiosk_modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'kiosk.assign',
+          data: {action: 'json.kiosk.assign',
                  address: address,
                  name: name},
           success: function(data) {
@@ -384,10 +357,8 @@ function handle_name_kiosk(address, name) {
 // Controls for the standings display
 //////////////////////////////////////////////////////////////////////////
 function process_standings_reveal_result(data) {
-  var reveal = data.documentElement.getElementsByTagName('reveal');
-  if (reveal.length > 0) {
-    var current_exposed = reveal[0].getAttribute('count');
-    console.log('revealed: ' + current_exposed);
+  if (data.hasOwnProperty('exposed')) {
+    var current_exposed = data.exposed;
     if (current_exposed === '') {
       $("#current_exposed").text('all');
       $("#current_unexposed").text('nothing');
@@ -413,7 +384,7 @@ $(function () {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {
-              action: 'standings.reveal',
+              action: 'json.standings.reveal',
               'catalog-entry': selection.attr('data-catalog-entry')
             },
             success: function(data) {
@@ -426,7 +397,7 @@ function handle_reveal1() {
   $.ajax(g_action_url,
          {type: 'POST',
           data: {
-            action: 'standings.reveal',
+            action: 'json.standings.reveal',
             expose: '+1'
             },
           success: function(data) {
@@ -438,7 +409,7 @@ function handle_reveal_all() {
   $.ajax(g_action_url,
          {type: 'POST',
           data: {
-            action: 'standings.reveal',
+            action: 'json.standings.reveal',
             expose: 'all'
             },
           success: function(data) {
@@ -450,7 +421,7 @@ function handle_reveal_all() {
 // Controls for the kiosk parameter for classes (please_check_in display)
 //////////////////////////////////////////////////////////////////////////
 function show_config_classes_modal(event) {
-  var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
+  var kiosk = event.data;  // {name:, address:, page:, parameters: }
   $("#title_div").addClass('hidden');
   populate_classids(kiosk.parameters);
   show_modal("#config_classes_modal", function(event) {
@@ -462,7 +433,7 @@ function show_config_classes_modal(event) {
 
 function show_config_title_and_classes_modal(event) {
   show_config_classes_modal(event);
-  var kiosk = event.data;  // {name:, address:, assigned_page:, parameters: }
+  var kiosk = event.data;  // {name:, address:, page:, parameters: }
   $("#title_div").removeClass('hidden');
   $("#title_text").val(kiosk.parameters.title);
   populate_classids(kiosk.parameters);
@@ -508,7 +479,7 @@ function compute_classids() {
 function post_new_params(kiosk, new_params) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'kiosk.assign',
+          data: {action: 'json.kiosk.assign',
                  address: kiosk.address,
                  params: JSON.stringify(new_params)},
           success: function(data) {

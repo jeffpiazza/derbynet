@@ -28,8 +28,8 @@ while true ; do
   curl --location -s "$BASE_URL/kiosk.php?id=$MAIN" > /dev/null
   curl --location -s "$BASE_URL/kiosk.php?id=$AUX" > /dev/null
 
-  curl_post action.php "action=kiosk.assign&address=$MAIN&page=kiosks/slideshow.kiosk" | check_success
-  curl_post action.php "action=kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/slideshow.kiosk" | check_jsuccess
+  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_jsuccess
 
   # Tedious set-up
   curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
@@ -46,7 +46,7 @@ while true ; do
   `dirname $0`/test-photo-assignments.sh "$BASE_URL"
   curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
-  curl_post action.php "action=kiosk.assign&address=$AUX&page=kiosks/please-check-in.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/please-check-in.kiosk" | check_jsuccess
 
   `dirname $0`/checkin-all.sh "$BASE_URL"
 
@@ -68,9 +68,9 @@ while true ; do
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
 
   curl_post action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_success
-  curl_post action.php "action=kiosk.assign&address=$ONDECK&page=kiosks/ondeck.kiosk" | check_success
-  curl_post action.php "action=kiosk.assign&address=$MAIN&page=kiosks/now-racing.kiosk" | check_success
-  curl_post action.php "action=kiosk.assign&address=$AUX&page=kiosks/results-by-racer.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&address=$ONDECK&page=kiosks/ondeck.kiosk" | check_jsuccess
+  curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/now-racing.kiosk" | check_jsuccess
+  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/results-by-racer.kiosk" | check_jsuccess
 
   # Knock off a few early rounds
   user_login_timer
@@ -131,13 +131,13 @@ while true ; do
   # sleep 3s
 
   # TODO Not ready for prime time
-  # curl_post action.php "action=kiosk.assign&address=$MAIN&page=kiosks/standings.kiosk" | check_success
+  # curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/standings.kiosk" | check_jsuccess
   # curl_post action.php "action=standings.select&roundid=1&expose=all" | check_success
 
   user_login_coordinator
   ########## Awards Presentations ##############
   sleep 15s
-  curl_post action.php "action=kiosk.assign&address=$AUX&page=kiosks/award-presentations.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/award-presentations.kiosk" | check_jsuccess
   sleep 6s
   curl_postj action.php "action=json.award.present&key=speed-2-1&reveal=0" | check_jsuccess
   sleep 3s
@@ -149,6 +149,6 @@ while true ; do
   sleep 12s
 
   ########## DerbyNet ##############
-  curl_post action.php "action=kiosk.assign&all=kiosks/derbynet.kiosk" | check_success
+  curl_postj action.php "action=json.kiosk.assign&all=kiosks/derbynet.kiosk" | check_jsuccess
   sleep 30s
 done

@@ -22,7 +22,7 @@ if [ $OK -eq 0 ]; then
     test_fails Anonymous index page
 fi
 
-curl_post action.php "action=kiosk.assign" | check_failure
+curl_postj action.php "action=json.kiosk.assign" | check_jfailure
 
 curl_postj action.php "action=json.result.delete" | check_jfailure
 curl_postj action.php "action=json.racer.edit" | check_jfailure
@@ -46,8 +46,8 @@ curl_postj action.php "action=json.award.xbs" | check_jfailure
 # nothing to check other than that they parse as XML.
 curl_getj "action.php?query=json.class.list" > /dev/null
 curl_getj "action.php?query=json.poll.coordinator" | jq . > /dev/null
-curl_get "action.php?query=kiosk.poll" > /dev/null
-curl_get "action.php?query=poll.kiosk.all" > /dev/null
+curl_getj "action.php?query=json.poll.kiosk" > /dev/null
+curl_getj "action.php?query=json.poll.kiosk.all" > /dev/null
 curl_get "action.php?query=roles"  > /dev/null
 curl_get "action.php?query=poll.ondeck" > /dev/null
 curl_getj "action.php?query=json.poll.now-racing" > /dev/null
