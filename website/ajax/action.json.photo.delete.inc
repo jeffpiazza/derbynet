@@ -5,9 +5,6 @@ require_once('inc/photo-config.inc');
 require_once('inc/events.inc');
 
 
-start_response();
-echo "\n";
-
 if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
   $repo = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
   foreach ($repo->all_renders() as &$render) {
@@ -35,11 +32,9 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
     }
   } catch (Exception $e) {
   }
-  echo "<success/>\n";
+  json_success();
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 
 ?>

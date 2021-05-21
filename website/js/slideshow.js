@@ -44,28 +44,28 @@ function mainphoto_onload(img) {
     if (racer) {
       if (current.find("img.mainphoto").length == 0) {
         current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                       racer.getAttribute('main_photo') + '"/>');
+                       racer['main-photo'] + '"/>');
       }
       current.find("img.mainphoto").after('<p class="subtitle">' + 
-                     '<span class="carno">' + racer.getAttribute('carnumber') + '</span>: ' +
-                     racer.getAttribute('name') +
-                     (racer.getAttribute('carname') ?
-                      '<br/><i>' + racer.getAttribute('carname') + '</i>' : '') +
+                     '<span class="carno">' + racer.carnumber + '</span>: ' +
+                     racer.name +
+                     (racer.carname ?
+                      '<br/><i>' + racer.carname + '</i>' : '') +
                      '</p>');
-      if (racer.hasAttribute('inset_photo') &&
+      if (racer.hasOwnProperty('inset-photo') &&
           current.find("img.inset_photo").length == 0) {
         current.append('<img class="inset_photo" src="' +
-                       racer.getAttribute('inset_photo') + '"/>');
+                       racer['inset-photo'] + '"/>');
       }
 
       // Preload the next image for better display
-      if (racer.hasAttribute('next_photo')) {
+      if (racer.hasOwnProperty('next-photo')) {
         next.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                   racer.getAttribute('next_photo') + '"/>');
+                   racer['next-photo'] + '"/>');
       }
-      if (racer.hasAttribute('next_inset')) {
+      if (racer.hasOwnProperty('next-inset')) {
         next.append('<img class="inset_photo" src="' +
-                   racer.getAttribute('next_inset') + '"/>');
+                   racer['next-inset'] + '"/>');
       }
     } else {
       // We assume there's no img.mainphoto under current, because there
@@ -83,14 +83,13 @@ function mainphoto_onload(img) {
     var classids = kiosk_parameters.classids;
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'photo.next',
+            data: {query: 'json.photo.next',
                    racerid: current_racer_id,
                    classids: classids && classids.length > 0 ? classids.join(',') : ''},
             success: function(data) {
-              var racers = data.getElementsByTagName("racer");
-              if (racers.length > 0) {
-                current_racer_id = racers[0].getAttribute('racerid');
-                refresh_page(racers[0]);
+              if (data.hasOwnProperty('racer')) {
+                current_racer_id = data.racer.racerid;
+                refresh_page(data.racer);
               } else {
                 current_racer_id = 0;
                 refresh_page(null);

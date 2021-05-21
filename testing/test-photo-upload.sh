@@ -15,8 +15,8 @@ function upload_carphoto_to_racer() {
     echo                         >> $OUTPUT_CURL
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
          -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" \
-         -F "$2" -F action=photo.upload -F repo=car \
-        | tee $DEBUG_CURL | check_success
+         -F "$2" -F action=json.photo.upload -F repo=car \
+        | tee $DEBUG_CURL | check_jsuccess
 }
 
 # Racerid 65 Porter Papke, Car 465

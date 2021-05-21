@@ -1,4 +1,3 @@
-<slideshow>
 <?php
 
 require_once('inc/name-mangler.inc');
@@ -64,31 +63,43 @@ $stmt = $db->prepare('SELECT racerid, lastname, firstname, carnumber, carname, c
                      .' ORDER BY racerid');
 $stmt->execute(array(':racerid' => $racerid));
 
+function url_for_cropped(&$row, $column_name, &$repository) {
+  return $repository->url_for_file($row[$column_name], $row['racerid'], RENDER_CROPPED);
+}
+
 $row = $stmt->fetch();
 if ($row) {
-    echo '<racer';
-    echo ' racerid="'.$row['racerid'].'"';
-    echo ' name="'.htmlspecialchars(mangled_name($row, $name_style), ENT_QUOTES, 'UTF-8').'"';
-    echo ' carnumber="'.htmlspecialchars($row['carnumber'], ENT_QUOTES, 'UTF-8').'"';
-    echo ' carname="'.htmlspecialchars($row['carname'], ENT_QUOTES, 'UTF-8').'"';
+  $racer = array('racerid' => $row['racerid'],
+                 'name' => mangled_name($row, $name_style),
+                 'carnumber' => $row['carnumber'],
+                 'carname' => $row['carname']);
 
-    if (write_main_photo($row, 'main_photo', $repositories)) {
-      if (isset($row['inset_photo']) && $row['inset_photo']) {
-        write_photo($row, 'inset_photo', 'inset_photo', $repositories[1]);
-      }
-    }
+  $write_inset = false;
+  if (isset($row['main_photo']) && $row['main_photo']) {
+    $racer['main-photo'] = url_for_cropped($row, 'main_photo', $repositories[0]);
+    $write_inset = true;
+  }
 
-    $row = $stmt->fetch();
-    if ($row) {
-      if (write_main_photo($row, 'next_photo', $repositories)) {
-        if (isset($row['inset_photo']) && $row['inset_photo']) {
-          write_photo($row, 'next_inset', 'inset_photo', $repositories[1]);
-        }
-      }
+  if (isset($row['inset_photo']) && $row['inset_photo']) {
+    $racer[$write_inset ? 'inset-photo' : 'main-photo'] =
+        url_for_cropped($row, 'inset_photo', $repositories[1]);
+  }
+
+  $row = $stmt->fetch();
+  if ($row) {
+    $write_inset = false;
+    if (isset($row['main_photo']) && $row['main_photo']) {
+      $racer['next-photo'] = url_for_cropped($row, 'main_photo', $repositories[0]);
+      $write_inset = true;
     }
-    echo '/>'."\n";
+    if (isset($row['inset_photo']) && $row['inset_photo']) {
+      $racer[$write_inset ? 'next-inset' : 'next-photo'] =
+               url_for_cropped($row, 'inset_photo', $repositories[1]);
+    }
+  }
+
+  json_out('racer', $racer);
 }
-// If that's the last racer, return no <racer/> element, and let the client send
+// If that's the last racer, return no racer, and let the client send
 // another request to start from 0.
 ?>
-</slideshow>

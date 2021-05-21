@@ -81,6 +81,9 @@ if (!@include 'ajax/'.$prefix.'.'.$inc.'.inc') {
 }
 
 if ($in_json) {
+  if (empty($json_out)) {
+    $json_out = new stdClass();
+  }
   echo json_encode($json_out, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
   echo "\n";
 }

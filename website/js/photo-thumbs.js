@@ -124,7 +124,7 @@ $(function() {
 function changeRacerPhotoAjax(racer, photo) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'photo.assign',
+          data: {action: 'json.photo.assign',
                  repo: g_photo_repo_name,
                  racer: racer,
                  photo: photo}});
@@ -188,7 +188,7 @@ function cropPhoto() {
     var photo_data = $("#work_image").data('photo');
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'photo.crop',
+            data: {action: 'json.photo.crop',
                    repo: photo_data.repo,
                    image_name: photo_data.basename,
                    left: g_crop.x,
@@ -199,9 +199,8 @@ function cropPhoto() {
                    original_width: $('#work_image img').width()
                   },
             success: function(data) {
-              var breaker = data.getElementsByTagName('cache_breaker');
-              if (breaker) {
-                updateImage(photo_data.source, breaker[0].getAttribute('time'));
+              if (data.hasOwnProperty('cache-breaker')) {
+                updateImage(photo_data.source, data['cache-breaker']);
               }
             }
            });
@@ -213,14 +212,13 @@ function rotatePhoto(angle) {
   var photo_data = $("#work_image").data('photo');
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'photo.rotate',
+          data: {action: 'json.photo.rotate',
                  repo: photo_data.repo,
                  image_name: photo_data.basename,
                  rotation: angle},
           success: function(data) {
-            var breaker = data.getElementsByTagName('cache_breaker');
-            if (breaker) {
-              var breaker_time = breaker[0].getAttribute('time');
+            if (data.hasOwnProperty('cache-breaker')) {
+              var breaker_time = data['cache-breaker'];
               setupPhotoCrop(photo_data.repo, photo_data.basename, breaker_time);
               updateImage(photo_data.source, breaker_time);
             }
@@ -234,7 +232,7 @@ function on_delete_photo_button() {
     close_secondary_modal("#delete_confirmation_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'photo.delete',
+            data: {action: 'json.photo.delete',
                    repo: photo_data.repo,
                    photo: photo_data.basename},
             success: function (data) {
@@ -253,18 +251,18 @@ Dropzone.options.uploadTarget = {
   // dropzone considers the upload successful as long as there was an HTTP response.  We need to look at the
   // message that came back and determine whether the file was actually accepted.
   success: function(file, response) {
-    var xml = $.parseXML(response);
-    var failures = xml.getElementsByTagName("failure");
-    if (failures.length > 0) {
+    if (response.outcome.summary == 'failure') {
       file.status = 'error';
-      file.previewElement.querySelectorAll("[data-dz-errormessage]")[0].textContent = failures[0].textContent;
+      file.previewElement.querySelectorAll("[data-dz-errormessage]")[0].textContent =
+        response.outcome.description;
       file.previewElement.classList.add("dz-error");
     } else {
+      var uploaded
       var uploaded = xml.getElementsByTagName("uploaded");
       var thumb = xml.getElementsByTagName("thumbnail");
-      if (uploaded.length > 0) {
-        uploaded = uploaded[0].textContent;
-        thumb = thumb[0].textContent;
+      if (response.hasOwnProperty('uploaded')) {
+        var uploaded = response.uploaded;
+        var thumb = response.thumbnail;
         $('.photothumbs h2').remove();
         var img =
           $('<img class="unassigned-photo"/>')

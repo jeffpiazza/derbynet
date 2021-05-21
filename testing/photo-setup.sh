@@ -9,14 +9,14 @@ rm -rf /tmp/headshots* /tmp/carphotos* /tmp/cleanup
 
 function upload_headshot() {
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=photo.upload -F repo=head \
-    | tee $DEBUG_CURL | check_success
+         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=json.photo.upload -F repo=head \
+    | tee $DEBUG_CURL | check_jsuccess
 }
 
 function upload_car_photo() {
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=photo.upload -F repo=car \
-    | tee $DEBUG_CURL | check_success
+         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=json.photo.upload -F repo=car \
+    | tee $DEBUG_CURL | check_jsuccess
 }
 
 if [ `echo "$BASE_URL" | grep -i localhost` ]; then
@@ -69,7 +69,7 @@ fi
 
 # Delete a photo, then upload it again
 curl_photo_any head/file/original/Cub-3126.jpg/xyz
-curl_post action.php "action=photo.delete&repo=head&photo=Cub-3126.jpg" | check_success
+curl_postj action.php "action=json.photo.delete&repo=head&photo=Cub-3126.jpg" | check_jsuccess
 
 COUNT=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/head/file/original/Cub-3126.jpg/xyz | wc -c`
 if [ $COUNT -gt 1000 ]; then

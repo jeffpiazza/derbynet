@@ -15,5 +15,5 @@ RACERID=$3
 user_login_photo
 
 curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-    -X POST -F photo="@$PHOTO" -F action=photo.upload -F carnumber="$RACERID" -F autocrop=1 # | check_success
+    -X POST -F photo="@$PHOTO" -F action=json.photo.upload -F carnumber="$RACERID" -F autocrop=1 # | check_jsuccess
 

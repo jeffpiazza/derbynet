@@ -7,10 +7,8 @@
 require_once('inc/photo-config.inc');
 require_once('inc/permissions.inc');
 
-start_response();
-
 if (!have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
-  not_authorized_body();
+  json_not_authorized();
 } else {
   $image_name = $_POST['image_name'];
   $photo_repository = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
@@ -33,14 +31,20 @@ if (!have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
     // A racer's record may refer to a cropped image which will have just been deleted; replace with
     // a path to the corresponding original.
     $cropped_file_path = $photo_repository->lookup(RENDER_CROPPED)->file_path($image_name);
-    take_action('UPDATE RegistrationInfo'
-                .' SET '.$photo_repository->column_name().' = :original'
-                .' WHERE '.$photo_repository->column_name().' = :cropped',
-                array(':original' => $source_file_path,
-                      ':cropped' => $cropped_file_path));
-    echo "<cache_breaker time='".time()."'/>\n";
+    if (take_action_silently('UPDATE RegistrationInfo'
+                             .' SET '.$photo_repository->column_name().' = :original'
+                             .' WHERE '.$photo_repository->column_name().' = :cropped',
+                             array(':original' => $source_file_path,
+                                   ':cropped' => $cropped_file_path))) {
+      json_success();
+    } else {
+      $info = $db->errorInfo();
+      json_failure('sql'.$info[0].'-'.$info[1],
+                   $sql.' failed: '.$info[2].' [EOM]');
+    }
+    json_out('cache-breaker', time());
   } else {
-    echo "<failure code=\"unknown\">Rotation failed.</failure>\n";
+    json_failure('unknown', "Rotation failed.");
   }
 
   imagedestroy($im);
@@ -48,7 +52,5 @@ if (!have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
 
   $original->delete_dependents($image_name);
 }
-
-end_response();
 
 ?>
