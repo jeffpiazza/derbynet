@@ -24,21 +24,21 @@ curl_postj action.php "action=json.racer.import&firstname=Clark&lastname=Chesnut
 curl_postj action.php "action=json.racer.import&firstname=Cletus&lastname=Creager&carnumber=514" | check_jsuccess
 
 
-curl_post action.php "action=racer.pass&racer=1&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=2&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=3&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=4&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=5&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=6&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=7&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=8&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=9&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=10&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=11&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=12&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=13&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=14&value=1" | check_success
-#curl_post action.php "action=racer.pass&racer=15&value=1" | check_success
+curl_postj action.php "action=json.racer.pass&racer=1&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=2&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=3&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=4&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=5&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=6&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=7&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=8&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=9&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=10&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=11&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=12&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=13&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=14&value=1" | check_jsuccess
+#curl_postj action.php "action=json.racer.pass&racer=15&value=1" | check_jsuccess
 
 curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
 

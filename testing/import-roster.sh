@@ -101,8 +101,8 @@ curl_postj action.php "action=json.racer.import&firstname=Willard&lastname=Woolf
 curl_postj action.php "action=json.racer.import&firstname=Soon&lastname=ToGo&classname=White's Wolves&carnumber=283" | check_jsuccess
 
 curl_getj "action.php?query=json.racer.list" | expect_one 'ToGo'
-curl_post action.php "action=racer.delete&racer=83" | check_success
+curl_postj action.php "action=json.racer.delete&racer=83" | check_jsuccess
 curl_getj "action.php?query=json.racer.list" | expect_count 'ToGo' 0
 
-curl_post action.php "action=racer.bulk&what=number&who=c4&start=501&renumber=1" | check_success
+curl_postj action.php "action=json.racer.bulk&what=number&who=c4&start=501&renumber=1" | check_jsuccess
 

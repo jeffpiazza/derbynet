@@ -9,7 +9,7 @@ source `dirname $0`/common.sh
 curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
 
 # Check in everyone and race all the rounds
-curl_post action.php "action=racer.bulk&who=all&what=checkin&value=1" | check_success
+curl_postj action.php "action=json.racer.bulk&who=all&what=checkin&value=1" | check_jsuccess
 
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess

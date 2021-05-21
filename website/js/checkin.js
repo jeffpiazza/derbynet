@@ -44,7 +44,7 @@ function handlechange_passed(cb, racer) {
 
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'racer.pass',
+          data: {action: 'json.racer.pass',
                  racer: racer,
                  value: value},
          });
@@ -190,7 +190,7 @@ function handle_delete_racer() {
   if (confirm("Really delete car #" + car_no + ": " + first_name + " " + last_name + "?")) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'racer.delete',
+            data: {action: 'json.racer.delete',
                    racer: racerid}
            });
   }
@@ -215,7 +215,7 @@ function bulk_check_in(value) {
     close_secondary_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'racer.bulk',
+            data: {action: 'json.racer.bulk',
                    what: 'checkin',
                    who: $("#bulk_who").val(),
                    value: value ? 1 : 0},
@@ -235,7 +235,7 @@ function bulk_numbering() {
     close_secondary_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'racer.bulk',
+            data: {action: 'json.racer.bulk',
                    what: 'number',
                    who: $("#bulk_who").val(),
                    start: $("#bulk_numbering_start").val(),
@@ -257,7 +257,7 @@ function bulk_eligibility() {
     close_secondary_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'racer.bulk',
+            data: {action: 'json.racer.bulk',
                    what: 'eligibility',
                    who: $("#bulk_who").val(),
                    value: $("#bulk_eligible").is(':checked') ? 1 : 0},
@@ -411,7 +411,7 @@ function take_snapshot(racerid, repo, photo_base_name) {
 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'racer.pass',
+            data: {action: 'json.racer.pass',
                    racer: racerid,
                    value: 1},
            });

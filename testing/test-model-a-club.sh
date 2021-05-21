@@ -18,9 +18,9 @@ for i in $(seq 1 100) ; do
               "action=json.racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class" | check_jsuccess
 done
 
-curl_post action.php "action=racer.bulk&what=checkin&who=all&value=1" | check_success
+curl_postj action.php "action=json.racer.bulk&what=checkin&who=all&value=1" | check_jsuccess
 
-curl_post action.php "action=racer.bulk&what=number&who=all&start=101" | check_success
+curl_postj action.php "action=json.racer.bulk&what=number&who=all&start=101" | check_jsuccess
 
 curl_post action.php "action=settings.write&n-lanes=3&max-runs-per-car=1" | check_success
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess

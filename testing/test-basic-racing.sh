@@ -17,7 +17,7 @@ curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
 
 # Can't delete a racer who's in a schedule
-curl_post action.php "action=racer.delete&racer=21" | check_failure
+curl_postj action.php "action=json.racer.delete&racer=21" | check_jfailure
 
 ### Racing for roundid=1: 5 heats
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
@@ -74,9 +74,9 @@ run_heat 2 5 3.0439 3.4090 3.3881 2.9110      x
 
 user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
-curl_post action.php "action=racer.pass&racer=13&value=0" | check_success
-curl_post action.php "action=racer.pass&racer=23&value=0" | check_success
-curl_post action.php "action=racer.pass&racer=33&value=0" | check_success
+curl_postj action.php "action=json.racer.pass&racer=13&value=0" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=23&value=0" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=33&value=0" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
 
 curl_postj action.php "action=json.heat.select&roundid=3&now_racing=1" | check_jsuccess

@@ -228,7 +228,7 @@ RACERID_1110=$(curl_getj "action.php?query=json.racer.list" | \
 RACERID_1150=$(curl_getj "action.php?query=json.racer.list" | \
                          jq '.racers | map(select( .firstname == "F-1150" ))[0].racerid')
 
-curl_post action.php "action=racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_CLASS" | check_success
+curl_postj action.php "action=json.racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_CLASS" | check_jsuccess
 
 # 6 lanes, 200 racers, 6 runs each = 1200 heats to schedule
 curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
@@ -281,10 +281,10 @@ curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUN
 
 # 6 lanes, 3 racers, 6 runs each: 36 heats with 3 racers in each
 curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
-curl_post action.php "action=racer.bulk&what=checkin&value=0&who=c$TWO_HUNDRED_CLASS" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1100" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1050" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1150" | check_success
+curl_postj action.php "action=json.racer.bulk&what=checkin&value=0&who=c$TWO_HUNDRED_CLASS" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1100" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1050" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1150" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
@@ -305,11 +305,11 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 6 lanes, 8 racers, 6 runs each: 48 heats
-curl_post action.php "action=racer.pass&racer=$RACERID_1060" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1070" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1080" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1090" | check_success
-curl_post action.php "action=racer.pass&racer=$RACERID_1110" | check_success
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1060" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1070" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1080" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1090" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=$RACERID_1110" | check_jsuccess
 
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 

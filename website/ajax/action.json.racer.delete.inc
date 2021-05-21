@@ -6,18 +6,16 @@ $racerid = $_POST['racer'];
 // Roster
 // RaceChart
 
-start_response();
-
 $ok = true;
 if (!have_permission(EDIT_RACER_PERMISSION)) {
-  not_authorized_body();
+  json_not_authorized();
   $ok = false;
 }
 
 if ($ok &&
     read_single_value('SELECT COUNT(*) FROM RaceChart WHERE racerid = :racerid',
                       array(':racerid' => $racerid)) > 0) {
-  echo "<failure code='scheduled'>Racer already appears in a race schedule.</failure>\n";
+  json_failure('scheduled', "Racer already appears in a race schedule.");
   $ok = false;
 }
 
@@ -26,7 +24,7 @@ if ($ok &&
 if ($ok &&
     read_single_value('SELECT COUNT(*) FROM Roster WHERE racerid = :racerid',
                       array(':racerid' => $racerid)) > 1) {
-  echo "<failure code='rosters'>Racer already appears in more than one racing round.</failure>\n";
+  json_failure('rosters', "Racer already appears in more than one racing round.");
   $ok = false;
 }
 
@@ -41,10 +39,8 @@ if ($ok) {
 }
 
 if ($ok) {
-  echo "<success/>\n";
-  echo "<reload/>\n";
+  json_success();
+  json_out('reload', true);
 }
-
-end_response();
 
 ?>

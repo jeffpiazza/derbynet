@@ -10,47 +10,47 @@ curl_post action.php "action=settings.write&use-master-sched-checkbox=1&use-mast
 curl_post action.php "action=settings.write&n-lanes=4" | check_success
 
 # Two racers from Bears & Freres (but 4 heats, with byes)
-curl_post action.php "action=racer.pass&racer=3&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=8&value=1" | check_success
+curl_postj action.php "action=json.racer.pass&racer=3&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=8&value=1" | check_jsuccess
 
 # All the Lions and Tigers (17)
-curl_post action.php "action=racer.pass&racer=1&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=6&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=11&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=16&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=21&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=26&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=31&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=36&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=41&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=46&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=51&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=56&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=61&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=71&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=66&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=76&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=81&value=1" | check_success
+curl_postj action.php "action=json.racer.pass&racer=1&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=6&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=11&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=16&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=21&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=26&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=31&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=36&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=41&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=46&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=51&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=56&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=61&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=71&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=66&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=76&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=81&value=1" | check_jsuccess
 
 # White's Wolves (13)
-curl_post action.php "action=racer.pass&racer=2&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=7&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=12&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=22&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=17&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=27&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=32&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=37&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=42&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=52&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=62&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=72&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=82&value=1" | check_success
+curl_postj action.php "action=json.racer.pass&racer=2&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=7&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=12&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=22&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=17&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=27&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=32&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=37&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=42&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=52&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=62&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=72&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=82&value=1" | check_jsuccess
 
 # Three racers from Webelos (4 heats, with byes)
-curl_post action.php "action=racer.pass&racer=39&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=44&value=1" | check_success
-curl_post action.php "action=racer.pass&racer=49&value=1" | check_success
+curl_postj action.php "action=json.racer.pass&racer=39&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=44&value=1" | check_jsuccess
+curl_postj action.php "action=json.racer.pass&racer=49&value=1" | check_jsuccess
 
 # ... for a total of 38 heats
 # 17/4 ~ 4 ratio for Lions & Tigers

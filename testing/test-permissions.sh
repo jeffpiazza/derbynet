@@ -31,7 +31,7 @@ curl_postj action.php "action=json.racer.import" | check_jfailure
 
 # curl_post action.php "action=login" | check_failure
 curl_postj action.php "action=json.racer.add" | check_jfailure
-curl_post action.php "action=racer.pass" | check_failure
+curl_postj action.php "action=json.racer.pass" | check_jfailure
 curl_post action.php "action=photo" | check_failure
 # TODO Replay application registers itself without credentials, a security weakness.
 # curl_post action.php "action=register-replay" | check_failure

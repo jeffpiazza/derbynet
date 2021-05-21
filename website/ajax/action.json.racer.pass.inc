@@ -14,7 +14,7 @@ function pass_racer($racerid, $value) {
 
   if ($racerid == 0) {
     $ok_to_change = false;
-    $failure = '<failure code="notunique">Need to identify racer uniquely.</failure>';
+    json_failure('notunique', "Need to identify racer uniquely.");
   }
 
 // Protect against changes to a racer who already has schedule data.
@@ -25,7 +25,7 @@ function pass_racer($racerid, $value) {
                               .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                               array(':racerid' => $racerid), 0)) {
       $ok_to_change = false;
-      $failure = '<failure code="alreadyscheduled">Schedule data already exists for this racer</failure>';
+      json_failure('alreadyscheduled', "Schedule data already exists for this racer");
     }
   }
 
@@ -38,21 +38,17 @@ function pass_racer($racerid, $value) {
       record_event(EVENT_CHECKIN, $racerid);
       return true;
     } else {
-      not_authorized_body();
+      json_not_authorized();
       return false;
     }
   } else {
-    // Force reload of the page to show schedule data
-    echo $failure;
-    echo '<reload/>';
+    json_out('reload', true);
   }
 }
 
 
-start_response();
-
 if (pass_racer($racerid, $value)) {
-  echo "<success/>\n";
+  json_success();
   if ($value) {
     $details = read_single_row('SELECT class, firstname, lastname'
                                .' FROM RegistrationInfo'
@@ -61,15 +57,9 @@ if (pass_racer($racerid, $value)) {
                                array(':racerid' => $racerid),
                                PDO::FETCH_ASSOC);
     if ($details) {
-      echo "<details>\n";
-      echo "CLASSNAME=".htmlspecialchars($details['class'], ENT_QUOTES, 'UTF-8')."\n";
-      echo "FIRSTNAME=".htmlspecialchars($details['firstname'], ENT_QUOTES, 'UTF-8')."\n";
-      echo "LASTNAME=".htmlspecialchars($details['lastname'], ENT_QUOTES, 'UTF-8')."\n";
-      echo "</details>\n";
+      json_out('details', $details);
     }
   }
 }
-
-end_response();
 
 ?>

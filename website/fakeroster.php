@@ -20,7 +20,7 @@ function make_the_fake_racers() {
   console.log('make_the_fake_racers');
   $.ajax("action.php",
          {type: 'POST',
-          data: {action: 'racer.fake',
+          data: {action: 'json.racer.fake',
                  ngroups: $("#ngroups").val(),
                  racers_per_group: $("#racers_per_group").val(),
                  check_in: $("#check_in_all").is(':checked') ? 1 : 0},

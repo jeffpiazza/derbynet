@@ -23,8 +23,6 @@ function fake_group_name($g) {
   return 'Fake Group '.$g;
 }
 
-start_response();
-
 if (have_permission(SET_UP_PERMISSION)) {
   $target_per_group = $_POST['racers_per_group'];
   $fake_names = all_fake_names();
@@ -79,10 +77,8 @@ if (have_permission(SET_UP_PERMISSION)) {
   }
   write_raceinfo('fake-racers', 1);
 
-  echo "<success/>\n";
+  json_success();
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

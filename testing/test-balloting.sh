@@ -9,7 +9,7 @@ user_login_coordinator
 
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
-curl_post action.php "action=racer.bulk&what=checkin&who=all" | check_success
+curl_postj action.php "action=json.racer.bulk&what=checkin&who=all" | check_jsuccess
 
 curl_postj action.php "action=json.award.import&awardname=Best%20in%20Show&awardtype=Design%20Trophy" | check_jsuccess
 curl_postj action.php "action=json.award.import&awardname=Consolation%20Prize&awardtype=Design%20Trophy" | check_jsuccess

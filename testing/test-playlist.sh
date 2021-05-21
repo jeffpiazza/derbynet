@@ -26,7 +26,7 @@ make_racer 302 Den3
 
 curl_postj action.php "action=json.class.add&name=TwoThree&constituent_2&constituent_3" | check_jsuccess
 
-curl_post action.php "action=racer.bulk&who=all&what=checkin" | check_success
+curl_postj action.php "action=json.racer.bulk&who=all&what=checkin" | check_jsuccess
 
 KIOSK1=FAKE-KIOSK1
 
