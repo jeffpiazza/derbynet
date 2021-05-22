@@ -398,7 +398,7 @@ $(function() {
   $("#ballot_password").on('keyup mouseup', function() {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'settings.write',
+            data: {action: 'json.settings.write',
                    ballot_password: $("#ballot_password").val()}
            });
   });

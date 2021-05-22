@@ -117,7 +117,7 @@ function toggle_vote(div) {
 
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'vote.cast',
+          data: {action: 'json.vote.cast',
                  awardid: g_awardid,
                  'votes': JSON.stringify(award_ballot['votes'])}
          });
@@ -196,14 +196,12 @@ $(function() {
   setInterval(function() {
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'settings',
+            data: {query: 'json.settings',
                    key: 'balloting'},
             success: function(data) {
-              var settings = data.getElementsByTagName('setting');
-              if (settings.length > 0) {
-                var v = settings[0].textContent;
-              } else {
-                var v = 'closed';
+              var v = 'closed';
+              if (data.hasOwnProperty('settings') && data.settings.length > 0) {
+                v = data.settings[0].value;
               }
               if (balloting_open_or_closed == '') {
                 balloting_open_or_closed = v;

@@ -94,14 +94,14 @@ function handle_rerun(button) {
 function handle_test_replay() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'replay.test'}
+            data: {action: 'json.replay.test'}
            });
 }
 
 function trigger_replay() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'replay.trigger'}
+          data: {action: 'json.replay.trigger'}
          });
 }
 

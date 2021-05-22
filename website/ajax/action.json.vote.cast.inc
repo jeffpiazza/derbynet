@@ -5,18 +5,16 @@
 
 require_once('inc/voterid.inc');
 
-start_response();
-
 $ballot_code = session_id();
 list($voterid, $ballotid) = retrieve_voterid($ballot_code);
 
 $ok = true;
 if (!$voterid) {
-  echo "<failure code='invalid'>Invalid ballot code</failure>\n";
+  json_failure('invalid', "Invalid ballot code");
   $ok = false;
 }
 if ($ok && read_raceinfo('balloting', 'closed') == 'closed') {
-  echo "<failure code='closed'>Voting is not open at this time</failure>\n";
+  json_failure('closed', "Voting is not open at this time");
   $ok = false;
 }
 
@@ -27,7 +25,7 @@ if ($ok) {
                            array(':awardid' => $awardid),
                            PDO::FETCH_ASSOC);
   if (!$award) {
-    echo "<failure code='no-award'>No such award</failure>\n";
+    json_failure('no-award', "No such award");
     $ok = false;
   }
 }
@@ -40,8 +38,8 @@ if ($ok && count($votes) >
                       .'   AND awardid = :awardid',
                       array(':ballotid' => BALLOTID,
                             ':awardid' => $awardid))) {
-    echo "<failure code='too-many'>Too many choices offered</failure>\n";
-    $ok = false;
+  json_failure('too-many', "Too many choices offered");
+  $ok = false;
 }
 
 if ($ok) {
@@ -51,20 +49,20 @@ if ($ok) {
     $stmt->execute(array(':voterid' => $voterid,
                          ':awardid' => $awardid));
 
+    $vote_summary = array();
     $stmt = $db->prepare('INSERT INTO Votes(awardid, racerid, voterid)'
                          .' VALUES(:awardid, :racerid, :voterid)');
     foreach ($votes as $racerid) {
       $stmt->execute(array(':awardid' => $awardid,
                            ':racerid' => $racerid,
                            ':voterid' => $voterid));
-      echo "<vote>$voterid $awardid $racerid</vote>\n";
+      $vote_summary[] = "$voterid $awardid $racerid";
     }
+    json_out('votes', $vote_summary);
 }
 
 if ($ok) {
-  echo "\n<success/>\n";
+  json_success();
 }
-
-end_response();
 
 ?>

@@ -4,7 +4,7 @@ function on_lane_count_change() {
   var nlanes = $("#n-lanes").val();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'settings.write',
+          data: {action: 'json.settings.write',
                  'n-lanes': nlanes}
          });
   var mask = $("#unused-lane-mask").val();
@@ -38,7 +38,7 @@ $(function() {
 function on_reverse_lanes_change() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'settings.write',
+          data: {action: 'json.settings.write',
                  'reverse-lanes': $("#reverse-lanes").is(':checked') ? 1 : 0,
                  'reverse-lanes-checkbox': 1}
         });
@@ -231,7 +231,7 @@ $(function() { $("#test-mode").on('change', on_testing_change); });
 function on_send_log_change(event) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'settings.write',
+          data: {action: 'json.settings.write',
                  'timer-send-logs': $("#timer-send-logs").is(':checked') ? 1 : 0,
                 },
          });

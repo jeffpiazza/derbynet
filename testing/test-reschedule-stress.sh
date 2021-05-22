@@ -30,7 +30,7 @@ function setup_schedule() {
     NLANES="$1"
     NRACERS="$2"
 
-    curl_post action.php "action=settings.write&n-lanes=$NLANES" | check_success
+    curl_postj action.php "action=json.settings.write&n-lanes=$NLANES" | check_jsuccess
     curl_postj action.php "action=json.racer.bulk&what=checkin&who=all&value=0" | check_jsuccess
     # NRACERS racers pass inspection
     for i in $(seq 1 $NRACERS) ; do

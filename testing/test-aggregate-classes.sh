@@ -11,7 +11,7 @@ user_login_coordinator
 
 `dirname $0`/outlaw-class.sh "$BASE_URL"
 
-curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_success
+curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_jsuccess
 curl_postj action.php "action=json.rank.edit&rankid=6&name=Siblings" | check_jsuccess
 curl_postj action.php "action=json.rank.add&classid=6&name=Parents" | check_jsuccess
 curl_postj action.php "action=json.rank.add&classid=6&name=Desperados" | check_jsuccess

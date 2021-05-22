@@ -6,8 +6,8 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_post action.php "action=settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_success
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_jsuccess
+curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
 
 # Two racers from Bears & Freres (but 4 heats, with byes)
 curl_postj action.php "action=json.racer.pass&racer=3&value=1" | check_jsuccess

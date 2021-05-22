@@ -32,8 +32,8 @@ while true ; do
   curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_jsuccess
 
   # Tedious set-up
-  curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
-  curl_post action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_success
+  curl_postj action.php "action=json.settings.write&photos-on-now-racing=head" | check_jsuccess
+  curl_postj action.php "action=json.settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
 
   `dirname $0`/import-roster.sh "$BASE_URL"
   `dirname $0`/photo-setup.sh "$BASE_URL"
@@ -44,7 +44,7 @@ while true ; do
   curl_postj action.php "action=json.class.edit&classid=5&name=Webelos%20II" | check_jsuccess
   curl_postj action.php "action=json.class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_jsuccess
   `dirname $0`/test-photo-assignments.sh "$BASE_URL"
-  curl_post action.php "action=settings.write&n-lanes=4" | check_success
+  curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
 
   curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/please-check-in.kiosk" | check_jsuccess
 
@@ -67,7 +67,7 @@ while true ; do
   # Start racing
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
 
-  curl_post action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_success
+  curl_postj action.php "action=json.settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
   curl_postj action.php "action=json.kiosk.assign&address=$ONDECK&page=kiosks/ondeck.kiosk" | check_jsuccess
   curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/now-racing.kiosk" | check_jsuccess
   curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/results-by-racer.kiosk" | check_jsuccess

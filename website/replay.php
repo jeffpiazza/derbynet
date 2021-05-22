@@ -66,13 +66,12 @@ function logmessage(txt) {
 function poll_as_replay() {
   $.ajax("action.php",
   {type: 'POST',
-    data: {action: 'replay-message',
+    data: {action: 'json.replay.message',
            status: 0,
            'finished-replay': 0},
     success: function(data) {
-      let msgs = data.getElementsByTagName('replay-message');
-      for (let i = 0; i < msgs.length; ++i) {
-        handle_replay_message(msgs[i].textContent);
+      for (let i = 0; i < data.replay.length; ++i) {
+        handle_replay_message(data.replay[i]);
       }
     }
   });
@@ -243,7 +242,7 @@ function upload_video(root, blob) {
     console.log("Uploading video");
     let form_data = new FormData();
     form_data.append('video', blob, root + ".mkv");
-    form_data.append('action', 'video.upload');
+    form_data.append('action', 'json.video.upload');
     $.ajax("action.php",
            {type: 'POST',
              data: form_data,

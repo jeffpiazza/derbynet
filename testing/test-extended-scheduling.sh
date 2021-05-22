@@ -231,7 +231,7 @@ RACERID_1150=$(curl_getj "action.php?query=json.racer.list" | \
 curl_postj action.php "action=json.racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_CLASS" | check_jsuccess
 
 # 6 lanes, 200 racers, 6 runs each = 1200 heats to schedule
-curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
+curl_postj action.php "action=json.settings.write&n-lanes=6&unused-lane-mask=0" | check_jsuccess
 # Takes about 15s on my laptop
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
@@ -259,7 +259,7 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 1 lane, 200 racers, 6 runs each
-curl_post action.php "action=settings.write&n-lanes=1" | check_success
+curl_postj action.php "action=json.settings.write&n-lanes=1" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
@@ -280,7 +280,7 @@ curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
 # 6 lanes, 3 racers, 6 runs each: 36 heats with 3 racers in each
-curl_post action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_success
+curl_postj action.php "action=json.settings.write&n-lanes=6&unused-lane-mask=0" | check_jsuccess
 curl_postj action.php "action=json.racer.bulk&what=checkin&value=0&who=c$TWO_HUNDRED_CLASS" | check_jsuccess
 curl_postj action.php "action=json.racer.pass&racer=$RACERID_1100" | check_jsuccess
 curl_postj action.php "action=json.racer.pass&racer=$RACERID_1050" | check_jsuccess

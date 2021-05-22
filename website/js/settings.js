@@ -99,14 +99,14 @@ var PostSettingChange;
 
 (function() {
   var next_train = 0;
-  var values = {action: 'settings.write'};
+  var values = {action: 'json.settings.write'};
 
   function maybe_post() {
     if (next_train == 0) {
       next_train = setTimeout(function() {
         next_train = 0;
         var d = values;
-        values = {action: 'settings.write'};
+        values = {action: 'json.settings.write'};
 
         console.log('POSTing ' + JSON.stringify(d));
 
@@ -114,10 +114,9 @@ var PostSettingChange;
                {type: 'POST',
                 data: d,
                 success: function(data) {
-                  var fail = data.documentElement.getElementsByTagName("failure");
-                  if (fail && fail.length > 0) {
+                  if (data.outcome.summary == 'failure') {
                     console.log(data);
-                    alert("Action failed: " + fail[0].textContent);
+                    alert("Action failed: " + data.outcome.description);
                   }
                 },
                 error: function(jqXHR, ajaxSettings, thrownError) {

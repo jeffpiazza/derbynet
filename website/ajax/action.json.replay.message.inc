@@ -5,7 +5,9 @@
 
 require_once('inc/replay.inc');
 
-start_response(); echo "\n";
+function not_empty_string($s) {
+  return $s !== "";
+}
 
 function drain_queue() {
   global $db;
@@ -17,27 +19,25 @@ function drain_queue() {
   try {
     $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
   } catch (PDOException $p) {
-    // TODO - This doesn't seem to work:var_dump($p)
   }
 
-  foreach (explode("\n", $queue) as $msg) {
-    if (strlen($msg) > 0) {
-      echo "<replay-message>".htmlspecialchars($msg, ENT_QUOTES, 'UTF-8')."</replay-message>\n";
-    }
-  }
+  return array_filter(explode("\n", $queue), 'not_empty_string');
 }
 
 $replay = get_replay();
 
 if ($replay['state'] != REPLAY_CONNECTED) {
   write_raceinfo('replay_state', REPLAY_CONNECTED);
-  echo "<replay-message>HELLO</replay-message>\n";  // TODO
 }
 
 write_raceinfo('replay_reported', $_POST['status']);
 write_raceinfo('replay_last_contact', time());
-echo "<success/>\n";
-drain_queue();
 
-end_response();
+json_success();
+
+$queue = drain_queue();
+if ($replay['state'] != REPLAY_CONNECTED) {
+  prepend($queue, 'HELLO');
+}
+json_out('replay', $queue);
 ?>

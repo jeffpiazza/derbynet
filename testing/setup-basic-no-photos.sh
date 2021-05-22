@@ -21,4 +21,4 @@ curl_postj action.php \
 `dirname $0`/import-roster.sh "$BASE_URL"
 `dirname $0`/test-den-changes.sh "$BASE_URL"
 
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess

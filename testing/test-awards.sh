@@ -106,7 +106,7 @@ curl_postj action.php "action=json.award.winner&awardid=6&racerid=48" | check_jf
 curl_postj action.php "action=json.award.winner&awardid=6&racerid=1" | check_jsuccess
 
 ## Create an empty subgroup for Lions & Tigers
-curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_success
+curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_jsuccess
 curl_postj action.php "action=json.rank.add&name=Private&classid=1" | check_jsuccess
 ## Create an "aggregate" class comprising only the new Private rankid
 curl_postj action.php "action=json.class.add&rankid_8=1&name=AggExclusive" | check_jsuccess

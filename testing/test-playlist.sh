@@ -40,8 +40,8 @@ curl_getj "action.php?query=json.poll.kiosk&address=$KIOSK1" | expect_one welcom
 # Assuming sceneid 4 is "Racing"  with now-racing page on Main,
 # and sceneid 5 is "Awards", with awards-presentation page on Main
 
-curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=2" | check_success
-curl_post action.php "action=settings.write&racing_scene=4" | check_success
+curl_postj action.php "action=json.settings.write&unused-lane-mask=0&n-lanes=2" | check_jsuccess
+curl_postj action.php "action=json.settings.write&racing_scene=4" | check_jsuccess
 
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 

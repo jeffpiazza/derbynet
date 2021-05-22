@@ -12,7 +12,7 @@ user_login_coordinator
 while true ; do
   curl_postj action.php "action=json.database.execute&script=schema" | check_jsuccess
   curl_postj action.php "action=json.database.execute&script=update-schema" | check_jsuccess
-  curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
+  curl_postj action.php "action=json.settings.write&photos-on-now-racing=head" | check_jsuccess
 
   # kiosk page will re-poll every 5s
   sleep 6s
@@ -26,7 +26,7 @@ while true ; do
   ########## Slideshow ##############
   curl_postj action.php "action=json.kiosk.assign&all=kiosks/slideshow.kiosk" | check_jsuccess
 
-  curl_post action.php "action=settings.write&n-lanes=4" | check_success
+  curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
 
   `dirname $0`/checkin-all.sh "$BASE_URL"
   sleep 15s

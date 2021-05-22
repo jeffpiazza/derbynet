@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
 
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
@@ -165,7 +165,7 @@ curl_getj "action.php?query=json.award.current" | expect_one Asher
 curl_get awards-presentation.php | expect_one "<option data-classid=.1.>Lions &amp; Tigers</option>"
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 6
 
-curl_post action.php "action=settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_success
+curl_postj action.php "action=json.settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_jsuccess
 # There are only 3 racers in Webelos, and one of them gets a pack-level award.  So only
 # five 3rd-place trophies in this case.
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 5

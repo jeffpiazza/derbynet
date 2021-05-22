@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 # Assumes:  import-roster.sh
 
-curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
 
 # Check in everyone and race all the rounds
 curl_postj action.php "action=json.racer.bulk&who=all&what=checkin&value=1" | check_jsuccess

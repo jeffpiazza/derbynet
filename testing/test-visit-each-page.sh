@@ -40,6 +40,6 @@ curl_get "kiosk.php?page=kiosks/results-by-racer.kiosk" | sed -n -e "/$PATTERN/ 
 curl_get "kiosk.php?page=kiosks/welcome.kiosk" | sed -n -e "/$PATTERN/ { p; q 1 }"
 
 # Should do a more complete test of the interaction between replay and the
-# server.  This just ensures that the basic replay-message code hasn't broken
+# server.  This just ensures that the basic replay.message code hasn't broken
 # completely.
-curl_post action.php "action=replay-message&status=-1&finished-replay=0" | check_success
+curl_postj action.php "action=json.replay.message&status=-1&finished-replay=0" | check_jsuccess

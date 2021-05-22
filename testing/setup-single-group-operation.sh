@@ -40,7 +40,7 @@ curl_postj action.php "action=json.racer.pass&racer=13&value=1" | check_jsuccess
 curl_postj action.php "action=json.racer.pass&racer=14&value=1" | check_jsuccess
 #curl_postj action.php "action=json.racer.pass&racer=15&value=1" | check_jsuccess
 
-curl_post action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
 
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 

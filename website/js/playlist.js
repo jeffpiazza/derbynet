@@ -19,7 +19,7 @@ function maybe_change_playlist_message() {
 function on_racing_scene_change() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'settings.write',
+          data: {action: 'json.settings.write',
                  racing_scene: $("#racing-scene").val()},
           success: function(data) {
             $("#racing-scene-psa").toggleClass('hidden', $("#racing-scene").val() >= 0);

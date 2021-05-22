@@ -8,7 +8,7 @@ user_login_coordinator
 
 `dirname $0`/reset-database.sh "$BASE_URL"
 
-curl_post action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_success
+curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_jsuccess
 
 # Single group, ThePack
 # Subgroup Lions = 1
@@ -58,7 +58,7 @@ curl_postj action.php "action=json.racer.pass&value=1&racer=18" | check_jsuccess
 curl_postj action.php "action=json.racer.pass&value=1&racer=19" | check_jsuccess
 curl_postj action.php "action=json.racer.pass&value=1&racer=20" | check_jsuccess
 
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
 
 curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
@@ -163,7 +163,7 @@ curl_postj action.php "action=json.award.import&awardname=Bad%20Subgroup%20Name&
 curl_postj action.php "action=json.award.winner&awardid=1&racerid=2" | check_jfailure
 curl_postj action.php "action=json.award.winner&awardid=1&racerid=1" | check_jsuccess
 
-curl_post action.php "action=settings.write&n-rank-trophies=3" | check_success
+curl_postj action.php "action=json.settings.write&n-rank-trophies=3" | check_jsuccess
 
 curl_postj action.php "action=json.award.present&key=speed-3-1-2" | check_jsuccess
 curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in Tigers'

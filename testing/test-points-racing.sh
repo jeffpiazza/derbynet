@@ -15,8 +15,8 @@ user_login_coordinator
 # Reinstate car 111
 curl_postj action.php "action=json.racer.edit&racer=11&firstname=Carroll&lastname=Cybulski&carno=111&carname=Vroom&rankid=1&exclude=0" | check_jsuccess
 
-curl_post action.php "action=settings.write&use-points=1&use-points-checkbox" | check_success
-curl_post action.php "action=settings.write&n-lanes=4" | check_success
+curl_postj action.php "action=json.settings.write&use-points=1&use-points-checkbox" | check_jsuccess
+curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
 
 
 ### Schedule roundid 1
@@ -154,7 +154,7 @@ curl_postj action.php "action=json.award.present&key=speed-4-1" | check_jsuccess
 curl_getj "action.php?query=json.award.current" | jq 'length' | expect_eq 0
 
 # One-trophy-per-racer means Felton takes 1st place in Lions
-curl_post action.php "action=settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_success
+curl_postj action.php "action=json.settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_jsuccess
 curl_postj action.php "action=json.award.present&key=speed-3a" | check_jsuccess
 curl_getj "action.php?query=json.award.current" | expect_one Derick
 curl_postj action.php "action=json.award.present&key=speed-3b" | check_jsuccess
