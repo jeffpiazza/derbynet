@@ -19,9 +19,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
                                      ':racerid' => $_POST['racer']))) {
         json_success();
       } else {
-		$info = $db->errorInfo();
-        json_failure('sql'.$info[0].'-'.$info[1],
-                     $sql.' failed: '.$info[2].' [EOM]');
+        json_sql_failure($sql);  // TODO Missing sql
       }
       record_event($repo->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
                    $_POST['racer']);
@@ -32,9 +30,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
                              array(':racerid' => $_POST['racer']))) {
       json_success();
     } else {
-      $info = $db->errorInfo();
-      json_failure('sql'.$info[0].'-'.$info[1],
-                   $sql.' failed: '.$info[2].' [EOM]');
+      json_sql_failure($sql);  // TODO Missing sql
     }
     record_event($repo->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
                  $_POST['racer']);

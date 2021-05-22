@@ -91,13 +91,6 @@ function populate_details(details) {
   $("#purge_nawards_span").text(details.purge.nawards);
 }
 
-function populate_details_from_xml(data) {
-  var details = data.documentElement.getElementsByTagName("details");
-  if (details && details.length > 0) {
-    populate_details(JSON.parse(details[0].textContent));
-  }
-}
-
 function hide_reporting_box() {
   $("#reporting_box").removeClass('success failure').addClass('hidden').css('opacity', 100);
   $("#reporting_box_dismiss").addClass('hidden');
@@ -124,19 +117,14 @@ function report_failure(text) {
   // Has to be explicitly cleared -- no timout to disappear
 }
 
-function report_success_xml(data) {
-  var success = data.documentElement.getElementsByTagName("success");
-  if (success && success.length > 0) {
-    populate_details_from_xml(data);
+function report_success_json(data) {
+  if (data.outcome.summary == 'success') {
+    if (data.hasOwnProperty('details')) {
+      populate_details(data.details);
+    }
     report_success();
   } else {
-    var fail = data.documentElement.getElementsByTagName("failure");
-    if (fail && fail.length > 0) {
-      report_failure(fail[0].textContent);
-    } else {
-      // Program bug -- the response should specify either <success/> for <failure/>
-      report_failure("Not successful");
-    }
+    report_failure(data.outcome.description);
   }
 }
 
@@ -162,7 +150,7 @@ function handle_ezsetup_modal_submit() {
          {type: 'POST',
           data: serialized, // action = setup.nodata
           success: function(data) {
-            report_success_xml(data);
+            report_success_json(data);
           },
           error: function(event, jqXHR, ajaxSettings, thrownError) {
             report_failure(thrownError);
@@ -211,7 +199,7 @@ function handle_advanced_database_modal_submit() {
          {type: 'POST',
           data: serialized, // action = setup.nodata
           success: function(data) {
-            report_success_xml(data);
+            report_success_json(data);
           },
           error: function(event, jqXHR, ajaxSettings, thrownError) {
             report_failure(thrownError);
@@ -243,10 +231,10 @@ function confirm_purge(purge) {
     close_secondary_modal("#purge_confirmation_modal");
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'database.purge',
+            data: {action: 'json.database.purge',
                    purge: purge},
             success: function(data) {
-              report_success_xml(data);
+              report_success_json(data);
             },
             error: function(event, jqXHR, ajaxSettings, thrownError) {
               report_failure(thrownError);
@@ -268,10 +256,10 @@ function handle_initialize_schema() {
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'database.execute',
+          data: {action: 'json.database.execute',
                  script: 'schema'},
           success: function(data) {
-            report_success_xml(data);
+            report_success_json(data);
           },
           error: function(event, jqXHR, ajaxSettings, thrownError) {
             report_failure(thrownError);
@@ -291,10 +279,10 @@ function handle_update_schema() {
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'database.execute',
+          data: {action: 'json.database.execute',
                  script: 'update-schema'},
           success: function(data) {
-            report_success_xml(data);
+            report_success_json(data);
           },
           error: function(event, jqXHR, ajaxSettings, thrownError) {
             report_failure(thrownError);

@@ -3,7 +3,7 @@
 function send_message(recipient, message_json) {
   $.ajax("action.php",
          {type: 'POST',
-          data: {action: 'message.send',
+          data: {action: 'json.message.send',
                  recipient: recipient,
                  message: JSON.stringify(message_json)}});
 };
@@ -16,13 +16,12 @@ function MessagePoller(ms, recipient, on_message) {
   this.retrieve_messages = function() {
     $.ajax("action.php",
            {type: 'POST',
-            data: {action: 'message.retrieve',
+            data: {action: 'json.message.retrieve',
                    recipient: recipient},
             success: function(data) {
-              // console.log("retrieve_messages took " + ((new Date()).getTime() - start) + "ms.");
-              let msgs = data.getElementsByTagName('message');
-              for (let i = 0; i < msgs.length; ++i) {
-                on_message(JSON.parse(msgs[i].textContent));
+              var msgs = data.messages;
+              for (var i = 0; i < msgs.length; ++i) {
+                on_message(mesgs[i]);
               }
             }
            });

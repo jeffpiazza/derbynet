@@ -8,7 +8,7 @@ require_once('inc/sql-script.inc');
 // server for messages.
 
 function create_message_queue_table() {
-  run_sql_script('message-queue-table', true);
+  run_sql_script('message-queue-table');
 }
 
 function message_queue_sql($sql, $params) {
@@ -22,7 +22,6 @@ function message_queue_sql($sql, $params) {
     } catch (PDOException $p) {
       if (!$retry && is_no_such_table_exception($p)) {
         $retry = true;
-        echo "<creating-table/>\n";  // TODO
         create_message_queue_table();
       } else {
         echo "\n<errorInfo>\n"; print_r($db->errorInfo()); echo "\n</errorInfo>";

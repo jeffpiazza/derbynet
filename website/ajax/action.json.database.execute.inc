@@ -5,12 +5,10 @@ require_once('inc/locked.inc');
 require_once('inc/details-for-setup-page.inc');
 require_once('inc/fake_images.inc');
 
-start_response();
-
 if (!have_permission(SET_UP_PERMISSION)) {
-  not_authorized_body();
+  json_not_authorized();
 } else if (strpbrk($_POST['script'], DIRECTORY_SEPARATOR."/\\") !== false) {
-  echo "<failure code='insecure'>Only local SQL script execution is allowed.</failure>\n";
+  json_failure('insecure', "Only local SQL script execution is allowed.");
 } else {
   $values_found = false;
   if ($_POST['script'] == 'schema') {
@@ -39,11 +37,9 @@ if (!have_permission(SET_UP_PERMISSION)) {
       write_raceinfo('lane_count', $nlanes);
     }
   }
+
+  json_success();
 }
 
-echo "<details><![CDATA[\n";
-echo json_encode(build_setup_page_details());
-echo "\n]]></details>\n";
-
-end_response();
+json_out('details', build_setup_page_details());
 ?>

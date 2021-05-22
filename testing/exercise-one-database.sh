@@ -120,15 +120,15 @@ if [ "$DBTYPE" == "none" ] ; then
 elif [ "$DBTYPE" == "sqlite" ] ; then
     DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
     prepare_for_setup
-    curl_post action.php \
-        "action=setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
-        | check_success
+    curl_postj action.php \
+        "action=json.setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
+        | check_jsuccess
     run_tests
 elif [ "$DBTYPE" == "access" ] ; then
     prepare_for_setup
-    curl_post action.php \
-              "action=setup.nodata&connection_string=odbc:DSN=gprm;Exclusive=NO&dbuser=&dbpass=" \
-        | check_success
+    curl_postj action.php \
+              "action=json.setup.nodata&connection_string=odbc:DSN=gprm;Exclusive=NO&dbuser=&dbpass=" \
+        | check_jsuccess
 
     # Access databases can't load a database snapshot, because it doesn't allow
     # primary key fields to be rewritten (I guess):

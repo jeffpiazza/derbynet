@@ -170,7 +170,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 
 <div id="ezsetup_modal" class="modal_dialog hidden block_buttons">
   <form>
-    <input type="hidden" name="action" value="setup.nodata"/>
+    <input type="hidden" name="action" value="json.setup.nodata"/>
 
     <div id="ez_database">
       <label for="ez_database_name">Name for new database:</label>
@@ -205,7 +205,7 @@ if (count($ez_configs) > 0) {
   <form><?php
     $is_windows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 ?>
-    <input type="hidden" name="action" value="setup.nodata"/>
+    <input type="hidden" name="action" value="json.setup.nodata"/>
 
     <input id="sqlite_connection" type="radio" name="connection_type" value="sqlite" checked="checked"/>
     <label for="sqlite_connection">SQLite data source<span class="missing_driver"></span></label>

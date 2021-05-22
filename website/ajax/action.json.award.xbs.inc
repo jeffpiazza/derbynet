@@ -12,9 +12,7 @@ if (have_permission(CHECK_IN_RACERS_PERMISSION)) {
                                        ':racerid' => $_POST['racer']))) {
     json_success();
   } else {
-    $info = $db->errorInfo();
-    json_failure('sql'.$info[0].'-'.$info[1],
-                 $sql.' failed: '.$info[2]);
+    json_sql_failure($sql);  // TODO Missing sql
   }
 } else {
   json_not_authorized();

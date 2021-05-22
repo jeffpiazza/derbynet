@@ -13,8 +13,8 @@ CAR_PHOTO_DIR=$(curl_get "action.php?query=settings" | xmllint --format - | sed 
 
 VIDEO_DIR=$(curl_get "action.php?query=settings" | xmllint --format - | sed -ne '/key="video-directory"/ s#[^>]*>\([^<]*\)</setting>#\1#p')
 
-curl_post action.php "action=database.execute&script=schema" | check_success
-curl_post action.php "action=database.execute&script=update-schema" | check_success
+curl_postj action.php "action=json.database.execute&script=schema" | check_jsuccess
+curl_postj action.php "action=json.database.execute&script=update-schema" | check_jsuccess
 
 if [ "$PHOTO_DIR" ] ; then
     curl_post action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_success

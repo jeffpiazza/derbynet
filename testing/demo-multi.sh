@@ -19,8 +19,8 @@ user_login_coordinator
 
 while true ; do
   # Resetting the database also clears all the kiosk settings
-  curl_post action.php "action=database.execute&script=schema" | check_success
-  curl_post action.php "action=database.execute&script=update-schema" | check_success
+  curl_postj action.php "action=json.database.execute&script=schema" | check_jsuccess
+  curl_postj action.php "action=json.database.execute&script=update-schema" | check_jsuccess
 
   # Because the kiosks haven't registered themselves (again) since the database
   # got reset.  We don't want to use the cookies file because we don't want the

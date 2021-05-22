@@ -38,9 +38,7 @@ if (!have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
                                    ':cropped' => $cropped_file_path))) {
       json_success();
     } else {
-      $info = $db->errorInfo();
-      json_failure('sql'.$info[0].'-'.$info[1],
-                   $sql.' failed: '.$info[2].' [EOM]');
+      json_sql_failure($sql);
     }
     json_out('cache-breaker', time());
   } else {

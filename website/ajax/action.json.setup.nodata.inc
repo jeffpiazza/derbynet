@@ -86,10 +86,8 @@ function attempt_to_count_racers($trial_db) {
   return $result;
 }
 
-start_response();
-
 if (locked_settings()) {
-  echo "<failure code='locked'>Settings are locked and cannot be changed.</failure>\n";
+  json_failure('locked', "Settings are locked and cannot be changed.");
 } else if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;
 
@@ -107,7 +105,7 @@ if (locked_settings()) {
     error_reporting(E_ALL);
     
     if (is_dir($directory)) {
-      echo '<failure code="already_exists">Directory already exists.</failure>'."\n";
+      json_failure('already_exists', "Directory already exists.");
       $ok = false;
     }
 
@@ -116,9 +114,7 @@ if (locked_settings()) {
     if ($ok) {
       if (!@mkdir($directory, 0777, true)) {
         $error = error_get_last();
-        echo '<failure code="cannot_mkdir">'
-        .htmlspecialchars($directory.':  '.$error['message'], ENT_QUOTES, 'UTF-8')
-        .'</failure>'."\n";
+        json_failure('mkdir', $directory.':  '.$error['message']);
         $ok = false;
       }
     }
@@ -129,19 +125,19 @@ if (locked_settings()) {
     $videos_subdir = $directory . DIRECTORY_SEPARATOR . 'videos';
     if ($ok) {
       if (!@mkdir($racers_subdir)) {
-        echo '<failure code="cannot_mkdir_racers">Unable to create racers subdirectory.</failure>'."\n";
+        json_failure('mkdir-racers', "Unable to create racers subdirectory.");
         $ok = false;
       }
     }
     if ($ok) {
       if (!@mkdir($cars_subdir)) {
-        echo '<failure code="cannot_mkdir_cars">Unable to create cars subdirectory.</failure>'."\n";
+        json_failure('mkdir-cars', "Unable to create cars subdirectory.");
         $ok = false;
       }
     }
     if ($ok) {
       if (!@mkdir($videos_subdir)) {
-        echo '<failure code="cannot_mkdir_videos">Unable to create videos subdirectory.</failure>'."\n";
+        json_failure('mkdir-videos', "Unable to create videos subdirectory.");
         $ok = false;
       }
     }
@@ -156,9 +152,7 @@ if (locked_settings()) {
   } else if (isset($_POST['ez-old']) && $_POST['ez-old'] != "") {
     $config = is_standard_config(default_database_directory(), $_POST['ez-old']);
     if ($config === false) {
-      echo '<failure code="not_recognized">'
-          .htmlspecialchars($_POST['ez-old'], ENT_QUOTES, 'UTF-8')
-          .' is not a recognized configuration.</failure>';
+      json_failure('not-recognized', $_POST['ez-old'].' is not a recognized configuration.');
       $ok = false;
     } else {
       $connection_string = 'sqlite:'.$config['database'];
@@ -186,14 +180,8 @@ if (locked_settings()) {
         umask($old_umask);
       }
     } else {
+      json_failure($trial['error'], $trial['exception']->getMessage());
       $ok = false;
-      echo "<failure code='".$trial['error']."'>";
-      if ($trial['error'] == 'access_denied') {
-        echo "Access denied:\n".$trial['exception']->getMessage();
-      } else {
-        var_dump($trial['exception']);
-      }
-      echo "</failure>\n";
     }
   }
 
@@ -210,22 +198,15 @@ if (locked_settings()) {
         $parsed = parse_connection_string($connection_string);
         $db = $trial_db;
         $dbtype = $parsed['scheme'];
-        $ok = run_sql_script('schema', true);
+        list($ok, $executed) = run_sql_script('schema');
+        json_out('executed', $executed);
       } else if ($count['error'] == 'not_a_database') {
         $parsed = parse_connection_string($connection_string);
         $sqlite_path = $parsed['sqlite_path'];
-        echo "<failure code='not_a_database'>".htmlspecialchars($sqlite_path, ENT_QUOTES, 'UTF-8')
-            ."\nis not a database.</failure>";
+        json_failure('not-a-database', $sqlite_path."\nis not a database.");
       } else {
         $p = $count['exception'];
-        echo "<failure code='unknown_sql'"
-             ." sqlcode='".htmlspecialchars($p->getCode(), ENT_QUOTES, 'UTF-8')."'>\n";
-        echo "<![CDATA[\n";
-        echo "CODE: ".$p->getCode()."\n";
-        echo "ERROR: ".$trial_db->errorInfo()[1]."\n";
-        var_dump($p);
-        echo "\n]]>\n";
-        echo "</failure>\n";
+        json_failure('sql', $p->getMessage());
       }
     }
   }
@@ -254,15 +235,13 @@ if (locked_settings()) {
       write_raceinfo('video-directory', $videos_subdir);
     }
 
-    echo "<success/>\n";
+    json_success();
 
     // With the database config file written, we can construct the PDO as most
     // other scripts do.
 
     // Summarize the database state for the user.
-    echo "<details><![CDATA[\n";
-    echo json_encode(build_setup_page_details());
-    echo "\n]]></details>\n";
+    json_out('details', build_setup_page_details());
 
     // Setup permissions were granted temporarily because there was no
     // configuration present.  Now that there is, remove the special setting_up
@@ -283,8 +262,6 @@ if (locked_settings()) {
     }
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-
-end_response();
 ?>

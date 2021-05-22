@@ -282,7 +282,7 @@ function handle_purge_button(roundid, heats_run) {
       close_secondary_modal("#purge_confirmation_modal");
       $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'database.purge',
+            data: {action: 'json.database.purge',
                    purge: 'results',
                    roundid: roundid},
             success: function(data) { coordinator_poll(); }

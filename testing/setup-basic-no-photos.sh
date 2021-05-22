@@ -13,9 +13,9 @@ DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
 
 user_login_coordinator
 
-curl_post action.php \
-        "action=setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
-        | check_success
+curl_postj action.php \
+        "action=json.setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
+        | check_jsuccess
 
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"

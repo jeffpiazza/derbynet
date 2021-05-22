@@ -28,8 +28,7 @@ function get_or_create_id($idfield, $tablename, $read_fields, $write_fields = nu
     $write_sql .= ') VALUES ('.$write_params.')';
     $stmt = $db->prepare($write_sql);
     if (!$stmt->execute($write_fields)) {
-      json_failure('sql-write', "SQL execute failed: $write_sql");
-      json_out('error-info', $db->errorInfo());
+      json_sql_failure($write_sql);
     }
 
     $id = read_single_value($read_sql, $read_fields);

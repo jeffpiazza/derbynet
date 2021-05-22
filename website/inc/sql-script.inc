@@ -5,64 +5,47 @@ function sql_file_path($stem) {
   return 'sql'.DIRECTORY_SEPARATOR.$dbtype.DIRECTORY_SEPARATOR.$stem.'.inc';
 }
 
-function report_sql_result($sql_result, $sql_stmt) {
-  echo '<executed result="'.($sql_result === false ? 'FALSE' : $sql_result).'">'
-      .htmlspecialchars($sql_stmt, ENT_QUOTES, 'UTF-8')."</executed>\n";
-}
-
-function run_sql_script($scriptname, $write_xml = false) {
+// Returns two values, a bool (true for successful execution) and a list of results
+function run_sql_script($scriptname) {
   global $db;
   global $dbtype;
   $ok = true;
+  $executed = array();
   try {
     $sql_script = @include_once(sql_file_path($scriptname));
     if ($sql_script !== FALSE) {
       foreach ($sql_script as $sql_stmt) {
         try {
           $sql_result = $db->exec($sql_stmt);
-          if ($write_xml) {
-            report_sql_result($sql_result, $sql_stmt);
-          }
+          $executed[] = array('sql' => $sql_stmt, 'result' => $sql_result);
         } catch (PDOException $p) {
-          report_sql_result($sql_result, $sql_stmt);
+          $executed[] = array('sql' => $sql_stmt, 'result' => $sql_result);
 
           // Hack to work around the fact that Access doesn't provide a "drop if
           // exists" statement -- you have to attempt a table drop and catch the
           // failure if the table didn't already exist.
           if ($dbtype == 'access' && substr($sql_stmt, 0, 4) == 'DROP') {
-            if ($write_xml) {
-              echo '<drop-failed/>';
-            }
           } else {
-            if ($write_xml) {
-              echo '<failure code="sqlfailure">'.htmlspecialchars($p->getMessage(), ENT_QUOTES, 'UTF-8')."</failure>\n";
-              foreach ($p->errorInfo as $info) {
-                echo "<failure-info>".htmlspecialchars($info, ENT_QUOTES, 'UTF-8')."</failure-info>\n";
-              }
-            }
+            json_sql_failure($sql_stmt);
             $ok = false;
             break;
           }
         }
       }
     } else {
-      if ($write_xml) {
-        echo '<failure code="sqlnoscript">SQL script '.@$_POST['script'].' not found.</failure>'."\n";
-      }
+      json_failure('sqlnoscript', "SQL script ".@$_POST['script']." not found.");
       $ok = false;
     }
   } catch (PDOException $p) {
-    if ($write_xml) {
-      echo '<failure code="sqlfailure">'.$p.'</failure>';
-    }
+    json_failure('sqlfailure', $p->getMessage());
     $ok = false;
   }
 
-  if ($write_xml && $ok) {
-    echo "<success/>\n";
+  if ($ok) {
+    json_success();
   }
 
-  return $ok;
+  return array($ok, $executed);
 }
 
 ?>

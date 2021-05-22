@@ -34,6 +34,12 @@ function json_failure($code, $description) {
                             'description' => $description));
 }
 
+function json_sql_failure($sql) {
+  global $db;
+  $info = $db->errorInfo();
+  json_failure('sql'.$info[0].'-'.$info[1], "$sql failed: $info[2] [EOM]");
+}
+
 function json_not_authorized() {
   json_failure('notauthorized', "Not authorized -- please see race coordinator.");
 }

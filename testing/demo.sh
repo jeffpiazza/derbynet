@@ -10,8 +10,8 @@ source `dirname $0`/common.sh
 user_login_coordinator
 
 while true ; do
-  curl_post action.php "action=database.execute&script=schema" | check_success
-  curl_post action.php "action=database.execute&script=update-schema" | check_success
+  curl_postj action.php "action=json.database.execute&script=schema" | check_jsuccess
+  curl_postj action.php "action=json.database.execute&script=update-schema" | check_jsuccess
   curl_post action.php "action=settings.write&photos-on-now-racing=head" | check_success
 
   # kiosk page will re-poll every 5s
