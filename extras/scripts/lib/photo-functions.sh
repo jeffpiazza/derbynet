@@ -53,7 +53,7 @@ do_login() {
         curl --location \
              --silent --show-error \
 	     -b "$COOKIES" -c "$COOKIES" -o - \
-	     --data "action=login&name=$PHOTO_USER&password=$PHOTO_PASSWORD" \
+	     --data "action=role.login&name=$PHOTO_USER&password=$PHOTO_PASSWORD" \
              "$DERBYNET_SERVER/action.php" \
             | tee "$TMPFILE" \
             | grep -q success \
@@ -63,7 +63,7 @@ do_login() {
     done
 
     if [ $ADJUST_CLOCK -ne 0 ]; then
-        NEWTIME=`grep timecheck "$TMPFILE" | sed -e "s/<timecheck>//" -e "s/<.timecheck>//"`
+        NEWTIME=`grep timecheck "$TMPFILE" | sed -e 's/.*: "\(.*\)".*/\1/'`
         echo Adjusting clock to $NEWTIME
         sudo date -s "$NEWTIME"
     fi
@@ -161,8 +161,8 @@ maybe_check_in_racer() {
             announce checkin-failed
         else
             if [ -x /usr/bin/flite ] ; then
-                FIRSTNAME=`grep FIRSTNAME "$TMPFILE" | cut -d= -f 2`
-                LASTNAME=`grep LASTNAME "$TMPFILE" | cut -d= -f 2`
+                FIRSTNAME=`grep firstname "$TMPFILE" | sed -e 's/.*: "\(.*\)".*/\1/'`
+                LASTNAME=`grep lastname "$TMPFILE" | sed -e 's/.*: "\(.*\)".*/\1/'`
                 flite -t "Successful check in for $FIRSTNAME $LASTNAME"
             fi
         fi

@@ -235,26 +235,24 @@ curl_postj action.php "action=json.settings.write&n-lanes=6&unused-lane-mask=0" 
 # Takes about 15s on my laptop
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | expect_count "roundid=.$TWO_HUNDRED_ROUNDID. " 7200
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID '.results | map(select(.roundid == $r)) | length' | \
+    expect_eq 7200
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | expect_count "racerid=.$RACERID_1100." 36
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr)) | length' | \
+    expect_eq 36
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | grep "lane=.1." \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr and .lane == 1)) | length' | \
+    expect_eq 6
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | grep "lane=.6." \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr and .lane == 6)) | length' | \
+    expect_eq 6
 
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
@@ -262,20 +260,19 @@ curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUN
 curl_postj action.php "action=json.settings.write&n-lanes=1" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | expect_count "roundid=.$TWO_HUNDRED_ROUNDID. " 1200
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID '.results | map(select(.roundid == $r)) | length' | \
+    expect_eq 1200
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr)) | length' | \
+    expect_eq 6
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | grep "lane=.1." \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr and .lane == 1)) | length' | \
+    expect_eq 6
 
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
@@ -287,20 +284,19 @@ curl_postj action.php "action=json.racer.pass&racer=$RACERID_1050" | check_jsucc
 curl_postj action.php "action=json.racer.pass&racer=$RACERID_1150" | check_jsuccess
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | expect_count "roundid=.$TWO_HUNDRED_ROUNDID. " 108
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID '.results | map(select(.roundid == $r)) | length' | \
+    expect_eq 108
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | expect_count "racerid=.$RACERID_1100." 36
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+       '.results | map(select(.roundid == $r and .racerid == $rr)) | length' | \
+    expect_eq 36
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | grep "lane=.1." \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr and .lane == 1)) | length' | \
+    expect_eq 6
 
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
@@ -313,19 +309,18 @@ curl_postj action.php "action=json.racer.pass&racer=$RACERID_1110" | check_jsucc
 
 curl_postj action.php "action=json.schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | expect_count "roundid=.$TWO_HUNDRED_ROUNDID. " 288
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID '.results | map(select(.roundid == $r)) | length' | \
+    expect_eq 288
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | expect_count "racerid=.$RACERID_1100." 36
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+       '.results | map(select(.roundid == $r and .racerid == $rr)) | length' | \
+    expect_eq 36
 
-curl_get "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" \
-    | grep "<result " \
-    | grep "roundid=.$TWO_HUNDRED_ROUNDID. " \
-    | grep "lane=.1." \
-    | expect_count "racerid=.$RACERID_1100." 6
+curl_getj "action.php?query=json.poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
+    jq --argjson r $TWO_HUNDRED_ROUNDID --argjson rr $RACERID_1100 \
+         '.results | map(select(.roundid == $r and .racerid == $rr and .lane == 1)) | length' | \
+    expect_eq 6
 
 curl_postj action.php "action=json.schedule.unschedule&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess

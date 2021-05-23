@@ -43,6 +43,8 @@ class ScheduleAdjuster {
   private $nlanes;
   private $nheats;
 
+
+
   // An array of indices into $race_chart of the heats that have been completed.
   private $completed_heats;
 
@@ -112,15 +114,15 @@ class ScheduleAdjuster {
     $start = microtime(true);
     $this->generate_injection_proposals();
     $stop = microtime(true);
-    echo "<injection-outcome>\n";  // TODO
+    // echo "<injection-outcome>\n";  // TODO
     if ($this->best_proposal !== null) {
-      echo "<best-score>".$this->best_score."</best-score>\n";  // TODO
-      echo "<skip-lanes>".json_encode($this->best_skip_lanes)."</skip-lanes>";  // TODO
-      echo "<proposal>".json_encode($this->best_proposal)."</proposal>\n";  // TODO
+      // echo "<best-score>".$this->best_score."</best-score>\n";  // TODO
+      // echo "<skip-lanes>".json_encode($this->best_skip_lanes)."</skip-lanes>";  // TODO
+      // echo "<proposal>".json_encode($this->best_proposal)."</proposal>\n";  // TODO
     }
-    echo "<timing>".number_format($stop - $start, 4)."</timing>\n";  // TODO
-    echo "<unspent-budget>".$this->search_budget."</unspent-budget>\n";  // TODO
-    echo "</injection-outcome>\n";  // TODO
+    // echo "<timing>".number_format($stop - $start, 4)."</timing>\n";  // TODO
+    // echo "<unspent-budget>".$this->search_budget."</unspent-budget>\n";  // TODO
+    // echo "</injection-outcome>\n";  // TODO
 
     if ($this->best_proposal === null) {
       return false;
@@ -157,16 +159,7 @@ class ScheduleAdjuster {
     }
 
     if (DEBUG) {
-      echo "<race-chart>\n";
-      for ($heat = 0; $heat < $this->nheats; ++$heat) {
-        echo "          ";
-        echo json_encode($this->race_chart[$heat]);
-        if (in_array($heat, $this->completed_heats, true)) {
-          echo "*";
-        }
-        echo "\n";
-      }
-      echo "</race-chart>\n";
+      json_out('race-chart', $this->race_chart);
     }
   }
 
@@ -192,11 +185,7 @@ class ScheduleAdjuster {
     }
 
     if (DEBUG_SCORING) {
-      echo "<matchups>\n";
-      foreach ($this->matchups as $racer1 => $pairings) {
-        echo "For ".$racer1.": ".json_encode($pairings)."\n";
-      }
-      echo "</matchups>\n";
+      json_out('matchups', $this->matchups);
     }
   }
 
@@ -222,11 +211,9 @@ class ScheduleAdjuster {
     }
 
     if (DEBUG) {
-      echo "<matchups>\n";
-      echo "<min-matchups>".$this->min_matchups."</min-matchups>\n";
-      echo "<max-matchups>".$this->max_matchups."</max-matchups>\n";
-      echo "<range-matchups>".($this->max_matchups - $this->min_matchups)."</range-matchups>\n";
-      echo "</matchups>\n";
+      json_out('matchups-summary', array('min' => $this->min_matchups,
+                                         'max' => $this->max_matchups,
+                                         'range' => $this->max_matchups - $this->min_matchups));
     }
   }
 
@@ -247,7 +234,7 @@ class ScheduleAdjuster {
   // either null (no swap) or a heat index.
   function score_proposal(&$proposal, $proposed_new_heat) {
     $score = -min($this->nheats_with_byes, $this->nlanes);
-    if (DEBUG_SCORING) echo "<initial-score>".$score."</initial-score>\n";
+    if (DEBUG_SCORING) json_out('initial-score', $score);
     for ($lane = 0; $lane < $this->nlanes; ++$lane) {
       if ($proposal[$lane] !== null) {
         $candidate_heat_index = $proposal[$lane];
@@ -255,7 +242,7 @@ class ScheduleAdjuster {
         $candidate_racer = $candidate_heat[$lane];
         if ($candidate_racer === null) {
           $score += 1;
-          if (DEBUG_SCORING) echo "<filled-bye>Lane ".$lane."</filled-bye>\n";
+          if (DEBUG_SCORING) json_out('filled-bye', "Lane $lane");
           continue;
         }
         // Scan the old heat looking for matchups lost
@@ -267,10 +254,10 @@ class ScheduleAdjuster {
             // increasing nor decreasing the number of matchups between
             // $candidate_racer and that opponent.
             if (DEBUG_SCORING) {
-              echo "<score>In lane ".$lane.": Lost matchup between ".$candidate_racer
-                ." and ".$old_opponent
-                .", decreasing matchup count from "
-                .$this->matchups[$candidate_racer][$old_opponent]."</score>\n";
+              //echo "<score>In lane ".$lane.": Lost matchup between ".$candidate_racer
+              //  ." and ".$old_opponent
+              //  .", decreasing matchup count from "
+              //  .$this->matchups[$candidate_racer][$old_opponent]."</score>\n";
             }
             if ($this->matchups[$candidate_racer][$old_opponent] ==
                    $this->min_matchups) {
@@ -278,7 +265,7 @@ class ScheduleAdjuster {
                 // We're losing a matchup with $old_opponent here, and not making
                 // it up in the new heat, so earns a negative score.
                 $score -= 10;
-                if (DEBUG_SCORING) echo "<ding/>\n";
+                // if (DEBUG_SCORING) echo "<ding/>\n";
               }
             }
           }
@@ -288,11 +275,11 @@ class ScheduleAdjuster {
           $new_opponent = $proposed_new_heat[$o];
           if ($new_opponent == null) continue;
           if (DEBUG_SCORING) {
-            echo "<score>In lane ".$lane.": Added matchup between "
-                .$candidate_racer." and ".$new_opponent
-                .", increasing matchup count from "
-                .$this->matchups[$candidate_racer][$new_opponent]
-                ."</score>\n";
+            //echo "<score>In lane ".$lane.": Added matchup between "
+            //    .$candidate_racer." and ".$new_opponent
+            //    .", increasing matchup count from "
+            //    .$this->matchups[$candidate_racer][$new_opponent]
+            //    ."</score>\n";
           }
           if ($this->matchups[$candidate_racer][$new_opponent] == $this->max_matchups) {
             if (!in_array($new_opponent, $candidate_heat)) {
@@ -300,7 +287,7 @@ class ScheduleAdjuster {
               // had as many as we should, and we're not eliminating one of those
               // matchups from the old heat.
               $score -= 10;
-              if (DEBUG_SCORING) echo "<ding/>\n";
+              // if (DEBUG_SCORING) echo "<ding/>\n";
             }
           }
         }
@@ -357,32 +344,32 @@ class ScheduleAdjuster {
         $lane, $skip_lanes, &$proposal, &$proposed_new_heat) {
     if ($this->best_score >= 0) return;  // Short-circuit on optimal choice
     if ($this->search_budget <= 0) {
-      echo "<over-budget/>\n";
+      // echo "<over-budget/>\n";
       return;
     }
 
     if ($lane >= $this->nlanes) {
       --$this->search_budget;
-      if ($this->search_budget <= 0) echo "<budget-expired/>\n";
+      // if ($this->search_budget <= 0) echo "<budget-expired/>\n";
       if (DEBUG_SEARCH) {
-        echo "<proposal>\n";
-        echo "<heats>".json_encode($proposal)."</heats>\n";
+        // echo "<proposal>\n";
+        // echo "<heats>".json_encode($proposal)."</heats>\n";
       }
       $score = $this->score_proposal($proposal, $proposed_new_heat);
       if (DEBUG_SEARCH) {
-        echo "<score>".$score."</score>\n";
+        // echo "<score>".$score."</score>\n";
       }
       if ($score > $this->best_score) {
         $this->best_score = $score;
         $this->best_skip_lanes = $skip_lanes;
         $this->best_proposal = $proposal;
         if (DEBUG_SEARCH) {
-          echo "<best-score>".$score." for ".json_encode($proposal)
-              ." with skip_lanes ".json_encode($skip_lanes)."</best-score>\n";
+          // echo "<best-score>".$score." for ".json_encode($proposal)
+          //     ." with skip_lanes ".json_encode($skip_lanes)."</best-score>\n";
         }
       }
       if (DEBUG_SEARCH) {
-        echo "</proposal>\n";
+        // echo "</proposal>\n";
       }
     } else if (in_array($lane, $skip_lanes, true)) {
       $this->generate_injection_proposals_recur($lane + 1, $skip_lanes,
@@ -519,51 +506,47 @@ function added_racers($roundid) {
   return $result;
 }
 
-start_response();
-
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   $roundid = $_POST['roundid'];
 
   $deleted = deleted_racers($roundid);
-  if (count($deleted) > 0) echo "<deleted>".json_encode($deleted)."</deleted>\n";  // TODO
+  if (count($deleted) > 0) json_out('deleted-racers', $deleted);
   $added = added_racers($roundid);
-  if (count($added) > 0) echo "<added>".json_encode($added)."</added>\n";  // TODO
+  if (count($added) > 0) json_out('added-racers', $added);
 
   $ok = true;
 
   if (count($deleted) == 0 && count($added) == 0) {
-    echo "<failure code='nothingtodo'>Nothing to do</failure>\n";
+    json_failure('nothingtodo', "Nothing to do");
     $ok = false;
   }
 
   $n_runs_per_lane = n_runs_per_lane($roundid);
   if ($n_runs_per_lane == 0) {
-    echo "<failure code='unrecognizable'>Schedule not recognizable</failure>\n";
+    json_failure('unrecognizable', "Schedule not recognizable");
     $ok = false;
   }
 
   $adjuster = new ScheduleAdjuster($roundid);
   
   if ($adjuster->number_of_completed_heats() == 0) {
-    echo "<regenerating/>\n";
+    json_out('regenerating', true);
     read_single_row('DELETE FROM RaceChart WHERE roundid = :roundid',
                     array(':roundid' => $roundid));
 
 	if (schedule_one_round($roundid, $adjuster->number_of_usable_lanes(),
                            $n_runs_per_lane, /* trace */ false)) {
-      echo "<success/>\n";
+      json_success();
     } else {
-      echo '<failure code="too-few-racers">'
-      .'There need to be at least two racers checked in'
-      .' to generate a schedule.'
-      .'</failure>'."\n";
+      json_failure('too-few-racers', 
+                   "There need to be at least two racers checked in to generate a schedule.");
     }
 
     $ok = false;
   }
   
   if ($ok && count($deleted) > 0) {
-    echo "<failure code='deleted'>Not yet implemented: deleted racers</failure>\n";
+    json_failure('deleted', "Not yet implemented: deleted racers");
     $ok = false;
   }
 
@@ -571,19 +554,19 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     foreach ($added as $new_racer) {
       // TODO for ($run = 0; $run < $n_runs_per_lane; ++$run) ?
       if ($adjuster->inject($new_racer)) {
-        echo "<successful-injection/>\n";
+        json_out('successful-injection', true);
       } else {
-        echo "<failure code='no-injection'>Unsuccessful racer injection</failure>\n";
+        json_failure('no-injection', "Unsuccessful racer injection");
         $ok = false;
       }
     }
   }
 
   if ($ok) {
-    echo "<success/>\n";
+    json_success();
   }
 } else {
-  not_authorized_body();
+  json_not_authorized();
 }
-end_response();
+
 ?>

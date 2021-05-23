@@ -48,7 +48,7 @@ function setup_schedule() {
 
 function do_reschedule() {
     echo
-    curl_post action.php "action=schedule.reschedule&roundid=1"
+    curl_postj action.php "action=json.schedule.reschedule&roundid=1"
     echo
 }
 

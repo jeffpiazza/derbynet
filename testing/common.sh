@@ -129,9 +129,9 @@ function user_login() {
 	echo    >> $OUTPUT_CURL
 	echo login $1 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
-	curl --location -d "action=login&name=$1&password=$PWD" \
+	curl --location -d "action=json.role.login&name=$1&password=$PWD" \
         -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
-		| xmllint --format - | tee -a $OUTPUT_CURL | check_success
+		| tee -a $OUTPUT_CURL | check_jsuccess
 }
 
 function user_login_coordinator() {
@@ -151,16 +151,15 @@ function user_login_photo() {
 }
 
 function user_logout() {
-	curl_post action.php "action=login" | check_success logout
+	curl_postj action.php "action=json.role.login" | check_jsuccess logout
 }
 
 function test_fails() {
     tput setaf 1  # red text
 	echo TEST FAILURE: $*
     stacktrace
-	echo BEGIN RESPONSE
-	cat $DEBUG_CURL
-	echo END RESPONSE
+	echo RECEIVED:
+	head -n 100 $DEBUG_CURL
     tput setaf 0  # black text
     exit 1
 }

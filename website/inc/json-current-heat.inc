@@ -1,6 +1,6 @@
 <?php
 
-function json_current_heat(&$now_running) {
+function json_current_heat(&$now_running, $use_master_sched = false) {
   $current_heat = array(
     'now_racing' => $now_running['now_racing'] ? true : false,
     'use_master_sched' => @$now_running['use_master_sched'] ? true : false,

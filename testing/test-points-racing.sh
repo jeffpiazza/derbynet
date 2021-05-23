@@ -114,8 +114,10 @@ user_login_coordinator
 curl_postj action.php "action=json.award.present&key=speed-2-1" | check_jsuccess
 curl_getj "action.php?query=json.award.current" | expect_one Asher
 
-curl_get "action.php?query=poll.ondeck" | grep 'resultid="1"' | expect_one 'result="2nd"'
-curl_get "action.php?query=poll.ondeck" | grep 'resultid="4"' | expect_one 'result="1st"'
+curl_getj "action.php?query=json.poll.ondeck" | \
+    jq -r '.updates | map(select(.resultid == 1))[0].result' | expect_eq 2nd
+curl_getj "action.php?query=json.poll.ondeck" | \
+    jq -r '.updates | map(select(.resultid == 4))[0].result' | expect_eq 1st
 
 # Test the tie in the standings:
 #

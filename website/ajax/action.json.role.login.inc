@@ -10,8 +10,6 @@ if (isset($_POST['name'])) {
   $password = '';
 }
 
-start_response();
-
 $role = $roles[$name];
 
 if ($role) {
@@ -20,25 +18,26 @@ if ($role) {
     if (empty($name) && isset($_SESSION['setting_up'])) {
       unset($_SESSION['setting_up']);
     }      
+
     // Some clients are scripts running from RPi's or similar devices that may
     // not have an accurate clock.  The timecheck element allows the device to
     // be set reasonably close to the date.
-    echo "\n<timecheck>".date(DATE_ISO8601)."</timecheck>\n";
+    json_out('timecheck', date(DATE_ISO8601));
+
     if ($password) {
       $_SESSION['role'] = $name;
-	  echo '<success>'.$_SESSION['role'].'</success>'."\n";
+      json_out('role', $_SESSION['role']);
+      json_success();
 	} else {
       // Despite the unset, it appears $_SESSION['role'] will appear
       // as an empty string in subsequent accesses.
       unset($_SESSION['role']);
-	  echo '<success/>'."\n";
+      json_success();
 	}
   } else {
-    echo '<failure>Incorrect password</failure>'."\n";
+    json_failure('login', "Incorrect password");
   }
 } else {
-  echo '<failure role="'.$name.'">No such role: '.$name.'</failure>'."\n";
+  json_failure('role', "No such role: $role");
 }
-
-end_response();
 ?>

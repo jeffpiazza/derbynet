@@ -2,22 +2,21 @@
 function handle_login(role, pwd) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'login',
+            data: {action: 'json.role.login',
                    name: role,
                    password: pwd},
-            success: function(/*PlainObject*/ response, /*String*/ textStatus, /*jqXHR*/ jqXHR) {
-                response = $(response);
-		        var succ = response.find("success");
-		        if (succ && succ.size() > 0) {
-			        window.location.href = 'index.php';
-		        } else {
-			        var fail = response.find("failure");
-			        if (fail && fail.size() > 0) {
-				        alert("Login fails: " + fail.text());
-			        } else {
-				        alert("Unrecognized XML: " + this.responseXML);
-			        }
-		        }
+            success: function(data) {
+              if (data.hasOwnProperty('outcome') &&
+                  data.outcome.hasOwnProperty('summary') &&
+                  data.outcome.summary == 'success') {
+			    window.location.href = 'index.php';
+              } else if (data.hasOwnPropety('outcome') &&
+                         data.outcome.hasOwnProperty('summary') &&
+                         data.outcome.summary == 'failure') {
+				alert("Login fails: " + data.outcome.summary.description);
+		      } else {
+				alert("Unrecognized XML: " + this.responseXML);
+              }
             },
            });
 }

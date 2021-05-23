@@ -1,6 +1,5 @@
-<ondeck>
 <?php
-require_once('inc/current-heat.inc');
+require_once('inc/json-current-heat.inc');
 require_once('inc/autoadvance.inc');
 require_once('inc/ordinals.inc');
 
@@ -59,7 +58,7 @@ require_once('inc/ordinals.inc');
 $since = @$_GET['since'];
 $hwresultid = @$_GET['high_water_resultid'];
 if (!$hwresultid) {
-	$hwresultid = 0;
+  $hwresultid = 0;
 }
 
 // If true, the client is using master scheduling and therefore merging all the
@@ -70,83 +69,78 @@ $time_format = get_finishtime_formatting_string();
 
 $use_master_sched = use_master_sched();
 $now_running = get_running_round();
-emit_current_heat($now_running);
-?>
+json_out('current-heat', json_current_heat($now_running, $use_master_sched));
 
-<?php
 $next = get_next_heat($now_running, 'next');
 if ($next !== false) {
-  echo "  <next-heat roundid=\"$next[roundid]\" heat=\"$next[heat]\"/>\n";
+  json_out('next-heat', array('roundid' => $next['roundid'],
+                              'heat' => $next['heat']));
 }
 
 $prev = get_next_heat($now_running, 'prev');
 if ($prev !== false) {
-  echo "  <prev-heat roundid=\"$prev[roundid]\" heat=\"$prev[heat]\"/>\n";
+  json_out('prev-heat', array('roundid' => $prev['roundid'],
+                              'heat' => $prev['heat']));
 }
-?>
-  <lanes n="<?php echo get_lane_count_from_results(); ?>"/>
-  <options update-period="<?php echo update_period(); ?>"
-           use-master-sched="<?php echo $use_master_sched; ?>"/>
-<?php
-  $sql = 'SELECT'
-    .' lane, resultid, finishtime, finishplace, completed'
-    .' FROM Rounds'
-    .' INNER JOIN RaceChart'
-    .' ON RaceChart.roundid = Rounds.roundid'
-    .' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
-    .($since
-	    ? ' AND completed > '.db_compare_completed(':since')
-	    : "") 
-    .' ORDER BY completed, resultid, lane';
-  $stmt = $db->prepare($sql);
-  $stmt->execute($since ? array(':since' => $since) : array());
+json_out('lanes', get_lane_count_from_results());
+json_out('options', array('update-period' => update_period(),
+                          'use-master-sched' => $use_master_sched));
 
-  if ($stmt === FALSE) {
-	$info = $db->errorInfo();
-    echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
+$sql = 'SELECT'
+.' lane, resultid, finishtime, finishplace, completed'
+.' FROM Rounds'
+.' INNER JOIN RaceChart'
+.' ON RaceChart.roundid = Rounds.roundid'
+.' WHERE (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
+.($since
+  ? ' AND completed > '.db_compare_completed(':since')
+  : "") 
+.' ORDER BY completed, resultid, lane';
+$stmt = $db->prepare($sql);
+$stmt->execute($since ? array(':since' => $since) : array());
+
+// <update> elements for heats recorded since the ['since']
+$updates = array();
+$max_time = $since;
+$use_points = read_raceinfo_boolean('use-points');
+foreach ($stmt as $rs) {
+  if ($use_points) {
+    $val = ordinal($rs['finishplace']);
+  } else {
+    $val = sprintf($time_format, $rs['finishtime']);
   }
-
-  // <update> elements for heats recorded since the ['since']
-  $max_time = $since;
-  $use_points = read_raceinfo_boolean('use-points');
-  foreach ($stmt as $rs) {
-    if ($use_points) {
-      $val = ordinal($rs['finishplace']);
-    } else {
-      $val = sprintf($time_format, $rs['finishtime']);
-    }
-    echo "<update resultid='".$rs['resultid']."'"
-	  ." result='".$val."'/>\n";
-    if ($rs['completed'] > $max_time)
-      $max_time = $rs['completed'];
+  $updates[] = array('resultid' => $rs['resultid'],
+                     'result' => $val);
+  if ($rs['completed'] > $max_time) {
+    $max_time = $rs['completed'];
   }
+}
+json_out('updates', $updates);
 
-  // <has_new_schedule> elements for rounds affected by newly-entered racechart rows
+// <has_new_schedule> elements for rounds affected by newly-entered racechart rows
+$new_rounds = array();
 
 $sql = 'SELECT DISTINCT Rounds.roundid, round'
-    .' FROM RaceChart'
-    .' INNER JOIN Rounds'
-    .' ON RaceChart.roundid = Rounds.roundid'
-    .' WHERE resultid > '.$hwresultid
-    .' ORDER BY Rounds.roundid';
-  $stmt = $db->query($sql);
-  if ($stmt === FALSE) {
-	$info = $db->errorInfo();
-    echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
-  }
+.' FROM RaceChart'
+.' INNER JOIN Rounds'
+.' ON RaceChart.roundid = Rounds.roundid'
+.' WHERE resultid > '.$hwresultid
+.' ORDER BY Rounds.roundid';
+$stmt = $db->query($sql);
+if ($stmt === FALSE) {
+  $info = $db->errorInfo();
+  echo '<error msg="'.$info[2].'" query="'.$sql.'"/>'."\n";
+}
 
-  foreach ($stmt as $rs) {
-    echo '<has_new_schedule'
-    .' tbodyid="'.$rs[$merge_rounds ? 'round' : 'roundid'].'"'
-    .'/>'."\n";
-  }
+foreach ($stmt as $rs) {
+  $new_rounds[] = $rs[$merge_rounds ? 'round' : 'roundid'];
+}
+json_out('new-rounds', $new_rounds);
 
-  $high_water_rounds = high_water_rounds();
-  ?>
-  <high_water roundid="<?php echo $high_water_rounds['roundid']; ?>"
-              round="<?php echo $high_water_rounds['round']; ?>"
-              tbodyid="<?php echo $high_water_rounds[$merge_rounds ? 'round' : 'roundid']; ?>"
-              resultid="<?php echo high_water_resultid(); ?>"
-              completed="<?php echo $max_time; ?>" />
-
-</ondeck>
+$high_water_rounds = high_water_rounds();
+json_out('high-water', array('roundid' => $high_water_rounds['roundid'],
+                             'round' => $high_water_rounds['round'],
+                             'tbodyid' => $high_water_rounds[$merge_rounds ? 'round' : 'roundid'],
+                             'resultid' => high_water_resultid(),
+                             'completed' => $max_time));
+?>

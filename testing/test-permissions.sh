@@ -29,14 +29,14 @@ curl_postj action.php "action=json.racer.edit" | check_jfailure
 curl_postj action.php "action=json.result.write" | check_jfailure
 curl_postj action.php "action=json.racer.import" | check_jfailure
 
-# curl_post action.php "action=login" | check_failure
+# curl_postj action.php "action=json.role.login" | check_jfailure
 curl_postj action.php "action=json.racer.add" | check_jfailure
 curl_postj action.php "action=json.racer.pass" | check_jfailure
 curl_post action.php "action=photo" | check_failure
 # TODO Replay application registers itself without credentials, a security weakness.
 # curl_post action.php "action=register-replay" | check_failure
-curl_post action.php "action=replay-test" | check_failure
-curl_post action.php "action=schedule.reschedule" | check_failure
+curl_postj action.php "action=json.replay.test" | check_jfailure
+curl_postj action.php "action=json.schedule.reschedule" | check_jfailure
 curl_postj action.php "action=json.schedule.generate" | check_jfailure
 curl_postj action.php "action=json.heat.select" | check_jfailure
 curl_post action.php "action=timer-message" | check_failure
@@ -48,8 +48,8 @@ curl_getj "action.php?query=json.class.list" > /dev/null
 curl_getj "action.php?query=json.poll.coordinator" | jq . > /dev/null
 curl_getj "action.php?query=json.poll.kiosk" > /dev/null
 curl_getj "action.php?query=json.poll.kiosk.all" > /dev/null
-curl_get "action.php?query=roles"  > /dev/null
-curl_get "action.php?query=poll.ondeck" > /dev/null
+curl_getj "action.php?query=json.roles.list"  > /dev/null
+curl_getj "action.php?query=json.poll.ondeck" > /dev/null
 curl_getj "action.php?query=json.poll.now-racing" > /dev/null
 
 cat >coordinator.index.tmp <<EOF

@@ -215,7 +215,7 @@ function handle_reschedule_button(roundid) {
     // TODO: On success... 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'schedule.reschedule',
+            data: {action: 'json.schedule.reschedule',
                    roundid: roundid}});
 }
 

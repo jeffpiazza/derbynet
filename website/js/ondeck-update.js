@@ -48,8 +48,7 @@ function process_update_elements(updates) {
 // current element.
 function process_new_schedules(newly_scheduled, index, completed) {
   if (index < newly_scheduled.length) {
-    var nsched = newly_scheduled.item(index);
-	var tbodyid = nsched.getAttribute("tbodyid");
+	var tbodyid = newly_scheduled[index];
     console.log("Loading page section for tbody_" + tbodyid);
 
     // These assignments force curheat to get redone.
@@ -131,17 +130,10 @@ function notice_change_current_heat(roundid, heat, next_roundid, next_heat, prev
 
 // Summary is the XML document element for the full <ondeck/> response.
 function process_response_from_current(summary) {
-  var current_xml = summary.getElementsByTagName("current-heat")[0];
-  var current = {tbodyid: current_xml.getAttribute("tbodyid"),
-                 roundid: current_xml.getAttribute("roundid"),
-                 round: current_xml.getAttribute("round"),
-                 heat: current_xml.getAttribute("heat"),
-                 classname: current_xml.firstChild ? current_xml.firstChild.data : null};
-
-  var nlanes = summary.getElementsByTagName("lanes")[0].getAttribute("n");
-
-  var options = summary.getElementsByTagName("options")[0];
-  var update_period = options.getAttribute("update-period");
+  console.log(summary);
+  var current = summary['current-heat'];
+  var nlanes = summary.lanes;
+  var update_period = summary.options['update-period'];
   if (update_period != g_update_status.update_period) {
     g_update_status.update_period = update_period;
     clearInterval(g_update_status.interval_id);
@@ -149,46 +141,44 @@ function process_response_from_current(summary) {
   }
 
   if (typeof g_update_status.use_master_sched != 'undefined' && 
-	  g_update_status.use_master_sched != options.getAttribute("use-master-sched")) {
+	  g_update_status.use_master_sched != summary.options['use-master-sched']) {
 	console.log("Reload triggered by: g_update_status.use_master_sched=" + g_update_status.use_master_sched +
-				"; use-master-sched option = " + options.getAttribute("use-master-sched"));
+				"; use-master-sched option = " + summary.options['use-master-sched']);
 	location.reload(true);
 	return;
   }
-  g_update_status.use_master_sched = options.getAttribute("use-master-sched");
+  g_update_status.use_master_sched = summary.options['use-master-sched'];
 
-  var high_water = summary.getElementsByTagName("high_water")[0];
+  var high_water = summary['high-water'];
 
   // Number of lanes may not have been known when the page was generated, but has since
   // been determined.  Update colspan attributes if that's the case.
   $(".wide").attr("colspan", nlanes);
 
-  var new_high_water_tbodyid = high_water.getAttribute('tbodyid');
+  var new_high_water_tbodyid = high_water.tbodyid;
   if (new_high_water_tbodyid > g_update_status.high_water_tbodyid) {
     // If we have new rounds set up, just reload the whole page
-    console.log("Reload triggered by g_update_status.high_water_tbodyid=" + g_update_status.high_water_tbodyid);
+    console.log("Reload triggered by g_update_status.high_water_tbodyid=" +
+                g_update_status.high_water_tbodyid);
     location.reload(true);
     return;
   }
 
-  var next_heat_xml = summary.getElementsByTagName("next-heat")[0];
-  var prev_heat_xml = summary.getElementsByTagName("prev-heat")[0];
+  var next_heat = summary.hasOwnProperty('next-heat') ? summary['next-heat'] : {roundid: 0, heat: 0};
+  var prev_heat = summary.hasOwnProperty('prev-heat') ? summary['prev-heat'] : {roundid: 0, heat: 0};
 
   process_new_schedules(
-    summary.getElementsByTagName("has_new_schedule"), 0,
+    summary['new-rounds'], 0,
     function () {
       notice_change_current_tbody(current.tbodyid, current.round,
                                   current.classname);
       notice_change_current_heat(current.roundid, current.heat,
-                                 next_heat_xml ? next_heat_xml.getAttribute("roundid") : 0,
-                                 next_heat_xml ? next_heat_xml.getAttribute("heat") : 0,
-                                 prev_heat_xml ? prev_heat_xml.getAttribute("roundid") : 0,
-                                 prev_heat_xml ? prev_heat_xml.getAttribute("heat") : 0
-                                );
-      process_update_elements(summary.getElementsByTagName("update"));
+                                 next_heat.roundid, next_heat.heat,
+                                 prev_heat.roundid, prev_heat.heat);
+      process_update_elements(summary.updates);
 
-      g_update_status.last_update_time = high_water.getAttribute("completed");
-      g_update_status.high_water_resultid = high_water.getAttribute("resultid");
+      g_update_status.last_update_time = high_water.completed;
+      g_update_status.high_water_resultid = high_water.resultid;
     });
 }
 
@@ -203,13 +193,15 @@ function is_visible(el) {
 // If passed-in DOM element is below the viewport, then scrolls the viewport so
 // the element is vertically centered on the display.
 function scroll_to_current(el) {
-  var rect = el.getBoundingClientRect();
-  var w = $(window).height();
+  if (el) {
+    var rect = el.getBoundingClientRect();
+    var w = $(window).height();
 
-  if (rect.bottom > w || rect.top < 0) {  // Off-screen by being below.
-    $(window).scrollTop($(window).scrollTop()
-                        + (rect.top + rect.bottom)/2
-                        - $(window).height()/2);
+    if (rect.bottom > w || rect.top < 0) {  // Off-screen by being below.
+      $(window).scrollTop($(window).scrollTop()
+                          + (rect.top + rect.bottom)/2
+                          - $(window).height()/2);
+    }
   }
 }
 
@@ -220,7 +212,7 @@ function start_polling() {
                 + " &high_water_resultid=" + g_update_status.high_water_resultid);
     $.ajax("action.php",
            {type: 'GET',
-            data: {query: 'poll.ondeck',
+            data: {query: 'json.poll.ondeck',
                    since: g_update_status.last_update_time,
                    high_water_resultid: g_update_status.high_water_resultid,
                    merge_rounds: g_update_status.merge_rounds},
