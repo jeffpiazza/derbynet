@@ -25,7 +25,7 @@ function show_add_class_modal() {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: 'action=json.class.add&' +
+            data: 'action=class.add&' +
                 $("#add-class-name").serialize() + '&' +
                 $("#add-class-ntrophies").serialize(),
             success: function (data) {
@@ -63,7 +63,7 @@ function show_add_aggregate_modal() {
     close_add_class_modal();
     $.ajax(g_action_url,
            {type: 'POST',
-            data:  'action=json.class.add&' +
+            data:  'action=class.add&' +
                 $("#add-class-name").serialize() + '&' +
                 $("#add-class-ntrophies").serialize() + '&' +
                 ($("#aggregate-by-checkbox").is(':checked')
@@ -132,7 +132,7 @@ function show_edit_one_class_modal(list_item) {
     show_secondary_modal("#edit_one_class_modal", function () {
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'json.class.edit',
+                data: {action: 'class.edit',
                        classid: list_item.attr('data-classid'),
                        name: $("#edit_class_name").val(),
                        ntrophies: $("#edit_class_ntrophies").val()},
@@ -155,7 +155,7 @@ function handle_delete_class() {
               + ' "' + $('#edit_one_class_modal input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.class.delete',
+            data: {action: 'class.delete',
                    classid: $("#edit_class_name").attr('data-classid')
                   },
             success: function(data) {
@@ -208,7 +208,7 @@ function show_edit_one_rank_modal(list_item) {
   show_tertiary_modal("#edit_one_rank_modal", function() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.rank.edit',
+            data: {action: 'rank.edit',
                    rankid: list_item.attr('data-rankid'),
                    name: $("#edit_rank_name").val()},
             success: function(data) {
@@ -233,7 +233,7 @@ function handle_delete_rank() {
               + ' "' + $("#edit_rank_name").val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.rank.delete',
+            data: {action: 'rank.delete',
                    rankid: $("#edit_rank_name").attr('data-rankid')
                   },
             success: function(data) {
@@ -249,7 +249,7 @@ function handle_delete_rank() {
 function reload_class_list() {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'json.class.list'},
+            data: {query: 'class.list'},
             success: function(data) {
               repopulate_class_list(data);
               repopulate_constituent_classes(data);
@@ -281,7 +281,7 @@ function populate_rank_list(cl) {
   }
 
   rank_ul.sortable({stop: function(event, ui) {
-      var data = {action: 'json.rank.order'};
+      var data = {action: 'rank.order'};
       $("#ranks_container ul[data-classid=" + classid + "] li").each(function(i) {
         data['rankid_' + (i + 1)] = $(this).attr('data-rankid');
       });
@@ -383,7 +383,7 @@ function on_aggregate_by_change() {
 
 $(function () {
     $("#groups").sortable({stop: function(event, ui) {
-      var data = {action: 'json.class.order'};
+      var data = {action: 'class.order'};
       $("#edit_all_classes_modal ul li").each(function(i) {
         data['classid_' + (i + 1)] = $(this).attr('data-classid');
       });

@@ -646,7 +646,7 @@ function coordinator_poll() {
   if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
     $.ajax(g_action_url,
            {type: 'GET',
-            data: {query: 'json.poll.coordinator',
+            data: {query: 'poll.coordinator',
                    roundid: g_current_heat.roundid,
                    heat: g_current_heat.heat},
             success: function(json) {

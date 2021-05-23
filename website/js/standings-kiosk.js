@@ -96,7 +96,7 @@ $(function() {
       $.ajax({type: 'GET',
               url: 'action.php',
               data: {
-                query: 'json.standings.reveal'
+                query: 'standings.reveal'
               },
               success: function(data) {
                 var changed = false;

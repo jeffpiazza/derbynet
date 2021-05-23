@@ -66,7 +66,7 @@ function logmessage(txt) {
 function poll_as_replay() {
   $.ajax("action.php",
   {type: 'POST',
-    data: {action: 'json.replay.message',
+    data: {action: 'replay.message',
            status: 0,
            'finished-replay': 0},
     success: function(data) {
@@ -242,7 +242,7 @@ function upload_video(root, blob) {
     console.log("Uploading video");
     let form_data = new FormData();
     form_data.append('video', blob, root + ".mkv");
-    form_data.append('action', 'json.video.upload');
+    form_data.append('action', 'video.upload');
     $.ajax("action.php",
            {type: 'POST',
              data: form_data,

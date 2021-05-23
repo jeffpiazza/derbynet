@@ -19,7 +19,7 @@ function maybe_change_playlist_message() {
 function on_racing_scene_change() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.settings.write',
+          data: {action: 'settings.write',
                  racing_scene: $("#racing-scene").val()},
           success: function(data) {
             $("#racing-scene-psa").toggleClass('hidden', $("#racing-scene").val() >= 0);
@@ -122,7 +122,7 @@ function on_playlist_entry_update(li) {
 
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.playlist.edit',
+          data: {action: 'playlist.edit',
                  queueid: queueid,
                  top: entry.bucket_limit,
                  bucketed: entry.bucketed,
@@ -138,7 +138,7 @@ function on_remove_playlist_entry() {
   var li = $(this).closest('li');
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.playlist.delete',
+          data: {action: 'playlist.delete',
                  queueid: g_queue[li.index()].queueid},
           success: function(data) {
             g_queue.splice(li.index(), 1);
@@ -152,7 +152,7 @@ function on_remove_playlist_entry() {
 }
 
 function on_reorder(ul) {
-  var data = {action: 'json.playlist.order'};
+  var data = {action: 'playlist.order'};
   $(ul).find('li').each(function(i) {
     data['queueid_' + (i + 1)] = $(this).attr('data-queueid');
   });
@@ -208,7 +208,7 @@ function show_create_roster_dialog(classid, roundno) {
 function add_round_to_queue(classid, round, roster_params) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.playlist.add',
+          data: {action: 'playlist.add',
                  classid: classid,
                  round: round,
                  top: roster_params ? roster_params.top : 0,

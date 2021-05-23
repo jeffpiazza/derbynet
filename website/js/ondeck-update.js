@@ -212,7 +212,7 @@ function start_polling() {
                 + " &high_water_resultid=" + g_update_status.high_water_resultid);
     $.ajax("action.php",
            {type: 'GET',
-            data: {query: 'json.poll.ondeck',
+            data: {query: 'poll.ondeck',
                    since: g_update_status.last_update_time,
                    high_water_resultid: g_update_status.high_water_resultid,
                    merge_rounds: g_update_status.merge_rounds},

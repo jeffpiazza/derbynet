@@ -117,7 +117,7 @@ function toggle_vote(div) {
 
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.vote.cast',
+          data: {action: 'vote.cast',
                  awardid: g_awardid,
                  'votes': JSON.stringify(award_ballot['votes'])}
          });
@@ -168,7 +168,7 @@ function car_number_for_racerid(racerid) {
 function get_ballot() {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.ballot.get',
+          data: {query: 'ballot.get',
                  password: $("#password_input").val()},
           success: function(data) {
             var password_modal_showing =
@@ -196,7 +196,7 @@ $(function() {
   setInterval(function() {
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'json.settings',
+            data: {query: 'settings.list',
                    key: 'balloting'},
             success: function(data) {
               var v = 'closed';

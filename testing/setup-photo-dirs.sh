@@ -23,8 +23,8 @@ if [ `echo "$BASE_URL" | grep -i localhost` ]; then
 
     user_login_coordinator
 
-    curl_postj action.php "action=json.settings.write&photo-dir=$PHOTO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&photos-on-now-racing=head" | check_jsuccess
+    curl_postj action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&photos-on-now-racing=head" | check_jsuccess
 fi

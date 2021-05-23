@@ -7,7 +7,7 @@ var g_unclaimed_scene_kiosk_names;
 function poll_kiosk_all() {
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'json.poll.kiosk.all'},
+          data: {query: 'poll.kiosk.all'},
           success: function(data) {
             setTimeout(poll_kiosk_all, 2000);
             process_polled_data(data);
@@ -296,7 +296,7 @@ function on_scene_change(event, synthetic) {
     var val = $("#scenes-select").val();
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.scene.apply',
+            data: {action: 'scene.apply',
                    sceneid: val},
             success: function(data) {
               process_polled_data(data);
@@ -309,7 +309,7 @@ function on_scene_change(event, synthetic) {
 function handle_assign_kiosk_page_change(sel) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.kiosk.assign',
+          data: {action: 'kiosk.assign',
                  address: sel.getAttribute('data-kiosk-address'),
                  page: sel.value},
           success: function(data) {
@@ -344,7 +344,7 @@ function handle_name_kiosk(address, name) {
   close_modal("#kiosk_modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.kiosk.assign',
+          data: {action: 'kiosk.assign',
                  address: address,
                  name: name},
           success: function(data) {
@@ -384,7 +384,7 @@ $(function () {
     $.ajax(g_action_url,
            {type: 'POST',
             data: {
-              action: 'json.standings.reveal',
+              action: 'standings.reveal',
               'catalog-entry': selection.attr('data-catalog-entry')
             },
             success: function(data) {
@@ -397,7 +397,7 @@ function handle_reveal1() {
   $.ajax(g_action_url,
          {type: 'POST',
           data: {
-            action: 'json.standings.reveal',
+            action: 'standings.reveal',
             expose: '+1'
             },
           success: function(data) {
@@ -409,7 +409,7 @@ function handle_reveal_all() {
   $.ajax(g_action_url,
          {type: 'POST',
           data: {
-            action: 'json.standings.reveal',
+            action: 'standings.reveal',
             expose: 'all'
             },
           success: function(data) {
@@ -479,7 +479,7 @@ function compute_classids() {
 function post_new_params(kiosk, new_params) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.kiosk.assign',
+          data: {action: 'kiosk.assign',
                  address: kiosk.address,
                  params: JSON.stringify(new_params)},
           success: function(data) {

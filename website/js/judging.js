@@ -33,7 +33,7 @@ function maybe_assign_award_winner(award_li, racer_div) {
   if (award_assignment_hover_class(award_li, racer_div) == "") {
         $.ajax('action.php',
                {type: 'POST',
-                data: {action: 'json.award.winner',
+                data: {action: 'award.winner',
                        awardid: award_li.attr('data-awardid'),
                        racerid: racer_div.attr('data-racerid')},
                 success: function(data) {
@@ -63,7 +63,7 @@ function show_racer_awards_modal(judging_racer) {
     close_racer_awards_modal();
     $.ajax('action.php',
            {type: 'POST',
-            // action=json.award.adhoc
+            // action=award.adhoc
             data:  $("#racer_awards_form").serialize(),
             success: function(data) {
               update_awards(data);
@@ -80,7 +80,7 @@ function close_racer_awards_modal() {
 function on_vote_choose(event) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.award.winner',
+          data: {action: 'award.winner',
                  awardid: $(event.target).attr('data-awardid'),
                  racerid: $(event.target).attr('data-racerid')},
           success: function(data) {
@@ -259,7 +259,7 @@ function on_ballot_depth_change(event) {
   var awardid = $(event.target).attr('data-awardid');
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.award.edit',
+          data: {action: 'award.edit',
                  awardid: awardid,
                  ballot_depth: $(event.target).val()},
           success: function(data) {
@@ -294,7 +294,7 @@ function update_ballot_awards(awards) {
 function handle_remove_recipient(imgxjq) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.award.winner',
+          data: {action: 'award.winner',
                  awardid: imgxjq.closest("[data-awardid]").attr("data-awardid"),
                  racerid: 0},
           success: function(data) {
@@ -377,7 +377,7 @@ function make_racers_draggable_and_droppable() {
 function query_for_award_list() {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.award.list'},
+          data: {query: 'award.list'},
           success: function(data) {
             update_awards(data);
           }
@@ -390,7 +390,7 @@ $(function() {
   $("#balloting_state").on('change', function() {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.ballot.open',
+            data: {action: 'ballot.open',
                    state: $("#balloting_state").is(':checked') ? "open" : "closed" }
            });
   });
@@ -398,7 +398,7 @@ $(function() {
   $("#ballot_password").on('keyup mouseup', function() {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.settings.write',
+            data: {action: 'settings.write',
                    ballot_password: $("#ballot_password").val()}
            });
   });

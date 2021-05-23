@@ -6,51 +6,51 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_postj action.php "action=json.settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_jsuccess
-curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
+curl_postj action.php "action=settings.write&use-master-sched-checkbox=1&use-master-sched=1" | check_jsuccess
+curl_postj action.php "action=settings.write&n-lanes=4" | check_jsuccess
 
 # Two racers from Bears & Freres (but 4 heats, with byes)
-curl_postj action.php "action=json.racer.pass&racer=3&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=8&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=3&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=8&value=1" | check_jsuccess
 
 # All the Lions and Tigers (17)
-curl_postj action.php "action=json.racer.pass&racer=1&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=6&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=11&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=16&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=21&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=26&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=31&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=36&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=41&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=46&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=51&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=56&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=61&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=71&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=66&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=76&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=81&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=1&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=6&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=11&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=16&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=21&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=26&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=31&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=36&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=41&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=46&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=51&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=56&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=61&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=71&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=66&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=76&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=81&value=1" | check_jsuccess
 
 # White's Wolves (13)
-curl_postj action.php "action=json.racer.pass&racer=2&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=7&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=12&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=22&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=17&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=27&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=32&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=37&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=42&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=52&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=62&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=72&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=82&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=2&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=7&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=12&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=22&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=17&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=27&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=32&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=37&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=42&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=52&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=62&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=72&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=82&value=1" | check_jsuccess
 
 # Three racers from Webelos (4 heats, with byes)
-curl_postj action.php "action=json.racer.pass&racer=39&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=44&value=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=49&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=39&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=44&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=49&value=1" | check_jsuccess
 
 # ... for a total of 38 heats
 # 17/4 ~ 4 ratio for Lions & Tigers
@@ -59,21 +59,21 @@ curl_postj action.php "action=json.racer.pass&racer=49&value=1" | check_jsuccess
 # 4/4 = 1 ratio for Webelos
 
 # Schedule dens
-curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=4" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=4" | check_jsuccess
 # Can't schedule Arrows, because no one's checked in
-curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jfailure
+curl_postj action.php "action=schedule.generate&roundid=5" | check_jfailure
 
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 1" | \
     expect_eq true
 
-curl_postj action.php "action=json.heat.select&heat=next-up&now_racing=0" | check_jsuccess
-curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&heat=next-up&now_racing=0" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
 
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 1 and .heat == 1" | \
     expect_eq true
 
@@ -126,43 +126,43 @@ run_heat 2 13 3.9767 3.6456 2.2947 3.7196    x
 # Expecting NO heat-ready:
 cat $DEBUG_CURL | expect_count "<heat-ready[ />]" 0
 
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false" | \
     expect_eq true
 
 user_login_coordinator
 # Now create a aggregate round, 3 from each den.
 # (Bears/Freres have only 2 racers and Webelos only 3.)
-curl_postj action.php "action=json.roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
+curl_postj action.php "action=roster.new&roundid=&top=3&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
  | check_jsuccess
 
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2 and .heat == 13" | \
     expect_eq true
 
-curl_postj action.php "action=json.schedule.generate&roundid=8" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=8" | check_jsuccess
 
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 8 and .heat == 1" | \
     expect_eq true
 
-curl_postj action.php "action=json.heat.select&heat=next-up&now_racing=0" | check_jsuccess
-curl_postj action.php "action=json.heat.select&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&heat=next-up&now_racing=0" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
 
 run_heat 8 1  3 2 1 4
 
 # Next heat is Grand Finals heat 2
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | \
     jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 8 and .heat == 2" | \
     expect_eq true
 
-curl_getj "action.php?query=json.class.list" | expect_one 'Grand Finals'
+curl_getj "action.php?query=class.list" | expect_one 'Grand Finals'
 
 # Unschedule and remove Grand Finals round
-curl_postj action.php "action=json.result.delete&roundid=8&heat=1" | check_jsuccess
-curl_postj action.php "action=json.schedule.unschedule&roundid=8" | check_jsuccess
-curl_postj action.php "action=json.roster.delete&roundid=8" | check_jsuccess
+curl_postj action.php "action=result.delete&roundid=8&heat=1" | check_jsuccess
+curl_postj action.php "action=schedule.unschedule&roundid=8" | check_jsuccess
+curl_postj action.php "action=roster.delete&roundid=8" | check_jsuccess
 
-curl_getj "action.php?query=json.class.list" | expect_count 'Grand Finals' 0
-curl_getj "action.php?query=json.class.list" | \
+curl_getj "action.php?query=class.list" | expect_count 'Grand Finals' 0
+curl_getj "action.php?query=class.list" | \
     jq '.classes | all(.classid != 8)' | expect_eq true

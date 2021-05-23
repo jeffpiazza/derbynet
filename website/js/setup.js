@@ -231,7 +231,7 @@ function confirm_purge(purge) {
     close_secondary_modal("#purge_confirmation_modal");
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.database.purge',
+            data: {action: 'database.purge',
                    purge: purge},
             success: function(data) {
               report_success_json(data);
@@ -256,7 +256,7 @@ function handle_initialize_schema() {
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.database.execute',
+          data: {action: 'database.execute',
                  script: 'schema'},
           success: function(data) {
             report_success_json(data);
@@ -279,7 +279,7 @@ function handle_update_schema() {
   report_in_progress();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.database.execute',
+          data: {action: 'database.execute',
                  script: 'update-schema'},
           success: function(data) {
             report_success_json(data);

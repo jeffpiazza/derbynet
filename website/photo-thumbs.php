@@ -117,7 +117,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
     <div class="fallback">
       <input type="file" name="photo" value="Upload Files"/>
     </div>
-    <input type="hidden" name="action" value="json.photo.upload"/>
+    <input type="hidden" name="action" value="photo.upload"/>
     <input type="hidden" name="repo" value="<?php echo $photo_repository->name(); ?>"/>
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
   </form>

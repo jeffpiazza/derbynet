@@ -3,7 +3,7 @@
 function send_message(recipient, message_json) {
   $.ajax("action.php",
          {type: 'POST',
-          data: {action: 'json.message.send',
+          data: {action: 'message.send',
                  recipient: recipient,
                  message: JSON.stringify(message_json)}});
 };
@@ -16,7 +16,7 @@ function MessagePoller(ms, recipient, on_message) {
   this.retrieve_messages = function() {
     $.ajax("action.php",
            {type: 'POST',
-            data: {action: 'json.message.retrieve',
+            data: {action: 'message.retrieve',
                    recipient: recipient},
             success: function(data) {
               var msgs = data.messages;

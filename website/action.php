@@ -51,7 +51,7 @@ if (empty($_POST) && empty($_GET)) {
 
 $is_action = !empty($_POST);
 $inc = $is_action ? @$_POST['action'] : @$_GET['query'];
-$in_json = strpos($inc, 'json') !== false;
+$in_json = $inc != 'timer-message' && (strpos($inc, 'snapshot') === false);
 
 if ($in_json) {
   header('Content-Type: application/json; charset=utf-8');

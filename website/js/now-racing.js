@@ -322,7 +322,7 @@ var Poller = {
       this.time_of_last_request = (new Date()).valueOf();
       $.ajax('action.php',
              {type: 'GET',
-              data: {query: 'json.poll.now-racing',
+              data: {query: 'poll.now-racing',
                      roundid: roundid,
                      heat: heat,
                      'row-height': row_height},

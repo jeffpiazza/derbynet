@@ -20,7 +20,7 @@ function repopulate_chooser_modal(path) {
   $("#chooser_directory_content").empty();
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.file.directory.nodata',
+          data: {query: 'file.directory.nodata',
                  path: path},
           // Disable the alert from dashboard-ajax.js that would show up for
           // "unable to list directory"
@@ -109,7 +109,7 @@ function chooser_show_add_directory_modal(event) {
     chooser_close_add_directory_modal();
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.file.directory.new.nodata',
+            data: {action: 'file.directory.new.nodata',
                    directory: parent_path + $("#chooser_new_directory_name").val()},
             success: function(data) {
               if (data.hasOwnProperty('path')) {

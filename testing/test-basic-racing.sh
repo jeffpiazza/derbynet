@@ -6,21 +6,21 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-curl_postj action.php "action=json.settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
+curl_postj action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
 
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
 
 ### Schedule first round for 3 of the classes
-curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
 
 # Can't delete a racer who's in a schedule
-curl_postj action.php "action=json.racer.delete&racer=21" | check_jfailure
+curl_postj action.php "action=racer.delete&racer=21" | check_jfailure
 
 ### Racing for roundid=1: 5 heats
-curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
@@ -39,7 +39,7 @@ run_heat 1 5 2.9661 3.9673 3.5686 3.8388    x
 
 ### Racing for roundid=2: 5 heats
 user_login_coordinator
-curl_postj action.php "action=json.heat.select&roundid=2&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=2&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
@@ -49,15 +49,15 @@ run_heat 2 1 2.6149 2.0731 3.0402 3.7937
 run_heat 2 2 2.9945 3.4571 2.1867 2.3447
 
 user_login_coordinator
-curl_getj "action.php?query=json.poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
-curl_postj action.php "action=json.heat.rerun&heat=last" | check_jsuccess
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_getj "action.php?query=poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
+curl_postj action.php "action=heat.rerun&heat=last" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
     jq '.["last-heat"] == "recoverable" and 
         (.["heat-results"] | all(has("finishtime") and has("finishplace")))' | \
     expect_eq true
 
-curl_postj action.php "action=json.heat.reinstate" | grep last-heat | expect_one none
-curl_getj "action.php?query=json.poll.coordinator" | \
+curl_postj action.php "action=heat.reinstate" | grep last-heat | expect_one none
+curl_getj "action.php?query=poll.coordinator" | \
     jq '.racers |
         all((.finishtime == 2.994 and (.name | test("Darrell.*"))) or 
             (.finishtime == 3.457 and .name == "Ian Ives") or
@@ -65,7 +65,7 @@ curl_getj "action.php?query=json.poll.coordinator" | \
             (.finishtime == 2.345 and .name == "Elliot Eastman"))' | \
     expect_eq true
 
-curl_postj action.php "action=json.heat.select&heat=next&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&heat=next&now_racing=1" | check_jsuccess
 user_login_timer
 
 run_heat 2 3 2.4901 2.0838 3.6469 2.1003
@@ -74,12 +74,12 @@ run_heat 2 5 3.0439 3.4090 3.3881 2.9110      x
 
 user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
-curl_postj action.php "action=json.racer.pass&racer=13&value=0" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=23&value=0" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&racer=33&value=0" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=13&value=0" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=23&value=0" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=33&value=0" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
 
-curl_postj action.php "action=json.heat.select&roundid=3&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=3&now_racing=1" | check_jsuccess
 
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
@@ -95,29 +95,29 @@ user_login_coordinator
 ### Editing racers
 
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Arrows'` -eq 1 ] || test_fails Initial class
-curl_postj action.php "action=json.racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_jsuccess
+curl_postj action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_jsuccess
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"firstname":"Zuzu"'` -eq 1 ] || test_fails Firstname change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"lastname":"Zingelo"'` -eq 1 ] || test_fails Lastname change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Webelos'` -eq 1 ] || test_fails Class change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"carnumber":999'` -eq 1 ] || test_fails Car number change
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
-curl_postj action.php "action=json.heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess
-curl_postj action.php "action=json.result.write&lane2=8.888" | check_jsuccess
-curl_postj action.php "action=json.heat.select&roundid=1&heat=2" | check_jsuccess
-curl_postj action.php "action=json.result.write&lane4=8.888" | check_jsuccess
-curl_postj action.php "action=json.heat.select&roundid=1&heat=3" | check_jsuccess
-curl_postj action.php "action=json.result.write&lane1=8.888" | check_jsuccess
-curl_postj action.php "action=json.heat.select&roundid=1&heat=4" | check_jsuccess
-curl_postj action.php "action=json.result.write&lane3=8.888" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess
+curl_postj action.php "action=result.write&lane2=8.888" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&heat=2" | check_jsuccess
+curl_postj action.php "action=result.write&lane4=8.888" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&heat=3" | check_jsuccess
+curl_postj action.php "action=result.write&lane1=8.888" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&heat=4" | check_jsuccess
+curl_postj action.php "action=result.write&lane3=8.888" | check_jsuccess
 
 # For roundid 4, schedule two appearances per lane per racer
-curl_postj action.php "action=json.schedule.generate&roundid=4&n_times_per_lane=2" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=4&n_times_per_lane=2" | check_jsuccess
 # Schedule for roundid 5
-curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=5" | check_jsuccess
 
 ### Racing for roundid=4
-curl_postj action.php "action=json.heat.select&roundid=4&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=4&now_racing=1" | check_jsuccess
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
@@ -132,7 +132,7 @@ run_heat 4 8 3.6487 3.0060 3.9589 3.6175    x
 
 ### Racing for roundid=5
 user_login_coordinator
-curl_postj action.php "action=json.heat.select&roundid=5&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=5&now_racing=1" | check_jsuccess
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
@@ -143,44 +143,44 @@ run_heat 5 4 2.7886 3.5121 3.8979 2.0171   x
 
 user_login_coordinator
 
-curl_postj action.php "action=json.award.present&key=speed-1" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Elliot
-curl_postj action.php "action=json.award.present&key=speed-2" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Kris
-curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Blake
+curl_postj action.php "action=award.present&key=speed-1" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Elliot
+curl_postj action.php "action=award.present&key=speed-2" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Kris
+curl_postj action.php "action=award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Blake
 
-curl_postj action.php "action=json.award.present&key=speed-1-4" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Kaba
-curl_postj action.php "action=json.award.present&key=speed-2-4" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Zuzu
-curl_postj action.php "action=json.award.present&key=speed-3-4" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Byron
+curl_postj action.php "action=award.present&key=speed-1-4" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Kaba
+curl_postj action.php "action=award.present&key=speed-2-4" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Zuzu
+curl_postj action.php "action=award.present&key=speed-3-4" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Byron
 
 # Make sure that excluding Carroll Cybulski leaves Adolpho Asher as the second-in-tigers winner
-curl_postj action.php "action=json.award.present&key=speed-2-1" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Asher
+curl_postj action.php "action=award.present&key=speed-2-1" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Asher
 
 # Issue#87: make sure the awards presentation page populates for speed awards
 curl_get awards-presentation.php | expect_one "<option data-classid=.1.>Lions &amp; Tigers</option>"
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 6
 
-curl_postj action.php "action=json.settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_jsuccess
+curl_postj action.php "action=settings.write&one-trophy-per=1&one-trophy-per-checkbox" | check_jsuccess
 # There are only 3 racers in Webelos, and one of them gets a pack-level award.  So only
 # five 3rd-place trophies in this case.
 curl_get awards-presentation.php | expect_count ">3rd Fastest in " 5
 
-curl_postj action.php "action=json.award.present&key=speed-1" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Elliot
-curl_postj action.php "action=json.award.present&key=speed-2" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Kris
-curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Blake
+curl_postj action.php "action=award.present&key=speed-1" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Elliot
+curl_postj action.php "action=award.present&key=speed-2" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Kris
+curl_postj action.php "action=award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Blake
 
-curl_postj action.php "action=json.award.present&key=speed-1-4" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Zuzu
-curl_postj action.php "action=json.award.present&key=speed-2-4" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one Byron
+curl_postj action.php "action=award.present&key=speed-1-4" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Zuzu
+curl_postj action.php "action=award.present&key=speed-2-4" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one Byron
 
 # Issue#97: confirm lane bias calculation isn't broken
 curl_get history.php | expect_one "<td>1.757 sample variance.</td>"

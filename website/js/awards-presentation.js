@@ -35,7 +35,7 @@ function on_choose_award(list_item) {
   var item = $(list_item);
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.award.present',
+          data: {action: 'award.present',
                  key: item.data('awardkey'),
                  reveal: '0'}
          });
@@ -60,7 +60,7 @@ function on_reveal() {
   if (!g_changing_awards) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.award.present',
+            data: {action: 'award.present',
                    reveal: $("#reveal-checkbox").prop('checked') ? 1 : 0}
            });
   }
@@ -69,7 +69,7 @@ function on_reveal() {
 function on_clear_awards() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.award.present',
+          data: {action: 'award.present',
                  key: '',
                  reveal: '0'}
          });
@@ -86,7 +86,7 @@ function on_clear_awards() {
 function initialize_award_controls() {
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'json.award.current'},
+          data: {query: 'award.current'},
           success: function(data) {
             var award;
             if (!data.hasOwnProperty('current')) {

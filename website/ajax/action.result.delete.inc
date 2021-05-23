@@ -37,7 +37,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
   json_success();
   json_out('sql', $sql);
 
-  require('ajax/query.json.poll.coordinator.inc');
+  require('ajax/query.poll.coordinator.inc');
 
 } else {
   json_not_authorized();

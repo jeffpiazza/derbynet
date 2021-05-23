@@ -19,8 +19,8 @@ user_login_coordinator
 
 while true ; do
   # Resetting the database also clears all the kiosk settings
-  curl_postj action.php "action=json.database.execute&script=schema" | check_jsuccess
-  curl_postj action.php "action=json.database.execute&script=update-schema" | check_jsuccess
+  curl_postj action.php "action=database.execute&script=schema" | check_jsuccess
+  curl_postj action.php "action=database.execute&script=update-schema" | check_jsuccess
 
   # Because the kiosks haven't registered themselves (again) since the database
   # got reset.  We don't want to use the cookies file because we don't want the
@@ -28,25 +28,25 @@ while true ; do
   curl --location -s "$BASE_URL/kiosk.php?id=$MAIN" > /dev/null
   curl --location -s "$BASE_URL/kiosk.php?id=$AUX" > /dev/null
 
-  curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/slideshow.kiosk" | check_jsuccess
-  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$MAIN&page=kiosks/slideshow.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$AUX&page=kiosks/welcome.kiosk" | check_jsuccess
 
   # Tedious set-up
-  curl_postj action.php "action=json.settings.write&photos-on-now-racing=head" | check_jsuccess
-  curl_postj action.php "action=json.settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
+  curl_postj action.php "action=settings.write&photos-on-now-racing=head" | check_jsuccess
+  curl_postj action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
 
   `dirname $0`/import-roster.sh "$BASE_URL"
   `dirname $0`/photo-setup.sh "$BASE_URL"
-  curl_postj action.php "action=json.class.edit&classid=1&name=Tigers" | check_jsuccess
-  curl_postj action.php "action=json.class.edit&classid=2&name=Wolves" | check_jsuccess
-  curl_postj action.php "action=json.class.edit&classid=3&name=Bears" | check_jsuccess
-  curl_postj action.php "action=json.class.edit&classid=4&name=Webelos%20I" | check_jsuccess
-  curl_postj action.php "action=json.class.edit&classid=5&name=Webelos%20II" | check_jsuccess
-  curl_postj action.php "action=json.class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_jsuccess
+  curl_postj action.php "action=class.edit&classid=1&name=Tigers" | check_jsuccess
+  curl_postj action.php "action=class.edit&classid=2&name=Wolves" | check_jsuccess
+  curl_postj action.php "action=class.edit&classid=3&name=Bears" | check_jsuccess
+  curl_postj action.php "action=class.edit&classid=4&name=Webelos%20I" | check_jsuccess
+  curl_postj action.php "action=class.edit&classid=5&name=Webelos%20II" | check_jsuccess
+  curl_postj action.php "action=class.order&classid_1=1&classid_2=2&classid_3=3&classid_4=4&classid_5=5" | check_jsuccess
   `dirname $0`/test-photo-assignments.sh "$BASE_URL"
-  curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
+  curl_postj action.php "action=settings.write&n-lanes=4" | check_jsuccess
 
-  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/please-check-in.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$AUX&page=kiosks/please-check-in.kiosk" | check_jsuccess
 
   `dirname $0`/checkin-all.sh "$BASE_URL"
 
@@ -58,19 +58,19 @@ while true ; do
   user_login_coordinator
 
   # Schedule Round 1
-  curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
-  # curl_postj action.php "action=json.schedule.generate&roundid=2" | check_jsuccess
-  # curl_postj action.php "action=json.schedule.generate&roundid=3" | check_jsuccess
-  # curl_postj action.php "action=json.schedule.generate&roundid=4" | check_jsuccess
-  # curl_postj action.php "action=json.schedule.generate&roundid=5" | check_jsuccess
+  curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
+  # curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess
+  # curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
+  # curl_postj action.php "action=schedule.generate&roundid=4" | check_jsuccess
+  # curl_postj action.php "action=schedule.generate&roundid=5" | check_jsuccess
 
   # Start racing
   curl_post action.php "action=select-heat&now_racing=1&roundid=1" | check_success
 
-  curl_postj action.php "action=json.settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
-  curl_postj action.php "action=json.kiosk.assign&address=$ONDECK&page=kiosks/ondeck.kiosk" | check_jsuccess
-  curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/now-racing.kiosk" | check_jsuccess
-  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/results-by-racer.kiosk" | check_jsuccess
+  curl_postj action.php "action=settings.write&show-car-photos-on-deck=1&show-car-photos-on-deck-checkbox=1" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$ONDECK&page=kiosks/ondeck.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$MAIN&page=kiosks/now-racing.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$AUX&page=kiosks/results-by-racer.kiosk" | check_jsuccess
 
   # Knock off a few early rounds
   user_login_timer
@@ -131,24 +131,24 @@ while true ; do
   # sleep 3s
 
   # TODO Not ready for prime time
-  # curl_postj action.php "action=json.kiosk.assign&address=$MAIN&page=kiosks/standings.kiosk" | check_jsuccess
+  # curl_postj action.php "action=kiosk.assign&address=$MAIN&page=kiosks/standings.kiosk" | check_jsuccess
   # curl_post action.php "action=standings.select&roundid=1&expose=all" | check_success
 
   user_login_coordinator
   ########## Awards Presentations ##############
   sleep 15s
-  curl_postj action.php "action=json.kiosk.assign&address=$AUX&page=kiosks/award-presentations.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&address=$AUX&page=kiosks/award-presentations.kiosk" | check_jsuccess
   sleep 6s
-  curl_postj action.php "action=json.award.present&key=speed-2-1&reveal=0" | check_jsuccess
+  curl_postj action.php "action=award.present&key=speed-2-1&reveal=0" | check_jsuccess
   sleep 3s
-  curl_postj action.php "action=json.award.present&reveal=1" | check_jsuccess
+  curl_postj action.php "action=award.present&reveal=1" | check_jsuccess
   sleep 12s
-  curl_postj action.php "action=json.award.present&key=speed-1-1&reveal=0" | check_jsuccess
+  curl_postj action.php "action=award.present&key=speed-1-1&reveal=0" | check_jsuccess
   sleep 3s
-  curl_postj action.php "action=json.award.present&reveal=1" | check_jsuccess
+  curl_postj action.php "action=award.present&reveal=1" | check_jsuccess
   sleep 12s
 
   ########## DerbyNet ##############
-  curl_postj action.php "action=json.kiosk.assign&all=kiosks/derbynet.kiosk" | check_jsuccess
+  curl_postj action.php "action=kiosk.assign&all=kiosks/derbynet.kiosk" | check_jsuccess
   sleep 30s
 done

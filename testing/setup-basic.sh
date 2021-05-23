@@ -18,4 +18,4 @@ DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
 
 `dirname $0`/test-photo-assignments.sh "$BASE_URL"
 
-curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
+curl_postj action.php "action=settings.write&n-lanes=4" | check_jsuccess

@@ -172,7 +172,7 @@ function handle_sortorder_racers_change() {
   // display actually reflects that.
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "json.racer.list",
+          data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
             process_racer_list(data);
@@ -184,7 +184,7 @@ function handle_sortorder_awards_change() {
   /*
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "json.racer.list",
+          data: {query: "racer.list",
                  order: $("#sortorder").val()},
           success: function(data) {
             process_racer_list(data);
@@ -196,7 +196,7 @@ function handle_sortorder_awards_change() {
 function poll() {
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "json.racer.list",
+          data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
             process_racer_list(data);
@@ -204,7 +204,7 @@ function poll() {
          });
   $.ajax("action.php",
          {type: 'GET',
-          data: {query: "json.award.list",
+          data: {query: "award.list",
                  adhoc: 1},
           success: function(data) {
             process_award_list(data);

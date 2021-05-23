@@ -83,7 +83,7 @@ function mainphoto_onload(img) {
     var classids = kiosk_parameters.classids;
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'json.photo.next',
+            data: {query: 'photo.next',
                    racerid: current_racer_id,
                    classids: classids && classids.length > 0 ? classids.join(',') : ''},
             success: function(data) {

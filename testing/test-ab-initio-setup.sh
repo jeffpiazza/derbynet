@@ -61,7 +61,7 @@ if [ "$BASE_URL" = "localhost/derbynet" ]; then
     chmod 0777 $BASEDIR/local
     curl_get index.php | expect_one 'configure the database first'
 
-    curl_postj action.php "action=json.setup.nodata&ez-new=this-will-fail" | check_jfailure
+    curl_postj action.php "action=setup.nodata&ez-new=this-will-fail" | check_jfailure
 
     [ -z "`ls $BASEDIR/local`" ] || test_fails Unexpected files created!
 
@@ -70,7 +70,7 @@ if [ "$BASE_URL" = "localhost/derbynet" ]; then
     cp $BASEDIR/xlocalx/default-file-path.inc $BASEDIR/local
 
     curl_get index.php | expect_one 'configure the database first'
-    curl_postj action.php "action=json.setup.nodata&ez-new=this-will-succeed" | check_jsuccess
+    curl_postj action.php "action=setup.nodata&ez-new=this-will-succeed" | check_jsuccess
 
     # confirm config-database and config-roles
     [ -f $BASEDIR/local/config-database.inc ] || test_fails Missing database config

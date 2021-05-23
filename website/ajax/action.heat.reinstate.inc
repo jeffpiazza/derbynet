@@ -36,6 +36,6 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   set_racing_state(0);
 
   json_success();
-  require('ajax/query.json.poll.coordinator.inc');
+  require('ajax/query.poll.coordinator.inc');
 }
 ?>

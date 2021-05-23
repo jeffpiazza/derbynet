@@ -4,7 +4,7 @@ function on_lane_count_change() {
   var nlanes = $("#n-lanes").val();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.settings.write',
+          data: {action: 'settings.write',
                  'n-lanes': nlanes}
          });
   var mask = $("#unused-lane-mask").val();
@@ -38,7 +38,7 @@ $(function() {
 function on_reverse_lanes_change() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.settings.write',
+          data: {action: 'settings.write',
                  'reverse-lanes': $("#reverse-lanes").is(':checked') ? 1 : 0,
                  'reverse-lanes-checkbox': 1}
         });
@@ -48,7 +48,7 @@ $(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
 function handle_timer_settings_button() {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.timer.settings'},
+          data: {query: 'timer.settings'},
           success: function(data) {
             open_timer_settings_modal(data);
           }});
@@ -100,7 +100,7 @@ function open_timer_settings_modal(data) {
 function on_port_change(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.timer.assign-port',
+          data: {action: 'timer.assign-port',
                  port: $("#timer_settings_port select")
                         .find('option:selected').attr('value')
                 }});
@@ -110,7 +110,7 @@ $(function() { $("#timer_settings_port select").on('change', on_port_change); })
 function on_device_change(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.timer.assign-device',
+          data: {action: 'timer.assign-device',
                  device: $("#timer_settings_device select")
                            .find('option:selected').attr('value')
                 }});
@@ -120,7 +120,7 @@ $(function() { $("#timer_settings_device select").on('change', on_device_change)
 function on_flag_change_bool(evt) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.timer.assign-flag',
+          data: {action: 'timer.assign-flag',
                  flag: $(evt.target).attr('data-flag'),
                  value: $(evt.target).is(':checked') ? 'true' : 'false'
                 }});
@@ -137,7 +137,7 @@ function on_flag_check(evt) {
   var input = target.closest('td').find('input[type="text"]');
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.timer.assign-flag',
+          data: {action: 'timer.assign-flag',
                  flag: input.attr('data-flag'),
                  value: input.val()
                 }});
@@ -180,7 +180,7 @@ function make_flag_control(f, td) {
 function handle_start_race_button() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.timer.remote-start'}
+          data: {action: 'timer.remote-start'}
          });
 }
 
@@ -211,7 +211,7 @@ function on_mask_click(event) {
 
   $.ajax("action.php",
          {type: 'POST',
-          data: {action: 'json.timer.test',
+          data: {action: 'timer.test',
                  'tt-mask': mask}
          });
 }
@@ -220,7 +220,7 @@ function on_testing_change(event, synthetic) {
   if (!synthetic) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.timer.test',
+            data: {action: 'timer.test',
                    'test-mode': $("#test-mode").is(':checked') ? 1 : 0,
                   },
            });
@@ -231,7 +231,7 @@ $(function() { $("#test-mode").on('change', on_testing_change); });
 function on_send_log_change(event) {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.settings.write',
+          data: {action: 'settings.write',
                  'timer-send-logs': $("#timer-send-logs").is(':checked') ? 1 : 0,
                 },
          });
@@ -283,7 +283,7 @@ $(function() {
   setInterval(function() {
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'json.poll.timer.test'},
+            data: {query: 'poll.timer.test'},
             success: function(data) {
               var tstate = data["timer-state"];
               var current = data["current-heat"];
@@ -317,7 +317,7 @@ $(function() {
 function poll_for_timer_log(seek, timeout) {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.timer.log',
+          data: {query: 'timer.log',
                  seek: seek},
           success: function(data) {
             if (data.hasOwnProperty('file-data')) {

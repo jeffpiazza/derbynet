@@ -46,7 +46,7 @@ function on_max_runs_change() {
 function render_directory_status_icon(photo_dir_selector) {
   $.ajax('action.php',
          {type: 'GET',
-          data: {query: 'json.file.stat',
+          data: {query: 'file.stat',
                  path: $(photo_dir_selector).val()},
           success: function(data) {
             console.log(data);
@@ -99,14 +99,14 @@ var PostSettingChange;
 
 (function() {
   var next_train = 0;
-  var values = {action: 'json.settings.write'};
+  var values = {action: 'settings.write'};
 
   function maybe_post() {
     if (next_train == 0) {
       next_train = setTimeout(function() {
         next_train = 0;
         var d = values;
-        values = {action: 'json.settings.write'};
+        values = {action: 'settings.write'};
 
         console.log('POSTing ' + JSON.stringify(d));
 

@@ -12,7 +12,7 @@ $(function() {
   // Upon displaying an Awards Presentation page, clear any current award.
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.award.present',
+          data: {action: 'award.present',
                  key: '',
                  reveal: '0'}
          });
@@ -28,7 +28,7 @@ var AwardPoller = {
   query_for_current_award: function() {
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'json.award.current'},
+            data: {query: 'award.current'},
             success: function(data) {
               AwardPoller.queue_next_query();
               AwardPoller.process_current_award(data);

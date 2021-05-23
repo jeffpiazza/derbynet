@@ -44,7 +44,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       if ($trace) {
         json_out('trace', $trace);
       }
-      require('ajax/query.json.poll.coordinator.inc');
+      require('ajax/query.poll.coordinator.inc');
     } else {
       json_failure('too-few-racers', 'There need to be at least two racers checked in'
                    .' to generate a schedule.');

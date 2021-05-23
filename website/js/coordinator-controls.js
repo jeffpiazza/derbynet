@@ -37,7 +37,7 @@ g_ready_aggregate_classes = [];
 function handle_start_race_button() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.timer.remote-start'}
+          data: {action: 'timer.remote-start'}
          });
 }
 
@@ -45,7 +45,7 @@ function handle_isracing_change(event, scripted) {
     if (!g_updating_current_round) {
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'json.heat.select',
+                data: {action: 'heat.select',
                        now_racing: $("#is-currently-racing").prop('checked') ? 1 : 0},
                 success: function(json) { process_coordinator_poll_json(json); }
                });
@@ -56,7 +56,7 @@ $(function() { $("#is-currently-racing").on("change", handle_isracing_change); }
 function handle_skip_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.select',
+            data: {action: 'heat.select',
                    heat: 'next'},
             success: function(json) { process_coordinator_poll_json(json); }
            });
@@ -65,7 +65,7 @@ function handle_skip_heat_button() {
 function handle_previous_heat_button() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.select',
+            data: {action: 'heat.select',
                    heat: 'prev'},
             success: function(json) { process_coordinator_poll_json(json); }
            });
@@ -77,14 +77,14 @@ function handle_rerun(button) {
   if (rerun_type == 'current' || rerun_type == 'available') {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.rerun',
+            data: {action: 'heat.rerun',
                    heat: rerun_type == 'current' ? 'current' : 'last'},
             success: function(data) { process_coordinator_poll_json(data); }
            });
   } else if (rerun_type = 'recoverable') {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.reinstate'},
+            data: {action: 'heat.reinstate'},
             success: function(data) { process_coordinator_poll_json(data); }
            });
   }
@@ -94,14 +94,14 @@ function handle_rerun(button) {
 function handle_test_replay() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.replay.test'}
+            data: {action: 'replay.test'}
            });
 }
 
 function trigger_replay() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.replay.trigger'}
+          data: {action: 'replay.trigger'}
          });
 }
 
@@ -166,7 +166,7 @@ function handle_discard_results_button() {
             // the user chose.  If current-heat changes while
             // manual-results dialog is open, maybe close the dialog
             // and start over?
-            data: {action: 'json.result.delete',
+            data: {action: 'result.delete',
                    roundid: 'current',
                    heat: 'current'},
             success: function(data) { process_coordinator_poll_json(data); }
@@ -199,7 +199,7 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
     close_modal("#schedule_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.schedule.generate',
+            data: {action: 'schedule.generate',
                    roundid: roundid,
                    n_times_per_lane: n_times_per_lane},
             success: function(data) {
@@ -215,14 +215,14 @@ function handle_reschedule_button(roundid) {
     // TODO: On success... 
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.schedule.reschedule',
+            data: {action: 'schedule.reschedule',
                    roundid: roundid}});
 }
 
 function handle_race_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.select',
+            data: {action: 'heat.select',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 1},
@@ -237,7 +237,7 @@ function handle_unschedule_button(roundid, classname, round) {
         close_modal("#unschedule_modal");
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'json.schedule.unschedule',
+                data: {action: 'schedule.unschedule',
                        roundid: roundid},
                 success: function(data) { process_coordinator_poll_json(data); }
                });
@@ -252,7 +252,7 @@ function handle_delete_round_button(roundid, classname, round) {
         close_modal("#delete_round_modal");
         $.ajax(g_action_url,
                {type: 'POST',
-                data: {action: 'json.roster.delete',
+                data: {action: 'roster.delete',
                        roundid: roundid},
                 success: function(data) { process_coordinator_poll_json(data); }
                });
@@ -263,7 +263,7 @@ function handle_delete_round_button(roundid, classname, round) {
 function handle_make_changes_button(roundid) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.select',
+            data: {action: 'heat.select',
                    roundid: roundid,
                    heat: 1,
                    now_racing: 0},
@@ -282,7 +282,7 @@ function handle_purge_button(roundid, heats_run) {
       close_secondary_modal("#purge_confirmation_modal");
       $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.database.purge',
+            data: {action: 'database.purge',
                    purge: 'results',
                    roundid: roundid},
             success: function(data) { coordinator_poll(); }
@@ -348,7 +348,7 @@ function on_submit_new_round_follow_on(roundid) {
   close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.roster.new',
+          data: {action: 'roster.new',
                  roundid: roundid,
                  top: $("#new-round-top").val(),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
@@ -381,7 +381,7 @@ function on_submit_new_round_make_aggregate() {
   close_modal("#new-round-modal");
   $.ajax(g_action_url,
          {type: 'POST',
-          data:  'action=json.roster.new&' +
+          data:  'action=roster.new&' +
                  $("#new-round-common input").serialize() + '&' +
                  $("#agg-classname-div input").serialize() + '&' +
                 ($("#aggregate-by-checkbox").is(':checked')
@@ -413,7 +413,7 @@ function on_submit_new_round_aggregate_class(classid) {
 
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.roster.new',
+          data: {action: 'roster.new',
                  classid: classid,
                  top: $("#new-round-top").val(),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
@@ -441,7 +441,7 @@ function handle_replay_settings_submit() {
 function handle_master_next_up() {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.heat.select',
+            data: {action: 'heat.select',
                    heat: 'next-up',
                    now_racing: 0},
             success: function(json) { process_coordinator_poll_json(json); }
@@ -451,7 +451,7 @@ function handle_master_next_up() {
 function handle_stop_testing() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.timer.test',
+          data: {action: 'timer.test',
                  'test-mode': 0},
          });
 }
@@ -459,7 +459,7 @@ function handle_stop_testing() {
 function handle_start_playlist() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.playlist.start'}
+          data: {action: 'playlist.start'}
          });
 }
 

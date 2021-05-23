@@ -4,7 +4,7 @@ $(function() {
   setInterval(function() {
     $.ajax("action.php",
            {type: 'GET',
-            data: {query: 'json.poll.results'},
+            data: {query: 'poll.results'},
             success: function(data) {
               process_newresults(data);
             }

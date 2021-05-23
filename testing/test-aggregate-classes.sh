@@ -11,36 +11,36 @@ user_login_coordinator
 
 `dirname $0`/outlaw-class.sh "$BASE_URL"
 
-curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_jsuccess
-curl_postj action.php "action=json.rank.edit&rankid=6&name=Siblings" | check_jsuccess
-curl_postj action.php "action=json.rank.add&classid=6&name=Parents" | check_jsuccess
-curl_postj action.php "action=json.rank.add&classid=6&name=Desperados" | check_jsuccess
+curl_postj action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_jsuccess
+curl_postj action.php "action=rank.edit&rankid=6&name=Siblings" | check_jsuccess
+curl_postj action.php "action=rank.add&classid=6&name=Parents" | check_jsuccess
+curl_postj action.php "action=rank.add&classid=6&name=Desperados" | check_jsuccess
 
 # Sib 6
 # P   7
 # Des 8
 
 # Move to parents(rankid=7)
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=92" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=90" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=86" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=84" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=88" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=85" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=7&racer=93" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=92" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=90" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=86" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=84" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=88" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=85" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=7&racer=93" | check_jsuccess
 
 # Move to Desperado(rankid=8)
-curl_postj action.php "action=json.racer.edit&rankid=8&racer=83" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=8&racer=91" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=8&racer=94" | check_jsuccess
-curl_postj action.php "action=json.racer.edit&rankid=8&racer=87" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=8&racer=83" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=8&racer=91" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=8&racer=94" | check_jsuccess
+curl_postj action.php "action=racer.edit&rankid=8&racer=87" | check_jsuccess
 
 `dirname $0`/run-scout-heats.sh "$BASE_URL"
 
-curl_postj action.php "action=json.schedule.generate&roundid=6" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=6" | check_jsuccess
 
 # Outlaw round: these are intentionally much faster
-curl_postj action.php "action=json.heat.select&roundid=6&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=6&now_racing=1" | check_jsuccess
 run_heat	6	1	2.488	2.656	2.36	2.518
 run_heat	6	2	2.393	2.273	2.346	2.293
 run_heat	6	3	2.339	2.698	2.844	2.465
@@ -73,17 +73,17 @@ run_heat	6	14	3.819	3.065	3.761	3.551  x
 # Des Zip Wyatt(87)
 
 ## Create "Younger" aggregate class of classes 1,2
-curl_postj action.php "action=json.class.add&constituent_1=1&constituent_2=1&name=Younger" | check_jsuccess
+curl_postj action.php "action=class.add&constituent_1=1&constituent_2=1&name=Younger" | check_jsuccess
 
 ## Create "Older" aggregate class of classes 3,4,5
-curl_postj action.php "action=json.class.add&constituent_3=1&constituent_4=1&constituent_5=1&name=Older" | check_jsuccess
+curl_postj action.php "action=class.add&constituent_3=1&constituent_4=1&constituent_5=1&name=Older" | check_jsuccess
 
 ## Create an aggregate of aggregates, "Scouts", that excludes Outlaw
-curl_postj action.php "action=json.class.add&constituent_7=1&constituent_8=1&name=Scouts" | check_jsuccess
+curl_postj action.php "action=class.add&constituent_7=1&constituent_8=1&name=Scouts" | check_jsuccess
 
 ## Create an aggregate of subgroups, "Firsts and Families", that includes
 ## rankids 1 (Lions & Tigers), 6 (Siblings) and 7 (Parents)
-curl_postj action.php "action=json.class.add&rankid_1=1&rankid_6=1&rankid_7=1&name=Firsts%20and%20Families" \
+curl_postj action.php "action=class.add&rankid_1=1&rankid_6=1&rankid_7=1&name=Firsts%20and%20Families" \
     | check_jsuccess
 
 TMP_STANDINGS=$(mktemp /tmp/standings.XXXXX)
@@ -112,7 +112,7 @@ test "`xmllint --xpath "//div[@class='st-q10']/ancestor::tr/td[3]" $TMP_STANDING
 
 # Test generating a round from an aggregate class by subgroup
 RANK_FINAL=`mktemp`
-curl_postj action.php "action=json.roster.new&classid=10&top=2&bucketed=1" | tee $RANK_FINAL | check_jsuccess
+curl_postj action.php "action=roster.new&classid=10&top=2&bucketed=1" | tee $RANK_FINAL | check_jsuccess
 
 jq '.finalists | length' $RANK_FINAL | expect_eq 6
 jq -e '.finalists | map(select(.racerid == 92)) | length' $RANK_FINAL | expect_eq 1

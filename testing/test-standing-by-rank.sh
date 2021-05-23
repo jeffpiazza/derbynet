@@ -8,7 +8,7 @@ user_login_coordinator
 
 `dirname $0`/reset-database.sh "$BASE_URL"
 
-curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_jsuccess
+curl_postj action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_jsuccess
 
 # Single group, ThePack
 # Subgroup Lions = 1
@@ -16,52 +16,52 @@ curl_postj action.php "action=json.settings.write&do-use-subgroups=1&do-use-subg
 # Subgroup Bears = 3
 # Subgroup Wolves = 4
 
-curl_postj action.php "action=json.racer.import&firstname=Jewell&lastname=Jeansonne&classname=ThePack&carnumber=101&subgroup=Lions&exclude=" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Cedrick&lastname=Charley&classname=ThePack&carnumber=202&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Grant&lastname=Gribble&classname=ThePack&carnumber=303&subgroup=Bears" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Harrison&lastname=Hanks&classname=ThePack&carnumber=404&subgroup=Wolves" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Jerald&lastname=Jerry&classname=ThePack&carnumber=105&subgroup=Lions&exclude=X" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Ernest&lastname=Edelman&classname=ThePack&carnumber=206&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Lloyd&lastname=Lightsey&classname=ThePack&carnumber=307&subgroup=Bears" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Gary&lastname=Grissom&classname=ThePack&carnumber=408&subgroup=Wolves" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Von&lastname=Vassar&classname=ThePack&carnumber=109&subgroup=Lions&exclude=NO" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Harold&lastname=Hayek&classname=ThePack&carnumber=210&subgroup=Tigers&exclude=yes" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Pasquale&lastname=Procopio&classname=ThePack&carnumber=311&subgroup=Bears" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Winford&lastname=Weld&classname=ThePack&carnumber=412&subgroup=Wolves" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=John&lastname=Jefferys&classname=ThePack&carnumber=113&subgroup=Lions&exclude=0" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Thanh&lastname=Turner&classname=ThePack&carnumber=214&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Demetrius&lastname=Demming&classname=ThePack&carnumber=315&subgroup=Bears" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Everette&lastname=Esses&classname=ThePack&carnumber=416&subgroup=Wolves" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Forrest&lastname=Figgins&classname=ThePack&carnumber=117&subgroup=Lions" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Sterling&lastname=Spalla&classname=ThePack&carnumber=218&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Delmar&lastname=Donnelly&classname=ThePack&carnumber=319&subgroup=Bears" | check_jsuccess
-curl_postj action.php "action=json.racer.import&firstname=Stanton&lastname=Salmon&classname=ThePack&carnumber=420&subgroup=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Jewell&lastname=Jeansonne&classname=ThePack&carnumber=101&subgroup=Lions&exclude=" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Cedrick&lastname=Charley&classname=ThePack&carnumber=202&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Grant&lastname=Gribble&classname=ThePack&carnumber=303&subgroup=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Harrison&lastname=Hanks&classname=ThePack&carnumber=404&subgroup=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Jerald&lastname=Jerry&classname=ThePack&carnumber=105&subgroup=Lions&exclude=X" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Ernest&lastname=Edelman&classname=ThePack&carnumber=206&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Lloyd&lastname=Lightsey&classname=ThePack&carnumber=307&subgroup=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Gary&lastname=Grissom&classname=ThePack&carnumber=408&subgroup=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Von&lastname=Vassar&classname=ThePack&carnumber=109&subgroup=Lions&exclude=NO" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Harold&lastname=Hayek&classname=ThePack&carnumber=210&subgroup=Tigers&exclude=yes" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Pasquale&lastname=Procopio&classname=ThePack&carnumber=311&subgroup=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Winford&lastname=Weld&classname=ThePack&carnumber=412&subgroup=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=John&lastname=Jefferys&classname=ThePack&carnumber=113&subgroup=Lions&exclude=0" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Thanh&lastname=Turner&classname=ThePack&carnumber=214&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Demetrius&lastname=Demming&classname=ThePack&carnumber=315&subgroup=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Everette&lastname=Esses&classname=ThePack&carnumber=416&subgroup=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Forrest&lastname=Figgins&classname=ThePack&carnumber=117&subgroup=Lions" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Sterling&lastname=Spalla&classname=ThePack&carnumber=218&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Delmar&lastname=Donnelly&classname=ThePack&carnumber=319&subgroup=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Stanton&lastname=Salmon&classname=ThePack&carnumber=420&subgroup=Wolves" | check_jsuccess
 
-curl_postj action.php "action=json.racer.pass&value=1&racer=1" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=2" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=3" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=4" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=5" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=6" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=7" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=8" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=9" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=10" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=11" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=12" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=13" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=14" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=15" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=16" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=17" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=18" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=19" | check_jsuccess
-curl_postj action.php "action=json.racer.pass&value=1&racer=20" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=2" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=3" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=4" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=5" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=6" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=7" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=8" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=9" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=10" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=11" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=12" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=13" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=14" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=15" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=16" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=17" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=18" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=19" | check_jsuccess
+curl_postj action.php "action=racer.pass&value=1&racer=20" | check_jsuccess
 
-curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
-curl_postj action.php "action=json.schedule.generate&roundid=1" | check_jsuccess
+curl_postj action.php "action=settings.write&n-lanes=4" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
 
-curl_postj action.php "action=json.heat.select&roundid=1&now_racing=1" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
 
 # Fast Lions    1.100
 # Slow Tigers   5.500
@@ -137,42 +137,42 @@ curl_text "export.php" | sed -n -e '/START_JSON/,/END_JSON/ p' | tail -2 | head 
 # Thanh came in 4th by time, but with Harold ineligible, he becomes 3rd, and Sterling is 4th
 curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "col-insubgroup.>4<" | expect_one "Sterling Spalla"
 
-curl_getj "action.php?query=json.standings.reveal" | expect_count catalog-entry 0
+curl_getj "action.php?query=standings.reveal" | expect_count catalog-entry 0
 # javascript: encodeURIComponent(JSON.stringify({kind: 'supergroup', key: 'supergroup', name: 'Pack'}))
-curl_postj action.php "action=json.standings.reveal&catalog-entry=%7B%22kind%22%3A%22supergroup%22%2C%22key%22%3A%22supergroup%22%2C%22name%22%3A%22Pack%22%7D" | \
+curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22supergroup%22%2C%22key%22%3A%22supergroup%22%2C%22name%22%3A%22Pack%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
     jq '.kind == "supergroup" and .key == "supergroup" and .name == "Pack"' | \
     expect_eq true
 
-curl_postj action.php "action=json.standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22ThePack%22%7D" | \
+curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22ThePack%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
     jq '.kind == "class" and .key == "c1" and .name == "ThePack"' | \
     expect_eq true
-curl_postj action.php "action=json.standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | \
+curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
     jq '.kind == "rank" and .key == "r2" and .name == "Tigers"' | \
     expect_eq true
 
 # Rank-specific awards:
 
-curl_postj action.php "action=json.award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_jsuccess
-curl_postj action.php "action=json.award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=json.award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_jsuccess
-curl_postj action.php "action=json.award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_jfailure
+curl_postj action.php "action=award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_jsuccess
+curl_postj action.php "action=award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_jsuccess
+curl_postj action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&classname=ThePack" | check_jsuccess
+curl_postj action.php "action=award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_jfailure
 
-curl_postj action.php "action=json.award.winner&awardid=1&racerid=2" | check_jfailure
-curl_postj action.php "action=json.award.winner&awardid=1&racerid=1" | check_jsuccess
+curl_postj action.php "action=award.winner&awardid=1&racerid=2" | check_jfailure
+curl_postj action.php "action=award.winner&awardid=1&racerid=1" | check_jsuccess
 
-curl_postj action.php "action=json.settings.write&n-rank-trophies=3" | check_jsuccess
+curl_postj action.php "action=settings.write&n-rank-trophies=3" | check_jsuccess
 
-curl_postj action.php "action=json.award.present&key=speed-3-1-2" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in Tigers'
-curl_getj "action.php?query=json.award.current" | expect_one Thanh
+curl_postj action.php "action=award.present&key=speed-3-1-2" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in Tigers'
+curl_getj "action.php?query=award.current" | expect_one Thanh
 
-curl_postj action.php "action=json.award.present&key=speed-3-1" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in ThePack'
-curl_getj "action.php?query=json.award.current" | expect_one Jefferys
+curl_postj action.php "action=award.present&key=speed-3-1" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in ThePack'
+curl_getj "action.php?query=award.current" | expect_one Jefferys
 
-curl_postj action.php "action=json.award.present&key=speed-3" | check_jsuccess
-curl_getj "action.php?query=json.award.current" | expect_one '3rd Fastest in Pack'
-curl_getj "action.php?query=json.award.current" | expect_one Jefferys
+curl_postj action.php "action=award.present&key=speed-3" | check_jsuccess
+curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in Pack'
+curl_getj "action.php?query=award.current" | expect_one Jefferys

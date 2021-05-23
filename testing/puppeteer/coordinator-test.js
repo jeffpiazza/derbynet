@@ -318,7 +318,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     skip_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'json.heat.select',
+                        'data': {'action': 'heat.select',
                                  'heat': 'next'}},
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
@@ -485,7 +485,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     prev_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'json.heat.select',
+                        'data': {'action': 'heat.select',
                                  'heat': 'prev'}},
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
@@ -653,7 +653,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     racing_button.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'json.heat.select',
+                        'data': {'action': 'heat.select',
                                  'now_racing': 1}},
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": false,\n" +
@@ -841,7 +841,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     });
   },
                        {'type': 'POST',
-                        'data': 'action=json.result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
+                        'data': 'action=result.write&lane1=1.234&lane2=2.34&lane3=4.321'},
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": false,\n" +
                         "\"use_points\": false,\n" +
@@ -1019,7 +1019,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await all_modals_closed();
   },
                        {'type': 'POST',
-                        'data': {"action": "json.result.delete",
+                        'data': {"action": "result.delete",
                                  "roundid": "current",
                                  "heat": "current"}},
       "{\"current-heat\": {\"now_racing\": true,\n" +
@@ -1214,7 +1214,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await page.evaluate(() => { $("#new-round-modal input[type='submit']").click(); });
   },
                              {'type': 'POST',
-                              'data': {"action":"json.roster.new","roundid":2,"top":"4","bucketed":0}
+                              'data': {"action":"roster.new","roundid":2,"top":"4","bucketed":0}
                              },
       "{\"current-heat\": {\"now_racing\": false,\n" +
                         "\"use_master_sched\": false,\n" +
@@ -1393,7 +1393,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
     await dialog_schedule_and_race.click();
   },
                        {'type': 'POST',
-                        'data': {'action': 'json.schedule.generate',
+                        'data': {'action': 'schedule.generate',
                                  'roundid': 5,
                                  'n_times_per_lane': '1' } },
                          false);  // No xml response

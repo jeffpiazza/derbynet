@@ -75,5 +75,5 @@ if ($ok) {
   json_success();
 }
 
-require('ajax/query.json.poll.coordinator.inc');
+require('ajax/query.poll.coordinator.inc');
 ?>

@@ -9,13 +9,13 @@ rm -rf /tmp/headshots* /tmp/carphotos* /tmp/cleanup
 
 function upload_headshot() {
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=json.photo.upload -F repo=head \
+         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=photo.upload -F repo=head \
     | tee $DEBUG_CURL | check_jsuccess
 }
 
 function upload_car_photo() {
     curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php \
-         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=json.photo.upload -F repo=car \
+         -X POST -F MAX_FILE_SIZE=2000000 -F photo="@$1" -F action=photo.upload -F repo=car \
     | tee $DEBUG_CURL | check_jsuccess
 }
 
@@ -41,10 +41,10 @@ if [ `echo "$BASE_URL" | grep -i localhost` ]; then
 
     user_login_coordinator
 
-    curl_postj action.php "action=json.settings.write&photo-dir=$PHOTO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
-    curl_postj action.php "action=json.settings.write&photos-on-now-racing=head" | check_jsuccess
+    curl_postj action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&photos-on-now-racing=head" | check_jsuccess
 else
     # For the remote case, assume that directories have been set up, and upload each photo
     echo Headshot uploads begin
@@ -69,7 +69,7 @@ fi
 
 # Delete a photo, then upload it again
 curl_photo_any head/file/original/Cub-3126.jpg/xyz
-curl_postj action.php "action=json.photo.delete&repo=head&photo=Cub-3126.jpg" | check_jsuccess
+curl_postj action.php "action=photo.delete&repo=head&photo=Cub-3126.jpg" | check_jsuccess
 
 COUNT=`curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/photo.php/head/file/original/Cub-3126.jpg/xyz | wc -c`
 if [ $COUNT -gt 1000 ]; then

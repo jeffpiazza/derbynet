@@ -2,7 +2,7 @@
 function handle_login(role, pwd) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.role.login',
+            data: {action: 'role.login',
                    name: role,
                    password: pwd},
             success: function(data) {

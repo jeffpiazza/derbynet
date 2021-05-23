@@ -129,7 +129,7 @@ function user_login() {
 	echo    >> $OUTPUT_CURL
 	echo login $1 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
-	curl --location -d "action=json.role.login&name=$1&password=$PWD" \
+	curl --location -d "action=role.login&name=$1&password=$PWD" \
         -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
 		| tee -a $OUTPUT_CURL | check_jsuccess
 }
@@ -151,7 +151,7 @@ function user_login_photo() {
 }
 
 function user_logout() {
-	curl_postj action.php "action=json.role.login" | check_jsuccess logout
+	curl_postj action.php "action=role.login" | check_jsuccess logout
 }
 
 function test_fails() {
@@ -234,7 +234,7 @@ function run_heat() {
     LANE4=$6
     SKIP_CHECK_HEAT_READY=$7
 
-    curl_getj "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=poll.coordinator" | \
         jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
         expect_eq true
     
@@ -255,7 +255,7 @@ function run_heat_place() {
     PLACE4=$6
     SKIP_CHECK_HEAT_READY=$7
 
-    curl_getj "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=poll.coordinator" | \
         jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
         expect_eq true
 
@@ -269,7 +269,7 @@ function run_heat_place() {
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
 #  "Bye" lanes are given as 0's
 function staged_heat4() {
-    curl_getj "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=poll.coordinator" | \
         jq ".racers | \
             ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
             ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \
@@ -280,7 +280,7 @@ function staged_heat4() {
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno> <lane5-carno> <lane6-carno>
 function staged_heat6() {
-    curl_getj "action.php?query=json.poll.coordinator" | \
+    curl_getj "action.php?query=poll.coordinator" | \
         jq ".racers | \
             ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
             ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \

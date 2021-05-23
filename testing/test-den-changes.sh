@@ -4,34 +4,34 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-curl_postj action.php "action=json.class.add&name=TheNotLastClass" | check_jsuccess
+curl_postj action.php "action=class.add&name=TheNotLastClass" | check_jsuccess
 
 # Regression test: class.add left the sortorder field unpopulated
-curl_postj action.php "action=json.class.add&name=TheLastClass" | check_jsuccess
+curl_postj action.php "action=class.add&name=TheLastClass" | check_jsuccess
 
 CLASS_LIST=$(mktemp /tmp/derby-class.list.XXXXX)
 
-curl_getj "action.php?query=json.class.list" > $CLASS_LIST
+curl_getj "action.php?query=class.list" > $CLASS_LIST
 cat $CLASS_LIST | jq '.classes | length == 7 and .[6].name == "TheLastClass"' | expect_eq true
 #    test_fails New class should be sorted last
 
 CLASSID=$(cat $CLASS_LIST | jq '.classes | map(select(.name == "TheNotLastClass"))[0].classid')
-curl_postj action.php "action=json.class.delete&classid=$CLASSID" | check_jsuccess
+curl_postj action.php "action=class.delete&classid=$CLASSID" | check_jsuccess
 
 CLASSID=$(cat $CLASS_LIST | jq '.classes | map(select(.name | match("Bears.*")))[0].classid')
 
 RANKID=$(cat $CLASS_LIST | jq --argjson cl $CLASSID '.classes | map(select(.classid == $cl))[0].subgroups[0].rankid')
 
 # Can't delete the only rank in a class
-curl_postj action.php "action=json.rank.delete&rankid=$RANKID" | check_jfailure
+curl_postj action.php "action=rank.delete&rankid=$RANKID" | check_jfailure
 
-curl_postj action.php "action=json.rank.add&classid=$CLASSID&name=SecondRank" | check_jsuccess
-RANKID2=$(curl_getj "action.php?query=json.class.list" | \
+curl_postj action.php "action=rank.add&classid=$CLASSID&name=SecondRank" | check_jsuccess
+RANKID2=$(curl_getj "action.php?query=class.list" | \
               jq '.classes | map(.subgroups | map(select(.name == "SecondRank"))[0].rankid) |
                              map(select(. != null))[0]')
 
-curl_postj action.php "action=json.rank.order&rankid_1=$RANKID2&rankid_2=$RANKID" | check_jsuccess
-curl_postj action.php "action=json.rank.edit&rankid=$RANKID2&name=New%20Rank%20Name" | check_jsuccess
+curl_postj action.php "action=rank.order&rankid_1=$RANKID2&rankid_2=$RANKID" | check_jsuccess
+curl_postj action.php "action=rank.edit&rankid=$RANKID2&name=New%20Rank%20Name" | check_jsuccess
 
 GOLDEN=$(mktemp /tmp/derby-golden-class.list.XXXXX)
 cat >$GOLDEN <<EOF
@@ -130,8 +130,8 @@ cat >$GOLDEN <<EOF
 }
 EOF
 
-curl_getj "action.php?query=json.class.list" > $CLASS_LIST
+curl_getj "action.php?query=class.list" > $CLASS_LIST
 diff $GOLDEN $CLASS_LIST || test_fails "class.list fails"
 
-curl_postj action.php "action=json.rank.delete&rankid=$RANKID2" | check_jsuccess
+curl_postj action.php "action=rank.delete&rankid=$RANKID2" | check_jsuccess
 

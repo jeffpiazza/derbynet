@@ -14,11 +14,11 @@ DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
 user_login_coordinator
 
 curl_postj action.php \
-        "action=json.setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
+        "action=setup.nodata&connection_string=sqlite:$DBPATH&dbuser=&dbpass=" \
         | check_jsuccess
 
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 `dirname $0`/test-den-changes.sh "$BASE_URL"
 
-curl_postj action.php "action=json.settings.write&n-lanes=4" | check_jsuccess
+curl_postj action.php "action=settings.write&n-lanes=4" | check_jsuccess

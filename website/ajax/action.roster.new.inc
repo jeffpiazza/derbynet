@@ -131,6 +131,6 @@ json_out('finalists', $finalists);
 json_out('new-round', array('roundid' => $new_roundid));
 json_success();
 
-require('ajax/query.json.poll.coordinator.inc');
+require('ajax/query.poll.coordinator.inc');
 
 ?>

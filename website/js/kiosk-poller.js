@@ -16,7 +16,7 @@ var KioskPoller = (function(KioskPoller) {
     setInterval(function() {
       $.ajax('action.php',
              {type: 'GET',
-              data: {query: 'json.poll.kiosk',
+              data: {query: 'poll.kiosk',
                      address: address},
               success: function(data) {
                 var setting = data['kiosk-setting'];

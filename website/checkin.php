@@ -265,7 +265,7 @@ foreach ($stmt as $rs) {
 
 <div id='photo_modal' class="modal_dialog hidden block_buttons">
   <form id="photo_drop" class="dropzone">
-    <input type="hidden" name="action" value="json.photo.upload"/>
+    <input type="hidden" name="action" value="photo.upload"/>
     <input type="hidden" id="photo_modal_repo" name="repo"/>
     <input type="hidden" id="photo_modal_racerid" name="racerid"/>
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />

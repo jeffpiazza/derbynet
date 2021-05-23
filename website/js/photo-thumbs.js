@@ -124,7 +124,7 @@ $(function() {
 function changeRacerPhotoAjax(racer, photo) {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.photo.assign',
+          data: {action: 'photo.assign',
                  repo: g_photo_repo_name,
                  racer: racer,
                  photo: photo}});
@@ -188,7 +188,7 @@ function cropPhoto() {
     var photo_data = $("#work_image").data('photo');
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.photo.crop',
+            data: {action: 'photo.crop',
                    repo: photo_data.repo,
                    image_name: photo_data.basename,
                    left: g_crop.x,
@@ -212,7 +212,7 @@ function rotatePhoto(angle) {
   var photo_data = $("#work_image").data('photo');
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'json.photo.rotate',
+          data: {action: 'photo.rotate',
                  repo: photo_data.repo,
                  image_name: photo_data.basename,
                  rotation: angle},
@@ -232,7 +232,7 @@ function on_delete_photo_button() {
     close_secondary_modal("#delete_confirmation_modal");
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.photo.delete',
+            data: {action: 'photo.delete',
                    repo: photo_data.repo,
                    photo: photo_data.basename},
             success: function (data) {

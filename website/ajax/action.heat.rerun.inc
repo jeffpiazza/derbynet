@@ -73,5 +73,5 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   }
 }
 
-require('ajax/query.json.poll.coordinator.inc');
+require('ajax/query.poll.coordinator.inc');
 ?>

@@ -104,7 +104,7 @@ function on_new_scene() {
       var name = $("#new_scene_name").val();
       $.ajax('action.php',
              {type: 'POST',
-              data: {action: 'json.scene.add',
+              data: {action: 'scene.add',
                      name: name},
               success: function(data) {
                 if (data.hasOwnProperty('scene-id')) {
@@ -137,7 +137,7 @@ function on_page_change(event, synthetic) {
   if (!synthetic) {
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'json.scene.setkiosk',
+            data: {action: 'scene.setkiosk',
                    sceneid: $("#scenes-select").val(),
                    kiosk_name: kdiv.attr('data-kiosk'),
                    page:  page.full}
@@ -186,7 +186,7 @@ function on_add_kiosk() {
 function on_delete_scene() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'json.scene.delete',
+          data: {action: 'scene.delete',
                  sceneid: g_current_scene},
           success: function(data) {
             var scene_index = g_all_scenes.findIndex((s) => s.sceneid == g_current_scene);

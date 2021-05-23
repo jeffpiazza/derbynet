@@ -39,7 +39,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
       $stmt = $db->prepare('DELETE FROM Rounds WHERE roundid = :roundid');
       $stmt->execute(array(':roundid' => $roundid));
       json_success();
-      require('ajax/query.json.poll.coordinator.inc');
+      require('ajax/query.poll.coordinator.inc');
     }
   }
 }

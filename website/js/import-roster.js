@@ -163,6 +163,6 @@ function rewriteClassnames(columnNumber, canonicalized) {
 
 $(function() {
   $('#import_button').click(function() {
-    uploadTableRows('json.racer.import');
+    uploadTableRows('racer.import');
   });
 });

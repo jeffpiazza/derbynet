@@ -107,7 +107,7 @@ function handle_new_award() {
     close_modal('#award_editor_modal');
     $.ajax(g_action_url,
            {type: 'POST',
-            // json.award.edit
+            // award.edit
             data: $('#award_editor_form').serialize(),
             success: function(data) {
               update_awards(data);
@@ -134,7 +134,7 @@ function handle_edit_award(list_item) {
     close_modal('#award_editor_modal');
     $.ajax(g_action_url,
            {type: 'POST',
-            // json.award.edit
+            // award.edit
             data: $('#award_editor_form').serialize(),
             success: function(data) {
               update_awards(data);
@@ -149,7 +149,7 @@ function handle_delete_award() {
   if (confirm('Really delete award "' + $('#award_editor_form input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
-            data: {action: 'json.award.delete',
+            data: {action: 'award.delete',
                    awardid: $('#award_editor_form input[name="awardid"]').val()},
             success: function(data) {
               update_awards(data);
@@ -161,7 +161,7 @@ function handle_delete_award() {
 
 $(function() {
   $("#all_awards").sortable({stop: function(event, ui) {
-    var data = {action: 'json.award.order'};
+    var data = {action: 'award.order'};
     $("#all_awards li").each(function (i) {
       data['awardid_' + (i + 1)] = $(this).attr('data-awardid');
     });
@@ -178,7 +178,7 @@ $(function() {
   // TODO Poll on this, not just this one time
   $.ajax(g_action_url,
          {type: 'GET',
-          data: {query: 'json.award.list',
+          data: {query: 'award.list',
                  adhoc: '0'},
           success: function(data) {
             update_awards(data);
