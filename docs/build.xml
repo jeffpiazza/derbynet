@@ -6,16 +6,23 @@
 
    <property name="dist"  location="dist"/>
 
-   <!-- Set soffice for Windows if that's where we are, otherwise use
-	standard (Mac) value -->
+   <!-- Set soffice for Windows if that's where we are, or Linux if we are There
+	otherwise use	standard (Mac) value -->
    <condition property="soffice"
 	      value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
      <os family="windows"/>
+   </condition>
+	 <condition property="soffice"
+	      value="/usr/bin/soffice">
+     <os family="unix"/>
    </condition>
    <property name="soffice"
 	     location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
    <condition property="is_windows">
      <os family="windows"/>
+   </condition>
+   <condition property="is_linux">
+     <os family="unix"/>
    </condition>
 
    <target name="dist" depends="installation, after-installation, operation,
@@ -38,7 +45,7 @@
            </uptodate>
 
            <echo if:true="${pdf.uptodate}">pdf for @{file} is up to date</echo>
-           
+
            <exec executable="${soffice}" unless:true="${pdf.uptodate}">
 	           <!-- This UserInstallation variable avoids any conflict with another
 		            running LibreOffice on Mac, but doesn't seem to work on
@@ -54,7 +61,7 @@
            </exec>
        </sequential>
    </macrodef>
-   
+
  <target name="installation" depends="make-dist-dir">
      <make-pdf file="Installation- Debian.fodt"/>
      <make-pdf file="Installation- Mac.fodt"/>
