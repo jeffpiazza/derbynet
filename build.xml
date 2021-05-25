@@ -26,6 +26,9 @@
   <condition property="is_windows">
     <os family="windows"/>
   </condition>
+  <condition property="is_linux">
+    <os family="unix"/>
+  </condition>
 
   <target name="clean"
           description="Remove generated artifacts for a clean build environment">
@@ -40,7 +43,7 @@
     <ant dir="${timer-dir}" target="clean"/>
     <ant dir="${docs-dir}"  target="clean"/>
   </target>
-  
+
   <target name="dist" depends="dist.oneclick, dist.mac, dist.debian"
           description="Build complete distribution"/>
 
@@ -357,7 +360,7 @@
   </exec>
 </target>
 
-<target name="dist.oneclick" depends="generated, timer-jar, docs-dist"
+<target name="dist.oneclick" if="is_windows" depends="generated, timer-jar, docs-dist"
     description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
@@ -389,7 +392,7 @@
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
          match="PHP_SELECT=php[0-9]*"
          replace="PHP_SELECT=${php-version}"/>
-  
+
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
          match="DISPLAY_PAGE_2=yes"
          replace="DISPLAY_PAGE_2=no"/>
