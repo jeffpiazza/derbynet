@@ -6,7 +6,7 @@
 
    <property name="dist"  location="dist"/>
 
-   <!-- Set soffice for Windows if that's where we are, or Linux if we are There
+   <!-- Set soffice for Windows if that's where we are, or Linux if we are there
 	otherwise use	standard (Mac) value -->
    <condition property="soffice"
 	      value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
@@ -22,7 +22,7 @@
      <os family="windows"/>
    </condition>
    <condition property="is_linux">
-     <os family="unix"/>
+     <and><os family="unix"/><not><os family="mac"/></not></and>
    </condition>
 
    <target name="dist" depends="installation, after-installation, operation,

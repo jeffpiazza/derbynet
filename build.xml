@@ -27,7 +27,7 @@
     <os family="windows"/>
   </condition>
   <condition property="is_linux">
-    <os family="unix"/>
+    <and><os family="unix"/><not><os family="mac"/></not></and>
   </condition>
 
   <target name="clean"
