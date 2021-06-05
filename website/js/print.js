@@ -97,7 +97,7 @@ function process_racer_list(data) {
   });
 
   // Chop off any extra rows, but first preserve checkbox settings for any moved racers
-  var condemned = table.find("tr").slice(racers.length);
+  var condemned = table.find("tr").slice(data.racers.length);
   condemned.find("input:checkbox").each(function() {
     $("input:checkbox[data-racerid='" + $(this).attr('data-racerid') + "']")
       .prop('checked', $(this).prop('checked'));
