@@ -157,14 +157,14 @@ function handle_edit_racer() {
               window.alert("WARNING: " + data.warnings[0]);
             }
             if (data.hasOwnProperty('new-row')) {
-              $("#main_tbody").append(addrow0(data['new-row']))
-                .trigger('create');
+              var row = addrow0(data['new-row']);
+              flipswitch(row.find('input[type="checkbox"].flipswitch'));
             } else {
               $("#firstname-" + racerid).text(new_firstname);
               var ln = $("#lastname-" + racerid);
               ln.text(new_lastname);
               ln.attr("data-exclude", exclude);
-              ln.parents('tr').toggleClass('exclude', exclude);
+              ln.parents('tr').toggleClass('exclude', exclude == 1);
               $("#car-number-" + racerid).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
 
@@ -827,5 +827,5 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
 }
 
 function add_table_row(tbody, racer, use_groups, use_subgroups, xbs) {
-  $(tbody).append(make_table_row(racer, use_groups, use_subgroups, xbs));
+  return make_table_row(racer, use_groups, use_subgroups, xbs).appendTo($(tbody));
 }

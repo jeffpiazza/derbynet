@@ -241,8 +241,8 @@ function generate_kiosk_control(index, kiosk, pages) {
               + " onchange=\"handle_assign_kiosk_page_change(this)\""
               + "/>");
   for (var i = 0; i < pages.length; ++i) {
-    opt = $("<option value=\"" + pages[i].path + "\">" + pages[i].brief + "</option>");
-    if (kiosk.page == pages[i].path) {
+    opt = $("<option value=\"" + pages[i].full + "\">" + pages[i].brief + "</option>");
+    if (kiosk.page == pages[i].full) {
       opt.prop("selected", true);
     }
     sel.append(opt);

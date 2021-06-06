@@ -70,7 +70,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
           $still_hidden = 'nothing';
         } else {
           $cat_entry = json_decode($current_catalog_entry, /* assoc */true);
-          $count = $standings->catalog_counts[$cat_entry['key']];
+          $count = @$standings->catalog_counts[$cat_entry['key']];
           if ($current_exposed > $count) {
             $current_exposed = $count;
           }
@@ -87,7 +87,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
       foreach ($standings->standings_catalog() as $entry) {
         $json_entry = json_encode($entry);
         echo '<option data-catalog-entry="'.htmlspecialchars($json_entry, ENT_QUOTES, 'UTF-8').'"';
-        echo ' data-count="'.$standings->catalog_counts[$entry['key']].'"';
+        echo ' data-count="'.@$standings->catalog_counts[$entry['key']].'"';
         if ($current_catalog_entry == $json_entry) {
           echo ' selected="selected"';
         }

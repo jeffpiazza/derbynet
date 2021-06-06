@@ -6,7 +6,7 @@ require_once('inc/permissions.inc');
 
 // The award presentation kiosk wants to reset the current award when it starts
 // up.
-$_SESSION['permissions'] |= PRESENT_AWARDS_PERMISSION;
+@$_SESSION['permissions'] |= PRESENT_AWARDS_PERMISSION;
 
 $g_kiosk_parameters_string = '';
 function kiosk_parameters() {

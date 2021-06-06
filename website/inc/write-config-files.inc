@@ -9,7 +9,7 @@ function write_config_file($filename, $content) {
   global $g_errstr;
   $where = local_file_name($filename);
   if (@file_put_contents($where, $content, FILE_USE_INCLUDE_PATH) === false) {
-    echo "<failure code='cant_write_config'>Can't write config file $where: $g_errstr</failure>";
+    json_failure('cant_write_config', "Can't write config file $where: $g_errstr");
     return false;
   }
 

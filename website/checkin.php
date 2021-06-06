@@ -132,7 +132,7 @@ make_banner('Racer Check-In');
 
 <script>
 function addrow0(racer) {
-  add_table_row('#main_tbody', racer,
+  return add_table_row('#main_tbody', racer,
                 <?php echo $use_groups ? "true" : "false"; ?>,
                 <?php echo $use_subgroups ? "true" : "false"; ?>,
                 <?php echo $xbs ? json_encode($xbs_award_name) : "false"; ?>);

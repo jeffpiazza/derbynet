@@ -26,6 +26,8 @@ function cancel_ajax_failure() {
 
 $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
   console.log('ajaxError fired!');
+  console.log(event);
+  console.log(jqxhr);
   if (!g_unloading) {
     ajax_failure(jqxhr.status, jqxhr.statusText, thrownError);
     $('#ajax-failure').removeClass('hidden');

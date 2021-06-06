@@ -35,7 +35,8 @@ var KioskPoller = (function(KioskPoller) {
                   return;
                 }
                 var params_string = '{}';
-                if (setting.hasOwnProperty('params')) {
+                if (setting.hasOwnProperty('params') && setting.params.length !== 0) {
+                  console.log("setting.params=" + setting.params)
                   params_string = setting.params;
                 }
                 KioskPoller.param_callback(JSON.parse(params_string));

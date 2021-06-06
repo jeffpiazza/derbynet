@@ -33,11 +33,11 @@ if ($replay['state'] != REPLAY_CONNECTED) {
 write_raceinfo('replay_reported', $_POST['status']);
 write_raceinfo('replay_last_contact', time());
 
-json_success();
-
 $queue = drain_queue();
 if ($replay['state'] != REPLAY_CONNECTED) {
-  prepend($queue, 'HELLO');
+  array_unshift($queue, 'HELLO');
 }
 json_out('replay', $queue);
+
+json_success();
 ?>
