@@ -290,12 +290,14 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
     if (profile.gate_watcher != null
         && sm.state() != StateMachine.State.RUNNING) {
-      // Required in MARK in order to energize the gate switch and detect open-to-closed.
-      // (Actually the sequence is: PREPARE_HEAT, close the gate (undetected), reset laser gate, detect gate now closed.)
-      portWrapper.write(profile.gate_watcher.command);
+      // Required in MARK in order to energize the gate switch and detect
+      // open-to-closed.  (Actually the sequence is:
+      // PREPARE_HEAT, close the gate (undetected), reset laser gate,
+      // detect gate now closed.)
       for (ProfileDetector detector : gate_watch_detectors) {
         detector.activateFor(POLL_RESPONSE_DEADLINE_MS);
       }
+      portWrapper.write(profile.gate_watcher.command);
     }
 
     while (portWrapper.next(deadline) != null) {

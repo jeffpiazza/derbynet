@@ -2,9 +2,12 @@ package org.jeffpiazza.derby.serialport;
 
 import jssc.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.devices.TimerDevice;
+import org.jeffpiazza.derby.timer.ProfileDetector;
 
 // Usage:
 //
@@ -51,6 +54,27 @@ public class SerialPortWrapper implements SerialPortEventListener {
   public interface Detector {
     // Return that part of line not handled by this detector
     String apply(String line) throws SerialPortException;
+
+    public static String applyDetectors(String line, List<Detector> detectors)
+        throws SerialPortException {
+      line = line.trim();
+      boolean match_more = (line.length() > 0);
+      if (match_more) {
+        LogWriter.serialIn(line);
+      }
+      while (match_more) {
+        match_more = false;
+        for (Detector d : detectors) {
+          String s2 = d.apply(line);
+          if (line != s2) {  // Intentional pointer comparison
+            line = s2;
+            match_more = (line.length() > 0);
+            break;
+          }
+        }
+      }
+      return line;
+    }
   }
   private final ArrayList<Detector> detectors = new ArrayList<Detector>();
   // If there is one, the early detector gets applied repeatedly each time the
@@ -214,24 +238,17 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   private String applyDetectors(String line) {
-    try {
-      line = line.trim();
-      if (line.length() > 0) {
-        LogWriter.serialIn(line);
-        synchronized (detectors) {
-          for (Detector detector : detectors) {
-            line = detector.apply(line);
-            if (line.length() == 0) {
-              break;
-            }
-          }
-        }
+    line = line.trim();
+    if (line.length() > 0) {
+      LogWriter.serialIn(line);
+      try {
+        line = Detector.applyDetectors(line, detectors);
+      } catch (SerialPortException exc) {
+        LogWriter.stacktrace(exc);
+        System.err.println("Exception while reading: " + exc);
+        exc.printStackTrace();
+        line = "";
       }
-    } catch (SerialPortException exc) {
-      LogWriter.stacktrace(exc);
-      System.err.println("Exception while reading: " + exc);
-      exc.printStackTrace();
-      line = "";
     }
     return line;
   }

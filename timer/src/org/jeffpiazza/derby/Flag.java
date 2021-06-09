@@ -2,7 +2,6 @@ package org.jeffpiazza.derby;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.w3c.dom.Element;
 
 public abstract class Flag<T> {
   private static List<Flag> all_flags = new ArrayList<Flag>();

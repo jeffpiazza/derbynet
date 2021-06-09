@@ -59,7 +59,7 @@ public class AllDeviceTypes {
       Method m = type.getMethod("toHumanString");
       return (String) m.invoke(null);
     } catch (Exception ex) {
-      return null;
+      return type.getName();
     }
   }
 

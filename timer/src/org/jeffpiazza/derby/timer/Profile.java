@@ -30,9 +30,9 @@ package org.jeffpiazza.derby.timer;
 //   internal, if present, is another list of matchers that should be repeatedly
 //   applied to the string that matched the outer matcher's pattern.
 //
-//  prober gives a command (probe) and responses to identify the timer, if such
-//   identification is possible.  pre_probe, if present, is a command to reset
-//   or settle the timer before probing.
+//  prober gives a command (probe) and response regexes to identify the timer,
+//   if such identification is possible.  pre_probe, if present, is a command to
+//   reset or settle the timer before probing.
 //
 //  setup is a sequence of commands to set up the timer once it's been identified.
 //  setup_queries is a collection of commands and matchers to interrogate the
@@ -42,10 +42,11 @@ package org.jeffpiazza.derby.timer;
 //   polling; the command string gets sent to the timer and the matchers are
 //   applied to any responses.
 //
-//  heat_prep describes how to prepare the timer for the next heat.  If the timer
-//   supports lane masking, unmask_command, mask_command, and lane describe
-//   how to construct the commands to set the lane mask.  reset is the command
-//   string to reset the timer, if the timer can be reset from the host.
+//  heat_prep describes how to prepare the timer for the next heat.  If the
+//   timer supports lane masking, then the fields unmask_command, mask_command,
+//   and lane describe how to construct the commands to set the lane mask.
+//   reset is the command string to reset the timer, if the timer can be reset
+//   from the host.
 //
 //  on and poll describe additional commands to be sent when a given event occurs
 //   (on) or whenever the timer is in a given state (poll).
@@ -200,10 +201,13 @@ public class Profile {
     }
 
     public JSONObject toJSON() {
-      return new JSONObject()
-          .putOpt("pre_probe", pre_probe)
+      JSONObject j = new JSONObject()
           .put("probe", probe)
           .put("responses", new JSONArray(response_patterns));
+      if (pre_probe != null) {
+        j.put("pre_probe", pre_probe.toJSON());
+      }
+      return j;
     }
   }
 

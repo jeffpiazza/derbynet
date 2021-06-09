@@ -7,11 +7,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class ClientSession {
   private CookieManager manager;
@@ -86,9 +90,9 @@ public class ClientSession {
     return false;
   }
 
-  public Element login(String role, String password) throws IOException {
-    return doPostWithVariations("action.php",
-                                "action=login&name=" + role
+  public JSONObject login(String role, String password) throws IOException {
+    return doJsonPostWithVariations("action.php",
+                                "action=role.login&name=" + role
                                 + "&password=" + password);
   }
 
@@ -114,6 +118,11 @@ public class ClientSession {
     return makeRequestWithVariations(url_path, "POST", null, body);
   }
 
+  private JSONObject doJsonPostWithVariations(String url_path, String body)
+      throws IOException {
+    return makeJsonRequestWithVariations(url_path, "POST", null, body);
+  }
+
   private URL fullUrl(String url_path) throws MalformedURLException {
     return new URL(base_url + url_path);
   }
@@ -130,6 +139,11 @@ public class ClientSession {
 
   public Element doQueryWithVariations(String q) throws IOException {
     return makeRequestWithVariations("action.php?query=" + q, "GET", null, null);
+  }
+
+  public JSONObject doJsonQueryWithVariations(String q) throws IOException {
+    return makeJsonRequestWithVariations("action.php?query=" + q,
+                                         "GET", null, null);
   }
 
   // Overridden by SimulatedClientSession
@@ -152,6 +166,33 @@ public class ClientSession {
     while (result == null && makeUrlVariation()) {
       try {
         result = makeRequest(fullUrl(url_path), method, headers, body);
+      } catch (HttpException he) {
+        LogWriter.info("Ignoring for variation: " + he.getMessage());
+      }
+    }
+
+    if (result == null && firstException != null) {
+      throw firstException;
+    }
+
+    return result;
+  }
+
+  public JSONObject makeJsonRequestWithVariations(String url_path, String method,
+                                           List<String> headers, String body)
+      throws IOException {
+    JSONObject result = null;
+    HttpException firstException = null;
+
+    try {
+      result = makeJsonRequest(fullUrl(url_path), method, headers, body);
+    } catch (HttpException he) {
+      firstException = he;
+    }
+
+    while (result == null && makeUrlVariation()) {
+      try {
+        result = makeJsonRequest(fullUrl(url_path), method, headers, body);
       } catch (HttpException he) {
         LogWriter.info("Ignoring for variation: " + he.getMessage());
       }
@@ -190,6 +231,34 @@ public class ClientSession {
     } while ((url = urlFromRedirection(connection)) != null);
 
     return getResponse(connection);
+  }
+
+  private JSONObject makeJsonRequest(URL url, String method, List<String> headers,
+                              String body) throws IOException {
+    HttpURLConnection connection;
+    do {
+      connection = (HttpURLConnection) url.openConnection();
+
+      connection.setRequestMethod(method);
+      connection.addRequestProperty("User-Agent",
+                                    "derby-timer.jar/" + Version.get());
+      if (headers != null) {
+        for (int i = 0; i < headers.size(); i += 2) {
+          connection.addRequestProperty(headers.get(i), headers.get(i + 1));
+        }
+      }
+
+      if (body != null) {
+        connection.setDoOutput(true);
+        OutputStreamWriter writer
+            = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(body);
+        writer.flush();
+        writer.close(); // writer.close() may block.
+      }
+    } while ((url = urlFromRedirection(connection)) != null);
+
+    return getJsonResponse(connection);
   }
 
   private URL urlFromRedirection(HttpURLConnection connection) {
@@ -244,10 +313,30 @@ public class ClientSession {
     throw new HttpException(connection);
   }
 
+  private JSONObject getJsonResponse(HttpURLConnection connection) throws IOException {
+    final int responseCode = connection.getResponseCode();
+    if (responseCode == 200) {
+      return parseJsonResponse(connection.getInputStream());
+    }
+
+    throw new HttpException(connection);
+  }
+
+  protected JSONObject parseJsonResponse(String s) throws IOException {
+    return new JSONObject(s);
+  }
+
+  protected JSONObject parseJsonResponse(final InputStream inputStream)
+      throws IOException {
+    // TODO inputStream.mark(10000);
+    return new JSONObject(new JSONTokener(new InputStreamReader(inputStream)));
+  }
+
   protected Element parseResponse(String s) throws IOException {
     return parseResponse(new ByteArrayInputStream(s.getBytes("UTF-8")));
   }
 
+  // For Login request, response may be json rather than xml
   protected Element parseResponse(final InputStream inputStream)
       throws IOException {
     inputStream.mark(10000);
@@ -267,6 +356,19 @@ public class ClientSession {
       LogWriter.httpResponse(new String(buffer, 0, bytesRead));
     }
     return null;
+  }
+
+  public static boolean wasSuccessful(JSONObject response) {
+    if (response == null) {
+      System.err.println("null response");
+      return false;
+    }
+    try {
+      return response.getJSONObject("outcome").getString("summary").equals(
+          "success");
+    } catch (JSONException ex) {
+      return false;
+    }
   }
 
   public static boolean wasSuccessful(Element response) {

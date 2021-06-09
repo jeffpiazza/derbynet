@@ -1,5 +1,6 @@
 package org.jeffpiazza.derby.timer;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPortException;
@@ -10,9 +11,10 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
     this.pattern = Pattern.compile(config.pattern_string);
     this.event = config.event;
     if (config.internal_detectors != null) {
-      this.internal_detectors = new ProfileDetector[config.internal_detectors.length];
+      this.internal_detectors =
+          new ArrayList<SerialPortWrapper.Detector>(config.internal_detectors.length);
       for (int i = 0; i < config.internal_detectors.length; ++i) {
-        internal_detectors[i] = new ProfileDetector(config.internal_detectors[i]);
+        internal_detectors.add(new ProfileDetector(config.internal_detectors[i]));
       }
     }
     this.arg_indexes = config.arg_indexes;
@@ -26,7 +28,7 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
   }
 
   private Pattern pattern;
-  private ProfileDetector[] internal_detectors;
+  private ArrayList<SerialPortWrapper.Detector> internal_detectors;
   private Event event;
   private int[] arg_indexes;
 
@@ -61,20 +63,6 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
   }
 
   protected void applyInternalDetectors(Matcher m) throws SerialPortException {
-    if (internal_detectors != null) {
-      String s = m.group();
-      boolean match_more = true;
-      while (match_more) {
-        match_more = false;
-        for (ProfileDetector d : internal_detectors) {
-          String s2 = d.apply(s);
-          if (s != s2) {  // Intentional pointer comparison
-            match_more = true;
-            s = s2;
-            break;
-          }
-        }
-      }
-    }
+    SerialPortWrapper.Detector.applyDetectors(m.group(), internal_detectors);
   }
 }

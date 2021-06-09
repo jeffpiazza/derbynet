@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 import java.io.*;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import org.json.JSONObject;
 
 // HttpTask expects to run in its own thread sending outgoing messages and
 // awaiting their responses.  Sends a heartbeat message periodically if the
@@ -80,7 +81,7 @@ public class HttpTask implements Runnable {
       public void run() {
         boolean login_ok = false;
         try {
-          Element login_response = session.login(role, password);
+          JSONObject login_response = session.login(role, password);
           login_ok = ClientSession.wasSuccessful(login_response);
           if (!login_ok) {
             callback.onLoginFailed("Login failed");

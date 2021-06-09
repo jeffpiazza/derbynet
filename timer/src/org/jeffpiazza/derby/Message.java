@@ -165,8 +165,9 @@ public interface Message {
           if (flag.is_settable()) {
             sb.append("&flag-").append(flag.name()).append("=");
             sb.append(flag.typeName()).append(":");
-            sb.append(URLEncoder.encode(flag.value() == null ? "null" : flag.
-                value().toString(), "UTF-8"));
+            sb.append(URLEncoder.encode(flag.value() == null
+                                        ? "null" : flag.value().toString(),
+                                        "UTF-8"));
             sb.append("&desc-").append(flag.name()).append("=");
             sb.append(URLEncoder.encode("" + flag.description(), "UTF-8"));
           }

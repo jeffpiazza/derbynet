@@ -1,10 +1,9 @@
 package org.jeffpiazza.derby.timer;
 
-// Note that there's no LOST_CONNECTION, because if that happens, we're
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import org.jeffpiazza.derby.LogWriter;
 
+// Note that there's no LOST_CONNECTION, because if that happens, we're
 // going to abandon the state machine and everything else altogether.
 public enum Event {
   PREPARE_HEAT_RECEIVED,
