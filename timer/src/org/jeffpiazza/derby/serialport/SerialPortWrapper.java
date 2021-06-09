@@ -58,24 +58,27 @@ public class SerialPortWrapper implements SerialPortEventListener {
     public static String applyDetectors(String line, List<Detector> detectors)
         throws SerialPortException {
       line = line.trim();
-      boolean match_more = (line.length() > 0);
-      if (match_more) {
-        LogWriter.serialIn(line);
-      }
-      while (match_more) {
-        match_more = false;
-        for (Detector d : detectors) {
-          String s2 = d.apply(line);
-          if (line != s2) {  // Intentional pointer comparison
-            line = s2;
-            match_more = (line.length() > 0);
-            break;
+      if (detectors != null) {
+        boolean match_more = (line.length() > 0);
+        if (match_more) {
+          LogWriter.serialIn(line);
+        }
+        while (match_more) {
+          match_more = false;
+          for (Detector d : detectors) {
+            String s2 = d.apply(line);
+            if (line != s2) {  // Intentional pointer comparison
+              line = s2;
+              match_more = (line.length() > 0);
+              break;
+            }
           }
         }
       }
       return line;
     }
   }
+
   private final ArrayList<Detector> detectors = new ArrayList<Detector>();
   // If there is one, the early detector gets applied repeatedly each time the
   // buffer changes, without waiting for a newline character.

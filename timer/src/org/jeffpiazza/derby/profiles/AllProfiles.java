@@ -38,5 +38,6 @@ public class AllProfiles {
       allProfiles.put(p.toJSON());
     }
     System.out.println(allProfiles.toString(2));
+    System.exit(0);
   }
 }

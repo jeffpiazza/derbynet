@@ -10,6 +10,10 @@ public class DerbyMagic9600ByProfile extends TimerDeviceWithProfile {
     super(portWrapper, profile());
   }
 
+  public static String toHumanString() {
+    return profile().name + " (9600)";
+  }
+
   public static Profile profile() {
     return DerbyMagicByProfile.profile().params(SerialPort.BAUDRATE_9600,
                                                 SerialPort.DATABITS_8,

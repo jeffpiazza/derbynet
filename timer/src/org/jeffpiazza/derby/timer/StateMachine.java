@@ -101,7 +101,7 @@ public class StateMachine implements Event.Handler {
             currentState = unexpected(e, State.SET);
             break;
           case GATE_OPEN:
-            Event.queue(Event.RACE_STARTED);
+            Event.send(Event.RACE_STARTED);
             break;
           case RACE_STARTED:
             currentState = State.RUNNING;

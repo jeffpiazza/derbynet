@@ -1,7 +1,15 @@
 package org.jeffpiazza.derby.timer;
 
+// TODO Thread safety for handler register/unregister.
+//
+// TODO static sendAt/sendAfterMs subsumes the current ScheduledEventQueue;
+// same poller thread picks up scheduled events as they become available.
+// When there's an entry in the queue of scheduled events, the eventPoller sleeps
+// onlly until then, or until a new scheduled event is added.
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 // Note that there's no LOST_CONNECTION, because if that happens, we're
 // going to abandon the state machine and everything else altogether.
@@ -33,40 +41,95 @@ public enum Event {
     handlers.remove(handler);
   }
 
-  public static void trigger(Event event) {
-    trigger(event, null);
+  public static void send(Event event) {
+    send(event, null);
   }
-
-  public static void trigger(Event event, String[] args) {
-    triggerOne(event, args);
-    drainQueue();
-  }
-
-  protected static void triggerOne(Event event, String[] args) {
-    for (Handler handler : handlers) {
-      handler.onEvent(event, args);
+  public static void send(Event event, String[] args) {
+    synchronized (eventsQueue) {
+      eventsQueue.add(new EventRecord(event, args));
+      eventsQueue.notifyAll();
     }
   }
 
-  // If needed, the queue could support an Event enum plus args
-  private static ArrayDeque<Event> queue = new ArrayDeque<Event>();
-
-  public static void queue(Event event) {
-    synchronized (queue) {
-      queue.add(event);
+  public static void sendAt(long deadline, Event event) {
+    synchronized (eventsQueue) {
+      delayedEvents.add(new DelayedEvent(deadline, new EventRecord(event, null)));
+      eventsQueue.notifyAll();
     }
   }
 
-  private static void drainQueue() {
-    while (true) {
-      Event e;
-      synchronized (queue) {
-        e = queue.poll();
+  public static void sendAfterMs(long delay, Event event) {
+    sendAt(System.currentTimeMillis() + delay, event);
+  }
+
+  private static class EventRecord {
+    private Event event;
+    private String[] args;
+    public EventRecord(Event event, String[] args) {
+      this.event = event;
+      this.args = args;
+    }
+    public Event event() { return event; }
+    public String[] args() { return args; }
+  }
+  private static ArrayDeque<EventRecord> eventsQueue =
+      new ArrayDeque<EventRecord>();
+
+  private static class DelayedEvent {
+    private long deadline;
+    private EventRecord event;
+
+    public DelayedEvent(long deadline, EventRecord event) {
+      this.deadline = deadline;
+      this.event = event;
+    }
+  }
+  private static TreeSet<DelayedEvent> delayedEvents
+      = new TreeSet<DelayedEvent>(new Comparator<DelayedEvent>() {
+        public int compare(DelayedEvent e1, DelayedEvent e2) {
+          return Long.compare(e1.deadline, e2.deadline);
+        }
+      });
+
+  private static Thread eventPoller = new Thread() {
+    @Override
+    public void run() {
+      while (true) {
+        EventRecord e = null;
+        synchronized (eventsQueue) {
+          long timeout = 10000;  // Arbitrarily high
+          if (!delayedEvents.isEmpty()) {
+            // Wake up for the next delayed event's deadline
+            timeout = delayedEvents.first().deadline - System.currentTimeMillis();
+          }
+          if (eventsQueue.isEmpty() && timeout > 0) {
+            try {
+              eventsQueue.wait(timeout);
+            } catch (InterruptedException ex) {
+            }
+          }
+          if (!eventsQueue.isEmpty()) {
+            e = eventsQueue.poll();
+          }
+          if (!delayedEvents.isEmpty()) {
+            DelayedEvent firstDelayed = delayedEvents.first();
+            if (e == null && firstDelayed.deadline <= System.currentTimeMillis()) {
+              delayedEvents.remove(firstDelayed);
+              e = firstDelayed.event;
+            }
+          }
+        }
+        if (e != null) {
+          for (Handler handler : Event.handlers) {
+            handler.onEvent(e.event(), e.args());
+          }
+        }
       }
-      if (e == null) {
-        return;
-      }
-      triggerOne(e, null);
     }
+  };
+
+  static {
+    eventPoller.start();
   }
+
 }

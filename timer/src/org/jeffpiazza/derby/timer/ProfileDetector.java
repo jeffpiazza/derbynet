@@ -55,7 +55,7 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
         }
       }
       if (event != null) {
-        Event.trigger(event, args);
+        Event.send(event, args);
       }
       return line.substring(0, m.start()) + line.substring(m.end());
     }
