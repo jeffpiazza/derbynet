@@ -36,8 +36,12 @@ div#timer_summary h3 {
 }
 div#timer_summary p {
   margin-top: 5px;
+  margin-bottom: 5px;
 }
-
+div#timer-details p {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 
 div.test-control {
  font-size: 18px;

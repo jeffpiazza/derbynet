@@ -86,7 +86,7 @@ var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
     </div>
 
     <div id='timer-test' class="block_buttons">
-      <a class='button_link' href='timer.php'>Test</a>
+      <a class='button_link' href='timer-test.php'>Test</a>
     </div>
 
     <h3>Timer Status</h3>

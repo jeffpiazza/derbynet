@@ -96,6 +96,14 @@ g_completed_rounds = [];
 // Roundids of an aggregate rounds
 g_aggregate_rounds = [];
 
+function find_by_classid(classes, classid) {
+  for (var i = 0; i < classes.length; ++i) {
+    if (classes[i].classid == classid) {
+      return classes[i];
+    }
+  }
+}
+
 function update_for_last_heat(json) {
   var rerun_type = json['last-heat'];
   var button = $("#rerun-button");
@@ -508,7 +516,8 @@ function offer_new_rounds(rounds, classes) {
   for (var classid in highest_rounds) {
     var round = highest_rounds[classid];
     if (round.heats_scheduled > 0 && round.heats_scheduled == round.heats_run) {
-      round.subgroups = classes[classid].subgroups;
+      var cl = find_by_classid(classes, classid);
+      round.subgroups = cl.subgroups;
       completed_rounds.push(round);
     }
   }

@@ -2,7 +2,9 @@
 
 require_once('inc/banner.inc');
 require_once('inc/data.inc');
-require_once('inc/timer-state-xml.inc');
+require_once('inc/json-current-heat.inc');
+require_once('inc/json-timer-state.inc');
+require_once('inc/timer-test.inc');
 
 $current = get_running_round();
 
@@ -16,26 +18,23 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 <title>Timer</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
-<link rel="stylesheet" type="text/css" href="css/timer.css"/>
+<link rel="stylesheet" type="text/css" href="css/timer-test.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript" src="js/timer-test.js"></script>
 <script type="text/javascript">
 $(function() {
-  var parser = new DOMParser();
-  var xmlDoc = parser.parseFromString(
-    "<doc><timer-state icon='<?php echo $timer_state_status[1]; ?>'>"
-    + <?php echo json_encode($timer_state_status[0]); ?>
-    + "</timer-state></doc>", "text/xml");
-  update_timer_summary(xmlDoc.getElementsByTagName('timer-state')[0]);
+    update_timer_summary(<?php echo json_encode(json_timer_state()); ?>,
+                         <?php echo json_encode(json_timer_details()); ?>,
+                         <?php echo json_encode(json_current_heat($current)); ?>);
 });
 
 </script>
 </head>
 <body>
-<?php make_banner('Timer', 'coordinator.php'); ?>
+<?php make_banner('Timer Testing', 'coordinator.php'); ?>
 
 <div id="log_outer">
   <div class="test-control">
