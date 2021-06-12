@@ -18,7 +18,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     super(portWrapper);
     this.profile = profile;
 
-    portWrapper.setEndOfLine(profile.options.end_of_line);
+    portWrapper.setEndOfLine(profile.options.eol);
   }
 
   @Override
@@ -82,10 +82,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
   @Override
   public boolean probe() throws SerialPortException {
-    if (!portWrapper.setPortParams(profile.portParams.baudRate,
-                                   profile.portParams.dataBits,
-                                   profile.portParams.stopBits,
-                                   profile.portParams.parity,
+    if (!portWrapper.setPortParams(profile.params.baud,
+                                   profile.params.data,
+                                   profile.params.stop,
+                                   profile.params.parity,
                                    !Flag.clear_rts_dtr.value(),
                                    !Flag.clear_rts_dtr.value())) {
       return false;
@@ -108,17 +108,17 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     long deadline = System.currentTimeMillis() + PROBER_RESPONSE_TIME_MS;
     portWrapper.write(profile.prober.probe);
     int pi = 0;
-    Pattern p = Pattern.compile(profile.prober.response_patterns[pi++]);
+    Pattern p = Pattern.compile(profile.prober.responses[pi++]);
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       has_ever_spoken = true;
       Matcher m = p.matcher(s);
       if (m.find()) {
-        if (pi >= profile.prober.response_patterns.length) {
+        if (pi >= profile.prober.responses.length) {
           timerIdentifier = s;
           return true;
         } else {
-          p = Pattern.compile(profile.prober.response_patterns[pi++]);
+          p = Pattern.compile(profile.prober.responses[pi++]);
         }
       }
     }
@@ -126,11 +126,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   protected void setUp() throws SerialPortException {
-    for (Profile.Detector detector_config : profile.detectors) {
+    for (Profile.Detector detector_config : profile.matchers) {
       portWrapper.registerDetector(new ProfileDetector(detector_config));
     }
     if (profile.gate_watcher != null) {
-      for (Profile.Detector detector_config : profile.gate_watcher.detectors) {
+      for (Profile.Detector detector_config : profile.gate_watcher.matchers) {
         ProfileDetector detector = new ProfileDetector(detector_config, false);
         gate_watch_detectors.add(detector);
         portWrapper.registerDetector(detector);
@@ -142,7 +142,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     }
 
     for (Profile.Query query : profile.setup_queries) {
-      for (Profile.Detector detector_config : query.detectors) {
+      for (Profile.Detector detector_config : query.matchers) {
         ProfileDetector detector = new ProfileDetector(detector_config, false);
         detector.activateFor(COMMAND_DRAIN_MS);
         portWrapper.registerDetector(detector);
@@ -174,20 +174,20 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   protected void maskLanes(int lanemask) {
     try {
       if (profile.heat_prep != null) {
-        if (profile.heat_prep.unmask_command != null) {
-          portWrapper.write(profile.heat_prep.unmask_command);
+        if (profile.heat_prep.unmask != null) {
+          portWrapper.write(profile.heat_prep.unmask);
           int nlanes = Math.max(detected_lane_count, profile.options.max_lanes);
           for (int lane = 0; lane < nlanes; ++lane) {
             if ((lanemask & (1 << lane)) == 0) {
               drainForMs();
-              portWrapper.write(profile.heat_prep.mask_command
-                  + (char) (profile.heat_prep.first_lane + lane));
+              portWrapper.write(profile.heat_prep.mask
+                  + (char) (profile.heat_prep.lane + lane));
             }
           }
         }
-        if (profile.heat_prep.reset_command != null) {
+        if (profile.heat_prep.reset != null) {
           drainForMs();
-          portWrapper.write(profile.heat_prep.reset_command);
+          portWrapper.write(profile.heat_prep.reset);
         }
         drainForMs();
       }
@@ -203,7 +203,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   public void onEvent(Event event, String[] args) {
-    Profile.CommandSequence custom = profile.custom_handlers.get(event);
+    Profile.CommandSequence custom = profile.on.get(event);
     if (custom != null) {
       try {
         sendCommandSequence(custom);
@@ -213,6 +213,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     }
     switch (event) {
       case PREPARE_HEAT_RECEIVED:
+        // prepareHeat was called when the server sent its message; then
+        // prepareHeat set a delayed event to apply the lane mask and reset the
+        // timer
         maskLanes(lanemask);
         break;
       case ABORT_HEAT_RECEIVED:
@@ -282,7 +285,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     }
 
     {
-      Profile.CommandSequence seq = profile.custom_poll_actions.get(sm.state());
+      Profile.CommandSequence seq = profile.poll.get(sm.state());
       if (seq != null) {
         sendCommandSequence(seq);
       }
@@ -301,7 +304,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     }
 
     while (portWrapper.next(deadline) != null) {
-      // Let the detectors run, and pick up any hanging lines
+      // Let the matchers run, and pick up any hanging lines
     }
   }
 

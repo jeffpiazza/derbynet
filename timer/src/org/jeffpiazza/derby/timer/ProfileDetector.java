@@ -8,7 +8,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class ProfileDetector implements SerialPortWrapper.Detector {
   public ProfileDetector(Profile.Detector config, boolean active) {
-    this.pattern = Pattern.compile(config.pattern_string);
+    this.pattern = Pattern.compile(config.pattern);
     this.event = config.event;
     if (config.internal_detectors != null) {
       this.internal_detectors =
@@ -17,7 +17,7 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
         internal_detectors.add(new ProfileDetector(config.internal_detectors[i]));
       }
     }
-    this.arg_indexes = config.arg_indexes;
+    this.arg_indexes = config.args;
     if (!active) {
       this.active_until = -1;
     }
