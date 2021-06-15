@@ -36,6 +36,9 @@
             <filename name="generated-build-date.inc"/>
             <filename name="generated-commit-hash.inc"/>
         </fileset>
+        <fileset dir="website/js/timer">
+            <filename name="timer-profiles.js"/>
+        </fileset>
     </delete>
     <ant dir="${timer-dir}" target="clean"/>
     <ant dir="${docs-dir}"  target="clean"/>
@@ -44,7 +47,7 @@
   <target name="dist" depends="dist.oneclick, dist.mac, dist.debian"
           description="Build complete distribution"/>
 
-  <target name="dist.zip" depends="timer-jar, docs-dist, generated"
+  <target name="dist.zip" depends="timer-jar, timer-profiles, docs-dist, generated"
           description="Build OS-neutral zip-file distribution">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
@@ -198,7 +201,7 @@
       <ant dir="${timer-dir}"/>
   </target>
 
-  <target name="dist.debian" depends="generated, timer-jar, docs-dist"
+  <target name="dist.debian" depends="generated, timer-jar, timer-profiles, docs-dist"
       description="Build a Debian binary package (.deb) for all of DerbyNet">
     <ant dir="installer/debian" target="dist"/>
   </target>
@@ -207,7 +210,7 @@
       <ant dir="${docs-dir}"/>
   </target>
 
-<target name="mac.installer.website" if="is_mac" depends="generated">
+<target name="mac.installer.website" if="is_mac" depends="generated, timer-profiles">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">
@@ -376,7 +379,7 @@
   </exec>
 </target>
 
-<target name="dist.oneclick" depends="generated, timer-jar, docs-dist"
+<target name="dist.oneclick" depends="generated, timer-jar, timer-profiles, docs-dist"
     description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
