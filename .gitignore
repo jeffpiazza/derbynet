@@ -29,6 +29,7 @@ website/inc/generated-*.inc
 website/quickref.pdf
 website/js/adapter.js
 website/local/
+website/js/timer/timer-profiles.js
 
 dist/
 adapter-webrtc/

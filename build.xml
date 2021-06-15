@@ -169,6 +169,25 @@
       </copy>
   </target>
 
+  <target name="timer-profiles" depends="timer-jar">
+      <!-- java task supposedly supports outputproperty, but it doesn't seem to
+           work. -->
+      <exec executable="java" outputproperty="timer-profiles">
+          <arg value="-cp"/>
+          <!-- ${timer-jar-dir} doesn't work in arg value, apparently. -->
+          <arg value="timer/dist/lib/derby-timer.jar"/>
+          <arg value="org.jeffpiazza.derby.profiles.AllProfiles"/>
+      </exec>
+      <copy file="templates/timer-profiles.js"
+            tofile="website/js/timer/timer-profiles.js" overwrite="true">
+          <filterchain>
+              <replacetokens>
+                  <token key="PROFILES" value="${timer-profiles}"/>
+              </replacetokens>
+          </filterchain>
+      </copy>
+  </target>
+
   <target name="quickref" depends="docs-dist">
       <copy file="docs/dist/Quick Reference.pdf" tofile="website/quickref.pdf" overwrite="true"/>
   </target>
