@@ -1,5 +1,10 @@
 'use strict';
 
+// A detector is a regex that triggers an event upon matching.  The generated
+// event may include strings picked up from the match.  In some cases, instead
+// of (or in addition to) generating an event after a match, the detector may
+// try applying some "internal" detectors to the parse the matched string into
+// separate events.
 
 class Detector {
   matcher;  // { pattern, event, arg_indexes, internal_detectors }

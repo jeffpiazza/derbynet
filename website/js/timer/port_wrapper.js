@@ -1,5 +1,12 @@
 'use strict';
 
+// A PortWrapper reads from the serial port, dividing the input into lines and
+// then applying pattern matchers to each line as it becomes available.  A line
+// is considered complete either when a newline character is seen, or after a
+// long-enough pause.  The pattern matchers are typically looking for news of
+// lane or heat finishes, or possibly news about the start gate being open or
+// closed.
+
 const NEWLINE_EXPECTED_MS = 200;
 const COMMAND_DRAIN_MS = 100;
 

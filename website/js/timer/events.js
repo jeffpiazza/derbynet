@@ -1,5 +1,11 @@
 'use strict';
 
+// Different objects involved in managing the timer communicate with each other
+// via events.  Event handlers get registered in one static list, and an event
+// gets sent to all registered handlers.  Events can also be scheduled for
+// delivery at a future time, specified either by absolute time or milliseconds
+// in the future.
+
 class TimerEvent {
   /*
     IDENTIFIED

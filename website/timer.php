@@ -3,16 +3,10 @@
 require_once('inc/authorize.inc');
 require_once('inc/banner.inc');
 require_once('inc/data.inc');
-require_once('inc/json-current-heat.inc');
 require_once('inc/json-timer-state.inc');
 require_once('inc/timer-test.inc');
 require_permission(SET_UP_PERMISSION);
 
-$current = get_running_round();
-
-// $timer_state_status comprises two values. This is just the initial value; the
-// page will poll for updates
-$timer_state_status = expand_timer_state_status(new TimerState());
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -28,6 +22,7 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 
 <script type="text/javascript" src="js/timer/port_wrapper.js"></script>
 <script type="text/javascript" src="js/timer/ports.js"></script>
+<!-- timer-profiles.js is generated from the java definitions as part of the build process. -->
 <script type="text/javascript" src="js/timer/timer-profiles.js"></script>
 <script type="text/javascript" src="js/timer/detector.js"></script>
 <script type="text/javascript" src="js/timer/events.js"></script>

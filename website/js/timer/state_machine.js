@@ -1,5 +1,8 @@
 'use strict';
 
+// The state machine keeps track of when a race is running vs when cars are
+// being staged or the track is idle.
+
 class StateMachine {
   state = 'IDLE';
 

@@ -1,5 +1,10 @@
 'use strict';
 
+// The host poller handles the communication with the web server.  Messages from
+// the server get converted into timer events (e.g., PREPARE_HEAT_RECEIVED or
+// ABORT_HEAT_RECEIVED).  The host poller also listens for several events that
+// it then reports to the web server.
+
 const HEARTBEAT_PACE = 500;
 
 class HostPoller {
