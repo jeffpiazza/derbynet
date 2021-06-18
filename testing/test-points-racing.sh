@@ -170,10 +170,10 @@ curl_getj "action.php?query=award.current" | expect_one Felton
 curl_postj action.php "action=award.present&key=speed-2-1" | check_jsuccess
 curl_getj "action.php?query=award.current" | jq 'length' | expect_eq 0
 
-
 # Generate a next round of top 3, where there's a tie for third -- take 4 finalists
 curl_postj action.php "action=roster.new&roundid=1&top=3" | check_jsuccess
-jq -e '.finalists | length == 4' $DEBUG_CURL >/dev/null || test_fails Expecting 4 finalists
+jq -e '.finalists | map(.racerid) | sort == [1,11,21,41]' $DEBUG_CURL >/dev/null || \
+    test_fails Expecting 4 finalists
 
 curl_postj action.php "action=schedule.generate&roundid=6" | check_jsuccess
 # Racing for roundid=6: 4 heats

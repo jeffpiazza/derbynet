@@ -113,11 +113,4 @@ test "`xmllint --xpath "//div[@class='st-q10']/ancestor::tr/td[3]" $TMP_STANDING
 # Test generating a round from an aggregate class by subgroup
 RANK_FINAL=`mktemp`
 curl_postj action.php "action=roster.new&classid=10&top=2&bucketed=1" | tee $RANK_FINAL | check_jsuccess
-
-jq '.finalists | length' $RANK_FINAL | expect_eq 6
-jq -e '.finalists | map(select(.racerid == 92)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 90)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 89)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 95)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 26)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 1)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(.racerid) | sort == [1,26,89,90,92,95]' $RANK_FINAL >/dev/null || test_fail

@@ -36,27 +36,9 @@ curl_postj action.php "action=racer.edit&rankid=7&racer=41" | check_jsuccess
 # Add a Grand Final by ranks, leaving out rankid=1
 RANK_FINAL=`mktemp`
 curl_postj action.php "action=roster.new&top=4&bucketed=1&rankid_2=1&rankid_3=1&rankid_4=1&rankid_5=1&rankid_6=1&rankid_7=1&classname=Rank%20Final" | tee $RANK_FINAL | check_jsuccess
-
-# Check that there are 23 in the roster
-jq '.finalists | length' $RANK_FINAL | expect_eq 23
-
-# No Lions are included: Adolfo(1), Felton(31), Carroll(11), Levi(51), Owen(61), Raymon(66)
-jq -e '.finalists | map(select(.racerid == 1)) | length' $RANK_FINAL | expect_eq 0
-jq -e '.finalists | map(select(.racerid == 31)) | length' $RANK_FINAL | expect_eq 0
-jq -e '.finalists | map(select(.racerid == 51)) | length' $RANK_FINAL | expect_eq 0
-jq -e '.finalists | map(select(.racerid == 61)) | length' $RANK_FINAL | expect_eq 0
-jq -e '.finalists | map(select(.racerid == 66)) | length' $RANK_FINAL | expect_eq 0
-
-# Top 4 Tigers: Edgardo(26), Ben(6), Danial(16), Kelvin(46)
-jq -e '.finalists | map(select(.racerid == 26)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 6)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 16)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 46)) | length' $RANK_FINAL | expect_eq 1
-
-# Cougars Jesse(41), Herb(36), Derick(21)
-jq -e '.finalists | map(select(.racerid == 41)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 36)) | length' $RANK_FINAL | expect_eq 1
-jq -e '.finalists | map(select(.racerid == 21)) | length' $RANK_FINAL | expect_eq 1
+jq -e '.finalists | map(.racerid) | sort ==
+     [6,9,16,17,18,19,20,21,26,35,36,41,45,46,47,50,58,62,63,69,74,77,78]' \
+         $RANK_FINAL >/dev/null || test_fails
 
 curl_postj action.php "action=roster.delete&roundid=6" | check_jsuccess
 # Deleting the round (by deleting its roster) seems to leave roundid=6 available
@@ -64,6 +46,7 @@ curl_postj action.php "action=roster.delete&roundid=6" | check_jsuccess
 
 ## Create "Younger Finals" aggregate of roundid 1,2 and race the round
 curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_jsuccess
+jq -e '.finalists | map(.racerid) | sort == [1,11,17,26,31,47,62,77]' $DEBUG_CURL >/dev/null || test_fails
 
 curl_postj action.php "action=schedule.generate&roundid=6" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=6&now_racing=1" | check_jsuccess
@@ -78,6 +61,8 @@ run_heat	6	8	3.000	3.477	3.67	3.512 x
 
 ## Create "Older Finals" aggregate of roundid 3,4,5, and race
 curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_jsuccess
+jq -e '.finalists | map(.racerid) | sort == [9,18,19,20,35,45,50,58,63,69,74,78]' $DEBUG_CURL >/dev/null || test_fails
+
 curl_postj action.php "action=schedule.generate&roundid=7" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=7&now_racing=1" | check_jsuccess
 run_heat	7	1	3.85	3.145	3.849	3.288
@@ -95,6 +80,8 @@ run_heat	7	12	3.563	3.857	3.255	3.742 x
 
 ## Race a second round of Older Finals
 curl_postj action.php "action=roster.new&top=8&roundid=7" | check_jsuccess
+jq -e '.finalists | map(.racerid) | sort == [9,20,35,45,50,63,74,78]' $DEBUG_CURL >/dev/null || test_fails
+
 curl_postj action.php "action=schedule.generate&roundid=8" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=8&now_racing=1" | check_jsuccess
 
@@ -109,6 +96,8 @@ run_heat	8	8	3.028	3.104	3.049	3.301 x
 
 ## Create a final final of the other two GF's
 curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_jsuccess
+jq -e '.finalists | map(.racerid) | sort == [11,17,20,26,45,50,74,77]' $DEBUG_CURL >/dev/null || test_fails
+
 curl_postj action.php "action=schedule.generate&roundid=9" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=9&now_racing=1" | check_jsuccess
 
