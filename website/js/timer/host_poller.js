@@ -92,7 +92,7 @@ class HostPoller {
                                                 parseInt(nodes[0].getAttribute('lane-mask'))]);
     }
     if ((nodes = response.getElementsByTagName("remote-start")).length > 0) {
-      // TODO
+      TimerEvent.send('START_RACE', []);
     }
     if ((nodes = response.getElementsByTagName("assign-flag")).length > 0) {
       // TODO

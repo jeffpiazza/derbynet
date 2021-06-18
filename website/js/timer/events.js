@@ -23,7 +23,8 @@ class TimerEvent {
     // Eventually, overdue results give way to a GIVING_UP event,
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
     GIVING_UP,
-    LANE_COUNT // Some timers report how many lanes
+    LANE_COUNT, // Some timers report how many lanes
+    START_RACE  // Remote start requested
   */
 
   static handlers = [];

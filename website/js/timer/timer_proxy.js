@@ -131,6 +131,12 @@ class TimerProxy {
       this.lastFinishTime = 0;
       this.roundid = this.heat = 0;
       break;
+    case 'START_RACE':
+      // TODO FastTrack profile's remote start value is controlled by flag
+      if (this.profile?.remote_start?.has_remote_start) {
+        this.port_wrapper.write(this.profile.remote_start.command);
+      }
+      break;
     case 'RACE_STARTED':
       if (this.profile?.options?.max_running_time_ms) {
         this.overdue_time = Date.now() + this.profile.options.max_running_time_ms;
