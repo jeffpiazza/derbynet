@@ -34,12 +34,11 @@ g_update_status.interval_id = 0;  // Returned by start_polling
 function process_update_elements(updates) {
   for (var i = 0; i < updates.length; ++i) {
 	var upd = updates[i];
-	var time_span = $(".resultid_" + upd.getAttribute("resultid")
-	                  + " .time");
+	var time_span = $(".resultid_" + upd.resultid + " .time");
     if (time_span.length == 0) {
-      console.log("Can't find <span> element to receive time for resultid " + upd.getAttribute("resultid"));
+      console.log("Can't find <span> element to receive time for resultid " + upd.resultid);
     }
-    time_span.html(upd.getAttribute("result"));
+    time_span.html(upd.result);
   }
 }
 

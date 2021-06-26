@@ -485,6 +485,7 @@ function handle_sorting_event(event) {
 }
 
 function sorting_key(row) {
+  console.log(row);
   if (g_order == 'class') {
     // rankseq, lastname, firstname
     return [parseInt(row.querySelector('[data-rankseq]').getAttribute('data-rankseq')),
@@ -741,7 +742,7 @@ $(function() {
 // TODO We might be in a better position to know the row number (and parity)
 // than the server (which sends rowno).
 function make_table_row(racer, use_groups, use_subgroups, xbs) {
-  var tr = $('<tr/>').prop('data-racerid', racer.racerid)
+  var tr = $('<tr/>').attr('data-racerid', racer.racerid)
       .addClass('d' + (racer.rowno & 1))
       .toggleClass('den_scheduled', racer.denscheduled)
       .toggleClass('exclude', racer.exclude);
@@ -750,39 +751,40 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
                     ' onclick="show_edit_racer_form(' + racer.racerid + ')"/>'));
 
   if (use_groups) {
-    tr.append($('<td/>').prop('id', 'class-' + racer.racerid)
-              .prop('data-rankid', racer.rankid)
-              .prop('data-rankseq', racer.rankseq)
-              .text(racer['class']));
+    tr.append($('<td/>')
+              .attr('id', 'class-' + racer.racerid)
+              .attr('data-rankid', racer.rankid)
+              .attr('data-rankseq', racer.rankseq)
+              .text(racer.class));
   }
 
   if (use_subgroups) {
-    tr.append($('<td/>').prop('id', 'rank-' + racer.racerid)
+    tr.append($('<td/>').attr('id', 'rank-' + racer.racerid)
               .text(racer.rank));
   }
 
   tr.append($('<td class="sort-car-number"/>')
-            .prop('data-car-number', racer.carnumber)
-            .prop('id', 'car-number-' + racer.racerid)
+            .attr('data-car-number', racer.carnumber)
+            .attr('id', 'car-number-' + racer.racerid)
             .text(racer.carnumber));
 
-  tr.append($('<td/>').prop('id', 'photo-' + racer.racerid)
+  tr.append($('<td/>').attr('id', 'photo-' + racer.racerid)
             .append($('<a href="javascript:show_racer_photo_modal(' + racer.racerid + ')"/>')
                     .append($('<img class="checkin-photo" data-repo="head"/>')
-                            .prop('src', racer.headshot)))
+                            .attr('src', racer.headshot)))
             .append($('<a href="javascript:show_car_photo_modal(' + racer.racerid + ')"/>')
                     .append($('<img class="checkin-photo" data-repo="car"/>')
-                            .prop('src', racer.carphoto))));
+                            .attr('src', racer.carphoto))));
 
   tr.append($('<td class="sort-lastname"/>')
-            .prop('id', 'lastname-' + racer.racerid)
-            .prop('data-exclude', racer.exclude)
+            .attr('id', 'lastname-' + racer.racerid)
+            .attr('data-exclude', racer.exclude)
             .text(racer.lastname));
   tr.append($('<td class="sort-firstname"/>')
-            .prop('id', 'firstname-' + racer.racerid)
+            .attr('id', 'firstname-' + racer.racerid)
             .text(racer.firstname));
   tr.append($('<td/>')
-            .prop('id', 'car-name-' + racer.racerid)
+            .attr('id', 'car-name-' + racer.racerid)
             .text(racer.carname));
 
   var checkin = $('<td class="checkin-status"/>').appendTo(tr);
@@ -794,12 +796,12 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
     }
   } else {
     checkin.append($('<label/>')
-                   .prop('for', 'passed-' + racer.racerid)
+                   .attr('for', 'passed-' + racer.racerid)
                    .text('Checked In?'));
     checkin.append('<br/>');
     checkin.append($('<input type="checkbox" class="flipswitch"/>')
-                   .prop('id', 'passed-' + racer.racerid)
-                   .prop('name', 'passed-' + racer.racerid)
+                   .attr('id', 'passed-' + racer.racerid)
+                   .attr('name', 'passed-' + racer.racerid)
                    .prop('checked', racer.passed)
                    // prop onchange doesn't seem to allow a string, but attr does
                    .attr('onchange', 'handlechange_passed(this, ' +
@@ -813,14 +815,14 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
   if (xbs) {
     tr.append($('<td/>')
               .append($('<label/>')
-                      .prop('for', 'xbs-' + racer.racerid)
+                      .attr('for', 'xbs-' + racer.racerid)
                       .text(xbs + '?'))
               .append($('<input type="checkbox" class="flipswitch"/>')
-                      .prop('name', 'xbs-' + racer.racerid)
+                      .attr('name', 'xbs-' + racer.racerid)
                       .prop('checked', racer.xbs)
-                      .prop('data-on-text', 'Yes')
-                      .prop('data-off-text', 'No')
-                      .prop('onchange', 'handlechange_xbs(this);')));
+                      .attr('data-on-text', 'Yes')
+                      .attr('data-off-text', 'No')
+                      .attr('onchange', 'handlechange_xbs(this);')));
   }
 
   return tr;
