@@ -28,16 +28,13 @@ user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 
-staged_heat4 101 121 141 111
-run_heat_place 1 1   2 3 4 1
-staged_heat4 111 131 101 121
-run_heat_place 1 2   1 4 2 3
+run_heat -place 1 1   101:2 121:3 141:4 111:1
+run_heat -place 1 2   111:1 131:4 101:2 121:3
 
 # Report times for this heat, let timer-message compute places
 # First we have a tie for last place in the heat, as for a couple of DNFs;
 # neither racer gets any points for the heat
-staged_heat4 121 141 111 131
-run_heat 1 3   9.9999 3.2 3.1 9.9999
+run_heat 1 3 121:9.9999 141:3.2 111:3.1 131:9.9999
 
 user_login_coordinator
 # Check the points for each racer in the heat: # heats, total points
@@ -69,8 +66,7 @@ curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
 curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
 user_login_timer
 
-staged_heat4 131 101 121 141
-run_heat_place 1 4   4 1 2 3
+run_heat -place 1 4   131:4 101:1 121:2 141:3
 
 user_login_coordinator
 curl_getj "action.php?query=poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
@@ -93,8 +89,7 @@ curl_postj action.php "action=heat.select&heat=next&now_racing=1" | check_jsucce
 user_login_timer
 
 
-staged_heat4 141 111 131 101
-run_heat_place 1 5   2 1 4 3  x
+run_heat -place 1 5   141:2 111:1 131:4 101:3  x
 
 # Results (place):
 # 111 101 121 141
@@ -179,14 +174,10 @@ curl_postj action.php "action=schedule.generate&roundid=6" | check_jsuccess
 # Racing for roundid=6: 4 heats
 curl_postj action.php "action=heat.select&roundid=6&now_racing=1" | check_jsuccess
 
-staged_heat4 111 141 121 101
-run_heat_place 6 1   2 3 4 1
-staged_heat4 101 111 141 121
-run_heat_place 6 2   3 4 1 2
-staged_heat4 121 101 111 141
-run_heat_place 6 3   4 1 2 3
-staged_heat4 141 121 101 111
-run_heat_place 6 4   1 2 3 4  x
+run_heat -place 6 1   111:2 141:3 121:4 101:1
+run_heat -place 6 2   101:3 111:4 141:1 121:2
+run_heat -place 6 3   121:4 101:1 111:2 141:3
+run_heat -place 6 4   141:1 121:2 101:3 111:4  x
 
 
 

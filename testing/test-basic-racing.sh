@@ -26,16 +26,11 @@ user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 
-staged_heat4 101 121 141 111
-run_heat 1 1 3.3294 3.4179 3.8182 2.2401
-staged_heat4 111 131 101 121
-run_heat 1 2 3.7554 2.6205 2.3800 3.2347
-staged_heat4 121 141 111 131
-run_heat 1 3 2.0793 3.6770 2.9511 2.8799
-staged_heat4 131 101 121 141
-run_heat 1 4 3.7412 3.4053 3.3414 2.8045
-staged_heat4 141 111 131 101
-run_heat 1 5 2.9661 3.9673 3.5686 3.8388    x
+run_heat 1 1 101:3.3294 121:3.4179 141:3.8182 111:2.2401
+run_heat 1 2 111:3.7554 131:2.6205 101:2.3800 121:3.2347
+run_heat 1 3 121:2.0793 141:3.6770 111:2.9511 131:2.8799
+run_heat 1 4 131:3.7412 101:3.4053 121:3.3414 141:2.8045
+run_heat 1 5 141:2.9661 111:3.9673 131:3.5686 101:3.8388    x
 
 ### Racing for roundid=2: 5 heats
 user_login_coordinator

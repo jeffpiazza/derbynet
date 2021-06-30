@@ -176,7 +176,7 @@ function check_success() {
 function check_jsuccess() {
 	# Expecting stdin
     OK=1
-    jq -e '.outcome.summary == "success"' >/dev/null || OK=0
+    jq -s -e ' length > 0 and (map(.outcome.summary == "success") | all)' >/dev/null || OK=0
 	if [ $OK -eq 0 ]; then
         echo Tail failed
         test_fails
@@ -225,68 +225,89 @@ function expect_eq {
 
 # Confirm what roundid/heat is current and simulate timer interaction for running one heat
 # Usage: run_heat <roundid> <heat> <lane1> <lane2> <lane3> <lane4> ?<skip-check_heat_ready>
+#  where <laneN> is either just a time, or a carnumber plus a time, e.g., 101:3.210
 function run_heat() {
-    ROUNDID=$1
-    HEAT=$2
-    LANE1=$3
-    LANE2=$4
-    LANE3=$5
-    LANE4=$6
-    SKIP_CHECK_HEAT_READY=$7
+    SKIP_CHECK_HEAT_READY=0
 
-    curl_getj "action.php?query=poll.coordinator" | \
-        jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
-        expect_eq true
-    
-    curl_post action.php "action=timer-message&message=STARTED" | check_success
-    curl_post action.php "action=timer-message&message=FINISHED&lane1=$LANE1&lane2=$LANE2&lane3=$LANE3&lane4=$LANE4" | check_success
-    if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
-        cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
+    if [[ "$1" == "-place" ]] ; then
+        shift
+        KEY=place
+    else
+        KEY=lane
     fi
-}
-
-# Usage: run_heat_place <roundid> <heat> <place1> <place2> <place3> <place4> ?<skip-check_heat_ready>
-function run_heat_place() {
+    
     ROUNDID=$1
     HEAT=$2
-    PLACE1=$3
-    PLACE2=$4
-    PLACE3=$5
-    PLACE4=$6
-    SKIP_CHECK_HEAT_READY=$7
+    shift 2
 
     curl_getj "action.php?query=poll.coordinator" | \
-        jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == $ROUNDID and .heat == $HEAT" | \
-        expect_eq true
+        jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and
+               .roundid == $ROUNDID and .heat == $HEAT" >/dev/null || \
+                   test_fails Wrong heat or not racing
+
+    CARNOS=`jq -c '.racers | map(.carnumber)' $DEBUG_CURL`
+
+    
+    SUGGEST_UPDATE=
+    # SUGGEST_UPDATE=1
+    if [[ "$1" == *:* ]] ; then
+        SUGGEST_UPDATE=
+    fi
+
+    if [ $SUGGEST_UPDATE ] ; then
+        echo `caller 0 | cut -d\  -f3`:`caller 0 | cut -d\  -f1`
+        echo -n run_heat $ROUNDID $HEAT ""
+    fi
+
+    FINISHED=""
+    LANE=1
+    while [ $# -gt 0 ]; do
+        if [ "$1" = "x" ] ; then
+            SKIP_CHECK_HEAT_READY=1
+        elif [[ "$1" == *:* ]] ; then
+            EXPECTED_CARNO=$(echo "$1" | cut -d: -f1)
+            TIME=$(echo "$1" | cut -d: -f2)
+
+            ACTUAL_CARNO=$(echo $CARNOS | jq -j ".[$LANE-1]")
+
+            if [[ "$EXPECTED_CARNO" != "$ACTUAL_CARNO" ]] ; then
+                test_fails Wrong car number in lane $LANE: \
+                           expected $EXPECTED_CARNO instead of $ACTUAL_CARNO
+            fi
+
+            FINISHED="$FINISHED&$KEY$LANE=$TIME"
+            let LANE+=1
+        else
+            FINISHED="$FINISHED&lane$LANE=$1"
+            if [ $SUGGEST_UPDATE ] ; then
+                echo -n " "
+                echo $CARNOS | jq -j ".[$LANE-1]"
+                echo -n ":$1"
+            fi
+            let LANE+=1
+        fi
+        shift
+    done
+    if [ $SUGGEST_UPDATE ] ; then echo ; fi
 
     curl_post action.php "action=timer-message&message=STARTED" | check_success
-    curl_post action.php "action=timer-message&message=FINISHED&place1=$PLACE1&place2=$PLACE2&place3=$PLACE3&place4=$PLACE4" | check_success
-    if [ -z "$SKIP_CHECK_HEAT_READY" ] ; then
+    curl_post action.php "action=timer-message&message=FINISHED$FINISHED" | check_success
+    if [ $SKIP_CHECK_HEAT_READY -eq 0 ] ; then
         cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
     fi
 }
 
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno>
 #  "Bye" lanes are given as 0's
-function staged_heat4() {
-    curl_getj "action.php?query=poll.coordinator" | \
-        jq ".racers | \
-            ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
-            ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \
-            ($3 == 0 or map(select ( .lane == 3 ))[0].carnumber == $3) and \
-            ($4 == 0 or map(select ( .lane == 4 ))[0].carnumber == $4)" | \
-        expect_eq true
-}
-
 # Usage: staged_heat <lane1-carno> <lane2-carno> <lane3-carno> <lane4-carno> <lane5-carno> <lane6-carno>
 function staged_heat6() {
     curl_getj "action.php?query=poll.coordinator" | \
-        jq ".racers | \
+        jq -e ".racers | \
             ($1 == 0 or map(select ( .lane == 1 ))[0].carnumber == $1) and \
             ($2 == 0 or map(select ( .lane == 2 ))[0].carnumber == $2) and \
             ($3 == 0 or map(select ( .lane == 3 ))[0].carnumber == $3) and \
             ($4 == 0 or map(select ( .lane == 4 ))[0].carnumber == $4) and \
             ($5 == 0 or map(select ( .lane == 5 ))[0].carnumber == $5) and \
-            ($6 == 0 or map(select ( .lane == 6 ))[0].carnumber == $6)" | \
-        expect_eq true
+            ($6 == 0 or map(select ( .lane == 6 ))[0].carnumber == $6)" >/dev/null || \
+        test_fails
 }

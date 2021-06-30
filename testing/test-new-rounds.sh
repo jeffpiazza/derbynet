@@ -20,6 +20,8 @@ jq -e '.finalists | map(.racerid) | sort as $racers | $racers == [1,31,41] or $r
    $DEBUG_CURL >/dev/null || test_fails
 ROUNDID=`jq '.["new-round"].roundid' $DEBUG_CURL`
 
+[ "$ROUNDID" ] || test_fails
+
 # The new round should be roundid=8, which is now deletable
 curl_postj action.php "action=roster.delete&roundid=$ROUNDID" | check_jsuccess
 # roundid=7 is now gone, so second deletion fails

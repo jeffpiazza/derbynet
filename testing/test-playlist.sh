@@ -65,8 +65,8 @@ sleep 11s
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one award-presentations.kiosk
 
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2" | \
-    expect_eq true
+    jq -e ".[\"current-heat\"] | .[\"now_racing\"] == false and .roundid == 2" >/dev/null || \
+    test_fails
 
 curl_postj action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kiosk" | check_jsuccess
 
@@ -84,8 +84,8 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.4
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" | \
-    expect_eq true
+    jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" >/dev/null || \
+    test_fails
 
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
@@ -96,25 +96,25 @@ curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.4
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" | \
-    expect_eq true
+    jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" >/dev/null || \
+    test_fails
 
 # First heat: 203 v. 201
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == 203) or 
-                      (.lane == 2 and .carnumber == 201))" | \
-    expect_eq true
+    jq -e ".racers | all((.lane == 1 and .carnumber == 203) or 
+                               (.lane == 2 and .carnumber == 201))" >/dev/null || \
+    test_fails
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Second heat: 302 v. 203
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == 302) or 
-                      (.lane == 2 and .carnumber == 203))" | \
-    expect_eq true
+    jq -e ".racers | all((.lane == 1 and .carnumber == 302) or 
+                       (.lane == 2 and .carnumber == 203))" >/dev/null || \
+    test_fails
 curl_post action.php "action=timer-message&message=STARTED" | check_success
 curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
 # Third heat: 201 v. 302
 curl_getj "action.php?query=poll.coordinator" | \
-    jq ".racers | all((.lane == 1 and .carnumber == 201) or 
-                      (.lane == 2 and .carnumber == 302))" | \
-    expect_eq true
+    jq -e ".racers | all((.lane == 1 and .carnumber == 201) or 
+                       (.lane == 2 and .carnumber == 302))" >/dev/null || \
+    test_fails
