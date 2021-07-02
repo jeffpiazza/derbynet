@@ -40,8 +40,8 @@ user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 cat $DEBUG_CURL | expect_one "<heat-ready[ />]"
 
-run_heat 2 1 2.6149 2.0731 3.0402 3.7937
-run_heat 2 2 2.9945 3.4571 2.1867 2.3447
+run_heat 2 1  207:2.6149 227:2.0731 247:3.0402 217:3.7937
+run_heat 2 2  217:2.9945 237:3.4571 207:2.1867 227:2.3447
 
 user_login_coordinator
 curl_getj "action.php?query=poll.coordinator" | jq '.["last-heat"] == "available"' | expect_eq true
@@ -63,10 +63,10 @@ curl_getj "action.php?query=poll.coordinator" | \
 curl_postj action.php "action=heat.select&heat=next&now_racing=1" | check_jsuccess
 user_login_timer
 
-run_heat 2 3 2.4901 2.0838 3.6469 2.1003
-run_heat 2 4 3.9403 3.4869 3.5717 3.5386
-run_heat 2 5 3.0439 3.4090 3.3881 2.9110      x
-
+run_heat 2 3  227:2.4901 247:2.0838 217:3.6469 237:2.1003
+run_heat 2 4  237:3.9403 207:3.4869 227:3.5717 247:3.5386
+run_heat 2 5  247:3.0439 217:3.4090 237:3.3881 207:2.9110  x
+ 
 user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
 curl_postj action.php "action=racer.pass&racer=13&value=0" | check_jsuccess
@@ -81,10 +81,10 @@ curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
 ### Racing for roundid=3: 4 heats among 3 racers
 
-run_heat 3 1 2.7706 -      2.4508 2.4413
-run_heat 3 2 2.7384 3.0321 -      9.9999
-run_heat 3 3 9.9999 3.4490 2.8584 -
-run_heat 3 4 -      9.9999 2.7565 3.0264   x
+run_heat 3 1  303:2.7706 -          343:2.4508 139:2.4413
+run_heat 3 2  139:2.7384 303:3.0321 -          343:9.9999
+run_heat 3 3  343:9.9999 139:3.4490 303:2.8584 -
+run_heat 3 4  -          343:9.9999 139:2.7565 303:3.0264  x
 
 user_login_coordinator
 ### Editing racers
@@ -116,14 +116,14 @@ curl_postj action.php "action=heat.select&roundid=4&now_racing=1" | check_jsucce
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
-run_heat 4 1 3.5819 3.3400 2.7394 3.9177
-run_heat 4 2 3.4442 2.4411 3.6294 2.4309
-run_heat 4 3 3.4408 3.6778 2.9768 3.7326
-run_heat 4 4 3.4894 2.0477 2.4732 2.5479
-run_heat 4 5 2.4360 3.4858 2.7608 3.4163
-run_heat 4 6 3.6268 2.5541 2.5365 3.9059
-run_heat 4 7 2.5955 3.7658 3.7152 3.4789
-run_heat 4 8 3.6487 3.0060 3.9589 3.6175    x
+run_heat 4 1  999:3.5819 510:3.3400 502:2.7394 null:3.9177
+run_heat 4 2  502:3.4442 999:2.4411 510:3.6294 null:2.4309
+run_heat 4 3  510:3.4408 502:3.6778 999:2.9768 null:3.7326
+run_heat 4 4  510:3.4894 502:2.0477 999:2.4732 null:2.5479
+run_heat 4 5  999:2.4360 502:3.4858 510:2.7608 null:3.4163
+run_heat 4 6  502:3.6268 510:2.5541 999:2.5365 null:3.9059
+run_heat 4 7  510:2.5955 999:3.7658 502:3.7152 null:3.4789
+run_heat 4 8  999:3.6487 502:3.0060 510:3.9589 null:3.6175  x
 
 ### Racing for roundid=5
 user_login_coordinator
@@ -131,10 +131,10 @@ curl_postj action.php "action=heat.select&roundid=5&now_racing=1" | check_jsucce
 user_login_timer
 curl_post action.php "action=timer-message&message=HEARTBEAT" | check_success
 
-run_heat 5 1 3.9962 3.9847 2.1091 3.2685
-run_heat 5 2 2.4600 3.6349 2.3152 2.6711
-run_heat 5 3 3.8841 2.8243 2.7381 3.9018
-run_heat 5 4 2.7886 3.5121 3.8979 2.0171   x
+run_heat 5 1  415:3.9962 445:3.9847 435:2.1091 425:3.2685
+run_heat 5 2  425:2.4600 415:3.6349 445:2.3152 435:2.6711
+run_heat 5 3  435:3.8841 425:2.8243 415:2.7381 445:3.9018
+run_heat 5 4  445:2.7886 435:3.5121 425:3.8979 415:2.0171  x
 
 user_login_coordinator
 

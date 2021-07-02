@@ -18,88 +18,96 @@ function make_new_round($classid, $roundno) {
   return $roundid;
 }
 
-define('ROSTER_UNBUCKETED', 0);
-define('ROSTER_BUCKETED_ORGANIC', 1);
-define('ROSTER_BUCKETED_AGGREGATE', 2);
-define('ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP', 3);
 
-// $bucketing: one of the enum constants above.
-// $new_roundid: roundid for the round being populated.
-// $classid: classid for the round's class
-// $bucket_limit: number of racers to choose in each bucket (however determined)
-// $constituent_roundids: array of roundids
-// $rankids: array of rankids for aggregate-round-by-subgroup
-function populate_roster($bucketing, $new_roundid, $classid, $bucket_limit,
-                         $constituent_roundids, $rankids, &$finalists) {
+function calculate_roster_from_classes($classids, $bucketed, $bucket_limit) {
+  $standings = new StandingsOracle();
+
+  $bucket_keys = array();
+  foreach ($classids as $cl) {
+    $bucket_keys[] = $standings->class_key($cl);
+  }
+
+  return calculate_roster_from_keys($bucket_keys, $bucketed ? 1 : 0, $bucket_limit, $standings);
+}
+
+function calculate_roster_from_subgroups($rankids, $bucketed, $bucket_limit) {
+  $standings = new StandingsOracle();
+
+  $bucket_keys = array();
+  foreach ($rankids as $rankid) {
+    $bucket_keys[] = $standings->rank_key($rankid);
+  }
+
+  return calculate_roster_from_keys($bucket_keys, $bucketed ? 1 : 0, $bucket_limit, $standings);
+}
+
+// For a follow-on round to an existing racing round ("organic" roster), 
+// $roundid must be the highest-numbered round for a class that has racing rounds
+function calculate_roster_follow_on_round($classid, $bucketed, $bucket_limit) {
   global $db;
 
-  $buckets = array();  // bucketno => array of { racerid , score }
-
-  if (count($rankids) == 0) {
-    $and_filter = '';
-  } else {
-    $and_filter = 'AND RegistrationInfo.rankid IN ('.implode(',', $rankids).')';
+  if (!$bucketed) {
+    return calculate_roster_from_classes(array($classid), $bucketed, $bucket_limit);
   }
-  if ($bucketing == ROSTER_UNBUCKETED) {
-    // If top n across the whole unit or den, bucketno is a constant (1)
-    $bucketno_expr = '1';
-  } else if ($bucketing == ROSTER_BUCKETED_ORGANIC) {
-    $bucketno_expr = 'RegistrationInfo.rankid';
-  } else if ($bucketing == ROSTER_BUCKETED_AGGREGATE) {
-    $bucketno_expr = 'Result.roundid';
-  } else /* ROSTER_BUCKETED_AGGREGATE_BY_SUBGROUP */ {
-    $bucketno_expr = 'RegistrationInfo.rankid';
+  
+  $stmt = $db->prepare('SELECT rankid FROM Ranks WHERE classid = :classid');
+  $stmt->execute(array(':classid' => $classid));
+  $rankids = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+  return calculate_roster_from_subgroups($rankids, $bucketed, $bucket_limit);
+}
+
+
+// $bucket_keys: An array of standings key symbols
+// $bucket_multiplier is 0 for no bucketing (take top overall), or 1 for bucketing by key
+// $bucket_limit: How many racers per bucket.  May be exceeded for ties within a bucket.
+// $standings: A StandingsOracle instance
+function calculate_roster_from_keys($bucket_keys, $bucket_multiplier, $bucket_limit, &$standings) {
+  global $db;
+
+  $buckets = array();
+  while (count($buckets) < count($bucket_keys)) {
+    $buckets[] = array();
   }
 
-  // Rounds(roundid, round, classid)
-  // Roster(rosterid, roundid, classid, racerid)
-  // RaceChart(resultid, classid, roundid, heat, lane, racerid, finishtime, completed)
-  // RegistrationInfo(racerid, ..., classid, rankid)
-  $stmt = $db->prepare('SELECT Result.racerid, '.$bucketno_expr.' AS bucketno, score'
-                       .' FROM (SELECT racerid, Rounds.roundid, '
-                       .sql_scoring_expression('finishtime', 'finishplace').' AS score'
-                       .'       FROM RaceChart'
-                       .'       INNER JOIN Rounds'
-                       .'       ON RaceChart.roundid = Rounds.roundid'
-                       .'       WHERE RaceChart.roundid IN ('.implode(',', $constituent_roundids).')'
-                       .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
-                       // This is basically "GROUP BY racerid"; racerid will
-                       // determine Rounds.roundid uniquely, unless a racer is
-                       // part of two different constituent rounds; in that case,
-                       // we'll treat that racer like two different racers.
-                       .'       GROUP BY racerid, Rounds.roundid) AS Result'
-                       .' INNER JOIN RegistrationInfo'
-                       .'  ON Result.racerid = RegistrationInfo.racerid'
-                       .' WHERE passedinspection = 1 AND exclude = 0 '
-                       .$and_filter
-                       .' ORDER BY score');
-  $stmt->execute(array());
-  foreach ($stmt as $row) {
-    $bucketno = $row['bucketno'];
-    if (!isset($buckets[$bucketno])) {
-      $buckets[$bucketno] = array();
-    }
-    $n_in_bucket = count($buckets[$bucketno]);
-    if ($n_in_bucket < $bucket_limit ||
-        // If there's a tie for third when picking top 3, include additional finalists
-        $buckets[$bucketno][$n_in_bucket - 1]['score'] >= $row['score']) {
-
-      $finalists[] = array('racerid' => $row['racerid'] + 0,
-                           'bucket-nuber' => $bucketno + 0,
-                           'score' => $row['score'] + 0);
-      $buckets[$bucketno][] = array('racerid' => $row['racerid'], 'score' => $row['score']);
+  foreach ($standings->result_summary as &$row) {
+    foreach ($row['outcome'] as $key => $place) {
+      if (($bucketno = array_search($key, $bucket_keys)) !== false) {
+        $bucket = &$buckets[$bucketno * $bucket_multiplier];
+        $n_in_bucket = count($bucket);
+        if ($n_in_bucket < $bucket_limit ||
+            $bucket[$n_in_bucket - 1]['score'] >= $row['score']) {
+          $bucket[] = array('racerid' => $row['racerid'], 'score' => $row['score']);
+        }
+        break;
+      }
     }
   }
-  $stmt->closeCursor();
 
+  json_out('debug', array('bucket_multiplier' => $bucket_multiplier,
+                          'bucket_keys' => $bucket_keys,
+                          'bucket_limit' => $bucket_limit,
+                          'buckets' => $buckets));
+
+  $finalists = array();
+
+  foreach ($buckets as $b) {
+    foreach ($b as $racer) {
+      $finalists[] = array('racerid' => $racer['racerid'] + 0,
+                           'score' => $racer['score'] + 0);
+    }
+  }
+  return $finalists;
+}
+
+function write_roster_entries($new_roundid, $classid, &$finalists) {
+  global $db;
   $stmt = $db->prepare('INSERT INTO Roster(roundid, classid, racerid)'
                        .' VALUES(:roundid, :classid, :racerid)');
-  foreach ($buckets as $bucket) {
-    foreach ($bucket as $racer) {
-      $stmt->execute(array(':roundid' => $new_roundid,
-                           ':classid' => $classid,
-                           ':racerid' => $racer['racerid']));
-    }
+  foreach ($finalists as $racer) {
+    $stmt->execute(array(':roundid' => $new_roundid,
+                         ':classid' => $classid,
+                         ':racerid' => $racer['racerid']));
   }
 }
 

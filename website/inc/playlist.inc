@@ -71,23 +71,26 @@ function activate_playlist_entry(&$playlist_entry) {
   if (read_single_value('SELECT COUNT(*) FROM Roster WHERE roundid = :roundid',
                                      array(':roundid' => $roundid)) == 0) {
     if ($playlist_entry['round'] == 1) {
-      $bucketing = $playlist_entry['bucketed'] ? ROSTER_BUCKETED_AGGREGATE : ROSTER_UNBUCKETED;
-      $constituent_classids = read_single_value('SELECT constituents FROM Classes'
-                                                .' WHERE classid = :classid',
-                                                array(':classid' => $playlist_entry['classid']));
-      $constituent_roundids = implode(',', highest_rounds($constituent_classids));
+      list($constituents, $rankids) =
+          read_single_row('SELECT constituents, rankids FROM Classes'
+                          .' WHERE classid = :classid',
+                          array(':classid' => $playlist_entry['classid']));
+      if (empty($rankids)) {
+        $finalists = calculate_roster_from_classes(explode(',', $constituents),
+                                                   $playlist_entry['bucketed'],
+                                                   $playlist_entry['bucket_limit']);
+      } else {
+        $finalists = calculate_roster_from_subgroups(explode(',', $rankids),
+                                                     $playlist_entry['bucketed'],
+                                                     $playlist_entry['bucket_limit']);
+      }
     } else {
-      // Follow-on round
-      $bucketing = $playlist_entry['bucketed'] ? ROSTER_BUCKETED_ORGANIC : ROSTER_UNBUCKETED;
-      $constituent_roundids = read_single_value('SELECT roundid FROM Rounds'
-                                                .' WHERE classid = :classid'
-                                                .'  AND round = :round',
-                                                array(':classid' => $playlist_entry['classid'],
-                                                      ':round' => $playlist_entry['round'] - 1));
+      $finalists = calculate_roster_follow_on_round($playlist_entry['classid'],
+                                                    $playlist_entry['bucketed'],
+                                                    $plaaylist_entry['bucket_limit']);
     }
-    $finalists = array();
-    populate_roster($bucketing, $roundid, $playlist_entry['classid'], $playlist_entry['bucket_limit'],
-                    explode(',', $constituent_roundids), /* rankids */array(), $finalists);
+    json_out('finalists', $finalists);
+    write_roster_entries($roundid, $playlist_entry['classid'], $finalists);
   }
   if ($playlist_entry['n_times_per_lane'] > 0 &&
       read_single_value('SELECT COUNT(*) FROM RaceChart'

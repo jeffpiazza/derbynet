@@ -257,7 +257,7 @@ function generate_scheduling_control_group(round, current, timer_state) {
               + '</div>')
       .append($("<div data-name=\"buttons\" class=\"block_buttons collapsible\"/>"));
 
-  if (round.next) {
+  if (round['next-round']) {
     control_group.find('h3.roundclass').append('<div class="next_tag">NEXT</div>');
   }
 
@@ -541,6 +541,7 @@ function process_coordinator_poll_json(json) {
                                           !json['timer-state']['remote-start']);
 
   g_ready_aggregate_classes = json['ready-aggregate'];
+
   for (var i = 0; i < json.rounds.length; ++i) {
     // May get changed to now-racing for the current round
     json.rounds[i].category = 

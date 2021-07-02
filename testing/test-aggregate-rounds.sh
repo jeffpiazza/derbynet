@@ -45,38 +45,44 @@ curl_postj action.php "action=roster.delete&roundid=6" | check_jsuccess
 # for the next 'roster.new' operation, below.
 
 ## Create "Younger Finals" aggregate of roundid 1,2 and race the round
-curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_1=1&roundid_2=1&classname=Younger%20Finals" | check_jsuccess
+curl_postj action.php "action=roster.new&top=4&bucketed=1&classid_1=1&classid_2=1&classname=Younger%20Finals" | check_jsuccess
 jq -e '.finalists | map(.racerid) | sort == [1,11,17,26,31,47,62,77]' $DEBUG_CURL >/dev/null || test_fails
 
 curl_postj action.php "action=schedule.generate&roundid=6" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=6&now_racing=1" | check_jsuccess
-run_heat	6	1	3.103	3.762	3.359	3.471
-run_heat	6	2	3.757	3.635	3.085	3.328
-run_heat	6	3	3.586	3.749	3.095	3.494
-run_heat	6	4	3.095	3.645	3.836	3.54
-run_heat	6	5	3.087	3.278	3.702	3.135
-run_heat	6	6	3.602	3.405	3.632	3.523
-run_heat	6	7	3.685	3.136	3.737	3.419
-run_heat	6	8	3.000	3.477	3.67	3.512 x
+
+
+run_heat 6 1  126:3.103 131:3.762 262:3.359 277:3.471
+run_heat 6 2  101:3.757 111:3.635 247:3.085 126:3.328
+run_heat 6 3  131:3.586 262:3.749 217:3.095 101:3.494
+run_heat 6 4  111:3.095 247:3.645 277:3.836 131:3.540
+run_heat 6 5  262:3.087 217:3.278 126:3.702 111:3.135
+run_heat 6 6  247:3.602 277:3.405 101:3.632 262:3.523
+run_heat 6 7  217:3.685 126:3.136 131:3.737 247:3.419
+run_heat 6 8  277:3.000 101:3.477 111:3.670 217:3.512  x
+
 
 ## Create "Older Finals" aggregate of roundid 3,4,5, and race
-curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_3=1&roundid_4=1&roundid_5=1&classname=Older%20Finals" | check_jsuccess
+curl_postj action.php "action=roster.new&top=4&bucketed=1&classid_3=1&classid_4=1&classid_5=1&classname=Older%20Finals" | check_jsuccess
 jq -e '.finalists | map(.racerid) | sort == [9,18,19,20,35,45,50,58,63,69,74,78]' $DEBUG_CURL >/dev/null || test_fails
+
 
 curl_postj action.php "action=schedule.generate&roundid=7" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=7&now_racing=1" | check_jsuccess
-run_heat	7	1	3.85	3.145	3.849	3.288
-run_heat	7	2	3.706	3.212	3.343	3.711
-run_heat	7	3	3.282	3.51	3.703	3.653
-run_heat	7	4	3.785	3.835	3.264	3.024
-run_heat	7	5	3.081	3.502	3.65	3.256
-run_heat	7	6	3.12	3.286	3.209	3.89
-run_heat	7	7	3.352	3.673	3.355	3.039
-run_heat	7	8	3.11	3.026	3.401	3.152
-run_heat	7	9	3.756	3.763	3.38	3.056
-run_heat	7	10	3.45	3.692	3.079	3.329
-run_heat	7	11	3.003	3.79	3.47	3.199
-run_heat	7	12	3.563	3.857	3.255	3.742 x
+
+run_heat 7 1   358:3.756 318:3.763 515:3.380 435:3.056
+run_heat 7 2   363:3.450 378:3.692 502:3.079 358:3.329
+run_heat 7 3   318:3.003 514:3.790 420:3.470 363:3.199
+run_heat 7 4   378:3.563 504:3.857 445:3.255 318:3.742
+run_heat 7 5   514:3.850 515:3.145 450:3.849 378:3.288
+run_heat 7 6   504:3.706 502:3.212 435:3.343 514:3.711
+run_heat 7 7   515:3.282 420:3.510 358:3.703 504:3.653
+run_heat 7 8   502:3.785 445:3.835 363:3.264 515:3.024
+run_heat 7 9   420:3.081 450:3.502 318:3.650 502:3.256
+run_heat 7 10  445:3.120 435:3.286 378:3.209 420:3.890
+run_heat 7 11  450:3.352 358:3.673 514:3.355 445:3.039
+run_heat 7 12  435:3.110 363:3.026 504:3.401 450:3.152 x
+
 
 ## Race a second round of Older Finals
 curl_postj action.php "action=roster.new&top=8&roundid=7" | check_jsuccess
@@ -85,28 +91,29 @@ jq -e '.finalists | map(.racerid) | sort == [9,20,35,45,50,63,74,78]' $DEBUG_CUR
 curl_postj action.php "action=schedule.generate&roundid=8" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=8&now_racing=1" | check_jsuccess
 
-run_heat	8	1	3.862	3.887	3.162	3.234
-run_heat	8	2	3.329	3.401	3.554	3.015
-run_heat	8	3	3.674	3.837	3.102	3.5
-run_heat	8	4	3.792	3.685	3.096	3.53
-run_heat	8	5	3.819	3.501	3.624	3.451
-run_heat	8	6	3.183	3.007	3.227	3.665
-run_heat	8	7	3.37	3.512	3.448	3.486
-run_heat	8	8	3.028	3.104	3.049	3.301 x
+run_heat 8 1  435:3.862 363:3.887 502:3.162 420:3.234
+run_heat 8 2  515:3.329 445:3.401 378:3.554 435:3.015
+run_heat 8 3  363:3.674 502:3.837 450:3.102 515:3.500
+run_heat 8 4  445:3.792 378:3.685 420:3.096 363:3.530
+run_heat 8 5  502:3.819 450:3.501 435:3.624 445:3.451
+run_heat 8 6  378:3.183 420:3.007 515:3.227 502:3.665
+run_heat 8 7  450:3.370 435:3.512 363:3.448 378:3.486
+run_heat 8 8  420:3.028 515:3.104 445:3.049 450:3.301 x
 
 ## Create a final final of the other two GF's
-curl_postj action.php "action=roster.new&top=4&bucketed=1&roundid_8=1&roundid_6=1&classname=Final%20Finals" | check_jsuccess
+curl_postj action.php "action=roster.new&top=4&bucketed=1&classid_7=1&classid_6=1&classname=Final%20Finals" | check_jsuccess
 jq -e '.finalists | map(.racerid) | sort == [11,17,20,26,45,50,74,77]' $DEBUG_CURL >/dev/null || test_fails
 
 curl_postj action.php "action=schedule.generate&roundid=9" | check_jsuccess
 curl_postj action.php "action=heat.select&roundid=9&now_racing=1" | check_jsuccess
 
-run_heat	9	1	3.061	3.857	3.565	3.674
-run_heat	9	2	3.825	3.672	3.592	3.106
-run_heat	9	3	3.392	3.409	3.651	3.577
-run_heat	9	4	3.65	3.132	3.415	3.85
-run_heat	9	5	3.895	3.052	3.636	3.096
-run_heat	9	6	3.598	3.415	3.625	3.831
-run_heat	9	7	3.059	3.54	3.306	3.714
-run_heat	9	8	3.563	3.657	3.648	3.895 x
+run_heat 9 1  420:3.061 450:3.857 126:3.565 277:3.674
+run_heat 9 2  515:3.825 445:3.672 111:3.592 420:3.106
+run_heat 9 3  450:3.392 126:3.409 217:3.651 515:3.577
+run_heat 9 4  445:3.65 111:3.132 277:3.415 450:3.85
+run_heat 9 5  126:3.895 217:3.052 420:3.636 445:3.096
+run_heat 9 6  111:3.598 277:3.415 515:3.625 126:3.831
+run_heat 9 7  217:3.059 420:3.54 450:3.306 111:3.714
+run_heat 9 8  277:3.563 515:3.657 445:3.648 217:3.895  x
+
 

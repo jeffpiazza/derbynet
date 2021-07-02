@@ -225,7 +225,8 @@ function expect_eq {
 
 # Confirm what roundid/heat is current and simulate timer interaction for running one heat
 # Usage: run_heat <roundid> <heat> <lane1> <lane2> <lane3> <lane4> ?<skip-check_heat_ready>
-#  where <laneN> is either just a time, or a carnumber plus a time, e.g., 101:3.210
+#  where <laneN> is either just a time, a carnumber plus a time, e.g.,
+#  101:3.210, or a hypen for a bye.
 function run_heat() {
     SKIP_CHECK_HEAT_READY=0
 
@@ -261,14 +262,20 @@ function run_heat() {
 
     FINISHED=""
     LANE=1
+    BYES=0
     while [ $# -gt 0 ]; do
         if [ "$1" = "x" ] ; then
             SKIP_CHECK_HEAT_READY=1
+        elif [[ "$1" == "-" ]] ; then
+            # Lane not occupied.  CARNOS won't have a blank, so adjust BYES
+            let BYES+=1
+            let LANE+=1
+            if [ $SUGGEST_UPDATE ] ; then echo -n " -" ; fi
         elif [[ "$1" == *:* ]] ; then
             EXPECTED_CARNO=$(echo "$1" | cut -d: -f1)
             TIME=$(echo "$1" | cut -d: -f2)
 
-            ACTUAL_CARNO=$(echo $CARNOS | jq -j ".[$LANE-1]")
+            ACTUAL_CARNO=$(echo $CARNOS | jq -j ".[$LANE-$BYES-1]")
 
             if [[ "$EXPECTED_CARNO" != "$ACTUAL_CARNO" ]] ; then
                 test_fails Wrong car number in lane $LANE: \
@@ -279,11 +286,7 @@ function run_heat() {
             let LANE+=1
         else
             FINISHED="$FINISHED&lane$LANE=$1"
-            if [ $SUGGEST_UPDATE ] ; then
-                echo -n " "
-                echo $CARNOS | jq -j ".[$LANE-1]"
-                echo -n ":$1"
-            fi
+            if [ $SUGGEST_UPDATE ] ; then echo -n " $(echo $CARNOS | jq -j ".[$LANE-$BYES-1]"):$1" ; fi
             let LANE+=1
         fi
         shift

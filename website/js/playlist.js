@@ -177,7 +177,6 @@ function show_create_roster_dialog(classid, roundno) {
   // roster.new action:
   // For a follow-on round (round >= 2): $_POST['roundid'] + $_POST['top'] + ['bucketed']
   // For a first aggregate (round = 1 and no roundid), classid for the aggregate class, plus top + bucketed
-  classid = parseInt(classid);
   var cl = g_classes[classid];
 
   $("#add-to-queue-modal .hidable").addClass('hidden');
@@ -352,8 +351,6 @@ function build_rounds(queue, classes) {
   var highest_round = 0;  // Highest round overall
   $.each(queue, function(i, entry) {
     // entry = {classid, round}
-    entry.round = parseInt(entry.round);
-    entry.seq = parseInt(entry.seq);
     if (entry.round > highest_round) {
       highest_round = entry.round;
     }
@@ -366,8 +363,8 @@ function build_rounds(queue, classes) {
   // highest round overall
   $.each(g_all_rounds, function(classid, round_entries) {
     $.each(round_entries, function(i, round_entry) {
-      round_entry.round = parseInt(round_entry.round);
-      round_entry.heats_scheduled = parseInt(round_entry.heats_scheduled);
+      round_entry.round = round_entry.round;
+      round_entry.heats_scheduled = round_entry.heats_scheduled;
       if (round_entry.round > highest_round) {
         highest_round = round_entry.round;
       }
@@ -418,8 +415,8 @@ function build_rounds(queue, classes) {
                 }
               })
               .toggleClass('finished',
-                           round_entry
-                           ? (round_entry.heats_run >= round_entry.heats_scheduled) : false)
+                           round_entry != null && round_entry.heats_run > 0 &&
+                           round_entry.heats_run >= round_entry.heats_scheduled)
               .on('click', on_add_round_to_queue)
           );
         }

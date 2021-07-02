@@ -35,7 +35,7 @@ jq '.finalists | map(.racerid) | sort as $racers | $racers == [7,27,47] or $race
 # Grand Finals round, 4 from each den
 # In test-basic-checkins, Bears & Freres only have 2 racers, so it's a total of 14 racers
 # In test-master-schedule, Bears & Freres have 2 racers, and Webelos only 3, so it's a total of 13 finalists
-curl_postj action.php "action=roster.new&roundid=&top=4&bucketed=1&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals" \
+curl_postj action.php "action=roster.new&roundid=&top=4&bucketed=1&classid_1=1&classid_2=1&classid_3=1&classid_4=1&classname=Grand%20Finals" \
  | check_jsuccess
 jq '.finalists | map(.racerid) | sort as $racers | 
     $racers == [1,3,5,7,9,21,27,31,37,39,41,43,47,49] or
@@ -46,7 +46,7 @@ ROUNDID=$(jq '.["new-round"].roundid' $DEBUG_CURL)
 curl_postj action.php "action=roster.delete&roundid=$ROUNDID" | check_jsuccess
 
 # Grand Finals round, top 5 overall
-curl_postj action.php "action=roster.new&roundid=&top=5&roundid_1=1&roundid_2=1&roundid_3=1&roundid_4=1&classname=Grand%20Finals-2" | check_jsuccess
+curl_postj action.php "action=roster.new&roundid=&top=5&classid_1=1&classid_2=1&classid_3=1&classid_4=1&classname=Grand%20Finals-2" | check_jsuccess
 jq -e '.finalists | map(.racerid) | sort as $racers |
     $racers == [3,7,27,39,49] or
     $racers == [1,6,36,42,66]' $DEBUG_CURL >/dev/null || test_fails

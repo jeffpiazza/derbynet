@@ -46,7 +46,7 @@ curl_postj action.php "action=heat.rerun&heat=last" | check_jsuccess
 user_login_timer
 
 # Now re-run with a tie for first place
-run_heat 1 3   3.3 3.1 3.1 3.4
+run_heat 1 3  121:3.3 141:3.1 111:3.1 131:3.4
 
 user_login_coordinator
 curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
@@ -57,7 +57,7 @@ curl_postj action.php "action=heat.rerun&heat=last" | check_jsuccess
 user_login_timer
 
 # Finally, re-run the heat again, now with four good times:
-run_heat 1 3   3.3 3.2 3.1 3.4
+run_heat 1 3  121:3.3 141:3.2 111:3.1 131:3.4
 
 user_login_coordinator
 curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"

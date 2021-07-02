@@ -130,11 +130,9 @@ function record_event_create_round($roundid, $classid, $roundno) {
 function record_event_delete_round($classid, $roundid) {
   $roundno = -1;
   if ($roundid >= 0) {
-    $round = read_single_row('SELECT classid, round FROM Rounds'
+    list($classid, $roundno) = read_single_row('SELECT classid, round FROM Rounds'
                              .' WHERE roundid = :roundid',
                              array(':roundid' => $roundid));
-    $classid = $round[0];
-    $roundno = $round[1];
   }
   $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                  array(':classid' => $classid));

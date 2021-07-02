@@ -72,7 +72,7 @@ function handle_previous_heat_button() {
 }
 
 function handle_rerun(button) {
-  var rerun_type = $(button).prop('data-rerun');
+  var rerun_type = $(button).attr('data-rerun');
   // rerun_type values are: 'none', recoverable, available, current
   if (rerun_type == 'current' || rerun_type == 'available') {
     $.ajax(g_action_url,
@@ -325,6 +325,7 @@ function update_bucketed_checkbox(for_group) {
 
 // Create a follow-on round to an existing round.
 function handle_new_round_follow_on(roundid) {
+  console.log('follow-on for roundid=' + roundid);  // TODO
   close_modal_leave_background("#choose_new_round_modal");
   $("#new-round-modal div").removeClass("hidden");
   $(".aggregate-only").addClass("hidden");
@@ -464,6 +465,7 @@ function handle_start_playlist() {
 }
 
 function populate_new_round_modals() {
+  // Each round in completed_rounds is the highest round for its class and all its heats have been run.
   var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
 
   var add_aggregate = completed_rounds.length > 1;
@@ -478,41 +480,43 @@ function populate_new_round_modals() {
     while (i < completed_rounds.length) {
       if (completed_rounds[i].round == roundno) {
         var round = completed_rounds[i];
+        console.log(round);
         // For completed rounds, offer a button to generate a follow-on round
         var button = $('<input type="button"/>');
-        button.prop('value', round['class']);
+        button.attr('value', round['class']);
         // Although syntactically it looks like a new round variable is created
         // each time through the loop, it's actually just one variable that's
         // reused/assigned each time.  Capturing that reused variable in the on-click
         // function won't work, so, we need to record the current roundid on
         // the button itself.
-        button.prop('data-roundid', round.roundid);
+        button.attr('data-roundid', round.roundid);
         button.on('click', function(event) {
-          handle_new_round_follow_on($(this).prop('data-roundid'));
+          handle_new_round_follow_on($(this).attr('data-roundid'));
         });
         modal.append(button);
 
         // A completed round can also be incorporated into a new aggregate round
-        var flipswitch_div = $('<div class="flipswitch-div"></div>');
-        flipswitch_div.append($('<label for="roundid_' + round.roundid + '"'
-                                + ' class="aggregate-label"/>').text(round['class']));
-        flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
-                                + ' id="roundid_' + round.roundid + '"'
-                                + ' name="roundid_' + round.roundid + '"'
-                                + ' checked="checked"/>'));
-        constituent_rounds_div.append(flipswitch_div);
+        constituent_rounds_div.append(
+          $('<div class="flipswitch-div"></div>')
+            .append($('<label class="aggregate-label"/>')
+                    .attr('for', 'classid_' + round.classid)
+                    .text(round['class']))
+            .append($('<input type="checkbox" class="flipswitch" checked="checked"/>')
+                    .attr('id', 'classid_' + round.classid)
+                    .attr('name', 'classid_' + round.classid)));
 
         // A completed round gives subgroups to choose from
         for (var ri = 0; ri < round.subgroups.length; ++ri) {
           var subgroup = round.subgroups[ri];
-          var flipswitch_div = $('<div class="flipswitch-div"></div>');
-          flipswitch_div.append($('<label for="rankid_' + subgroup.rankid + '"'
-                                  + ' class="aggregate-label"/>').text(subgroup.name));
-          flipswitch_div.append($('<input type="checkbox" class="flipswitch"'
-                                  + ' id="rankid_' + subgroup.rankid + '"'
-                                  + ' name="rankid_' + subgroup.rankid + '"'
-                                  + ' checked="checked"/>'));
-          constituent_subgroups_div.append(flipswitch_div);
+          
+          constituent_subgroups_div.append(
+            $('<div class="flipswitch-div"></div>')
+              .append($('<label class="aggregate-label"/>')
+                      .attr('for', 'rankid_' + subgroup.rankid)
+                      .text(subgroup.name))
+              .append($('<input type="checkbox" class="flipswitch" checked="checked"/>')
+                      .attr('id', 'rankid_' + subgroup.rankid)
+                      .attr('name', 'rankid_' + subgroup.rankid)));
         }
         
         completed_rounds.splice(i, 1);
@@ -527,21 +531,38 @@ function populate_new_round_modals() {
     for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
       var agg = g_ready_aggregate_classes[i];
       var button = $('<input type="button"/>');
-      button.prop('value', agg['class']);
-      button.prop('data-classid', agg.classid);
-      button.prop('data-by-subgroup', agg['by-subgroup']);
+      button.attr('value', agg['class']);
+      button.attr('data-classid', agg.classid);
+      button.attr('data-by-subgroup', agg['by-subgroup']);
       button.on('click', function(event) {
         handle_new_round_aggregate_class(
-          $(this).prop('data-classid'),
-          $(this).prop('data-by-subgroup'));
+          $(this).attr('data-classid'),
+          $(this).attr('data-by-subgroup'));
       });
       modal.append(button);
+
+      // Aggregate rounds ready for scheduling can also be incorporated as
+      // non-racing constituents for a new aggregate round.
+      if (!g_ready_aggregate_classes[i]['by-subgroup']) {
+        var id = 'classid_' + g_ready_aggregate_classes[i]['classid'];
+        constituent_rounds_div.append(
+          $('<div class="flipswitch-div"></div>')
+            .append($('<label class="aggregate-label"/>')
+                    .attr('for', id)
+                    .text(g_ready_aggregate_classes[i]['class']))
+            // leave these unchecked by default
+            .append($('<input type="checkbox" class="flipswitch"/>')
+                    .attr('id', id)
+                    .attr('name', id)));
+      }
     }
     var button = $('<input type="button" value="Aggregate Round"/>');
     button.on('click', function(event) { handle_new_round_make_aggregate(); });
     modal.append(button);
+
     flipswitch($("#constituent-div").find("input[type='checkbox']"));
   }
+  
   modal.append('<h3>&nbsp;</h3>');
   modal.append('<input type="button" value="Cancel"'
                + ' onclick=\'close_modal("#choose_new_round_modal");\'/>');

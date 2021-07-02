@@ -78,6 +78,7 @@ run_tests() {
 
     `dirname $0`/test-aggregate-rounds.sh "$BASE_URL"
     `dirname $0`/test-aggregate-classes.sh "$BASE_URL"
+    `dirname $0`/test-aggregate-nonracing.sh "$BASE_URL"
 
 ############################## Snapshot Export and Import ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"

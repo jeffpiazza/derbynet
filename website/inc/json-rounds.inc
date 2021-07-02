@@ -1,8 +1,9 @@
 <?php
 
 require_once('inc/rounds.inc');
+require_once('inc/playlist.inc');
 
-function json_all_rounds() {
+function json_all_rounds(&$now_running) {
   $next_roundid = false;
   if (isset($now_running['roundid'])) {
     $q = playlist_entry_for($now_running['roundid']);

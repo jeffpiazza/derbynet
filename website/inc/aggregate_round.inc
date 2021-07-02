@@ -96,23 +96,24 @@ function nonracing_aggregate_classids() {
   return $results;
 }
 
-function create_aggregate_class($classname, $all_roundids, $durable) {
+function create_aggregate_class($classname, $constituents, $rankids, $durable) {
   global $db;
   $classid = create_class($classname, /* with_first_round= */ false);
 
-  $constituents = array();
-  $stmt = $db->prepare('SELECT DISTINCT classid FROM Rounds'
-                       .'      WHERE roundid IN ('.implode(',', $all_roundids).')');
-  $stmt->execute(array());
-  foreach ($stmt as $row) {
-    $constituents[] = $row['classid'];
+  if (is_array($constituents)) {
+    $constituents = implode(',', $constituents);
+  }
+  if (is_array($rankids)) {
+    $rankids = implode(',', $rankids);
   }
 
   $stmt = $db->prepare('UPDATE Classes'
                        .' SET constituents = :constituents,'
+                       .' rankids = :rankids,'
                        .' durable = :durable'
                        .' WHERE classid = :classid');
-  $stmt->execute(array(':constituents' => implode(',', $constituents),
+  $stmt->execute(array(':constituents' => $constituents,
+                       ':rankids' => $rankids,
                        ':durable' => $durable,
                        ':classid' => $classid));
   

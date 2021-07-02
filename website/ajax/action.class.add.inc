@@ -1,14 +1,17 @@
 <?php
 // Adding a class:
 // $_POST['name']
-// Optional $_POST['constituent_' + classid] for each constituent classid
 // Optional $_POST['ntrophies']
+// For aggregate classes, use EITHER constituent_ keys or rankid_ keys, but not both:
+//     $_POST['constituent_' + classid] for each constituent classid
+//  OR $_POST['rankid_' + rankid] for each constituent rankid
 
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/newracer.inc');
 require_once('inc/classes.inc');
+require_once('inc/aggregate_round.inc');
 
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['name'])) {
@@ -36,15 +39,7 @@ if (have_permission(SET_UP_PERMISSION)) {
         // using rank names.
         $rankid = find_or_create_rank($classname, $classid);
       } else {  // Aggregate class
-        $classid = create_class($classname, /*with_first_round=*/false);
-        $stmt = $db->prepare('UPDATE Classes'
-                             .' SET constituents = :constituents,'
-                             .' rankids = :rankids,'
-                             .' durable = 1'
-                             .' WHERE classid = :classid');
-        $stmt->execute(array(':constituents' => implode(',', $constituents),
-                             ':rankids' => implode(',', $rankids),
-                             ':classid' => $classid));
+        $classid = create_aggregate_class($classname, $constituents, $rankids, /*durable*/1);
       }
       if (isset($_POST['ntrophies'])) {
         update_ntrophies($classid, $_POST['ntrophies']);

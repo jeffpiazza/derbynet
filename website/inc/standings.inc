@@ -51,8 +51,8 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
 // to the user:
 //
 // CLASS standings presentation: The presentation of standings for a class with
-// racing rounds is simple the ROUND standings of the highest-numbered round for
-// that class.  This applies both to native classes, and to aggregate classes
+// racing rounds is simply the ROUND standings of the highest-numbered round for
+// that class.  This applies both to organic classes, and to aggregate classes
 // that have associated racing rounds.  If there are (say) 2 rounds of racing
 // for the class, this means that racers eliminated in the first round don't
 // have a class standing for the class.
@@ -150,6 +150,8 @@ class StandingsOracle {
     $this->add_rolls_up_to_relation();
     $this->add_rounds_by_class();
 
+    $this->unfinished_rounds = unfinished_rounds();
+
     $this->result_summary = $this->make_result_summary();
     // Writes $this->all_standings
     $this->compute_all_standings();
@@ -166,12 +168,15 @@ class StandingsOracle {
   private $ranks;
   private $rankseq;
 
+  private $unfinished_rounds;
+  
   public $result_summary;
   public $all_standings;
   // Maps catalog key to number of entries included in those standings
   public $catalog_counts;
 
-  // Returns classid => { ... }
+  // Returns classid => {classid:, class:, unscheduled:, unfinished:,
+  //                     constituents:, rankids:, rolls_up_to:, rounds: ... }
   private function make_class_details() {
     global $db;
     $stmt = $db->prepare('SELECT classid, class,'
@@ -213,7 +218,6 @@ class StandingsOracle {
     }
 
     // Propagate 'rolls_up_to' relation across non-racing aggregate classes
-    $max = 10;
     do {
       $repeat = false;
       foreach ($this->class_details as $classid => &$row) {
@@ -228,7 +232,7 @@ class StandingsOracle {
           }
         }
       }
-    } while ($repeat && --$max > 0);
+    } while ($repeat);
   }
 
   function add_rounds_by_class() {
@@ -257,8 +261,9 @@ class StandingsOracle {
   //    classid, class -- name of racer's (native) class (i.e., not "Grand Finals")
   //    rankid, rank -- name of racer's rank
   //    base -- number of heats run in round
-  //    time -- "average" time in this round, possibly after discarding worst heat
-  //    best, worst -- fastest and slowest time in this round
+  //    score -- result of the scoring expression
+  //    avg -- "average" score in this round, possibly after discarding worst heat
+  //    best, worst -- fastest and slowest score in this round
   private function make_result_summary() {
     global $db;
 
@@ -332,8 +337,6 @@ class StandingsOracle {
   // outcome: field.  The outcome value is a map of standings key to ladder
   // index in the ladder for the same key.
   private function compute_all_standings($for_awards = false) {
-    $unfinished_rounds = unfinished_rounds();  // TODO
-
     $trackers = array();  // An array of key => StandingsTracker
 
     // $add_outcome records a category place in the annotation entry in $parallel.
@@ -350,9 +353,11 @@ class StandingsOracle {
 
       $add_outcome(stkey_round($row['roundid']), $row);
 
-      if (!isset($unfinished_rounds[$row['roundid']])) {
+      if (!isset($this->unfinished_rounds[$row['roundid']])) {
         $cl = &$this->class_details[$row['round_classid']];
         if (count($cl['rounds']) > 0 && $row['roundid'] == $cl['rounds'][0]['roundid']) {
+          // Final round for this class, so this round result bears on the class standing
+          // and beyond
           if ($this->use_subgroups) {
             $add_outcome(stkey_round_subgroup($row['roundid'], $row['rankid']), $row);
           }
@@ -437,6 +442,14 @@ class StandingsOracle {
     } else {
       return array();
     }
+  }
+
+  function subgroups($classid) {
+    $rankids = array();
+    foreach ($this->class_details[$classid]['subgroups'] as $subgroup) {
+      $rankids[] = $subgroup['rankid'];
+    }
+    return $rankids;
   }
 
   private function write_standings_table_headers() {
@@ -600,6 +613,35 @@ class StandingsOracle {
     $this->write_standings_table_rows();
   }
 
+  function highest_round($classid) {
+    $rounds = $this->class_details[$classid]['rounds'];
+    for ($i = 0; $i < count($rounds); ++$i) {
+      if (!isset($this->unfinished_rounds[$rounds[$i]['roundid']])) {
+        return $rounds[$i]['roundid'];
+      }
+    }
+
+    return null;
+  }
+
+  public function class_key($classid) {
+    $roundid = $this->highest_round($classid);
+    if ($roundid) {
+      return stkey_round($roundid);
+    }
+    if (!empty($this->class_details[$classid]['constituents'])) {
+      return stkey_qual($classid);
+    }
+  }
+
+  public function rank_key($rankid) {
+    $classid = $this->ranks[$rankid]['classid'];
+    $roundid = $this->highest_round($classid);
+    if ($roundid) {
+      return stkey_round_subgroup($roundid, $rankid);
+    }
+  }
+  
   // Presentation determines:
   // (1) What to show in the first column
   // (2) Which other columns to show:
@@ -634,21 +676,27 @@ class StandingsOracle {
       $cl = $this->class_details[$classid];
       $details = $this->class_details[$classid];
       if (count($details['rounds']) > 0) {
-        $rounds = &$details['rounds'];
+        $rounds = $details['rounds'];
         // The final round for a class is listed first
-        $scoring_roundid = array_shift($rounds)['roundid'];
+        do {
+          $scoring_roundid = array_shift($rounds)['roundid'];
+        } while (isset($this->unfinished_rounds[$scoring_roundid]));
+
+        $this->class_keys[$classid] = stkey_round($scoring_roundid);
 
         if ($this->use_groups) {
           $catalog[] = array('name' => $cl['class'],
                              'key' => stkey_round($scoring_roundid),
                              'presentation' => 'class');
         }
-        if ($this->use_subgroups) {
-          for (; $rankseq_index < count($this->rankseq); ++$rankseq_index) {
-            $rank = $this->ranks[$this->rankseq[$rankseq_index]];
-            if ($rank['classid'] != $classid) {
-              break;
-            }
+
+        for (; $rankseq_index < count($this->rankseq); ++$rankseq_index) {
+          $rank = $this->ranks[$this->rankseq[$rankseq_index]];
+          if ($rank['classid'] != $classid) {
+            break;
+          }
+
+          if ($this->use_subgroups) {
             $catalog[] = array('name' => $cl['class'].' / '.$rank['rank'],
                                'key' => stkey_round_subgroup($scoring_roundid, $rank['rankid']),
                                'presentation' => 'subgroup');
@@ -685,6 +733,7 @@ class StandingsOracle {
         }
       } else {
         // Nonracing aggregate class
+        $this->class_keys[$classid] = stkey_qual($classid);
         $catalog[] = array('name' => $cl['class'],
                            'key' => stkey_qual($classid),
                            'presentation' => 'qual');
