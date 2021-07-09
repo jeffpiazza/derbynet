@@ -83,12 +83,12 @@ function calculate_roster_from_keys($bucket_keys, $bucket_multiplier, $bucket_li
       }
     }
   }
-
+  /*
   json_out('debug', array('bucket_multiplier' => $bucket_multiplier,
                           'bucket_keys' => $bucket_keys,
                           'bucket_limit' => $bucket_limit,
                           'buckets' => $buckets));
-
+  */
   $finalists = array();
 
   foreach ($buckets as $b) {
