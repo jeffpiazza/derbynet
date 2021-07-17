@@ -34,9 +34,9 @@ if (warn_no_timer()) {
 $now_running = get_running_round();
 json_out('current-heat', json_current_heat($now_running));
 
-$time_format = get_finishtime_formatting_string();
 // This lets the js reserve room for the right number of digits
-json_out('zero', sprintf($time_format, 0.0));
+$time_format = get_finishtime_formatting_string();
+json_out('precision', $time_format == "%6.4f" ? 4 : 3);
 
 if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
   json_out('timer-test', true);
