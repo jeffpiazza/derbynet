@@ -8,11 +8,6 @@ div.banner img {
   max-height: 6.2vh;
 }
 
-div.lower-right {
-  position: fixed;
-  bottom: 0px;
-  right: 0px;
-}
 div#all-lanes {
   /* This kills the gap between inline-block elements */
   font-size: 0px;
@@ -86,10 +81,38 @@ div.racer img {
 div.bottom-banner {
   position: fixed;
   bottom: 0px;
-  height: 8vh;
+  height: 9.8vh;  /* 100 - 6.8(banner) - 10(lane_number) - 73.4(rollable) */
   width: 100%;
   background-color: #8080c0;
 }
+
+div.bottom-banner div.label {
+  width: 12vh;
+  height: 9.8vh;
+  margin-left: 1.5vh;
+  font-size: 2.5vh;
+  display: inline-block;
+  text-align: center;
+}
+
+div.bottom-banner div.best-time {
+  width: 10vh;
+  height: 9.8vh;
+  display: inline-block;
+  font-size: 3.5vh;
+  text-align: center;
+  border-right: 0.8vh solid #8080c0;
+  background-color: #2d2d42;
+  color: white;
+}
+div.bottom-banner div.best-time div.carno {
+  margin-top: 0.5vh;
+}
+
+div.bottom-banner div.best-time div.time {
+  font-size: 2.5vh;
+}
+
 
 html, body, table { width: 100%; height: 100%; margin: 0; padding: 0; }
 

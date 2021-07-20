@@ -78,7 +78,8 @@ class ResultAnimator {
     this.animation_running = false;
     this.results_written = false;
   }
-  
+
+  waiting_for_results() { return ! this.results_written; }
   ok_to_change() { return ! this.animation_running; }
 
   async onHeatResults(precision, heat_results) {
@@ -120,6 +121,21 @@ function vcenter_image(event) {
   target.css('margin-left', (target.parent().width() - target.width()) / 2);
 }
 
+function update_best_times(best_times) {
+  var tiles = $("div.bottom-banner div.best-time");
+  for (var i = 0; i < best_times.length; ++i) {
+    if (i < tiles.length) {
+      tiles.eq(i).find('.carno').text(best_times[i].carnumber);
+      tiles.eq(i).find('.time').text(best_times[i].finishtime);
+    } else {
+      $("div.bottom-banner").append(
+        $('<div class="best-time"/>')
+          .append($('<div class="carno"/>').text(best_times[i].carnumber))
+          .append($('<div class="time"/>').text(best_times[i].finishtime)));
+    }
+  }
+}
+
 
 function process_polling_result(data) {
   var current_heat = data["current-heat"];
@@ -136,6 +152,9 @@ function process_polling_result(data) {
   if (heat_results && heat_results.length > 0) {
     g_result_animator.onHeatResults(data.precision, heat_results);
   }
+
+  update_best_times(data['best-times']);
+
   var heat_key = current_heat.roundid + "+" + current_heat.heat;
   var now_showing = $("div.rollable").first().find("div.racer-entry").eq(0).attr("data-heat-key");
   if (heat_key != now_showing) {
@@ -219,7 +238,6 @@ function queue_next_request() {
 function resize_window() {
   var width = $(window).width();
   $("div.lane").css("width", width / g_number_of_lanes + "px");
-  $("#screen_size").text(width + " x " + $(window).height());
 
   $("div.lane").each(function(i, div_lane) {
       // TODO Bye lanes?  

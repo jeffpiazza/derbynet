@@ -13,6 +13,7 @@
 //    heat-results: [{lane, time, place, speed}...] if results are available
 //    racers: [{lane name carname carnumber photo}...]
 
+require_once('inc/data.inc');
 require_once('inc/json-current-heat.inc');
 require_once('inc/json-current-racers.inc');
 require_once('inc/json-heat-results.inc');
@@ -75,5 +76,15 @@ if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
 
   json_out('racers', json_current_racers($now_running, read_name_style(), $render));
 }
+
+// TODO Needs refinement
+$stmt = $db->prepare('SELECT carnumber, finishtime'
+                     .' FROM RaceChart JOIN RegistrationInfo'
+                     .' USING (racerid)'
+                     .' WHERE finishtime IS NOT NULL AND finishtime > 0'
+                     .' ORDER BY finishtime'
+                     .' LIMIT 15');
+$stmt->execute(array());
+json_out('best-times', $stmt->fetchAll(PDO::FETCH_ASSOC));
 ?>
 

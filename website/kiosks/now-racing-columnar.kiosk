@@ -66,11 +66,8 @@ for ($lane = 1; $lane <= $nlanes; ++$lane) {
 </div>
 
 <div class="bottom-banner">
-    <!-- Best heat times, with car number -->
-&nbsp;
+    <div class="label">Best heat times</div>
 </div>
-
-<div class="lower-right">Screen size is <span id="screen_size"></span></div>
 
 <div id="overlay_background"></div>
 <div id="paused_overlay" class="overlay_foreground">
