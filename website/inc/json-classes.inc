@@ -3,9 +3,9 @@
 require_once('inc/schema_version.inc');
 require_once('inc/classes.inc');
 
-// { [classid, count, nrounds, ntrophies, name, aggregate-by-subgroup
+// [ {classid, count, nrounds, ntrophies, name, aggregate-by-subgroup
 //    subgroups: [{rankid, name, count}...],
-//    constituents: [classid, classid, ...] }
+//    constituents: [classid, classid, ...] }, ... ]
 
 function json_all_classes() {
   $all_classes = all_classes();

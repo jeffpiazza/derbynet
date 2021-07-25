@@ -119,9 +119,12 @@ make_index("Ranks", "rank"),
 ."  `firstname` VARCHAR(15) NOT NULL COLLATE NOCASE, "
 ."  `classid` INTEGER NOT NULL, "
 ."  `rankid` INTEGER NOT NULL, "
+."  `divisionid` INTEGER,"
+."  `subdivisionid` INTEGER,"
 ."  `passedinspection` TINYINT(1) DEFAULT 0, "
 ."  `imagefile` VARCHAR(255), "
 .(expected_schema_version() < 2 ? "" : "  `carphoto` VARCHAR(255), ")
+."  `note` VARCHAR(255), "
 ."  `exclude` TINYINT(1) DEFAULT 0"
 .")",
 make_index("RegistrationInfo", "carnumber"),  // Why??
@@ -171,6 +174,8 @@ make_index("Rounds", "round"),
 @include_once(sql_file_path('balloting')),
 
 @include_once(sql_file_path('timer-settings')),
+
+@include_once(sql_file_path('divisions')),
 
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",

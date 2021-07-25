@@ -4,12 +4,19 @@ require_once('inc/sql-script.inc');
 require_once('inc/locked.inc');
 require_once('inc/details-for-setup-page.inc');
 require_once('inc/fake_images.inc');
+require_once('inc/schema_version.inc');
 
 if (!have_permission(SET_UP_PERMISSION)) {
   json_not_authorized();
 } else if (strpbrk($_POST['script'], DIRECTORY_SEPARATOR."/\\") !== false) {
   json_failure('insecure', "Only local SQL script execution is allowed.");
 } else {
+
+  try {
+    $original_schema = schema_version();
+  } catch (PDOException $p) {
+  }
+
   $values_found = false;
   if ($_POST['script'] == 'schema') {
     // Special handling of the "schema" script (reinitializing the database):
@@ -36,6 +43,11 @@ if (!have_permission(SET_UP_PERMISSION)) {
     if ($nlanes) {
       write_raceinfo('lane_count', $nlanes);
     }
+  }
+
+  if ($_POST['script'] == 'update-schema') {
+    require_once('inc/update_schema.inc');
+    after_update_schema($original_schema);
   }
 
   json_success();

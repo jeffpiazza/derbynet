@@ -206,9 +206,12 @@ array(
 .'	FirstName        VARCHAR (15),'
 .'	ClassID          INTEGER,'
 .'	RankID           INTEGER,'
+.'  DivisionID       INTEGER,'
+.'  SubdivisionID    INTEGER,'
 .'	PassedInspection BIT,'
 .'	ImageFile        VARCHAR (255),'
 .(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),')
+.'  Note             VARCHAR (255),'
 .'	Exclude          BIT'
 .'	)',
 
@@ -320,6 +323,8 @@ array(
 @include_once(sql_file_path('balloting')),
 
 @include_once(sql_file_path('timer-settings')),
+
+@include_once(sql_file_path('divisions')),
 
 array(
 
