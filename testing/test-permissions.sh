@@ -42,14 +42,14 @@ curl_post action.php "action=timer-message" | check_failure
 curl_postj action.php "action=award.xbs" | check_jfailure
 
 # Queries don't answer "<success/>" or "<failure/>", so there's really
-# nothing to check other than that they parse as XML.
+# nothing to check other than that they parse as JSON.
 curl_getj "action.php?query=class.list" > /dev/null
 curl_getj "action.php?query=poll.coordinator" | jq . > /dev/null
 curl_getj "action.php?query=poll.kiosk" > /dev/null
 curl_getj "action.php?query=poll.kiosk.all" > /dev/null
 curl_getj "action.php?query=roles.list"  > /dev/null
 curl_getj "action.php?query=poll.ondeck" > /dev/null
-curl_getj "action.php?query=poll.now-racing" > /dev/null
+curl_getj "action.php?query=poll&values=" > /dev/null
 
 cat >coordinator.index.tmp <<EOF
           <a class="button_link before_button" href="setup.php">Set-Up</a>

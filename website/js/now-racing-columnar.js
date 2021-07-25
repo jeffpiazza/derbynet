@@ -38,7 +38,8 @@ var Poller = {
       this.time_of_last_request = Date.now();
       $.ajax('action.php',
              {type: 'GET',
-              data: {query: 'poll.now-racing',
+              data: {query: 'poll',
+                     values: 'best-times,current-heat,heat-results,precision,racers,timer-trouble',
                      roundid: roundid,
                      heat: heat},
               success: function(data) {
