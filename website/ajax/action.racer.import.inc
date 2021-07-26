@@ -23,10 +23,10 @@ if (have_permission(SET_UP_PERMISSION)) {
   // them.
   $fields = array('lastname' => true,  
                   'firstname' => true,
-                  'classname' => false,
+                  'division' => false,
+                  'subdivision' => false,
                   'carnumber' => false,
                   'carname' => false,
-                  'subgroup' => false,
                   'exclude' => false);
 
   // An alternative to separate lastname and firstname parameters is a single
@@ -71,26 +71,7 @@ if (have_permission(SET_UP_PERMISSION)) {
 }
 
 if ($ok) {
-  $classname = isset($_POST['classname']) ? trim(@$_POST['classname']) : '';
-  if (!$classname) {
-    $classname = UNSPECIFIED_CLASS;
-  }
-  $classname = substr($classname, 0, CLASS_COLUMN_WIDTH);
-  $classid = find_or_create_class($classname);
-  if (!empty(read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
-                               array(':classid' => $classid)))) {
-    json_failure('aggregate', "Aggregate classes cannot contain direct members.");
-    $ok = false;
-  }
-}
-if ($ok) {
-  $rankname = isset($_POST['subgroup']) ? trim($_POST['subgroup']) : $classname;
-  if (!$rankname) {
-    $rankname = UNSPECIFIED_RANK;
-  }
-  $rankname = substr($rankname, 0, RANK_COLUMN_WIDTH);
-  $rankid = find_or_create_rank($rankname, $classid);
-
+  $division = isset($_POST['division']) ? trim(@$_POST['division']) : 'Default';
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
@@ -100,8 +81,8 @@ if ($ok) {
                          'lastname' => $_POST['lastname'],
                          'carnumber' => $carnumber,
                          'carname' => $carname,
-                         'rankid' => $rankid,
-                         'classid' => $classid,
+                         'division' => $division,
+                         'subdivision' => @$_POST['subdivision'],
                          'exclude' => $exclude));
 
   json_success();

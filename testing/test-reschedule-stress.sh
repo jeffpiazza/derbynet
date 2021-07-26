@@ -18,12 +18,12 @@ user_login_coordinator
 
 for i in $(seq 1 100) ; do
     curl_postj action.php \
-         "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&classname=Unwashed-Class" | check_jsuccess
+         "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&division=Unwashed-Class" | check_jsuccess
 done
 curl_postj action.php "action=racer.bulk&what=number&who=all&start=101" | check_jsuccess
 
-curl_postj action.php "action=racer.import&firstname=RacerX&lastname=RacerX&classname=Unwashed-Class" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=RacerY&lastname=RacerY&classname=Unwashed-Class" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=RacerX&lastname=RacerX&division=Unwashed-Class" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=RacerY&lastname=RacerY&division=Unwashed-Class" | check_jsuccess
 
 
 function setup_schedule() {

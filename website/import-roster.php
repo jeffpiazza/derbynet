@@ -3,6 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 require_once('inc/classes.inc');
+require_once('inc/divisions.inc');
 require_once('inc/plural.inc');
 require_permission(SET_UP_PERMISSION);
 
@@ -73,10 +74,10 @@ function all_classes() {
                                                            'required' => true),
                                        'firstname' => array('name' => "First Name",
                                                             'required' => true),
-                                       'classname' => array('name' => group_label(),
-                                                            'required' => false),
-                                       'subgroup' => array('name' => subgroup_label(),
+                                       'division' => array('name' => division_label(),
                                                            'required' => false),
+                                       'subdivision' => array('name' => subdivision_label(),
+                                                              'required' => false),
                                        'carnumber' => array('name' => "Car Number",
                                                             'required' => false),
                                        'carname' => array('name' => "Car Name",

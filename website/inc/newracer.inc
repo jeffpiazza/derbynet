@@ -2,22 +2,41 @@
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
+require_once('inc/divisions.inc');
 require_once('inc/events.inc');
 
 define('UNSPECIFIED_CLASS', '* Not specified');
 define('UNSPECIFIED_RANK', '* Not specified');
 
-// $values are: { firstname, lastname, carnumber, carname, rankid, classid, exclude }
-// Must have at least one of classid or rankid.
+// $values are: { firstname, lastname, carnumber, carname, divisionid, division, subdivisionid, exclude }
+//   division is ignored if divisionid is provided.
+//   If neither division nor divisionid is provided, 'Default' is assumed
 
 function insert_new_racer($values) {
   global $db;
 
-  if (!isset($values['classid'])) {
+  if (!isset($values['classid']) && isset($values['rankid'])) {
     $values['classid'] = read_single_value('SELECT classid FROM Ranks WHERE rankid = :rankid',
                                            array(':rankid' => $values['rankid']));
   }
 
+  if (!isset($values['divisionid']) && !isset($values['division']) && isset($values['classid'])) {
+    // TODO This is an interim arrangement only
+    $values['divisionid'] = read_single_value('SELECT divisionid FROM Divisions'
+                                              .' WHERE name = (SELECT class FROM Classes'
+                                              .'                WHERE classid = :classid)',
+                                              array(':classid' => $values['classid']));
+  }
+
+  if (!isset($values['divisionid'])) {
+    $values['divisionid'] = find_or_create_division(
+      isset($values['division']) ? $values['division'] : 'Default');
+  }
+  if (!isset($values['subdivisionid']) && isset($values['subdivision'])) {
+    $values['subdivisionid'] = find_or_create_subdivision(
+      $values['subdivision'], $values['divisionid']);
+  }
+  
   if (!isset($values['carnumber']) || $values['carnumber'] == '') {
     $max_carnumber = read_single_value('SELECT MAX(carnumber) FROM RegistrationInfo'
                                        .' WHERE rankid = :rankid',
@@ -34,13 +53,43 @@ function insert_new_racer($values) {
     json_out('warnings', array("Duplicate car number $values[carnumber]"));
   }
 
+  if (!isset($values['classid'])) {
+    $div_name = read_single_value('SELECT name FROM Divisions WHERE divisionid = :divisionid',
+                                  array(':divisionid' => $values['divisionid']));
+    if (group_formation_rule() == 'by-division') {
+      $values['classid'] = find_or_create_class($div_name);
+      $subdiv_name = $div_name;
+      if (isset($values['subdivisionid'])) {
+        $subdiv_name = read_single_value('SELECT name FROM Subdivisions WHERE subdivisionid = :subdivisionid',
+                                         array(':subdivisionid' => $values['subdivisionid']));
+      }
+      $values['rankid'] = find_or_create_rank($subdiv_name, $values['classid']);
+    } else {  // 'one-group' or 'custom'
+      $values['classid'] = find_or_create_class('Default');
+      $values['rankid'] = find_or_create_rank($div_name, $values['classid']);
+    }
+
+    if (!empty(read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
+                                 array(':classid' => $classid)))) {
+      json_failure('aggregate', "Aggregate classes cannot contain direct members.");
+      // Pick a non-aggregate class at random, and assume there's at rank for it.
+      $values['classid'] = read_single_value('SELECT classid FROM Classes WHERE constituents = \'\'');
+      $values['rankid'] = read_single_value('SELECT rankid FROM Ranks WHERE classid = :classid',
+                                            array(':classid' => $values['classid']));
+    }
+  }
+  json_out('debug', $values);
+
   $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, carname,'
-                       .'                             rankid, classid, exclude)'
-                       .' VALUES(:carnumber, :lastname, :firstname, :carname, :rankid, :classid, :exclude)');
+                       .'                             divisionid, subdivisionid, rankid, classid, exclude)'
+                       .' VALUES(:carnumber, :lastname, :firstname, :carname,'
+                       .'        :divisionid, :subdivisionid, :rankid, :classid, :exclude)');
   $stmt->execute(array(':carnumber' => trim($values['carnumber']),
                        ':carname' => trim($values['carname']),
                        ':firstname' => trim($values['firstname']),
                        ':lastname' => trim($values['lastname']),
+                       ':divisionid' => $values['divisionid'],
+                       ':subdivisionid' => @$values['subdivisionid'],
                        ':rankid' => $values['rankid'],
                        ':classid' => $values['classid'],
                        ':exclude' => (isset($values['exclude']) && $values['exclude']) ? 1 : 0));
@@ -170,4 +219,45 @@ function force_populate_a_rankid() {
   return $rankid;
 }
 
+function find_or_create_division($name) {
+  global $db;
+  $name = trim($name);
+  $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
+                                  array(':name' => $name));
+  if ($divisionid === false) {
+    read_single_value('INSERT INTO Divisions(name, sortorder)'
+                      .' VALUES(:name, (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Divisions))',
+                      array(':name' => $name));
+    // TODO record_event_create_class($classid, $classname);
+    $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
+                                    array(':name' => $name));
+  }    
+
+  return $divisionid;
+}
+
+function find_or_create_subdivision($name, $divid) {
+  global $db;
+  $name = trim($name);
+  $subdivisionid = read_single_value('SELECT subdivisionid FROM Subdivisions'
+                                     .' WHERE name = :name AND superdiv = :superdiv',
+                                     array(':name' => $name,
+                                           ':superdiv' => $divid));
+  if ($subdivisionid === false) {
+    read_single_value('INSERT INTO Subdivisions(name, superdiv, sortorder)'
+                      .' VALUES(:name, :superdiv,'
+                      .'     (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Subdivisions'
+                      .'          WHERE superdiv = :superdiv2))',
+                      array(':name' => $name,
+                            ':superdiv' => $divid,
+                            ':superdiv2' => $divid));
+    // TODO record_event_create_(...)
+    $subdivisionid = read_single_value('SELECT subdivisionid FROM Subdivisions'
+                                       .' WHERE name = :name AND superdiv = :superdiv',
+                                       array(':name' => $name,
+                                             ':superdiv' => $divid));
+  }    
+
+  return $subdivisionid;
+}
 ?>
