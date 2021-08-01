@@ -73,6 +73,8 @@ function make_draggable_photo(target) {
   target.draggable({
 	helper: 'clone',
 	appendTo: 'body',
+    // This used to be true, but apparently no longer:
+    //
 	// When using helper: clone, the clone's top left corner
 	// appears to be what controls selection of the droppable
 	// target, and I don't see any way to change it to use the
@@ -82,7 +84,8 @@ function make_draggable_photo(target) {
 	// care so much about horizontal position.)
 
 	// TODO: Don't know why only top has effect here.
-	cursorAt: { top: 0, left: 20 },
+    //	cursorAt: { top: 0, left: 20 },
+
 	opacity: 0.5,
 	revert: 'invalid',
 	scope: "assign",
