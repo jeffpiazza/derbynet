@@ -63,7 +63,10 @@ if (schema_version() < 8) {
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN divisionid INTEGER";
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN subdivisionid INTEGER";
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN note VARCHAR(255)";
-
+  $updates[] = "CREATE TABLE ConstituentClasses ("
+          ."  antecedent INTEGER, dependent  INTEGER)";
+  $updates[] = "CREATE UNIQUE INDEX AnteDependent ON ConstituentClasses(antecedent, dependent)";
+  
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '8')";
 }

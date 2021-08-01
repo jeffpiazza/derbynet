@@ -87,6 +87,7 @@ if (schema_version() >= 6) {
 if (schema_version() >= 8) {
   $schema['Divisions'] = array('divisionid', 'name', 'sortorder');
   $schema['Subdivisions'] = array('subdivisionid', 'name', 'superdiv', 'sortorder');
+  $schema['ConstituentClasses'] = array('antecedent', 'dependent');
   $schema['RegistrationInfo'][] = 'divisionid';
   $schema['RegistrationInfo'][] = 'subdivisionid';
 }

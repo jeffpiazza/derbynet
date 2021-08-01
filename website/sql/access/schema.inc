@@ -85,6 +85,18 @@ array(
 
 
 
+'DROP TABLE ConstituentClasses',
+
+'CREATE TABLE ConstituentClasses'
+.'  ('
+.'  antecedent INTEGER,'
+.'  dependent INTEGER'
+.'  )',
+
+'CREATE UNIQUE INDEX AnteDependent'
+.'  ON ConstituentClasses (antecedent, dependent)',
+
+
 'DROP TABLE RaceChart',
 
 'CREATE TABLE RaceChart'

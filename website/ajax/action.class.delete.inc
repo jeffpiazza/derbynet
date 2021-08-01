@@ -12,6 +12,7 @@ $classid = $_POST['classid'];
 if (have_permission(SET_UP_PERMISSION)) {
   try {
     $ok = true;
+    $schema_version = schema_version();
 
     if ($ok) {
       $nracers = read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE classid = :classid',
@@ -21,13 +22,21 @@ if (have_permission(SET_UP_PERMISSION)) {
         $ok = false;
       }
     }
-    if ($ok && schema_version() >= 3) {
-      $stmt = $db->prepare('SELECT class, constituents FROM Classes');
-      $stmt->execute(array());
-      foreach ($stmt as $row) {
-        if (in_array($classid, explode(',', $row['constituents']))) {
+    if ($ok) {
+      if ($schema_version >= 8) {
+        if (read_single_value('SELECT COUNT(*) FROM ConstituentClasses WHERE antecedent = :classid',
+                              array(':classid' => $classid)) > 0) {
           json_failure('constituent', "Unable to delete a constituent class");
           $ok = false;
+        }
+      } else if ($schema_version >= 3) {
+        $stmt = $db->prepare('SELECT class, constituents FROM Classes');
+        $stmt->execute(array());
+        foreach ($stmt as $row) {
+          if (in_array($classid, explode(',', $row['constituents']))) {
+            json_failure('constituent', "Unable to delete a constituent class");
+            $ok = false;
+          }
         }
       }
     }
@@ -69,6 +78,8 @@ if (have_permission(SET_UP_PERMISSION)) {
       }
     }
     if ($ok) {
+      $stmt = $db->prepare('DELETE FROM ConstituentClasses WHERE dependent = :classid');
+      $stmt->execute(array(':classid' => $classid));
       $stmt = $db->prepare('DELETE FROM Classes WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         json_failure('delete-classes', "Unable to delete Classes entries");

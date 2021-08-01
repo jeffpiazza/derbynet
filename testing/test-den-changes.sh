@@ -131,7 +131,7 @@ cat >$GOLDEN <<EOF
 EOF
 
 curl_getj "action.php?query=class.list" > $CLASS_LIST
-diff $GOLDEN $CLASS_LIST || test_fails "class.list fails"
+diff $GOLDEN $CLASS_LIST || test_fails "class.list fails to match expected response"
 
 curl_postj action.php "action=rank.delete&rankid=$RANKID2" | check_jsuccess
 

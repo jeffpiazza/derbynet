@@ -60,6 +60,14 @@ array(
 .(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER")
 .")",
 
+"DROP TABLE IF EXISTS ConstituentClasses",
+
+"CREATE TABLE ConstituentClasses ("
+."  antecedent INTEGER,"
+."  dependent  INTEGER,"
+."  UNIQUE (antecedent, dependent)"
+.")",
+
 "DROP TABLE IF EXISTS `RaceChart`",
 
 "CREATE TABLE `RaceChart` ("

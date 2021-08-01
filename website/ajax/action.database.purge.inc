@@ -43,6 +43,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
   $db->exec('DELETE FROM RegistrationInfo');
   remove_fake_car_and_racer_images();
   if (read_raceinfo_boolean('fake-racers')) {
+    $db->exec('DELETE FROM ConstituentClasses');
     $db->exec('DELETE FROM Ranks');
     $db->exec('DELETE FROM Classes');
   }

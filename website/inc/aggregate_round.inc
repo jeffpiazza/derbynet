@@ -116,6 +116,11 @@ function create_aggregate_class($classname, $constituents, $rankids, $durable) {
                        ':rankids' => $rankids,
                        ':durable' => $durable,
                        ':classid' => $classid));
+
+  $stmt = $db->prepare('INSERT INTO ConstituentClasses(antecedent, dependent) VALUES(:ante, :dep)');
+  foreach (explode(',', $constituents) as $ante) {
+    $stmt->execute(array(':ante' => $ante, ':dep' => $classid));
+  }
   
   return $classid;
 }
@@ -146,6 +151,8 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
   $stmt->execute(array(':classid' => $classid));
   if ($stmt->rowCount() > 0) {
     record_event_delete_class($classid);
+    read_single_value('DELETE FROM ConstituentClasses WHERE dependent = :classid',
+                      array(':classid' => $classid));
   }
 
   // Clean up any playlist entries for the deleted class.  When activated, a

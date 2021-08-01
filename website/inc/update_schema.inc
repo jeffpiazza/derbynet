@@ -19,6 +19,17 @@ function after_update_schema($original_schema) {
     $db->exec('UPDATE Subdivisions SET name = \'Default\''
               .' WHERE name = \'* Not specified\'');
     $db->exec('UPDATE RegistrationInfo SET subdivisionid = rankid');
+
+    $stmt = $db->prepare('SELECT classid, constituents FROM Classes WHERE constituents <> \'\'');
+    $stmt->execute();
+
+    $ins = $db->prepare('INSERT INTO ConstituentClasses(antecedent, dependent) VALUES(:ante, :dep)');
+    foreach ($stmt as $row) {
+      $dep = $row['classid'];
+      foreach (explode(',', $row['constituents']) as $ante) {
+        $ins->execute(array(':ante' => $ante, ':dep' => $dep));
+      }
+    }
   }
 }
 
