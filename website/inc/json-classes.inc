@@ -11,9 +11,14 @@ function json_all_classes() {
   $all_classes = all_classes();
 
   $classes_by_id = array();
+  $ranks_by_id = array();
   foreach ($all_classes as $class) {
     $classes_by_id[$class['classid']] = $class;
+    foreach ($class['ranks'] as $rank) {
+      $ranks_by_id[$rank['rankid']] = $rank;
+    }
   }
+
   $result = array();
 
   foreach ($all_classes as $class) {
@@ -40,6 +45,16 @@ function json_all_classes() {
         $cl['constituents'][] = array(
           'classid' => $constit_id,
           'name' => $classes_by_id[$constit_id]['name']);
+      }
+    }
+    if (!empty($class['rankids'])) {
+      $rankids = explode(',', $class['rankids']);
+      $cl['constituent-ranks'] = array();
+      foreach ($rankids as $r) {
+        $rr = $ranks_by_id[$r];
+        $cl['constituent-ranks'][] = array(
+          'rankid' => $r,
+          'name' => $rr['name']);
       }
     }
     $result[] = $cl;
