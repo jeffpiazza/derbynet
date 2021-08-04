@@ -121,12 +121,12 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_details"></div>
 </div>
 
-<!-- Classes -->
-<div id="classes_step" class="step_div">
+<!-- Groups -->
+<div id="groups_step" class="step_div">
   <div class="status_icon"><img/></div>
 
   <div class="step_button block_buttons">
-    <a class="button_link" href="class-editor.php"></a>
+    <a class="button_link" href="racing-groups.php">Racing Groups</a>
   </div>
 
   <div class="step_details"></div>

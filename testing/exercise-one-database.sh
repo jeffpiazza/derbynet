@@ -62,6 +62,9 @@ run_tests() {
 
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
+############################## Racing Groups and Divisions ##############################
+    `dirname $0`/test-divisions.sh "$BASE_URL"
+
 ############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"

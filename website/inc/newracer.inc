@@ -114,7 +114,8 @@ function insert_new_racer($values) {
             //
             // .' AND Roster.classid = RegistrationInfo.classid'
             .' AND Roster.racerid = RegistrationInfo.racerid)');
-  
+
+  fix_up_missing_subdivisions();
 }
 
 function create_class($classname, $with_first_round = true) {
@@ -217,47 +218,5 @@ function force_populate_a_rankid() {
   }
 
   return $rankid;
-}
-
-function find_or_create_division($name) {
-  global $db;
-  $name = trim($name);
-  $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
-                                  array(':name' => $name));
-  if ($divisionid === false) {
-    read_single_value('INSERT INTO Divisions(name, sortorder)'
-                      .' VALUES(:name, (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Divisions))',
-                      array(':name' => $name));
-    // TODO record_event_create_class($classid, $classname);
-    $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
-                                    array(':name' => $name));
-  }    
-
-  return $divisionid;
-}
-
-function find_or_create_subdivision($name, $divid) {
-  global $db;
-  $name = trim($name);
-  $subdivisionid = read_single_value('SELECT subdivisionid FROM Subdivisions'
-                                     .' WHERE name = :name AND superdiv = :superdiv',
-                                     array(':name' => $name,
-                                           ':superdiv' => $divid));
-  if ($subdivisionid === false) {
-    read_single_value('INSERT INTO Subdivisions(name, superdiv, sortorder)'
-                      .' VALUES(:name, :superdiv,'
-                      .'     (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Subdivisions'
-                      .'          WHERE superdiv = :superdiv2))',
-                      array(':name' => $name,
-                            ':superdiv' => $divid,
-                            ':superdiv2' => $divid));
-    // TODO record_event_create_(...)
-    $subdivisionid = read_single_value('SELECT subdivisionid FROM Subdivisions'
-                                       .' WHERE name = :name AND superdiv = :superdiv',
-                                       array(':name' => $name,
-                                             ':superdiv' => $divid));
-  }    
-
-  return $subdivisionid;
 }
 ?>

@@ -2,7 +2,7 @@
 
 require_once('inc/schema_version.inc');
 
-// divisions, divseq, subdivisions, subdivseq
+
 function json_divisions() {
   global $db;
 
@@ -19,7 +19,7 @@ function json_divisions() {
   
   $last_div = array('divisionid' => -1);
   foreach ($stmt as $row) {
-    if ($row['divisionid'] != $prev_div['divisionid']) {
+    if ($row['divisionid'] != $last_div['divisionid']) {
       $divisions[] = array('divisionid' => $row['divisionid'],
                            'name' => $row['div_name'],
                            'subdivisions' => array(),
@@ -52,49 +52,6 @@ function json_divisions() {
   }
 
   return $divisions;
-
-
-  
-  // SELECT DISTINCT rankid, divisionid FROM RegistrationInfo
-  
-  $stmt = $db->prepare('SELECT divisionid, name'
-                       .' FROM Divisions'
-                       .' ORDER BY Divisions.sortorder');
-  $stmt->execute();
-  $divisions = array();
-  $divseq = array();
-  foreach ($stmt as $div) {
-    $div['ranks'] = array();
-    $divisions[$div['divisionid']] = $div;
-    $divseq[] = $div['divisionid'];
-  }
-
-  $stmt = $db->prepare('SELECT subdivisionid, Subdivisions.name, superdiv'
-                       .' FROM Subdivisions JOIN Divisions'
-                       .'  ON superdiv = divisionid'
-                       .' ORDER BY Divisions.sortorder, Subdivisions.sortorder');
-  $stmt->execute();
-  $subdivisions = array();
-  $subdivseq = array();
-  foreach ($stmt as $sub) {
-    $sub['ranks'] = array();
-    $subdivisions[$sub['subdivisionid']] = $sub;
-    $subdivseq[] = $sub['subdivisionid'];
-  }
-
-  $stmt = $db->prepare('SELECT DISTINCT rankid, divisionid FROM RegistrationInfo');
-  $stmt->execute();
-  foreach($stmt as $rank_div) {
-    $divisions[$rank_div['divisionid']]['ranks'][] = $rank_div['rankid'];
-  }
-
-  $stmt = $db->prepare('SELECT DISTINCT rankid, subdivisionid FROM RegistrationInfo');
-  $stmt->execute();
-  foreach($stmt as $rank_div) {
-    $subdivisions[$rank_div['subdivisionid']]['ranks'][] = $rank_div['rankid'];
-  }
-
-  return array($divisions, $divseq, $subdivisions, $subdivseq);
 }
 
 ?>

@@ -8,7 +8,7 @@
 //            schema: {status:, details:, button:}
 //            purge: {nracers:, nawards:, nheats:, nresults:}
 //            roster:
-//            classes:
+//            groups:
 //            awards:
 //            settings:
 //            form_fields: {drivers:, radio:, sqlite_path:, odbc_dsn_name:}
@@ -16,14 +16,14 @@ function populate_details(details) {
   $("#database_step div.status_icon img").attr('src', 'img/status/' + details.database.status + '.png');
   $("#schema_step div.status_icon img").attr('src', 'img/status/' + details.schema.status + '.png');
   $("#roster_step div.status_icon img").attr('src', 'img/status/' + details.roster.status + '.png');
-  $("#classes_step div.status_icon img").attr('src', 'img/status/' + details.classes.status + '.png');
+  $("#groups_step div.status_icon img").attr('src', 'img/status/' + details.groups.status + '.png');
   $("#awards_step div.status_icon img").attr('src', 'img/status/' + details.awards.status + '.png');
   $("#settings_step div.status_icon img").attr('src', 'img/status/' + details.settings.status + '.png');
 
   var disabled = (details.schema.button == 'disabled') || !details.database.writable 
   // $("#settings_step input[type='submit']").prop('disabled', disabled);
   $("#roster_step a.button_link, "
-    + "#classes_step a.button_link, "
+    + "#groups_step a.button_link, "
     + "#awards_step a.button_link, "
     + "#settings_step a.button_link").toggleClass('disabled', disabled);
   $("#purge_data_button")
@@ -44,12 +44,10 @@ function populate_details(details) {
       .off('click').on('click', function() { show_initialize_schema_modal(); });
   }
 
-  $("#classes_step a.button_link").text("Edit " + details.classes.plural);
-
   $("#database_step div.step_details").html(details.database.details);
   $("#schema_details").html(details.schema.details);
   $("#roster_step div.step_details").html(details.roster.details);
-  $("#classes_step div.step_details").html(details.classes.details);
+  $("#groups_step div.step_details").html(details.groups.details);
   $("#awards_step div.step_details").html(details.awards.details);
   $("#settings_step div.step_details").html(details.settings.details);
 

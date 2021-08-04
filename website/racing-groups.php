@@ -1,27 +1,34 @@
 <?php @session_start();
 require_once('inc/data.inc');
+require_once('inc/classes.inc');
 require_once('inc/banner.inc');
-require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
-require_once('inc/plural.inc');
+require_once('inc/divisions.inc');
+require_once('inc/schema_version.inc');
 require_permission(SET_UP_PERMISSION);
+
+if (schema_version() < DIVISIONS_SCHEMA) {
+  header('Location: setup.php');
+  exit(0);
+}
+
+
 ?><!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title><?php echo group_label(); ?> Editor</title>
-<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
+<title>Racing Groups Editor</title>
 <?php require('inc/stylesheet.inc'); ?>
-<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
-<link rel="stylesheet" type="text/css" href="css/class-editor.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
-<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-<script type="text/javascript" src="js/mobile.js"></script>
+<script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
-<script type="text/javascript" src="js/class-editor.js"></script>
+<script type="text/javascript" src="js/mobile.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/racing-groups.js"></script>
+<script type="text/javascript" src="js/racing-groups-add-group.js"></script>
+<script type="text/javascript" src="js/racing-groups-edit.js"></script>
 <script type="text/javascript">
 function use_subgroups() { return <?php echo json_encode(use_subgroups()); ?>; }
 function group_label() { return <?php echo json_encode(group_label()); ?>; }
@@ -30,38 +37,86 @@ function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>;
 function subgroup_label() { return <?php echo json_encode(subgroup_label()); ?>; }
 function subgroup_label_plural() { return <?php echo json_encode(plural(subgroup_label())); ?>; }
 function subgroup_label_lc() { return <?php echo json_encode(subgroup_label_lc()); ?>; }
-$(function() { show_edit_all_classes_modal(); });
+
+$(function() {
+    var rule = <?php echo json_encode(group_formation_rule()); ?>;
+    $("input[name='form-groups-by'][value='" + rule + "']").prop('checked', true);
+    mobile_radio_refresh($("input[name='form-groups-by']"));
+  });
 </script>
+<link rel="stylesheet" type="text/css" href="css/mobile.css"/>
+<link rel="stylesheet" type="text/css" href="css/racing-groups.css"/>
 </head>
 <body>
-<?php
-  // Since the back button is always obscured, the back button setting doesn't
-  // really have much effect.
-make_banner(group_label().' Editor', 'setup.php'); ?>
+<?php make_banner('Racing Groups', 'setup.php'); ?>
 
-<div id="edit_all_classes_modal" class="modal_dialog hidden block_buttons">
-  <form>
-    <h3>Drag to Re-order <?php echo plural(group_label()); ?></h3>
+<div id="below-banner">
 
-    <div id="groups_container">
-      <ul id="groups" class="mlistview has-alts">
-      </ul>
-    </div>
+<div id="race-rules">
 
-    <br/>
+<?php if (read_single_value('SELECT COUNT(*) FROM Divisions') > 1) { ?>
+  <input id="by-division-radio" type="radio" name="form-groups-by" value="by-division"/>
+   <label for="by-division-radio">Race each <?php echo division_label_lc(); ?> as a group</label>
+<?php } ?>
 
-    <input type="button" value="Add <?php echo group_label(); ?>"
-           onclick="show_add_class_modal();" />
+<?php if (false && read_single_value('SELECT COUNT(*) FROM Subdivisions') > 1) { ?>
+  <input id="by-subdivision-radio" type="radio" name="form-groups-by" value="by-subdivision"/>
+  <label for="by-subdivision-radio">Race by Subdivision</label>
+<?php } ?>
 
-    <input type="button" value="Add Aggregate"
-           onclick="show_add_aggregate_modal();" />
+<input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
+<label for="one-group-radio">Race as one big group</label>
 
-    <br/>
+<input id="custom-group-radio" type="radio" name="form-groups-by" value="custom"/>
+<label for="custom-group-radio">Custom racing groups</label>
 
-    <input type="button" value="Close"
-           onclick="close_edit_all_classes_modal();"/>
-  </form>
+<div class="switch">
+<label for="use-subgroups">Use Subgroups?</label>
+<input id="use-subgroups" type="checkbox" class="flipswitch"
+     data-on-text="Yes" data-off-text="No"
+       <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
 </div>
+
+<div class="switch">
+<label for="cleanup">Remove unpopulated groups and subgroups?</label>
+<input id="cleanup" type="checkbox" class="flipswitch"
+     data-on-text="Yes" data-off-text="No"
+       <?php if (true) echo "checked=\"checked\""; ?>/>
+</div>
+
+<div style="margin-top: 10px;">
+  <ul id="aggregate-groups" class="mlistview">
+  </ul>
+</div>
+
+<div class="block_buttons">
+  <input id="add-aggregate-button" type="button" value="Add Aggregate"/>
+</div>
+
+</div><!-- race-rules -->
+
+<div id="race-structure">
+
+<p class="instructions">Drag <span class="group-color">&nbsp;</span> groups
+       <span class="and-subgroups">and <span class="subgroup-color">&nbsp;</span> subgroups</span>
+       to re-order.</p>
+       <p class="instructions">Drag <span class="division-color">&nbsp;</span> <?php echo division_label_plural_lc(); ?>
+       <span class="and-subdivisions">and <span class="subdivision-color">&nbsp;</span> <?php echo subdivision_label_plural_lc(); ?></span>
+       <br/>onto <span class="group-color">&nbsp;</span> groups
+        <span class="and-subgroups" style="white-space: nowrap;">and <span class="subgroup-color">&nbsp;</span> subgroups</span>.
+</p>
+
+<ul id="all-groups" class="mlistview">
+
+  <li id='new-group' class='group'>
+    <p>New Group</p>
+  </li>
+</ul>
+
+</div><!-- race-structure -->
+
+</div><!-- below-banner -->
+
 
 
 <div id="add_class_modal" class="modal_dialog wide_modal hidden block_buttons">
@@ -79,7 +134,8 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     <h3>Add New <?php echo group_label(); ?></h3>
     <input id='add-class-name' name="name" type="text"/>
 
-    <h3>Number of speed trophies:</h3>
+   <div class="ntrophies">
+    <label for='add-class-ntrophies'>Number of speed trophies:</label>
     <select id='add-class-ntrophies' name="ntrophies">
       <option value="-1" selected="selected">Default</option>
       <option>0</option>
@@ -94,7 +150,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
       <option>9</option>
       <option>10</option>
     </select>
-    <h3>&nbsp;</h3>
+   </div>
 
     <div id='constituent-clip' class='aggregate-only'>
       <div id='constituent-div'>
@@ -109,14 +165,14 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
   </form>
 </div>
 
-
 <div id="edit_one_class_modal" class="modal_dialog hidden block_buttons">
   <form>
     <h3><?php echo group_label(); ?> Name</h3>
     <input id="edit_class_name" name="name" type="text"/>
 
-    <h3>Number of speed trophies:</h3>
-    <select id="edit_class_ntrophies" name="ntrophies">
+   <div class="ntrophies">
+    <label for='edit-class-ntrophies'>Number of speed&nbsp;trophies:</label>
+    <select id='edit-class-ntrophies' name='ntrophies'>
       <option value="-1">Default</option>
       <option>0</option>
       <option>1</option>
@@ -130,7 +186,7 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
       <option>9</option>
       <option>10</option>
     </select>
-    <h3>&nbsp;</h3>
+</div>
 
     <div id="completed_rounds_extension">
       <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>
@@ -141,10 +197,6 @@ make_banner(group_label().' Editor', 'setup.php'); ?>
     </div>
 
     <div id="edit_ranks_extension" class="hidden">
-      <h3>Drag to Re-order <?php echo plural(subgroup_label()); ?></h3>
-      <div id="ranks_container">
-      </div>
-      <br/>
       <input type="button" value="Add <?php echo subgroup_label(); ?>"
              onclick="show_add_rank_modal();" />
       <br/>
