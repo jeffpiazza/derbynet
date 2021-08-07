@@ -62,6 +62,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     clean_up_empty_classes_and_ranks();
   }
 
+  reorder_divisions();
+
   json_success();
 }
 ?>

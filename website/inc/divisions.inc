@@ -103,4 +103,49 @@ function clean_up_empty_classes_and_ranks() {
             .'   AND rankids = \'\'');
 }
 
+// Updates sortorder fields for Divisions and Subdivisions to agree with
+// ordering of classes and ranks.  If members of a division or subdivision fall
+// in more than class or rank, the ordering for the division or subdivision will
+// be based on the first appearance among classes and ranks.
+function reorder_divisions() {
+  global $db;
+  // select distinct rankid, classid, subdivisionid from registrationInfo
+  // select distinct rankid, classid, divisionid from registrationInfo join classes join ranks order by classes.sortorder, ranks.sortorder
+  $stmt = $db->prepare('SELECT DISTINCT divisionid, subdivisionid FROM '
+                       .inner_join('RegistrationInfo', 'Classes',
+                                   'RegistrationInfo.classid = Classes.classid',
+                                   'Ranks',
+                                   'RegistrationInfo.rankid = Ranks.rankid')
+                       .' ORDER BY Classes.sortorder, Ranks.sortorder');
+  $stmt->execute();
+
+  // A given divisionid or subdivisionid may appear more than once in these
+  // arrays.  The first appearance wins, by virtue of the fact that the arrays
+  // are traversed in reverse order when writing new sortorders
+  $divids = array();
+  $subdivids = array();
+  foreach ($stmt as $row) {
+    $divids[] = $row['divisionid'];
+    if (isset($row['subdivisionid'])) {
+      $subdivids[] = $row['subdivisionid'];
+    }
+  }
+
+  $stmt = $db->prepare('UPDATE Divisions SET sortorder = :sortorder WHERE divisionid = :divisionid');
+  for ($index = count($divids); $index > 0; --$index) {
+    $stmt->execute(array(':sortorder' => $index,
+                         ':divisionid' => $divids[$index - 1]));
+  }
+
+  // Subdivision.sortorder will be an absolute ordering, although it only needs
+  // to be relative to the containing division.
+  if (count($subdivids) > 0) {
+    $stmt = $db->prepare('UPDATE Subdivisions SET sortorder = :sortorder WHERE subdivisionid = :subdivisionid');
+    for ($index = count($subdivids); $index > 0; --$index) {
+      $stmt->execute(array(':sortorder' => $index,
+                           ':subdivisionid' => $subdivids[$index - 1]));
+    }
+  }
+}
+
 ?>

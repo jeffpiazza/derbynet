@@ -3,6 +3,8 @@
 // <n> is the sequential order, e.g. the value of $_POST['classid_1'] is the classid which
 // should have sortorder=1
 
+require_once('inc/divisions.inc');
+
 if (have_permission(SET_UP_PERMISSION)) {
   foreach ($_POST as $key => $val) {
     if (substr($key, 0, strlen('classid_')) == 'classid_') {
@@ -10,7 +12,8 @@ if (have_permission(SET_UP_PERMISSION)) {
       $stmt->execute(array(':sortorder' => substr($key, strlen('classid_')),
                            ':classid' => $val));
     }
-  }
+  }  
+  reorder_divisions();
   json_success();
 } else {
   json_failure('permission', "Not authorized");

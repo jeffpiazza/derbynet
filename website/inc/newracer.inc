@@ -184,12 +184,15 @@ function find_or_create_rank($rankname, $classid) {
                                       ':classid' => $classid));
     if (schema_version() >= 2) {
       record_event_create_rank($classid, $rankid, $rankname);
-      $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
-                                  array(':classid' => $classid));
+      $sortorder = read_single_value('SELECT 1 + MAX(sortorder) FROM Ranks WHERE classid = :classid',
+                                     array(':classid' => $classid));
+      if ($sortorder === false) {
+        $sortorder = 1;
+      }
       $stmt = $db->prepare('UPDATE Ranks'
-                           .' SET sortorder = :nranks'
+                           .' SET sortorder = :sortorder'
                            .' WHERE rankid = :rankid');
-      $stmt->execute(array(':nranks' => $nranks,
+      $stmt->execute(array(':sortorder' => $sortorder,
                            ':rankid' => $rankid));
     }
   }
