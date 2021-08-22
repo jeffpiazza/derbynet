@@ -143,23 +143,6 @@ function populate_divisions_in_subgroup(subg, rankid, data) {
         .toggleClass('incomplete', data.divisions[d].rankids.length > 1)
         .append($("<p/>")
                 .text(data.divisions[d].name));
-    if (true || data.divisions[d].rankids.length > 1) {
-      var subs = $("<ul/>")
-          .appendTo(div)
-          .addClass('subdivisions');
-      for (var s = 0; s < data.divisions[d].subdivisions.length; ++s) {
-        if (!data.divisions[d].subdivisions[s].rankids.includes(rankid)) {
-          continue;
-        }
-        $("<li/>")
-          .appendTo(subs)
-          .addClass('subdivision')
-          .attr('data-subdivisionid', data.divisions[d].subdivisions[s].subdivisionid)
-          .toggleClass('incomplete', data.divisions[d].subdivisions[s].rankids.length > 1)
-          .append($("<p/>")
-                  .text(data.divisions[d].subdivisions[s].name));
-      }
-    }
   }
 }
 
@@ -211,7 +194,7 @@ function make_groups_sortable() {
 }
 
 function make_divisions_draggable_droppable(using_subgroups) {
-  $("li.division, li.subdivision").draggable({
+  $("li.division").draggable({
     scope: 'custom-group',
     helper: 'clone',
     appendTo: 'body',
@@ -233,14 +216,9 @@ function make_divisions_draggable_droppable(using_subgroups) {
       console.log($(ui.draggable).find('p').eq(0).text() + ' dropped on ' +
                   $(event.target).text());
       var draggable = $(ui.draggable);
-      var div_field;
       var div_id;
       if (draggable.is('[data-divisionid]')) {
-        div_field = 'divisionid';
         div_id = draggable.attr('data-divisionid');
-      } else if (draggable.is('[data-subdivisionid]')) {
-        div_field = 'subdivisionid'
-        div_id = draggable.attr('data-subdivisionid');
       } else {
         console.log('Unrecognizable division');
         return;
@@ -280,7 +258,6 @@ function make_divisions_draggable_droppable(using_subgroups) {
       }
 
       var data = {action: 'division.move',
-                  div_field: div_field,
                   div_id: div_id,
                   group_field: group_field,
                   group_id: group_id,

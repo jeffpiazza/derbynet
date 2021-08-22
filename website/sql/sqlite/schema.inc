@@ -127,8 +127,7 @@ make_index("Ranks", "rank"),
 ."  `firstname` VARCHAR(15) NOT NULL COLLATE NOCASE, "
 ."  `classid` INTEGER NOT NULL, "
 ."  `rankid` INTEGER NOT NULL, "
-."  `divisionid` INTEGER,"
-."  `subdivisionid` INTEGER,"
+."  `divisionid` INTEGER NOT NULL,"
 ."  `passedinspection` TINYINT(1) DEFAULT 0, "
 ."  `imagefile` VARCHAR(255), "
 .(expected_schema_version() < 2 ? "" : "  `carphoto` VARCHAR(255), ")

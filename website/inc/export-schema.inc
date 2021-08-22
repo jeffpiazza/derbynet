@@ -17,7 +17,6 @@ require_once('inc/schema_version.inc');
    RegistrationInfo(classid) -> Classes
    RegistrationInfo(divisionid) -> Divisions
    RegistrationInfo(rankid) -> Ranks
-   RegistrationInfo(subdivisionid) -> Subdivisions
 
    Roster(roundid) -> Rounds
    Roster(classid) -> Classes
@@ -26,8 +25,6 @@ require_once('inc/schema_version.inc');
    Rounds(classid) -> Classes
 
    SceneKiosk(sceneid) -> Scenes
-
-   Subdivisions(superdiv) -> Divisions
 
    Playlist(roundid) -> Rounds
    Playlist(sceneid_at_finish) -> Scenes
@@ -86,10 +83,9 @@ if (schema_version() >= 6) {
 
 if (schema_version() >= 8) {
   $schema['Divisions'] = array('divisionid', 'name', 'sortorder');
-  $schema['Subdivisions'] = array('subdivisionid', 'name', 'superdiv', 'sortorder');
   $schema['ConstituentClasses'] = array('antecedent', 'dependent');
+  
   $schema['RegistrationInfo'][] = 'divisionid';
-  $schema['RegistrationInfo'][] = 'subdivisionid';
 }
 
 ?>

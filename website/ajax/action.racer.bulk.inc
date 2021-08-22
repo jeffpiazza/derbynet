@@ -1,6 +1,7 @@
 <?php
 // $_POST['who']:
 //    'all' => all racers
+//    'd' + divisionid => all members of a division
 //    'c' + classid => all members of a class
 //    'r' + rankid => all members of one rank
 //
@@ -30,6 +31,9 @@ if ($ok) {
   $params = array();
   if ($_POST['who'] == 'all') {
     $where = '';
+  } else if (substr($_POST['who'], 0, 1) == 'd') {
+    $where = 'WHERE divisionid = :divisionid';
+    $params[':divisionid'] = substr($_POST['who'], 1);
   } else if (substr($_POST['who'], 0, 1) == 'c') {
     $where = 'WHERE classid = :classid';
     $params[':classid'] = substr($_POST['who'], 1);

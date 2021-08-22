@@ -1,7 +1,6 @@
 <?php
 
-// $_POST['div_field'] = 'divisionid' or 'subdivisionid'
-// $_POST['div_id'] = the numeric divisionid or subdivisionid
+// $_POST['div_id'] = the numeric divisionid
 // $_POST['group_field'] = 'classid' or 'rankid'
 // $_POST['group_id'] = numeric classid or rankid the (sub)division racers will move to.
 //
@@ -13,12 +12,11 @@
 require_once('inc/divisions.inc');
 require_once('inc/newracer.inc');
 
-function move_division($div_field, $div_id, $group_field, $group_id, $from_group_field, $from_group_id) {
+function move_division($div_id, $group_field, $group_id, $from_group_field, $from_group_id) {
   global $db;
 
   if ($group_field == 'classid') {
-    $div_table = ($div_field == 'divisionid') ? 'Divisions' : 'Subdivisions';
-    $name = read_single_value("SELECT name FROM $div_table WHERE $div_field = :div_id",
+    $name = read_single_value("SELECT name FROM Divisions WHERE divisionid = :div_id",
                               array(':div_id' => $div_id));
     if ($group_id < 0) {
       $group_id = find_or_create_class($name);
@@ -36,7 +34,7 @@ function move_division($div_field, $div_id, $group_field, $group_id, $from_group
                                  array(':group_id' => $group_id));
   }
   
-  $sql = "UPDATE RegistrationInfo SET classid = :classid, rankid = :rankid WHERE $div_field = :div_id";
+  $sql = "UPDATE RegistrationInfo SET classid = :classid, rankid = :rankid WHERE divisionid = :div_id";
   $params = array(':classid' => $classid,
                   ':rankid' => $rankid,
                   ':div_id' => $div_id);
@@ -54,7 +52,7 @@ function move_division($div_field, $div_id, $group_field, $group_id, $from_group
 if (!have_permission(CONTROL_RACE_PERMISSION)) {
   json_not_authorized();
 } else {
-  move_division($_POST['div_field'], $_POST['div_id'],
+  move_division($_POST['div_id'],
                 $_POST['group_field'], $_POST['group_id'],
                 @$_POST['from_group_field'], @$_POST['from_group_id']);
 

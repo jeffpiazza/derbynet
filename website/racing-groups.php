@@ -7,7 +7,7 @@ require_once('inc/divisions.inc');
 require_once('inc/schema_version.inc');
 require_permission(SET_UP_PERMISSION);
 
-if (schema_version() < DIVISIONS_SCHEMA) {
+if (schema_version() < DIVISION_SCHEMA) {
   header('Location: setup.php');
   exit(0);
 }
@@ -59,11 +59,6 @@ $(function() {
    <label for="by-division-radio">Race each <?php echo division_label_lc(); ?> as a group</label>
 <?php } ?>
 
-<?php if (false && read_single_value('SELECT COUNT(*) FROM Subdivisions') > 1) { ?>
-  <input id="by-subdivision-radio" type="radio" name="form-groups-by" value="by-subdivision"/>
-  <label for="by-subdivision-radio">Race by Subdivision</label>
-<?php } ?>
-
 <input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
 <label for="one-group-radio">Race as one big group</label>
 
@@ -101,8 +96,7 @@ $(function() {
        <span class="and-subgroups">and <span class="subgroup-color">&nbsp;</span> subgroups</span>
        to re-order.</p>
        <p class="instructions">Drag <span class="division-color">&nbsp;</span> <?php echo division_label_plural_lc(); ?>
-       <span class="and-subdivisions">and <span class="subdivision-color">&nbsp;</span> <?php echo subdivision_label_plural_lc(); ?></span>
-       <br/>onto <span class="group-color">&nbsp;</span> groups
+       onto <span class="group-color">&nbsp;</span> groups
         <span class="and-subgroups" style="white-space: nowrap;">and <span class="subgroup-color">&nbsp;</span> subgroups</span>.
 </p>
 

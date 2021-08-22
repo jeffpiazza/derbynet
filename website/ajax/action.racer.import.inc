@@ -24,7 +24,6 @@ if (have_permission(SET_UP_PERMISSION)) {
   $fields = array('lastname' => true,  
                   'firstname' => true,
                   'division' => false,
-                  'subdivision' => false,
                   'carnumber' => false,
                   'carname' => false,
                   'exclude' => false);
@@ -82,7 +81,6 @@ if ($ok) {
                          'carnumber' => $carnumber,
                          'carname' => $carname,
                          'division' => $division,
-                         'subdivision' => @$_POST['subdivision'],
                          'exclude' => $exclude));
 
   json_success();

@@ -68,7 +68,7 @@ function classes_and_ranks() {
                       .(schema_version() >= 3
                         ? 'constituents, ntrophies, '
                         : '\'\' AS constituents, -1 AS ntrophies, ')
-                      .(schema_version() >= RANK_AGGREGATE_VERSION
+                      .(schema_version() >= RANK_AGGREGATE_SCHEMA
                         ? 'rankids' : '\'\' AS rankids')
                       .' FROM Classes'
                       .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'

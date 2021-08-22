@@ -61,7 +61,6 @@ if (schema_version() < 8) {
   $updates - array_merge($updates,
                          @include_once(sql_file_path('divisions')));
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN divisionid INTEGER";
-  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN subdivisionid INTEGER";
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN note VARCHAR(255)";
   $updates[] = "CREATE TABLE ConstituentClasses ("
           ."  antecedent INTEGER, dependent  INTEGER)";

@@ -69,6 +69,7 @@ function inspect_database() {
                   'nawards' => 0,
                   'nheats' => 0,
                   'nresults' => 0,
+                  'fake-racers' => 0,
                   'settings_icon' => 'unknown',
                   'settings_details' => 'No photo directories defined.',
                   'writable' => false
@@ -243,6 +244,7 @@ function diagnose_configuration() {
                'nawards' => 0,
                'nheats' => 0,
                'nresults' => 0,
+               'fake-racers' => 0,
                'settings_icon' => 'unknown',
                'settings_details' => 'No photo directories defined.',
                'writable' => false

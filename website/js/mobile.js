@@ -66,6 +66,9 @@ function mobile_text(texts) {
   $(texts).each(function(i, text) {
     text = $(text);
     text.wrap("<div class='mtext'/>");
+    if (text.attr('data-wrap-class')) {
+      text.parent().addClass(text.attr('data-wrap-class'));
+    }
   });
 }
 

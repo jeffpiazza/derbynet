@@ -76,8 +76,6 @@ function all_classes() {
                                                             'required' => true),
                                        'division' => array('name' => division_label(),
                                                            'required' => false),
-                                       'subdivision' => array('name' => subdivision_label(),
-                                                              'required' => false),
                                        'carnumber' => array('name' => "Car Number",
                                                             'required' => false),
                                        'carname' => array('name' => "Car Name",

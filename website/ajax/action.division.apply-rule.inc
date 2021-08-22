@@ -36,26 +36,12 @@ function form_groups_by_rule($rule) {
               .'     WHERE class = (SELECT name FROM Divisions'
               .'                     WHERE Divisions.divisionid = RegistrationInfo.divisionid))');
 
-    if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE subdivisionid IS NOT NULL') > 0) {
-      // Assuming that subdivisions not assigned to RegistrationInfo entries can/should be ignored.
-      // Ranks get created even if not using (i.e., showing) subgroups
-      $db->exec('INSERT INTO Ranks(rank, classid, sortorder)'
-                .' SELECT DISTINCT Subdivisions.name, classid, Subdivisions.sortorder'
-                .' FROM RegistrationInfo JOIN Subdivisions USING (subdivisionid)');
-      $db->exec('UPDATE RegistrationInfo'
-                .' SET rankid ='
-                .'   (SELECT rankid FROM Ranks'
-                .'     WHERE classid = RegistrationInfo.classid'
-                .'       AND rank = (SELECT name FROM Subdivisions'
-                .'                    WHERE Subdivisions.subdivisionid = RegistrationInfo.subdivisionid))');
-    } else {
-      // No subdivisions; manufacture one rank per class
-      $db->exec('INSERT INTO Ranks(rank, classid, sortorder)'
-                .' SELECT class, classid, 1 FROM Classes');
-      $db->exec('UPDATE RegistrationInfo'
-                .' SET rankid = (SELECT rankid FROM Ranks'
-                .'                WHERE Ranks.classid = RegistrationInfo.classid)');
-    }
+    // Manufacture one rank per class
+    $db->exec('INSERT INTO Ranks(rank, classid, sortorder)'
+              .' SELECT class, classid, 1 FROM Classes');
+    $db->exec('UPDATE RegistrationInfo'
+              .' SET rankid = (SELECT rankid FROM Ranks'
+              .'                WHERE Ranks.classid = RegistrationInfo.classid)');
   }
   // else ('custom') do nothing
 }

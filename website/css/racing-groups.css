@@ -46,7 +46,7 @@ li.division {
   margin-bottom: 5px;
 }
 
-.group-color, .subgroup-color, .division-color, .subdivision-color {
+.group-color, .subgroup-color, .division-color {
   display: inline-block;
   width: 1em;
   border: 1px #404040 solid;
@@ -89,15 +89,6 @@ li.incomplete > p {
 }
 
 li.division p {
-  color: white;
-  padding-left: 10px;
-  margin-right: 10px;
-}
-
-li.subdivision > p, .subdivision-color {
-  background-color: #e0e0e0;
-}
-li.subdivision p {
   color: white;
   padding-left: 10px;
   margin-right: 10px;

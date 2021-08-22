@@ -117,6 +117,26 @@ input.white-button {
   margin-left: 90px;
   margin-bottom: 30px;
 }
+#edit_racer_modal .block_buttons input,
+#edit_racer_modal .block_buttons select,
+#edit_racer_modal .block_buttons optgroup,
+#edit_racer_modal .block_buttons option,
+#edit_racer_modal .block_buttons label,
+#edit_racer_modal .block_buttons span,
+#edit_racer_modal .block_buttons p {
+  font-size: 18px;
+}
+#edit_racer_modal input[type="button"],
+#edit_racer_modal .block_buttons input[type="submit"],
+#edit_racer_modal .block_buttons a.button_link {
+  margin-bottom: 2px;
+  line-height: 1.0;
+}
+#delete_racer_extension {
+  /* padding-top: 40px; */
+}
+
+
 #bulk_details_modal .eligible-flip {
   font-size: 24px;
   margin-left: 40px;
@@ -130,10 +150,6 @@ input.white-button {
 tr.exclude td.checkin-status {
   background-image: url('../img/no-trophy.png');
   background-repeat: no-repeat;
-}
-
-#delete_racer_extension {
-    padding-top: 40px;
 }
 
 img.checkin-photo {
@@ -193,4 +209,18 @@ p.warning a.ui-link {
     color: red;
     font-weight: bold;
     font-size: 16px;
+}
+
+
+/* divisions-modal dialog */
+.mlistview > li > p {
+  font-size: 17px;
+}
+.mlistview > li > p span.count {
+    font-size: 16px;
+    font-weight: bold;
+    float: right;
+}
+div.delete-extension {
+  margin-top: 40px;
 }

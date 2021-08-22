@@ -65,13 +65,23 @@ function handlechange_xbs(cb) {
          });
 }
 
+function on_edit_division_change(reorder_modal) {
+  var edit_division = $("#edit_division");
+  if (edit_division.val() < 0) {
+    edit_division.val(edit_division.find('option').eq(0).attr('value'));
+    close_modal_leave_background(edit_division);
+    show_modal(reorder_modal);
+  }
+}
+
 function show_edit_racer_form(racerid) {
   var first_name = $('#firstname-' + racerid).text();
   var last_name = $('#lastname-' + racerid).text();
   var car_no = $('#car-number-' + racerid).text();
   var car_name = $('#car-name-' + racerid).text();
 
-  var rankid = $('#class-' + racerid).attr('data-rankid');
+  var class_name = $('#class-' + racerid).text();
+  var rank_name = $('#rank-' + racerid).text();
 
   $("#edit_racer").val(racerid);
 
@@ -81,12 +91,18 @@ function show_edit_racer_form(racerid) {
   $("#edit_carno").val(car_no);
   $("#edit_carname").val(car_name);
 
-  var edit_rank = $("#edit_rank");
-  edit_rank.val(rankid);
-  // I think it's a bug in jquery-mobile that an explicit change
-  // event is required; setting the val above should be sufficient
-  // to cause an update.
-  edit_rank.change();
+  $("#edit_division").val($('#div-' + racerid).attr('data-divisionid'));
+  $("#edit_division").change();
+
+  if (false) { // TODO
+    var edit_rank = $("#edit_rank");
+    // TODO drop rank_name unless use_subgroups
+    edit_rank.val(class_name + ' / ' + rank_name)
+    // I think it's a bug in jquery-mobile that an explicit change
+    // event is required; setting the val above should be sufficient
+    // to cause an update.
+    edit_rank.change();
+  }
 
   $("#eligible").prop("checked", ! $('#lastname-' + racerid).prop("data-exclude"));
   $("#eligible").trigger("change", true);
@@ -133,9 +149,13 @@ function handle_edit_racer() {
   var new_carno = $("#edit_carno").val().trim();
   var new_carname = $("#edit_carname").val().trim();
 
-  var rank_picker = $("#edit_rank");
-  var new_rankid = rank_picker.val();
-
+  if (false) {
+    var rank_picker = $("#edit_rank");
+    var new_rankid = rank_picker.val();
+  }
+  var new_div_id = $("#edit_division").val();
+  var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_division")).text();
+  
   var rank_option = $('[value="' + new_rankid + '"]', rank_picker);
   var new_classname = rank_option.attr('data-class');
   var new_rankname = rank_option.attr('data-rank');
@@ -150,7 +170,7 @@ function handle_edit_racer() {
                  lastname: new_lastname,
                  carno: new_carno,
                  carname: new_carname,
-                 rankid: new_rankid,
+                 divisionid: new_div_id,
                  exclude: exclude},
           success: function(data) {
             if (data.hasOwnProperty('warnings')) {
@@ -167,6 +187,8 @@ function handle_edit_racer() {
               ln.parents('tr').toggleClass('exclude', exclude == 1);
               $("#car-number-" + racerid).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
+              console.log('Changing division to ' + new_div_name);
+              $("#div-" + racerid).attr('data-divisionid', new_div_id).text(new_div_name);
 
               $('#class-' + racerid).attr('data-rankid', new_rankid);
               $('#class-' + racerid).text(new_classname);
@@ -485,8 +507,12 @@ function handle_sorting_event(event) {
 }
 
 function sorting_key(row) {
-  console.log(row);
-  if (g_order == 'class') {
+  if (g_order == 'division') {
+    // division sortorder, lastname, firstname
+    return [parseInt(row.querySelector('[data-div-sortorder]').getAttribute('data-div-sortorder')),
+            row.getElementsByClassName('sort-lastname')[0].innerHTML,
+            row.getElementsByClassName('sort-firstname')[0].innerHTML]
+  } else if (g_order == 'class') {
     // rankseq, lastname, firstname
     return [parseInt(row.querySelector('[data-rankseq]').getAttribute('data-rankseq')),
             row.getElementsByClassName('sort-lastname')[0].innerHTML,
@@ -750,6 +776,12 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
             .append('<input type="button" class="white-button" value="Change"' +
                     ' onclick="show_edit_racer_form(' + racer.racerid + ')"/>'));
 
+  tr.append($('<td>')
+            .attr('id', 'div-' + racer.racerid)
+            .attr('data-divisionid', racer.divisionid)
+            .attr('data-div-sortorder', racer.division_sortorder)
+            .text(racer.division));
+  
   if (use_groups) {
     tr.append($('<td/>')
               .attr('id', 'class-' + racer.racerid)

@@ -219,7 +219,6 @@ array(
 .'	ClassID          INTEGER,'
 .'	RankID           INTEGER,'
 .'  DivisionID       INTEGER,'
-.'  SubdivisionID    INTEGER,'
 .'	PassedInspection BIT,'
 .'	ImageFile        VARCHAR (255),'
 .(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),')

@@ -10,32 +10,34 @@ user_login_coordinator
 
 curl_postj action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox=1" | check_jsuccess
 
+curl_postj action.php "action=division.apply-rule&rule=one-group" | check_jsuccess
+
 # Single group, ThePack
 # Subgroup Lions = 1
 # Subgroup Tigers = 2
 # Subgroup Bears = 3
 # Subgroup Wolves = 4
 
-curl_postj action.php "action=racer.import&firstname=Jewell&lastname=Jeansonne&division=ThePack&carnumber=101&subdivision=Lions&exclude=" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Cedrick&lastname=Charley&division=ThePack&carnumber=202&subdivision=Tigers" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Grant&lastname=Gribble&division=ThePack&carnumber=303&subdivision=Bears" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Harrison&lastname=Hanks&division=ThePack&carnumber=404&subdivision=Wolves" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Jerald&lastname=Jerry&division=ThePack&carnumber=105&subdivision=Lions&exclude=X" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Ernest&lastname=Edelman&division=ThePack&carnumber=206&subdivision=Tigers" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Lloyd&lastname=Lightsey&division=ThePack&carnumber=307&subdivision=Bears" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Gary&lastname=Grissom&division=ThePack&carnumber=408&subdivision=Wolves" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Von&lastname=Vassar&division=ThePack&carnumber=109&subdivision=Lions&exclude=NO" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Harold&lastname=Hayek&division=ThePack&carnumber=210&subdivision=Tigers&exclude=yes" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Pasquale&lastname=Procopio&division=ThePack&carnumber=311&subdivision=Bears" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Winford&lastname=Weld&division=ThePack&carnumber=412&subdivision=Wolves" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=John&lastname=Jefferys&division=ThePack&carnumber=113&subdivision=Lions&exclude=0" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Thanh&lastname=Turner&division=ThePack&carnumber=214&subdivision=Tigers" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Demetrius&lastname=Demming&division=ThePack&carnumber=315&subdivision=Bears" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Everette&lastname=Esses&division=ThePack&carnumber=416&subdivision=Wolves" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Forrest&lastname=Figgins&division=ThePack&carnumber=117&subdivision=Lions" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Sterling&lastname=Spalla&division=ThePack&carnumber=218&subdivision=Tigers" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Delmar&lastname=Donnelly&division=ThePack&carnumber=319&subdivision=Bears" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Stanton&lastname=Salmon&division=ThePack&carnumber=420&subdivision=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Jewell&lastname=Jeansonne&carnumber=101&division=Lions&exclude=" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Cedrick&lastname=Charley&carnumber=202&division=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Grant&lastname=Gribble&carnumber=303&division=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Harrison&lastname=Hanks&carnumber=404&division=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Jerald&lastname=Jerry&carnumber=105&division=Lions&exclude=X" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Ernest&lastname=Edelman&carnumber=206&division=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Lloyd&lastname=Lightsey&carnumber=307&division=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Gary&lastname=Grissom&carnumber=408&division=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Von&lastname=Vassar&carnumber=109&division=Lions&exclude=NO" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Harold&lastname=Hayek&carnumber=210&division=Tigers&exclude=yes" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Pasquale&lastname=Procopio&carnumber=311&division=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Winford&lastname=Weld&carnumber=412&division=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=John&lastname=Jefferys&carnumber=113&division=Lions&exclude=0" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Thanh&lastname=Turner&carnumber=214&division=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Demetrius&lastname=Demming&carnumber=315&division=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Everette&lastname=Esses&carnumber=416&division=Wolves" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Forrest&lastname=Figgins&carnumber=117&division=Lions" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Sterling&lastname=Spalla&carnumber=218&division=Tigers" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Delmar&lastname=Donnelly&carnumber=319&division=Bears" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Stanton&lastname=Salmon&carnumber=420&division=Wolves" | check_jsuccess
 
 curl_postj action.php "action=racer.pass&value=1&racer=1" | check_jsuccess
 curl_postj action.php "action=racer.pass&value=1&racer=2" | check_jsuccess
@@ -144,9 +146,9 @@ curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22
     jq '.kind == "supergroup" and .key == "supergroup" and .name == "Pack"' | \
     expect_eq true
 
-curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22ThePack%22%7D" | \
+curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22One Group%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
-    jq '.kind == "class" and .key == "c1" and .name == "ThePack"' | \
+    jq '.kind == "class" and .key == "c1" and .name == "One Group"' | \
     expect_eq true
 curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
@@ -157,7 +159,7 @@ curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22
 
 curl_postj action.php "action=award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_jsuccess
 curl_postj action.php "action=award.import&awardname=Most%20Tigerific&awardtype=Other&subgroup=Tigers" | check_jsuccess
-curl_postj action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy&division=ThePack" | check_jsuccess
+curl_postj action.php "action=award.import&awardname=The%20Pack%20Design&awardtype=Design%20Trophy" | check_jsuccess
 curl_postj action.php "action=award.import&awardname=Bad%20Subgroup%20Name&awardtype=Design%20Trophy&subgroup=Typo" | check_jfailure
 
 curl_postj action.php "action=award.winner&awardid=1&racerid=2" | check_jfailure
@@ -170,7 +172,7 @@ curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in Tigers'
 curl_getj "action.php?query=award.current" | expect_one Thanh
 
 curl_postj action.php "action=award.present&key=speed-3-1" | check_jsuccess
-curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in ThePack'
+curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in One Group'
 curl_getj "action.php?query=award.current" | expect_one Jefferys
 
 curl_postj action.php "action=award.present&key=speed-3" | check_jsuccess
