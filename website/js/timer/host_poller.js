@@ -8,6 +8,7 @@
 const HEARTBEAT_PACE = 500;
 
 class HostPoller {
+  static url = 'action.php';
 
   next_message_time = 0;
   confirmed = 1;  // TODO
@@ -71,7 +72,7 @@ class HostPoller {
 
   sendMessage(msg) {
     this.next_message_time = Date.now() + HEARTBEAT_PACE;
-    $.ajax('action.php',
+    $.ajax(url,
            {type: 'POST',
             data: msg,
             success: this.decodeResponse.bind(this)});
