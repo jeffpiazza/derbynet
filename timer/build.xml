@@ -9,6 +9,10 @@
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   <property name="lib" location="../lib"/>
+  <property name="templates" location="../templates"/>
+
+  <property name="derbynet-timer" location="derbynet-timer"/>
+  <property name="forge" location="electron-forge"/>
 
   <!-- Should be inherited from invoking task;
        these definitions are only backups -->
@@ -37,8 +41,92 @@
     </javac>
   </target>
 
-  <target name="dist" depends="compile"
-        description="generate the distribution" >
+  <target name="make-electron-forge">
+      <mkdir dir="${forge}"/>
+      <mkdir dir="${forge}/src"/>
+      <mkdir dir="${forge}/src/css"/>
+      <mkdir dir="${forge}/src/js"/>
+      <mkdir dir="${forge}/src/js/timer"/>
+  </target>
+
+  <target name="timer.html" depends="make-electron-forge">
+      <copy file="${templates}/timer.html"
+            tofile="${forge}/src/timer.html">
+            <filterchain>
+                <replacetokens>
+                    <token key="STARTPHP" value="!--"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ENDPHP" value="--"/>
+                </replacetokens>
+          </filterchain>
+      </copy>
+  </target>
+
+  <target name="timer-profiles" depends="timer-jar, make-electron-forge">
+      <!-- java task supposedly supports outputproperty, but it doesn't seem to
+           work. -->
+      <exec executable="java" outputproperty="timer-profiles">
+          <arg value="-cp"/>
+          <!-- ${timer-jar-dir} doesn't work in arg value, apparently. -->
+          <arg value="${dist}/lib/derby-timer.jar"/>
+          <arg value="org.jeffpiazza.derby.profiles.AllProfiles"/>
+      </exec>
+      <copy file="${templates}/timer-profiles.js"
+            tofile="${forge}/src/js/timer/profiles.js" overwrite="true">
+          <filterchain>
+              <replacetokens>
+                  <token key="PROFILES" value="${timer-profiles}"/>
+              </replacetokens>
+          </filterchain>
+      </copy>
+  </target>
+
+  <target name="prepare-electron-forge" depends="make-electron-forge,
+                                                 timer.html, timer-profiles">
+      <copy file="${derbynet-timer}/package.json" todir="${forge}"/>
+      <copy file="${derbynet-timer}/timer.js" todir="${forge}/src"/>
+      <copy todir="${forge}/src/css">
+          <fileset dir="../website/css">
+              <include name="global.css"/>
+              <include name="mobile.css"/>
+          </fileset>
+          <fileset dir="${derbynet-timer}/src/css">
+              <include name="timer.css"/>
+          </fileset>
+      </copy>
+      <copy todir="${forge}/src/js">
+          <fileset dir="../website/js">
+              <include name="jquery.js"/>
+              <include name="mobile.js"/>
+              <include name="ajax-setup.js"/>
+              <include name="modal.js"/>
+          </fileset>
+      </copy>
+      <copy todir="${forge}/src/js/timer">
+        <fileset dir="${derbynet-timer}/src/js">
+            <include name="**"/>
+        </fileset>
+      </copy>
+  </target>
+
+  <target name="electron-app" depends="prepare-electron-forge"
+          description="Builds the stand-alone derbynet-timer app">
+      <exec executable="yarn">
+          <arg value="--cwd"/>
+          <arg value="${forge}"/>
+          <arg value="install"/>
+      </exec>
+      <exec executable="yarn">
+          <arg value="--cwd"/>
+          <arg value="${forge}"/>
+          <arg value="make"/>
+      </exec>
+      <!-- TODO move ${forge}/out/derbynet-timer-darwin-x64/derbynet-timer.app/ -->
+  </target>
+
+  <target name="timer-jar" depends="compile"
+        description="generate the jar file" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
 
@@ -71,6 +159,9 @@
         <zipgroupfileset dir="${lib}" includes="Java-WebSocket-1.5.2.jar"/>
         <zipgroupfileset dir="${lib}" includes="json-20210307.jar"/>
     </jar>
+  </target>
+
+  <target name="dist" depends="timer-jar">
   </target>
 
   <target name="clean"

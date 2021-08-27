@@ -30,6 +30,12 @@
   <target name="clean"
           description="Remove generated artifacts for a clean build environment">
     <delete quiet="true">
+        <fileset dir="website">
+            <filename name="timer.php"/>
+        </fileset>
+        <fileset dir="website/css">
+            <filename name="timer.css"/>
+        </fileset>
         <fileset dir="website/inc">
             <filename name="banner.inc"/>
             <filename name="generated-version.inc"/>
@@ -37,7 +43,7 @@
             <filename name="generated-commit-hash.inc"/>
         </fileset>
         <fileset dir="website/js/timer">
-            <filename name="timer-profiles.js"/>
+            <filename name="**"/>
         </fileset>
     </delete>
     <ant dir="${timer-dir}" target="clean"/>
@@ -47,7 +53,7 @@
   <target name="dist" depends="dist.oneclick, dist.mac, dist.debian"
           description="Build complete distribution"/>
 
-  <target name="dist.zip" depends="timer-jar, timer-profiles, docs-dist, generated"
+  <target name="dist.zip" depends="timer-jar, timer-in-browser, docs-dist, generated"
           description="Build OS-neutral zip-file distribution">
       <zip destfile="../DerbyNet-${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}.zip">
           <fileset dir=".">
@@ -172,7 +178,25 @@
       </copy>
   </target>
 
-  <target name="timer-profiles" depends="timer-jar">
+  <target name="prepare-timer-in-browser">
+      <mkdir dir="website/js/timer"/>
+  </target>
+
+  <target name="timer.php">
+        <copy file="templates/timer.html"
+            tofile="website/timer.php" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="STARTPHP" value="?php"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ENDPHP" value="?"/>
+                </replacetokens>
+          </filterchain>
+      </copy>
+</target>
+
+  <target name="timer-profiles" depends="timer-jar, prepare-timer-in-browser">
       <!-- java task supposedly supports outputproperty, but it doesn't seem to
            work. -->
       <exec executable="java" outputproperty="timer-profiles">
@@ -182,13 +206,26 @@
           <arg value="org.jeffpiazza.derby.profiles.AllProfiles"/>
       </exec>
       <copy file="templates/timer-profiles.js"
-            tofile="website/js/timer/timer-profiles.js" overwrite="true">
+            tofile="website/js/timer/profiles.js" overwrite="true">
           <filterchain>
               <replacetokens>
                   <token key="PROFILES" value="${timer-profiles}"/>
               </replacetokens>
           </filterchain>
       </copy>
+  </target>
+
+  <target name="timer-in-browser" depends="timer.php, timer-profiles">
+      <copy todir="website/js/timer" overwrite="true">
+        <fileset dir="timer/derbynet-timer/src/js">
+            <include name="*.js"/>
+        </fileset>
+    </copy>
+      <copy todir="website/css" overwrite="true">
+        <fileset dir="timer/derbynet-timer/src/css">
+            <include name="*.css"/>
+        </fileset>
+    </copy>
   </target>
 
   <target name="quickref" depends="docs-dist">
@@ -198,10 +235,15 @@
   <target name="timer-jar" depends="generated"
           description="Builds the jar file for derby-timer">
       <ant dir="${timer-dir}" target="clean"/>
-      <ant dir="${timer-dir}"/>
+      <ant dir="${timer-dir}" target="timer-jar"/>
   </target>
 
-  <target name="dist.debian" depends="generated, timer-jar, timer-profiles, docs-dist"
+  <target name="electron-app" depends="generated"
+          description="Builds the stand-alone timer application">
+      <ant dir="${timer-dir}" target="electron-app"/>
+  </target>
+
+  <target name="dist.debian" depends="generated, timer-jar, timer-in-browser, docs-dist"
       description="Build a Debian binary package (.deb) for all of DerbyNet">
     <ant dir="installer/debian" target="dist"/>
   </target>
@@ -210,7 +252,7 @@
       <ant dir="${docs-dir}"/>
   </target>
 
-<target name="mac.installer.website" if="is_mac" depends="generated, timer-profiles">
+<target name="mac.installer.website" if="is_mac" depends="generated, timer-in-browser">
     <mkdir dir="ROOT/Library/WebServer/Documents/derbynet"/>
     <copy todir="ROOT/Library/WebServer/Documents/derbynet" overwrite="true">
         <fileset dir="website">
@@ -379,7 +421,7 @@
   </exec>
 </target>
 
-<target name="dist.oneclick" depends="generated, timer-jar, timer-profiles, docs-dist"
+<target name="dist.oneclick" depends="generated, timer-jar, timer-in-browser, docs-dist"
     description="Build the &quot;one-click&quot; zip file to run Uniform Server on Windows">
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>

@@ -21,15 +21,20 @@ testing/*.passwords
 timer/build/
 timer/out/
 timer/dist/
+timer/electron-forge/
 timer/.idea/workspace.xml
 timer/.idea/encodings.xml
+
+website/css/timer.css
 
 website/inc/banner.inc
 website/inc/generated-*.inc
 website/quickref.pdf
 website/js/adapter.js
 website/local/
-website/js/timer/timer-profiles.js
+
+website/timer.php
+website/js/timer/*
 
 dist/
 adapter-webrtc/
