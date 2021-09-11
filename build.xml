@@ -187,10 +187,16 @@
             tofile="website/timer.php" overwrite="true">
             <filterchain>
                 <replacetokens>
-                    <token key="STARTPHP" value="?php"/>
+                    <token key="PHP_START" value="&lt;?php"/>
                 </replacetokens>
                 <replacetokens>
-                    <token key="ENDPHP" value="?"/>
+                    <token key="PHP_END" value="?&gt;"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ELECTRON_ONLY_START" value="&lt;!--"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ELECTRON_ONLY_END" value="--&gt;"/>
                 </replacetokens>
           </filterchain>
       </copy>
@@ -215,7 +221,8 @@
       </copy>
   </target>
 
-  <target name="timer-in-browser" depends="timer.php, timer-profiles">
+  <target name="timer-in-browser" depends="timer.php, timer-profiles"
+          description="Rebuild timer.php and friends">
       <copy todir="website/js/timer" overwrite="true">
         <fileset dir="timer/derbynet-timer/src/js">
             <include name="*.js"/>

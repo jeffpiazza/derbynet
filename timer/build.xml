@@ -45,6 +45,7 @@
       <mkdir dir="${forge}"/>
       <mkdir dir="${forge}/src"/>
       <mkdir dir="${forge}/src/css"/>
+      <mkdir dir="${forge}/src/img"/>
       <mkdir dir="${forge}/src/js"/>
       <mkdir dir="${forge}/src/js/timer"/>
   </target>
@@ -54,10 +55,16 @@
             tofile="${forge}/src/timer.html">
             <filterchain>
                 <replacetokens>
-                    <token key="STARTPHP" value="!--"/>
+                    <token key="PHP_START" value="&lt;!--"/>
                 </replacetokens>
                 <replacetokens>
-                    <token key="ENDPHP" value="--"/>
+                    <token key="PHP_END" value="--&gt;"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ELECTRON_ONLY_START" value='&lt;script type="text/javascript"&gt;'/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="ELECTRON_ONLY_END" value="&lt;/script&gt;"/>
                 </replacetokens>
           </filterchain>
       </copy>
@@ -107,6 +114,11 @@
         <fileset dir="${derbynet-timer}/src/js">
             <include name="**"/>
         </fileset>
+      </copy>
+      <copy todir="${forge}/src/img">
+          <fileset dir="../website/img">
+              <include name="derbynet.png"/>
+          </fileset>
       </copy>
   </target>
 

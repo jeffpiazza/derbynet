@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 app.commandLine.appendSwitch('enable-features', 'ElectronSerialChooser');
@@ -17,12 +17,40 @@ const createWindow = () => {
       // Apparently no longer needed:
       //   enableBlinkFeatures: 'Serial',
       // webSecurity: false
+      nodeIntegration: true,
+      contextIsolation: false,
     }
-  })
+  });
+
+  console.log('createWindow method');
 
   mainWindow.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
     console.log('SELECT-SERIAL-PORT FIRED WITH', portList);
 
+    mainWindow.webContents.send('serial-ports', portList);
+    console.log('Sent portList on serial-ports channel');
+
+    // webContents.executeJavaScript(codestring, userGesture) -- Not good
+    //
+    // ipcRenderer.on(channel, listener)
+    // ipcRenderer.send(channel, ...args)
+    // ipcRenderer.invoke(channel, ...args) returns Promise for receiving a response
+    // ipcRenderer.postMessage(channel, message) 
+
+    /* SELECT-SERIAL-PORT FIRED WITH [
+  {
+    portId: '4A1BCFB62B8A6BD6ACECFBFC39279F82',
+    portName: 'cu.Bluetooth-Incoming-Port'
+  },
+  {
+    portId: 'EEB852387750551647DDAEDA1DAE7B07',
+    portName: 'cu.usbserial-1410',
+    displayName: 'USB-Serial Controller',
+    vendorId: '1659',
+    productId: '8963',
+    usbDriverName: 'com.apple.DriverKit-AppleUSBPLCOM'
+  }
+*/
     //Display some type of dialog so that the user can pick a port
     /*dialog.showMessageBoxSync({
       ....
@@ -48,15 +76,18 @@ const createWindow = () => {
   mainWindow.webContents.session.on('serial-port-added', (event, port) => {
     console.log('serial-port-added FIRED WITH', port);
     event.preventDefault();
+    mainWindow.webContents.send('serial-ports', 'serial-port-added');
   })
 
   mainWindow.webContents.session.on('serial-port-removed', (event, port) => {
     console.log('serial-port-removed FIRED WITH', port);
     event.preventDefault();
+    mainWindow.webContents.send('serial-ports', 'serial-port-removed');
   })
   
   mainWindow.webContents.session.on('select-serial-port-cancelled', () => {
     console.log('select-serial-port-cancelled FIRED.');
+    mainWindow.webContents.send('serial-ports', 'select-serial-port-cancelled');
   })
 
   // and load the index.html of the app.

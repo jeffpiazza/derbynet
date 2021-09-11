@@ -187,6 +187,15 @@ tbody {
     background: #ff0000;
 }
 
+.block_buttons input.mini {
+  padding: 5px;
+  border-radius: 0.4em;
+  text-decoration: none;
+  width: 160px;
+  font-size: 18px;
+  margin-bottom: 3px;
+}
+
 #ajax_working {
   position: fixed;
   background-color: green;

@@ -5,7 +5,7 @@
 // ABORT_HEAT_RECEIVED).  The host poller also listens for several events that
 // it then reports to the web server.
 
-const HEARTBEAT_PACE = 500;
+const HEARTBEAT_PACE = 5000;   // TODO 500
 
 class HostPoller {
   static url = 'action.php';
@@ -72,7 +72,7 @@ class HostPoller {
 
   sendMessage(msg) {
     this.next_message_time = Date.now() + HEARTBEAT_PACE;
-    $.ajax(url,
+    $.ajax(HostPoller.url,
            {type: 'POST',
             data: msg,
             success: this.decodeResponse.bind(this)});

@@ -1,4 +1,5 @@
-<@STARTPHP@ @session_start();
+@PHP_START@
+@session_start();
 
 require_once('inc/authorize.inc');
 require_once('inc/banner.inc');
@@ -7,7 +8,7 @@ require_once('inc/json-timer-state.inc');
 require_once('inc/timer-test.inc');
 require_permission(SET_UP_PERMISSION);
 
-@ENDPHP@><!DOCTYPE html>
+@PHP_END@<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -29,37 +30,82 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/timer/state_machine.js"></script>
 <script type="text/javascript" src="js/timer/timer_proxy.js"></script>
 <script type="text/javascript" src="js/timer/host_poller.js"></script>
-<script type="text/javascript" src="js/timer/main.js"></script>
+<script type="text/javascript" src="js/timer/serial_port_event_listener.js"></script>
+<script type="text/javascript" src="js/timer/role_finder.js"></script>
+@ELECTRON_ONLY_START@
+const { ipcRenderer } = require('electron');
+ipcRenderer.on('serial-ports', serial_port_event_listener);
 
+$(function() {
+  g_standalone = true; 
+  $("#host-side, #standalone-banner").removeClass('hidden');
+  $("#main-container").addClass('standalone');
+});
+@ELECTRON_ONLY_END@
+<script type="text/javascript" src="js/timer/main.js"></script>
 </head>
 <body>
-<@STARTPHP@ make_banner('Timer', 'coordinator.php'); @ENDPHP@>
+<div id="standalone-banner" class="banner hidden">
+  <div class="banner_title">Timer</div>
+  <img class="logo" src="img/derbynet.png"/>
+</div>
+@PHP_START@ make_banner('Timer', 'coordinator.php'); @PHP_END@
 
-<div id="no-serial-api" class="hidden">
-This browser does not support Web Serial API and so cannot communicate with your timer.
-Please try a different browser.
+<div id="main-container">
+
+  <div id="host-side" class="hidden">
+    <form id="host-side-form">
+    <label for="host-url">Server URL</label>
+    <input id="host-url" type="text"/>
+
+    <label for="role-select">Role</label>
+    <select id="role-select"></select>
+
+    <label for="host-password">Password</label>
+    <input id="host-password" type="password"/>
+
+    <div id="connect-button-div" class="block_buttons">
+      <input id="connect-button" type="submit" value="Connect"/>
+    </div>
+    </form>
+  </div><!-- No gap between inline-block elements
+
+  --><div id="serial-side">
+
+    <div id="ports-div" class="scanlist-div">
+      <ul id="ports-list" class="mlistview scanlist">
+      </ul>
+      <div class="block_buttons">
+        <input id="port-button" type="button" class="mini"
+               value="New Port" onclick="new_port()"/>
+      </div>
+    </div>
+
+    <div id="profiles-div" class="scanlist-div">
+      <ul id="profiles-list" class="mlistview scanlist">
+      </ul>
+    </div>
+
+    <div id="probe-buttons-div" class="block_buttons">
+      <input id="probe-button" type="button" value="Scan" onclick="probe_for_timer()"/>
+    </div>
+
+  </div>
+
 </div>
 
-<div id="profiles-div">
-  <ul id="profiles-list" class="mlistview">
-  </ul>
-</div>
+<div id="opening_modal" class="modal_dialog hidden block_buttons">
+    <div id="no-serial-api" class="hidden">
+        This browser does not support <br/><b>Web Serial API</b><br/>and so cannot communicate with your timer.
+        Please try a different browser.
+    </div>
 
-<div id="probe-buttons-div" class="block_buttons">
-  <p>Plug in your timer and click "Probe".</p>
-
-  <input id="probe-button" type="button" value="Probe" onclick="probe_for_timer()"/>
-  <br/>
-  <input id="port-button" type="button" value="New Port" onclick="new_port()"/>
-  
-</div>
-
-<div id="connection-status-div">
-  <p id="connected">Page reloaded</p>
-  <p id="connected-detail"></p>
-</div>
-
-<div id="last_event">
+    <div id="serial-start" class="hidden">
+      <div>
+         Click 'Start Scan' to choose a serial port.
+      </div>
+      <input id="serial-start-button" type="button" value="Start Scan" onclick="on_serial_start()"/>
+    </div>
 </div>
 
 </body>

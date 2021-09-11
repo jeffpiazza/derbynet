@@ -1,38 +1,77 @@
-#profiles-list li {
-  font-size: 12px;
+#main-container {
+  border: 2px solid gray;
+  margin-left: auto;
+  margin-right: auto;
+  width: 316px;
+}
+
+#main-container.standalone {
+  margin-top: 20px;
+  width: 620px;
+}
+
+#host-side {
+  display: inline-block;
+  vertical-align: top;
+  width: 300px;
+}
+#host-side.hidden {
+  display: none;
+}
+/* Ugh.  This is to make the "Connect"
+button align visually with the "Scan"
+button on the serial side. */
+#connect-button-div {
+  margin-top: 245px;
+}
+
+#serial-side {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.scanlist li {
+  font-size: 16px;
   line-height: 1.1;
   padding: .3em .7em;
 }
 
-li.probing {
+.scanlist li.probing {
   font-weight: bold;
+  background-color: #f9fc2d;
 }
 
-li.undiscoverable {
+.scanlist li.undiscoverable {
   background-color: #cccccc;
 }
 
-li.chosen {
+.scanlist li.chosen {
   font-weight: bold;
   background-color: #00cc00;
 }
 
-#no-serial-api {
-  font-weight: bold;
-  font-size: 20px;
-  width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+.scanlist-div {
+  width: 300px;
+  border: 3px solid black;
+  margin: 5px;
 }
 
-#profiles-div {
-  width: 300px;
-  float: right;
-  margin-right: 20px;
+#probe-button {
+  margin-top: 20px;
+}
+
+#opening_modal {
+  width: 400px;
+}
+
+#no-serial-api {
+  text-align: center;
+  font-size: 20px;
+  margin: 20px;
 }
 
 #probe-buttons-div {
-  width: 400px;
+
 }
 
 #connection-status-div {
