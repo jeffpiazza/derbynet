@@ -7,33 +7,23 @@
 
 #main-container.standalone {
   margin-top: 20px;
-  width: 620px;
+  width: 600px;
 }
 
-#host-side {
+.host, .serial {
   display: inline-block;
   vertical-align: top;
   width: 300px;
 }
-#host-side.hidden {
+.host.hidden {
   display: none;
-}
-/* Ugh.  This is to make the "Connect"
-button align visually with the "Scan"
-button on the serial side. */
-#connect-button-div {
-  margin-top: 245px;
-}
-
-#serial-side {
-  display: inline-block;
-  vertical-align: top;
 }
 
 .scanlist li {
   font-size: 16px;
   line-height: 1.1;
   padding: .3em .7em;
+  cursor: pointer;
 }
 
 .scanlist li.probing {
@@ -45,19 +35,33 @@ button on the serial side. */
   background-color: #cccccc;
 }
 
+.scanlist li.user-chosen {
+  border-color: #498128;
+  border-left-width: 4px;
+  border-right-width: 4px;
+}
+
 .scanlist li.chosen {
   font-weight: bold;
-  background-color: #00cc00;
+  background-color: #498128;
+  color: white;
 }
 
 .scanlist-div {
-  width: 300px;
+  /* width: 300px; */
   border: 3px solid black;
   margin: 5px;
 }
 
-#probe-button {
+#lower-container {
   margin-top: 20px;
+}
+
+.status img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
 }
 
 #opening_modal {

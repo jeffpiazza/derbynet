@@ -78,6 +78,7 @@
 .timer_control_group div#timer-test {
   float: right;
   clear: right;
+  margin-top: 9px;
 }
 
 .timer_control_group div#timer-test a {
@@ -85,6 +86,8 @@
   height: 25px;
   padding-top: 5px;
   color: white;
+  display: inline-block;
+  margin-left: 6px;
 }
 
 #timer-testing-herald {

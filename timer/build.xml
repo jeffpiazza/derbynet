@@ -118,6 +118,7 @@
       <copy todir="${forge}/src/img">
           <fileset dir="../website/img">
               <include name="derbynet.png"/>
+              <include name="status/*.png"/>
           </fileset>
       </copy>
   </target>

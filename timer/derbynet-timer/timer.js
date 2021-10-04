@@ -12,7 +12,7 @@ const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1600,
-    height: 600,
+    height: 700,
     webPreferences: {
       // Apparently no longer needed:
       //   enableBlinkFeatures: 'Serial',

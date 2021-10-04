@@ -9,9 +9,12 @@ require_once('inc/timer-test.inc');
 require_permission(SET_UP_PERMISSION);
 
 @PHP_END@<!DOCTYPE html>
-<html>
-<head>
+<html lang="en" xml:lang="en" xmlns= "http://www.w3.org/1999/xhtml">
+<meta charset="UTF-8"/>
+<meta name="google" content="notranslate"/>
+<meta http-equiv="Content-Language" content="en"/>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
 <title>Timer</title>
 <link rel="stylesheet" type="text/css" href="css/global.css"/>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
@@ -38,46 +41,43 @@ ipcRenderer.on('serial-ports', serial_port_event_listener);
 
 $(function() {
   g_standalone = true; 
-  $("#host-side, #standalone-banner").removeClass('hidden');
+  $(".host").removeClass('hidden');
   $("#main-container").addClass('standalone');
 });
 @ELECTRON_ONLY_END@
 <script type="text/javascript" src="js/timer/main.js"></script>
 </head>
 <body>
-<div id="standalone-banner" class="banner hidden">
+<div id="standalone-banner" class="banner">
   <div class="banner_title">Timer</div>
   <img class="logo" src="img/derbynet.png"/>
 </div>
-@PHP_START@ make_banner('Timer', 'coordinator.php'); @PHP_END@
+
 
 <div id="main-container">
 
-  <div id="host-side" class="hidden">
-    <form id="host-side-form">
-    <label for="host-url">Server URL</label>
-    <input id="host-url" type="text"/>
+  <div id="middle-container">
+    <div id="host-side" class="hidden host">
+      <form id="host-side-form">
+        <label for="host-url">Server URL</label>
+        <input id="host-url" type="text"/>
 
-    <label for="role-select">Role</label>
-    <select id="role-select"></select>
+        <label for="role-select">Role</label>
+        <select id="role-select"></select>
 
-    <label for="host-password">Password</label>
-    <input id="host-password" type="password"/>
+        <label for="host-password">Password</label>
+        <input id="host-password" type="password"/>
+      </form>
+    </div><!-- host-side No gap between inline-block elements
 
-    <div id="connect-button-div" class="block_buttons">
-      <input id="connect-button" type="submit" value="Connect"/>
-    </div>
-    </form>
-  </div><!-- No gap between inline-block elements
-
-  --><div id="serial-side">
+  --><div id="serial-side" class="serial">
 
     <div id="ports-div" class="scanlist-div">
       <ul id="ports-list" class="mlistview scanlist">
       </ul>
       <div class="block_buttons">
         <input id="port-button" type="button" class="mini"
-               value="New Port" onclick="new_port()"/>
+               value="New Port" onclick="on_new_port_click()"/>
       </div>
     </div>
 
@@ -85,14 +85,32 @@ $(function() {
       <ul id="profiles-list" class="mlistview scanlist">
       </ul>
     </div>
+    
+  </div><!-- serial-side -->
+  </div><!-- middle-container -->    
 
-    <div id="probe-buttons-div" class="block_buttons">
-      <input id="probe-button" type="button" value="Scan" onclick="probe_for_timer()"/>
+  <div id="lower-container">
+    <div id="connect-button-div" class="block_buttons host hidden">
+      <input id="connect-button" type="submit" form="host-side-form" value="Connect"/>
+    </div><!-- No gap between inline-block elements
+
+  --><div id="probe-buttons-div" class="block_buttons serial">
+      <input id="probe-button" type="button" value="Scan" onclick="on_scan_click()"/>
     </div>
 
-  </div>
+  <div id="status-container">
+    <div class="host status hidden">
+      <img id="host-status" src="img/status/trouble.png"/>
+    </div><!-- No gap between inline-block elements
 
-</div>
+    --><div class="serial status">
+      <img id="serial-status" src="img/status/unknown.png"/>
+    </div>  
+  </div><!-- status-container -->
+
+  </div><!-- lower-container -->
+
+</div><!-- main-container -->
 
 <div id="opening_modal" class="modal_dialog hidden block_buttons">
     <div id="no-serial-api" class="hidden">
@@ -106,6 +124,12 @@ $(function() {
       </div>
       <input id="serial-start-button" type="button" value="Start Scan" onclick="on_serial_start()"/>
     </div>
+</div>
+
+<div id="leaving_modal" class="modal_dialog hidden">
+  <p>
+  NOTE: Closing this window or tab will disconnect the timer from the server.
+  </p>
 </div>
 
 </body>

@@ -113,9 +113,16 @@ class PortWrapper {
 
   async write(msg) {
     const encoder = new TextEncoder();
-    const writer = this.port.writable.getWriter();
-    await writer.write(encoder.encode(msg + this.eol));
-    writer.releaseLock();
+    if (this.port.writable) {
+      const writer = this.port.writable.getWriter();
+      try {
+        await writer.write(encoder.encode(msg + this.eol));
+      } finally {
+        writer.releaseLock();
+      }
+    } else {
+      console.log('** No writable stream for port');
+    }
   }
 
   nextNoWait() {

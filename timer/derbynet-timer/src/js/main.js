@@ -14,6 +14,21 @@ $(function() {
   }
 });
 
+$(function() {
+  // Once per second, broadcast a "timer is alive" message, so other tabs/windows won't
+  // try to open a second instance or refresh this one.
+  const bc = new BroadcastChannel('timer-alive');
+  setInterval(function() {
+    bc.postMessage({alive: true});
+  }, 1000);
+
+  // We can try to bring our window to the front, but it mostly doesn't work.
+  const bc_focus = new BroadcastChannel('timer-focus');
+  bc_focus.onmessage = function(ev) { window.focus(); }
+});
+
+// g_standalone gets set to true for standalone Electron version by inline
+// script tag that follows the import of this file.
 var g_standalone = false;
 
 var g_host_poller;
@@ -24,6 +39,9 @@ var g_ports = [];
 
 $(function() {
   console.log('Starting initial action');
+  if (!g_standalone) {
+    $("#port-button").addClass('hidden');
+  }
   if (!('serial' in navigator)) {
     $("#no-serial-api").removeClass('hidden');
     show_modal("#opening_modal");
@@ -40,11 +58,11 @@ $(function() {
 
       if (g_ports.length == 0) {
         // It won't work to make a requestPort call except via a user gesture, so prompt the user
-        $("#serial-start").removeClass('hidden');
-        show_modal("#opening_modal");
+        // $("#serial-start").removeClass('hidden');
+        // show_modal("#opening_modal");
       } else {
         console.log("Starting initial probe for timer with existing ports");
-        probe_for_timer();
+        on_scan_click();
       }
     }, 1000);
   }
@@ -53,14 +71,15 @@ $(function() {
 // This is the on-click handler for the "start scan" button from the opening modal
 function on_serial_start() {
   close_modal("#opening_modal");
-  probe_for_timer();
+  on_scan_click();
 }
 
-if (false) {
+if (!g_standalone) {
 $(window).bind("beforeunload", function(event) {
-  console.log('BeforeUnload fires');
   if (g_timer_proxy) {
     // Chrome ignores the prompt and substitutes its own generic message.  Gee, thanks.
+    show_modal("#leaving_modal");
+    setTimeout(function() { close_modal("#leaving_modal"); }, 10000);
     var prompt =
         "Leaving this page will disconnect the timer.  Are you sure you want to exit?";
     event.preventDefault();
@@ -73,6 +92,42 @@ $(window).bind("beforeunload", function(event) {
 
 const PRE_PROBE_SETTLE_TIME_MS = 2000;
 const PROBER_RESPONSE_TIME_MS = 500;
+
+var g_user_chosen_port = -1;
+function on_user_port_selection(event) {
+  // "this" is the <li> clicked
+  console.log('on_user_port_selection', event, this);
+  g_user_chosen_port = $(this).index();
+  $(this).siblings().removeClass('user-chosen');
+  $(this).addClass('user-chosen');
+}
+
+var g_user_chosen_profile = -1;
+function on_user_profile_selection(event) {
+  console.log('on_user_profile_selection', event, this);
+  g_user_chosen_profile = $(this).index();
+  $(this).siblings().removeClass('user-chosen');
+  $(this).addClass('user-chosen');
+}
+
+async function request_new_port() {
+  await new Promise((resolve, reject) => {
+    $("#second_modal_background").fadeTo(200, 0.75, function() { resolve(1); });
+  });
+  console.log("modal_background in place");
+  try {
+    await navigator.serial.requestPort().catch(() => {});
+  } finally {
+    $("#second_modal_background").fadeOut(200);
+  }
+  g_ports = await navigator.serial.getPorts();
+}
+
+async function on_new_port_click() {
+  request_new_port();
+  update_ports_list();
+}
+
 
 async function update_ports_list() {
   $("#ports-list").empty();
@@ -90,39 +145,33 @@ async function update_ports_list() {
   }
 }
 
-var g_user_chosen_port = -1;
-function on_user_port_selection(event) {
-  // "this" is the <li> clicked
-  console.log('on_user_port_selection', event, this);
-  g_user_chosen_port = $(this).index();
-}
+async function probe_one_profile(pw, prof) {
+  var deadline = Date.now() + PROBER_RESPONSE_TIME_MS;
+  await pw.write(prof.prober.probe);
 
-var g_user_chosen_profile = -1;
-function on_user_profile_selection(event) {
-  console.log('on_user_profile_selection', event, this);
-  g_user_chosen_profile = $(this).index();
-}
-
-async function new_port() {
-  try {
-    await navigator.serial.requestPort();
-    g_ports = await navigator.serial.getPorts();
-    update_ports_list();
-    $("#probe-button").prop('disabled', false);
-    g_timer_proxy = await probe();
-  } catch (err) {
+  var ri = 0;
+  var re = new RegExp(prof.prober.responses[ri]);
+  var s;
+  while ((s = await pw.next(deadline)) != null) {
+    if (re.test(s)) {
+      ++ri;
+      if (ri >= prof.prober.responses.length) {
+        return true;
+      }
+      re = new RegExp(prof.prober.responses[ri]);
+    }
   }
-}
 
+  return false;
+}
 
 async function probe() {
   var profiles = all_profiles();
   if (g_ports.length == 0) {
     g_ports = await navigator.serial.getPorts();
   }
-  if (g_ports.length == 0) {
-    await navigator.serial.requestPort().catch(() => {});
-    g_ports = await navigator.serial.getPorts();
+  if (g_ports.length == 0 || !g_standalone) {
+    await request_new_port();
   }
   update_ports_list();
 
@@ -144,11 +193,17 @@ async function probe() {
         if (g_user_chosen_profile != profi) {
           console.log('Skipping profile ' + profi + ' because user chose ' + g_user_chosen_profile);
           continue;
-        } else if (!prof.hasOwnProperty('prober')) {
+          /*
+TODO        } else if (!prof.hasOwnProperty('prober')) {
           console.log('Forcing selection of user-chosen unprobable profile ' + g_user_chosen_profile);
-          $("#ports-list li").eq(porti).removeClass('probing').addClass('chosen');
-          $("#profiles-list li").eq(profi).removeClass('probing').addClass('chosen');
+          $("#ports-list li").eq(porti)
+            .removeClass('probing user-chosen')
+            .addClass('chosen');
+          $("#profiles-list li").eq(profi)
+            .removeClass('probing user-chosen')
+            .addClass('chosen');
           return new TimerProxy(new PortWrapper(port), prof);
+*/
         } else {
           console.log('Trying user-chosen profile ' + g_user_chosen_profile);
         }
@@ -162,34 +217,30 @@ async function probe() {
 
       var pw = new PortWrapper(port);
       try {
+        var ok = true;
         await pw.open(prof.params);
-        if (prof.prober.hasOwnProperty('pre_probe')) {
-          await pw.writeCommandSequence(prof.prober.pre_probe);
-          await pw.drain(PRE_PROBE_SETTLE_TIME_MS);
+
+        if (prof.hasOwnProperty('prober')) {
+          if (prof.prober.hasOwnProperty('pre_probe')) {
+            await pw.writeCommandSequence(prof.prober.pre_probe);
+            await pw.drain(PRE_PROBE_SETTLE_TIME_MS);
+          }
+          ok = await probe_one_profile(pw, prof);
         }
 
-        var deadline = Date.now() + PROBER_RESPONSE_TIME_MS;
-        await pw.write(prof.prober.probe);
+        if (ok) {
+          console.log('*    Matched ' + prof.name + '!');
 
-        var ri = 0;
-        var re = new RegExp(prof.prober.responses[ri]);
-        var s;
-        while ((s = await pw.next(deadline)) != null) {
-          if (re.test(s)) {
-            ++ri;
-            if (ri >= prof.prober.responses.length) {
-              console.log('*    Matched ' + prof.name + '!');
-              $("#ports-list li").eq(porti).removeClass('probing').addClass('chosen');
-              $("#profiles-list li").eq(profi).removeClass('probing').addClass('chosen');
-              TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, s]);
-              $("#probe-button").prop('disabled', true);
-              // Avoid closing pw on the way out:
-              var pw0 = pw;
-              pw = null;
-              return new TimerProxy(pw0, prof);
-            }
-            re = new RegExp(prof.prober.responses[ri]);
-          }
+          $("#ports-list li").eq(porti).removeClass('probing user-chosen').addClass('chosen');
+          $("#profiles-list li").eq(profi).removeClass('probing user-chosen').addClass('chosen');
+
+          TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, ""]);  // TODO Identifier string
+          $("#probe-button").prop('disabled', true);
+
+          // Avoid closing pw on the way out:
+          var pw0 = pw;
+          pw = null;
+          return new TimerProxy(pw0, prof);
         }
       } finally {
         if (pw) {
@@ -221,7 +272,7 @@ $(function() {
   });
 });
 
-async function probe_for_timer() {
+async function on_scan_click() {
   $("#connected").text("Probe started");
   g_timer_proxy = await probe();
   if (!g_timer_proxy) {
@@ -265,6 +316,7 @@ async function on_connect_button(event) {
               if (data.outcome.summary == 'success') {
                 console.log('Login succeeded, creating host poller.');
                 g_host_poller = new HostPoller();
+                $("#host-status").prop('src', "img/status/ok.png");
               }
             },
            });
