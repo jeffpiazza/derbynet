@@ -46,6 +46,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     $db->exec('DELETE FROM ConstituentClasses');
     $db->exec('DELETE FROM Ranks');
     $db->exec('DELETE FROM Classes');
+    $db->exec('DELETE FROM Divisions');
   }
   delete_from_raceinfo('fake-racers');
 } else if ($_POST['purge'] == 'awards') {
