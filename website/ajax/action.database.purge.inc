@@ -41,12 +41,12 @@ if (!have_permission(SET_UP_PERMISSION)) {
   $db->exec('DELETE FROM RaceChart');
   $db->exec('DELETE FROM Roster');
   $db->exec('DELETE FROM RegistrationInfo');
+  $db->exec('DELETE FROM Divisions');
   remove_fake_car_and_racer_images();
   if (read_raceinfo_boolean('fake-racers')) {
     $db->exec('DELETE FROM ConstituentClasses');
     $db->exec('DELETE FROM Ranks');
     $db->exec('DELETE FROM Classes');
-    $db->exec('DELETE FROM Divisions');
   }
   delete_from_raceinfo('fake-racers');
 } else if ($_POST['purge'] == 'awards') {
