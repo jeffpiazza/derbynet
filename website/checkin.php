@@ -223,7 +223,7 @@ mobile_select_refresh($("#edit_division"));
 {
   var reorder_modal = DivisionsModal(
     "<?php echo htmlspecialchars(division_label(), ENT_QUOTES, 'UTF-8'); ?>",
-    "<?php echo htmlspecialchars(division_label_plural(), ENT_QUOTES, 'UTF-8'); ?>",
+    "<?php echo htmlspecialchars(division_label_pl(), ENT_QUOTES, 'UTF-8'); ?>",
     divisions);
 
   $("#edit_division").on('change', function() { on_edit_division_change(reorder_modal); });

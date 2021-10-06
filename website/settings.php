@@ -2,6 +2,7 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+require_once('inc/divisions.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
@@ -170,18 +171,9 @@ $scoring = read_raceinfo('scoring', 0);
         <label for="supergroup-label">Super-Group Label</label>
       </p>
       <p>
-        <input id="group-label" name="group-label" type="text" class="not-mobile" value="<?php echo group_label(); ?>"/>
-        <label for="group-label">Group Label</label>
-      </p>
-      <p>
-        <input id="use-subgroups" name="do-use-subgroups" class="not-mobile" type="checkbox"<?php
-            if ($use_subgroups) echo ' checked="checked"';?>/>
-        <label>Use subgroups?</label>
-      </p>
-      <p>
-        <input id="subgroup-label" name="subgroup-label" type="text" class="not-mobile"
-               value="<?php echo subgroup_label(); ?>"/>
-        <label for="subgroup-label">Subgroup Label</label>
+        <input id="division-label" name="division-label" type="text" class="not-mobile"
+               value="<?php echo division_label(); ?>"/>
+        <label for="division-label">Division Label</label>
       </p>
 
       <p>Show racer names as:<br/>
@@ -212,14 +204,12 @@ $scoring = read_raceinfo('scoring', 0);
       <p>
         <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" class="not-mobile"
                value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
-        <label for="n-den">Number of speed trophies per
-               <span class="group-label"><?php echo group_label_lc(); ?></span></label>
+        <label for="n-den">Number of speed trophies per group</label>
       </p>
       <p>
         <input id="n-rank" name="n-rank-trophies" type="number" min="0" max="20" class="not-mobile"
                value="<?php echo read_raceinfo('n-rank-trophies', 0); ?>"/>
-        <label for="n-pack">Number of speed trophies per
-               <span class="subgroup-label"><?php echo subgroup_label_lc(); ?></span></label>
+        <label for="n-rank">Number of speed trophies per subgroup</label>
       </p>
       <p>
         <input id="one-trophy-per" name="one-trophy-per" class="not-mobile"

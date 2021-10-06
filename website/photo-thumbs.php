@@ -3,6 +3,8 @@ require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/authorize.inc');
+require_once('inc/divisions.inc');
+
 require_permission(ASSIGN_RACER_IMAGE_PERMISSION);
 
 require_once('inc/photo-config.inc');

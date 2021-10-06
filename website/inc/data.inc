@@ -125,29 +125,6 @@ function use_subgroups() {
   return read_raceinfo_boolean('use-subgroups');
 }
 
-// GPRM sets these in "Advanced Settings", but they're not stored in the database.
-// Presumably they're in the Windows registry somewhere.
-
-function group_label() {
-  return read_raceinfo('group-label', 'Den');
-}
-function group_label_lc() {
-  return strtolower(group_label());
-}
-
-function subgroup_label() {
-  return read_raceinfo('subgroup-label', 'Subgroup');
-}
-function subgroup_label_lc() {
-  return strtolower(subgroup_label());
-}
-
-function supergroup_label() {
-  return read_raceinfo('supergroup-label', 'Pack');
-}
-function supergroup_label_lc() {
-  return strtolower(supergroup_label());
-}
 function use_master_sched() {
   return read_raceinfo_boolean('use-master-sched');
 }

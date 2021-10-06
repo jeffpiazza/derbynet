@@ -95,7 +95,7 @@ $(function() {
 <p class="instructions">Drag <span class="group-color">&nbsp;</span> groups
        <span class="and-subgroups">and <span class="subgroup-color">&nbsp;</span> subgroups</span>
        to re-order.</p>
-       <p class="instructions">Drag <span class="division-color">&nbsp;</span> <?php echo division_label_plural_lc(); ?>
+       <p class="instructions">Drag <span class="division-color">&nbsp;</span> <?php echo division_label_pl_lc(); ?>
        onto <span class="group-color">&nbsp;</span> groups
         <span class="and-subgroups" style="white-space: nowrap;">and <span class="subgroup-color">&nbsp;</span> subgroups</span>.
 </p>

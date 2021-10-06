@@ -4,6 +4,7 @@ require_once('inc/parse-connection-string.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/locked.inc');
 require_once('inc/plural.inc');
+require_once('inc/divisions.inc');
 
 // Tests whether there are any tables defined in the database, for those
 // database types that we know how to test.

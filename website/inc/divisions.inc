@@ -4,11 +4,53 @@ require_once('inc/plural.inc');
 require_once('inc/find_or_create_class.inc');
 // ** Do not require inc/newracer.inc from here, as newracer.inc requires this file.
 
-function division_label() { return "Den"; }
-function division_label_lc() { return strtolower(division_label()); }
+$labels = false;
+function labels() {
+  global $labels;
+  // Once per page load, I think.
+  if ($labels === false) {
+    $supergroup = read_raceinfo('supergroup-label', 'Pack');
+    $div_label = read_raceinfo('division-label', 'Den');
+    $labels = array(
+      'supergroup' => array($supergroup, plural($supergroup)),
+      'division'   => array($div_label,  plural($div_label)));
 
-function division_label_plural() { return plural(division_label()); }
-function division_label_plural_lc() { return strtolower(division_label_plural()); }
+    switch (group_formation_rule()) {
+    case 'by-division':
+      $labels['group'] = $labels['division'];
+      $labels['subgroup'] = array("Subgroup", "Subgroups");
+      break;
+    case 'one-group':
+      $labels['group'] = $labels['supergroup'];
+      $labels['subgroup'] = $labels['division'];
+      break;
+    default:  // custom
+      $labels['group'] = array("Group", "Groups");
+      $labels['subgroup'] = array("Subgroup", "Subgroups");
+    }
+  }
+  return $labels;
+}
+
+function division_label() { return labels()['division'][0]; }
+function division_label_lc() { return strtolower(labels()['division'][0]); }
+function division_label_pl() { return labels()['division'][1]; }
+function division_label_pl_lc() { return strtolower(labels()['division'][1]); }
+
+function supergroup_label() { return labels()['supergroup'][0]; }
+function supergroup_label_lc() { return strtolower(labels()['supergroup'][0]); }
+function supergroup_label_pl() { return labels()['supergroup'][1]; }
+function supergroup_label_pl_lc() { return strtolower(labels()['supergroup'][1]); }
+
+function group_label() { return labels()['group'][0]; }
+function group_label_lc() { return strtolower(labels()['group'][0]); }
+function group_label_pl() { return labels()['group'][1]; }
+function group_label_pl_lc() { return strtolower(labels()['group'][1]); }
+
+function subgroup_label() { return labels()['subgroup'][0]; }
+function subgroup_label_lc() { return strtolower(labels()['subgroup'][0]); }
+function subgroup_label_pl() { return labels()['subgroup'][1]; }
+function subgroup_label_pl_lc() { return strtolower(labels()['subgroup'][1]); }
 
 function is_allowed_group_formation_rule($rule) {
   return $rule == 'one-group' ||
@@ -94,6 +136,15 @@ function reorder_divisions() {
     $stmt->execute(array(':sortorder' => $index,
                          ':divisionid' => $divids[$index - 1]));
   }
+}
+
+function all_divisions() {
+  global $db;
+  $stmt = $db->query('SELECT name FROM Divisions ORDER BY sortorder, name');
+  if ($stmt) {
+    return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+  }
+  return array();
 }
 
 ?>
