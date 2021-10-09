@@ -48,14 +48,14 @@ foreach (all_rounds_with_counts() as $round) {
   var g_subgroup_label = <?php echo json_encode(subgroup_label(), JSON_HEX_TAG); ?>;
 
   var g_all_scenes = <?php echo json_encode(all_scenes(),
-                                            JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
+                                            JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
   var g_current_racing_scene = <?php echo json_encode(read_raceinfo('racing_scene', ''),
-                                                      JSON_HEX_TAG | JSON_NUMERIC_CHECK); ?>;
+                                                      JSON_HEX_TAG | JSON_HEX_AMP  | JSON_NUMERIC_CHECK); ?>;
   var g_current_round = <?php echo json_encode(get_running_round(),
-                                               JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
+                                               JSON_HEX_TAG | JSON_HEX_AMP  | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
 
   var g_all_rounds = <?php echo json_encode($all_rounds_by_class,
-                                            JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
+                                            JSON_HEX_TAG | JSON_HEX_AMP  | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
   var g_queue = <?php
     $stmt = $db->query('SELECT queueid, seq, Playlist.classid, Playlist.round,'
                        .' bucket_limit, bucketed, n_times_per_lane,'
@@ -67,11 +67,11 @@ foreach (all_rounds_with_counts() as $round) {
                                             'Playlist.classid = Classes.classid')
                        .' ORDER BY seq');
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
-                 JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
+                 JSON_HEX_TAG | JSON_HEX_AMP  | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK);
   ?>;
 
   var g_classes = <?php echo json_encode($classes, 
-                                         JSON_HEX_TAG | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
+                                         JSON_HEX_TAG | JSON_HEX_AMP  | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK); ?>;
 
 $(function() {
     $.each(g_queue,

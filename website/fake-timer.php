@@ -104,7 +104,7 @@ before the day of your actual race.</p>
 
 <p id="summary">Not racing.</p>
 
-<input id='start-button' type='button' value='Start' onclick='start_timer();' disabled/>
+<input id='start-button' type='button' value='Start' onclick='start_timer();' disabled='1'/>
 
 <table id='timer-sim'>
   <tr id='timer-sim-headers'>
