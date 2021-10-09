@@ -3,6 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+require_once('inc/divisions.inc');
 require_once('inc/plural.inc');
 
 require_permission(CHECK_IN_RACERS_PERMISSION);
