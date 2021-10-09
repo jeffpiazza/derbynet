@@ -5,6 +5,11 @@
 // divisions is an array of {divisionid, name, count}, in order
 function DivisionsModal(div_label, div_label_plural, divisions) {
   var divisions_list;
+
+  // This gets set true if user made actual changes.  In that case, when closing
+  // the modal, we reload the page.
+  var changed = false;
+
   var reorder_modal = 
       $("<div/>").appendTo("body")
       .addClass('modal_dialog hidden block_buttons')
@@ -15,7 +20,14 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
               .append($("<input type='button'/>").val("Add " + div_label)
                       .on('click', function() { show_add_division_modal(); }))
               .append($("<input type='button'/>").val("Close")
-                      .on('click', function() { pop_modal(); })));
+                      .on('click', function() {
+                        if (changed) {
+                          location.reload();
+                        } else {
+                          pop_modal();
+                        }
+                      })));
+
   for (var i in divisions) {
     $("<li/>")
       .appendTo(divisions_list)
@@ -38,9 +50,7 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
       $.ajax('action.php',
              {type: 'POST',
               data: data,
-              success: function() {
-                location.reload();
-              }
+              success: function() { changed = true; }
              });
     }
   });
@@ -75,9 +85,7 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
              {type: 'POST',
               data: {action: 'division.add',
                      name: name_field.val()},
-              success: function(data) {
-                location.reload();
-              }
+              success: function(data) { location.reload(); }
              });
 
       event.preventDefault();
@@ -99,8 +107,8 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
                      divisionid: li.attr('data-divisionid'),
                      name: name_field.val()},
               success: function(data) {
-                location.reload();
-              }
+                li.text(name_field.val());
+                changed = true; }
              });
 
       event.preventDefault();
@@ -113,9 +121,7 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
            {type: 'POST',
             data: {action: 'division.delete',
                    divisionid: $(self).parent('[data-divisionid]').attr('data-divisionid')},
-            success: function(data) {
-                location.reload();
-            }
+            success: function(data) { location.reload(); }
            });
   };
 

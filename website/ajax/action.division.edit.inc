@@ -40,7 +40,7 @@ if ($ok) {
                       .' WHERE classid = (SELECT classid'
                       .'                  FROM '.inner_join('Divisions', 'Ranks',
                                                             'Divisions.rankid = Ranks.rankid')
-                      .'                  WHERE divisionid = :divisionid',
+                      .'                  WHERE divisionid = :divisionid)',
                       array(':name' => $name,
                             ':divisionid' => $divisionid));
     break;

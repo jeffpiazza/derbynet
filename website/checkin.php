@@ -209,16 +209,20 @@ var divisions = <?php echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
 
 $("#edit_division").empty();
 for (var i in divisions) {
-  $("<option/>")
-      .appendTo("#edit_division")
+  var opt = $("<option/>")
       .attr('value', divisions[i].divisionid)
       .text(divisions[i].name);
+  opt.appendTo("#edit_division");
+  opt.clone().appendTo("#bulk_who");
 }
-$("<option/>")
-    .appendTo("#edit_division")
+var opt = $("<option/>")
     .attr('value', -1)
     .text("(Edit divisions)");
+opt.appendTo("#edit_division");
+opt.clone().appendTo("#bulk_who");
+
 mobile_select_refresh($("#edit_division"));
+mobile_select_refresh($("#bulk_who"));
 
 {
   var reorder_modal = DivisionsModal(
@@ -226,7 +230,8 @@ mobile_select_refresh($("#edit_division"));
     "<?php echo htmlspecialchars(division_label_pl(), ENT_QUOTES, 'UTF-8'); ?>",
     divisions);
 
-  $("#edit_division").on('change', function() { on_edit_division_change(reorder_modal); });
+  $("#edit_division").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
+  $("#bulk_who").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
 }
 
 });

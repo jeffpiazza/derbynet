@@ -65,11 +65,11 @@ function handlechange_xbs(cb) {
          });
 }
 
-function on_edit_division_change(reorder_modal) {
-  var edit_division = $("#edit_division");
-  if (edit_division.val() < 0) {
-    edit_division.val(edit_division.find('option').eq(0).attr('value'));
-    close_modal_leave_background(edit_division);
+function on_edit_division_change(select, reorder_modal) {
+  var select = $(select);
+  if (select.val() < 0) {
+    select.val(select.find('option').eq(0).attr('value'));
+    close_modal_leave_background(select);
     show_modal(reorder_modal);
   }
 }
