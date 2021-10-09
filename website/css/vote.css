@@ -57,6 +57,8 @@ div.selection div.carno {
 div.selection img {
   vertical-align: middle;
   margin-left: 20px;
+  max-height: 150px;
+  max-width: 150px;
 }
 
 #racers_modal {
