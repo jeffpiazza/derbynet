@@ -7,8 +7,8 @@ function after_update_schema($original_schema) {
   global $db;
   if ($original_schema < DIVISION_SCHEMA) {
     // Updated database from older days
-    $db->exec('INSERT INTO Divisions(divisionid, name, sortorder)'
-              .' SELECT rankid, rank, sortorder FROM Ranks');
+    $db->exec('INSERT INTO Divisions(divisionid, name, rankid, sortorder)'
+              .' SELECT rankid, rank, rankid, sortorder FROM Ranks');
     $db->exec('UPDATE Divisions SET name = \'Default\''
               .' WHERE name = \'* Not specified\'');
     $db->exec('UPDATE RegistrationInfo SET divisionid = rankid');

@@ -26,9 +26,9 @@ $timer_state_status = expand_timer_state_status(new TimerState());
 <script type="text/javascript" src="js/timer-test.js"></script>
 <script type="text/javascript">
 $(function() {
-    update_timer_summary(<?php echo json_encode(json_timer_state()); ?>,
-                         <?php echo json_encode(json_timer_details()); ?>,
-                         <?php echo json_encode(json_current_heat($current)); ?>);
+    update_timer_summary(<?php echo json_encode(json_timer_state(), JSON_HEX_TAG | JSON_HEX_AMP); ?>,
+                         <?php echo json_encode(json_timer_details(), JSON_HEX_TAG | JSON_HEX_AMP); ?>,
+                         <?php echo json_encode(json_current_heat($current), JSON_HEX_TAG | JSON_HEX_AMP); ?>);
 });
 
 </script>

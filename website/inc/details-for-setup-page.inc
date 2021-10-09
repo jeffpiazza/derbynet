@@ -4,7 +4,6 @@ require_once('inc/parse-connection-string.inc');
 require_once('inc/default-database-directory.inc');
 require_once('inc/locked.inc');
 require_once('inc/plural.inc');
-require_once('inc/divisions.inc');
 
 // Tests whether there are any tables defined in the database, for those
 // database types that we know how to test.
@@ -80,8 +79,8 @@ function inspect_database() {
   } else {
     try {
       $schema_version = schema_version();
-      $result['group_label'] = group_label();
-      $result['group_label_lc'] = group_label_lc();
+      $result['group_label'] = read_raceinfo('division-label', 'Den');
+      $result['group_label_lc'] = strtolower($result['group_label_rc']);
       
       $result['nracers'] = read_single_value('SELECT COUNT(*) FROM RegistrationInfo', array());
       $result['nawards'] = read_single_value('SELECT COUNT(*) FROM Awards', array());
