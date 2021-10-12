@@ -12,7 +12,7 @@ user_login_coordinator
 # $2 = classname
 function make_racer() {
     curl_postj action.php \
-              "action=racer.import&firstname=First$1&lastname=Last$1&division=$2&carnumber=$1" \
+              "action=racer.import&firstname=First$1&lastname=Last$1&partition=$2&carnumber=$1" \
         | check_jsuccess
 }
 

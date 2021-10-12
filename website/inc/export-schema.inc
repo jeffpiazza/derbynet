@@ -15,7 +15,7 @@ require_once('inc/schema_version.inc');
    Ranks(classid) -> Classes
 
    RegistrationInfo(classid) -> Classes
-   RegistrationInfo(divisionid) -> Divisions
+   RegistrationInfo(partitionid) -> Partitions
    RegistrationInfo(rankid) -> Ranks
 
    Roster(roundid) -> Rounds
@@ -82,10 +82,10 @@ if (schema_version() >= 6) {
 }
 
 if (schema_version() >= 8) {
-  $schema['Divisions'] = array('divisionid', 'name', 'sortorder');
+  $schema['Partitions'] = array('partitionid', 'name', 'sortorder');
   $schema['ConstituentClasses'] = array('antecedent', 'dependent');
   
-  $schema['RegistrationInfo'][] = 'divisionid';
+  $schema['RegistrationInfo'][] = 'partitionid';
 }
 
 ?>

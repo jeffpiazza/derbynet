@@ -11,8 +11,8 @@
 // If either firstname or lastname is assigned to a column, then first-last
 // becomes unavailable and not required.
 function onDrop(draggable, droppable) {
-  if (draggable.attr('data-field') == 'division') {
-    onDropDivisionLabel(droppable.attr('data-column'));
+  if (draggable.attr('data-field') == 'partition') {
+    onDropPartitionLabel(droppable.attr('data-column'));
   } else if (draggable.attr('data-field') == 'first-last') {
     $('.field[data-field="firstname"], .field[data-field="lastname"]').addClass('hidden').removeClass('required');
   } else if (draggable.attr('data-field') == 'lastname' ||
@@ -26,8 +26,8 @@ function onDrop(draggable, droppable) {
 //
 // Returning first-last to the palette re-enables both firstname and lastname.
 function onUndrop(draggable) {
-  if (draggable.attr('data-field') == 'division') {
-    onUndropDivisionLabel();
+  if (draggable.attr('data-field') == 'partition') {
+    onUndropPartitionLabel();
   } else if (draggable.attr('data-field') == 'first-last') {
     $('.field[data-field="firstname"], .field[data-field="lastname"]').removeClass('hidden').addClass('required');
   } else if (draggable.attr('data-field') == 'lastname' ||
@@ -51,14 +51,14 @@ function onFileContentLoaded(file) {
 function onHeaderRowToggle() {
   $('#file-racer-count').text(countNewRacers());
 
-  var division_column_target = $("div[data-field='division']").closest('.label_target');
-  if (division_column_target.length > 0) {
-    calculateNewDivisions(division_column_target.attr('data-column'));
+  var partition_column_target = $("div[data-field='partition']").closest('.label_target');
+  if (partition_column_target.length > 0) {
+    calculateNewPartitions(partition_column_target.attr('data-column'));
   }
 }
 
 function show_class_details() {
-  show_modal('#new_divisions_modal', function() {
+  show_modal('#new_partitions_modal', function() {
   });
 }
 
@@ -75,53 +75,53 @@ function countNewRacers() {
   return racers;
 }
 
-function onDropDivisionLabel(column_number) {
-  calculateNewDivisions(column_number);
+function onDropPartitionLabel(column_number) {
+  calculateNewPartitions(column_number);
 }
 
-function calculateNewDivisions(column_number) {
-  // divisions_to_import is an object, with class names from the csv as properties.
-  // existing_divisions is an array of strings
-  var divisions_to_import = collectDivisionNames(column_number);
-  var existing_divisions = all_divisions();
-  var division_label = $("#division-label").val();
+function calculateNewPartitions(column_number) {
+  // partitions_to_import is an object, with class names from the csv as properties.
+  // existing_partitions is an array of strings
+  var partitions_to_import = collectPartitionNames(column_number);
+  var existing_partitions = all_partitions();
+  var partition_label = $("#partition-label").val();
 
-  $('#existing_divisions_div').empty();
-  if (existing_divisions.length > 0) {
-    $('#existing_divisions_div').append('<h4>Existing ' + plural(division_label) + ':</h4>');
-    for (var cl in existing_divisions) {
-      var name = existing_divisions[cl];
-      $('#existing_divisions_div').append(document.createTextNode(name), '<br/>');
-      delete divisions_to_import[name];
+  $('#existing_partitions_div').empty();
+  if (existing_partitions.length > 0) {
+    $('#existing_partitions_div').append('<h4>Existing ' + plural(partition_label) + ':</h4>');
+    for (var cl in existing_partitions) {
+      var name = existing_partitions[cl];
+      $('#existing_partitions_div').append(document.createTextNode(name), '<br/>');
+      delete partitions_to_import[name];
     }
   }
 
-  var n_new_divisions = 0;
+  var n_new_partitions = 0;
 
-  $('#new_divisions_div').empty();
-  for (var cl in divisions_to_import) {
-    if (divisions_to_import[cl] == 1) {
-      $('#new_divisions_div').append(document.createTextNode(cl), '<br/>');
-      ++n_new_divisions;
+  $('#new_partitions_div').empty();
+  for (var cl in partitions_to_import) {
+    if (partitions_to_import[cl] == 1) {
+      $('#new_partitions_div').append(document.createTextNode(cl), '<br/>');
+      ++n_new_partitions;
     }
   }
 
-  if (n_new_divisions > 0) {
-    $('#new_divisions_div').prepend('<h4>New ' + plural(division_label) + ':</h4>');
+  if (n_new_partitions > 0) {
+    $('#new_partitions_div').prepend('<h4>New ' + plural(partition_label) + ':</h4>');
   }
 
-  $('#file-class-count').text(existing_divisions.length + n_new_divisions);
-  $('#file-class-new-count').text(n_new_divisions);
+  $('#file-class-count').text(existing_partitions.length + n_new_partitions);
+  $('#file-class-new-count').text(n_new_partitions);
   $('#file-class-count-and-label').removeClass('hidden');
 }
 
-function onUndropDivisionLabel() {
-  $("#new_divisions_div").empty();
+function onUndropPartitionLabel() {
+  $("#new_partitions_div").empty();
 }
 
 // Maybe not what you think: returns an object with each class name being the
 // name of a property.
-function collectDivisionNames(columnNumber) {
+function collectPartitionNames(columnNumber) {
   var classnames = {};
   $('td.column' + columnNumber).each(function(index, elt) {
     // Don't count a header_row value
@@ -133,19 +133,19 @@ function collectDivisionNames(columnNumber) {
   return classnames;
 }
 
-// The user changes the name of the division label, e.g., calling it something
+// The user changes the name of the partition label, e.g., calling it something
 // other than "Den".
-function on_division_label_change() {
-  $("div[data-field='division']").text($("#division-label").val());
+function on_partition_label_change() {
+  $("div[data-field='partition']").text($("#partition-label").val());
   // TODO Update group_label() string in #state-of-play
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'settings.write',
-                 'division-label': $("#division-label").val()}
+                 'partition-label': $("#partition-label").val()}
          });
 }
 $(function() {
-  $("#division-label").on('keyup mouseup', on_division_label_change);
+  $("#partition-label").on('keyup mouseup', on_partition_label_change);
 });
 
 $(function() {

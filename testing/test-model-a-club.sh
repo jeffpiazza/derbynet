@@ -15,7 +15,7 @@ user_login_coordinator
 
 for i in $(seq 1 100) ; do
     curl_postj action.php \
-              "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&division=Unwashed-Class" | check_jsuccess
+              "action=racer.import&firstname=Racer-$i&lastname=Racer-$i&partition=Unwashed-Class" | check_jsuccess
 done
 
 curl_postj action.php "action=racer.bulk&what=checkin&who=all&value=1" | check_jsuccess

@@ -218,7 +218,7 @@ array(
 .'	FirstName        VARCHAR (15),'
 .'	ClassID          INTEGER,'
 .'	RankID           INTEGER,'
-.'  DivisionID       INTEGER,'
+.'  PartitionID       INTEGER,'
 .'	PassedInspection BIT,'
 .'	ImageFile        VARCHAR (255),'
 .(expected_schema_version() < 2 ? '' : '	CarPhoto        VARCHAR (255),')
@@ -335,7 +335,7 @@ array(
 
 @include_once(sql_file_path('timer-settings')),
 
-@include_once(sql_file_path('divisions')),
+@include_once(sql_file_path('partitions')),
 
 array(
 

@@ -5,13 +5,13 @@ require_once('inc/schema_version.inc');
 
 function after_update_schema($original_schema) {
   global $db;
-  if ($original_schema < DIVISION_SCHEMA) {
+  if ($original_schema < PARTITION_SCHEMA) {
     // Updated database from older days
-    $db->exec('INSERT INTO Divisions(divisionid, name, rankid, sortorder)'
+    $db->exec('INSERT INTO Partitions(partitionid, name, rankid, sortorder)'
               .' SELECT rankid, rank, rankid, sortorder FROM Ranks');
-    $db->exec('UPDATE Divisions SET name = \'Default\''
+    $db->exec('UPDATE Partitions SET name = \'Default\''
               .' WHERE name = \'* Not specified\'');
-    $db->exec('UPDATE RegistrationInfo SET divisionid = rankid');
+    $db->exec('UPDATE RegistrationInfo SET partitionid = rankid');
 
     $stmt = $db->prepare('SELECT classid, constituents FROM Classes WHERE constituents <> \'\'');
     $stmt->execute();

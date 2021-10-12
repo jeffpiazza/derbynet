@@ -23,7 +23,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   // them.
   $fields = array('lastname' => true,  
                   'firstname' => true,
-                  'division' => false,
+                  'partition' => false,
                   'carnumber' => false,
                   'carname' => false,
                   'exclude' => false);
@@ -70,7 +70,7 @@ if (have_permission(SET_UP_PERMISSION)) {
 }
 
 if ($ok) {
-  $division = isset($_POST['division']) ? trim(@$_POST['division']) : 'Default';
+  $partition = isset($_POST['partition']) ? trim(@$_POST['partition']) : 'Default';
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
@@ -80,7 +80,7 @@ if ($ok) {
                          'lastname' => $_POST['lastname'],
                          'carnumber' => $carnumber,
                          'carname' => $carname,
-                         'division' => $division,
+                         'partition' => $partition,
                          'exclude' => $exclude));
 
   json_success();

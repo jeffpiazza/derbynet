@@ -78,7 +78,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'n-rank-trophies' => 'n-rank-trophies',
                   'name-style' => 'name-style',
                   'xbs-award' => 'xbs-award',
-                  'division-label' => 'division-label',
+                  'partition-label' => 'partition-label',
                   'photos-on-now-racing' => 'photos-on-now-racing',
                   'supergroup-label' => 'supergroup-label',
                   'update-period' => 'update-period',

@@ -14,7 +14,7 @@ require_once('inc/photo-config.inc');
 define('FAKE_RACER_IMAGES', 'fake-racer-images/racers');
 define('FAKE_CAR_IMAGES', 'fake-racer-images/cars');
 
-function fake_division_name($g) {
+function fake_partition_name($g) {
   if ($g == 1) return 'Fake Lions';
   if ($g == 2) return 'Fake Tigers';
   if ($g == 3) return 'Fake Wolves';
@@ -32,7 +32,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   $swing = 2;
 
   for ($g = 1; $g <= $_POST['ngroups']; ++$g) {
-    $group_name = fake_division_name($g);
+    $group_name = fake_partition_name($g);
     $group_size = $_POST['racers_per_group'] + mt_rand(-$swing, $swing);
     for ($r = 0; $r < $group_size; ++$r) {
       $index = mt_rand(0, count($fake_names) - 1);
@@ -40,7 +40,7 @@ if (have_permission(SET_UP_PERMISSION)) {
       insert_new_racer(array('firstname' => $racer['firstname'],
                              'lastname' => $racer['lastname'],
                              'carname' => '',
-                             'division' => $group_name));
+                             'partition' => $group_name));
 
       $racerid = read_single_value('SELECT racerid FROM RegistrationInfo'
                                    .' WHERE firstname = :firstname'

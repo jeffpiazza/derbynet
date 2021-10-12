@@ -1,0 +1,59 @@
+<?php
+
+// $_POST['partitionid']
+// $_POST['name']
+
+require_once('inc/partitions.inc');
+
+// Renaming a partition should rename the corresponding group (by-partition) or subgroup (one-group)
+
+$ok = true;
+if (!have_permission(SET_UP_PERMISSION)) {
+  json_not_authorized();
+  $ok = false;
+}
+
+$name = trim($_POST['name']);
+$partitionid = $_POST['partitionid'];
+
+if ($ok && (empty($name) || $name === '')) {
+  json_failure('empty-name', 'Name must not be empty');
+  $ok = false;
+}
+
+if ($ok && read_single_value('SELECT COUNT(*) FROM Partitions'
+                             .' WHERE name = :name AND partitionid <> :partitionid',
+                             array(':name' => $name,
+                                   ':partitionid' => $partitionid)) != 0) {
+  json_failure('name-taken', 'The name '.$name.' is already in use.');
+  $ok = false;
+}
+
+if ($ok) {
+  read_single_value('UPDATE Partitions SET name = :name WHERE partitionid = :partitionid',
+                    array(':name' => $name,
+                          ':partitionid' => $partitionid));
+
+  switch (group_formation_rule()) {
+  case 'by-partition':
+    read_single_value('UPDATE Classes SET class = :name'
+                      .' WHERE classid = (SELECT classid'
+                      .'                  FROM '.inner_join('Partitions', 'Ranks',
+                                                            'Partitions.rankid = Ranks.rankid')
+                      .'                  WHERE partitionid = :partitionid)',
+                      array(':name' => $name,
+                            ':partitionid' => $partitionid));
+    break;
+  case 'one-group':
+    read_single_value('UPDATE Ranks SET rank = :name'
+                      .' WHERE rankid = (SELECT rankid FROM Partitions'
+                      .'                 WHERE partitionid = :partitionid)',
+                      array(':name' => $name,
+                            ':partitionid' => $partitionid));
+    break;
+  }
+
+  json_success();
+}
+
+?>

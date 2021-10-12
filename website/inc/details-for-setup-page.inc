@@ -65,7 +65,7 @@ function inspect_database() {
                   'group_label_lc' => 'den',
                   'nracers' => 0,
                   'dens' => array(),
-                  'div_rule' => 'by-division',
+                  'div_rule' => 'by-partition',
                   'nawards' => 0,
                   'nheats' => 0,
                   'nresults' => 0,
@@ -79,8 +79,8 @@ function inspect_database() {
   } else {
     try {
       $schema_version = schema_version();
-      $result['group_label'] = read_raceinfo('division-label', 'Den');
-      $result['group_label_lc'] = strtolower($result['group_label_rc']);
+      $result['group_label'] = read_raceinfo('partition-label', 'Den');
+      $result['group_label_lc'] = strtolower($result['group_label_lc']);
       
       $result['nracers'] = read_single_value('SELECT COUNT(*) FROM RegistrationInfo', array());
       $result['nawards'] = read_single_value('SELECT COUNT(*) FROM Awards', array());
@@ -98,7 +98,7 @@ function inspect_database() {
         $dens[] = $row['class'];
       }
       $result['dens'] = $dens;
-      $result['div_rule'] = read_raceinfo('group-formation-rule', 'by-division');
+      $result['div_rule'] = read_raceinfo('group-formation-rule', 'by-partition');
 
       if ($schema_version == expected_schema_version()) {
         $result['schema_status'] = "ok";
@@ -240,7 +240,7 @@ function diagnose_configuration() {
                'group_label_lc' => 'den',
                'nracers' => 0,
                'dens' => array(),
-               'div_rule' => 'by-division',
+               'div_rule' => 'by-partition',
                'nawards' => 0,
                'nheats' => 0,
                'nresults' => 0,
@@ -295,7 +295,7 @@ function build_setup_page_details() {
                                  'plural' => plural($schema['group_label']),
                                  'details' =>
                                  "<p>".
-                                 ($schema['div_rule'] == 'by-division'
+                                 ($schema['div_rule'] == 'by-partition'
                                   ? "Racing by ".$schema['group_label_lc'].": "
                                   : ($schema['div_rule'] == 'one-group'
                                      ? "Racing as one big group: "

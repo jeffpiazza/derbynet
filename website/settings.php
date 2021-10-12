@@ -2,7 +2,7 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');
 require_once('inc/default-database-directory.inc');
@@ -171,9 +171,9 @@ $scoring = read_raceinfo('scoring', 0);
         <label for="supergroup-label">Super-Group Label</label>
       </p>
       <p>
-        <input id="division-label" name="division-label" type="text" class="not-mobile"
-               value="<?php echo division_label(); ?>"/>
-        <label for="division-label">Division Label</label>
+        <input id="partition-label" name="partition-label" type="text" class="not-mobile"
+               value="<?php echo partition_label(); ?>"/>
+        <label for="partition-label">Partition Label</label>
       </p>
 
       <p>Show racer names as:<br/>

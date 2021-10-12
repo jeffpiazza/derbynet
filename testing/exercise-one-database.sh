@@ -62,8 +62,8 @@ run_tests() {
 
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
-############################## Racing Groups and Divisions ##############################
-    `dirname $0`/test-divisions.sh "$BASE_URL"
+############################## Racing Groups and Partitions ##############################
+    `dirname $0`/test-partitions.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"

@@ -11,5 +11,5 @@ function expected_schema_version() {
 define('RANK_AGGREGATE_SCHEMA', 5);  // Classes.rankids for aggregates formed from ranks
 define('BALLOTING_SCHEMA', 6);  // First schema version to support balloting
 define('TIMER_SETTINGS_SCHEMA', 7);
-define('DIVISION_SCHEMA', 8);
+define('PARTITION_SCHEMA', 8);
 ?>

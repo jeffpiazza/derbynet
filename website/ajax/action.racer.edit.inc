@@ -16,14 +16,14 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   $values = array(':racerid' => $racerid,
                   ':racerid_again' => $racerid);
 
-  if ($ok && isset($_POST['divisionid'])) {
-    $division_id = $_POST['divisionid'];
-    $assignments .= ', divisionid = :divisionid';
-    $values[':divisionid'] = $division_id;
+  if ($ok && isset($_POST['partitionid'])) {
+    $partition_id = $_POST['partitionid'];
+    $assignments .= ', partitionid = :partitionid';
+    $values[':partitionid'] = $partition_id;
     $row = read_single_row('SELECT classid, rankid FROM Ranks'
-                           .' WHERE rankid = (SELECT rankid FROM Divisions'
-                           .'                 WHERE divisionid = :divisionid)',
-                           array(':divisionid' => $division_id), PDO::FETCH_ASSOC);
+                           .' WHERE rankid = (SELECT rankid FROM Partitions'
+                           .'                 WHERE partitionid = :partitionid)',
+                           array(':partitionid' => $partition_id), PDO::FETCH_ASSOC);
     if ($row) {
       $assignments .= ', classid = :classid, rankid = :rankid';
       $values[':classid'] = $row['classid'];

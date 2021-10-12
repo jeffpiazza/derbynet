@@ -10,19 +10,19 @@ function labels() {
   // Once per page load, I think.
   if ($labels === false) {
     $supergroup = read_raceinfo('supergroup-label', 'Pack');
-    $div_label = read_raceinfo('division-label', 'Den');
+    $div_label = read_raceinfo('partition-label', 'Den');
     $labels = array(
       'supergroup' => array($supergroup, plural($supergroup)),
-      'division'   => array($div_label,  plural($div_label)));
+      'partition'   => array($div_label,  plural($div_label)));
 
     switch (group_formation_rule()) {
-    case 'by-division':
-      $labels['group'] = $labels['division'];
+    case 'by-partition':
+      $labels['group'] = $labels['partition'];
       $labels['subgroup'] = array("Subgroup", "Subgroups");
       break;
     case 'one-group':
       $labels['group'] = $labels['supergroup'];
-      $labels['subgroup'] = $labels['division'];
+      $labels['subgroup'] = $labels['partition'];
       break;
     default:  // custom
       $labels['group'] = array("Group", "Groups");
@@ -32,10 +32,10 @@ function labels() {
   return $labels;
 }
 
-function division_label() { return labels()['division'][0]; }
-function division_label_lc() { return strtolower(labels()['division'][0]); }
-function division_label_pl() { return labels()['division'][1]; }
-function division_label_pl_lc() { return strtolower(labels()['division'][1]); }
+function partition_label() { return labels()['partition'][0]; }
+function partition_label_lc() { return strtolower(labels()['partition'][0]); }
+function partition_label_pl() { return labels()['partition'][1]; }
+function partition_label_pl_lc() { return strtolower(labels()['partition'][1]); }
 
 function supergroup_label() { return labels()['supergroup'][0]; }
 function supergroup_label_lc() { return strtolower(labels()['supergroup'][0]); }
@@ -54,44 +54,44 @@ function subgroup_label_pl_lc() { return strtolower(labels()['subgroup'][1]); }
 
 function is_allowed_group_formation_rule($rule) {
   return $rule == 'one-group' ||
-         $rule == 'by-division' ||
+         $rule == 'by-partition' ||
          $rule == 'custom';
 }
 
 function group_formation_rule() {
-  return read_raceinfo('group-formation-rule', 'by-division');
+  return read_raceinfo('group-formation-rule', 'by-partition');
 }
 
 function write_group_formation_rule($rule) {
   write_raceinfo('group-formation-rule', $rule);
 }
 
-function find_or_create_division($name) {
+function find_or_create_partition($name) {
   global $db;
   $name = trim($name);
-  $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
+  $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                                   array(':name' => $name));
-  if ($divisionid === false) {
+  if ($partitionid === false) {
     switch (group_formation_rule()) {
     case 'one-group':
       // one-group: Find or create a rank
       $rankid = find_or_create_rank($name, find_or_create_class('One Group'));
       break;
     default:
-      // by-division or custom: Find or create a class
+      // by-partition or custom: Find or create a class
       $classid = find_or_create_class($name);
       $rankid = find_or_create_rank($name, $classid);
     }
-    read_single_value('INSERT INTO Divisions(name, rankid, sortorder)'
+    read_single_value('INSERT INTO Partitions(name, rankid, sortorder)'
                       .' VALUES(:name, :rankid,'
-                      .'         (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Divisions))',
+                      .'         (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Partitions))',
                       array(':name' => $name, ':rankid' => $rankid));
     // TODO record_event_create_class($classid, $classname);
-    $divisionid = read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
+    $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                                     array(':name' => $name));
   }    
 
-  return $divisionid;
+  return $partitionid;
 }
 
 function clean_up_empty_classes_and_ranks() {
@@ -109,13 +109,13 @@ function clean_up_empty_classes_and_ranks() {
             .'   AND rankids = \'\'');
 }
 
-// Updates sortorder fields for Divisions to agree with ordering of classes and
-// ranks.  If members of a division fall in more than class or rank, the
-// ordering for the division will be based on the first appearance among classes
+// Updates sortorder fields for Partitions to agree with ordering of classes and
+// ranks.  If members of a partition fall in more than class or rank, the
+// ordering for the partition will be based on the first appearance among classes
 // and ranks.
-function reorder_divisions() {
+function reorder_partitions() {
   global $db;
-  $stmt = $db->prepare('SELECT DISTINCT divisionid FROM '
+  $stmt = $db->prepare('SELECT DISTINCT partitionid FROM '
                        .inner_join('RegistrationInfo', 'Classes',
                                    'RegistrationInfo.classid = Classes.classid',
                                    'Ranks',
@@ -123,24 +123,24 @@ function reorder_divisions() {
                        .' ORDER BY Classes.sortorder, Ranks.sortorder');
   $stmt->execute();
 
-  // A given divisionid may appear more than once in these
+  // A given partitionid may appear more than once in these
   // arrays.  The first appearance wins, by virtue of the fact that the arrays
   // are traversed in reverse order when writing new sortorders
   $divids = array();
   foreach ($stmt as $row) {
-    $divids[] = $row['divisionid'];
+    $divids[] = $row['partitionid'];
   }
 
-  $stmt = $db->prepare('UPDATE Divisions SET sortorder = :sortorder WHERE divisionid = :divisionid');
+  $stmt = $db->prepare('UPDATE Partitions SET sortorder = :sortorder WHERE partitionid = :partitionid');
   for ($index = count($divids); $index > 0; --$index) {
     $stmt->execute(array(':sortorder' => $index,
-                         ':divisionid' => $divids[$index - 1]));
+                         ':partitionid' => $divids[$index - 1]));
   }
 }
 
-function all_divisions() {
+function all_partitions() {
   global $db;
-  $stmt = $db->query('SELECT name FROM Divisions ORDER BY sortorder, name');
+  $stmt = $db->query('SELECT name FROM Partitions ORDER BY sortorder, name');
   if ($stmt) {
     return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
   }

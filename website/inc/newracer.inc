@@ -3,15 +3,15 @@ require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/find_or_create_class.inc');
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 require_once('inc/events.inc');
 
 define('UNSPECIFIED_CLASS', '* Not specified');
 define('UNSPECIFIED_RANK', '* Not specified');
 
-// $values are: { firstname, lastname, carnumber, carname, divisionid, division, exclude }
-//   division is ignored if divisionid is provided.
-//   If neither division nor divisionid is provided, 'Default' is assumed
+// $values are: { firstname, lastname, carnumber, carname, partitionid, partition, exclude }
+//   partition is ignored if partitionid is provided.
+//   If neither partition nor partitionid is provided, 'Default' is assumed
 
 function insert_new_racer($values) {
   global $db;
@@ -21,17 +21,17 @@ function insert_new_racer($values) {
                                            array(':rankid' => $values['rankid']));
   }
 
-  if (!isset($values['divisionid']) && !isset($values['division']) && isset($values['classid'])) {
+  if (!isset($values['partitionid']) && !isset($values['partition']) && isset($values['classid'])) {
     // TODO This is an interim arrangement only
-    $values['divisionid'] = read_single_value('SELECT divisionid FROM Divisions'
+    $values['partitionid'] = read_single_value('SELECT partitionid FROM Partitions'
                                               .' WHERE name = (SELECT class FROM Classes'
                                               .'                WHERE classid = :classid)',
                                               array(':classid' => $values['classid']));
   }
 
-  if (!isset($values['divisionid'])) {
-    $values['divisionid'] = find_or_create_division(
-      isset($values['division']) ? $values['division'] : 'Default');
+  if (!isset($values['partitionid'])) {
+    $values['partitionid'] = find_or_create_partition(
+      isset($values['partition']) ? $values['partition'] : 'Default');
   }
   
   if (!isset($values['carnumber']) || $values['carnumber'] == '') {
@@ -52,23 +52,23 @@ function insert_new_racer($values) {
 
   if (!isset($values['classid'])) {
     list($classid, $rankid) = read_single_row('SELECT classid, rankid FROM Ranks'
-                                              .' WHERE rankid = (SELECT rankid FROM Divisions'
-                                              .'                 WHERE divisionid = :divisionid)',
-                                              array(':divisionid' => $values['divisionid']));
+                                              .' WHERE rankid = (SELECT rankid FROM Partitions'
+                                              .'                 WHERE partitionid = :partitionid)',
+                                              array(':partitionid' => $values['partitionid']));
     $values['classid'] = $classid;
     $values['rankid'] = $rankid;
   }
   json_out('debug', $values);
 
   $stmt = $db->prepare('INSERT INTO RegistrationInfo (carnumber, lastname, firstname, carname,'
-                       .'                             divisionid, rankid, classid, exclude)'
+                       .'                             partitionid, rankid, classid, exclude)'
                        .' VALUES(:carnumber, :lastname, :firstname, :carname,'
-                       .'        :divisionid, :rankid, :classid, :exclude)');
+                       .'        :partitionid, :rankid, :classid, :exclude)');
   $stmt->execute(array(':carnumber' => trim($values['carnumber']),
                        ':carname' => trim($values['carname']),
                        ':firstname' => trim($values['firstname']),
                        ':lastname' => trim($values['lastname']),
-                       ':divisionid' => $values['divisionid'],
+                       ':partitionid' => $values['partitionid'],
                        ':rankid' => $values['rankid'],
                        ':classid' => $values['classid'],
                        ':exclude' => (isset($values['exclude']) && $values['exclude']) ? 1 : 0));

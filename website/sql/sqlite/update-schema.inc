@@ -88,8 +88,8 @@ if (schema_version() < 7) {
 
 if (schema_version() < 8) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('divisions')));
-  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN divisionid INTEGER";
+                         @include_once(sql_file_path('partitions')));
+  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN partitionid INTEGER";
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN note VARCHAR(255)";
   $updates[] = "CREATE TABLE ConstituentClasses ("
                   ."antecedent INTEGER, dependent INTEGER, UNIQUE (antecedent, dependent))";

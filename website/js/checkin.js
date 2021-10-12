@@ -65,38 +65,38 @@ function handlechange_xbs(cb) {
          });
 }
 
-function on_edit_division_change(select, divisions_modal) {
+function on_edit_partition_change(select, partitions_modal) {
   var select = $(select);
   if (select.val() < 0) {
     // select.val(select.find('option').eq(0).attr('value'));
     close_modal_leave_background(select);
-    show_modal(divisions_modal);
+    show_modal(partitions_modal);
   }
 }
 
-function callback_after_division_modal(op, arg) {
-  if (op == 'add') {  // arg = {divisionid, name}
+function callback_after_partition_modal(op, arg) {
+  if (op == 'add') {  // arg = {partitionid, name}
     var opt = $("<option/>")
-        .attr('value', arg.divisionid)
+        .attr('value', arg.partitionid)
         .text(arg.name);
-    opt.appendTo("#edit_division");
+    opt.appendTo("#edit_partition");
     opt.clone().appendTo("#bulk_who");
-  } else if (op == 'delete') {  // arg = {divisionid}
-    $("#edit_division option[value=" + arg.divisionid + "]").remove();
-    $("#bulk_who option[value=" + arg.divisionid + "]").remove();
-  } else if (op == 'rename') {  // arg = {divisionid, name}
-    $("#edit_division option[value=" + arg.divisionid + "]").text(arg.name);
-    $("#bulk_who option[value=" + arg.divisionid + "]").text(arg.name);
-  } else if (op == 'reorder') { // arg = array of divisionid
+  } else if (op == 'delete') {  // arg = {partitionid}
+    $("#edit_partition option[value=" + arg.partitionid + "]").remove();
+    $("#bulk_who option[value=" + arg.partitionid + "]").remove();
+  } else if (op == 'rename') {  // arg = {partitionid, name}
+    $("#edit_partition option[value=" + arg.partitionid + "]").text(arg.name);
+    $("#bulk_who option[value=" + arg.partitionid + "]").text(arg.name);
+  } else if (op == 'reorder') { // arg = array of partitionid
     for (var i = 0; i < arg.length; ++i) {
       var divid = arg[i];
       // Move the existing elements around
-      $("#edit_division").append($("#edit_division option[value=" + divid + "]"));
+      $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
       $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
     }
-    // Move the "Edit Divisions" option to the end
+    // Move the "Edit Partitions" option to the end
     divid = -1;
-    $("#edit_division").append($("#edit_division option[value=" + divid + "]"));
+    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
     $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
   }
 }
@@ -118,8 +118,8 @@ function show_edit_racer_form(racerid) {
   $("#edit_carno").val(car_no);
   $("#edit_carname").val(car_name);
 
-  $("#edit_division").val($('#div-' + racerid).attr('data-divisionid'));
-  $("#edit_division").change();
+  $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
+  $("#edit_partition").change();
 
   if (false) { // TODO
     var edit_rank = $("#edit_rank");
@@ -180,8 +180,8 @@ function handle_edit_racer() {
     var rank_picker = $("#edit_rank");
     var new_rankid = rank_picker.val();
   }
-  var new_div_id = $("#edit_division").val();
-  var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_division")).text();
+  var new_div_id = $("#edit_partition").val();
+  var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_partition")).text();
   
   var rank_option = $('[value="' + new_rankid + '"]', rank_picker);
   var new_classname = rank_option.attr('data-class');
@@ -197,7 +197,7 @@ function handle_edit_racer() {
                  lastname: new_lastname,
                  carno: new_carno,
                  carname: new_carname,
-                 divisionid: new_div_id,
+                 partitionid: new_div_id,
                  exclude: exclude},
           success: function(data) {
             if (data.hasOwnProperty('warnings')) {
@@ -214,8 +214,8 @@ function handle_edit_racer() {
               ln.parents('tr').toggleClass('exclude', exclude == 1);
               $("#car-number-" + racerid).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
-              console.log('Changing division to ' + new_div_name);
-              $("#div-" + racerid).attr('data-divisionid', new_div_id).text(new_div_name);
+              console.log('Changing partition to ' + new_div_name);
+              $("#div-" + racerid).attr('data-partitionid', new_div_id).text(new_div_name);
 
               $('#class-' + racerid).attr('data-rankid', new_rankid);
               $('#class-' + racerid).text(new_classname);
@@ -533,8 +533,8 @@ function handle_sorting_event(event) {
 }
 
 function sorting_key(row) {
-  if (g_order == 'division') {
-    // division sortorder, lastname, firstname
+  if (g_order == 'partition') {
+    // partition sortorder, lastname, firstname
     return [parseInt(row.querySelector('[data-div-sortorder]').getAttribute('data-div-sortorder')),
             row.getElementsByClassName('sort-lastname')[0].innerHTML,
             row.getElementsByClassName('sort-firstname')[0].innerHTML]
@@ -804,9 +804,9 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
 
   tr.append($('<td>')
             .attr('id', 'div-' + racer.racerid)
-            .attr('data-divisionid', racer.divisionid)
-            .attr('data-div-sortorder', racer.division_sortorder)
-            .text(racer.division));
+            .attr('data-partitionid', racer.partitionid)
+            .attr('data-div-sortorder', racer.partition_sortorder)
+            .text(racer.partition));
   
   if (use_groups) {
     tr.append($('<td/>')

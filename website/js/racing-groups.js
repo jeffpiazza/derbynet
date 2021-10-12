@@ -4,7 +4,7 @@ function on_rule_change() {
   var val = $("input[type='radio'][name='form-groups-by']:checked").val();
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'division.apply-rule',
+          data: {action: 'partition.apply-rule',
                  rule: val,
                  cleanup: $("input#cleanup").is(':checked') ? 1 : 0},
           success: function(data) {
@@ -44,7 +44,7 @@ function poll_for_structure() {
   $.ajax('action.php',
          {type: 'GET',
           data: {query: 'poll',
-                 values: 'classes,divisions'},
+                 values: 'classes,partitions'},
           success: function(data) {
             process_polling_data(data);
           }
@@ -100,11 +100,11 @@ function populate_racing_groups(data, using_subgroups) {
                     .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                              .on('click', on_edit_rank)));
       } else {
-        // If we're not showing subgroups, then append the UL for divisions directly to the LI for the class.
+        // If we're not showing subgroups, then append the UL for partitions directly to the LI for the class.
         var subg = cl;
       }
       if (rule == 'custom') {
-        populate_divisions_in_subgroup(subg, rankid, data);
+        populate_partitions_in_subgroup(subg, rankid, data);
       }
     }
     if (rule == 'custom') {
@@ -123,26 +123,26 @@ function populate_racing_groups(data, using_subgroups) {
   make_groups_sortable();
 
   if (rule == 'custom') {
-    make_divisions_draggable_droppable(using_subgroups);
+    make_partitions_draggable_droppable(using_subgroups);
   }
 }
 
-function populate_divisions_in_subgroup(subg, rankid, data) {
+function populate_partitions_in_subgroup(subg, rankid, data) {
   var divs = $("<ul/>")
       .appendTo(subg)
-      .addClass('divisions');
+      .addClass('partitions');
   // This can have lower complexity with an index, but in practice it's not worth the trouble
-  for (var d = 0; d < data.divisions.length; ++d) {
-    if (!data.divisions[d].rankids.includes(rankid)) {
+  for (var d = 0; d < data.partitions.length; ++d) {
+    if (!data.partitions[d].rankids.includes(rankid)) {
       continue;
     }
     var div = $("<li/>")
         .appendTo(divs)
-        .addClass('division')
-        .attr('data-divisionid', data.divisions[d].divisionid)
-        .toggleClass('incomplete', data.divisions[d].rankids.length > 1)
+        .addClass('partition')
+        .attr('data-partitionid', data.partitions[d].partitionid)
+        .toggleClass('incomplete', data.partitions[d].rankids.length > 1)
         .append($("<p/>")
-                .text(data.divisions[d].name));
+                .text(data.partitions[d].name));
   }
 }
 
@@ -193,14 +193,14 @@ function make_groups_sortable() {
   });
 }
 
-function make_divisions_draggable_droppable(using_subgroups) {
-  $("li.division").draggable({
+function make_partitions_draggable_droppable(using_subgroups) {
+  $("li.partition").draggable({
     scope: 'custom-group',
     helper: 'clone',
     appendTo: 'body',
     opacity: 0.5,
     revert: 'invalid',
-    // This allows dragging a division to create its own group.  Dragging to a
+    // This allows dragging a partition to create its own group.  Dragging to a
     // group li (not its ul of subgroups) allows creating a subgroup within the
     // group.
     // connectToSortable: "ul#all-groups" 
@@ -217,10 +217,10 @@ function make_divisions_draggable_droppable(using_subgroups) {
                   $(event.target).text());
       var draggable = $(ui.draggable);
       var div_id;
-      if (draggable.is('[data-divisionid]')) {
-        div_id = draggable.attr('data-divisionid');
+      if (draggable.is('[data-partitionid]')) {
+        div_id = draggable.attr('data-partitionid');
       } else {
-        console.log('Unrecognizable division');
+        console.log('Unrecognizable partition');
         return;
       }
       var droppable = $(event.target);
@@ -257,7 +257,7 @@ function make_divisions_draggable_droppable(using_subgroups) {
         return;
       }
 
-      var data = {action: 'division.move',
+      var data = {action: 'partition.move',
                   div_id: div_id,
                   group_field: group_field,
                   group_id: group_id,

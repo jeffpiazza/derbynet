@@ -30,9 +30,9 @@ function json_common_1($key, &$now_running) {
     require_once('inc/json-current-heat.inc');
     json_out('current-heat', json_current_heat($now_running));
     break;
-  case 'divisions':
-    require_once('inc/json-divisions.inc');
-    json_out('divisions', json_divisions());
+  case 'partitions':
+    require_once('inc/json-partitions.inc');
+    json_out('partitions', json_partitions());
     break;
   case 'heat-results':
     require_once('inc/json-heat-results.inc');

@@ -6,7 +6,7 @@ require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/classes.inc');
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 require_once('inc/checkin-table.inc');
 
 require_permission(CHECK_IN_RACERS_PERMISSION);
@@ -42,7 +42,7 @@ $xbs_award_name = read_raceinfo('xbs-award', 'Exclusively By Scout');
 
 $order = '';
 if (isset($_GET['order']))
-  $order = $_GET['order'];  // Values are: name, class, car, division
+  $order = $_GET['order'];  // Values are: name, class, car, partition
 if (!$order)
     $order = 'name';
 
@@ -80,7 +80,7 @@ var g_action_on_barcode = "<?php
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/webcam.js"></script>
 <script type="text/javascript" src="js/dropzone.min.js"></script>
-<script type="text/javascript" src="js/divisions-modal.js"></script>
+<script type="text/javascript" src="js/partitions-modal.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 <script type="text/javascript" src="js/checkin-es6.js"></script>
 </head>
@@ -107,7 +107,7 @@ make_banner('Racer Check-In');
   <tr>
     <th/>
     <th><?php
-      echo column_header(htmlspecialchars(division_label(), ENT_QUOTES, 'UTF-8'), 'division');
+      echo column_header(htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'), 'partition');
     ?></th>
     <?php if ($use_groups) {
       echo '<th>'.column_header(htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'), 'class').'</th>';
@@ -154,17 +154,17 @@ function addrow0(racer) {
       .(schema_version() < 2 ? "" : " carphoto,")
       .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
       .(schema_version() < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
-      .(schema_version() < DIVISION_SCHEMA
-        ? " 1 AS divisionid, 1 AS division_sortorder, 'Default' AS division_name,"
-        : " Divisions.divisionid AS divisionid,"
-         ." Divisions.sortorder AS division_sortorder,"
-         ." Divisions.name AS division_name,")
+      .(schema_version() < PARTITION_SCHEMA
+        ? " 1 AS partitionid, 1 AS partition_sortorder, 'Default' AS partition_name,"
+        : " Partitions.partitionid AS partitionid,"
+         ." Partitions.sortorder AS partition_sortorder,"
+         ." Partitions.name AS partition_name,")
       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
       .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
       .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
       .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
-      .' FROM '.(schema_version() < DIVISION_SCHEMA 
+      .' FROM '.(schema_version() < PARTITION_SCHEMA 
                ? inner_join('RegistrationInfo', 'Classes',
                             'RegistrationInfo.classid = Classes.classid',
                             'Ranks',
@@ -173,12 +173,12 @@ function addrow0(racer) {
                             'RegistrationInfo.classid = Classes.classid',
                             'Ranks',
                             'RegistrationInfo.rankid = Ranks.rankid',
-                            'Divisions',
-                            'RegistrationInfo.divisionid = Divisions.divisionid'))
+                            'Partitions',
+                            'RegistrationInfo.partitionid = Partitions.partitionid'))
     .' ORDER BY '
           .($order == 'car' ? 'carnumber, lastname, firstname' :
             ($order == 'class'  ? 'class_sort, rank_sort, lastname, firstname' :
-             ($order == 'division' ? 'division_sortorder, lastname, firstname' :
+             ($order == 'partition' ? 'partition_sortorder, lastname, firstname' :
               'lastname, firstname')));
 
 $stmt = $db->query($sql);
@@ -196,42 +196,42 @@ foreach ($stmt as $rs) {
 
 <?php
 $divs = array();
-$stmt = $db->query('SELECT divisionid, name,'
+$stmt = $db->query('SELECT partitionid, name,'
                    .'  (SELECT COUNT(*) FROM RegistrationInfo'
-                   .'     WHERE RegistrationInfo.divisionid = Divisions.divisionid) AS count'
-                   .' FROM Divisions'
+                   .'     WHERE RegistrationInfo.partitionid = Partitions.partitionid) AS count'
+                   .' FROM Partitions'
                    .' ORDER BY sortorder');
 ?>
 $(function () {
-var divisions = <?php echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
+var partitions = <?php echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
                                        JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
                                        JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS); ?>;
 
-$("#edit_division").empty();
-for (var i in divisions) {
+$("#edit_partition").empty();
+for (var i in partitions) {
   var opt = $("<option/>")
-      .attr('value', divisions[i].divisionid)
-      .text(divisions[i].name);
-  opt.appendTo("#edit_division");
+      .attr('value', partitions[i].partitionid)
+      .text(partitions[i].name);
+  opt.appendTo("#edit_partition");
   opt.clone().appendTo("#bulk_who");
 }
 var opt = $("<option/>")
     .attr('value', -1)
-    .text("(Edit divisions)");
-opt.appendTo("#edit_division");
+    .text("(Edit partitions)");
+opt.appendTo("#edit_partition");
 opt.clone().appendTo("#bulk_who");
 
-mobile_select_refresh($("#edit_division"));
+mobile_select_refresh($("#edit_partition"));
 mobile_select_refresh($("#bulk_who"));
 
 {
-  var reorder_modal = DivisionsModal(
-    "<?php echo htmlspecialchars(division_label(), ENT_QUOTES, 'UTF-8'); ?>",
-    "<?php echo htmlspecialchars(division_label_pl(), ENT_QUOTES, 'UTF-8'); ?>",
-    divisions, callback_after_division_modal);
+  var reorder_modal = PartitionsModal(
+    "<?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?>",
+    "<?php echo htmlspecialchars(partition_label_pl(), ENT_QUOTES, 'UTF-8'); ?>",
+    partitions, callback_after_partition_modal);
 
-  $("#edit_division").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
-  $("#bulk_who").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
+  $("#edit_partition").on('change', function(ev) { on_edit_partition_change(ev.target, reorder_modal); });
+  $("#bulk_who").on('change', function(ev) { on_edit_partition_change(ev.target, reorder_modal); });
 }
 
 });
@@ -256,8 +256,8 @@ mobile_select_refresh($("#bulk_who"));
   <input id="edit_carname" type="text" name="edit_carname" value=""/>
   <br/>
 
-  <label for="edit_division"><?php echo htmlspecialchars(division_label(), ENT_QUOTES, 'UTF-8'); ?></label>
-  <select id="edit_division"><!-- Populated by javascript --></select>
+  <label for="edit_partition"><?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?></label>
+  <select id="edit_partition"><!-- Populated by javascript --></select>
 
   <br/>
   <label for="eligible">Trophy eligibility:</label>

@@ -41,7 +41,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
   $db->exec('DELETE FROM RaceChart');
   $db->exec('DELETE FROM Roster');
   $db->exec('DELETE FROM RegistrationInfo');
-  $db->exec('DELETE FROM Divisions');
+  $db->exec('DELETE FROM Partitions');
   remove_fake_car_and_racer_images();
   if (read_raceinfo_boolean('fake-racers')) {
     $db->exec('DELETE FROM ConstituentClasses');

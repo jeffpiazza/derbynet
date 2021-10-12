@@ -3,11 +3,11 @@ require_once('inc/data.inc');
 require_once('inc/classes.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 require_permission(SET_UP_PERMISSION);
 
-if (schema_version() < DIVISION_SCHEMA) {
+if (schema_version() < PARTITION_SCHEMA) {
   header('Location: setup.php');
   exit(0);
 }
@@ -54,9 +54,9 @@ $(function() {
 
 <div id="race-rules">
 
-<?php if (read_single_value('SELECT COUNT(*) FROM Divisions') > 1) { ?>
-  <input id="by-division-radio" type="radio" name="form-groups-by" value="by-division"/>
-   <label for="by-division-radio">Race each <?php echo division_label_lc(); ?> as a group</label>
+<?php if (read_single_value('SELECT COUNT(*) FROM Partitions') > 1) { ?>
+  <input id="by-partition-radio" type="radio" name="form-groups-by" value="by-partition"/>
+   <label for="by-partition-radio">Race each <?php echo partition_label_lc(); ?> as a group</label>
 <?php } ?>
 
 <input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
@@ -95,7 +95,7 @@ $(function() {
 <p class="instructions">Drag <span class="group-color">&nbsp;</span> groups
        <span class="and-subgroups">and <span class="subgroup-color">&nbsp;</span> subgroups</span>
        to re-order.</p>
-       <p class="instructions">Drag <span class="division-color">&nbsp;</span> <?php echo division_label_pl_lc(); ?>
+       <p class="instructions">Drag <span class="partition-color">&nbsp;</span> <?php echo partition_label_pl_lc(); ?>
        onto <span class="group-color">&nbsp;</span> groups
         <span class="and-subgroups" style="white-space: nowrap;">and <span class="subgroup-color">&nbsp;</span> subgroups</span>.
 </p>

@@ -1,8 +1,8 @@
 <?php
 
-// $_POST['rule']: one-group or by-division
+// $_POST['rule']: one-group or by-partition
 
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
 
 
@@ -13,28 +13,28 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Classes');  // TODO Aggregate classes?
     $db->exec('DELETE FROM Ranks');
     $classid = find_or_create_class('One Group');
-    // Trusting that divisions have unique names
+    // Trusting that partitions have unique names
     $stmt = $db->prepare('INSERT INTO Ranks(rank, classid, sortorder)'
-                         .'     SELECT name, :classid, sortorder FROM Divisions');
+                         .'     SELECT name, :classid, sortorder FROM Partitions');
     $stmt->execute(array(':classid' => $classid));
 
     $stmt = $db->prepare('UPDATE RegistrationInfo SET classid = :classid,'
                          .' rankid = (SELECT rankid FROM Ranks'
                          .'           WHERE rank = '
-                         .'            (SELECT name FROM Divisions'
-                         .'                 WHERE Divisions.divisionid = RegistrationInfo.divisionid))');
+                         .'            (SELECT name FROM Partitions'
+                         .'                 WHERE Partitions.partitionid = RegistrationInfo.partitionid))');
     $stmt->execute(array(':classid' => $classid));
-  } else if ($rule == 'by-division') {
+  } else if ($rule == 'by-partition') {
     $db->exec('DELETE FROM ConstituentClasses');
     $db->exec('DELETE FROM Classes');  // TODO Aggregate classes
     $db->exec('DELETE FROM Ranks');
 
-    $db->exec('INSERT INTO Classes(class, sortorder) SELECT name, sortorder FROM Divisions');
+    $db->exec('INSERT INTO Classes(class, sortorder) SELECT name, sortorder FROM Partitions');
     $db->exec('UPDATE RegistrationInfo'
               .' SET classid ='
               .'   (SELECT classid FROM Classes'
-              .'     WHERE class = (SELECT name FROM Divisions'
-              .'                     WHERE Divisions.divisionid = RegistrationInfo.divisionid))');
+              .'     WHERE class = (SELECT name FROM Partitions'
+              .'                     WHERE Partitions.partitionid = RegistrationInfo.partitionid))');
 
     // Manufacture one rank per class
     $db->exec('INSERT INTO Ranks(rank, classid, sortorder)'

@@ -41,12 +41,12 @@ li.subgroup {
   margin-right: 2px;
 }
 
-li.division {
+li.partition {
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
-.group-color, .subgroup-color, .division-color {
+.group-color, .subgroup-color, .partition-color {
   display: inline-block;
   width: 1em;
   border: 1px #404040 solid;
@@ -76,7 +76,7 @@ li.new-subgroup p {
   font-style: italic;
 }
   
-li.division > p, .division-color {
+li.partition > p, .partition-color {
   background-color: #939191;
 }
 
@@ -88,7 +88,7 @@ li.incomplete > p {
                               rgb(147, 145, 145, 0));
 }
 
-li.division p {
+li.partition p {
   color: white;
   padding-left: 10px;
   margin-right: 10px;

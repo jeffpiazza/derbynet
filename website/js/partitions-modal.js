@@ -2,9 +2,9 @@
 
 // Assumes jquery.js, mobile.js
 
-// divisions is an array of {divisionid, name, count}, in order
-function DivisionsModal(div_label, div_label_plural, divisions, callback) {
-  var divisions_list;
+// partitions is an array of {partitionid, name, count}, in order
+function PartitionsModal(div_label, div_label_plural, partitions, callback) {
+  var partitions_list;
 
   var reorder_modal = 
       $("<div/>").appendTo("body")
@@ -12,37 +12,37 @@ function DivisionsModal(div_label, div_label_plural, divisions, callback) {
       .append($("<form/>")
               .append($("<h3/>").text("Drag to Re-order " + div_label_plural))
               .append($("<div/>")
-                      .append(divisions_list = $("<ul/>").addClass('mlistview has-alts')))
+                      .append(partitions_list = $("<ul/>").addClass('mlistview has-alts')))
               .append($("<input type='button'/>").val("Add " + div_label)
-                      .on('click', function() { show_add_division_modal(); }))
+                      .on('click', function() { show_add_partition_modal(); }))
               .append($("<input type='button'/>").val("Close")
                       .on('click', function() { pop_modal(); })));
 
-  var append_li = function(divisionid, name, count) {
-    // divisions_list is free
+  var append_li = function(partitionid, name, count) {
+    // partitions_list is free
     $("<li/>")
-      .appendTo(divisions_list)
+      .appendTo(partitions_list)
       .addClass('mlistview has-alts')
-      .attr('data-divisionid', divisionid)
-      .attr('data-division', name)
+      .attr('data-partitionid', partitionid)
+      .attr('data-partition', name)
       .attr('data-count', count)
       .append($("<p/>").text(name)
               .append($('<span/>')
                       .addClass('count')
                       .text(' (' + count + ')')))
-      .append($("<a/>").on('click', function() { rename_one_division(this); }));
+      .append($("<a/>").on('click', function() { rename_one_partition(this); }));
   };
 
-  for (var i in divisions) {
-    append_li(divisions[i].divisionid, divisions[i].name, divisions[i].count);
+  for (var i in partitions) {
+    append_li(partitions[i].partitionid, partitions[i].name, partitions[i].count);
   }
-  divisions_list.sortable({
+  partitions_list.sortable({
     stop: function(event, ui) {
-      var data = {action: 'division.order'};
+      var data = {action: 'partition.order'};
       var divids = [];
-      divisions_list.find('li').each(function(i) {
-        data['divisionid_' + (i + 1)] = $(this).attr('data-divisionid');
-        divids.push($(this).attr('data-divisionid'));
+      partitions_list.find('li').each(function(i) {
+        data['partitionid_' + (i + 1)] = $(this).attr('data-partitionid');
+        divids.push($(this).attr('data-partitionid'));
       });
       $.ajax('action.php',
              {type: 'POST',
@@ -71,11 +71,11 @@ function DivisionsModal(div_label, div_label_plural, divisions, callback) {
                       .append($("<input type='button'/>")
                               .addClass('delete_button')
                               .val('Delete ' + div_label)
-                              .on('click', function() { delete_one_division(this); })))
+                              .on('click', function() { delete_one_partition(this); })))
              );
   mobile_text(name_field);
 
-  var show_add_division_modal = function() {
+  var show_add_partition_modal = function() {
     name_field.val("");
     delete_ext.addClass('hidden');
     show_secondary_modal(naming_modal, name_field, function(event) {
@@ -83,10 +83,10 @@ function DivisionsModal(div_label, div_label_plural, divisions, callback) {
 
       $.ajax('action.php',
              {type: 'POST',
-              data: {action: 'division.add',
+              data: {action: 'partition.add',
                      name: name_field.val()},
               success: function(data) {
-                append_li(data.divisionid, name_field.val(), 0);
+                append_li(data.partitionid, name_field.val(), 0);
               }
              });
 
@@ -94,23 +94,23 @@ function DivisionsModal(div_label, div_label_plural, divisions, callback) {
     });
   };
 
-  var rename_one_division = function(self) {
+  var rename_one_partition = function(self) {
     var li = $(self).closest('li');
-    name_field.val(li.attr('data-division'));
+    name_field.val(li.attr('data-partition'));
 
     delete_ext.toggleClass('hidden', li.attr('data-count') != 0);
-    delete_ext.attr('data-divisionid', li.attr('data-divisionid'));
+    delete_ext.attr('data-partitionid', li.attr('data-partitionid'));
 
     show_secondary_modal(naming_modal, name_field, function(event) {
       pop_modal();
       $.ajax('action.php',
              {type: 'POST',
-              data: {action: 'division.edit',
-                     divisionid: li.attr('data-divisionid'),
+              data: {action: 'partition.edit',
+                     partitionid: li.attr('data-partitionid'),
                      name: name_field.val()},
               success: function(data) {
                 li.text(name_field.val());
-                callback('rename', {divisionid: li.attr('data-divisionid'),
+                callback('rename', {partitionid: li.attr('data-partitionid'),
                                     name: name_field.val()});
               }
              });
@@ -119,18 +119,18 @@ function DivisionsModal(div_label, div_label_plural, divisions, callback) {
     });
   };
 
-  var delete_one_division = function(self) {
-    var del_ext = $(self).parent('[data-divisionid]');
-    var divid = del_ext.attr('data-divisionid');
+  var delete_one_partition = function(self) {
+    var del_ext = $(self).parent('[data-partitionid]');
+    var divid = del_ext.attr('data-partitionid');
     pop_modal();
     $.ajax('action.php',
            {type: 'POST',
-            data: {action: 'division.delete',
-                   divisionid: divid},
+            data: {action: 'partition.delete',
+                   partitionid: divid},
             success: function(data) {
-              var li = divisions_list.find('li[data-divisionid=' + divid + ']');
+              var li = partitions_list.find('li[data-partitionid=' + divid + ']');
               li.remove();
-              callback('delete', {divisionid: divid});
+              callback('delete', {partitionid: divid});
             }
            });
   };

@@ -50,7 +50,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                              array(':classid' => $classid),
                              array(':rank' => $_POST['class'],
                                    ':classid' => $classid));
-  $divisionid = get_or_create_id('divisionid', 'Divisions',
+  $partitionid = get_or_create_id('partitionid', 'Partitions',
                                  array(':rankid' => $rankid),
                                  array(':name' => $_POST['class'],
                                        ':rankid' => $rankid));
@@ -58,14 +58,14 @@ if (have_permission(SET_UP_PERMISSION)) {
                               array(':lastname' => $_POST['lastname'],
                                     ':firstname' => $_POST['firstname'],
                                     ':carnumber' => $_POST['carnumber'],
-                                    ':divisionid' => $divisionid,
+                                    ':partitionid' => $partitionid,
                                     ':classid' => $classid),
                               array(':carnumber' => $_POST['carnumber'],
                                     ':lastname' => $_POST['lastname'],
                                     ':firstname' => $_POST['firstname'],
                                     ':classid' => $classid,
                                     ':rankid' => $rankid,
-                                    ':divisionid' => $divisionid,
+                                    ':partitionid' => $partitionid,
                                     ':passedinspection' => 1,
                                     ':exclude' => 0));
   $roundid = get_or_create_id('roundid', 'Rounds',

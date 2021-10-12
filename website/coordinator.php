@@ -3,7 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 

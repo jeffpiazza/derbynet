@@ -1,8 +1,8 @@
 <?php
 
-// $_POST['divisionid']
+// $_POST['partitionid']
 
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 
 $ok = true;
 if (!have_permission(SET_UP_PERMISSION)) {
@@ -10,35 +10,35 @@ if (!have_permission(SET_UP_PERMISSION)) {
   $ok = false;
 }
 
-$divisionid = $_POST['divisionid'];
+$partitionid = $_POST['partitionid'];
 if ($ok && read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
-                             .' WHERE divisionid = :divisionid',
-                             array(':divisionid' => $divisionid)) > 0) {
-  json_failure('in-use', 'Division has racers assigned');
+                             .' WHERE partitionid = :partitionid',
+                             array(':partitionid' => $partitionid)) > 0) {
+  json_failure('in-use', 'Partition has racers assigned');
   $ok = false;
 }
 
 if ($ok) {
   list($classid, $rankid) = read_single_row('SELECT classid, rankid'
-                                            .' FROM Divisions JOIN Ranks USING (rankid)'
-                                            .' WHERE divisionid = :divisionid',
-                                            array(':divisionid' => $divisionid));
+                                            .' FROM Partitions JOIN Ranks USING (rankid)'
+                                            .' WHERE partitionid = :partitionid',
+                                            array(':partitionid' => $partitionid));
 
-  read_single_value('DELETE FROM Divisions WHERE divisionid = :divisionid',
-                    array(':divisionid' => $divisionid));
+  read_single_value('DELETE FROM Partitions WHERE partitionid = :partitionid',
+                    array(':partitionid' => $partitionid));
 
-  // if by-division, delete the corresponding class, if there are no racing results
+  // if by-partition, delete the corresponding class, if there are no racing results
   // if one-group, delete the corresponding rank.
   switch (group_formation_rule()) {
   case 'one-group':
-    // The rank is no longer associated to any division, and so should be deleted.
+    // The rank is no longer associated to any partition, and so should be deleted.
     if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE rankid = :rankid',
                           array(':rankid' => $rankid)) == 0) {
       read_single_value('DELETE FROM Ranks WHERE rankid = :rankid',
                         array(':rankid' => $rankid));
     }
     break;
-  case 'by-division':
+  case 'by-partition':
     if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE classid = :classid',
                           array(':classid' => $classid)) == 0) {
       read_single_value('DELETE FROM Ranks WHERE classid = :classid',

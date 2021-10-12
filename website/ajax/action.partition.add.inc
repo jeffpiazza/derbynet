@@ -2,7 +2,7 @@
 
 // $_POST['name']
 
-require_once('inc/divisions.inc');
+require_once('inc/partitions.inc');
 
 $ok = true;
 
@@ -14,19 +14,19 @@ if ($ok && !have_permission(CONTROL_RACE_PERMISSION)) {
 $name = trim($_POST['name']);
 
 if ($ok && (empty($name) || $name === '')) {
-  json_failure('no-name', 'Division name may not be empty');
+  json_failure('no-name', 'Partition name may not be empty');
   $ok = false;
 }
 
-if ($ok && read_single_value('SELECT divisionid FROM Divisions WHERE name = :name',
+if ($ok && read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                              array(':name' => $name)) !== false) {
-  json_failure('already-exists', 'A division named '.$name.' already exists.');
+  json_failure('already-exists', 'A partition named '.$name.' already exists.');
   $ok = false;
 }
 
 if ($ok) {
-  $divid = find_or_create_division($name);
-  json_out('divisionid', $divid);
+  $divid = find_or_create_partition($name);
+  json_out('partitionid', $divid);
   json_success();
 }
 
