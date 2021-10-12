@@ -60,8 +60,10 @@ function do_show_modal(modal_selector, focus, submit_handler, background_selecto
 function do_close_modal(modal_selector, background_selector) {
   g_modal_dialogs.pop();
   $(background_selector).fadeOut(200);
-  $(modal_selector).closest('.modal_frame').addClass('hidden');
-  $(modal_selector).css({'display': 'none'});
+  $(modal_selector).closest('.modal_frame')
+    .addClass('hidden')
+    // .css({'display': 'none'})
+    ;
 }
 
 function show_modal(modal_selector, focus, submit_handler) {

@@ -65,12 +65,39 @@ function handlechange_xbs(cb) {
          });
 }
 
-function on_edit_division_change(select, reorder_modal) {
+function on_edit_division_change(select, divisions_modal) {
   var select = $(select);
   if (select.val() < 0) {
-    select.val(select.find('option').eq(0).attr('value'));
+    // select.val(select.find('option').eq(0).attr('value'));
     close_modal_leave_background(select);
-    show_modal(reorder_modal);
+    show_modal(divisions_modal);
+  }
+}
+
+function callback_after_division_modal(op, arg) {
+  if (op == 'add') {  // arg = {divisionid, name}
+    var opt = $("<option/>")
+        .attr('value', arg.divisionid)
+        .text(arg.name);
+    opt.appendTo("#edit_division");
+    opt.clone().appendTo("#bulk_who");
+  } else if (op == 'delete') {  // arg = {divisionid}
+    $("#edit_division option[value=" + arg.divisionid + "]").remove();
+    $("#bulk_who option[value=" + arg.divisionid + "]").remove();
+  } else if (op == 'rename') {  // arg = {divisionid, name}
+    $("#edit_division option[value=" + arg.divisionid + "]").text(arg.name);
+    $("#bulk_who option[value=" + arg.divisionid + "]").text(arg.name);
+  } else if (op == 'reorder') { // arg = array of divisionid
+    for (var i = 0; i < arg.length; ++i) {
+      var divid = arg[i];
+      // Move the existing elements around
+      $("#edit_division").append($("#edit_division option[value=" + divid + "]"));
+      $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
+    }
+    // Move the "Edit Divisions" option to the end
+    divid = -1;
+    $("#edit_division").append($("#edit_division option[value=" + divid + "]"));
+    $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
   }
 }
 
@@ -501,7 +528,6 @@ function handle_sorting_event(event) {
   g_order = $(event.target).attr('data-order');
   $("thead a[data-order]").prop('href', '#');
   $(event.target).removeAttr('href');
-  console.log("Setting g_order = " + g_order);  // TODO
   sort_checkin_table();
   return false;
 }

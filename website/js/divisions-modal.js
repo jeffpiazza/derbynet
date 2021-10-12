@@ -3,12 +3,8 @@
 // Assumes jquery.js, mobile.js
 
 // divisions is an array of {divisionid, name, count}, in order
-function DivisionsModal(div_label, div_label_plural, divisions) {
+function DivisionsModal(div_label, div_label_plural, divisions, callback) {
   var divisions_list;
-
-  // This gets set true if user made actual changes.  In that case, when closing
-  // the modal, we reload the page.
-  var changed = false;
 
   var reorder_modal = 
       $("<div/>").appendTo("body")
@@ -20,37 +16,40 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
               .append($("<input type='button'/>").val("Add " + div_label)
                       .on('click', function() { show_add_division_modal(); }))
               .append($("<input type='button'/>").val("Close")
-                      .on('click', function() {
-                        if (changed) {
-                          location.reload();
-                        } else {
-                          pop_modal();
-                        }
-                      })));
+                      .on('click', function() { pop_modal(); })));
 
-  for (var i in divisions) {
+  var append_li = function(divisionid, name, count) {
+    // divisions_list is free
     $("<li/>")
       .appendTo(divisions_list)
       .addClass('mlistview has-alts')
-      .attr('data-divisionid', divisions[i].divisionid)
-      .attr('data-division', divisions[i].name)
-      .attr('data-count', divisions[i].count)
-      .append($("<p/>").text(divisions[i].name)
+      .attr('data-divisionid', divisionid)
+      .attr('data-division', name)
+      .attr('data-count', count)
+      .append($("<p/>").text(name)
               .append($('<span/>')
                       .addClass('count')
-                      .text(' (' + divisions[i].count + ')')))
+                      .text(' (' + count + ')')))
       .append($("<a/>").on('click', function() { rename_one_division(this); }));
+  };
+
+  for (var i in divisions) {
+    append_li(divisions[i].divisionid, divisions[i].name, divisions[i].count);
   }
   divisions_list.sortable({
     stop: function(event, ui) {
       var data = {action: 'division.order'};
+      var divids = [];
       divisions_list.find('li').each(function(i) {
         data['divisionid_' + (i + 1)] = $(this).attr('data-divisionid');
+        divids.push($(this).attr('data-divisionid'));
       });
       $.ajax('action.php',
              {type: 'POST',
               data: data,
-              success: function() { changed = true; }
+              success: function() {
+                callback('reorder', divids);
+              }
              });
     }
   });
@@ -78,6 +77,7 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
 
   var show_add_division_modal = function() {
     name_field.val("");
+    delete_ext.addClass('hidden');
     show_secondary_modal(naming_modal, name_field, function(event) {
       pop_modal();
 
@@ -85,7 +85,9 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
              {type: 'POST',
               data: {action: 'division.add',
                      name: name_field.val()},
-              success: function(data) { location.reload(); }
+              success: function(data) {
+                append_li(data.divisionid, name_field.val(), 0);
+              }
              });
 
       event.preventDefault();
@@ -108,7 +110,9 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
                      name: name_field.val()},
               success: function(data) {
                 li.text(name_field.val());
-                changed = true; }
+                callback('rename', {divisionid: li.attr('data-divisionid'),
+                                    name: name_field.val()});
+              }
              });
 
       event.preventDefault();
@@ -116,12 +120,18 @@ function DivisionsModal(div_label, div_label_plural, divisions) {
   };
 
   var delete_one_division = function(self) {
+    var del_ext = $(self).parent('[data-divisionid]');
+    var divid = del_ext.attr('data-divisionid');
     pop_modal();
     $.ajax('action.php',
            {type: 'POST',
             data: {action: 'division.delete',
-                   divisionid: $(self).parent('[data-divisionid]').attr('data-divisionid')},
-            success: function(data) { location.reload(); }
+                   divisionid: divid},
+            success: function(data) {
+              var li = divisions_list.find('li[data-divisionid=' + divid + ']');
+              li.remove();
+              callback('delete', {divisionid: divid});
+            }
            });
   };
 

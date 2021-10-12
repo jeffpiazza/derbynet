@@ -25,7 +25,8 @@ if ($ok && read_single_value('SELECT divisionid FROM Divisions WHERE name = :nam
 }
 
 if ($ok) {
-  find_or_create_division($name);
+  $divid = find_or_create_division($name);
+  json_out('divisionid', $divid);
   json_success();
 }
 

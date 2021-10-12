@@ -228,7 +228,7 @@ mobile_select_refresh($("#bulk_who"));
   var reorder_modal = DivisionsModal(
     "<?php echo htmlspecialchars(division_label(), ENT_QUOTES, 'UTF-8'); ?>",
     "<?php echo htmlspecialchars(division_label_pl(), ENT_QUOTES, 'UTF-8'); ?>",
-    divisions);
+    divisions, callback_after_division_modal);
 
   $("#edit_division").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
   $("#bulk_who").on('change', function(ev) { on_edit_division_change(ev.target, reorder_modal); });
