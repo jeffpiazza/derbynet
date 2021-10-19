@@ -11,7 +11,7 @@ $nlanes = get_lane_count();
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<title>(new graphics)</title>
+<title>Derby Racing Main Board</title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/now-racing-columnar.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -30,7 +30,7 @@ if (g_number_of_lanes == 0) {
 </script>
 </head>
 <body>
-<?php make_banner('', false); ?>
+<?php make_banner('Racing', false); ?>
 
 <div id="all-lanes">
 <?php

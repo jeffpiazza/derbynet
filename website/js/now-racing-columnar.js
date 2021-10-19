@@ -143,7 +143,7 @@ function process_polling_result(data) {
 
   if (data.hasOwnProperty('timer-trouble')) {
     Overlay.show('#timer_overlay');
-  } else if (!current_heat["now-racing"] && g_result_animator.ok_to_change()) {
+  } else if (!current_heat["now_racing"] && g_result_animator.ok_to_change()) {
     Overlay.show('#paused_overlay');
   } else {
     Overlay.clear();
@@ -192,12 +192,15 @@ function process_polling_result(data) {
         racer_entry.attr('data-racerid', racerid);
         racer_entry.find("div.car")
           .prepend($("<img/>")
-                  .attr('src', "photo.php/car/racer/" + racerid + "/" + car_wxh + "/0")
-                  .on('load', vcenter_image))
+                   .attr('src', "photo.php/car/racer/" + racerid + "/" + car_wxh + "/0")
+                   .css({'max-width': lane_width})
+                   .on('load', vcenter_image))
           .find("div.name").text((data.racers[i].carnumber + ' ' + data.racers[i].carname).trim());
-        racer_entry.find("div.racer").prepend($("<img/>")
-                  .attr('src', "photo.php/head/racer/" + racerid + "/" + racer_wxh + "/0")
-                                              .on('load', vcenter_image));
+        racer_entry.find("div.racer")
+          .prepend($("<img/>")
+                   .attr('src', "photo.php/head/racer/" + racerid + "/" + racer_wxh + "/0")
+                   .css({'max-width': lane_width})
+                   .on('load', vcenter_image));
         racer_entry.find("div.racer").find("div.name").text(data.racers[i].name);
       }
     }
@@ -205,8 +208,14 @@ function process_polling_result(data) {
     now_showing = $("div.rollable").first().find("div.racer-entry").eq(0).attr("data-heat-key");
     if (heat_key != now_showing && g_result_animator.ok_to_change()) {
       // && $(':animated').length == 0 ?
-      $("div.banner_title").text(
-        "Heat " + current_heat.heat + " of " + current_heat['number-of-heats']);
+      var title = '';
+      if (current_heat['number-of-heats'] > 0 && current_heat.heat) {
+        title = "Heat " + current_heat.heat + " of " + current_heat['number-of-heats'];
+        if (current_heat.hasOwnProperty('class') && current_heat['class']) {
+          title = current_heat['class'] + ', ' + title;
+        }
+      }
+      $("div.banner_title").text(title);
       var height = $("div.rollable").height();
       $("div.rollable div.racer-entry:first-child").animate({'margin-top': -height}, 1000)
         .promise().then(function() {
@@ -241,13 +250,15 @@ function resize_window() {
   $("div.lane").css("width", width / g_number_of_lanes + "px");
 
   $("div.lane").each(function(i, div_lane) {
+    $(div_lane).find("div.racer-entry").each(function(ii, div_racer_entry) {
       // TODO Bye lanes?  
-      var racerid = $(div_lane).attr('data-racerid');
+      var racerid = $(div_racer_entry).attr('data-racerid');
       var racer = $(div_lane).find("div.racer");
       var wxh = racer.width() + 'x' + (racer.height() - racer.find('div.name').height());
       racer.find('img').remove();
       racer.prepend($("<img/>")
                     .attr('src', "photo.php/head/racer/" + racerid + "/" + wxh + "/0")
+                    .css({'max-width': racer.width()})
                     .on('load', vcenter_image));
 
       var car = $(div_lane).find("div.car");
@@ -255,8 +266,10 @@ function resize_window() {
       car.find('img').remove();
       car.prepend($("<img/>")
                   .attr('src', "photo.php/car/racer/" + racerid + "/" + wxh + "/0")
+                  .css({'max-width': racer.width()})
                   .on('load', vcenter_image));
     });
+  });
 }
 
 $(window).on('resize', resize_window);

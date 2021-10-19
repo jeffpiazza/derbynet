@@ -40,6 +40,7 @@ if (have_permission(SET_UP_PERMISSION)) {
       insert_new_racer(array('firstname' => $racer['firstname'],
                              'lastname' => $racer['lastname'],
                              'carname' => '',
+                             'carnumber' => $g * 100 + $r + 1,
                              'partition' => $group_name));
 
       $racerid = read_single_value('SELECT racerid FROM RegistrationInfo'
