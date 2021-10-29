@@ -274,7 +274,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     long deadline = System.currentTimeMillis() + POLL_RESPONSE_DEADLINE_MS;
 
     if (sm == null) {
-      sm = new StateMachine();
+      sm = new StateMachine(profile.options.gate_state_is_knowable);
       Event.register(this);
       Event.register(sm);
     }

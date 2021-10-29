@@ -36,6 +36,7 @@ public class JitRacemasterByProfile extends TimerDeviceWithProfile {
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
                 SerialPort.PARITY_NONE)
+        .gate_state_is_knowable(false)
         // TODO filter escape characters from timer identifier string
         .prober("V", "JIT, Inc", "Racemaster Software", "^Software Version")
         .setup("L")

@@ -17,6 +17,7 @@ public class NewBoldByProfile extends TimerDeviceWithProfile {
                 SerialPort.DATABITS_7,
                 SerialPort.STOPBITS_2,
                 SerialPort.PARITY_NONE)
+        .gate_state_is_knowable(false)
         .setup(" ")
         .match("^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)", Event.LANE_RESULT, 1, 2)
         .heat_prep(" ");

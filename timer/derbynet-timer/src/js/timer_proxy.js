@@ -101,8 +101,7 @@ class TimerProxy {
       }
     }
 
-    this.sm = new StateMachine();
-    // TODO gate_state_is_knowable
+    this.sm = new StateMachine(this.profile.options.gate_state_is_knowable);
     TimerEvent.register(this.sm);
     TimerEvent.register(this);
   }

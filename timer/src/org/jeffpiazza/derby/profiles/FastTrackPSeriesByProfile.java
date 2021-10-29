@@ -18,6 +18,7 @@ public class FastTrackPSeriesByProfile extends TimerDeviceWithProfile {
                 SerialPort.STOPBITS_1,
                 SerialPort.PARITY_NONE)
         .max_lanes(6)
+        .gate_state_is_knowable(false)
         .setup("RF")
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2);
   }

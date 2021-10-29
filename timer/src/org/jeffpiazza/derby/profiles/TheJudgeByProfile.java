@@ -18,6 +18,7 @@ public class TheJudgeByProfile extends TimerDeviceWithProfile {
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
                 SerialPort.PARITY_NONE)
+        .gate_state_is_knowable(false)
         .prober("*", "Checking Valid Lanes")
         .setup() // No set-up commands
         .match("Number of Lanes:?\\s+(\\d)", Event.LANE_COUNT, 1)

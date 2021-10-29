@@ -86,13 +86,17 @@ public class Profile {
     // Defer reset and lane masking after a heat finishes to this many ms.
     // after a heat
     public long display_hold_time_ms = 10000;
+    // Some timers only report heat finished, but not whether the start gate
+    // is open or closed.
+    public boolean gate_state_is_knowable = true;
 
     public JSONObject toJSON() {
       return new JSONObject()
           .put("eol", eol)
           .put("max_lanes", max_lanes)
           .put("max_running_time_ms", max_running_time_ms)
-          .put("display_hold_time_ms", display_hold_time_ms);
+          .put("display_hold_time_ms", display_hold_time_ms)
+          .put("gate_state_is_knowable", gate_state_is_knowable);
     }
   }
   public Options options = new Options();
@@ -114,6 +118,11 @@ public class Profile {
 
   public Profile display_hold_time_ms(long display_hold_time_ms) {
     options.display_hold_time_ms = display_hold_time_ms;
+    return this;
+  }
+
+  public Profile gate_state_is_knowable(boolean gate_state_is_knowable) {
+    options.gate_state_is_knowable = gate_state_is_knowable;
     return this;
   }
 
