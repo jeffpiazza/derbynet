@@ -15,16 +15,20 @@ $(function() {
 });
 
 $(function() {
-  // Once per second, broadcast a "timer is alive" message, so other tabs/windows won't
-  // try to open a second instance or refresh this one.
-  const bc = new BroadcastChannel('timer-alive');
-  setInterval(function() {
-    bc.postMessage({alive: true});
-  }, 1000);
+  try {
+    // Once per second, broadcast a "timer is alive" message, so other tabs/windows won't
+    // try to open a second instance or refresh this one.
+    const bc = new BroadcastChannel('timer-alive');
+    setInterval(function() {
+      bc.postMessage({alive: true});
+    }, 1000);
 
-  // We can try to bring our window to the front, but it mostly doesn't work.
-  const bc_focus = new BroadcastChannel('timer-focus');
-  bc_focus.onmessage = function(ev) { window.focus(); }
+    // We can try to bring our window to the front, but it mostly doesn't work.
+    const bc_focus = new BroadcastChannel('timer-focus');
+    bc_focus.onmessage = function(ev) { window.focus(); }
+  } catch (ex) {
+    // BroadcastMessage isn't supported on all browsers
+  }
 });
 
 // g_standalone gets set to true for standalone Electron version by inline
