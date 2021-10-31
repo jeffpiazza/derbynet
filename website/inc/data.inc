@@ -247,20 +247,11 @@ function get_running_round() {
   return $config;
 }
 
-// Some behaviors are a little different if we're just running alongside Grand
-// Prix Race Manager, but GPRM is actually running the race.
-//
-// By default, if using an Access (ODBC) database, we assume we're running with GPRM.
+// If not working with a timer device, or if DerbyNet is just running as a
+// companion to Grand Prix Race Manager (and so not actually running the race),
+// we want not to put up warnings about not having an active timer connection.
 function warn_no_timer() {
-  global $dbtype;
-  $count = read_single_value('SELECT COUNT(*) FROM RaceInfo WHERE itemkey = :key',
-                             array(':key' => 'warn-no-timer'));
-  if ($count > 0) {
-    return read_raceinfo('warn-no-timer', true);
-  } else {
-    // This used to be stored as 'with-gprm', with the opposite sense
-    return ! read_raceinfo('with-gprm', $dbtype == 'access');
-  }
+  return read_raceinfo('warn-no-timer', true) ? true : false;
 }
 
 function is_windows_server() {
