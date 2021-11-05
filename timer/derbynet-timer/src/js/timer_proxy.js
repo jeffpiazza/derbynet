@@ -115,11 +115,8 @@ class TimerProxy {
       this.roundid = args[0];
       this.heat = args[1];
       var lanemask = args[2];
-      var pause = 0;
-      if (this.profile?.options?.display_hold_time_ms) {
-        pause = Math.max(
-          0, this.lastFinishTime + this.profile.options.display_hold_time_ms - Date.now());
-      }
+      var pause = Math.max(0,
+                           this.lastFinishTime + Flag.delay_reset_after_race.value * 1000 - Date.now());
       TimerEvent.sendAfterMs(pause, 'MASK_LANES', [lanemask]);
       break;
     }

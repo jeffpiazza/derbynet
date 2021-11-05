@@ -57,7 +57,7 @@ class HostPoller {
       for (var i = 0; i < results.length; ++i) {
         if (results[i]) {
           msg['lane' + (i + 1)] = results[i].time;
-          if (results[i]?.place) {
+          if (results[i]?.place && !Flag.ignore_place.value) {
             msg['place' + (i + 1)] = results[i].place;
           }
         }
@@ -105,7 +105,7 @@ class HostPoller {
       // TODO
     }
     if ((nodes = response.getElementsByTagName("query")).length > 0) {
-      // TODO: Wants a flags message
+      Flag.sendFlagsMessage(this);
     }
   }
 }

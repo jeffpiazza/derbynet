@@ -70,7 +70,8 @@
       </copy>
   </target>
 
-  <target name="timer-profiles" depends="timer-jar, make-electron-forge">
+  <target name="timer-profiles" depends="timer-jar, make-electron-forge"
+          description="Generate timer profiles">
       <!-- java task supposedly supports outputproperty, but it doesn't seem to
            work. -->
       <exec executable="java" outputproperty="timer-profiles">
@@ -174,11 +175,10 @@
     </jar>
   </target>
 
-  <target name="dist" depends="timer-jar">
+  <target name="dist" depends="timer-jar" description="Build timer jar">
   </target>
 
-  <target name="clean"
-        description="clean up" >
+  <target name="clean" description="clean up" >
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>

@@ -1,0 +1,52 @@
+DerbyNet Timer (JavaScript)
+class Detector
+// A detector is a regex that triggers an event upon matching.  The generated
+// event may include strings picked up from the match.  In some cases, instead
+// of (or in addition to) generating an event after a match, the detector may
+// try applying some "internal" detectors to the parse the matched string into
+// separate events.
+
+class TimerEvent
+// Different objects involved in managing the timer communicate with each other
+// via events.  Event handlers get registered in one static list, and an event
+// gets sent to all registered handlers.  Events can also be scheduled for
+// delivery at a future time, specified either by absolute time or milliseconds
+// in the future.
+
+class HostPoller
+// The host poller handles the communication with the web server.  Messages from
+// the server get converted into timer events (e.g., PREPARE_HEAT_RECEIVED or
+// ABORT_HEAT_RECEIVED).  The host poller also listens for several events that
+// it then reports to the web server.
+
+main.js
+
+class PortWrapper
+// A PortWrapper reads from the serial port, dividing the input into lines and
+// then applying pattern matchers to each line as it becomes available.  A line
+// is considered complete either when a newline character is seen, or after a
+// long-enough pause.  The pattern matchers are typically looking for news of
+// lane or heat finishes, or possibly news about the start gate being open or
+// closed.
+
+ports.js: Event listeners for ‘connect’ and ‘disconnect’ events, mostly no-ops.
+
+class HeatResult
+// Collects individual lane results according to the lane mask.
+// Each lane result is a {time:, place:}.
+
+class RoleFinder
+// Sends an ajax request for role.list, to get a list of available roles.
+
+serial_port_event_listener.js
+// Listener for ipc messages on serial-ports channel,
+// sent from the electron script, timer.js, when run as
+// a stand-alone application.
+
+class StateMachine
+// The state machine keeps track of when a race is running vs when cars are
+// being staged or the track is idle.
+
+class TimerProxy
+// Combines a port wrapper and a profile.
+

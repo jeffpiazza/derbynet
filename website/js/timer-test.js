@@ -45,6 +45,8 @@ function on_reverse_lanes_change() {
 }
 $(function() { $("#reverse-lanes").on('change', on_reverse_lanes_change); });
 
+// "Timer Settings" button clicked: fetch the timer settings from the server and
+// then display the modal to change them.
 function handle_timer_settings_button() {
   $.ajax('action.php',
          {type: 'GET',
@@ -59,24 +61,30 @@ function open_timer_settings_modal(data) {
   if (data.hasOwnProperty('ports')) {
     ports = data.ports.split(',');
   }
-  
-  $("#timer_settings_port select").empty();
-  $("#timer_settings_port select").append("<option value='' selected='selected'>Auto Port</option>");
-  for (var i = 0; i < ports.length; ++i) {
-    $("<option/>")
-      .attr('value', ports[i])
-      .text(ports[i])
-      .appendTo($("#timer_settings_port select"));
+
+  $("#timer_settings_port .mselect").toggleClass('hidden', ports.length == 0);
+  if (ports.length != 0) {
+    $("#timer_settings_port select").empty();
+    $("#timer_settings_port select").append("<option value='' selected='selected'>Auto Port</option>");
+    for (var i = 0; i < ports.length; ++i) {
+      $("<option/>")
+        .attr('value', ports[i])
+        .text(ports[i])
+        .appendTo($("#timer_settings_port select"));
+    }
   }
 
   var devices = data.devices;
-  $("#timer_settings_device select").empty();
-  $("#timer_settings_device select").append("<option value='' selected='selected'>Auto Device</option>");
-  for (var i = 0; i < devices.length; ++i) {
-    $("<option/>")
-      .attr('value', devices[i].name)
-      .text(devices[i].description)
-      .appendTo($("#timer_settings_device select"));
+  $("#timer_settings_device .mselect").toggleClass('hidden', devices.length == 0);
+  if (devices.length != 0) {
+    $("#timer_settings_device select").empty();
+    $("#timer_settings_device select").append("<option value='' selected='selected'>Auto Device</option>");
+    for (var i = 0; i < devices.length; ++i) {
+      $("<option/>")
+        .attr('value', devices[i].name)
+        .text(devices[i].description)
+        .appendTo($("#timer_settings_device select"));
+    }
   }
   
   var flags = data.flags;
