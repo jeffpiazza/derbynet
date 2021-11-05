@@ -4,7 +4,7 @@ package org.jeffpiazza.derby.timer;
 //
 // {name:
 //  params: {baud, data, stop, parity}
-//  options: {max_lanes, eol, max_running_times_ms, display_hold_time_ms}
+//  options: {max_lanes, eol, max_running_times_ms}
 //  prober: {pre_probe, probe, responses}
 //  setup: {commands: [c1, c2, ...]},
 //  setup_queries: [{command, matchers: [...]}, ...]
@@ -83,9 +83,6 @@ public class Profile {
     public long max_running_time_ms = 11000;
     // Some timers require a particular end-of-line character or sequence
     public String eol = "";
-    // Defer reset and lane masking after a heat finishes to this many ms.
-    // after a heat
-    public long display_hold_time_ms = 10000;
     // Some timers only report heat finished, but not whether the start gate
     // is open or closed.
     public boolean gate_state_is_knowable = true;
@@ -95,7 +92,6 @@ public class Profile {
           .put("eol", eol)
           .put("max_lanes", max_lanes)
           .put("max_running_time_ms", max_running_time_ms)
-          .put("display_hold_time_ms", display_hold_time_ms)
           .put("gate_state_is_knowable", gate_state_is_knowable);
     }
   }
@@ -113,11 +109,6 @@ public class Profile {
 
   public Profile max_running_time_ms(long max_running_time_ms) {
     options.max_running_time_ms = max_running_time_ms;
-    return this;
-  }
-
-  public Profile display_hold_time_ms(long display_hold_time_ms) {
-    options.display_hold_time_ms = display_hold_time_ms;
     return this;
   }
 
