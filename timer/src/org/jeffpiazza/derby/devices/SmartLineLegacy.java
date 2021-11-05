@@ -6,7 +6,7 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
+public class SmartLineLegacy extends TimerDeviceCommon implements TimerDevice {
   private int numberOfLanes;  // Detected at probe time
 
   private static final String READ_DECIMAL_PLACES = "od\r";
@@ -33,7 +33,7 @@ public class SmartLineDevice extends TimerDeviceCommon implements TimerDevice {
   private static final String READ_START_SWITCH = "rs\r";
   private static final String READ_VERSION = "v\r";
 
-  public SmartLineDevice(SerialPortWrapper portWrapper) {
+  public SmartLineLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper, new GateWatcher(portWrapper) {
         @Override
         protected boolean interrogateGateIsClosed()

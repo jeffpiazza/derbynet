@@ -12,11 +12,11 @@ import org.jeffpiazza.derby.LogWriter;
 // described at http://drakedev.com/pinewood/.  The "Race Timer Software
 // Interface Protocol" is described at
 // http://drakedev.com/pinewood/protocol.html
-public class BertDrakeDevice extends TimerDeviceCommon {
+public class BertDrakeLegacy extends TimerDeviceCommon {
   private TimerResult result = null;
   private int nresults = 0;
 
-  public BertDrakeDevice(SerialPortWrapper portWrapper) {
+  public BertDrakeLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
       // Interrogates the starting gate's state.  CAUTION: polling while a

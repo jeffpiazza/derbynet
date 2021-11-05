@@ -7,8 +7,8 @@ import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 
-public class TheJudgeByProfile extends TimerDeviceWithProfile {
-  public TheJudgeByProfile(SerialPortWrapper portWrapper) {
+public class TheJudge extends TimerDeviceWithProfile {
+  public TheJudge(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

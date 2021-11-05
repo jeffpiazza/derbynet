@@ -4,17 +4,17 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jeffpiazza.derby.Flag;
-import org.jeffpiazza.derby.profiles.BertDrakeByProfile;
-import org.jeffpiazza.derby.profiles.FastTrackByProfile;
-import org.jeffpiazza.derby.profiles.ChampByProfile;
-import org.jeffpiazza.derby.profiles.DerbyMagic9600ByProfile;
-import org.jeffpiazza.derby.profiles.DerbyMagicByProfile;
-import org.jeffpiazza.derby.profiles.DerbyTimerByProfile;
-import org.jeffpiazza.derby.profiles.FastTrackPSeriesByProfile;
-import org.jeffpiazza.derby.profiles.JitRacemasterByProfile;
-import org.jeffpiazza.derby.profiles.NewBoldByProfile;
-import org.jeffpiazza.derby.profiles.PdtByProfile;
-import org.jeffpiazza.derby.profiles.TheJudgeByProfile;
+import org.jeffpiazza.derby.profiles.BertDrake;
+import org.jeffpiazza.derby.profiles.FastTrack;
+import org.jeffpiazza.derby.profiles.Champ;
+import org.jeffpiazza.derby.profiles.DerbyMagic9600;
+import org.jeffpiazza.derby.profiles.DerbyMagic;
+import org.jeffpiazza.derby.profiles.DerbyTimer;
+import org.jeffpiazza.derby.profiles.FastTrackPSeries;
+import org.jeffpiazza.derby.profiles.JitRacemaster;
+import org.jeffpiazza.derby.profiles.NewBold;
+import org.jeffpiazza.derby.profiles.Pdt;
+import org.jeffpiazza.derby.profiles.TheJudge;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
@@ -23,39 +23,39 @@ public class AllDeviceTypes {
   @SuppressWarnings(value = "unchecked")
   private static final Class<? extends TimerDevice>[] allDeviceClasses
       = (Class<? extends TimerDevice>[]) new Class[]{
-        ChampByProfile.class,
-        FastTrackByProfile.class,
-        FastTrackPSeriesByProfile.class,
-        TheJudgeByProfile.class,
-        NewBoldByProfile.class,
-        DerbyTimerByProfile.class,
-        PdtByProfile.class,
-        DerbyMagicByProfile.class,
-        DerbyMagic9600ByProfile.class,
-        BertDrakeByProfile.class,
-        JitRacemasterByProfile.class
+        Champ.class,
+        FastTrack.class,
+        FastTrackPSeries.class,
+        TheJudge.class,
+        NewBold.class,
+        DerbyTimer.class,
+        Pdt.class,
+        DerbyMagic.class,
+        DerbyMagic9600.class,
+        BertDrake.class,
+        JitRacemaster.class
       };
   @SuppressWarnings(value = "unchecked")
   private static final Class<? extends TimerDevice>[] legacyDeviceClasses
       = (Class<? extends TimerDevice>[]) new Class[]{
-        SmartLineDevice.class,
-        FastTrackDevice.class,
-        OlderFastTrackDevice.class,
-        TheJudgeDevice.class,
-        NewBoldDevice.class,
-        DerbyTimerDevice.class,
-        MiscJunkDevice.class,
-        DerbyMagicDevice.class,
-        DerbyMagic9600.class,
-        DerbyMagic19200.class,
-        BertDrakeDevice.class,
-        RacemasterDevice.class
+        SmartLineLegacy.class,
+        FastTrackLegacy.class,
+        OlderFastTrackLegacy.class,
+        TheJudgeLegacy.class,
+        NewBoldLegacy.class,
+        DerbyTimerLegacy.class,
+        MiscJunkLegacy.class,
+        DerbyMagicLegacy.class,
+        DerbyMagic9600Legacy.class,
+        DerbyMagic19200Legacy.class,
+        BertDrakeLegacy.class,
+        RacemasterLegacy.class
       };
   public static final Class<? extends TimerDevice>[] allTimerDeviceClasses() {
-    if (Flag.beta_test.value()) {
-      return allDeviceClasses;
+    if (Flag.legacy_implementations.value()) {
+      return legacyDeviceClasses;
     }
-    return legacyDeviceClasses;
+    return allDeviceClasses;
   }
 
   public static String toHumanString(Class<? extends TimerDevice> type) {

@@ -8,7 +8,7 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class RacemasterDevice extends TimerDeviceBase {
+public class RacemasterLegacy extends TimerDeviceBase {
   /*
   Racemaster timers were produced by:
   JIT, Inc.
@@ -33,7 +33,7 @@ public class RacemasterDevice extends TimerDeviceBase {
   private static final String START_TIMING = "S";
   private static final String RESET_TIMER = "R";
 
-  public RacemasterDevice(SerialPortWrapper portWrapper) {
+  public RacemasterLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 

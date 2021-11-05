@@ -32,7 +32,6 @@ public class AllProfiles {
   }
 
   public static void main(String[] args) {
-    Flag.beta_test.setValueText("true");
     JSONArray allProfiles = new JSONArray();
     for (Profile p : profiles()) {
       allProfiles.put(p.toJSON());

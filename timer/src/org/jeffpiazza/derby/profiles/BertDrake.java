@@ -10,8 +10,8 @@ import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 // described at http://drakedev.com/pinewood/.  The "Race Timer Software
 // Interface Protocol" is described at
 // http://drakedev.com/pinewood/protocol.html
-public class BertDrakeByProfile extends TimerDeviceWithProfile {
-  public BertDrakeByProfile(SerialPortWrapper portWrapper) {
+public class BertDrake extends TimerDeviceWithProfile {
+  public BertDrake(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

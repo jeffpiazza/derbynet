@@ -33,9 +33,9 @@ that people could make their own release gates and software and make it work wit
 our cable.
 
 */
-public class FastTrackDevice extends TimerDeviceCommon implements
+public class FastTrackLegacy extends TimerDeviceCommon implements
     RemoteStartInterface {
-  public FastTrackDevice(SerialPortWrapper portWrapper) {
+  public FastTrackLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
       // Interrogates the starting gate's state.  CAUTION: polling while a

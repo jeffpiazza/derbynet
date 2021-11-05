@@ -30,8 +30,8 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 // no parity, 1 stop bit, no flow control. With these settings you should be
 // able to see the results in hyperterminal.
 // Unpopulated/overdue lanes report 0.0 instead of 9.9999
-public class OlderFastTrackDevice extends TimerDeviceBase {
-  public OlderFastTrackDevice(SerialPortWrapper portWrapper) {
+public class OlderFastTrackLegacy extends TimerDeviceBase {
+  public OlderFastTrackLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 

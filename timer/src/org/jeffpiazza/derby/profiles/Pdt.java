@@ -7,8 +7,8 @@ import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // TODO remote start "S"
-public class PdtByProfile extends TimerDeviceWithProfile {
-  public PdtByProfile(SerialPortWrapper portWrapper) {
+public class Pdt extends TimerDeviceWithProfile {
+  public Pdt(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

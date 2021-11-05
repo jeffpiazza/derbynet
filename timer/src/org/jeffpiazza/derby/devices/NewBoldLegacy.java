@@ -16,8 +16,8 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 // ...
 // Returns results in finish order, with each entry giving the lane and time.
 // (shows 1st Place Lane #, 1st Place Time, 2nd Place Lane #, 2nd Place Time, ...)
-public class NewBoldDevice extends TimerDeviceBase {
-  public NewBoldDevice(SerialPortWrapper portWrapper) {
+public class NewBoldLegacy extends TimerDeviceBase {
+  public NewBoldLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 

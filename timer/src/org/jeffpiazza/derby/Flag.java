@@ -48,9 +48,9 @@ public abstract class Flag<T> {
       = BooleanFlag.settable("ignore-place",
                              "Discard any place indications from timer");
 
-  public static final Flag<Boolean> beta_test
-      = BooleanFlag.settable("beta-test",
-                             "Exercise new timer code");
+  public static final Flag<Boolean> legacy_implementations
+      = BooleanFlag.settable("legacy",
+                             "Use legacy (non-profile-based) implementations");
 
   public static final Flag<Long> delay_reset_after_race
       = LongFlag.settable("delay-reset-after-race", 10,

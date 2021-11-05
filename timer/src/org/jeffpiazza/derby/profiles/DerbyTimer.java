@@ -7,8 +7,8 @@ import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // This class supports the "Derby Timer" device, http://derbytimer.com
-public class DerbyTimerByProfile extends TimerDeviceWithProfile {
-  public DerbyTimerByProfile(SerialPortWrapper portWrapper) {
+public class DerbyTimer extends TimerDeviceWithProfile {
+  public DerbyTimer(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

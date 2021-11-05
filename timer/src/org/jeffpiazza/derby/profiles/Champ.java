@@ -6,8 +6,8 @@ import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 
-public class ChampByProfile extends TimerDeviceWithProfile {
-  public ChampByProfile(SerialPortWrapper portWrapper) {
+public class Champ extends TimerDeviceWithProfile {
+  public Champ(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

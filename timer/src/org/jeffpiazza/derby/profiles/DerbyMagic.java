@@ -8,8 +8,8 @@ import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
-public class DerbyMagicByProfile extends TimerDeviceWithProfile {
-  public DerbyMagicByProfile(SerialPortWrapper portWrapper) {
+public class DerbyMagic extends TimerDeviceWithProfile {
+  public DerbyMagic(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

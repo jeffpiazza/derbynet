@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import org.jeffpiazza.derby.LogWriter;
 
 // This class supports the "Derby Timer" device, http://derbytimer.com
-public class DerbyTimerDevice extends TimerDeviceTypical {
+public class DerbyTimerLegacy extends TimerDeviceTypical {
 
-  public DerbyTimerDevice(SerialPortWrapper portWrapper) {
+  public DerbyTimerLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
 
     // Once started, we expect a race result within 10 seconds

@@ -32,8 +32,8 @@ command, although LR could work as could LN.  All the commands were put in here 
 that people could make their own release gates and software and make it work with
 our cable.
  */
-public class FastTrackByProfile extends TimerDeviceWithProfile {
-  public FastTrackByProfile(SerialPortWrapper portWrapper) {
+public class FastTrack extends TimerDeviceWithProfile {
+  public FastTrack(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

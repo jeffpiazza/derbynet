@@ -9,9 +9,9 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class MiscJunkDevice extends TimerDeviceCommon
+public class MiscJunkLegacy extends TimerDeviceCommon
     implements RemoteStartInterface {
-  public MiscJunkDevice(SerialPortWrapper portWrapper) {
+  public MiscJunkLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper, null);
 
     // Can't pass to super constructor because of the call to okToPoll()

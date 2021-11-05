@@ -22,8 +22,8 @@ Lane 2    3.2345 seconds    Place
 
 Race Over
  */
-public class TheJudgeDevice extends TimerDeviceBase {
-  public TheJudgeDevice(SerialPortWrapper portWrapper) {
+public class TheJudgeLegacy extends TimerDeviceBase {
+  public TheJudgeLegacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 

@@ -12,12 +12,12 @@ import org.jeffpiazza.derby.Message;
 // More importantly, "V" responds with "Derby Magic v3.00" or some such.
 // http://www.derbymagic.com/files/Timer.pdf
 // http://www.derbymagic.com/files/GPRM.pdf
-public class DerbyMagicDevice extends TimerDeviceCommon
+public class DerbyMagicLegacy extends TimerDeviceCommon
     implements RemoteStartInterface {
   private TimerResult result = null;
   private long timeOfFirstResult = 0;
 
-  public DerbyMagicDevice(SerialPortWrapper portWrapper) {
+  public DerbyMagicLegacy(SerialPortWrapper portWrapper) {
     // No GateWatcher, because there's no way to poll this timer
     super(portWrapper, null, /* gate is knowable */ false);
 

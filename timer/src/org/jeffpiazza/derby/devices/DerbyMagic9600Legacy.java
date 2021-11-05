@@ -4,8 +4,8 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class DerbyMagic9600 extends DerbyMagicDevice {
-  public DerbyMagic9600(SerialPortWrapper portWrapper) {
+public class DerbyMagic9600Legacy extends DerbyMagicLegacy {
+  public DerbyMagic9600Legacy(SerialPortWrapper portWrapper) {
     super(portWrapper);
   }
 

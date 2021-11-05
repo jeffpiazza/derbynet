@@ -5,8 +5,8 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
-public class DerbyMagic9600ByProfile extends TimerDeviceWithProfile {
-  public DerbyMagic9600ByProfile(SerialPortWrapper portWrapper) {
+public class DerbyMagic9600 extends TimerDeviceWithProfile {
+  public DerbyMagic9600(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 
@@ -15,7 +15,7 @@ public class DerbyMagic9600ByProfile extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return DerbyMagicByProfile.profile().params(SerialPort.BAUDRATE_9600,
+    return DerbyMagic.profile().params(SerialPort.BAUDRATE_9600,
                                                 SerialPort.DATABITS_8,
                                                 SerialPort.STOPBITS_1,
                                                 SerialPort.PARITY_NONE);

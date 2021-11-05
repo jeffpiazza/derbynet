@@ -25,8 +25,8 @@ import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
-public class JitRacemasterByProfile extends TimerDeviceWithProfile {
-  public JitRacemasterByProfile(SerialPortWrapper portWrapper) {
+public class JitRacemaster extends TimerDeviceWithProfile {
+  public JitRacemaster(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

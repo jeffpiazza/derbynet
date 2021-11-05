@@ -6,8 +6,8 @@ import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
-public class NewBoldByProfile extends TimerDeviceWithProfile {
-  public NewBoldByProfile(SerialPortWrapper portWrapper) {
+public class NewBold extends TimerDeviceWithProfile {
+  public NewBold(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

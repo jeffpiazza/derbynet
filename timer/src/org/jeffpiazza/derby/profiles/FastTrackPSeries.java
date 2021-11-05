@@ -6,8 +6,8 @@ import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
-public class FastTrackPSeriesByProfile extends TimerDeviceWithProfile {
-  public FastTrackPSeriesByProfile(SerialPortWrapper portWrapper) {
+public class FastTrackPSeries extends TimerDeviceWithProfile {
+  public FastTrackPSeries(SerialPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 
