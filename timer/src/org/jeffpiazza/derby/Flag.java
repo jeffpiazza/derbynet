@@ -71,7 +71,7 @@ public abstract class Flag<T> {
   // To do that, don't record a gate state change until it's aged a bit.
   //
   public static final Flag<Long> min_gate_time
-      = LongFlag.settable("min-gate-time", 0,
+      = LongFlag.settable("min-gate-time", 500,
                           "Ignore gate transitions shorter than <milliseconds>");
 
   public static final Flag<Boolean> simulate_timer
