@@ -12,7 +12,7 @@ public class Champ extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("\"The Champ\" (SmartLine/BestTrack)")
+    return Profile.forTimer("\"The Champ\" (SmartLine/BestTrack)", "TheChamp")
         .params(SerialPort.BAUDRATE_9600,
                   SerialPort.DATABITS_8,
                   SerialPort.STOPBITS_1,
@@ -33,7 +33,6 @@ public class Champ extends TimerDeviceWithProfile {
                  "ol0" /* report lane 1 as "A" */,
                  "op3" /* set place character '!' */)
         .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT))
-        .max_running_time_ms(11000)
         .heat_prep("om0", "om", '1')
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .gate_watcher("rs" /* READ_START_SWITCH */,

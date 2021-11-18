@@ -31,7 +31,7 @@ public class JitRacemaster extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("JIT Racemaster")
+    return Profile.forTimer("JIT Racemaster", "JIT")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,

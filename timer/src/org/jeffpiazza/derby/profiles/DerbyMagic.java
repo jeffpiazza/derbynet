@@ -14,7 +14,7 @@ public class DerbyMagic extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("Derby Magic timer")
+    return Profile.forTimer("Derby Magic timer", "DerbyMagic")
         .max_lanes(8)
         .gate_state_is_knowable(false)
         .params(SerialPort.BAUDRATE_19200,

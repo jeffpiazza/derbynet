@@ -13,7 +13,7 @@ public class Pdt extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("PDT timer (https://www.dfgtec.com/pdt)")
+    return Profile.forTimer("PDT timer (https://www.dfgtec.com/pdt)", "MiscJunk")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,

@@ -12,7 +12,7 @@ public class FastTrackPSeries extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("FastTrack P-series")
+    return Profile.forTimer("FastTrack P-series", "FastTrack-P")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,

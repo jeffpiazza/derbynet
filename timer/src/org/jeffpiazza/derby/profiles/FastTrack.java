@@ -38,7 +38,7 @@ public class FastTrack extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    Profile profile = Profile.forTimer("FastTrack K-series")
+    Profile profile = Profile.forTimer("FastTrack K-series", "FastTrack-K")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,

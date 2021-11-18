@@ -16,7 +16,7 @@ public class BertDrake extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("Bert Drake timer")
+    return Profile.forTimer("Bert Drake timer", "BertDrake")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,

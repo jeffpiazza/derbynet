@@ -3,6 +3,7 @@ package org.jeffpiazza.derby.timer;
 // A Profile describes a particular model timer.
 //
 // {name:
+//  key:
 //  params: {baud, data, stop, parity}
 //  options: {max_lanes, eol, max_running_times_ms}
 //  prober: {pre_probe, probe, responses}
@@ -67,20 +68,25 @@ import org.json.JSONObject;
 
 public class Profile {
   public String name;
+  public String key;
 
-  private Profile(String name) {
+  private Profile(String name, String key) {
     this.name = name;
+    this.key = key;
   }
 
-  public static Profile forTimer(String name) {
-    return new Profile(name);
+  public static Profile forTimer(String name, String key) {
+    return new Profile(name, key);
+  }
+
+  public Profile rename(String name, String key) {
+    this.name = name;
+    this.key = key;
+    return this;
   }
 
   public static class Options {
     public int max_lanes = 0;
-    // Maximum allowed time after race start after which results become overdue.
-    // 0 = wait forever
-    public long max_running_time_ms = 11000;
     // Some timers require a particular end-of-line character or sequence
     public String eol = "";
     // Some timers only report heat finished, but not whether the start gate
@@ -91,7 +97,6 @@ public class Profile {
       return new JSONObject()
           .put("eol", eol)
           .put("max_lanes", max_lanes)
-          .put("max_running_time_ms", max_running_time_ms)
           .put("gate_state_is_knowable", gate_state_is_knowable);
     }
   }
@@ -104,11 +109,6 @@ public class Profile {
 
   public Profile max_lanes(int max_lanes) {
     options.max_lanes = max_lanes;
-    return this;
-  }
-
-  public Profile max_running_time_ms(long max_running_time_ms) {
-    options.max_running_time_ms = max_running_time_ms;
     return this;
   }
 
@@ -427,6 +427,7 @@ public class Profile {
   public JSONObject toJSON() {
     return new JSONObject()
         .put("name", name)
+        .put("key", key)
         .put("options", options.toJSON())
         .put("params", params.toJSON())
         .putOpt("remote_start", remote_start == null ? null

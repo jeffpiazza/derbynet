@@ -71,7 +71,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       // This will defer acting on the prepareHeat message until some
       // minimum amount of time after the last heat finished.
       Event.sendAt(lastFinishTime + Flag.delay_reset_after_race.value() * 1000,
-                  Event.PREPARE_HEAT_RECEIVED);
+                   Event.PREPARE_HEAT_RECEIVED);
     }
   }
 
@@ -223,9 +223,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         roundid = heat = 0;
         break;
       case RACE_STARTED:
-        if (profile.options.max_running_time_ms != 0) {
+        if (Flag.reset_after_start.value() == 0) {
+          overdueTime = 0;
+        } else {
           overdueTime = System.currentTimeMillis()
-              + profile.options.max_running_time_ms;
+              + Flag.reset_after_start.value();
         }
         invokeRaceStartedCallback();
         break;

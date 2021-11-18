@@ -12,7 +12,7 @@ public class NewBold extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("NewBold DT, TURBO, or DerbyStick")
+    return Profile.forTimer("NewBold DT, TURBO, or DerbyStick", "NewBold")
         .params(SerialPort.BAUDRATE_1200,
                 SerialPort.DATABITS_7,
                 SerialPort.STOPBITS_2,

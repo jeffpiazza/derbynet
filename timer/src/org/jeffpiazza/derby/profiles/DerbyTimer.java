@@ -13,7 +13,7 @@ public class DerbyTimer extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    return Profile.forTimer("Derby Timer")
+    return Profile.forTimer("Derby Timer", "DerbyTimer.com")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
