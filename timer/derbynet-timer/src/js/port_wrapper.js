@@ -7,7 +7,6 @@
 // lane or heat finishes, or possibly news about the start gate being open or
 // closed.
 
-const NEWLINE_EXPECTED_MS = 200;
 const COMMAND_DRAIN_MS = 100;
 
 
@@ -37,7 +36,9 @@ class PortWrapper {
     await this.port.open({ baudRate: params.baud,
                            dataBits: params.data || 8,
                            stopBits: params.stop || 1,  // 1 or 2
-                           parity: params.parity || "none" /* none, even, odd */ });
+                           parity: params.parity || "none" /* none, even, odd */
+                           /* flowcontrol: 'none' or flowcontrol: 'hardware' */
+                         });
 
     this.reader = this.port.readable.getReader();
 
@@ -123,6 +124,7 @@ class PortWrapper {
     } else {
       console.log('** No writable stream for port');
     }
+    return msg;
   }
 
   nextNoWait() {
@@ -132,7 +134,8 @@ class PortWrapper {
     if (this.lines.length > 0) {
       return this.lines.shift().trim();
     }
-    if (this.leftover.length > 0 && Date.now() - this.last_char_received > NEWLINE_EXPECTED_MS) {
+    if (this.leftover.length > 0 &&
+        Date.now() - this.last_char_received > Flag.newline_expected_ms.value) {
       var s = this.applyDetectors(this.leftover);
       this.leftover = "";
       if (s.length > 0) {

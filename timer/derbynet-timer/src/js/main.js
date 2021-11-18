@@ -1,10 +1,3 @@
-// TODO
-//
-// - "Include new port" button
-// - Disable "Probe" button when a timer has been found
-// - Clickable <li>
-// - Instructions
-
 $(function() {
   var profiles = all_profiles();
   for (var i = 0; i < profiles.length; ++i) {
@@ -283,6 +276,7 @@ async function on_scan_click() {
     $("#connected").text("Probe failed.");
   } else if (!g_standalone) {
     g_host_poller = new HostPoller();
+    g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
   }
 }
 
@@ -321,6 +315,9 @@ async function on_connect_button(event) {
                 console.log('Login succeeded, creating host poller.');
                 g_host_poller = new HostPoller();
                 $("#host-status").prop('src', "img/status/ok.png");
+                if (g_timer_proxy) {
+                  g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
+                }
               }
             },
            });

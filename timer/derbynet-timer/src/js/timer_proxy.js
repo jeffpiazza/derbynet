@@ -24,6 +24,18 @@ class TimerProxy {
     this.start();
   }
 
+  remote_start_profile() {
+    if (Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K") {
+      return {has_remote_start: true, command: "LG"};
+    } else {
+      return this.profile?.remote_start;
+    }
+  }
+
+  has_remote_start() {
+    return this.remote_start_profile()?.has_remote_start;
+  }
+
   async start() {
     await this.setup();
 
@@ -32,7 +44,7 @@ class TimerProxy {
         var state = this.sm.state;
 
         var commands = this.profile?.poll?.[state];
-        if (commands) {
+        if (commands && !(Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K")) {
           await this.port_wrapper.writeCommandSequence(commands);
         }
 
@@ -40,7 +52,8 @@ class TimerProxy {
           TimerEvent.send('OVERDUE');
         }
 
-        if (this.profile?.gate_watcher && state != 'RUNNING') {
+        if (this.profile?.gate_watcher && state != 'RUNNING' &&
+            !Flag.no_gate_watcher.value) {
           await this.poll_gate_once();
         }
 
@@ -51,6 +64,7 @@ class TimerProxy {
       g_timer_proxy = null;
       $("#probe-button").prop('disabled', false);
       $("#profiles-list li").removeClass('probing chosen');
+      $("#ports-list li").removeClass('probing chosen');
     }
   }
 
@@ -128,14 +142,18 @@ class TimerProxy {
       this.roundid = this.heat = 0;
       break;
     case 'START_RACE':
-      // TODO FastTrack profile's remote start value is controlled by flag
-      if (this.profile?.remote_start?.has_remote_start) {
-        this.port_wrapper.write(this.profile.remote_start.command);
+      {
+        var remote_start = this.remote_start_profile;
+        if (remote_start?.has_remote_start) {
+          this.port_wrapper.write(remote_start.command);
+        }
       }
       break;
     case 'RACE_STARTED':
-      if (this.profile?.options?.max_running_time_ms) {
-        this.overdue_time = Date.now() + this.profile.options.max_running_time_ms;
+      if (Flag.reset_after_start.value == 0) {
+        this.overdue_time = 0;
+      } else {
+        this.overdue_time = Date.now() + Flag.reset_after_start.value;
       }
       break;
     case 'RACE_FINISHED':
@@ -179,13 +197,20 @@ class TimerProxy {
   }
 
   async maskLanes(lanemask) {
+    $("#heat-received").text('lane mask ' + lanemask);
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
+      console.log('profile for heat_prep: ', this.profile.heat_prep);
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
+        console.log('  unmasking: ' + this.profile.heat_prep.unmask);
         await this.port_wrapper.write(this.profile.heat_prep.unmask);
         var nlanes = Math.max(this.detected_lane_count || 0, this.profile?.options?.max_lanes || 0);
+        console.log('  detected lane count = ' + this.detected_lane_count + ', max_lanes=' +
+                    (this.profile?.options?.max_lanes || 0));
         for (var lane = 0; lane < nlanes; ++lane) {
           if ((lanemask & (1 << lane)) == 0) {
+            console.log('masking lane ' + lane + ': ' + this.profile.heat_prep.mask +
+                        String.fromCharCode(this.profile.heat_prep.lane.charCodeAt(0) + lane));
             await this.port_wrapper.drain();
             await this.port_wrapper.write(
               this.profile.heat_prep.mask +

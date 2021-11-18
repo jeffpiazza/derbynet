@@ -6,9 +6,15 @@
 class StateMachine {
   state = 'IDLE';
 
-  // Neither of these are used for much
+  // Not used for much
   gate_state_is_knowable = true;
-  state_entered_ms = 0;
+
+  // first_gate_open_ms marks the time at which a first GATE_OPEN is received
+  // while in SET state, or zero if no believable GATE_OPEN has yet been
+  // received.  If a GATE_CLOSED is received, first_gate_open_ms resets to zero.
+  // When a subsequent GATE_OPEN is received after Flag.min_gate_time (in ms)
+  // has passed, then a RACE_STARTED event can be sent.
+  first_gate_open_ms = 0;
 
   onEvent(event, args) {
     if (!this.gate_state_is_knowable) {
@@ -62,13 +68,18 @@ class StateMachine {
         this.state = this.unexpected(event, 'SET');
         break;
       case 'GATE_OPEN':
-        TimerEvent.send('RACE_STARTED');
+        if (this.first_gate_open_ms == 0) {
+          this.first_gate_open_ms = Date.now();
+        } else if (Date.now() - this.first_gate_open_ms >= Flag.min_gate_time) {
+          this.state = 'RUNNING';
+          TimerEvent.send('RACE_STARTED');
+        }
         break;
       case 'RACE_STARTED':
         this.state = 'RUNNING';
         break;
       case 'GATE_CLOSED':
-        this.state = 'SET';
+        this.first_gate_open_ms = 0;
         break;
       case 'RACE_FINISHED':
       case 'GIVING_UP':
@@ -99,7 +110,7 @@ class StateMachine {
     }
 
     if (initial != this.state) {
-      this.state_entered_ms = Date.now();
+      this.first_gate_open_ms = 0;
       console.log(initial + ' >--' + event + '--> ' + this.state);
     }
   }

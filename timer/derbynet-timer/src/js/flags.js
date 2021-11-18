@@ -9,40 +9,31 @@ class Flag {
   static delay_reset_after_race = new Flag(
     "delay-reset-after-race", 10,
     "How long after race over before timer will be reset, default 10s.");
-/*
+
   static newline_expected_ms = new Flag(
     "newline-expected-ms", 200,
     "After this many milliseconds, assume an unterminated line"
       + " from the timer is complete (0 = wait forever).");
 
-  static clear_rts_dtr = new Flag(
-    "clear-rts-dtr", false, "EXPERIMENTAL Initially clear RTS and DTR lines on serial port by default.");
+  // clear_rts_dtr: Not specifically supported, but serial API port.open does take a flowcontrol parameter.
 
-  // Issue #35: Reject gate state changes that don't last "reasonably" long.
-  // To do that, don't record a gate state change until it's aged a bit.
+  // Issue #35: While staging and/or latching the gate before a heat, polling can sometimes detect a fleeting
+  // "gate open" condition, but this should not be interpreted as the start of a heat unless the "gate open"
+  // condition lasts more than some minimum time.
   //
   static min_gate_time = new Flag(
-    "min-gate-time", 0, "Ignore gate transitions shorter than <milliseconds>");
-
-  static pace = new Flag(
-    "pace", 0, "Simulation staging pace (seconds between heats)");
+    "min-gate-time", 500, "Ignore gate transitions shorter than <milliseconds>");
 
   static no_gate_watcher = new Flag(
     "no-gate-watcher", false,
     "Disable interrogation of timer's gate state.");
 
   static reset_after_start = new Flag(
-    "reset-after-start", 10,
-    "TheJudge: Reset timer <nsec> seconds after heat start, default 10");
+    "reset-after-start", 11,
+    "Reset timer <nsec> seconds after heat start, default 11");
 
-  static skip_enhanced_format = new Flag(
-    "skip-enhanced-format", false,
-    "FastTrack: Don't attempt enhanced format command");
-  static skip_read_features = new Flag(
-    "skip-read-features", false, "FastTrack: Don't attempt reading features");
   static fasttrack_automatic_gate_release = new Flag(
     "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed");
-*/
 
   name;
   type;

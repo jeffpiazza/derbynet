@@ -5,13 +5,15 @@
 // ABORT_HEAT_RECEIVED).  The host poller also listens for several events that
 // it then reports to the web server.
 
-const HEARTBEAT_PACE = 5000;   // TODO 500
+const HEARTBEAT_PACE = 500;
 
 class HostPoller {
   static url = 'action.php';
 
   next_message_time = 0;
   confirmed = 1;  // TODO
+
+  remote_start = false;
 
   /* TODO: Messages:
     IDENTIFIED lane_count, timer, human, ident, options)
@@ -23,6 +25,10 @@ class HostPoller {
     this.sendMessage({action: 'timer-message',
                       message: 'HELLO'});
     this.heartbeat_loop();
+  }
+
+  offer_remote_start(v) {
+    this.remote_start = v;
   }
 
   async heartbeat_loop() {
@@ -71,6 +77,7 @@ class HostPoller {
   }
 
   sendMessage(msg) {
+    msg['remote-start'] = this.remote_start ? 'YES' : 'NO';
     this.next_message_time = Date.now() + HEARTBEAT_PACE;
     $.ajax(HostPoller.url,
            {type: 'POST',
@@ -85,9 +92,19 @@ class HostPoller {
       // TODO setRemoteLogging ( parseBoolean? nodes[0].getAttribute('send') )
     }
     if (response.getElementsByTagName("abort").length > 0) {
+      $("#heat-prepared").text("* Heat Aborted *");
+      console.log('-> abort heat');  // TODO
       TimerEvent.send('ABORT_HEAT_RECEIVED', []);
     }
     if ((nodes = response.getElementsByTagName("heat-ready")).length > 0) {
+      console.log(nodes);
+      $("#heat-prepared").text("Round " + nodes[0].getAttribute('roundid')
+                               + " heat " + nodes[0].getAttribute('heat')
+                               + " mask " + nodes[0].getAttribute('lane-mask'));
+      // TODO Remove this
+      console.log('-> heat-ready ', [parseInt(nodes[0].getAttribute('roundid')),
+                                     parseInt(nodes[0].getAttribute('heat')),
+                                     parseInt(nodes[0].getAttribute('lane-mask'))]);
       TimerEvent.send('PREPARE_HEAT_RECEIVED', [parseInt(nodes[0].getAttribute('roundid')),
                                                 parseInt(nodes[0].getAttribute('heat')),
                                                 parseInt(nodes[0].getAttribute('lane-mask'))]);
