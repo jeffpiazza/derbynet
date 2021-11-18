@@ -93,7 +93,6 @@ const PROBER_RESPONSE_TIME_MS = 500;
 var g_user_chosen_port = -1;
 function on_user_port_selection(event) {
   // "this" is the <li> clicked
-  console.log('on_user_port_selection', event, this);
   g_user_chosen_port = $(this).index();
   $(this).siblings().removeClass('user-chosen');
   $(this).addClass('user-chosen');
@@ -101,7 +100,6 @@ function on_user_port_selection(event) {
 
 var g_user_chosen_profile = -1;
 function on_user_profile_selection(event) {
-  console.log('on_user_profile_selection', event, this);
   g_user_chosen_profile = $(this).index();
   $(this).siblings().removeClass('user-chosen');
   $(this).addClass('user-chosen');
@@ -111,7 +109,6 @@ async function request_new_port() {
   await new Promise((resolve, reject) => {
     $("#second_modal_background").fadeTo(200, 0.75, function() { resolve(1); });
   });
-  console.log("modal_background in place");
   try {
     await navigator.serial.requestPort().catch(() => {});
   } finally {
@@ -283,15 +280,12 @@ async function on_scan_click() {
 
 // Host side
 async function on_connect_button(event) {
-  console.log('on_connect_button');
   event.preventDefault();
   var ui_url = $("#host-url").val() + '/action.php';
   if (ui_url != HostPoller.url) {
-    console.log('on_connect_button trying role_finder');
     HostPoller.url = ui_url;
     await g_role_finder.find_roles();
     if (g_role_finder.roles.length > 0) {
-      console.log('role_finder apparently succeeded, with ' + g_role_finder.roles.length + ' role(s).');
       $("#role-select").empty();
       for (var i = 0; i < g_role_finder.roles.length; ++i) {
         $("<option>").appendTo("#role-select").text(g_role_finder.roles[i].name);

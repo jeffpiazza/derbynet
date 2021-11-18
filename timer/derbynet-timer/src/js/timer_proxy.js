@@ -200,13 +200,10 @@ class TimerProxy {
     $("#heat-received").text('lane mask ' + lanemask);
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
-      console.log('profile for heat_prep: ', this.profile.heat_prep);
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
         console.log('  unmasking: ' + this.profile.heat_prep.unmask);
         await this.port_wrapper.write(this.profile.heat_prep.unmask);
         var nlanes = Math.max(this.detected_lane_count || 0, this.profile?.options?.max_lanes || 0);
-        console.log('  detected lane count = ' + this.detected_lane_count + ', max_lanes=' +
-                    (this.profile?.options?.max_lanes || 0));
         for (var lane = 0; lane < nlanes; ++lane) {
           if ((lanemask & (1 << lane)) == 0) {
             console.log('masking lane ' + lane + ': ' + this.profile.heat_prep.mask +

@@ -93,18 +93,9 @@ class HostPoller {
     }
     if (response.getElementsByTagName("abort").length > 0) {
       $("#heat-prepared").text("* Heat Aborted *");
-      console.log('-> abort heat');  // TODO
       TimerEvent.send('ABORT_HEAT_RECEIVED', []);
     }
     if ((nodes = response.getElementsByTagName("heat-ready")).length > 0) {
-      console.log(nodes);
-      $("#heat-prepared").text("Round " + nodes[0].getAttribute('roundid')
-                               + " heat " + nodes[0].getAttribute('heat')
-                               + " mask " + nodes[0].getAttribute('lane-mask'));
-      // TODO Remove this
-      console.log('-> heat-ready ', [parseInt(nodes[0].getAttribute('roundid')),
-                                     parseInt(nodes[0].getAttribute('heat')),
-                                     parseInt(nodes[0].getAttribute('lane-mask'))]);
       TimerEvent.send('PREPARE_HEAT_RECEIVED', [parseInt(nodes[0].getAttribute('roundid')),
                                                 parseInt(nodes[0].getAttribute('heat')),
                                                 parseInt(nodes[0].getAttribute('lane-mask'))]);
@@ -113,7 +104,26 @@ class HostPoller {
       TimerEvent.send('START_RACE', []);
     }
     if ((nodes = response.getElementsByTagName("assign-flag")).length > 0) {
-      // TODO
+      // attributes for each node: flag=no-gate-watcher, value=true
+      for (var i = 0; i < nodes.length; ++i) {
+        var name = nodes[i].getAttribute('flag');
+        var v = nodes[i].getAttribute('value');
+        console.log('assign-flag flag=' + name + ', value=' + v);
+        for (var j = 0; j < Flag._all_flags.length; ++j) {
+          var flag = Flag._all_flags[j];
+          if (flag.name != name) {
+            continue;
+          }
+          console.log('   type=' + flag.type);
+          if (flag.type == 'bool') {
+            flag.value = (v == 'true');
+          } else if (flag.type == 'int') {
+            flag.value = parseInt(v);
+          } else {
+            flag.value = v;
+          }
+        }
+      }
     }
     if ((nodes = response.getElementsByTagName("assign-port")).length > 0) {
       // TODO
