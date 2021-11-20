@@ -166,7 +166,7 @@ $(function() {
     PostSettingChange($(this));
   });
 
-  if (!locked_settings()) {
+  if ($("#photo-dir").length > 0) {
     render_directory_status_icon("#photo-dir");
     render_directory_status_icon("#car-photo-dir");
     render_directory_status_icon("#video-dir");
