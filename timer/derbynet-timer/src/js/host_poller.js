@@ -7,6 +7,8 @@
 
 const HEARTBEAT_PACE = 500;
 
+var g_host_poller;  // See initialization at bottom of file
+
 class HostPoller {
   // This URL is shared with role_finder.
   static url = 'action.php';
@@ -22,6 +24,7 @@ class HostPoller {
     FLAGS
   */
   constructor() {
+    console.log('HostPoller constructor');  // TODO
     TimerEvent.register(this);
     this.sendMessage({action: 'timer-message',
                       message: 'HELLO'});
@@ -144,3 +147,11 @@ class HostPoller {
     }
   }
 }
+
+
+
+$(function() {
+  if (!g_standalone) {
+    g_host_poller = new HostPoller();
+  }
+});

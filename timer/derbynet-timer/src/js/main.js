@@ -28,7 +28,6 @@ $(function() {
 // script tag that follows the import of this file.
 var g_standalone = false;
 
-var g_host_poller;
 var g_role_finder = new RoleFinder();
 var g_timer_proxy;
 
@@ -271,8 +270,7 @@ async function on_scan_click() {
   g_timer_proxy = await probe();
   if (!g_timer_proxy) {
     $("#connected").text("Probe failed.");
-  } else if (!g_standalone) {
-    g_host_poller = new HostPoller();
+  } else if (g_host_poller) {
     g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
   }
 }
