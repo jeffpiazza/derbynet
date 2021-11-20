@@ -202,7 +202,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
     }
   }
 
-  protected void noticeContact() {
+  public void noticeContact() {
     last_contact = System.currentTimeMillis();
   }
 

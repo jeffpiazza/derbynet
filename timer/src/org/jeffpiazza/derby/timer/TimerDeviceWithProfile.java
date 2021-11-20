@@ -283,6 +283,12 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
     if (sm.state() == StateMachine.State.RUNNING && overdueTime != 0
         && System.currentTimeMillis() >= overdueTime) {
+      // If we're in RUNNING state, then we won't have been polling for gate
+      // state, and likely won't have had any contact from the timer.  This
+      // noticeContact() call is to reset the wrapper's connection-check timer,
+      // so we don't start assuming that we've lost contact with the timer when
+      // gatewatcher polling resumes.
+      portWrapper.noticeContact();
       Event.send(Event.OVERDUE);
     }
 
