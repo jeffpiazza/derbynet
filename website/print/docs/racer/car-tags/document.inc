@@ -28,15 +28,18 @@ class CarTagsDocument extends PrintableRacerDocument {
     //
     // $this->pdf->Rect($left, 0,  2.75, 8.5);
 
-    // Center barcode y over [0, 5.5], so 2.75 is center and 0.75 is the top
     $this->pdf->SetFillColor(0,0,0);
-    $this->pdf->VerticalBarCode($left + 1.75, 0.75, 0.5, 4, $racer['barcode']);
+    // Small barcode along the top, sometimes more reliable to scan
+    $this->pdf->HorizontalBarcode($left + 0.875, 0.40, 1.0, 0.25, $racer['barcode']);
+    // Large barcode
+    $this->pdf->VerticalBarcode($left + 1.75, 0.75, 0.5, 4, $racer['barcode']);
 
     $this->RotatedCenteredName($left + 0.7, 2.75, $racer);
 
     $this->pdf->SetFont('Times', '', 15);
     $this->pdf->RotatedCenteredText($left + 1.1, 2.75,  $racer['carname']);
 
+    // Generic image set doesn't have rank images
     if ($this->get_option('rank_image') && is_dir(image_file_path("ranks"))) {
       // 2-inch rank image
       $this->pdf->SetXY($left, 5.5);
