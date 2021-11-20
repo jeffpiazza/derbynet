@@ -14,17 +14,12 @@ class HostPoller {
   static url = 'action.php';
 
   next_message_time = 0;
-  confirmed = 1;  // TODO
+  identified = false;
+  confirmed = true;  // TODO
 
   remote_start = false;
 
-  /* TODO: Messages:
-    IDENTIFIED lane_count, timer, human, ident, options)
-    MALFUNCTION
-    FLAGS
-  */
   constructor() {
-    console.log('HostPoller constructor');  // TODO
     TimerEvent.register(this);
     this.sendMessage({action: 'timer-message',
                       message: 'HELLO'});
@@ -38,9 +33,15 @@ class HostPoller {
   async heartbeat_loop() {
     while (true) {
       if (Date.now() >= this.next_message_time) {
-        this.sendMessage({action: 'timer-message',
-                          message: 'HEARTBEAT',
-                          confirmed: this.confirmed ? 1 : 0});
+        if (!this.identified) {
+          this.sendMessage({action: 'timer-message',
+                            message: 'HEARTBEAT',
+                            unhealthy: true});
+        } else {
+          this.sendMessage({action: 'timer-message',
+                            message: 'HEARTBEAT',
+                            confirmed: this.confirmed ? 1 : 0});
+        }
       }
       await new Promise(r => setTimeout(r, this.next_message_time - Date.now()));
     }
@@ -49,6 +50,7 @@ class HostPoller {
   async onEvent(event, args) {
     switch (event) {
     case 'IDENTIFIED':
+      this.identified = true;
       this.sendMessage({action: 'timer-message',
                         message: 'IDENTIFIED',
                         // TODO lane_count, ident, options

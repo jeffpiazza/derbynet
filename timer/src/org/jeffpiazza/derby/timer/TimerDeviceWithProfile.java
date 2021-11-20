@@ -115,7 +115,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       Matcher m = p.matcher(s);
       if (m.find()) {
         if (pi >= profile.prober.responses.length) {
-          timerIdentifier = s;
+          // The JitRacemaster timer includes escape characters in some of its
+          // responses, which can cause trouble when encoded as XML, so just
+          // filter them out.
+          timerIdentifier = s.replace("\033", "");
           return true;
         } else {
           p = Pattern.compile(profile.prober.responses[pi++]);

@@ -138,6 +138,7 @@ async function update_ports_list() {
   }
 }
 
+// Returns false for no match, or the timer identifier
 async function probe_one_profile(pw, prof) {
   var deadline = Date.now() + PROBER_RESPONSE_TIME_MS;
   await pw.write(prof.prober.probe);
@@ -149,7 +150,7 @@ async function probe_one_profile(pw, prof) {
     if (re.test(s)) {
       ++ri;
       if (ri >= prof.prober.responses.length) {
-        return true;
+        return s.replace("\033", "");
       }
       re = new RegExp(prof.prober.responses[ri]);
     }
@@ -210,7 +211,7 @@ TODO        } else if (!prof.hasOwnProperty('prober')) {
 
       var pw = new PortWrapper(port);
       try {
-        var ok = true;
+        var timer_id = true;
         await pw.open(prof.params);
 
         if (prof.hasOwnProperty('prober')) {
@@ -218,16 +219,16 @@ TODO        } else if (!prof.hasOwnProperty('prober')) {
             await pw.writeCommandSequence(prof.prober.pre_probe);
             await pw.drain(PRE_PROBE_SETTLE_TIME_MS);
           }
-          ok = await probe_one_profile(pw, prof);
+          timer_id = await probe_one_profile(pw, prof);
         }
 
-        if (ok) {
+        if (timer_id !== false) {
           console.log('*    Matched ' + prof.name + '!');
 
           $("#ports-list li").eq(porti).removeClass('probing user-chosen').addClass('chosen');
           $("#profiles-list li").eq(profi).removeClass('probing user-chosen').addClass('chosen');
 
-          TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, ""]);  // TODO Identifier string
+          TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id]);
           $("#probe-button").prop('disabled', true);
 
           // Avoid closing pw on the way out:
