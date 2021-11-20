@@ -8,6 +8,7 @@
 const HEARTBEAT_PACE = 500;
 
 class HostPoller {
+  // This URL is shared with role_finder.
   static url = 'action.php';
 
   next_message_time = 0;
@@ -89,18 +90,24 @@ class HostPoller {
     response = response.documentElement;
     var nodes;
     if ((nodes = response.getElementsByTagName("remote-log")).length > 0) {
-      // TODO setRemoteLogging ( parseBoolean? nodes[0].getAttribute('send') )
+      g_logger.set_remote_logging( nodes[0].getAttribute('send') == 'true' );
     }
     if (response.getElementsByTagName("abort").length > 0) {
+      g_logger.host_in('ABORT HEAT');
       $("#heat-prepared").text("* Heat Aborted *");
       TimerEvent.send('ABORT_HEAT_RECEIVED', []);
     }
     if ((nodes = response.getElementsByTagName("heat-ready")).length > 0) {
-      TimerEvent.send('PREPARE_HEAT_RECEIVED', [parseInt(nodes[0].getAttribute('roundid')),
-                                                parseInt(nodes[0].getAttribute('heat')),
-                                                parseInt(nodes[0].getAttribute('lane-mask'))]);
+      var args = [parseInt(nodes[0].getAttribute('roundid')),
+                  parseInt(nodes[0].getAttribute('heat')),
+                  parseInt(nodes[0].getAttribute('lane-mask'))];
+      if (g_logger.do_logging) {
+        g_logger.host_in('Prepare heat ' + args.join(','));
+      }
+      TimerEvent.send('PREPARE_HEAT_RECEIVED', args);
     }
     if ((nodes = response.getElementsByTagName("remote-start")).length > 0) {
+      g_logger.host_in('START RACE');
       TimerEvent.send('START_RACE', []);
     }
     if ((nodes = response.getElementsByTagName("assign-flag")).length > 0) {
@@ -108,6 +115,7 @@ class HostPoller {
       for (var i = 0; i < nodes.length; ++i) {
         var name = nodes[i].getAttribute('flag');
         var v = nodes[i].getAttribute('value');
+        g_logger.host_in('assign-flag ' + name + ' = ' + v);
         console.log('assign-flag flag=' + name + ', value=' + v);
         for (var j = 0; j < Flag._all_flags.length; ++j) {
           var flag = Flag._all_flags[j];

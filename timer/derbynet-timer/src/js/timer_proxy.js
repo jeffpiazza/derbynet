@@ -40,12 +40,23 @@ class TimerProxy {
     await this.setup();
 
     try {
+      // The polling pace, in ms.
+      const kPollIntervalMs = 250;
+      // This is the main timer polling loop.  Transmissions initiated by the timer (most importantly,
+      // heat results) are handled asynchronously with detectors registered on the port_wrapper.
       while (true) {
+        var poll_start = Date.now();
         var state = this.sm.state;
 
         var commands = this.profile?.poll?.[state];
         if (commands && !(Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K")) {
-          await this.port_wrapper.writeCommandSequence(commands);
+          var prev = g_logger.scope;
+          g_logger.scope = "profile.poll";
+          try {
+            await this.port_wrapper.writeCommandSequence(commands);
+          } finally {
+            g_logger.scope = prev;
+          }
         }
 
         if (state == 'RUNNING' && this.overdue_time != 0 && Date.now() >= this.overdue_time) {
@@ -57,7 +68,13 @@ class TimerProxy {
           await this.poll_gate_once();
         }
 
-        await new Promise(r => setTimeout(r, 50));
+        g_logger.poll();
+
+        // Avoid polling too often
+        var pause_ms = poll_start + kPollIntervalMs - Date.now();
+        if (pause_ms > 0) {
+          await new Promise(r => setTimeout(r, pause_ms));
+        }
       }
     } finally {
       // These are global clean-ups that don't really belong here
@@ -71,11 +88,17 @@ class TimerProxy {
   async poll_gate_once() {
     var deadline = Date.now() + /*POLL_RESPONSE_DEADLINE_MS*/100;
 
-    for (var i = 0; i < this.gate_watch_detectors; ++i) {
-      this.gate_watch_detectors[i].activateUntil(deadline);
+    var prev = g_logger.scope;
+    g_logger.scope = "poll_gate_once";
+    try {
+      for (var i = 0; i < this.gate_watch_detectors; ++i) {
+        this.gate_watch_detectors[i].activateUntil(deadline);
+      }
+      await this.port_wrapper.write(this.profile.gate_watcher.command);
+      await this.port_wrapper.drainUntil(deadline);
+    } finally {
+      g_logger.scope = prev;
     }
-    await this.port_wrapper.write(this.profile.gate_watcher.command);
-    await this.port_wrapper.drainUntil(deadline);
   }
 
   async setup() {
@@ -122,7 +145,13 @@ class TimerProxy {
 
   async onEvent(event, args) {
     if (this.profile.hasOwnProperty('on') && this.profile.on.hasOwnProperty(event)) {
-      await this.port_wrapper.writeCommandSequence(this.profile.on[event]);
+      var prev = g_logger.scope;
+      g_logger.scope = "event.on";
+      try {
+        await this.port_wrapper.writeCommandSequence(this.profile.on[event]);
+      } finally {
+        g_logger.scope = prev;
+      }
     }
     switch (event) {
     case 'PREPARE_HEAT_RECEIVED': {
@@ -153,7 +182,7 @@ class TimerProxy {
       if (Flag.reset_after_start.value == 0) {
         this.overdue_time = 0;
       } else {
-        this.overdue_time = Date.now() + Flag.reset_after_start.value;
+        this.overdue_time = Date.now() + Flag.reset_after_start.value * 1000;
       }
       break;
     case 'RACE_FINISHED':
@@ -201,7 +230,7 @@ class TimerProxy {
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
-        console.log('  unmasking: ' + this.profile.heat_prep.unmask);
+        console.log('unmasking: ' + this.profile.heat_prep.unmask);
         await this.port_wrapper.write(this.profile.heat_prep.unmask);
         var nlanes = Math.max(this.detected_lane_count || 0, this.profile?.options?.max_lanes || 0);
         for (var lane = 0; lane < nlanes; ++lane) {

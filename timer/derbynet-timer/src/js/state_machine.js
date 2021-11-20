@@ -16,6 +16,11 @@ class StateMachine {
   // has passed, then a RACE_STARTED event can be sent.
   first_gate_open_ms = 0;
 
+  constructor(gate_state_is_knowable) {
+    console.log('gate_state_is_knowable:', gate_state_is_knowable);
+    this.gate_state_is_knowable = gate_state_is_knowable;
+  }
+
   onEvent(event, args) {
     if (!this.gate_state_is_knowable) {
       if (event == 'GATE_CLOSED' || event == 'GATE_OPEN') {
@@ -70,7 +75,7 @@ class StateMachine {
       case 'GATE_OPEN':
         if (this.first_gate_open_ms == 0) {
           this.first_gate_open_ms = Date.now();
-        } else if (Date.now() - this.first_gate_open_ms >= Flag.min_gate_time) {
+        } else if (Date.now() - this.first_gate_open_ms >= Flag.min_gate_time.value) {
           this.state = 'RUNNING';
           TimerEvent.send('RACE_STARTED');
         }
@@ -110,7 +115,9 @@ class StateMachine {
     }
 
     if (initial != this.state) {
-      this.first_gate_open_ms = 0;
+      if (this.state != 'SET') {
+        this.first_gate_open_ms = 0;
+      }
       console.log(initial + ' >--' + event + '--> ' + this.state);
     }
   }

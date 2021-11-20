@@ -26,6 +26,8 @@ class PortWrapper {
   // Some timers require a particular end-of-line marker after a command
   eol = "";
 
+  encoder = new TextEncoder();
+
   async open(params) {
     // params: baud, data, stop, parity
 
@@ -87,6 +89,9 @@ class PortWrapper {
   }
 
   enqueueLine(line) {
+    if (line.length > 0) {
+      g_logger.serial_in(line);
+    }
     line = this.applyDetectors(line);
     if (line.length > 0) {
       this.lines.push(line);
@@ -113,11 +118,11 @@ class PortWrapper {
       
 
   async write(msg) {
-    const encoder = new TextEncoder();
+    g_logger.serial_out(msg);
     if (this.port.writable) {
       const writer = this.port.writable.getWriter();
       try {
-        await writer.write(encoder.encode(msg + this.eol));
+        await writer.write(this.encoder.encode(msg + this.eol));
       } finally {
         writer.releaseLock();
       }
