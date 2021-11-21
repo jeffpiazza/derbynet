@@ -37,6 +37,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/timer/role_finder.js"></script>
 <script type="text/javascript" src="js/timer/host_poller.js"></script>
 <script type="text/javascript" src="js/timer/logger.js"></script>
+<script type="text/javascript" src="js/timer/prober.js"></script>
 @ELECTRON_ONLY_START@
 const { ipcRenderer } = require('electron');
 ipcRenderer.on('serial-ports', serial_port_event_listener);
@@ -114,17 +115,10 @@ $(function() {
 
 </div><!-- main-container -->
 
-<div id="opening_modal" class="modal_dialog hidden block_buttons">
-    <div id="no-serial-api" class="hidden">
+<div id="no-serial-api-modal" class="modal_dialog hidden block_buttons">
+    <div id="no-serial-api">
         This browser does not support <br/><b>Web Serial API</b><br/>and so cannot communicate with your timer.
         Please try a different browser.
-    </div>
-
-    <div id="serial-start" class="hidden">
-      <div>
-         Click 'Start Scan' to choose a serial port.
-      </div>
-      <input id="serial-start-button" type="button" value="Start Scan" onclick="on_serial_start()"/>
     </div>
 </div>
 
