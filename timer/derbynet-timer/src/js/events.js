@@ -24,7 +24,8 @@ class TimerEvent {
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
     GIVING_UP,
     LANE_COUNT, // Some timers report how many lanes
-    START_RACE  // Remote start requested
+    START_RACE,  // Remote start requested
+    LOST_CONNECTION
   */
 
   static handlers = [];

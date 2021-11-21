@@ -19,6 +19,8 @@ class PortWrapper {
   }
 
   reader;
+  writer;
+
   leftover;
   lines;
   last_char_received;
@@ -50,6 +52,9 @@ class PortWrapper {
 
   // https://wicg.github.io/serial/#close-method for alternative readUntilClosed
   async close() {
+    if (this.writer) {
+      await this.writer.abort();
+    }
     if (this.reader) {
       await this.reader.cancel();
     }
@@ -77,17 +82,37 @@ class PortWrapper {
         }
       }
     } catch (err) {
-      console.log('[readLoop] caught ' + err);
+      console.log('PortWrapper.readLoop: exited because of caught ' + err);
+      console.log('PortWrapper.readLoop: sending LOST_CONNECTION event');
+      TimerEvent.send('LOST_CONNECTION', [true, "Read failure: " + err]);
     } finally {
       await this.reader.releaseLock();
+      // Reader has been released, and cannot be used to cancel its previous owner stream
+      this.reader = null;
     }
-
-    // Reader has been released, and cannot be used to cancel its previous owner stream
-    this.reader = null;
+  
+    if (this.port.readable) {
+      await this.port.readable.cancel();
+    }
 
     await this.port.close();
   }
 
+  noticeContact() {
+    this.last_char_received = Date.now();
+  }
+
+  async checkConnection() {
+    var age = Date.now() - this.last_char_received;
+    if (age > /*LOST_CONTACT_THRESHOLD*/2000) {
+      console.log('PortWrapper.checkConnection: detects lost connection');
+      await this.close();
+      TimerEvent.send('LOST_CONNECTION',
+                      [true, "No response from timer in " + age + "ms."]);
+      throw "PortWrapper says: connection lost";
+    }
+  }
+  
   enqueueLine(line) {
     if (line.length > 0) {
       g_logger.serial_in(line);
@@ -120,11 +145,12 @@ class PortWrapper {
   async write(msg) {
     g_logger.serial_out(msg);
     if (this.port.writable) {
-      const writer = this.port.writable.getWriter();
+      this.writer = this.port.writable.getWriter();
       try {
-        await writer.write(this.encoder.encode(msg + this.eol));
+        await this.writer.write(this.encoder.encode(msg + this.eol));
       } finally {
-        writer.releaseLock();
+        this.writer.releaseLock();
+        this.writer = null;
       }
     } else {
       console.log('** No writable stream for port');

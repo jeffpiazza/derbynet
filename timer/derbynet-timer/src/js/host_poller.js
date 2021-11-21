@@ -78,7 +78,13 @@ class HostPoller {
       this.sendMessage(msg);
       break;
     }
-    case 'GIVING_UP':
+    case 'LOST_CONNECTION':
+      this.identified = false;
+      this.sendMessage({action: 'timer-message',
+                        message: 'MALFUNCTION',
+                        detectable: args[0] ? 1 : 0,
+                        error: args[1]});
+      break;
     }
   }
 

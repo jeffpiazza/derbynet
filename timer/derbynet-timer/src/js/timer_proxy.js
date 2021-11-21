@@ -60,11 +60,13 @@ class TimerProxy {
         }
 
         if (state == 'RUNNING' && this.overdue_time != 0 && Date.now() >= this.overdue_time) {
+          this.port_wrapper.noticeContact();
           TimerEvent.send('OVERDUE');
         }
 
         if (this.profile?.gate_watcher && state != 'RUNNING' &&
             !Flag.no_gate_watcher.value) {
+          this.port_wrapper.checkConnection();
           await this.poll_gate_once();
         }
 
@@ -83,6 +85,7 @@ class TimerProxy {
       $("#profiles-list li").removeClass('probing chosen');
       $("#ports-list li").removeClass('probing chosen');
     }
+    // Intentially not caught: "Reader is closed" thrown from PortWrapper
   }
 
   async poll_gate_once() {
@@ -221,6 +224,8 @@ class TimerProxy {
       TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'GIVING_UP');
       break;
     case 'GIVING_UP':
+      break;
+    case 'LOST_CONNECTION':
       break;
     }
   }

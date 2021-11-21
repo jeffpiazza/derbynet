@@ -251,15 +251,19 @@ $(function() {
   var isOpen = false;
   TimerEvent.register({
     onEvent: function(event, args) {
-      if (event == 'GATE_OPEN') {
+      switch (event) {
+      case 'GATE_OPEN':
         if (isOpen) return;
         isOpen = true;
-      }
-      if (event == 'GATE_CLOSED') {
+        break;
+      case 'GATE_CLOSED':
         if (!isOpen) return
         isOpen = false;
-      }
-      if (event == 'IDENTIFIED') {
+        beak;
+      case 'LOST_CONNECTION':
+        $("#probe-button").prop('disabled', false);
+        setTimeout(async function() { g_timer_proxy = await probe(); }, 0);
+        break;
       }
       console.log('onEvent: ' + event + ' ' + (args || []).join(','));
     }
