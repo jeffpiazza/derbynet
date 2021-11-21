@@ -21,10 +21,14 @@ if [ `echo "$BASE_URL" | grep -i localhost` ]; then
     VIDEO_DIR=`mktemp -d /tmp/videos.XXXXXXXX`
     chmod 777 "$VIDEO_DIR"
 
+    LOG_DIR=`mktemp -d /tmp/logs.XXXXXXXX`
+    chmod 777 "$LOG_DIR"
+
     user_login_coordinator
 
     curl_postj action.php "action=settings.write&photo-dir=$PHOTO_DIR" | check_jsuccess
     curl_postj action.php "action=settings.write&car-photo-dir=$CAR_PHOTO_DIR" | check_jsuccess
     curl_postj action.php "action=settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
+    curl_postj action.php "action=settings.write&log-dir=$LOG_DIR" | check_jsuccess
     curl_postj action.php "action=settings.write&photos-on-now-racing=head" | check_jsuccess
 fi

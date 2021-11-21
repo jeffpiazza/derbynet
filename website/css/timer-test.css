@@ -48,9 +48,14 @@ div.test-control {
 }
 div.test-control label {
   display: inline-block;
-  margin-left: 105px;
-  width: 200px;
+  margin-left: 45px;
+  width: 150px;
 }
+div.test-control #log-location {
+  margin-left: 30px;
+  font-size: 18px;
+}
+
 #n-lanes-label {
   font-size: 18px;
   margin-left: 50px;

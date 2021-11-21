@@ -123,6 +123,7 @@ if (locked_settings()) {
     $racers_subdir = $directory . DIRECTORY_SEPARATOR . 'racers';
     $cars_subdir = $directory . DIRECTORY_SEPARATOR . 'cars';
     $videos_subdir = $directory . DIRECTORY_SEPARATOR . 'videos';
+    $logs_subdir = $directory . DIRECTORY_SEPARATOR . 'logs';
     if ($ok) {
       if (!@mkdir($racers_subdir)) {
         json_failure('mkdir-racers', "Unable to create racers subdirectory.");
@@ -138,6 +139,12 @@ if (locked_settings()) {
     if ($ok) {
       if (!@mkdir($videos_subdir)) {
         json_failure('mkdir-videos', "Unable to create videos subdirectory.");
+        $ok = false;
+      }
+    }
+    if ($ok) {
+      if (!@mkdir($logs_subdir)) {
+        json_failure('mkdir-logs', "Unable to create logs subdirectory.");
         $ok = false;
       }
     }
@@ -233,6 +240,9 @@ if (locked_settings()) {
     }
     if ($videos_subdir != '') {
       write_raceinfo('video-directory', $videos_subdir);
+    }
+    if ($logs_subdir != '') {
+      write_raceinfo('logs-directory', $logs_subdir);
     }
 
     json_success();

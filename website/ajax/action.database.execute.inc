@@ -25,6 +25,8 @@ if (!have_permission(SET_UP_PERMISSION)) {
     try {
       $photo_dir = read_raceinfo('photo-directory');
       $car_photo_dir = read_raceinfo('car-photo-directory');
+      $video_dir = read_raceinfo('video-directory');
+      $logs_dir = read_raceinfo('logs-directory');
       $nlanes = get_lane_count();
       $values_found = true;
       remove_fake_images($photo_dir);
@@ -40,6 +42,8 @@ if (!have_permission(SET_UP_PERMISSION)) {
   if ($values_found) {
     write_raceinfo('photo-directory', $photo_dir);
     write_raceinfo('car-photo-directory', $car_photo_dir);
+    write_raceinfo('video-directory', $video_dir);
+    write_raceinfo('logs-directory', $logs_dir);
     if ($nlanes) {
       write_raceinfo('lane_count', $nlanes);
     }

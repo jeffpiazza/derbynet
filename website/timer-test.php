@@ -2,6 +2,7 @@
 
 require_once('inc/banner.inc');
 require_once('inc/data.inc');
+require_once('inc/locked.inc');
 require_once('inc/json-current-heat.inc');
 require_once('inc/json-timer-state.inc');
 require_once('inc/timer-test.inc');
@@ -43,6 +44,10 @@ $(function() {
     if (read_raceinfo_boolean('timer-send-logs')) {
       echo " checked='checked'";
     } ?>/>
+    <span id="log-location"><?php
+        if (!locked_settings()) {
+          echo htmlspecialchars(read_raceinfo('timer-log', ''), ENT_QUOTES, 'UTF-8');
+        } ?></span>
   </div>
 
   <div id="log_container">

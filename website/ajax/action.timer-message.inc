@@ -68,7 +68,15 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $timer_state->to_state(TIMER_SEARCHING);
     // Upon getting a new timer connection, choose a new name for server-side
     // timer log file (which we may well never create).
-    write_raceinfo("timer-log", tempnam(sys_get_temp_dir(), "timer-"));
+    $logs_dir = read_raceinfo('logs-directory', '');
+    if ($logs_dir ==='') {
+      $logs_dir = sys_get_temp_dir();
+    }
+    if (!substr($logs_dir -1) !== DIRECTORY_SEPARATOR) {
+      $logs_dir = $logs_dir . DIRECTORY_SEPARATOR;
+    }
+    write_raceinfo("timer-log",
+                   $logs_dir . "timer-" . date('Ymd-Hi-s') . ".log");
     echo "\n  <success/>\n";
     echo "    <query/>\n";
   } else if ($message == 'IDENTIFIED') {

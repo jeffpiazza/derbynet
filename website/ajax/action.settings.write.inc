@@ -85,6 +85,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'photo-dir' => 'photo-directory',
                   'car-photo-dir' => 'car-photo-directory',
                   'video-dir' => 'video-directory',
+                  'log-dir' => 'logs-directory',
                   'replay-skipback' => 'replay-skipback',
                   'replay-num-showings' => 'replay-num-showings',
                   'replay-rate' => 'replay-rate',

@@ -18,6 +18,9 @@ CAR_PHOTO_DIR=$(curl_getj "action.php?query=settings.list&key=car-photo-director
 VIDEO_DIR=$(curl_getj "action.php?query=settings.list&key=video-directory" | \
                 jq -r 'if .settings | length > 0 then .settings[0].value else "" end')
 
+LOG_DIR=$(curl_getj "action.php?query=settings.list&key=logs-directory" | \
+              jq -r 'if .settings | length > 0 then .settings[0].value else "" end')
+
 curl_postj action.php "action=database.execute&script=schema" | check_jsuccess
 curl_postj action.php "action=database.execute&script=update-schema" | check_jsuccess
 
@@ -29,5 +32,8 @@ if [ "$CAR_PHOTO_DIR" ] ; then
 fi
 if [ "$VIDEO_DIR" ] ; then
     curl_postj action.php "action=settings.write&video-dir=$VIDEO_DIR" | check_jsuccess
+fi
+if [ "$LOG_DIR" ] ; then
+    curl_postj action.php "action=settings.write&log-dir=$LOG_DIR" | check_jsuccess
 fi
 
