@@ -1,0 +1,6 @@
+  location ~ /.*\.php(/.*)?$ {
+    client_max_body_size 16M;
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+    fastcgi_param CONFIG_DIR /var/www/html/local;
+  }
