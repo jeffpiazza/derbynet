@@ -59,6 +59,7 @@
      <make-pdf file="Installation- Debian.fodt"/>
      <make-pdf file="Installation- Mac.fodt"/>
      <make-pdf file="Installation- Windows.fodt"/>
+     <make-pdf file="Installation- Docker.fodt"/>
  </target>
 
  <target name="after-installation" depends="make-dist-dir">
