@@ -121,6 +121,10 @@ rm `dirname $0`/*.curl 2>&1 || true
 
 if [ "$DBTYPE" == "none" ] ; then
     run_tests
+elif [ "$DBTYPE" == "ez" ] ; then
+    prepare_for_setup
+    curl_postj action.php "action=setup.nodata&ez-new=testdb" > /dev/null
+    run_tests
 elif [ "$DBTYPE" == "sqlite" ] ; then
     DBPATH=${1:-/Library/WebServer/Documents/xsite/local/trial.sqlite}
     prepare_for_setup

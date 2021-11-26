@@ -69,6 +69,8 @@ else
     done
 
     echo Done
+
+    user_login_coordinator
 fi
 
 # Delete a photo, then upload it again
