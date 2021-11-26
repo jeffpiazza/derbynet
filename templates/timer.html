@@ -115,6 +115,12 @@ $(function() {
 
 </div><!-- main-container -->
 
+<div id="need-gesture-modal" class="modal_dialog hidden block_buttons">
+  <p>Please click to start scanning serial ports:</p>
+  <input id="gesture-button" type="button" class="mini"
+      value="Start Scanning" onclick="on_gesture_click()"/>
+</div>
+
 <div id="no-serial-api-modal" class="modal_dialog hidden block_buttons">
     <div id="no-serial-api">
         This browser does not support <br/><b>Web Serial API</b><br/>and so cannot communicate with your timer.

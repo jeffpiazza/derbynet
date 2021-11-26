@@ -74,6 +74,16 @@
   margin: 20px;
 }
 
+#need-gesture-modal {
+  width: 400px;
+  height: 200px;
+  padding-top: 50px;
+}
+#need-gesture-modal p {
+  font-size: 18px;
+  text-align: center;
+}
+
 #probe-buttons-div {
 
 }

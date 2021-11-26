@@ -46,7 +46,13 @@ class Prober {
     $("#connected").text("Probe started");
     try {
       if (g_ports.length == 0) {
-        await request_new_port();
+        try {
+          await request_new_port();
+        } catch (e) {
+          // Likely DOMException, Must be handling a user gesture...
+          console.log(e);
+          return;
+        }
       }
 
       while (!g_timer_proxy) {

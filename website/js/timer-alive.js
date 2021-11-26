@@ -1,10 +1,14 @@
-const bc = new BroadcastChannel('timer-alive');
-
 var g_timer_last_heard_from = 0;
-bc.onmessage = function(ev) {
-  g_timer_last_heard_from = Date.now();
-}
 
+try {
+  const bc = new BroadcastChannel('timer-alive');
+
+  bc.onmessage = function(ev) {
+    g_timer_last_heard_from = Date.now();
+  }
+} catch (e) {
+  console.log('timer-alive broadcast channel not available.');
+}
 
 
 function is_timer_alive() {

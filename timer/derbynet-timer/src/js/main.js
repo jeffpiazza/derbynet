@@ -47,15 +47,27 @@ $(function() {
         return;
       }
 
-      console.log('Calling getPorts()');
+      console.log('timeout upon entry: calling getPorts()');
 
       g_ports = await navigator.serial.getPorts();
       update_ports_list();
 
-      on_scan_click();
+      if (g_ports.length == 0) {
+        // Display a modal, asking for a user gesture
+        show_modal("#need-gesture-modal");
+      } else {
+        on_scan_click();
+      }
     }, 1000);
   }
 });
+
+// This is the handler for the button in the #need-gesture-modal, offered when
+// there's nothing we can do until the user makes some gesture.
+function on_gesture_click() {
+  close_modal("#need-gesture-modal");
+  on_scan_click();
+}
 
 if (!g_standalone) {
   $(window).bind("beforeunload", function(event) {
@@ -87,18 +99,25 @@ function on_user_profile_selection(event) {
 }
 
 async function request_new_port() {
+  console.log('request_new_port');
   await new Promise((resolve, reject) => {
     $("#second_modal_background").fadeTo(200, 0.75, function() { resolve(1); });
   });
   try {
-    await navigator.serial.requestPort().catch(() => {});
+    await navigator.serial.requestPort().catch((e) => {
+      console.log('requestPort throws ', e);
+      throw e;
+    });
   } finally {
     $("#second_modal_background").fadeOut(200);
   }
   g_ports = await navigator.serial.getPorts();
+  console.log('request_new_port is done', g_ports);
 }
 
 async function on_new_port_click() {
+  // The "New Port" button forcibly requests a new port even if there are other
+  // ports available, so the user gets the chance to choose
   await request_new_port();
   update_ports_list();
   g_prober.probe_until_found();
@@ -111,7 +130,9 @@ async function update_ports_list() {
     var info = g_ports[i].getInfo();
     var label;
     if (info.hasOwnProperty('usbProductId')) {
-      label = 'USB ' + info.usbVendorId + '/' + info.usbProductId;
+      label = 'USB x' +
+        info.usbVendorId.toString(16).padStart(4, '0') + '/x' +
+        info.usbProductId.toString(16).padStart(4, '0');
     } else {
       label = 'Built-in port';
     }
@@ -136,7 +157,8 @@ $(function() {
         beak;
       case 'LOST_CONNECTION':
         $("#probe-button").prop('disabled', false);
-        setTimeout(async function() { g_timer_proxy = await g_prober.probe_until_found(); }, 0);
+        setTimeout(async function() {
+          g_timer_proxy = await g_prober.probe_until_found(); }, 0);
         break;
       }
       console.log('onEvent: ' + event + ' ' + (args || []).join(','));
@@ -146,6 +168,7 @@ $(function() {
 
 // The "Scan" button
 async function on_scan_click() {
+  console.log('on_scan_click');
   g_prober.probe_until_found();
 }
 
