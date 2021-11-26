@@ -124,7 +124,7 @@ function all_kiosks() {
 
 function all_kiosk_pages_with_prefix($prefix) {
   $entries = array();
-  $dh = opendir(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.$prefix);
+  $dh = opendir($prefix);
   if ($dh !== false) {
     while (($entry = readdir($dh)) !== FALSE) {
       if (substr($entry, -6) == ".kiosk") {
@@ -143,7 +143,8 @@ function all_kiosk_pages_with_prefix($prefix) {
 
 function all_kiosk_pages() {
   $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
-  return array_merge(all_kiosk_pages_with_prefix('kiosks'),
+  return array_merge(all_kiosk_pages_with_prefix(
+                       dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.'kiosks'),
                      all_kiosk_pages_with_prefix($configdir.DIRECTORY_SEPARATOR.'kiosks'));
 }
 

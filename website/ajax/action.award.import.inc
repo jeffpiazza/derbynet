@@ -41,10 +41,11 @@ if ($ok) {
   $awardtypeid = read_single_value('SELECT awardtypeid FROM AwardTypes WHERE awardtype = :awardtype',
                                  array(':awardtype' => $awardtype));
   if ($awardtypeid === false) {
+    $stmt = $db->query('SELECT awardtype FROM AwardTypes ORDER BY awardtype', PDO::FETCH_COLUMN, 0);
+    $types = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    $str = join(', ', $types);
     json_failure('unknownawardtype',
-                 "Unrecognized award type.  Award type must be one of: ".
-                 $db->query('SELECT awardtype FROM AwardTypes ORDER BY awardtype')
-                 .fetchAll(PDO::FETCH_COLUMN).join(', '));
+                 "Unrecognized award type.  Award type must be one of: ".$str);
     $ok = false;
   }
 }
