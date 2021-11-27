@@ -51,6 +51,8 @@ function playlist_entry_after($seq) {
                          array(':seq' => $seq), PDO::FETCH_ASSOC);
 }
 
+// Returns true if there are no scheduled heats for this round without results.
+// Note that it returns true if there are just no scheduled heats at all.
 function round_is_completed($roundid) {
   return read_single_value('SELECT COUNT(*) FROM RaceChart'
                            .' WHERE roundid = :roundid'
@@ -104,7 +106,11 @@ function activate_playlist_entry(&$playlist_entry) {
 
   $current = get_running_round();
   $current['roundid'] = $roundid;
-  return advance_heat($current, 1, /* report_failure */ true);
+  $heat = read_single_value('SELECT MIN(heat) FROM RaceChart'
+                            .' WHERE roundid = :roundid'
+                            .'  AND (completed IS NULL OR completed = \'\')',
+                            array(':roundid' => $roundid));
+  return advance_heat($current, $heat, /* report_failure */ true);
 }
 
 /* When racing ends, at the completion of a round (all heats have been run), if
@@ -115,9 +121,24 @@ function activate_playlist_entry(&$playlist_entry) {
   - do nothing (leave racing off)
 */
 function perform_playlist_after_round($roundid) {
+  if (use_master_sched()) {
+    // No playlists for interleaved heats.
+    return;
+  }
   $entry = playlist_entry_for($roundid);
   $after = playlist_entry_after($entry['seq']);
   if ($after) {
+    $new_roundid = read_single_value('SELECT roundid FROM Rounds'
+                                     .' WHERE classid = :classid AND round = :round',
+                                     array(':classid' => $after['classid'],
+                                           ':round' => $after['round']));
+    if ($new_roundid !== false &&
+        read_single_value('SELECT COUNT(*) FROM RaceChart WHERE roundid = :roundid',
+                          array(':roundid' => $new_roundid)) > 0
+        && round_is_completed($new_roundid)) {
+      return perform_playlist_after_round($new_roundid);
+    }
+
     activate_playlist_entry($after);
   }
   if ($entry['sceneid_at_finish'] > 0) {

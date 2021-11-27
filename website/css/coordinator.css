@@ -71,6 +71,11 @@
   cursor: pointer;
 }
 
+#master-schedule-group h3 {
+  color: #be2525;
+  border-bottom: solid black 2px;
+}
+
 .current {
   background-color: #F7D117;
 }

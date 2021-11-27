@@ -54,10 +54,9 @@ curl_postj action.php "action=playlist.add&classid=4&round=1&top=3&bucketed=0&n_
 curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=2.00" | check_success
+run_heat 1 1   101:1.00 102:2.00 - -
+run_heat 1 2   102:1.00 101:2.00 - -    x
+
 # After the first round, we should have Den2 scheduled and teed up, but not
 # racing.  After a brief pause, we should see the scene switched to Awards
 echo "Waiting for scene change to take effect..."
@@ -74,12 +73,10 @@ curl_postj action.php "action=kiosk.assign&address=$KIOSK1&page=kiosks/flag.kios
 curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.30" | check_success
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.40" | check_success
+run_heat 2 1   201:1.00 203:1.20 - -
+run_heat 2 2   202:1.00 201:1.30 - -
+run_heat 2 3   203:1.00 202:1.40 - - x
+
 # No scene change, move right into round 3
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
@@ -87,10 +84,8 @@ curl_getj "action.php?query=poll.coordinator" | \
     jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 3" >/dev/null || \
     test_fails
 
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.40" | check_success
+run_heat 3 1   301:1.00 302:1.20 - -
+run_heat 3 2   302:1.00 301:1.40 - -  x
 
 # No scene change, move right into round 4, which picks a roster
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
@@ -99,22 +94,18 @@ curl_getj "action.php?query=poll.coordinator" | \
     jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4" >/dev/null || \
     test_fails
 
-# First heat: 203 v. 201
+run_heat 4 1   203:1.00 201:1.20 - -
+run_heat 4 2   302:1.00 203:1.20 - -
+run_heat 4 3   201:1.00 302:1.20 - -  x
+
+# Remove results for one heat from round 2, and one heat from round 4.
+# After re-running the round 2 heat, check that advances directly to round 4.
+curl_postj action.php "action=result.delete&roundid=2&heat=2" | check_jsuccess
+curl_postj action.php "action=result.delete&roundid=4&heat=3" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=2&heat=2&now_racing=1" | check_jsuccess
+
+run_heat 2 2  202:1.01 201:1.30 - -
+
 curl_getj "action.php?query=poll.coordinator" | \
-    jq -e ".racers | all((.lane == 1 and .carnumber == 203) or 
-                               (.lane == 2 and .carnumber == 201))" >/dev/null || \
-    test_fails
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
-# Second heat: 302 v. 203
-curl_getj "action.php?query=poll.coordinator" | \
-    jq -e ".racers | all((.lane == 1 and .carnumber == 302) or 
-                       (.lane == 2 and .carnumber == 203))" >/dev/null || \
-    test_fails
-curl_post action.php "action=timer-message&message=STARTED" | check_success
-curl_post action.php "action=timer-message&message=FINISHED&lane1=1.00&lane2=1.20" | check_success
-# Third heat: 201 v. 302
-curl_getj "action.php?query=poll.coordinator" | \
-    jq -e ".racers | all((.lane == 1 and .carnumber == 201) or 
-                       (.lane == 2 and .carnumber == 302))" >/dev/null || \
+    jq -e ".[\"current-heat\"] | .[\"now_racing\"] == true and .roundid == 4 and .heat == 3" >/dev/null || \
     test_fails

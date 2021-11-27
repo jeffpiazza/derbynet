@@ -554,6 +554,8 @@ function process_coordinator_poll_json(json) {
 
   offer_new_rounds(json.rounds, json['classes']);
 
+  $("#playlist-group").toggleClass('hidden', json['current-heat'].use_master_sched);
+
   if (json['current-heat'].use_master_sched) {
     var totals = calculate_totals(json.rounds);
     totals.roundid = -1;
@@ -568,7 +570,7 @@ function process_coordinator_poll_json(json) {
     }
     $("#schedule-and-race").addClass('hidden');
     $("#schedule-only").val("Make Schedule");
-  } else if (!json['current-heat'].use_master_sched) {
+  } else {
     $("#master-schedule-group").empty();
     $("#schedule-and-race").removeClass('hidden');
     $("#schedule-only").val("Schedule Only");
