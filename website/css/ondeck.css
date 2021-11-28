@@ -25,9 +25,18 @@
   color: #ffffff;
 }
 
-td .car {
-  font-size: x-large;
+td.in_prev {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: 50%;
 }
+.d1 td.in_prev {
+  background-image: url(../img/chevron-up-tan.svg);
+}
+.d0 td.in_prev {
+  background-image: url(../img/chevron-up-white.svg);
+}
+
 td .racer {
   font-size: small;
 }

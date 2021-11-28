@@ -188,6 +188,8 @@ foreach ($groups as $group) {
   $heat_row = '';
   // $photos_in_heat turns true if any entrant in the current heat has a car photo populated
   $photos_in_heat = false;
+  $prev_heat_racerids = array();
+  $this_heat_racerids = array();
   while ($rs and $rs['racinggroup'] == $groupid) {
     if ($seq <> $rs['seq']) {
       write_heat_row($first_entry, maybe_mark_photos_populated($heat_row, $photos_in_heat), @$lane);
@@ -199,6 +201,8 @@ foreach ($groups as $group) {
 						   'seq' => $seq);
       $lane = 1;
       $photos_in_heat = false;
+      $prev_heat_racerids = $this_heat_racerids;
+      $this_heat_racerids = array();
     }
 
     // Here, $lane is one more than the lane number of the last result we've added for this
@@ -210,16 +214,18 @@ foreach ($groups as $group) {
       $heat_row .= byes($new_lane - $lane);
       $lane = $new_lane;
 
+      $in_prev = in_array($rs['racerid'], $prev_heat_racerids) ? ' in_prev' : '';
+      $this_heat_racerids[] = $rs['racerid'];
+
       // Add the cell with the result we just got.
       // $ft = $rs['finishtime'];
-      $heat_row .= '<td class="lane_'.$lane.' resultid_'.$rs['resultid'].'">';
-      // $heat_row .= '<a class="racer_link" href="racer-results.php?racerid='.$rs['racerid'].'">';
-      $heat_row .= '<span class="car">'.htmlspecialchars($rs['carnumber'], ENT_QUOTES, 'UTF-8').'</span><br/>'."\n";
-      $heat_row .= '<span class="racer">('
-          .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').')</span><br/>'."\n";
-      $heat_row .= '<span class="time"></span>'; // Javascript will fill in the times, later
-      // $heat_row .= '</a>';
-      $heat_row .= '<div class="ondeck_photo unpopulated">';
+      $heat_row .= "<td class='lane_$lane$in_prev resultid_$rs[resultid]'>";
+      $heat_row .= "<span class='car'>".htmlspecialchars($rs['carnumber'], ENT_QUOTES, 'UTF-8')."</span><br/>\n";
+      $heat_row .= "<span class='racer'>("
+          .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').")</span><br/>\n";
+      $heat_row .= "<span class='time'></span>"; // Javascript will fill in the times, later
+
+      $heat_row .= "<div class='ondeck_photo unpopulated'>";
       if ($show_car_photos && isset($rs['carphoto']) && $rs['carphoto']) {
         $photos_in_heat = true;
         $heat_row .= '<img src="'.$repo->url_for_racer($rs, RENDER_ONDECK).'"'
