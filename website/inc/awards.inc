@@ -1,5 +1,6 @@
 <?php
 require_once('inc/classes.inc');
+require_once('inc/partitions.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/aggregate_round.inc');

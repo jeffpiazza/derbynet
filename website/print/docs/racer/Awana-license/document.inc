@@ -1,5 +1,6 @@
 <?php
 
+require_once('inc/partitions.inc');
 require_once('inc/photo-config.inc');
 
 class AwanaDriversLicenseDocument extends PrintableRacerDocument {

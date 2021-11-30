@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/partitions.inc');
+
 function export_roster(callable $out) {
   global $db;
   $headings = array();

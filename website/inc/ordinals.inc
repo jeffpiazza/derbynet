@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/partitions.inc');
+
 function ordinal($n) {
   if (is_string($n) && $n[0] == 'T') {
     return 'T'.ordinal(substr($n, 1));

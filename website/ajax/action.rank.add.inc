@@ -3,6 +3,7 @@
 //  $_POST['name']
 //  $_POST['classid']
 
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once('inc/json-classes.inc');

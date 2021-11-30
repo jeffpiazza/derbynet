@@ -6,6 +6,7 @@
 //     $_POST['constituent_' + classid] for each constituent classid
 //  OR $_POST['rankid_' + rankid] for each constituent rankid
 
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));

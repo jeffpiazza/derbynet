@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/data.inc');
+require_once('inc/partitions.inc');
 require_once('inc/classes.inc');
 require_once('inc/authorize.inc');
 require_once('inc/name-mangler.inc');
