@@ -3,8 +3,6 @@
 require_once('inc/last-heat.inc');
 require_once('inc/timer-test.inc');
 
-define('DNF_TIME', 9.9999);
-
 function compare_by_finishtime(&$lhs, &$rhs) {
   if ($lhs['finishtime'] == $rhs['finishtime']) return 0;
   return ($lhs['finishtime'] < $rhs['finishtime']) ? -1 : 1;

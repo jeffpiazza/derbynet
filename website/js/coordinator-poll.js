@@ -622,6 +622,20 @@ function process_coordinator_poll_json(json) {
     });
   }
 
+  if (json['current-heat'].use_master_sched) {
+    $("div.master_heat_reminder").remove();
+    $.each(json.rounds, function (index, round) {
+      // console.log(round);
+      if (round.heats_scheduled == 0) {
+        $("<div class='master_heat_reminder'></div>")
+          .append("<span class='master_heat_msg'>&nbsp;Not scheduled&nbsp;</span>")
+          .append("<img src='img/trouble_triangle_small.png'/>")
+          .prependTo(
+          $("div.control_group.scheduling_control[data-roundid=" + round.roundid + "]"));
+      }
+    });
+  }
+
   generate_timer_state_group(json['timer-state']);
 
   generate_replay_state_group(json['replay-state']);

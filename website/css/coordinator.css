@@ -141,6 +141,16 @@ div.scheduling_control div.next_tag {
   font-size: 16px;
 }
 
+div.scheduling_control div.master_heat_reminder {
+  float: right;
+}
+div.scheduling_control div.master_heat_reminder .master_heat_msg {
+  background-color: #cc0000;
+  color: white;
+  vertical-align: top;
+  font-weight: bold;
+}
+
 p.last_contact {
     font-size: 18px;
 }
