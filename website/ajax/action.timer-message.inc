@@ -103,6 +103,9 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     } else {
       $timer_state->to_state(TIMER_CONNECTED);
     }
+    if (isset($_POST['interface'])) {
+      write_raceinfo('timer-interface', $_POST['interface']);
+    }
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
     $timer_state->to_state(TIMER_RUNNING);

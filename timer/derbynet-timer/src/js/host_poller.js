@@ -46,13 +46,14 @@ class HostPoller {
       await new Promise(r => setTimeout(r, this.next_message_time - Date.now()));
     }
   }
-  
+
   async onEvent(event, args) {
     switch (event) {
     case 'IDENTIFIED':
       this.identified = true;
       this.sendMessage({action: 'timer-message',
                         message: 'IDENTIFIED',
+                        interface: 'web',
                         // TODO lane_count, ident, options
                         timer: args[0],  // TODO No formal name
                         human: args[0],
