@@ -75,12 +75,21 @@ function on_edit_partition_change(select, partitions_modal) {
 }
 
 function callback_after_partition_modal(op, arg) {
+  console.log('callback_after_partition_modal', op, arg);
   if (op == 'add') {  // arg = {partitionid, name}
     var opt = $("<option/>")
         .attr('value', arg.partitionid)
         .text(arg.name);
     opt.appendTo("#edit_partition");
     opt.clone().appendTo("#bulk_who");
+    // Delete "Default" partition, if any, after creating a real partition
+    $("#edit_partition option[value=0]").remove();
+    $("#bulk_who option[value=0]").remove();
+    // Move the "Edit Partitions" option to the end
+    divid = -1;
+    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
+    $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
+    
   } else if (op == 'delete') {  // arg = {partitionid}
     $("#edit_partition option[value=" + arg.partitionid + "]").remove();
     $("#bulk_who option[value=" + arg.partitionid + "]").remove();
@@ -121,16 +130,6 @@ function show_edit_racer_form(racerid) {
   $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
   $("#edit_partition").change();
 
-  if (false) { // TODO
-    var edit_rank = $("#edit_rank");
-    // TODO drop rank_name unless use_subgroups
-    edit_rank.val(class_name + ' / ' + rank_name)
-    // I think it's a bug in jquery-mobile that an explicit change
-    // event is required; setting the val above should be sufficient
-    // to cause an update.
-    edit_rank.change();
-  }
-
   $("#eligible").prop("checked", ! $('#lastname-' + racerid).prop("data-exclude"));
   $("#eligible").trigger("change", true);
 
@@ -155,6 +154,9 @@ function show_new_racer_form() {
   $("#edit_carno").val(9999);
   $("#edit_carname").val("");
 
+  $("#edit_partition").val($("#edit_partition option").first().attr('value'));
+  $("#edit_partition").change();
+
   $("#eligible").prop("checked", true);
   $("#eligible").trigger("change", true);
 
@@ -176,16 +178,8 @@ function handle_edit_racer() {
   var new_carno = $("#edit_carno").val().trim();
   var new_carname = $("#edit_carname").val().trim();
 
-  if (false) {
-    var rank_picker = $("#edit_rank");
-    var new_rankid = rank_picker.val();
-  }
   var new_div_id = $("#edit_partition").val();
   var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_partition")).text();
-  
-  var rank_option = $('[value="' + new_rankid + '"]', rank_picker);
-  var new_classname = rank_option.attr('data-class');
-  var new_rankname = rank_option.attr('data-rank');
 
   var exclude = $("#eligible").is(':checked') ? 0 : 1;
 
@@ -200,6 +194,10 @@ function handle_edit_racer() {
                  partitionid: new_div_id,
                  exclude: exclude},
           success: function(data) {
+            if (new_div_id <= 0) {
+              // Default partition id, used for the first racer (only); load the real partition id
+              location.reload(true);
+            }
             if (data.hasOwnProperty('warnings')) {
               window.alert("WARNING: " + data.warnings[0]);
             }
@@ -216,10 +214,6 @@ function handle_edit_racer() {
               $("#car-name-" + racerid).text(new_carname);
               console.log('Changing partition to ' + new_div_name);
               $("#div-" + racerid).attr('data-partitionid', new_div_id).text(new_div_name);
-
-              $('#class-' + racerid).attr('data-rankid', new_rankid);
-              $('#class-' + racerid).text(new_classname);
-              $('#rank-' + racerid).text(new_rankname);
             }
 
             sort_checkin_table();
@@ -793,7 +787,7 @@ $(function() {
 
 // TODO We might be in a better position to know the row number (and parity)
 // than the server (which sends rowno).
-function make_table_row(racer, use_groups, use_subgroups, xbs) {
+function make_table_row(racer, xbs) {
   var tr = $('<tr/>').attr('data-racerid', racer.racerid)
       .addClass('d' + (racer.rowno & 1))
       .toggleClass('den_scheduled', racer.denscheduled)
@@ -807,19 +801,6 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
             .attr('data-partitionid', racer.partitionid)
             .attr('data-div-sortorder', racer.partition_sortorder)
             .text(racer.partition));
-  
-  if (use_groups) {
-    tr.append($('<td/>')
-              .attr('id', 'class-' + racer.racerid)
-              .attr('data-rankid', racer.rankid)
-              .attr('data-rankseq', racer.rankseq)
-              .text(racer.class));
-  }
-
-  if (use_subgroups) {
-    tr.append($('<td/>').attr('id', 'rank-' + racer.racerid)
-              .text(racer.rank));
-  }
 
   tr.append($('<td class="sort-car-number"/>')
             .attr('data-car-number', racer.carnumber)
@@ -886,6 +867,6 @@ function make_table_row(racer, use_groups, use_subgroups, xbs) {
   return tr;
 }
 
-function add_table_row(tbody, racer, use_groups, use_subgroups, xbs) {
-  return make_table_row(racer, use_groups, use_subgroups, xbs).appendTo($(tbody));
+function add_table_row(tbody, racer, xbs) {
+  return make_table_row(racer, xbs).appendTo($(tbody));
 }

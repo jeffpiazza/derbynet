@@ -12,7 +12,7 @@ function json_table_row_for_id($racerid) {
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
     .($schema_version < 2 ? " '' AS carphoto," : " carphoto,")
     .($schema_version < PARTITION_SCHEMA
-      ? " 1 AS partitionid, 1 AS partition_sortorder, 'Default' AS partition_name,"
+      ? " 1 AS partitionid, 1 AS partition_sortorder, '".DEFAULT_PARTITION_NAME."' AS partition_name,"
       : " Partitions.partitionid AS partitionid,"
         ." Partitions.sortorder AS partition_sortorder,"
         ." Partitions.name AS partition_name,")

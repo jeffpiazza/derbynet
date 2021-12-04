@@ -9,7 +9,7 @@ function after_update_schema($original_schema) {
     // Updated database from older days
     $db->exec('INSERT INTO Partitions(partitionid, name, rankid, sortorder)'
               .' SELECT rankid, rank, rankid, sortorder FROM Ranks');
-    $db->exec('UPDATE Partitions SET name = \'Default\''
+    $db->exec('UPDATE Partitions SET name = \''.DEFAULT_PARTITION_NAME.'\''
               .' WHERE name = \'* Not specified\'');
     $db->exec('UPDATE RegistrationInfo SET partitionid = rankid');
 

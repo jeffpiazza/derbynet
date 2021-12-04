@@ -37,17 +37,11 @@ if (have_permission(SET_UP_PERMISSION)) {
     for ($r = 0; $r < $group_size; ++$r) {
       $index = mt_rand(0, count($fake_names) - 1);
       $racer = $fake_names[$index];
-      insert_new_racer(array('firstname' => $racer['firstname'],
-                             'lastname' => $racer['lastname'],
-                             'carname' => '',
-                             'carnumber' => $g * 100 + $r + 1,
-                             'partition' => $group_name));
-
-      $racerid = read_single_value('SELECT racerid FROM RegistrationInfo'
-                                   .' WHERE firstname = :firstname'
-                                   .' AND lastname = :lastname',
-                                   array(':firstname' => $racer['firstname'],
-                                         ':lastname' => $racer['lastname']));
+      $racerid = insert_new_racer(array('firstname' => $racer['firstname'],
+                                        'lastname' => $racer['lastname'],
+                                        'carname' => '',
+                                        'carnumber' => ($g - 1) * 100 + $r + 1,
+                                        'partition' => $group_name));
 
       $racer_photo = photo_directory().DIRECTORY_SEPARATOR."fake_".$racerid.".svg";
       copy(FAKE_RACER_IMAGES.DIRECTORY_SEPARATOR.$racer_photos[mt_rand(0, count($racer_photos) - 1)],

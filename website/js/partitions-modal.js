@@ -4,7 +4,7 @@
 
 // partitions is an array of {partitionid, name, count}, in order
 function PartitionsModal(div_label, div_label_plural, partitions, callback) {
-  var partitions_list;
+  var partitions_list;  // The <ul> element holding all the partition <li>'s
 
   var reorder_modal = 
       $("<div/>").appendTo("body")
@@ -34,7 +34,10 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
   };
 
   for (var i in partitions) {
-    append_li(partitions[i].partitionid, partitions[i].name, partitions[i].count);
+    // If a 'Default' partition entry is present, don't allow editing it
+    if (partitions[i].partitionid > 0) {
+      append_li(partitions[i].partitionid, partitions[i].name, partitions[i].count);
+    }
   }
   partitions_list.sortable({
     stop: function(event, ui) {
@@ -87,6 +90,8 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
                      name: name_field.val()},
               success: function(data) {
                 append_li(data.partitionid, name_field.val(), 0);
+                callback('add', {partitionid: data.partitionid,
+                                 name: name_field.val()});
               }
              });
 

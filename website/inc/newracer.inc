@@ -11,7 +11,8 @@ define('UNSPECIFIED_RANK', '* Not specified');
 
 // $values are: { firstname, lastname, carnumber, carname, partitionid, partition, exclude }
 //   partition is ignored if partitionid is provided.
-//   If neither partition nor partitionid is provided, 'Default' is assumed
+//   If neither partition nor partitionid is provided, default partition name is assumed
+// Returns the racerid for the new racer.
 
 function insert_new_racer($values) {
   global $db;
@@ -31,15 +32,15 @@ function insert_new_racer($values) {
 
   if (!isset($values['partitionid'])) {
     $values['partitionid'] = find_or_create_partition(
-      isset($values['partition']) ? $values['partition'] : 'Default');
+      isset($values['partition']) ? $values['partition'] : DEFAULT_PARTITION_NAME);
   }
   
   if (!isset($values['carnumber']) || $values['carnumber'] == '') {
     $max_carnumber = read_single_value('SELECT MAX(carnumber) FROM RegistrationInfo'
-                                       .' WHERE rankid = :rankid',
-                                       array(':rankid' => $values['rankid']));
+                                       .' WHERE partitionid = :partitionid',
+                                       array(':partitionid' => $values['partitionid']));
     if (!$max_carnumber) {
-      $max_carnumber = $values['rankid'] * 100;
+      $max_carnumber = ($values['partitionid'] - 1) * 100;
     }
     $values['carnumber'] = $max_carnumber + 1;
   }
@@ -93,6 +94,16 @@ function insert_new_racer($values) {
             //
             // .' AND Roster.classid = RegistrationInfo.classid'
             .' AND Roster.racerid = RegistrationInfo.racerid)');
+
+  // Return racerid
+  $stmt = $db->prepare('SELECT racerid FROM RegistrationInfo'
+                       .' WHERE firstname = :firstname and lastname = :lastname'
+                       .'  AND partitionid = :partitionid');
+  $stmt->execute(array(':firstname' => trim($values['firstname']),
+                       ':lastname' => trim($values['lastname']),
+                       ':partitionid' => $values['partitionid']));
+  $rs = $stmt->fetch(PDO::FETCH_NUM);
+  return $rs[0];
 }
 
 // Manufactures a classid and rankid when there are none.  This arises only if

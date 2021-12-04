@@ -24,13 +24,6 @@ require_permission(CHECK_IN_RACERS_PERMISSION);
 // page.  POST requests to make changes to the database are sent to
 // action.php, and produce just a small XML document.
 
-// TODO- subgroups explanation
-
-$use_groups = use_groups();
-$use_subgroups = use_subgroups();
-
-$use_groups = $use_subgroups = false;
-
 // Our pack provides an "exclusively by scout" award, based on a
 // signed statement from the parent.  Collecting the statement is part
 // of the check-in process, so there's provision for a checkbox on the
@@ -109,12 +102,6 @@ make_banner('Racer Check-In');
     <th><?php
       echo column_header(htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'), 'partition');
     ?></th>
-    <?php if ($use_groups) {
-      echo '<th>'.column_header(htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'), 'class').'</th>';
-    } ?>
-    <?php if ($use_subgroups) {
-        echo '<th>'.subgroup_label().'</th>';
-    } ?>
     <th><?php echo column_header('Car Number', 'car'); ?></th>
     <th>Photo</th>
     <th><?php echo column_header('Last Name', 'name'); ?></th>
@@ -138,15 +125,21 @@ make_banner('Racer Check-In');
 <?php } ?>
 </div>
 
-<script>
-function addrow0(racer) {
-  return add_table_row('#main_tbody', racer,
-                <?php echo $use_groups ? "true" : "false"; ?>,
-                <?php echo $use_subgroups ? "true" : "false"; ?>,
-                <?php echo $xbs ? json_encode($xbs_award_name) : "false"; ?>);
-}
-
 <?php
+
+  $stmt = $db->query('SELECT partitionid, name,'
+                     .'  (SELECT COUNT(*) FROM RegistrationInfo'
+                     .'     WHERE RegistrationInfo.partitionid = Partitions.partitionid) AS count'
+                     .' FROM Partitions'
+                     .' ORDER BY sortorder');
+  $partitions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  if (count($partitions) == 0) {
+    // 0 won't be used as a partitionid, but will cause the server to create a new
+    // partition with default name.
+    $partitions[] = array('partitionid' => 0,
+                          'name' => DEFAULT_PARTITION_NAME);
+  }
+
 
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
@@ -155,7 +148,7 @@ function addrow0(racer) {
       .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
       .(schema_version() < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
       .(schema_version() < PARTITION_SCHEMA
-        ? " 1 AS partitionid, 1 AS partition_sortorder, 'Default' AS partition_name,"
+        ? " 1 AS partitionid, 1 AS partition_sortorder, '".DEFAULT_PARTITION_NAME."' AS partition_name,"
         : " Partitions.partitionid AS partitionid,"
          ." Partitions.sortorder AS partition_sortorder,"
          ." Partitions.name AS partition_name,")
@@ -182,7 +175,15 @@ function addrow0(racer) {
               'lastname, firstname')));
 
 $stmt = $db->query($sql);
+?>
 
+<script>
+function addrow0(racer) {
+  return add_table_row('#main_tbody', racer,
+                <?php echo $xbs ? json_encode($xbs_award_name) : "false"; ?>);
+}
+
+  <?php
 $n = 1;
 foreach ($stmt as $rs) {
   // TODO
@@ -194,18 +195,10 @@ foreach ($stmt as $rs) {
 }
 ?>
 
-<?php
-$divs = array();
-$stmt = $db->query('SELECT partitionid, name,'
-                   .'  (SELECT COUNT(*) FROM RegistrationInfo'
-                   .'     WHERE RegistrationInfo.partitionid = Partitions.partitionid) AS count'
-                   .' FROM Partitions'
-                   .' ORDER BY sortorder');
-?>
 $(function () {
-var partitions = <?php echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC),
-                                       JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
-                                       JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS); ?>;
+var partitions = <?php echo json_encode($partitions,
+                                        JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
+                                        JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS); ?>;
 
 $("#edit_partition").empty();
 for (var i in partitions) {

@@ -3,6 +3,7 @@
 require_once('inc/newracer.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 
 
@@ -70,18 +71,20 @@ if (have_permission(SET_UP_PERMISSION)) {
 }
 
 if ($ok) {
-  $partition = isset($_POST['partition']) ? trim(@$_POST['partition']) : 'Default';
   $carnumber = isset($_POST['carnumber']) ? $_POST['carnumber'] : '';
   $carname = isset($_POST['carname']) ? $_POST['carname'] : '';
 
   $exclude = isset($_POST['exclude']) ? as_boolean($_POST['exclude']) : false;
 
-  insert_new_racer(array('firstname' => $_POST['firstname'],
-                         'lastname' => $_POST['lastname'],
-                         'carnumber' => $carnumber,
-                         'carname' => $carname,
-                         'partition' => $partition,
-                         'exclude' => $exclude));
+  $options = array('firstname' => $_POST['firstname'],
+                   'lastname' => $_POST['lastname'],
+                   'carnumber' => $carnumber,
+                   'carname' => $carname,
+                   'exclude' => $exclude);
+  if (isset($_POST['partition'])) {
+    $options['partition'] = trim(@$_POST['partition']);
+  }
+  insert_new_racer($options);
 
   json_success();
 }

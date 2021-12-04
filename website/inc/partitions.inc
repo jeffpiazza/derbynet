@@ -4,6 +4,8 @@ require_once('inc/plural.inc');
 require_once('inc/find_or_create_class.inc');
 // ** Do not require inc/newracer.inc from here, as newracer.inc requires this file.
 
+define('DEFAULT_PARTITION_NAME', 'Default');
+
 $labels = false;
 function labels() {
   global $labels;
