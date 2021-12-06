@@ -96,6 +96,8 @@ function callback_after_partition_modal(op, arg) {
   } else if (op == 'rename') {  // arg = {partitionid, name}
     $("#edit_partition option[value=" + arg.partitionid + "]").text(arg.name);
     $("#bulk_who option[value=" + arg.partitionid + "]").text(arg.name);
+    // Change the name for every racer in that partition
+    $("#main_tbody td[data-partitionid=" + arg.partitionid + "]").text(arg.name);
   } else if (op == 'reorder') { // arg = array of partitionid
     for (var i = 0; i < arg.length; ++i) {
       var divid = arg[i];

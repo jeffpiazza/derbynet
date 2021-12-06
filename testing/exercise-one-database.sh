@@ -18,6 +18,13 @@ prepare_for_setup() {
     user_login_coordinator
 }
 
+# $1 is the name of the .js file in puppeteer subdirectory
+puppeteer_test() {
+    echo
+    echo " " " " " " $1
+    node "`dirname $0`/puppeteer/$1" "$BASE_URL"
+}
+
 run_tests() {
 ############################## Basic Racing ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"
@@ -27,15 +34,18 @@ run_tests() {
     `dirname $0`/photo-setup.sh "$BASE_URL"
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
 
-    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-permissions.sh $BASE_URL
 
     `dirname $0`/test-basic-racing.sh "$BASE_URL"
-    `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+
+    puppeteer_test all-pages-test.js
+    puppeteer_test coordinator-test.js
+    puppeteer_test ondeck-columns-test.js
+
     `dirname $0`/test-awards.sh "$BASE_URL" basic
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
-    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+
     `dirname $0`/test-each-role.sh "$BASE_URL"
     `dirname $0`/test-scenes.sh "$BASE_URL"
 
@@ -63,6 +73,9 @@ run_tests() {
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
 ############################## Racing Groups and Partitions ##############################
+    `dirname $0`/reset-database.sh "$BASE_URL"
+    puppeteer_test checkin-empty-test.js
+
     `dirname $0`/test-partitions.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
@@ -70,7 +83,7 @@ run_tests() {
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
-    # `dirname $0`/test-basic-javascript.sh "$BASE_URL"
+
     `dirname $0`/test-awards.sh "$BASE_URL" master
     `dirname $0`/test-new-rounds.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"

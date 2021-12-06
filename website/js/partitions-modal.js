@@ -8,7 +8,7 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
 
   var reorder_modal = 
       $("<div/>").appendTo("body")
-      .addClass('modal_dialog hidden block_buttons')
+      .addClass('modal_dialog hidden block_buttons partition_modal')
       .append($("<form/>")
               .append($("<h3/>").text("Drag to Re-order " + div_label_plural))
               .append($("<div/>")
@@ -50,8 +50,10 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
       $.ajax('action.php',
              {type: 'POST',
               data: data,
-              success: function() {
-                callback('reorder', divids);
+              success: function(res) {
+                if (res.outcome.summary == 'success') {
+                  callback('reorder', divids);
+                }
               }
              });
     }
@@ -61,7 +63,7 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
   var delete_ext;
   var naming_modal =
       $("<div/>").appendTo("body")
-      .addClass('modal_dialog hidden block_buttons')
+      .addClass('modal_dialog hidden block_buttons partition_naming_modal')
       .append($("<form/>")
               .append($("<h3/>").text(div_label + " Name"))
               .append(name_field = $("<input type='text'/>"))
@@ -89,9 +91,11 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
               data: {action: 'partition.add',
                      name: name_field.val()},
               success: function(data) {
-                append_li(data.partitionid, name_field.val(), 0);
-                callback('add', {partitionid: data.partitionid,
-                                 name: name_field.val()});
+                if (data.outcome.summary == 'success') {
+                  append_li(data.partitionid, name_field.val(), 0);
+                  callback('add', {partitionid: data.partitionid,
+                                   name: name_field.val()});
+                }
               }
              });
 
@@ -114,9 +118,12 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
                      partitionid: li.attr('data-partitionid'),
                      name: name_field.val()},
               success: function(data) {
-                li.text(name_field.val());
-                callback('rename', {partitionid: li.attr('data-partitionid'),
-                                    name: name_field.val()});
+                if (data.outcome.summary == 'success') {
+                  var sp = li.find("p span");
+                  li.find("p").text(name_field.val()).append(sp);
+                  callback('rename', {partitionid: li.attr('data-partitionid'),
+                                      name: name_field.val()});
+                }
               }
              });
 
@@ -133,9 +140,11 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
             data: {action: 'partition.delete',
                    partitionid: divid},
             success: function(data) {
-              var li = partitions_list.find('li[data-partitionid=' + divid + ']');
-              li.remove();
-              callback('delete', {partitionid: divid});
+              if (data.outcome.summary == 'success') {
+                var li = partitions_list.find('li[data-partitionid=' + divid + ']');
+                li.remove();
+                callback('delete', {partitionid: divid});
+              }
             }
            });
   };

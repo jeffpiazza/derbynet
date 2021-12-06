@@ -28,6 +28,7 @@ exports.equal = function(expect, actual) {
   if (!isEqual(expect, actual)) {
     console.log("Expected: " + JSON.stringify(expect));
     console.log("Actual:   " + JSON.stringify(actual));
+    console.trace();
     process.exit(1);
   }
 };
@@ -35,6 +36,7 @@ exports.equal = function(expect, actual) {
 exports.notEqual = function(expect, actual) {
   if (expect == actual) {
     console.log("Expected notEqual: " + JSON.stringify(actual));
+    console.trace();
     process.exit(1);
   }
 };
@@ -43,6 +45,7 @@ exports.includes = function(needle, haystack) {
   if (haystack.indexOf(needle) < 0) {
     console.log("Actual: " + haystack);
     console.log("Expected to contain " + needle);
+    console.trace();
     process.exit(1);
   }
 };

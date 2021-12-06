@@ -15,6 +15,35 @@ var fakeAjax = {
   _debugging: false,
   setDebugging: function(d) { this._debugging = d; },
 
+  // Usage:
+  // const fakeAjax = require('./fake-ajax.js');
+  // await fakeAjax.installOn(page)
+  //
+  // page is a puppeteer Page
+  installOn: async function(page) {
+    await page.evaluate(() => {
+      window.original_ajax = $.ajax;
+
+      $.ajax = async function (url, config) {
+        var data = await window.onAjax(url, config);
+        if (typeof data == 'string') {
+          data = (new DOMParser()).parseFromString(data, 'text/xml');
+        }
+        if (data) {
+          config.success(data);
+        }
+      };
+    });
+
+    await page.exposeFunction('onAjax', (url, config) => {
+      return fakeAjax.onAjax(url, config);
+    });
+  },
+
+  uninstallOn: async function(page) {
+    await page.evaluate(() => { $.ajax = window.original_ajax; });
+  },
+
   onAjax: function(url, config) {
     if (this._debugging) {
       console.log("onAjax fires with " + JSON.stringify(config));
@@ -36,6 +65,7 @@ var fakeAjax = {
   },
 
   // A synchronous function, with no useful return value.
+  // ret_value is a string
   expect: function(ex_config, ret_value) {
     this._expected_config = ex_config;
     this._return_value = ret_value;
@@ -56,24 +86,6 @@ var fakeAjax = {
     return this._pending;
   },
 
-  installOn: async function(page) {
-    await page.evaluate(() => {
-      $.ajax = async function (url, config) {
-        var data = await window.onAjax(url, config);
-        if (typeof data == 'string') {
-          data = (new DOMParser()).parseFromString(data, 'text/xml');
-        }
-        if (data) {
-          config.success(data);
-        }
-      };
-    });
-
-    await page.exposeFunction('onAjax', (url, config) => {
-      return fakeAjax.onAjax(url, config);
-    });
-  },
-
   // actions: Callback to be invoked after the expectation has been set.
   // expected_call: JSON representing the ajax call arguments
   // return_value: XML that should be returned as the result of the ajax call.
@@ -88,8 +100,14 @@ var fakeAjax = {
     await this.completion();
   },
 
+  // 'actions': Callback to be invoked after setting up expectations;
+  // 'expected_call': JSON representing the ajax call arguments;
+  // 'return_value': JSON (or string) that $.ajax should return as result of the ajax call
   testForJson: async function(actions, expected_call, return_value) {
     this._return_value_is_json = true;
+    if (!(typeof return_value === 'string' || return_value instanceof String)) {
+      return_value = JSON.stringify(return_value);
+    }
     this.expect(expected_call, return_value);
     await actions();
     await this.completion();
