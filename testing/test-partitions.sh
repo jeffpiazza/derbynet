@@ -117,7 +117,7 @@ curl_getj "action.php?query=poll&values=classes" | \
         and .[2].subgroups[0].name == "Div 3" and .[2].subgroups[0].rankid == 3
 ' >/dev/null || test_fails
 
-curl_postj action.php "action=partition.move&div_field=partitionid&div_id=3&group_field=classid&group_id=1" | check_jsuccess
+curl_postj action.php "action=partition.move&div_id=3&group_field=classid&group_id=1" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 3 
@@ -148,7 +148,7 @@ curl_getj "action.php?query=poll&values=classes" | \
         and .[1].subgroups[0].name == "Div 2" and .[1].subgroups[0].rankid == 2
 ' >/dev/null || test_fails
 
-curl_postj action.php "action=partition.move&div_field=partitionid&div_id=3&group_field=classid&group_id=-1" | check_jsuccess
+curl_postj action.php "action=partition.move&div_id=3&group_field=classid&group_id=-1" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 3
@@ -258,6 +258,58 @@ curl_getj "action.php?query=poll&values=classes" | \
         and .[0].subgroups[2].name == "Div 1"
         and .[0].subgroups[3].name == "New Div"
 ' >/dev/null || test_fails
+
+
+# 'by-partition', then 'custom'
+curl_postj action.php "action=partition.apply-rule&rule=by-partition" | check_jsuccess
+curl_postj action.php "action=partition.apply-rule&rule=custom&cleanup=1" | check_jsuccess
+
+# Move partition 2 to the class already containing partition 1.  That should
+# leave partition 2's original class empty, and so removed by cleanup.
+curl_getj "action.php?query=poll&values=partitions" > /dev/null
+P1CLASSID=$(jq '.partitions | map(select(.partitionid==1))[0].classids[0]' $DEBUG_CURL)
+P2CLASSID=$(jq '.partitions | map(select(.partitionid==2))[0].classids[0]' $DEBUG_CURL)
+curl_getj "action.php?query=poll&values=rounds" > /dev/null
+P1ROSTERSIZE=$(jq ".rounds | map(select(.classid==$P1CLASSID))[0].roster_size" $DEBUG_CURL)
+P2ROSTERSIZE=$(jq ".rounds | map(select(.classid==$P2CLASSID))[0].roster_size" $DEBUG_CURL)
+
+curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=$P1CLASSID&cleanup=1" | \
+    check_jsuccess
+# Confirm that old class for partition 2 got cleaned up
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e ".classes | map(select(.classid==$P2CLASSID)) | length == 0" > /dev/null || test_fails
+# Confirm that the moved racers are included in the roster for $P1CLASSID
+let NEW_P1ROSTERSIZE=$P1ROSTERSIZE+$P2ROSTERSIZE
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e ".rounds | map(select(.classid==$P1CLASSID))[0].roster_size == $NEW_P1ROSTERSIZE" \
+       > /dev/null || test_fails
+
+# Move the partition again, now to a new group: group_field = 'classid', group_id = -1;
+# check that the racers appear in a roster for the new class.
+curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=-1&cleanup=1" | \
+    check_jsuccess
+curl_getj "action.php?query=poll&values=partitions" > /dev/null
+P2XCLASSID=$(jq '.partitions | map(select(.partitionid==2))[0].classids[0]' $DEBUG_CURL)
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e ".rounds | map(select(.classid==$P1CLASSID))[0].roster_size == $P1ROSTERSIZE" \
+       > /dev/null || test_fails
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e ".rounds | map(select(.classid==$P2XCLASSID))[0].roster_size == $P2ROSTERSIZE" \
+       > /dev/null || test_fails
+
+curl_postj action.php "action=partition.apply-rule&rule=by-partition" | check_jsuccess
+curl_getj "action.php?query=poll&values=partitions" > /dev/null
+# New classes makes potentially new classids for the partitions
+P1CLASSID=$(jq '.partitions | map(select(.partitionid==1))[0].classids[0]' $DEBUG_CURL)
+P2CLASSID=$(jq '.partitions | map(select(.partitionid==2))[0].classids[0]' $DEBUG_CURL)
+# Confirm rosters are as expected
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e ".rounds | map(select(.classid==$P1CLASSID))[0].roster_size == $P1ROSTERSIZE" \
+       > /dev/null || test_fails
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e ".rounds | map(select(.classid==$P2CLASSID))[0].roster_size == $P2ROSTERSIZE" \
+       > /dev/null || test_fails
+
 
 # Move all the "Div 3" racers to "New Div", then delete "Div 3"
 for RACERID in 5 10 15 20 25 30 35 40 45 50; do

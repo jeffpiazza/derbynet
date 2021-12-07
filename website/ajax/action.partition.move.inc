@@ -3,8 +3,11 @@
 // $_POST['div_id'] = the numeric partitionid
 // $_POST['group_field'] = 'classid' or 'rankid'
 // $_POST['group_id'] = numeric classid or rankid the (sub)partition racers will move to.
+// $_POST['cleanup'] = 1 if empty classes/ranks should be deleted after move
 //
-//  // If the racers to move should be further limited to a particular class or rank, these are present:
+// If the racers to move should be further limited based on their
+// currently-assigned class or rank, these are present:
+//
 // $_POST['from_group_field'] = 'classid' or 'rankid' (or empty if this is not used)
 // $_POST['from_group_id']
 
@@ -33,6 +36,15 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
     $classid = read_single_value("SELECT classid FROM Ranks WHERE rankid = :group_id",
                                  array(':group_id' => $group_id));
   }
+
+  // Delete roster entries for affected racers.  After moving the partition,
+  // fill_in_missing_roster_entries() will create new roster entries.  (This
+  // ignores from_group_field and from_group_id, so may needlessly delete and
+  // restore some entries.)
+  $stmt = $db->prepare("DELETE FROM Roster"
+                       ." WHERE racerid IN (SELECT racerid FROM RegistrationInfo"
+                       ."                   WHERE partitionid = :div_id)");
+  $stmt->execute(array(':div_id' => $div_id));
   
   $sql = "UPDATE RegistrationInfo SET classid = :classid, rankid = :rankid WHERE partitionid = :div_id";
   $params = array(':classid' => $classid,
@@ -46,6 +58,8 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
 
   $stmt = $db->prepare($sql);
   $stmt->execute($params);
+
+  fill_in_missing_roster_entries();
 }
 
 

@@ -9,9 +9,12 @@ require_once('inc/newracer.inc');
 function form_groups_by_rule($rule) {
   global $db;
   if ($rule == 'one-group') {
+    $db->exec('DELETE FROM Roster');
+    $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
-    $db->exec('DELETE FROM Classes');  // TODO Aggregate classes?
+    $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
+    // find_or_create_class will create a Rounds entry, if necessary.
     $classid = find_or_create_class('One Group');
     // Trusting that partitions have unique names
     $stmt = $db->prepare('INSERT INTO Ranks(rank, classid, sortorder)'
@@ -24,9 +27,12 @@ function form_groups_by_rule($rule) {
                          .'            (SELECT name FROM Partitions'
                          .'                 WHERE Partitions.partitionid = RegistrationInfo.partitionid))');
     $stmt->execute(array(':classid' => $classid));
+    fill_in_missing_roster_entries();
   } else if ($rule == 'by-partition') {
+    $db->exec('DELETE FROM Roster');
+    $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
-    $db->exec('DELETE FROM Classes');  // TODO Aggregate classes
+    $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
 
     $db->exec('INSERT INTO Classes(class, sortorder) SELECT name, sortorder FROM Partitions');
@@ -42,6 +48,10 @@ function form_groups_by_rule($rule) {
     $db->exec('UPDATE RegistrationInfo'
               .' SET rankid = (SELECT rankid FROM Ranks'
               .'                WHERE Ranks.classid = RegistrationInfo.classid)');
+
+    // Add racing rounds for the new groups.
+    $db->exec('INSERT INTO Rounds(round, classid) SELECT 1, classid FROM Classes');
+    fill_in_missing_roster_entries();
   }
   // else ('custom') do nothing
 }
@@ -50,6 +60,10 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   json_not_authorized();
 } else if (!is_allowed_group_formation_rule($_POST['rule'])) {
   json_failure('bad-rule', 'Rule value '.$_POST['rule'].' not recognized.');
+} else if (read_single_value('SELECT COUNT(*) FROM RaceChart'
+                             .' WHERE finishtime IS NOT NULL OR finishplace IS NOT NULL')
+           > 0) {
+  json_failure('results-exist', 'Racing results already exist.');
 } else {
   write_group_formation_rule($_POST['rule']);
 

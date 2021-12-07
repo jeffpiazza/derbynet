@@ -102,7 +102,7 @@ $(function() {
 
 <ul id="all-groups" class="mlistview">
 
-  <li id='new-group' class='group'>
+  <li id='new-group' class='group subgroup'>
     <p>New Group</p>
   </li>
 </ul>

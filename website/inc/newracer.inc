@@ -75,8 +75,22 @@ function insert_new_racer($values) {
                        ':exclude' => (isset($values['exclude']) && $values['exclude']) ? 1 : 0));
 
   // The new racer won't be recognized without a Roster record to go with it.
-  // Rounds has ChartType and Phase fields whose meaning isn't obvious.  This just enrolls
-  // everyone into Round 1 for their Class.
+  fill_in_missing_roster_entries();
+
+  // Return racerid
+  $stmt = $db->prepare('SELECT racerid FROM RegistrationInfo'
+                       .' WHERE firstname = :firstname and lastname = :lastname'
+                       .'  AND partitionid = :partitionid');
+  $stmt->execute(array(':firstname' => trim($values['firstname']),
+                       ':lastname' => trim($values['lastname']),
+                       ':partitionid' => $values['partitionid']));
+  $rs = $stmt->fetch(PDO::FETCH_NUM);
+  return $rs[0];
+}
+
+// This just enrolls everyone into Round 1 for their Class.
+function fill_in_missing_roster_entries() {
+  global $db;
   $db->exec('INSERT INTO Roster(roundid, classid, racerid)'
             .' SELECT roundid, RegistrationInfo.classid, racerid'
             .' FROM Rounds'
@@ -94,16 +108,6 @@ function insert_new_racer($values) {
             //
             // .' AND Roster.classid = RegistrationInfo.classid'
             .' AND Roster.racerid = RegistrationInfo.racerid)');
-
-  // Return racerid
-  $stmt = $db->prepare('SELECT racerid FROM RegistrationInfo'
-                       .' WHERE firstname = :firstname and lastname = :lastname'
-                       .'  AND partitionid = :partitionid');
-  $stmt->execute(array(':firstname' => trim($values['firstname']),
-                       ':lastname' => trim($values['lastname']),
-                       ':partitionid' => $values['partitionid']));
-  $rs = $stmt->fetch(PDO::FETCH_NUM);
-  return $rs[0];
 }
 
 // Manufactures a classid and rankid when there are none.  This arises only if
