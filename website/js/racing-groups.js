@@ -64,6 +64,9 @@ function populate_racing_groups(data, using_subgroups) {
   all_groups.children('li').not('#new-group').remove();
   var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
 
+  $("span.and-subgroups").toggleClass('hidden', !using_subgroups);
+  $("p.instructions.custom").toggleClass('hidden', rule != 'custom');
+  
   for (var i = 0; i < data.classes.length; ++i) {
     if (data.classes[i].hasOwnProperty('constituents') && data.classes[i].constituents.length > 0) {
       continue;
@@ -78,7 +81,9 @@ function populate_racing_groups(data, using_subgroups) {
         .append($("<p/>")
                 .addClass('class-name')
                 .text(data.classes[i].name)
+                // label and count are float-right, so the first span is rightmost
                 .append($("<span/>").text("group").addClass('label'))
+                .append($("<span/>").text("(" + data.classes[i].count + ")").addClass('count'))
                 .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                          .on('click', on_edit_class)));
 
@@ -97,6 +102,8 @@ function populate_racing_groups(data, using_subgroups) {
                     .addClass('rank-name')
                     .text(data.classes[i].subgroups[j].name)
                     .append($("<span/>").text("subgroup").addClass('label'))
+                    .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
+                            .addClass('count'))
                     .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                              .on('click', on_edit_rank)));
       } else {
@@ -142,7 +149,9 @@ function populate_partitions_in_subgroup(subg, rankid, data) {
         .attr('data-partitionid', data.partitions[d].partitionid)
         .toggleClass('incomplete', data.partitions[d].rankids.length > 1)
         .append($("<p/>")
-                .text(data.partitions[d].name));
+                .text(data.partitions[d].name)
+                .append($("<span/>").text("(" + data.partitions[d].count + ")")
+                        .addClass('count')));
   }
 }
 

@@ -92,12 +92,19 @@ $(function() {
 
 <div id="race-structure">
 
-<p class="instructions">Drag <span class="group-color">&nbsp;</span> groups
-       <span class="and-subgroups">and <span class="subgroup-color">&nbsp;</span> subgroups</span>
-       to re-order.</p>
-       <p class="instructions">Drag <span class="partition-color">&nbsp;</span> <?php echo partition_label_pl_lc(); ?>
-       onto <span class="group-color">&nbsp;</span> groups
-        <span class="and-subgroups" style="white-space: nowrap;">and <span class="subgroup-color">&nbsp;</span> subgroups</span>.
+<p class="instructions">
+    Drag <span class="group-color">&nbsp;</span> groups
+    <span class="and-subgroups">
+        and <span class="subgroup-color">&nbsp;</span> subgroups
+    </span>
+    to re-order.</p>
+       
+<p class="instructions custom">
+    Drag <span class="partition-color">&nbsp;</span> <?php echo partition_label_pl_lc(); ?>
+    onto <span class="group-color">&nbsp;</span> groups
+    <span class="and-subgroups" style="white-space: nowrap;">
+        and <span class="subgroup-color">&nbsp;</span> subgroups</span>
+    to customize.
 </p>
 
 <ul id="all-groups" class="mlistview">

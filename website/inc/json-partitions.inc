@@ -6,7 +6,10 @@ require_once('inc/schema_version.inc');
 function json_partitions() {
   global $db;
 
-  $stmt = $db->prepare('SELECT partitionid, name, sortorder FROM Partitions ORDER BY sortorder');
+  $stmt = $db->prepare('SELECT partitionid, name, sortorder,'
+                       .' (SELECT COUNT(*) FROM RegistrationInfo'
+                       .'  WHERE partitionid = Partitions.partitionid) AS count'
+                       .' FROM Partitions ORDER BY sortorder');
   $stmt->execute();
 
   $partitions = array();
@@ -16,10 +19,11 @@ function json_partitions() {
   foreach ($stmt as $row) {
     if ($row['partitionid'] != $last_div['partitionid']) {
       $partitions[] = array('partitionid' => $row['partitionid'],
-                           'name' => $row['name'],
-                           'sortorder' => $row['sortorder'],
-                           'classids' => array(),
-                           'rankids' => array());
+                            'name' => $row['name'],
+                            'sortorder' => $row['sortorder'],
+                            'count' => $row['count'],
+                            'classids' => array(),
+                            'rankids' => array());
       $last_div = &$partitions[count($partitions) - 1];
       $by_divid[$row['partitionid']] = &$last_div;
     }

@@ -54,12 +54,16 @@ curl_postj action.php "action=racer.import&firstname=Isobel&lastname=Ivester&par
 curl_postj action.php "action=racer.import&firstname=Nelia&lastname=Nagao" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Tuan&lastname=Troxell" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Lynelle&lastname=Lipsey&partition=Div%202" | check_jsuccess
-curl_postj action.php "action=racer.import&firstname=Mose&lastname=Meisinger&partition=Div%202" | check_jsuccess
+## curl_postj action.php "action=racer.import&firstname=Mose&lastname=Meisinger&partition=Div%202" | check_jsuccess
+## Last racer, in Div 3, is racerid 49
 curl_postj action.php "action=racer.import&firstname=Melanie&lastname=Meacham&partition=Div%203" | check_jsuccess
 
 
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 3 and 
                 .[0].name == "Default" and 
+                .[0].count == 20 and
                 .[1].name == "Div 2" and
-                .[2].name == "Div 3"' >/dev/null || test_fails
+                .[1].count == 19 and
+                .[2].name == "Div 3" and
+                .[2].count == 10' >/dev/null || test_fails

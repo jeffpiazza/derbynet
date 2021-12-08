@@ -104,7 +104,7 @@ li.ui-droppable-hover, p.ui-droppable-hover, div.ui-droppable-hover {
   border: #ff0000 4px solid;
 }
 
-span.label {
+span.label, span.count {
   float: right;
   margin-right: 5px;
   font-variant: small-caps;
