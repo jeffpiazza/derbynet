@@ -64,7 +64,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   @Override
   public void prepareHeat(int roundid, int heat, int laneMask)
       throws SerialPortException {
+    prepare(roundid, heat);
     lanemask = laneMask;
+
     if (lastFinishTime == 0 || Flag.delay_reset_after_race.value() == 0) {
       Event.send(Event.PREPARE_HEAT_RECEIVED);
     } else {

@@ -60,12 +60,18 @@ public abstract class Flag<T> {
 
   public static final Flag<Long> newline_expected_ms
       = LongFlag.settable("newline-expected-ms", 200,
-                          "After this many milliseconds, assume an unterminated line"
-                          + " from the timer is complete (0 = wait forever).");
+                          "After this many milliseconds, assume an unterminated"
+                          + " line from the timer is complete"
+                          + " (0 = wait forever).");
 
   public static final Flag<Boolean> clear_rts_dtr
       = BooleanFlag.settable("clear-rts-dtr",
-                             "EXPERIMENTAL Initially clear RTS and DTR lines on serial port by default.");
+                             "EXPERIMENTAL Initially clear RTS and DTR lines on"
+                             + " serial port by default.");
+
+  public static final Flag<Boolean> log_matchers
+      = BooleanFlag.settable("log-matchers",
+                             "Write matcher results to log (for debugging)");
 
   // Issue #35: Reject gate state changes that don't last "reasonably" long.
   // To do that, don't record a gate state change until it's aged a bit.

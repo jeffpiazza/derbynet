@@ -58,11 +58,11 @@ public class SerialPortWrapper implements SerialPortEventListener {
     public static String applyDetectors(String line, List<Detector> detectors)
         throws SerialPortException {
       line = line.trim();
+      boolean match_more = (line.length() > 0);
+      if (match_more) {
+        LogWriter.serialIn(line);
+      }
       if (detectors != null) {
-        boolean match_more = (line.length() > 0);
-        if (match_more) {
-          LogWriter.serialIn(line);
-        }
         while (match_more) {
           match_more = false;
           for (Detector d : detectors) {
@@ -241,17 +241,13 @@ public class SerialPortWrapper implements SerialPortEventListener {
   }
 
   private String applyDetectors(String line) {
-    line = line.trim();
-    if (line.length() > 0) {
-      LogWriter.serialIn(line);
-      try {
-        line = Detector.applyDetectors(line, detectors);
-      } catch (SerialPortException exc) {
-        LogWriter.stacktrace(exc);
-        System.err.println("Exception while reading: " + exc);
-        exc.printStackTrace();
-        line = "";
-      }
+    try {
+      line = Detector.applyDetectors(line, detectors);
+    } catch (SerialPortException exc) {
+      LogWriter.stacktrace(exc);
+      System.err.println("Exception while reading: " + exc);
+      exc.printStackTrace();
+      line = "";
     }
     return line;
   }

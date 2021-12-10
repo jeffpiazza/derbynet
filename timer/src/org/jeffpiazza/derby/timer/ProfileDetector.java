@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class ProfileDetector implements SerialPortWrapper.Detector {
@@ -43,10 +44,12 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
   @Override
   public String apply(String line) throws SerialPortException {
     if (!(active_until == 0 || System.currentTimeMillis() <= active_until)) {
+      LogWriter.serialMatcher(false, pattern, "Inactive");
       return line;
     }
     Matcher m = pattern.matcher(line);
     if (m.find()) {
+      LogWriter.serialMatcher(true, pattern, "<<" + m.group() + ">>");
       applyInternalDetectors(m);
       String[] args = new String[arg_indexes == null ? 0 : arg_indexes.length];
       if (arg_indexes != null) {
@@ -58,6 +61,8 @@ public class ProfileDetector implements SerialPortWrapper.Detector {
         Event.send(event, args);
       }
       return line.substring(0, m.start()) + line.substring(m.end());
+    } else {
+      LogWriter.serialMatcher(false, pattern, "");
     }
     return line;
   }

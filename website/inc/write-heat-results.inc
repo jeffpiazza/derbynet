@@ -69,8 +69,8 @@ function write_heat_results($results) {
     // General strategy for problems should be: reject results, but log them
     // somewhere that can be presented on coordinator dashboard.
 
-    if ((isset($_POST['roundid']) && $_POST['roundid'] != $roundid) ||
-        (isset($_POST['heat']) && $_POST['heat'] != $heat)) {
+    if ((isset($_POST['roundid']) && $_POST['roundid'] != $roundid && $_POST['roundid'] != 0) ||
+        (isset($_POST['heat']) && $_POST['heat'] != $heat && $_POST['heat'] != 0)) {
       echo "<failure code='wrong-heat'>Expecting heat results for roundid $roundid and heat $heat</failure>";
       return false;
     }

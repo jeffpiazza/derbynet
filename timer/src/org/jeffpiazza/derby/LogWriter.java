@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 // TODO: Suppress heartbeats with uninteresting responses
 public class LogWriter {
@@ -169,6 +170,8 @@ public class LogWriter {
   protected static final String INCOMING = "<-- ";
   protected static final String OUTGOING = "--> ";
   protected static final String INTERNAL = "INT ";
+  protected static final String MATCHER  = "  M ";
+  protected static final String MATCHER_MATCHED = "* M ";
 
   protected static final String SIMULATION_CHANNEL = "*";
   protected static final String INFO_CHANNEL = "I";
@@ -237,6 +240,17 @@ public class LogWriter {
   public static void serialOut(String s) {
     write(s, SERIAL_CHANNEL, OUTGOING);
     writeRemoteLogFragment(OUTGOING, s);
+  }
+
+  public static void serialMatcher(boolean matched, Pattern pattern,
+                                    String msg) {
+    if (Flag.log_matchers.value()) {
+      String key = matched ? MATCHER_MATCHED : MATCHER;
+      String s = msg.isBlank() ? pattern.toString()
+                               : (pattern.toString() + ": " + msg);
+      write(s, SERIAL_CHANNEL, key);
+      writeRemoteLogFragment(key, s);
+    }
   }
 
   public static void simulationLog(String msg) {
