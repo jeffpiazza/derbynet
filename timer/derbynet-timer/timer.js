@@ -8,11 +8,11 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = async() => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1600,
-    height: 700,
+    height: 800,
     webPreferences: {
       // Apparently no longer needed:
       //   enableBlinkFeatures: 'Serial',
@@ -22,41 +22,15 @@ const createWindow = () => {
     }
   });
 
-  console.log('createWindow method');
+  // The application's request_new_port method, when run as a standalone
+  // application, will call requestPorts repeatedly until it throws.  The
+  // 'select-serial-port' handler, below, will "choose" each available port in
+  // turn until all have been chosen.  It uses this variable to keep track of
+  // which ports have already been chosen.
+  let requestedPorts = [];
 
   mainWindow.webContents.session.on('select-serial-port', (event, portList, webContents, callback) => {
     console.log('SELECT-SERIAL-PORT FIRED WITH', portList);
-
-    mainWindow.webContents.send('serial-ports', portList);
-    console.log('Sent portList on serial-ports channel');
-
-    // webContents.executeJavaScript(codestring, userGesture) -- Not good
-    //
-    // ipcRenderer.on(channel, listener)
-    // ipcRenderer.send(channel, ...args)
-    // ipcRenderer.invoke(channel, ...args) returns Promise for receiving a response
-    // ipcRenderer.postMessage(channel, message) 
-
-    /* SELECT-SERIAL-PORT FIRED WITH [
-  {
-    portId: '4A1BCFB62B8A6BD6ACECFBFC39279F82',
-    portName: 'cu.Bluetooth-Incoming-Port'
-  },
-  {
-    portId: 'EEB852387750551647DDAEDA1DAE7B07',
-    portName: 'cu.usbserial-1410',
-    displayName: 'USB-Serial Controller',
-    vendorId: '1659',
-    productId: '8963',
-    usbDriverName: 'com.apple.DriverKit-AppleUSBPLCOM'
-  }
-*/
-    //Display some type of dialog so that the user can pick a port
-    /*dialog.showMessageBoxSync({
-      ....
-      ...
-      ...
-    });*/
     event.preventDefault();
     
     let selectedPort = portList.find((device) => {      
@@ -64,15 +38,22 @@ const createWindow = () => {
       //return device.vendorId == 0x2341 && device.productId == 0x0043;
 
       // Automatically return the first usbserial device
-      return device.portName.includes("usbserial");
+      // return device.portName.includes("usbserial");
+      if (requestedPorts.includes(device.portId)) {
+        return false;
+      }
+      return true;
     });
+
     if (!selectedPort) {
       callback('')
     } else {
-      callback(selectedPort.portId)
+      requestedPorts.push(selectedPort.portId);
+      callback(selectedPort.portId);
     }
   })
 
+  /*
   mainWindow.webContents.session.on('serial-port-added', (event, port) => {
     console.log('serial-port-added FIRED WITH', port);
     event.preventDefault();
@@ -89,12 +70,24 @@ const createWindow = () => {
     console.log('select-serial-port-cancelled FIRED.');
     mainWindow.webContents.send('serial-ports', 'select-serial-port-cancelled');
   })
+  */
+
+  mainWindow.webContents.session.setPermissionCheckHandler(
+    (webContents, permission, requestingOrigin, details) => {
+      return permission === 'serial'
+    });
+
+  mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+    return details.deviceType === 'serial';
+  });
 
   // and load the index.html of the app.
-  mainWindow.loadFile('src/timer.html')
+  await mainWindow.loadFile('src/timer.html');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
+
+  mainWindow.webContents.executeJavaScript('on_scan_click()', /*userGesture*/true);
 }
 
 
@@ -119,6 +112,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

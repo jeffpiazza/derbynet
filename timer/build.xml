@@ -61,10 +61,10 @@
                     <token key="PHP_END" value="--&gt;"/>
                 </replacetokens>
                 <replacetokens>
-                    <token key="ELECTRON_ONLY_START" value='&lt;script type="text/javascript"&gt;'/>
+                    <token key="ELECTRON_ONLY_START" value=''/>
                 </replacetokens>
                 <replacetokens>
-                    <token key="ELECTRON_ONLY_END" value="&lt;/script&gt;"/>
+                    <token key="ELECTRON_ONLY_END" value=""/>
                 </replacetokens>
           </filterchain>
       </copy>

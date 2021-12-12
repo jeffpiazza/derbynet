@@ -41,12 +41,8 @@ $(function() {
   if (!('serial' in navigator)) {
     $("#no-serial-api").removeClass('hidden');
     show_modal("#no-serial-api-modal");
-  } else {
+  } else if (!g_standalone) {
     setTimeout(async function() {
-      if (g_standalone) {
-        return;
-      }
-
       console.log('timeout upon entry: calling getPorts()');
 
       g_ports = await navigator.serial.getPorts();
@@ -99,22 +95,27 @@ function on_user_profile_selection(event) {
 }
 
 async function request_new_port() {
-  console.log('request_new_port');
   await new Promise((resolve, reject) => {
     $("#second_modal_background").fadeTo(200, 0.75, function() { resolve(1); });
   });
   try {
-    await navigator.serial.requestPort().catch((e) => {
-      console.log('requestPort throws ', e);
-      throw e;
-    });
+    var make_request = true;
+    while (make_request) {
+      make_request = g_standalone;
+      // In browser, ask the user to pick one port.
+      // In standalone, keep going until requestPort() throws (app will try to select every available port)
+      await navigator.serial.requestPort().catch((e) => {
+        // throw e;
+        make_request = false;
+      });
+      g_ports = await navigator.serial.getPorts();
+    }
   } finally {
     $("#second_modal_background").fadeOut(200);
   }
-  g_ports = await navigator.serial.getPorts();
-  console.log('request_new_port is done', g_ports);
 }
 
+// "New Port" button
 async function on_new_port_click() {
   // The "New Port" button forcibly requests a new port even if there are other
   // ports available, so the user gets the chance to choose
@@ -177,6 +178,9 @@ async function on_scan_click() {
 async function on_connect_button(event) {
   event.preventDefault();
   var ui_url = $("#host-url").val() + '/action.php';
+  if (!(ui_url.startsWith("http://") || ui_url.startsWith("https://"))) {
+    ui_url = "http://" + ui_url;
+  }
   if (ui_url != HostPoller.url) {
     HostPoller.url = ui_url;
     await g_role_finder.find_roles();
