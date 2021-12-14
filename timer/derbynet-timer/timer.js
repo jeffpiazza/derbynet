@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
+const debugging = false;
+
 app.commandLine.appendSwitch('enable-features', 'ElectronSerialChooser');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -11,7 +13,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 const createWindow = async() => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1600,
+    width: debugging ? 1600 : 650,
     height: 800,
     webPreferences: {
       // Apparently no longer needed:
@@ -84,8 +86,9 @@ const createWindow = async() => {
   // and load the index.html of the app.
   await mainWindow.loadFile('src/timer.html');
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  if (debugging) {
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.webContents.executeJavaScript('on_scan_click()', /*userGesture*/true);
 }
