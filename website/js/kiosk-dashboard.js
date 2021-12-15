@@ -1,5 +1,10 @@
 var g_unclaimed_scene_kiosk_names;
 
+function on_new_kiosk_window_button() {
+  window.open("kiosk.php?id=%25" + Date.now().toString(32), "_blank");
+}
+$(function() { $("#new_kiosk_window_button").on('click', on_new_kiosk_window_button); });
+
 
 //////////////////////////////////////////////////////////////////////////
 // Polling for kiosk dashboard
@@ -124,7 +129,6 @@ function configure_title_and_class_ids(kiosk, kiosk_select) {
 
 //////////////////////////////////////////////////////////////////////////
 // Construct dynamic elements for kiosk dashboard
-
 //////////////////////////////////////////////////////////////////////////
 // The polling rate for the page is relatively fast, and each time
 // causes a rewrite of everything for all the kiosks.  If the user has
@@ -145,6 +149,10 @@ function hash_string(hash, str) {
 }
 
 function process_polled_data(data) {
+  if (data.hasOwnProperty('outcome') && data.outcome.summary != 'success') {
+    console.log('Failure:', data.outcome);
+    return;
+  }
   var pages = data['kiosk-pages'];
   var kiosks = data['kiosks'];
   for (var i = 0; i < kiosks.length; ++i) {
@@ -213,7 +221,7 @@ function update_kiosk_names(kiosks) {
 
 // Generates a block of controls for a single kiosk.
 // index is just a sequential counter used for making unique control names.
-// kiosk describes the kiosk's state: {name:, address:, last_contact:, page:, parameters:}
+// kiosk describes the kiosk's state: {name:, address:, last_contact:, age:, page:, parameters:}
 // pages is an array of {path:, brief:} objects, as produced by parse_kiosk_pages.
 function generate_kiosk_control(index, kiosk, pages) {
   var kiosk_control = $("<div class=\"block_buttons control_group kiosk_control\"/>");
@@ -227,11 +235,14 @@ function generate_kiosk_control(index, kiosk, pages) {
   kiosk_ident.find(".kiosk_control_address").toggleClass("de-emphasize", kiosk.name.length > 0);
   kiosk_ident.append('<input type="button"'
                      + ' onclick="show_kiosk_naming_modal(\''
-                     + kiosk.address.replace(/"/g, '&quot;').replace(/'/, "\\'")
+                     + (kiosk.address ? kiosk.address.toString().replace(/"/g, '&quot;').replace(/'/, "\\'") : '')
                      + '\', \'' + kiosk.name.replace(/"/g, '&quot;').replace(/'/, "\\'")
                      + '\')"'
                      + ' value="Assign Name"/>');
-  kiosk_ident.append("<p class=\"last_contact\">Last contact: " + kiosk.last_contact + "</p>");
+  if (kiosk.age > 5) {
+    kiosk_ident.append(
+      $("<p class=\"last_contact\"/>").text("Last contact: " + kiosk.age + "s ago"));
+  }
   kiosk_ident.appendTo(kiosk_control);
 
   var kiosk_select = $("<div class='kiosk-select'/>");

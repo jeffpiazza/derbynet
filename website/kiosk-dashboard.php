@@ -116,7 +116,7 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 </div>
 
 <div class="block_buttons" style="width: 300px;">
-  <a class="button_link" href="kiosk.php" target="_blank">New Kiosk Window</a>
+  <input id="new_kiosk_window_button" type="button" value="New Kiosk Window"/>
 </div>
 <?php require_once('inc/ajax-failure.inc'); ?>
 

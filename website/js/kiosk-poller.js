@@ -11,7 +11,7 @@ var KioskPoller = (function(KioskPoller) {
   KioskPoller.param_callback = function(parameters) {
     // console.log("Params: " + param_string);
   };
-  
+
   KioskPoller.start = function(address, kiosk_page) {
     setInterval(function() {
       $.ajax('action.php',

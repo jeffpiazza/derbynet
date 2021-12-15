@@ -102,8 +102,11 @@ function all_kiosks() {
   $kiosks = array();
   try {
     drop_old_kiosks();
+    // Information for "old" kiosks remains in the database but we filter out those we haven't
+    // heard from in 10 minutes
     $stmt = $db->query('SELECT address, name, page, last_contact'
                        .' FROM Kiosks'
+                       .' WHERE '.time().' - last_contact < 600'
                        .' ORDER BY '
                        .'     CASE name WHEN \'Main\' THEN \'\' ELSE name END,'
                        .'        address, last_contact');
@@ -113,6 +116,7 @@ function all_kiosks() {
                         'address' => $row['address'],
                         'last_contact' => $row['last_contact'],
                         'page' => $row['page'],
+                        'age' => time() - $row['last_contact'],
                         'parameters' => $row['params']);
     }
   } catch (PDOException $p) {
@@ -141,18 +145,30 @@ function all_kiosk_pages_with_prefix($prefix) {
   return $entries;
 }
 
-function all_kiosk_pages() {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
-  return array_merge(all_kiosk_pages_with_prefix(
-                       dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.'kiosks'),
-                     all_kiosk_pages_with_prefix($configdir.DIRECTORY_SEPARATOR.'kiosks'));
+function remove_prefixes($prefix, $entries) {
+  $prefix_length = strlen($prefix);
+  foreach ($entries as &$entry) {
+    if (substr_compare($entry['full'], $prefix, 0, $prefix_length) == 0) {
+      $entry['full'] = substr($entry['full'], $prefix_length);
+    }
+  }
+  return $entries;
 }
 
-// "old" kiosks are those that haven't made contact in five minutes --
-// mainly this would be kiosks from testing that we don't want to
-// remain in the database on race day.
+function all_kiosk_pages() {
+  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  return remove_prefixes(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR,
+                         array_merge(all_kiosk_pages_with_prefix(
+                                       dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.'kiosks'),
+                                     all_kiosk_pages_with_prefix($configdir.DIRECTORY_SEPARATOR.'kiosks')));
+}
+
+// Kiosk panes that don't have focus may not check in as often as expected.
+// This function deletes "old" kiosks that haven't made contact for an hour
+// (3600 seconds) -- mainly this would be kiosks from testing that we don't want
+// to remain in the database on race day.
 function drop_old_kiosks() {
   global $db;
-  // TODO $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 30');
+  $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 3600');
 }
 ?>
