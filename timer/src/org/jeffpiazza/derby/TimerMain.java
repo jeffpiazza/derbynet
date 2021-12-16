@@ -97,7 +97,6 @@ public class TimerMain {
 
     Connector connector = new Connector();
 
-    new TriggerFileCallbacks(connector);
     new ObsCallbacks(connector);
 
     if (Flag.insecure.value()) {
