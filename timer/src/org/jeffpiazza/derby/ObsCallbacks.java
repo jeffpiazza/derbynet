@@ -45,7 +45,7 @@ public class ObsCallbacks implements TimerDevice.RaceStartedCallback,
       }
     }
     return new JSONObject()
-        .put("request-type", "TriggerhotkeyBySequence")
+        .put("request-type", "TriggerHotkeyBySequence")
         .put("message-id", "derby-timer-event")
         .put("keyId", flag)
         .toString();
