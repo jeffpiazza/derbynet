@@ -232,7 +232,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
           overdueTime = 0;
         } else {
           overdueTime = System.currentTimeMillis()
-              + Flag.reset_after_start.value();
+              + Flag.reset_after_start.value() * 1000;
         }
         invokeRaceStartedCallback();
         break;
