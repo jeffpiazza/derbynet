@@ -1,8 +1,10 @@
-name: CI
+name: Electron-timer-app
 on:
-  push:
-    branches:
-      - electron
+  workflow_dispatch
+  #push:
+  #  branches:
+  #    - v7.0
+
 jobs:
   build_on_mac:
     runs-on: macOS-latest
