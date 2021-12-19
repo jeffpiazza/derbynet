@@ -47,14 +47,16 @@ jobs:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@master
+    - name: Set up JDK
+      uses: actions/setup-java@v1
       with:
-        ref: feature/github-actions        
+        java-version: 15
     - uses: actions/setup-node@master
       with:
         node-version: 16
 
-    - name: install node tools
-      run: npm install --global --production windows-build-tools@4.0.0
+    #- name: install node tools
+    #  run: npm install --global --production windows-build-tools@4.0.0
 
     - name: ant electron
       run: ant -noinput electron-app
