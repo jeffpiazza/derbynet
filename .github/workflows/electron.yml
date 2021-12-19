@@ -1,0 +1,73 @@
+name: CI
+on:
+  push:
+    branches:
+      - electron
+jobs:
+  build_on_mac:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 15
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+
+    - name: ant electron
+      run: ant -noinput electron-app
+
+    #- name: add key to single keychain
+    #  run: security import ./electron/june-ai-single2-certs-electron.p12 -P ${{ secrets.CSC_KEY_PASSWORD }}
+    #- name: electron mac os security identities
+    #  run: security find-identity -v
+    #- name: Install dependencies
+    #  run: yarn install
+    #- name: Build on MacOS
+    #  env:
+    #    ELECTRON: true
+    #    # APP_VERSION_NUMBER: 0.5.9
+    #  run: yarn build
+    #- name: Build Electron
+    #  env:
+    #    ELECTRON: true
+    #    CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+    #    APP_VERSION_NUMBER: 0.5.9
+    #  run: yarn electron:buildUnix
+
+    - run: ls ./timer/electron
+
+    - run: ls ./timer/electron/dist
+  
+  build_on_win:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: feature/github-actions        
+    - uses: actions/setup-node@master
+      with:
+        node-version: 16
+
+    - name: install node tools
+      run: npm install --global --production windows-build-tools@4.0.0
+
+    - name: ant electron
+      run: ant -noinput electron-app
+
+    #- name: install node-gyp
+    #  run: npm install --global node-gyp@latest
+    #- name: Set node config to use python2.7
+    #  run: npm config set python python2.7
+    #- name: Set node config to set msvs_version to 2015
+    #  run: npm config set msvs_version 2015
+    #- name: Work around for Windows Server 2019
+    #  run: set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
+    #- name: Install dependencies
+    #  run: yarn install
+
+    - run: ls ./timer/electron
+
+    - run: ls ./timer/electron/dist
