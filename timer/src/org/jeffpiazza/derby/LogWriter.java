@@ -246,7 +246,7 @@ public class LogWriter {
                                     String msg) {
     if (Flag.log_matchers.value()) {
       String key = matched ? MATCHER_MATCHED : MATCHER;
-      String s = msg.isBlank() ? pattern.toString()
+      String s = msg.isEmpty() ? pattern.toString()
                                : (pattern.toString() + ": " + msg);
       write(s, SERIAL_CHANNEL, key);
       writeRemoteLogFragment(key, s);

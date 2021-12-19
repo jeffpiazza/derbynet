@@ -126,17 +126,17 @@
 
   <target name="electron-app" depends="prepare-electron"
           description="Builds the stand-alone derbynet-timer app">
-      <exec executable="yarn">
-          <arg value="--cwd"/>
-          <arg value="${electron-dir}"/>
-          <arg value="install"/>
-      </exec>
-      <exec executable="yarn">
-          <arg value="--cwd"/>
-          <arg value="${electron-dir}"/>
-          <arg value="dist"/>
-      </exec>
-      <!-- TODO move ${electron-dir}/out/derbynet-timer-darwin-x64/derbynet-timer.app/ -->
+    <!-- exec under windows won't recognize "yarn", but needs
+         "yarn.cmd" instead.  Other OSes just want plain "yarn". -->
+    <condition property="yarn.cmd" value="yarn.cmd" else="yarn">
+      <os family="windows"/>
+    </condition>
+    <exec executable="${yarn.cmd}" dir="${electron-dir}">
+      <arg value="install"/>
+    </exec>
+    <exec executable="${yarn.cmd}" dir="${electron-dir}">
+      <arg value="dist"/>
+    </exec>
   </target>
 
   <target name="timer-jar" depends="compile"
