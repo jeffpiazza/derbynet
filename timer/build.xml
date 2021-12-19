@@ -12,7 +12,7 @@
   <property name="templates" location="../templates"/>
 
   <property name="derbynet-timer" location="derbynet-timer"/>
-  <property name="forge" location="electron-forge"/>
+  <property name="electron-dir" location="electron"/>
 
   <!-- Should be inherited from invoking task;
        these definitions are only backups -->
@@ -41,18 +41,18 @@
     </javac>
   </target>
 
-  <target name="make-electron-forge">
-      <mkdir dir="${forge}"/>
-      <mkdir dir="${forge}/src"/>
-      <mkdir dir="${forge}/src/css"/>
-      <mkdir dir="${forge}/src/img"/>
-      <mkdir dir="${forge}/src/js"/>
-      <mkdir dir="${forge}/src/js/timer"/>
+  <target name="make-electron-dirs">
+      <mkdir dir="${electron-dir}"/>
+      <mkdir dir="${electron-dir}/src"/>
+      <mkdir dir="${electron-dir}/src/css"/>
+      <mkdir dir="${electron-dir}/src/img"/>
+      <mkdir dir="${electron-dir}/src/js"/>
+      <mkdir dir="${electron-dir}/src/js/timer"/>
   </target>
 
-  <target name="timer.html" depends="make-electron-forge">
+  <target name="timer.html" depends="make-electron-dirs">
       <copy file="${templates}/timer.html"
-            tofile="${forge}/src/timer.html">
+            tofile="${electron-dir}/src/timer.html">
             <filterchain>
                 <replacetokens>
                     <token key="PHP_START" value="&lt;!--"/>
@@ -70,7 +70,7 @@
       </copy>
   </target>
 
-  <target name="timer-profiles" depends="timer-jar, make-electron-forge"
+  <target name="timer-profiles" depends="timer-jar, make-electron-dirs"
           description="Generate timer profiles">
       <!-- java task supposedly supports outputproperty, but it doesn't seem to
            work. -->
@@ -81,7 +81,7 @@
           <arg value="org.jeffpiazza.derby.profiles.AllProfiles"/>
       </exec>
       <copy file="${templates}/timer-profiles.js"
-            tofile="${forge}/src/js/timer/profiles.js" overwrite="true">
+            tofile="${electron-dir}/src/js/timer/profiles.js" overwrite="true">
           <filterchain>
               <replacetokens>
                   <token key="PROFILES" value="${timer-profiles}"/>
@@ -90,11 +90,11 @@
       </copy>
   </target>
 
-  <target name="prepare-electron-forge" depends="make-electron-forge,
+  <target name="prepare-electron" depends="make-electron-dirs,
                                                  timer.html, timer-profiles">
-      <copy file="${derbynet-timer}/package.json" todir="${forge}"/>
-      <copy file="${derbynet-timer}/timer.js" todir="${forge}/src"/>
-      <copy todir="${forge}/src/css">
+      <copy file="${derbynet-timer}/package.json" todir="${electron-dir}"/>
+      <copy file="${derbynet-timer}/timer.js" todir="${electron-dir}/src"/>
+      <copy todir="${electron-dir}/src/css">
           <fileset dir="../website/css">
               <include name="global.css"/>
               <include name="mobile.css"/>
@@ -103,7 +103,7 @@
               <include name="timer.css"/>
           </fileset>
       </copy>
-      <copy todir="${forge}/src/js">
+      <copy todir="${electron-dir}/src/js">
           <fileset dir="../website/js">
               <include name="jquery.js"/>
               <include name="mobile.js"/>
@@ -111,12 +111,12 @@
               <include name="modal.js"/>
           </fileset>
       </copy>
-      <copy todir="${forge}/src/js/timer">
+      <copy todir="${electron-dir}/src/js/timer">
         <fileset dir="${derbynet-timer}/src/js">
             <include name="**"/>
         </fileset>
       </copy>
-      <copy todir="${forge}/src/img">
+      <copy todir="${electron-dir}/src/img">
           <fileset dir="../website/img">
               <include name="derbynet.png"/>
               <include name="status/*.png"/>
@@ -124,19 +124,19 @@
       </copy>
   </target>
 
-  <target name="electron-app" depends="prepare-electron-forge"
+  <target name="electron-app" depends="prepare-electron"
           description="Builds the stand-alone derbynet-timer app">
       <exec executable="yarn">
           <arg value="--cwd"/>
-          <arg value="${forge}"/>
+          <arg value="${electron-dir}"/>
           <arg value="install"/>
       </exec>
       <exec executable="yarn">
           <arg value="--cwd"/>
-          <arg value="${forge}"/>
-          <arg value="make"/>
+          <arg value="${electron-dir}"/>
+          <arg value="dist"/>
       </exec>
-      <!-- TODO move ${forge}/out/derbynet-timer-darwin-x64/derbynet-timer.app/ -->
+      <!-- TODO move ${electron-dir}/out/derbynet-timer-darwin-x64/derbynet-timer.app/ -->
   </target>
 
   <target name="timer-jar" depends="compile"

@@ -21,7 +21,7 @@ testing/*.passwords
 timer/build/
 timer/out/
 timer/dist/
-timer/electron-forge/
+timer/electron/
 timer/.idea/workspace.xml
 timer/.idea/encodings.xml
 
