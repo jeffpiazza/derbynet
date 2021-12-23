@@ -318,6 +318,11 @@ class PhotoRender {
         }
 
         $thumb = imagecreatetruecolor($width, $height);
+        
+        // Alpha channel handling for formats that have them (png)
+        imagealphablending($thumb, false);
+        imagesavealpha($thumb, true);
+
         imagecopyresampled($thumb, $im, 0,0,0,0, $width, $height, $source_width, $source_height);
 
         write_image($thumb, $target_file_path, $image_type);
