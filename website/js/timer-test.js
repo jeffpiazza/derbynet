@@ -251,7 +251,7 @@ function is_in_testing_mode(current) {
     return false;
   }
   return current.roundid == -100 &&
-    current["now-racing"];
+    current["now_racing"];
 }
 function update_testing_mode(current) {
   var should_be_checked = is_in_testing_mode(current);

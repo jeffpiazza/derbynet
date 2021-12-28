@@ -41,7 +41,7 @@ var Lineup = {
     var current = data["current-heat"];
     if (data.hasOwnProperty('timer-trouble')) {
       Overlay.show('#timer_overlay');
-    } else if (!current["now-racing"] && this.ok_to_change()) {
+    } else if (!current["now_racing"] && this.ok_to_change()) {
       Overlay.show('#paused_overlay');
     } else {
       Overlay.clear();
@@ -321,8 +321,6 @@ var Poller = {
   }
 };
 
-// Processes the top-level <now-racing> element.
-//
 // Walks through each of the heat-result {lane= time= place= speed=} elements,
 // in order, building a mapping from the reported place to the matching lane.
 //
