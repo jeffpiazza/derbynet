@@ -39,9 +39,8 @@ jobs:
     #    APP_VERSION_NUMBER: 0.5.9
     #  run: yarn electron:buildUnix
 
-    - run: ls ./timer/electron
-
     - run: ls ./timer/electron/dist
+    - run: ls ./timer/electron/dist/mac
   
   build_on_win:
     runs-on: windows-2016
@@ -72,6 +71,6 @@ jobs:
     #- name: Install dependencies
     #  run: yarn install
 
-    - run: ls ./timer/electron
-
     - run: ls ./timer/electron/dist
+    - run: ls ./timer/electron/dist/win-unpacked
+
