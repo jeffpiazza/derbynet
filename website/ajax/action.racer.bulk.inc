@@ -41,7 +41,7 @@ if ($ok) {
     $where = 'WHERE rankid = :rankid';
     $params[':rankid'] = substr($_POST['who'], 1);
   } else {
-    json_failure('who', "Unrecognized 'who' parameter");
+    json_failure('who', "Unrecognized 'who' parameter: ".$_POST['who']);
     $ok = false;
   }
 }
@@ -67,7 +67,7 @@ if ($ok) {
                                .' SET exclude = :value'
                                .' WHERE racerid = :racerid');
   } else {
-    json_failure('what', "Unrecognized 'what' parameter");
+    json_failure('what', "Unrecognized 'what' parameter: ".$_POST['what']);
     $ok = false;
   }
 }

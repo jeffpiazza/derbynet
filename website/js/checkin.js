@@ -68,8 +68,11 @@ function handlechange_xbs(cb) {
 function on_edit_partition_change(select, partitions_modal) {
   var select = $(select);
   if (select.val() < 0) {
-    // select.val(select.find('option').eq(0).attr('value'));
-    close_modal_leave_background(select);
+    // Close any secondary or tertiary modals, which would be in front of partitions_modal.
+    while (g_modal_dialogs.length > 1) {
+      pop_modal();
+    }
+    close_modal_leave_background(g_modal_dialogs[0]);
     show_modal(partitions_modal);
   }
 }
@@ -78,7 +81,7 @@ function callback_after_partition_modal(op, arg) {
   console.log('callback_after_partition_modal', op, arg);
   if (op == 'add') {  // arg = {partitionid, name}
     var opt = $("<option/>")
-        .attr('value', arg.partitionid)
+      .attr('value', arg.partitionid)
         .text(arg.name);
     opt.appendTo("#edit_partition");
     opt.clone().appendTo("#bulk_who");
@@ -89,7 +92,6 @@ function callback_after_partition_modal(op, arg) {
     divid = -1;
     $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
     $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
-    
   } else if (op == 'delete') {  // arg = {partitionid}
     $("#edit_partition option[value=" + arg.partitionid + "]").remove();
     $("#bulk_who option[value=" + arg.partitionid + "]").remove();
@@ -251,18 +253,18 @@ function show_bulk_form() {
 }
 
 function bulk_check_in(value) {
-  close_modal("#bulk_modal");
+  close_modal_leave_background("#bulk_modal");
   $("#bulk_details_title").text(value ? "Bulk Check-In" : "Bulk Check-In Undo");
   $("#who_label").text(value ? "Check in racers in" : "Undo check-in of racers in");
   $("#bulk_details div.hidable").addClass("hidden");
 
-  show_secondary_modal("#bulk_details_modal", function(event) {
-    close_secondary_modal("#bulk_details_modal");
+  show_modal("#bulk_details_modal", function(event) {
+    close_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'checkin',
-                   who: $("#bulk_who").val(),
+                   who: 'd' + $("#bulk_who").val(),
                    value: value ? 1 : 0},
            });
     return false;
@@ -270,19 +272,19 @@ function bulk_check_in(value) {
 }
 
 function bulk_numbering() {
-  close_modal("#bulk_modal");
+  close_modal_leave_background("#bulk_modal");
   $("#bulk_details_title").text("Bulk Numbering");
   $("#who_label").text("Assign car numbers to");
   $("#bulk_details div.hidable").addClass("hidden");
   $("#numbering_controls").removeClass("hidden");
 
-  show_secondary_modal("#bulk_details_modal", function(event) {
-    close_secondary_modal("#bulk_details_modal");
+  show_modal("#bulk_details_modal", function(event) {
+    close_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'number',
-                   who: $("#bulk_who").val(),
+                   who: 'd' + $("#bulk_who").val(),
                    start: $("#bulk_numbering_start").val(),
                    renumber: $("#renumber").is(':checked') ? 1 : 0},
            });
@@ -292,19 +294,19 @@ function bulk_numbering() {
 }
 
 function bulk_eligibility() {
-  close_modal("#bulk_modal");
+  close_modal_leave_background("#bulk_modal");
   $("#bulk_details_title").text("Bulk Eligibility");
   $("#who_label").text("Change eligibility for");
   $("#bulk_details div.hidable").addClass("hidden");
   $("#elibility_controls").removeClass("hidden");
 
-  show_secondary_modal("#bulk_details_modal", function(event) {
-    close_secondary_modal("#bulk_details_modal");
+  show_modal("#bulk_details_modal", function(event) {
+    close_modal("#bulk_details_modal");
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'eligibility',
-                   who: $("#bulk_who").val(),
+                   who: 'd' + $("#bulk_who").val(),
                    value: $("#bulk_eligible").is(':checked') ? 1 : 0},
            });
     

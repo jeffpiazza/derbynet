@@ -67,6 +67,9 @@ function kiosk_page($addr) {
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $stmt->closeCursor();
       if ($row) {
+        if (!isset($row['name'])) {
+          $row['name'] = '';
+        }
         $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time().' WHERE address = :address');
         $stmt->execute(array(':address' => $addr));
         if (@$row['page']) {
