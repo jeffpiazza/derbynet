@@ -223,7 +223,7 @@ function update_awards(data) {
         }
 
         $(this).find('.votes')
-          .data('votes', awards[i].votes.join(','))
+          .data('votes', awards[i].votes)
           .attr('data-awardid', awards[i].awardid)
           .toggleClass('hidden', awards[i].votes.length == 0);
         
