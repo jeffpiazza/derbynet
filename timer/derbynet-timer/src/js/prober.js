@@ -103,6 +103,8 @@ class Prober {
         }
 
         console.log("Probing for " + prof.name + ' on port ' + porti);
+        g_logger.internal_msg("Probing for " + prof.name + ' on port ' + porti);
+
         $("#profiles-list li").eq(profi).addClass('probing');
 
         var pw = new PortWrapper(port);

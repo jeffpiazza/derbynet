@@ -70,8 +70,6 @@ class TimerProxy {
           await this.poll_gate_once();
         }
 
-        g_logger.poll();
-
         // Avoid polling too often
         var pause_ms = poll_start + kPollIntervalMs - Date.now();
         if (pause_ms > 0) {

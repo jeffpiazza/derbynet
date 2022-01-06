@@ -82,8 +82,8 @@ class PortWrapper {
         }
       }
     } catch (err) {
-      console.log('PortWrapper.readLoop: exited because of caught ' + err);
-      console.log('PortWrapper.readLoop: sending LOST_CONNECTION event');
+      g_logger.internal_msg('PortWrapper.readLoop exited because of caught ' + err);
+      console.log('PortWrapper.readLoop exited because of caught ' + err);
       TimerEvent.send('LOST_CONNECTION', [true, "Read failure: " + err]);
     } finally {
       await this.reader.releaseLock();
@@ -105,7 +105,8 @@ class PortWrapper {
   async checkConnection() {
     var age = Date.now() - this.last_char_received;
     if (age > /*LOST_CONTACT_THRESHOLD*/2000) {
-      console.log('PortWrapper.checkConnection: detects lost connection');
+      g_logger.internal_msg('PortWrapper.checkConnection detects lost connection by inactivity');
+      console.log('PortWrapper.checkConnection detects lost connection by inactivity');
       await this.close();
       TimerEvent.send('LOST_CONNECTION',
                       [true, "No response from timer in " + age + "ms."]);

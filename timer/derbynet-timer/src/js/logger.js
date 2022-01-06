@@ -93,3 +93,4 @@ class Logger {
 }
 
 var g_logger = new Logger(false);
+setInterval(function () { g_logger.poll(); }, 250);
