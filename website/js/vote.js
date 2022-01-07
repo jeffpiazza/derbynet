@@ -174,9 +174,9 @@ function get_ballot() {
             var password_modal_showing =
                 $("#password_modal").closest('.modal_frame').length > 0 &&
                 !$("#password_modal").closest('.modal_frame').is(".hidden");
-            if (data.hasOwnProperty('failure')) {
+            if (data.hasOwnProperty('outcome') && data.outcome.summary == 'failure') {
               $("#awards div[data-awardid]").addClass('hidden');
-              if (data.failure.code == 'password') {
+              if (data.outcome.code == 'password') {
                 if (!password_modal_showing) {
                   show_modal("#password_modal", function() { get_ballot(); return false; });
                 }
