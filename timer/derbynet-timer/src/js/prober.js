@@ -76,8 +76,15 @@ class Prober {
     }
     update_ports_list();
 
+    // If g_ports changes during scan (e.g. via "New Port" button), we want to start the probe over
+    // rather than confuse the UI.
+    var n_ports = g_ports.length;
+
     for (var porti in g_ports) {
       $("#ports-list li").removeClass('probing')
+      if (g_ports.length != n_ports) {
+        break;
+      }
 
       if (this.user_chosen_port >= 0 && this.user_chosen_port != porti) {
         continue;
@@ -88,6 +95,9 @@ class Prober {
       var port = g_ports[porti];
       for (var profi in profiles) {
         $("#profiles-list li").removeClass('probing');
+        if (g_ports.length != n_ports) {
+          break;
+        }
         var prof = profiles[profi];
 
         if (this.user_chosen_profile >= 0) {
@@ -109,10 +119,22 @@ class Prober {
 
         var pw = new PortWrapper(port);
         try {
-          var timer_id = true;
-          await pw.open(prof.params);
+          var opened_ok = true;
+          await pw.open(prof.params)
+            .catch((e) => {
+              g_logger.internal_msg('** Unable to open port ' + porti + ': ' + e);
+              console.log('** Unable to open port ' + porti, e);
+              $("#ports-list li").eq(porti).removeClass('probing').addClass('trouble');
+              opened_ok = false;
+            });
+          if (!opened_ok) {
+            break;  // No more profiles for this port
+          }
 
-          if (prof.hasOwnProperty('prober')) {
+          var timer_id;
+          if (!prof.hasOwnProperty('prober')) {
+            timer_id = true;
+          } else {
             if (prof.prober.hasOwnProperty('pre_probe')) {
               await pw.writeCommandSequence(prof.prober.pre_probe);
               await pw.drain(PRE_PROBE_SETTLE_TIME_MS);

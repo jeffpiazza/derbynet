@@ -31,6 +31,10 @@
   background-color: #f9fc2d;
 }
 
+.scanlist li.trouble {
+  background-color: #ff6060;
+}
+
 .scanlist li.undiscoverable {
   background-color: #cccccc;
 }

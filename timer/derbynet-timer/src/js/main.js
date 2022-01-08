@@ -126,7 +126,14 @@ async function on_new_port_click() {
 
 
 async function update_ports_list() {
-  $("#ports-list").empty();
+  $("#ports-list li").slice(g_ports.length).remove();
+  while ($("#ports-list li").length < g_ports.length) {
+    // If ports have been added, the old ports may not be in the same positions,
+    // so clear the CSS classes to avoid misleading UI.
+    $("#ports-list li").removeClass('trouble probing chosen');
+    $("#ports-list").append($("<li/>")
+                            .on('click', on_user_port_selection));
+  }
   for (var i = 0; i < g_ports.length; ++i) {
     var info = g_ports[i].getInfo();
     var label;
@@ -137,9 +144,7 @@ async function update_ports_list() {
     } else {
       label = 'Built-in port';
     }
-    $("#ports-list").append($("<li/>")
-                            .text(label)
-                            .on('click', on_user_port_selection));
+    $("#ports-list li").eq(i).text(label);
   }
 }
 
