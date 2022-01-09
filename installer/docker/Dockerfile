@@ -13,7 +13,7 @@ RUN apt install -y supervisor
 ##################################################
 # from debian/build.xml (debian-stage-website targe):
 
-ARG WWW_ROOT /var/www/html
+ARG WWW_ROOT=/var/www/html
 
 WORKDIR $WWW_ROOT
 
