@@ -11,7 +11,7 @@ RUN apt install -y nginx ssl-cert
 RUN apt install -y supervisor
 
 ##################################################
-# from debian/build.xml (debian-stage-website targe):
+# from debian/build.xml (debian-stage-website target):
 
 ARG WWW_ROOT=/var/www/html
 
@@ -22,6 +22,10 @@ RUN rm -rf ./local/* ./index*.html
 
 WORKDIR /etc/nginx/derbynet
 COPY installer/nginx-configs/root/ .
+
+# The set-timeout.sh script may be needed to prevent timeouts under automated testing.
+# Under "normal" production use, stock timeouts are probably OK.
+COPY installer/docker/set-timeout.sh /usr/local/bin
 
 ##################################################
 # Post-install actions from Debian derbynet_server installer:
