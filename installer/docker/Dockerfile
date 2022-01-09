@@ -18,7 +18,7 @@ ARG WWW_ROOT=/var/www/html
 WORKDIR $WWW_ROOT
 
 COPY website/ .
-RUN rm -rf ./local/*
+RUN rm -rf ./local/* ./index*.html
 
 WORKDIR /etc/nginx/derbynet
 COPY installer/nginx-configs/root/ .
@@ -65,6 +65,7 @@ RUN sed -i \
     -e 's!# *\(listen 443 ssl .*\)!\1!' \
     -e 's!# *\(listen [::]:443 ssl .*\)!\1!' \
     -e 's!# *\(include snippets/snakeoil.conf;\)!\1!' \
+    -e '/index\.php/! s!\( *index *\)!\1 index.php !' \
     /etc/nginx/sites-available/default
 
 ##################################################

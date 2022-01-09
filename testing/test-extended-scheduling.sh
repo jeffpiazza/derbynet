@@ -4,6 +4,11 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
+# This script imports 200 racers into a partition called TheTwoHundred and tries
+# generating schedules for them.  It doesn't reset the database but it usually
+# doesn't need to: it isn't affected by other partitions/classes/rounds.
+# Resetting the database before running the test works as well.
+
 curl_postj action.php "action=racer.import&firstname=F-1001&lastname=L-1001&partition=TheTwoHundred&carnumber=1001" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=F-1002&lastname=L-1002&partition=TheTwoHundred&carnumber=1002" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=F-1003&lastname=L-1003&partition=TheTwoHundred&carnumber=1003" | check_jsuccess
@@ -232,8 +237,11 @@ curl_postj action.php "action=racer.bulk&what=checkin&value=1&who=c$TWO_HUNDRED_
 
 # 6 lanes, 200 racers, 6 runs each = 1200 heats to schedule
 curl_postj action.php "action=settings.write&n-lanes=6&unused-lane-mask=0" | check_jsuccess
+SCHED_START=$(date +%s)
 # Takes about 15s on my laptop
-curl_postj action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" | check_jsuccess
+curl_postj action.php "action=schedule.generate&n_times_per_lane=6&roundid=$TWO_HUNDRED_ROUNDID" > /dev/null
+echo $(expr $(date +%s) - $SCHED_START) seconds
+check_jsuccess < $DEBUG_CURL
 
 curl_getj "action.php?query=poll.results&roundid=$TWO_HUNDRED_ROUNDID&details" | \
     jq --argjson r $TWO_HUNDRED_ROUNDID '.results | map(select(.roundid == $r)) | length' | \
