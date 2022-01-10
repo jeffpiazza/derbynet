@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2021-11-24T20:29:03.364065776</meta:creation-date><meta:editing-duration>PT18M17S</meta:editing-duration><meta:editing-cycles>4</meta:editing-cycles><meta:generator>LibreOffice/7.1.3.2$MacOSX_X86_64 LibreOffice_project/47f78053abe362b9384784d31a6e56f8511eb1c1</meta:generator><dc:date>2021-11-26T10:42:49.308587834</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="2" meta:paragraph-count="34" meta:word-count="347" meta:character-count="2343" meta:non-whitespace-character-count="2018"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2021-11-24T20:29:02.925694563"/></office:meta>
+ <office:meta><meta:creation-date>2021-11-24T20:29:03.364065776</meta:creation-date><meta:editing-duration>PT21H53M51S</meta:editing-duration><meta:editing-cycles>7</meta:editing-cycles><meta:generator>LibreOffice/7.1.3.2$MacOSX_X86_64 LibreOffice_project/47f78053abe362b9384784d31a6e56f8511eb1c1</meta:generator><dc:date>2022-01-10T16:25:46.533470271</dc:date><meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="2" meta:paragraph-count="41" meta:word-count="415" meta:character-count="2732" meta:non-whitespace-character-count="2349"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2021-11-24T20:29:02.925694563"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">6461</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">9313</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
    <config:config-item config:name="ViewAreaWidth" config:type="long">26603</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">16619</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">15931</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">15136</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">12839</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">20025</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">18994</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">6461</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">9313</config:config-item>
      <config:config-item config:name="VisibleRight" config:type="long">26601</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">23079</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">25243</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -102,7 +102,7 @@
    <config:config-item config:name="SubtractFlysAnchoredAtFlys" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AddParaSpacingToTableCells" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AddExternalLeading" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="Rsid" config:type="int">3013337</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">3321018</config:config-item>
    <config:config-item config:name="AddVerticalFrameOffsets" config:type="boolean">false</config:config-item>
    <config:config-item config:name="TreatSingleColumnBreakAsPageBreak" config:type="boolean">false</config:config-item>
    <config:config-item config:name="IsLabelDocument" config:type="boolean">false</config:config-item>
@@ -206,7 +206,7 @@
   <style:style style:name="Command_20_Line" style:display-name="Command Line" style:family="paragraph" style:parent-style-name="Standard" style:class="text">
    <loext:graphic-properties draw:fill="solid" draw:fill-color="#c0c0c0" draw:opacity="100%"/>
    <style:paragraph-properties fo:margin-left="0.5in" fo:margin-right="0.5in" fo:text-indent="0in" style:auto-text-indent="false" fo:background-color="#c0c0c0"/>
-   <style:text-properties officeooo:rsid="00141019"/>
+   <style:text-properties style:font-name="Courier New" fo:font-family="&apos;Courier New&apos;" style:font-family-generic="modern" style:font-pitch="variable" officeooo:rsid="00141019"/>
   </style:style>
   <style:style style:name="Quotations" style:family="paragraph" style:parent-style-name="Standard" style:class="html">
    <style:paragraph-properties fo:margin-left="0.3937in" fo:margin-right="0.3937in" fo:margin-top="0in" fo:margin-bottom="0.1965in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
@@ -309,112 +309,153 @@
    <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002c8fa8"/>
   </style:style>
   <style:style style:name="P4" style:family="paragraph" style:parent-style-name="Command_20_Line">
-   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.0217in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
-   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c"/>
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
   <style:style style:name="P5" style:family="paragraph" style:parent-style-name="Command_20_Line">
-   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.0217in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
-   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="0024a352"/>
-  </style:style>
-  <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Standard">
-   <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
-  </style:style>
-  <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Subtitle">
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0022c2cf"/>
-  </style:style>
-  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="0023672b"/>
-  </style:style>
-  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c"/>
-  </style:style>
-  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:paragraph-rsid="002b146c"/>
-  </style:style>
-  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
-   <style:paragraph-properties style:page-number="auto"/>
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
-   <style:paragraph-properties style:page-number="auto"/>
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Command_20_Line">
    <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
    <style:text-properties style:font-name="Courier New" officeooo:rsid="002c8fa8" officeooo:paragraph-rsid="002c8fa8"/>
   </style:style>
-  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Command_20_Line">
+  <style:style style:name="P6" style:family="paragraph" style:parent-style-name="Command_20_Line">
    <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
    <style:text-properties style:font-name="Courier New" officeooo:rsid="002c8fa8" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Command_20_Line">
-   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
-   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002dfad9"/>
+  <style:style style:name="P7" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.0217in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c"/>
   </style:style>
-  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Command_20_Line">
+  <style:style style:name="P8" style:family="paragraph" style:parent-style-name="Command_20_Line">
    <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.0217in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
    <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="0024a352"/>
   </style:style>
-  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Command_20_Line">
+  <style:style style:name="P9" style:family="paragraph" style:parent-style-name="Command_20_Line">
    <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.0217in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
    <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Heading_20_1">
-   <style:text-properties officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="002ccc0b"/>
+  <style:style style:name="P10" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
   </style:style>
-  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Heading_20_1">
-   <style:text-properties officeooo:paragraph-rsid="002ccc0b"/>
-  </style:style>
-  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P11" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L4">
+  <style:style style:name="P12" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L4">
+  <style:style style:name="P13" style:family="paragraph" style:parent-style-name="Standard">
    <style:text-properties officeooo:rsid="002dfad9" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P14" style:family="paragraph" style:parent-style-name="Subtitle">
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P15" style:family="paragraph" style:parent-style-name="Subtitle">
+   <style:text-properties fo:font-size="16pt" fo:font-style="italic" officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2" style:font-size-asian="16pt" style:font-style-asian="italic" style:font-size-complex="16pt" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P16" style:family="paragraph" style:parent-style-name="Subtitle">
+   <style:text-properties fo:font-size="16pt" fo:font-style="italic" officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="0020c9a2" style:font-size-asian="16pt" style:font-style-asian="italic" style:font-size-complex="16pt" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="P17" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P18" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0022c2cf"/>
+  </style:style>
+  <style:style style:name="P19" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="002ccc0b"/>
+  </style:style>
+  <style:style style:name="P20" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P21" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="0023672b"/>
+  </style:style>
+  <style:style style:name="P22" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P23" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P24" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P25" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="002ccc0b"/>
+  </style:style>
+  <style:style style:name="P26" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="">
+   <style:paragraph-properties style:page-number="auto"/>
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Heading_20_1">
+   <style:text-properties officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="002ccc0b"/>
+  </style:style>
+  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Heading_20_1">
+   <style:text-properties officeooo:paragraph-rsid="002ccc0b"/>
+  </style:style>
+  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-left="0.4925in" fo:margin-right="0in" fo:text-indent="0in" style:auto-text-indent="false"/>
    <style:text-properties officeooo:rsid="002dfad9" officeooo:paragraph-rsid="002dfad9"/>
   </style:style>
-  <style:style style:name="P27" style:family="paragraph" style:parent-style-name="Standard">
+  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Standard">
    <style:paragraph-properties fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false"/>
    <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
   </style:style>
-  <style:style style:name="P28" style:family="paragraph" style:parent-style-name="Subtitle">
-   <style:text-properties fo:font-size="16pt" fo:font-style="italic" officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2" style:font-size-asian="16pt" style:font-style-asian="italic" style:font-size-complex="16pt" style:font-style-complex="italic"/>
-  </style:style>
-  <style:style style:name="P29" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:paragraph-rsid="0020c9a2"/>
-  </style:style>
-  <style:style style:name="P30" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="0023672b"/>
-  </style:style>
-  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
-  </style:style>
-  <style:style style:name="P32" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
-   <style:text-properties officeooo:paragraph-rsid="002b146c"/>
-  </style:style>
-  <style:style style:name="P33" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="002ccc0b"/>
-  </style:style>
-  <style:style style:name="P34" style:family="paragraph" style:parent-style-name="Text_20_body">
-   <style:text-properties officeooo:rsid="002ccc0b" officeooo:paragraph-rsid="002ccc0b"/>
-  </style:style>
-  <style:style style:name="P35" style:family="paragraph" style:parent-style-name="Text_20_body">
+  <style:style style:name="P31" style:family="paragraph" style:parent-style-name="Text_20_body">
    <style:paragraph-properties fo:margin-top="0.0398in" fo:margin-bottom="0.1366in" style:contextual-spacing="false"/>
    <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0022c2cf"/>
+  </style:style>
+  <style:style style:name="P32" style:family="paragraph" style:parent-style-name="Title" style:master-page-name="Standard">
+   <style:paragraph-properties style:page-number="auto"/>
+   <style:text-properties officeooo:rsid="0020c9a2" officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P33" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New" fo:font-style="normal" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="P34" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P35" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New"/>
+  </style:style>
+  <style:style style:name="P36" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties officeooo:rsid="0031356d" officeooo:paragraph-rsid="0032acba"/>
+  </style:style>
+  <style:style style:name="P37" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:margin-top="0in" fo:margin-bottom="0.1402in" style:contextual-spacing="false" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b" officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P38" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:paragraph-properties fo:margin-left="0.9846in" fo:margin-right="0.5in" fo:text-indent="0in" style:auto-text-indent="false"/>
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="002ef348" officeooo:paragraph-rsid="002ef348"/>
+  </style:style>
+  <style:style style:name="P39" style:family="paragraph" style:parent-style-name="Standard" style:list-style-name="L3">
+   <style:text-properties officeooo:rsid="002dfad9" officeooo:paragraph-rsid="002dfad9"/>
+  </style:style>
+  <style:style style:name="P40" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:paragraph-rsid="0020c9a2"/>
+  </style:style>
+  <style:style style:name="P41" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="002b146c" officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P42" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L2">
+   <style:text-properties officeooo:paragraph-rsid="002b146c"/>
+  </style:style>
+  <style:style style:name="P43" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="0023672b" officeooo:paragraph-rsid="0023672b"/>
+  </style:style>
+  <style:style style:name="P44" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
+   <style:text-properties officeooo:paragraph-rsid="002ef348"/>
+  </style:style>
+  <style:style style:name="P45" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L4">
+   <style:text-properties officeooo:rsid="002ef348" officeooo:paragraph-rsid="002ef348"/>
+  </style:style>
+  <style:style style:name="P46" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
+   <style:text-properties officeooo:paragraph-rsid="002f5a6d"/>
+  </style:style>
+  <style:style style:name="P47" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L7">
+   <style:text-properties officeooo:rsid="0032acba" officeooo:paragraph-rsid="0032acba"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="0020c9a2"/>
@@ -432,34 +473,79 @@
    <style:text-properties officeooo:rsid="0024a352"/>
   </style:style>
   <style:style style:name="T6" style:family="text">
-   <style:text-properties fo:font-weight="normal" officeooo:rsid="002b146c" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+   <style:text-properties fo:font-weight="normal" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T7" style:family="text">
-   <style:text-properties fo:font-weight="normal" officeooo:rsid="0025f4a4" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="002b146c" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T8" style:family="text">
-   <style:text-properties officeooo:rsid="0025f4a4"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="0025f4a4" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T9" style:family="text">
-   <style:text-properties officeooo:rsid="00296499"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="002ef348" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T10" style:family="text">
-   <style:text-properties officeooo:rsid="002b146c"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="002f5a6d" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T11" style:family="text">
-   <style:text-properties fo:font-weight="bold" officeooo:rsid="002b146c" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+   <style:text-properties fo:font-weight="normal" officeooo:rsid="0031356d" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
   </style:style>
   <style:style style:name="T12" style:family="text">
-   <style:text-properties officeooo:rsid="002c8fa8"/>
+   <style:text-properties officeooo:rsid="0025f4a4"/>
   </style:style>
   <style:style style:name="T13" style:family="text">
-   <style:text-properties officeooo:rsid="002ccc0b"/>
+   <style:text-properties officeooo:rsid="00296499"/>
   </style:style>
   <style:style style:name="T14" style:family="text">
-   <style:text-properties fo:color="#345a8a" loext:opacity="100%" style:font-name="Calibri" fo:font-size="16pt" fo:font-weight="bold" style:font-name-asian="ＭＳ ゴシック" style:font-size-asian="16pt" style:font-weight-asian="bold" style:font-name-complex="Tahoma" style:font-size-complex="16pt" style:font-weight-complex="bold"/>
+   <style:text-properties officeooo:rsid="002b146c"/>
   </style:style>
   <style:style style:name="T15" style:family="text">
+   <style:text-properties fo:font-weight="bold" officeooo:rsid="002b146c" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="T16" style:family="text">
+   <style:text-properties officeooo:rsid="002c8fa8"/>
+  </style:style>
+  <style:style style:name="T17" style:family="text">
+   <style:text-properties officeooo:rsid="002ccc0b"/>
+  </style:style>
+  <style:style style:name="T18" style:family="text">
+   <style:text-properties fo:color="#345a8a" loext:opacity="100%" style:font-name="Calibri" fo:font-size="16pt" fo:font-weight="bold" style:font-name-asian="ＭＳ ゴシック" style:font-size-asian="16pt" style:font-weight-asian="bold" style:font-name-complex="Tahoma" style:font-size-complex="16pt" style:font-weight-complex="bold"/>
+  </style:style>
+  <style:style style:name="T19" style:family="text">
    <style:text-properties officeooo:rsid="002dfad9"/>
+  </style:style>
+  <style:style style:name="T20" style:family="text">
+   <style:text-properties fo:font-style="italic" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T21" style:family="text">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="0024a352" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T22" style:family="text">
+   <style:text-properties fo:font-style="italic" officeooo:rsid="0031356d" style:font-style-asian="italic" style:font-style-complex="italic"/>
+  </style:style>
+  <style:style style:name="T23" style:family="text">
+   <style:text-properties officeooo:rsid="002ef348"/>
+  </style:style>
+  <style:style style:name="T24" style:family="text">
+   <style:text-properties officeooo:rsid="0031356d"/>
+  </style:style>
+  <style:style style:name="T25" style:family="text">
+   <style:text-properties style:font-name="Courier New" fo:font-weight="normal" officeooo:rsid="0031356d" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+  </style:style>
+  <style:style style:name="T26" style:family="text">
+   <style:text-properties style:font-name="Courier New" fo:font-weight="normal" officeooo:rsid="002f5a6d" style:font-weight-asian="normal" style:font-weight-complex="normal"/>
+  </style:style>
+  <style:style style:name="T27" style:family="text">
+   <style:text-properties fo:font-style="normal" style:font-style-asian="normal" style:font-style-complex="normal"/>
+  </style:style>
+  <style:style style:name="T28" style:family="text">
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0023672b"/>
+  </style:style>
+  <style:style style:name="T29" style:family="text">
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0031356d"/>
+  </style:style>
+  <style:style style:name="T30" style:family="text">
+   <style:text-properties style:font-name="Courier New" officeooo:rsid="0024a352"/>
   </style:style>
   <text:list-style style:name="L1">
    <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
@@ -566,58 +652,266 @@
    </text:list-level-style-bullet>
   </text:list-style>
   <text:list-style style:name="L3">
-   <text:list-level-style-bullet text:level="1" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="2" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="3" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="4" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="5" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="6" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="7" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="8" text:style-name="Bullet_20_Symbols" text:bullet-char="◦">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="9" text:style-name="Bullet_20_Symbols" text:bullet-char="▪">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
-   <text:list-level-style-bullet text:level="10" text:style-name="Bullet_20_Symbols" text:bullet-char="•">
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
     </style:list-level-properties>
-   </text:list-level-style-bullet>
+   </text:list-level-style-number>
   </text:list-style>
   <text:list-style style:name="L4">
+   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix=")" style:num-format="a">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+  </text:list-style>
+  <text:list-style style:name="L5">
+   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix=")" style:num-format="a">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix=")" style:num-format="a">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+  </text:list-style>
+  <text:list-style style:name="L6">
+   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+  </text:list-style>
+  <text:list-style style:name="L7">
+   <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="2" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.75in" fo:text-indent="-0.25in" fo:margin-left="0.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="3" text:style-name="Numbering_20_Symbols" style:num-suffix=")" style:num-format="a">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1in" fo:text-indent="-0.25in" fo:margin-left="1in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="4" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.25in" fo:text-indent="-0.25in" fo:margin-left="1.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="5" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.5in" fo:text-indent="-0.25in" fo:margin-left="1.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="6" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="1.75in" fo:text-indent="-0.25in" fo:margin-left="1.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="7" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2in" fo:text-indent="-0.25in" fo:margin-left="2in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="8" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.25in" fo:text-indent="-0.25in" fo:margin-left="2.25in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="9" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.5in" fo:text-indent="-0.25in" fo:margin-left="2.5in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+   <text:list-level-style-number text:level="10" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
+    <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
+     <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="2.75in" fo:text-indent="-0.25in" fo:margin-left="2.75in"/>
+    </style:list-level-properties>
+   </text:list-level-style-number>
+  </text:list-style>
+  <text:list-style style:name="L8">
    <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" style:num-suffix="." style:num-format="1">
     <style:list-level-properties text:list-level-position-and-space-mode="label-alignment">
      <style:list-level-label-alignment text:label-followed-by="listtab" text:list-tab-stop-position="0.5in" fo:text-indent="-0.25in" fo:margin-left="0.5in"/>
@@ -689,76 +983,143 @@
     <text:sequence-decl text:display-outline-level="0" text:name="Drawing"/>
     <text:sequence-decl text:display-outline-level="0" text:name="Figure"/>
    </text:sequence-decls>
-   <text:p text:style-name="P15"><text:span text:style-name="T2">Running</text:span> DerbyNet as a Docker Image</text:p>
-   <text:p text:style-name="P28"><text:span text:style-name="T13">Preliminary</text:span></text:p>
-   <text:h text:style-name="P21" text:outline-level="1">Running a DerbyNet Docker image on Your Laptop or Desktop</text:h>
-   <text:p text:style-name="P35">As an alternative to natively installing DerbyNet on a Windows or Mac machine, you can instead run DerbyNet as a <text:span text:style-name="T15">d</text:span><text:span text:style-name="T3">ocker </text:span>container. <text:s/><text:span text:style-name="T3">Docker is a technology for isolating an application in a self-contained bundle. <text:s/>For an application like</text:span> DerbyNet, <text:span text:style-name="T3">built</text:span> around a web server, <text:span text:style-name="T15">d</text:span>ocker technology is a good fit, and can be significantly easier to use than the <text:span text:style-name="T3">native web server. <text:s/>There are just these steps:</text:span></text:p>
-   <text:list xml:id="list1901781045" text:style-name="L1">
+   <text:p text:style-name="P32"><text:span text:style-name="T2">Running</text:span> DerbyNet as a Docker Image</text:p>
+   <text:p text:style-name="P16">Preliminary</text:p>
+   <text:h text:style-name="P27" text:outline-level="1">Running a DerbyNet Docker image on Your Laptop or Desktop</text:h>
+   <text:p text:style-name="P31">As an alternative to natively installing DerbyNet on a Windows or Mac machine, you can instead run DerbyNet as a <text:span text:style-name="T19">d</text:span><text:span text:style-name="T3">ocker </text:span>container. <text:s/><text:span text:style-name="T3">Docker is a technology for isolating an application in a self-contained bundle. <text:s/>For an application like</text:span> DerbyNet, <text:span text:style-name="T3">built</text:span> around a web server, <text:span text:style-name="T19">d</text:span>ocker technology is a good fit, and can be significantly easier to use than the <text:span text:style-name="T3">native web server. <text:s/>There are just these steps:</text:span></text:p>
+   <text:list xml:id="list3554198748" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P29"><text:span text:style-name="T1">From your Windows or Mac machine, visit </text:span><text:a xlink:type="simple" xlink:href="https://www.docker.com/get-started" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T1">https://www.docker.com/get-started</text:span></text:a><text:span text:style-name="T1"> to download and install the Docker Desktop application. <text:s/>(You can sign up or not for a Docker Hub account; you don’t need one for our purposes.)</text:span></text:p>
+     <text:p text:style-name="P40"><text:span text:style-name="T1">From your Windows or Mac machine, visit </text:span><text:a xlink:type="simple" xlink:href="https://www.docker.com/get-started" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T1">https://www.docker.com/get-started</text:span></text:a><text:span text:style-name="T1"> to download and install the Docker Desktop application. <text:s/>(You can sign up or not for a Docker Hub account; you don’t need one for our purposes.)</text:span></text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P31">Start the DerbyNet server with one of the following methods:</text:p>
+     <text:p text:style-name="P41">Start the DerbyNet server with one of the following methods:</text:p>
     </text:list-item>
    </text:list>
-   <text:list xml:id="list2491319727" text:style-name="L2">
+   <text:list xml:id="list3456717950" text:style-name="L2">
     <text:list-item>
      <text:list>
       <text:list-item>
-       <text:p text:style-name="P32"><text:span text:style-name="T6">On </text:span><text:span text:style-name="T11">Windows</text:span><text:span text:style-name="T6">, open a CMD window and enter the following command:</text:span></text:p>
+       <text:p text:style-name="P42"><text:span text:style-name="T9">On </text:span><text:span text:style-name="T15">Windows</text:span><text:span text:style-name="T7">, open a CMD window and enter the following command</text:span><text:span text:style-name="T10">s</text:span><text:span text:style-name="T7">:</text:span></text:p>
       </text:list-item>
      </text:list>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P1">docker run -p 80:80 -p 443:443 <text:span text:style-name="T5">\</text:span></text:p>
-   <text:p text:style-name="P1"><text:tab/>-<text:span text:style-name="T5">v (path-to-data):/var/lib/derbynet \</text:span></text:p>
-   <text:p text:style-name="P1"><text:tab/>-<text:span text:style-name="T8">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
-   <text:p text:style-name="P4"><text:span text:style-name="T6"><text:tab/></text:span><text:span text:style-name="T7">jeffpiazza</text:span><text:span text:style-name="T6">/derbynet_server</text:span></text:p>
-   <text:list xml:id="list104251540911133" text:continue-numbering="true" text:style-name="L2">
+   <text:list xml:id="list3573869370" text:style-name="L7">
     <text:list-item>
      <text:list>
       <text:list-item>
-       <text:p text:style-name="P32"><text:span text:style-name="T4">O</text:span><text:span text:style-name="T10">n </text:span><text:span text:style-name="T11">macOS, </text:span><text:span text:style-name="T6">open </text:span><text:span text:style-name="T4">Terminal, and enter the following command:</text:span></text:p>
+       <text:list>
+        <text:list-item>
+         <text:p text:style-name="P46"><text:span text:style-name="T10">Identify or create a directory in which to store data. <text:s/>Any directory will do; we’ll </text:span><text:span text:style-name="T11">use</text:span><text:span text:style-name="T10"> ‘</text:span><text:span text:style-name="T25">path\to\</text:span><text:span text:style-name="T26">derbynet</text:span><text:span text:style-name="T10">’:</text:span></text:p>
+        </text:list-item>
+       </text:list>
       </text:list-item>
      </text:list>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P16">mkdir ~/Public/DerbyNet</text:p>
-   <text:p text:style-name="P3">docker run -p 80:80 -p 443:443 <text:span text:style-name="T5">\</text:span></text:p>
-   <text:p text:style-name="P2"><text:tab/>-<text:span text:style-name="T5">v </text:span><text:span text:style-name="T12">~/Public/DerbyNet</text:span><text:span text:style-name="T5">:/var/lib/derbynet \</text:span></text:p>
-   <text:p text:style-name="P2"><text:tab/>-<text:span text:style-name="T8">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
-   <text:p text:style-name="P5"><text:tab/><text:span text:style-name="T8">jeffpiazza</text:span>/derbynet_server</text:p>
-   <text:p text:style-name="P27"/>
-   <text:list xml:id="list104250220895602" text:continue-list="list1901781045" text:style-name="L1">
+   <text:p text:style-name="P36"><text:span text:style-name="T10">mkdir path\to\derbynet\data</text:span></text:p>
+   <text:list xml:id="list162547525991890" text:continue-numbering="true" text:style-name="L7">
     <text:list-item>
-     <text:p text:style-name="P30">To stop the DerbyNet server, open the Docker Desktop application, find the running container, and delete it. <text:s/><text:span text:style-name="T9">Alternatively, you can use this command from the command line:</text:span></text:p>
+     <text:list>
+      <text:list-item>
+       <text:list>
+        <text:list-item>
+         <text:p text:style-name="P47"><text:span text:style-name="T10">S</text:span><text:span text:style-name="T6">tart the docker image:</text:span></text:p>
+        </text:list-item>
+       </text:list>
+      </text:list-item>
+     </text:list>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P34"><text:span text:style-name="T28">docker run -</text:span><text:span text:style-name="T29">d </text:span><text:span text:style-name="T28">-p 80:80 -p 443:443 </text:span><text:span text:style-name="T30">\</text:span></text:p>
+   <text:p text:style-name="P33"><text:tab/>-<text:span text:style-name="T5">v </text:span><text:span text:style-name="T24">path\to\derbynet\data</text:span><text:span text:style-name="T5">:/var/lib/derbynet \</text:span></text:p>
+   <text:p text:style-name="P1"><text:tab/>-<text:span text:style-name="T12">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
+   <text:p text:style-name="P37"><text:span text:style-name="T7"><text:tab/></text:span><text:span text:style-name="T8">jeffpiazza</text:span><text:span text:style-name="T7">/derbynet_server</text:span></text:p>
+   <text:list xml:id="list162548088460090" text:continue-list="list3456717950" text:style-name="L2">
+    <text:list-item>
+     <text:list>
+      <text:list-item>
+       <text:p text:style-name="P42"><text:span text:style-name="T4">O</text:span><text:span text:style-name="T14">n </text:span><text:span text:style-name="T15">macOS, </text:span><text:span text:style-name="T7">open </text:span><text:span text:style-name="T4">Terminal, and enter the following command</text:span><text:span text:style-name="T23">s</text:span><text:span text:style-name="T4">:</text:span></text:p>
+      </text:list-item>
+     </text:list>
+    </text:list-item>
+   </text:list>
+   <text:list xml:id="list1280188936" text:style-name="L4">
+    <text:list-item>
+     <text:list>
+      <text:list-item>
+       <text:list>
+        <text:list-item>
+         <text:p text:style-name="P44"><text:span text:style-name="T23">If Apache web server is running, it needs to be stopped so as not to compete for ports 80 and 443:</text:span></text:p>
+        </text:list-item>
+       </text:list>
+      </text:list-item>
+     </text:list>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P38">sudo apachectl graceful-stop</text:p>
+   <text:list xml:id="list162546831499851" text:continue-numbering="true" text:style-name="L4">
+    <text:list-item>
+     <text:list>
+      <text:list-item>
+       <text:list>
+        <text:list-item>
+         <text:p text:style-name="P45">If necessary, create a directory in which to store data:</text:p>
+        </text:list-item>
+       </text:list>
+      </text:list-item>
+     </text:list>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P35">mkdir ~/Public/DerbyNet</text:p>
+   <text:list xml:id="list162547016755307" text:continue-numbering="true" text:style-name="L4">
+    <text:list-item>
+     <text:list>
+      <text:list-item>
+       <text:list>
+        <text:list-item>
+         <text:p text:style-name="P44"><text:span text:style-name="T23">Start the docker image: </text:span></text:p>
+        </text:list-item>
+       </text:list>
+      </text:list-item>
+     </text:list>
+    </text:list-item>
+   </text:list>
+   <text:p text:style-name="P3">docker run -<text:span text:style-name="T24">d </text:span>-p 80:80 -p 443:443 <text:span text:style-name="T5">\</text:span></text:p>
+   <text:p text:style-name="P2"><text:tab/>-<text:span text:style-name="T5">v </text:span><text:span text:style-name="T16">~/Public/DerbyNet</text:span><text:span text:style-name="T5">:/var/lib/derbynet \</text:span></text:p>
+   <text:p text:style-name="P2"><text:tab/>-<text:span text:style-name="T12">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
+   <text:p text:style-name="P8"><text:tab/><text:span text:style-name="T12">jeffpiazza</text:span>/derbynet_server</text:p>
+   <text:p text:style-name="P30"/>
+   <text:list xml:id="list162546799950199" text:continue-list="list3554198748" text:style-name="L1">
+    <text:list-item>
+     <text:p text:style-name="P43"><text:soft-page-break/>To stop the DerbyNet server, open the Docker Desktop application, find the running container, and delete it. <text:s/><text:span text:style-name="T13">Alternatively, you can use this command from the command line:</text:span></text:p>
     </text:list-item>
    </text:list>
    <text:p text:style-name="Command_20_Line">docker stop `docker ps --filter ancestor=derbynet_server --format &quot;{{.ID}}&quot;`</text:p>
-   <text:h text:style-name="P21" text:outline-level="1">Deploying Docker Container With <text:span text:style-name="T14">An Existing Web Site</text:span></text:h>
-   <text:p text:style-name="P23">If your organization already has a web site and you wish to use a <text:span text:style-name="T15">d</text:span>ocker image to add DerbyNet access as part of that web site, <text:span text:style-name="T15">follow these steps:</text:span></text:p>
-   <text:list xml:id="list882741105" text:style-name="L4">
+   <text:h text:style-name="P27" text:outline-level="1">Deploying Docker Container With <text:span text:style-name="T18">An Existing Web Site</text:span></text:h>
+   <text:p text:style-name="P11">If your organization already has a web site and you wish to use a <text:span text:style-name="T19">d</text:span>ocker image to add DerbyNet access as part of that web site, <text:span text:style-name="T19">follow these steps:</text:span></text:p>
+   <text:list xml:id="list1173718695" text:style-name="L3">
     <text:list-item>
-     <text:p text:style-name="P24"><text:span text:style-name="T15">Run the docker container so that the container port 80 is exposed only on local loopback interface, on port 8000, for example:</text:span></text:p>
+     <text:p text:style-name="P39">Run the docker container so that the container port 80 is exposed only on local loopback interface, on port 8000, for example:</text:p>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P17">mkdir /<text:span text:style-name="T15">var/lib/derbynet</text:span></text:p>
-   <text:p text:style-name="P18">docker run -p <text:span text:style-name="T15">127.0.0.1:</text:span>80<text:span text:style-name="T15">00</text:span>:80 <text:span text:style-name="T5">\</text:span></text:p>
-   <text:p text:style-name="P18"><text:tab/>-<text:span text:style-name="T5">v /</text:span><text:span text:style-name="T15">var/lib/derbynet</text:span><text:span text:style-name="T5">:/var/lib/derbynet \</text:span></text:p>
-   <text:p text:style-name="P18"><text:soft-page-break/><text:tab/>-<text:span text:style-name="T8">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
-   <text:p text:style-name="P20"><text:tab/><text:span text:style-name="T8">jeffpiazza</text:span>/derbynet_server</text:p>
-   <text:p text:style-name="P26">It’s not necessary or useful to expose the container’s port 443 in this configuration.</text:p>
-   <text:list xml:id="list104250255194792" text:continue-numbering="true" text:style-name="L4">
+   <text:p text:style-name="P6">mkdir /<text:span text:style-name="T19">var/lib/derbynet</text:span></text:p>
+   <text:p text:style-name="P4">docker run -p <text:span text:style-name="T19">127.0.0.1:</text:span>80<text:span text:style-name="T19">00</text:span>:80 <text:span text:style-name="T5">\</text:span></text:p>
+   <text:p text:style-name="P4"><text:tab/>-<text:span text:style-name="T5">v /</text:span><text:span text:style-name="T19">var/lib/derbynet</text:span><text:span text:style-name="T5">:/var/lib/derbynet \</text:span></text:p>
+   <text:p text:style-name="P4"><text:tab/>-<text:span text:style-name="T12">v /etc/localtime:/etc/localtime:ro \</text:span></text:p>
+   <text:p text:style-name="P9"><text:tab/><text:span text:style-name="T12">jeffpiazza</text:span>/derbynet_server</text:p>
+   <text:p text:style-name="P29">It’s not necessary or useful to expose the container’s port 443 in this configuration.</text:p>
+   <text:list xml:id="list162548164322980" text:continue-numbering="true" text:style-name="L3">
     <text:list-item>
-     <text:p text:style-name="P25">Configure your web server to forward DerbyNet requests to the container port. <text:s/>Here’s an (untested) nginx example:</text:p>
+     <text:p text:style-name="P39">Configure your web server to forward DerbyNet requests to the container port. <text:s/>Here’s an (untested) nginx example:</text:p>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P17">location /my-derbynet {</text:p>
-   <text:p text:style-name="P17"><text:s text:c="4"/>proxy_pass <text:s/>http://127.0.0.1:<text:span text:style-name="T15">8</text:span>000/;</text:p>
-   <text:p text:style-name="P17">}</text:p>
-   <text:h text:style-name="P22" text:outline-level="1"><text:span text:style-name="T13">Acknowledgement</text:span></text:h>
-   <text:p text:style-name="P33"><text:span text:style-name="T13">Kudos to </text:span>Mitchell Riley <text:span text:style-name="T13">for breaking ground on a DerbyNet server docker image! <text:s/>(</text:span><text:a xlink:type="simple" xlink:href="https://hub.docker.com/u/mitchellriley" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T13">https://hub.docker.com/u/mitchellriley</text:span></text:a><text:span text:style-name="T13">)</text:span></text:p>
-   <text:p text:style-name="P33"/>
+   <text:p text:style-name="P6">location /my-derbynet {</text:p>
+   <text:p text:style-name="P6"><text:s text:c="4"/>proxy_pass <text:s/>http://127.0.0.1:<text:span text:style-name="T19">8</text:span>000/;</text:p>
+   <text:p text:style-name="P6">}</text:p>
+   <text:h text:style-name="P27" text:outline-level="1">Acknowledgement</text:h>
+   <text:p text:style-name="P19"><text:span text:style-name="T17">Kudos to </text:span>Mitchell Riley <text:span text:style-name="T17">for breaking ground on a DerbyNet server docker image! <text:s/>(</text:span><text:a xlink:type="simple" xlink:href="https://hub.docker.com/u/mitchellriley" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T17">https://hub.docker.com/u/mitchellriley</text:span></text:a><text:span text:style-name="T17">)</text:span></text:p>
+   <text:p text:style-name="P19"/>
   </office:text>
  </office:body>
 </office:document>
