@@ -252,6 +252,13 @@ function show_bulk_form() {
   });
 }
 
+function bulk_who_value() {
+  if ($("#bulk_who").val() == 'all') {
+    return 'all';
+  }
+  return 'd' + $("#bulk_who").val();
+}
+
 function bulk_check_in(value) {
   close_modal_leave_background("#bulk_modal");
   $("#bulk_details_title").text(value ? "Bulk Check-In" : "Bulk Check-In Undo");
@@ -264,7 +271,7 @@ function bulk_check_in(value) {
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'checkin',
-                   who: 'd' + $("#bulk_who").val(),
+                   who: bulk_who_value(),
                    value: value ? 1 : 0},
            });
     return false;
@@ -284,7 +291,7 @@ function bulk_numbering() {
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'number',
-                   who: 'd' + $("#bulk_who").val(),
+                   who: bulk_who_value(),
                    start: $("#bulk_numbering_start").val(),
                    renumber: $("#renumber").is(':checked') ? 1 : 0},
            });
@@ -306,7 +313,7 @@ function bulk_eligibility() {
            {type: 'POST',
             data: {action: 'racer.bulk',
                    what: 'eligibility',
-                   who: 'd' + $("#bulk_who").val(),
+                   who: bulk_who_value(),
                    value: $("#bulk_eligible").is(':checked') ? 1 : 0},
            });
     
