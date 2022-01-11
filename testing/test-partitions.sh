@@ -335,6 +335,111 @@ curl_getj "action.php?query=poll&values=rounds" | \
     jq -e ".rounds | map(select(.classid==$P2CLASSID))[0].roster_size == $P2ROSTERSIZE" \
        > /dev/null || test_fails
 
+# Create a new empty partition
+curl_postj action.php "action=partition.add&name=Empty" | check_jsuccess
+# Confirm there's a corresponding class, rank, round, and (empty) roster.
+curl_getj "action.php?query=poll&values=partitions" | \
+    jq -e '.partitions | length == 5
+        and .[0].name == "Div 3" and .[0].partitionid == 3
+        and .[1].name == "Div 1" and .[1].partitionid == 1
+        and .[2].name == "Div 2" and .[2].partitionid == 2
+        and .[3].name == "New Div" and .[3].partitionid == 4
+        and .[4].name == "Empty" and .[4].partitionid == 5
+' >/dev/null || test_fails
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e '.classes | length == 5
+        and .[0].name == "Div 3"
+        and .[0].count == 10
+        and (.[0].subgroups | length == 1)
+        and .[0].subgroups[0].name == "Div 3"
+        and .[1].name == "Div 1"
+        and .[1].count == 20
+        and (.[1].subgroups | length == 1)
+        and .[1].subgroups[0].name == "Div 1"
+        and .[2].name == "Div 2"
+        and .[2].count == 19
+        and (.[2].subgroups | length == 1)
+        and .[2].subgroups[0].name == "Div 2"
+        and .[3].name == "New Div"
+        and .[3].count == 0
+        and (.[3].subgroups | length == 1)
+        and .[3].subgroups[0].name == "New Div"
+        and .[4].name == "Empty"
+        and .[4].count == 0
+        and (.[4].subgroups | length == 1)
+        and .[4].subgroups[0].name == "Empty"
+' >/dev/null || test_fails
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e '.rounds | length == 5
+        and .[0].class == "Div 3"
+        and .[0].round == 1
+        and .[0].roster_size == 10
+        and .[1].class== "Div 1"
+        and .[1].round == 1
+        and .[1].roster_size == 20
+        and .[2].class == "Div 2"
+        and .[2].round == 1
+        and .[2].roster_size == 19
+        and .[3].class == "New Div"
+        and .[3].round == 1
+        and .[3].roster_size == 0
+        and .[4].class == "Empty"
+        and .[4].round == 1
+        and .[4].roster_size == 0
+' >/dev/null || test_fails
+
+# Re-apply by-partition rule with cleanup
+curl_postj action.php "action=partition.apply-rule&rule=by-partition&cleanup=1" | check_jsuccess
+# Confirm empty class, rank, round, and roster still present
+curl_getj "action.php?query=poll&values=partitions" | \
+    jq -e '.partitions | length == 5
+        and .[0].name == "Div 3" and .[0].partitionid == 3
+        and .[1].name == "Div 1" and .[1].partitionid == 1
+        and .[2].name == "Div 2" and .[2].partitionid == 2
+        and .[3].name == "New Div" and .[3].partitionid == 4
+        and .[4].name == "Empty" and .[4].partitionid == 5
+' >/dev/null || test_fails
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e '.classes | length == 5
+        and .[0].name == "Div 3"
+        and .[0].count == 10
+        and (.[0].subgroups | length == 1)
+        and .[0].subgroups[0].name == "Div 3"
+        and .[1].name == "Div 1"
+        and .[1].count == 20
+        and (.[1].subgroups | length == 1)
+        and .[1].subgroups[0].name == "Div 1"
+        and .[2].name == "Div 2"
+        and .[2].count == 19
+        and (.[2].subgroups | length == 1)
+        and .[2].subgroups[0].name == "Div 2"
+        and .[3].name == "New Div"
+        and .[3].count == 0
+        and (.[3].subgroups | length == 1)
+        and .[3].subgroups[0].name == "New Div"
+        and .[4].name == "Empty"
+        and .[4].count == 0
+        and (.[4].subgroups | length == 1)
+        and .[4].subgroups[0].name == "Empty"
+' >/dev/null || test_fails
+curl_getj "action.php?query=poll&values=rounds" | \
+    jq -e '.rounds | length == 5
+        and .[0].class == "Div 3"
+        and .[0].round == 1
+        and .[0].roster_size == 10
+        and .[1].class== "Div 1"
+        and .[1].round == 1
+        and .[1].roster_size == 20
+        and .[2].class == "Div 2"
+        and .[2].round == 1
+        and .[2].roster_size == 19
+        and .[3].class == "New Div"
+        and .[3].round == 1
+        and .[3].roster_size == 0
+        and .[4].class == "Empty"
+        and .[4].round == 1
+        and .[4].roster_size == 0
+' >/dev/null || test_fails
 
 # Move all the "Div 3" racers to "New Div", then delete "Div 3"
 for RACERID in 5 10 15 20 25 30 35 40 45 49; do

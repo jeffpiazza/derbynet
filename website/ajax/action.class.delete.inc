@@ -13,7 +13,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   try {
     $ok = true;
     $schema_version = schema_version();
-
+    
     if ($ok) {
       $nracers = read_single_value('SELECT COUNT(*) FROM RegistrationInfo WHERE classid = :classid',
                                    array(':classid' => $classid));
@@ -23,7 +23,7 @@ if (have_permission(SET_UP_PERMISSION)) {
       }
     }
     if ($ok) {
-      if ($schema_version >= 8) {
+      if ($schema_version >= PARTITION_SCHEMA) {
         if (read_single_value('SELECT COUNT(*) FROM ConstituentClasses WHERE antecedent = :classid',
                               array(':classid' => $classid)) > 0) {
           json_failure('constituent', "Unable to delete a constituent class");
@@ -40,7 +40,7 @@ if (have_permission(SET_UP_PERMISSION)) {
         }
       }
     }
-    
+
     if ($ok) {
       record_event_delete_rank($classid, -1);
       $stmt = $db->prepare('DELETE FROM Ranks WHERE classid = :classid');
@@ -73,7 +73,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     if ($ok) {
       $stmt = $db->prepare('DELETE FROM Playlist WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
-        json_failure('delete-rounds', "Unable to delete Playlist entries");
+        json_failure('delete-playlist', "Unable to delete Playlist entries");
         $ok = false;
       }
     }

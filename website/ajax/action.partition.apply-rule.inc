@@ -27,6 +27,12 @@ function form_groups_by_rule($rule) {
                          .'            (SELECT name FROM Partitions'
                          .'                 WHERE Partitions.partitionid = RegistrationInfo.partitionid))');
     $stmt->execute(array(':classid' => $classid));
+
+    // Update Partitions table's rankid values to match new ranks
+    $db->exec('UPDATE Partitions'
+              .' SET rankid = (SELECT rankid FROM Ranks'
+              .'               WHERE Ranks.rank = Partitions.name)');
+
     fill_in_missing_roster_entries();
   } else if ($rule == 'by-partition') {
     $db->exec('DELETE FROM Roster');
@@ -48,6 +54,11 @@ function form_groups_by_rule($rule) {
     $db->exec('UPDATE RegistrationInfo'
               .' SET rankid = (SELECT rankid FROM Ranks'
               .'                WHERE Ranks.classid = RegistrationInfo.classid)');
+
+    // Update Partitions table's rankid values to match new ranks
+    $db->exec('UPDATE Partitions'
+              .' SET rankid = (SELECT rankid FROM Ranks'
+              .'               WHERE Ranks.rank = Partitions.name)');
 
     // Add racing rounds for the new groups.
     $db->exec('INSERT INTO Rounds(round, classid) SELECT 1, classid FROM Classes');

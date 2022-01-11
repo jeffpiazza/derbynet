@@ -45,6 +45,10 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
                        ." WHERE racerid IN (SELECT racerid FROM RegistrationInfo"
                        ."                   WHERE partitionid = :div_id)");
   $stmt->execute(array(':div_id' => $div_id));
+
+  $stmt = $db->prepare('UPDATE Partitions SET rankid = :rankid WHERE partitionid = :partitionid');
+  $stmt->execute(array(':rankid' => $rankid,
+                       ':partitionid' => $div_id));
   
   $sql = "UPDATE RegistrationInfo SET classid = :classid, rankid = :rankid WHERE partitionid = :div_id";
   $params = array(':classid' => $classid,

@@ -98,17 +98,43 @@ function find_or_create_partition($name) {
 
 function clean_up_empty_classes_and_ranks() {
   global $db;
-  // Don't delete the last rank from a class that's an antecedent
+
+  // Clean up after partition rule change, especially after moving a partition
+  // under custom rule.
+  //
+  // To minimize disruption, we avoid deleting classes that are antecedent to
+  // some aggregate class.  Since every organic class needs at least one
+  // associated rank, we avoid deleting the smallest rankid for a class that
+  // won't be deleted.
+
+  // Organic classes include ranks for which a partition exists.
+  // Aggregate classes have either non-empty constituents field or non-empty rankids field.
+
   $db->exec('DELETE FROM Ranks AS r1'
-            .' WHERE rankid NOT IN (SELECT DISTINCT rankid FROM RegistrationInfo)'
+            .' WHERE rankid NOT IN (SELECT DISTINCT rankid FROM Partitions)'
             .'   AND (classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
-            .'      OR EXISTS(SELECT 1 FROM Ranks AS r2'
-            .'                 WHERE r1.classid = r2.classid AND r1.rankid > r2.rankid))');
+            .'      OR rankid > (SELECT MIN(rankid) FROM Ranks AS r2 WHERE r1.classid = r2.classid))');
   $db->exec('DELETE FROM Classes'
-            .' WHERE classid NOT IN (SELECT DISTINCT classid FROM RegistrationInfo)'
+            .' WHERE classid NOT IN (SELECT DISTINCT classid FROM Ranks)'
             .'   AND classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
             .'   AND constituents = \'\''
             .'   AND rankids = \'\'');
+  
+  $db->exec('DELETE FROM Rounds'
+            .' WHERE classid NOT IN (SELECT classid FROM Classes)');
+  $db->exec('DELETE FROM Roster'
+            .' WHERE roundid NOT IN (SELECT roundid FROM Rounds)');
+  $db->exec('DELETE FROM RaceChart'
+            .' WHERE roundid NOT IN (SELECT roundid FROM Rounds)');
+  $db->exec('DELETE FROM Playlist'
+            .' WHERE classid NOT IN (SELECT classid FROM Classes)');
+
+  $db->exec('DELETE FROM Awards'
+            .' WHERE classid IS NOT NULL AND classid <> 0'
+            .'  AND classid NOT IN (SELECT classid FROM Classes)');
+  $db->exec('DELETE FROM Awards'
+            .' WHERE rankid IS NOT NULL AND rankid <> 0'
+            .'  AND rankid NOT IN (SELECT rankid FROM Ranks)');
 }
 
 // Updates sortorder fields for Partitions to agree with ordering of classes and
