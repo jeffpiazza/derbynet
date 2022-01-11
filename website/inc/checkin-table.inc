@@ -7,7 +7,7 @@ require_once('inc/xbs.inc');
 
 function json_table_row_for_id($racerid) {
   $xbs_award_name = xbs_award();
-  $schema = schema_version();
+  $schema_version = schema_version();
   $row = read_single_row(
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
     .($schema_version < 2 ? " '' AS carphoto," : " carphoto,")
