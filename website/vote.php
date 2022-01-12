@@ -89,6 +89,9 @@ foreach ($db->query($sql) as $rs) {
   <div <?php if ($is_open) echo 'class="hidden"'; ?>>
     <h3>Balloting is currently closed.</h3>
   </div>
+  <div id='no-awards' class='hidden'>
+    <h3>There are no awards available for voting.</h3>
+  </div>
   <div class='please-click hidden'>
     Please click on an award to vote.
   </div>
@@ -179,6 +182,7 @@ foreach ($db->query($sql) as $rs) {
   <form>
     <h3>Please enter the ballot password</h3>
     <input id="password_input" type='password'/>
+    <p id="wrong-password" class="hidden">The password you entered is incorrect.  Please try again.</p>
     <input type='submit'/>
   </form>
 </div>

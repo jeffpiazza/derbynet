@@ -43,6 +43,7 @@ function set_up_ballot() {
         .appendTo(div);
     }
   }
+  $("#no-awards").toggleClass('hidden', $("div.award").not('.hidden').length != 0);
 }
 
 // From the main screen, clicking on an award opens the "racers" modal, which
@@ -164,7 +165,10 @@ function car_number_for_racerid(racerid) {
   return $("div.ballot_racer[data-racerid=" + racerid + "] div.carno").text();
 }
 
-
+// If balloting is open, there'll be an initial call to get_ballot, including
+// the current value of the password field, even if it hasn't been displayed to
+// the user yet..  If a password is needed, ballot.get will return a failure for
+// password, which prompts the display of the password form.
 function get_ballot() {
   $.ajax('action.php',
          {type: 'GET',
@@ -177,6 +181,11 @@ function get_ballot() {
             if (data.hasOwnProperty('outcome') && data.outcome.summary == 'failure') {
               $("#awards div[data-awardid]").addClass('hidden');
               if (data.outcome.code == 'password') {
+                // If we're already showing the password modal, then show the
+                // message about this having been the wrong password.  If we
+                // weren't showing the password modal, then a "wrong password"
+                // message is inappropriate, so hidden.
+                $("#wrong-password").toggleClass('hidden', !password_modal_showing);
                 if (!password_modal_showing) {
                   show_modal("#password_modal", function() { get_ballot(); return false; });
                 }

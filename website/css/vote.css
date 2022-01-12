@@ -1,3 +1,10 @@
+#wrong-password {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.1em;
+}
+
 #awards {
   position: relative;
   width: 250px;
