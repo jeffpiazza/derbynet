@@ -35,11 +35,12 @@ function json_common_1($key, &$now_running) {
     json_out('partitions', json_partitions());
     break;
   case 'heat-results':
-    require_once('inc/json-heat-results.inc');
     if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
+      require_once('inc/timer-test.inc');
       $tt = timer_test_recorded_results();
       json_out('heat-results', $tt['results']);
     } else {
+      require_once('inc/json-heat-results.inc');
       // TODO the roundid and heat are passed in to reflect what the requesting
       // page thinks the current round is; both poll.coordinator and
       // poll.now-racing both do this.  This is avoid the server having to work
