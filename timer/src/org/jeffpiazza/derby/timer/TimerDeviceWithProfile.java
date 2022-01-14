@@ -238,22 +238,28 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       case RACE_FINISHED:
         lastFinishTime = System.currentTimeMillis();
-        invokeRaceFinishedCallback(roundid, heat, result.toArray());
+        if (result != null) {
+          invokeRaceFinishedCallback(roundid, heat, result.toArray());
+        }
         roundid = heat = 0;
         result = null;
         break;
+
       case LANE_RESULT: {
         char lane_char = args[0].charAt(0);
         int lane = ('1' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         if (result != null) {
+          boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
             result.setLane(lane, args[1]);
           } else {
             result.setLane(lane, args[1], args[2].charAt(0) - '!' + 1);
           }
-          if (result.isFilled()) {
+          // Send just a single RACE_FINISHED event, even if we get some extra
+          // results for masked-out lanes, etc.
+          if (result.isFilled() && !wasFilled) {
             Event.send(Event.RACE_FINISHED);
           }
         }

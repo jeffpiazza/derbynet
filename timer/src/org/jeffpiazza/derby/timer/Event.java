@@ -10,6 +10,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
+import org.jeffpiazza.derby.LogWriter;
 
 // Note that there's no LOST_CONNECTION, because if that happens, we're
 // going to abandon the state machine and everything else altogether.
@@ -44,6 +45,7 @@ public enum Event {
   public static void send(Event event) {
     send(event, null);
   }
+
   public static void send(Event event, String[] args) {
     synchronized (eventsQueue) {
       eventsQueue.add(new EventRecord(event, args));
@@ -53,7 +55,8 @@ public enum Event {
 
   public static void sendAt(long deadline, Event event) {
     synchronized (eventsQueue) {
-      delayedEvents.add(new DelayedEvent(deadline, new EventRecord(event, null)));
+      delayedEvents.
+          add(new DelayedEvent(deadline, new EventRecord(event, null)));
       eventsQueue.notifyAll();
     }
   }
@@ -65,6 +68,7 @@ public enum Event {
   private static class EventRecord {
     private Event event;
     private String[] args;
+
     public EventRecord(Event event, String[] args) {
       this.event = event;
       this.args = args;
@@ -100,7 +104,8 @@ public enum Event {
           long timeout = 10000;  // Arbitrarily high
           if (!delayedEvents.isEmpty()) {
             // Wake up for the next delayed event's deadline
-            timeout = delayedEvents.first().deadline - System.currentTimeMillis();
+            timeout = delayedEvents.first().deadline -
+                System.currentTimeMillis();
           }
           if (eventsQueue.isEmpty() && timeout > 0) {
             try {
@@ -121,7 +126,13 @@ public enum Event {
         }
         if (e != null) {
           for (Handler handler : Event.handlers) {
-            handler.onEvent(e.event(), e.args());
+            try {
+              handler.onEvent(e.event(), e.args());
+            } catch (Throwable th) {
+              LogWriter.info("Caught throwable from handler for "
+                  + e.event().name());
+              LogWriter.stacktrace(th);
+            }
           }
         }
       }

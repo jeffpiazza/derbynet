@@ -65,20 +65,25 @@ public class ObsClient extends WebSocketClient {
   public void onMessage(String string) {
     try {
       JSONObject jsonObject = new JSONObject(string);
-      if ("get-auth-required".equals(jsonObject.getString("message-id"))) {
-        if (jsonObject.has("authRequired")
-            && jsonObject.getBoolean("authRequired")) {
-          makeAuthenticationResponse(jsonObject.getString("challenge"),
-                                     jsonObject.getString("salt"));
+      if (jsonObject.has("message-id")) {
+        String messageId = jsonObject.getString("message-id");
+        // Request responses have message-id, but Events (e.g.) do not.
+        if ("get-auth-required".equals(messageId)) {
+          if (jsonObject.has("authRequired")
+              && jsonObject.getBoolean("authRequired")) {
+            makeAuthenticationResponse(jsonObject.getString("challenge"),
+                                       jsonObject.getString("salt"));
+          } else {
+            System.err.println("No auth required");
+          }
+        } else if ("auth-response".equals(messageId)) {
+          System.err.println("Received response to auth-response: " + string);
         } else {
-          System.err.println("No auth required");
+          System.err.println("Received response for " + messageId);
         }
-      } else if ("auth-response".equals(jsonObject.getString("message-id"))) {
-        System.err.println("Received response to auth-response: " + string);
-      } else {
-        System.err.println("Received response for " + jsonObject.getString("message-id"));
       }
     } catch (JSONException ex) {
+      LogWriter.info("ObsClient.onMessage(" + string + ")");
       LogWriter.stacktrace(ex);
     }
   }

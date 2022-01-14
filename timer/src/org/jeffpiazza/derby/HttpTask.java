@@ -264,8 +264,8 @@ public class HttpTask implements Runnable {
       }
 
       if (ClientSession.wasSuccessful(response)) {
-        // We don't really change behavior (other than logging) for an
-        // unsuccessful response
+        // An unsuccessful response will always be logged; for successful
+        // responses, we log only based on flags.
         if (Flag.trace_responses.value()) {
           if (trace) {
             StdoutMessageTrace.httpResponse(nextMessage, response);
