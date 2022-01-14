@@ -199,13 +199,16 @@ class TimerProxy {
           lane_char - 49 + 1 :
           lane_char - 65 + 1;
       if (this.result != null) {
+        var was_filled = this.result.isFilled();
         var place = 0;
         if (args.length > 2 && args[2] != null && !args[2].isEmpty()) {
           // ASCII 33 is '!', signifying place
           place = args[2].charCodeAt(0) - 33 + 1;
         }
         var valid = this.result.setLane(lane, args[1], place);
-        if (valid && this.result.isFilled()) {
+        // Send just a single RACE_FINISHED event, even if we get some extra
+        // results for masked-out lanes, etc.
+        if (valid && this.result.isFilled() && !was_filled) {
           TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
         }
       }

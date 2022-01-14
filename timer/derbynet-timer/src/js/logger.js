@@ -57,6 +57,12 @@ class Logger {
     }
   }
 
+  stacktrace(err) {
+    if (this.do_logging) {
+      this.write_decorated('!!!!! ', error.message);
+    }
+  }
+
   write_decorated(key, s) {
     var d = new Date();
     this.write_raw('+' + /* d.getHours().toString().padStart(2, '0') +

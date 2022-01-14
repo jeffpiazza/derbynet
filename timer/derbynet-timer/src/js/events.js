@@ -56,7 +56,11 @@ class TimerEvent {
   
   static trigger(event, args) {
     for (var i = 0; i < this.handlers.length; ++i) {
-      this.handlers[i].onEvent(event, args);
+      try {
+        this.handlers[i].onEvent(event, args);
+      } catch (error) {
+        Logger.stacktrace(error);
+      }
     }
   }
 }
