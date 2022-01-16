@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/locked.inc');
+
 $seek = $_GET['seek'];
 
 $timer_log_name = read_raceinfo('timer-log', '');
@@ -8,6 +10,9 @@ if ($log === false) {
   json_failure('nolog', "No log file $timer_log_name");
   $size = 0;
 } else {
+  if (!locked_settings()) {
+    json_out('log-file-name', $timer_log_name);
+  }
   $stat = fstat($log);
   $size = $stat['size'];
   if ($size < $seek) {

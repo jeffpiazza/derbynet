@@ -84,7 +84,7 @@ public abstract class TimerDeviceTypical
 
   protected void logOverdueResults() {
     String msg = Timestamp.string() + ": ****** Race timed out *******";
-    LogWriter.trace(msg);
+    LogWriter.serial(msg);
     System.err.println(msg);
   }
 

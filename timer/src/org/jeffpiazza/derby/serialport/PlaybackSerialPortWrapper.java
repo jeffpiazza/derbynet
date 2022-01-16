@@ -6,6 +6,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.LogWriter;
 
 // For testing a new TimerDevice class, this simulates the data arriving on
 // the serial port.
@@ -38,7 +39,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
       }
       program = (String[]) lines.toArray(new String[lines.size()]);
     } catch (Throwable t) {
-      t.printStackTrace();
+      LogWriter.stacktrace(t);
       System.exit(1);
     }
   }

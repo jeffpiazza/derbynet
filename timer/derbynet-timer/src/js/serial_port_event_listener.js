@@ -8,6 +8,7 @@
 // a stand-alone application.
 function serial_port_event_listener(event, /* portlist */ selectedPort, requestedPorts) {
   console.log('serial-ports event', selectedPort, requestedPorts);
+  g_logger.internal_msg('serial_port_event_listener');
 }
 
 

@@ -119,11 +119,13 @@ class StateMachine {
         this.first_gate_open_ms = 0;
       }
       console.log(initial + ' >--' + event + '--> ' + this.state);
+      // g_logger.internal_msg(initial + ' >--' + event + '--> ' + this.state);
     }
   }
 
   unexpected(event, next = this.state) {
     console.log('Unexpected: ' + this.state + ' >--' + event + '--> ' + next);
+    // g_logger.internal_msg('Unexpected: ' + this.state + ' >--' + event + '--> ' + next);
     return next;
   }
 }

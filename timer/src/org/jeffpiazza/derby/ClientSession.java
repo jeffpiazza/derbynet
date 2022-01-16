@@ -83,6 +83,7 @@ public class ClientSession {
       } else {
         base_url = base_url + "derbynet/";
       }
+      LogWriter.info("Trying URL variation " + base_url);
       System.err.println();
       System.err.println("Trying URL variation " + base_url);
       return true;

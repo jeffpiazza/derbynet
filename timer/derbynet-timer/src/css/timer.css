@@ -1,5 +1,9 @@
 #main-container {
   border: 2px solid gray;
+}
+
+#main-container,
+#messages {
   margin-left: auto;
   margin-right: auto;
   width: 316px;
@@ -7,7 +11,15 @@
 
 #main-container.standalone {
   margin-top: 20px;
+}
+
+#main-container.standalone,
+#messages.standalone {
   width: 600px;
+}
+
+#messages img {
+  margin-right: 5px;
 }
 
 .host, .serial {
@@ -26,13 +38,13 @@
   cursor: pointer;
 }
 
+.scanlist li.trouble {
+  background-color: #ff6060;
+}
+
 .scanlist li.probing {
   font-weight: bold;
   background-color: #f9fc2d;
-}
-
-.scanlist li.trouble {
-  background-color: #ff6060;
 }
 
 .scanlist li.undiscoverable {

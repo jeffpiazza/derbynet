@@ -26,6 +26,7 @@ public class TimerMain {
       LogWriter.info("os.name = " + System.getProperty("os.name"));
     } catch (Throwable t) {
       t.printStackTrace();
+      LogWriter.stacktrace(t);
       System.exit(1);
     }
   }

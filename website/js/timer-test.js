@@ -328,6 +328,12 @@ function poll_for_timer_log(seek, timeout) {
           data: {query: 'timer.log',
                  seek: seek},
           success: function(data) {
+            if (data.hasOwnProperty('outcome')) {
+              console.log(data);
+            }
+            if (data.hasOwnProperty('log-file-name')) {
+              $("#log-location").text(data['log-file-name']);
+            }
             if (data.hasOwnProperty('file-data')) {
               $("#log_text").append(document.createTextNode(data['file-data']));
               $("#log_container").scrollTop($("#log_container").scrollTop()

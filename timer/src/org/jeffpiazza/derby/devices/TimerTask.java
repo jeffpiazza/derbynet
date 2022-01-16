@@ -327,9 +327,8 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         port.closePort();
       }
     } catch (Throwable t) {
+      LogWriter.trace("Exception closing port");
       LogWriter.stacktrace(t);
-      System.err.println("Exception closing port: ");
-      t.printStackTrace();
     }
   }
 

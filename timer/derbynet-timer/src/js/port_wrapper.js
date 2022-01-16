@@ -82,8 +82,8 @@ class PortWrapper {
         }
       }
     } catch (err) {
-      g_logger.internal_msg('PortWrapper.readLoop exited because of caught ' + err);
-      console.log('PortWrapper.readLoop exited because of caught ' + err);
+      g_logger.internal_msg('PortWrapper.readLoop exits for caught error');
+      g_logger.stacktrace(err);
       TimerEvent.send('LOST_CONNECTION', [true, "Read failure: " + err]);
     } finally {
       await this.reader.releaseLock();
@@ -154,6 +154,7 @@ class PortWrapper {
         this.writer = null;
       }
     } else {
+      g_logger.internal_msg('** No writable stream for port');
       console.log('** No writable stream for port');
     }
     return msg;

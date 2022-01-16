@@ -3,12 +3,14 @@ if ('serial' in navigator) {
   // This never seems to fire
   navigator.serial.addEventListener('connect', (e) => {
     // Connect to `e.target` or add it to a list of available ports.
-    console.log('connect event'); console.log(e);
+    console.log('connect event', e);
+    g_logger.internal_msg('serial connect event');
   });
 
   navigator.serial.addEventListener('disconnect', (e) => {
     // Remove `e.target` from the list of available ports.
-    console.log('disconnect event'); console.log(e);
+    console.log('disconnect event', e);
+    g_logger.internal_msg('serial disconnect event');
   });
 
   navigator.serial.getPorts().then((ports) => {

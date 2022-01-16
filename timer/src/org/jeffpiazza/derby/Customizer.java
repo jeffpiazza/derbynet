@@ -45,7 +45,7 @@ public class Customizer {
       }
     }
     } catch (IOException ex) {
-      ex.printStackTrace();
+      LogWriter.stacktrace(ex);
       System.exit(1);
     }
 

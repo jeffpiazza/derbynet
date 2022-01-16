@@ -19,12 +19,24 @@ class Logger {
   set_remote_logging(do_logging) {
     if (do_logging && !this.do_logging) {
       Logger.set_url(HostPoller.url);
+      this.do_logging = true;
+      this.start_log();
     }
     this.do_logging = do_logging;
   }
 
   static set_url(url) {
     Logger.url = url.replace(/action.php$/, 'post-timer-log.php');
+  }
+
+  // 
+  start_log() {
+    this.write_decorated(' HELLO',
+                         '\n   platform=' + navigator.platform +
+                         '\n   vendor=' + navigator.vendor +
+                         '\n   userAgent=' + navigator.userAgent
+                        );
+    this.flush();
   }
 
   serial_in(s) {
@@ -47,7 +59,7 @@ class Logger {
 
   internal_msg(s) {
     if (this.do_logging) {
-      this.write_decorated('M INT ', s);
+      this.write_decorated('* INT ', s);
     }
   }
 
@@ -59,8 +71,13 @@ class Logger {
 
   stacktrace(err) {
     if (this.do_logging) {
-      this.write_decorated('!!!!! ', error.message);
+      this.write_decorated('!!!!! ', err.toString());
+      if (err.hasOwnProperty('stack')) {
+        this.write_decorated('!!!!! ', err.stack);
+      }
     }
+    console.error(err);
+    $("#messages").prepend($("<p/>").text(err.toString()).prepend("<img src='img/trouble-tiny.png'/>"));
   }
 
   write_decorated(key, s) {

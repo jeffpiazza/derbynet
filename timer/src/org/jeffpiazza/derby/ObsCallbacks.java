@@ -25,7 +25,7 @@ public class ObsCallbacks implements TimerDevice.RaceStartedCallback,
         obsClient = new ObsClient(new URI(Flag.obs_uri.value()));
         obsClient.connect();
       } catch (URISyntaxException ex) {
-        System.err.println("ObsCallbacks fails: " + ex);
+        LogWriter.stacktrace(ex);
       }
     }
   }

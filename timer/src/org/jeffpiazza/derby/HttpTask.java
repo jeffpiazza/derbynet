@@ -256,9 +256,6 @@ public class HttpTask implements Runnable {
           } catch (Throwable t) {
             LogWriter.trace("Unable to send HTTP message " + params);
             LogWriter.stacktrace(t);
-            System.err.println(
-                "Unable to send HTTP message " + params + "; retrying");
-            t.printStackTrace();
           }
         }
       }

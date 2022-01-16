@@ -122,8 +122,8 @@ class Prober {
           var opened_ok = true;
           await pw.open(prof.params)
             .catch((e) => {
-              g_logger.internal_msg('** Unable to open port ' + porti + ': ' + e);
-              console.log('** Unable to open port ' + porti, e);
+              g_logger.internal_msg('Caught exception trying to open port ' + porti);
+              g_logger.stacktrace(e);
               $("#ports-list li").eq(porti).removeClass('probing').addClass('trouble');
               opened_ok = false;
             });
@@ -144,6 +144,7 @@ class Prober {
 
           if (timer_id !== false) {
             console.log('*    Matched ' + prof.name + '!');
+            g_logger.internal_msg('IDENTIFIED ' + prof.name);
 
             $("#ports-list li").eq(porti).removeClass('probing user-chosen').addClass('chosen');
             $("#profiles-list li").eq(profi).removeClass('probing user-chosen').addClass('chosen');
