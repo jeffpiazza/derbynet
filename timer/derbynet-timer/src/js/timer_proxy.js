@@ -201,7 +201,7 @@ class TimerProxy {
       if (this.result != null) {
         var was_filled = this.result.isFilled();
         var place = 0;
-        if (args.length > 2 && args[2] != null && !args[2].isEmpty()) {
+        if (args.length > 2 && args[2]) {
           // ASCII 33 is '!', signifying place
           place = args[2].charCodeAt(0) - 33 + 1;
         }
