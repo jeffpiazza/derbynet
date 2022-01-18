@@ -173,8 +173,8 @@ class TimerProxy {
       break;
     case 'START_RACE':
       {
-        var remote_start = this.remote_start_profile;
-        if (remote_start?.has_remote_start) {
+        var remote_start = this.remote_start_profile();
+        if (this.has_remote_start()) {
           this.port_wrapper.write(remote_start.command);
         }
       }
