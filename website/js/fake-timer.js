@@ -178,7 +178,7 @@ function send_identified() {
          {type: 'POST',
           data: {action: 'timer-message',
                  message: 'IDENTIFIED',
-                 lane_count: 6,
+                 lane_count: $("#lane-count").val(),
                  timer: 'FakeTimer',
                  human: 'Fake Timer',
                  // ident: '(Ident TBD)',
