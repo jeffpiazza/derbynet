@@ -43,6 +43,20 @@ if ($ok) {
                           array(':classid' => $classid)) == 0) {
       read_single_value('DELETE FROM Ranks WHERE classid = :classid',
                         array(':classid' => $classid));
+      read_single_value('DELETE FROM RaceChart WHERE roundid IN'
+                        .'  (SELECT roundid FROM Rounds'
+                        .'   WHERE classid = :classid)',
+                        array(':classid' => $classid));
+      read_single_value('DELETE FROM Roster WHERE roundid IN'
+                        .'  (SELECT roundid FROM Rounds'
+                        .'   WHERE classid = :classid)',
+                        array(':classid' => $classid));
+      read_single_value('DELETE FROM Rounds WHERE classid = :classid',
+                        array(':classid' => $classid));
+      read_single_value('DELETE FROM Playlist WHERE classid = :classid',
+                        array(':classid' => $classid));
+      read_single_value('DELETE FROM ConstituentClasses WHERE antecedent = :classid',
+                        array(':classid' => $classid));
       read_single_value('DELETE FROM Classes WHERE classid = :classid',
                         array(':classid' => $classid));
     }
