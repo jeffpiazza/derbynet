@@ -35,7 +35,7 @@ function pass_racer($racerid, $value) {
                            .' WHERE RacerID = :racer',
                            array(':value' => $value,
                                  ':racer' => $racerid));
-      record_event(EVENT_CHECKIN, $racerid);
+      record_event(EVENT_CHECKIN, array('racerid' => $racerid));
       return true;
     } else {
       json_not_authorized();

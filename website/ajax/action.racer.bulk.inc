@@ -119,7 +119,7 @@ function update_checkin($racerid) {
 
   $update_sql->execute(array(':value' => $value,
                              ':racerid' => $racerid));
-  record_event(EVENT_CHECKIN, $racerid);
+  record_event(EVENT_CHECKIN, array('racerid' => $racerid));
   return true;
 }
 

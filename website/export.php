@@ -24,7 +24,7 @@ $workbook = export_all();
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/xlsx.full.min.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/plurals.js"></script>
+<script type="text/javascript" src="js/plural.js"></script>
 <script type="text/javascript">
 
 var workbook;

@@ -33,7 +33,8 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
 
     if ($ok) {
-      record_event_delete_rank(-1, $rankid);
+      record_event(EVENT_RANK_DELETED, array('classid' => -1,
+                                             'rankid' => $rankid));
       $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
       if (!$stmt->execute(array(':rankid' => $rankid))) {
         json_failure('delete-ranks', "Unable to delete Ranks entries");

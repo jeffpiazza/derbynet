@@ -23,6 +23,7 @@ define('EVENT_PURGE_RESULTS', 90);
 define('EVENT_PURGE_SCHEDULES', 91);
 define('EVENT_PURGE_RACERS', 92);
 define('EVENT_PURGE_AWARDS', 93);
+define('EVENT_PURGE_RESULTS_ONE_ROUND', 94);
 
 // A racer's heat result was discarded (we record the value that was discarded,
 // in case questions arise later).  (racerid, roundid, heat, lane, other)
@@ -46,6 +47,7 @@ define('EVENT_PLAYLIST_ADDED', 209);
 define('EVENT_PLAYLIST_REMOVED', 210);
 
 define('EVENT_CLASS_DELETED', 301);
+// Either classid or rankid can be -1 for unknown
 define('EVENT_RANK_DELETED', 302);
 define('EVENT_ROUND_DELETED', 303);
 define('EVENT_SCHEDULE_DELETED', 303);
@@ -74,91 +76,20 @@ function record_event_sql($sql, $params) {
   } while ($retry);
 }
 
-function record_event($action, $racerid, $other = '') {
-  record_event_sql('INSERT INTO Events(tstamp, action, racerid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :racerid, :other)',
-                   array(':action' => $action,
-                         ':racerid' => $racerid,
-                         ':other' => $other));
-}
+function record_event($action, $fields = []) {
+  $sql1 = 'INSERT INTO Events(tstamp, action';
+  $sql2 = ' VALUES('.dbnow_expr().', :action';
+  $params = array(':action' => $action);
 
-function record_event_create_class($classid, $classname) {
-  record_event_sql('INSERT INTO Events(tstamp, action, classid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :classid, :other)',
-                   array(':action' => EVENT_CLASS_ADDED,
-                         ':classid' => $classid,
-                         ':other' => $classname));
-}
-function record_event_delete_class($classid) {
-  record_event_sql('INSERT INTO Events(tstamp, action, classid)'
-                   .' VALUES('.dbnow_expr().', :action, :classid)',
-                   array(':action' => EVENT_CLASS_DELETED,
-                         ':classid' => $classid));
-}
-function record_event_create_rank($classid, $rankid, $rankname) {
-  record_event_sql('INSERT INTO Events(tstamp, action, classid, rankid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :classid, :rankid, :other)',
-                   array(':action' => EVENT_RANK_ADDED,
-                         ':classid' => $classid,
-                         ':rankid' => $rankid,
-                         ':other' => $rankname));
-}
-// Either classid or rankid can be -1 for unknown
-function record_event_delete_rank($classid, $rankid) {
-  record_event_sql('INSERT INTO Events(tstamp, action, classid, rankid)'
-                   .' VALUES('.dbnow_expr().', :action, :classid, :rankid)',
-                   array(':action' => EVENT_RANK_DELETED,
-                         ':classid' => $classid,
-                         ':rankid' => $rankid));
-}
-// $roundid can be -1 for not known
-function record_event_create_round($roundid, $classid, $roundno) {
-  if ($roundid < 0) {
-    $roundid = read_single_value('SELECT roundid FROM Rounds'
-                                 .' WHERE classid = :classid AND round = :roundno',
-                                 array(':classid' => $classid,
-                                       ':roundno' => $roundno));
+  foreach ($fields as $f => $val) {
+    $sql1 .= ', '.$f;
+    $sql2 .= ', :'.$f;
+    $params[':'.$f] = $val;
   }
-  record_event_sql('INSERT INTO Events(tstamp, action, classid, roundid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :classid, :roundid, :other)',
-                   array(':action' => EVENT_ROUND_ADDED,
-                         ':classid' => $classid,
-                         ':roundid' => $roundid,
-                         ':other' => 'round '.$roundno));
-}
-
-function record_event_delete_round($classid, $roundid) {
-  $roundno = -1;
-  if ($roundid >= 0) {
-    list($classid, $roundno) = read_single_row('SELECT classid, round FROM Rounds'
-                             .' WHERE roundid = :roundid',
-                             array(':roundid' => $roundid));
-  }
-  $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
-                                 array(':classid' => $classid));
-  if ($classname === false) {
-    $classname = '(No such class)';
-  }
-
-  record_event_sql('INSERT INTO Events(tstamp, action, roundid, classid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :roundid, :classid, :other)',
-                   array(':action' => EVENT_ROUND_DELETED,
-                         ':roundid' => $roundid,
-                         ':classid' => $classid,
-                         ':other' => "$classname, Round $roundno"));
-}
-function record_event_create_schedule($roundid) {
-  record_event_sql('INSERT INTO Events(tstamp, action, roundid)'
-                   .' VALUES('.dbnow_expr().', :action, :roundid)',
-                   array(':action' => EVENT_SCHEDULE_ADDED,
-                         ':roundid' => $roundid));
-}
-function record_event_delete_schedule($roundid, $other) {
-  record_event_sql('INSERT INTO Events(tstamp, action, roundid, other)'
-                   .' VALUES('.dbnow_expr().', :action, :roundid, :other)',
-                   array(':action' => EVENT_SCHEDULE_DELETED,
-                         ':roundid' => $roundid,
-                         ':other' => $other));
+  
+  $sql1 .= ')';
+  $sql2 .= ')';
+  record_event_sql($sql1.$sql2, $params);
 }
 
 // Call this BEFORE rewriting a heat result
@@ -199,11 +130,6 @@ function record_event_for_refused_result($results) {
                              ':other' => $other));
     }
   }
-}
-
-function record_event_purge($action) {
-  record_event_sql('INSERT INTO Events(tstamp, action) VALUES('.dbnow_expr().', :action)',
-                   array(':action' => $action));
 }
 
 // Returns an array of racer records, in the order in which they had the

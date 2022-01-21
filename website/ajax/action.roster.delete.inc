@@ -8,29 +8,29 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 } else if (!isset($_POST['roundid'])) {
   json_failure('missing_param', 'No roundid parameter');
 } else {
-  $roundno = read_single_value('SELECT round'
-                               .' FROM Rounds'
-                               .' WHERE roundid = :roundid',
-                               array(':roundid' => $_POST['roundid']));
-  if ($roundno === false) {
+  $roundid = $_POST['roundid'];
+  list($classid, $roundno) = read_single_row('SELECT classid, round FROM Rounds'
+                                             .' WHERE roundid = :roundid',
+                                             array(':roundid' => $roundid));
+  if (!isset($roundno)) {
     json_failure('bad_param', 'No such round exists');
   } else if (read_single_value('SELECT COUNT(*)'
                                .' FROM RaceChart'
                                .' WHERE roundid = :roundid',
-                               array(':roundid' => $_POST['roundid'])) > 0) {
+                               array(':roundid' => $roundid)) > 0) {
     json_failure('scheduled', "Heats are scheduled for this round; remove before proceeding");
   } else {
-    $roundid = $_POST['roundid'];
-
-    list($classid, $roundno) = read_single_row('SELECT classid, round FROM Rounds'
-                                               .' WHERE roundid = :roundid',
-                                               array(':roundid' => $roundid));
     $constituents = read_single_value('SELECT constituents FROM Classes WHERE classid = :classid',
                                       array(':classid' => $classid));
     if ($roundno == 1 && strlen($constituents) == 0) {
       json_failure('first_round', "Can't remove a first round of an organic class.");
     } else {
-      record_event_delete_round(-1, $roundid);
+      $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                     array(':classid' => $classid),
+                                     "(No such class)");
+      record_event(EVENT_ROUND_DELETED, array('roundid' => $roundid,
+                                              'classid' => $classid,
+                                              'other' => "$classname, Round $roundno"));
       $stmt = $db->prepare('DELETE FROM Roster WHERE roundid = :roundid');
       $stmt->execute(array(':roundid' => $roundid));
 

@@ -172,6 +172,8 @@ class EventFormatter {
 
     case EVENT_PURGE_RESULTS:
       return "Purged race results";
+    case EVENT_PURGE_RESULTS_ONE_ROUND:
+      return "Purge race results for roundid $event[roundid]";
     case EVENT_PURGE_SCHEDULES:
       return "Purged schedules";
     case EVENT_PURGE_RACERS:

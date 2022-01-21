@@ -22,7 +22,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
         json_sql_failure($sql);  // TODO Missing sql
       }
       record_event($repo->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
-                   $_POST['racer']);
+                   array('racerid' => $_POST['racer']));
     }
   } else {
     if (take_action_silently('UPDATE RegistrationInfo SET '.$repo->column_name().' = \'\''
@@ -33,7 +33,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
       json_sql_failure($sql);  // TODO Missing sql
     }
     record_event($repo->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
-                 $_POST['racer']);
+                 array('racerid' => $_POST['racer']));
   }
 } else {
   json_not_authorized();

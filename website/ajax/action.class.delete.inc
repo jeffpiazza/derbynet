@@ -42,7 +42,8 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
 
     if ($ok) {
-      record_event_delete_rank($classid, -1);
+      record_event(EVENT_RANK_DELETED, array('classid' => $classid,
+                                             'rankid' => -1));
       $stmt = $db->prepare('DELETE FROM Ranks WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         json_failure('delete-ranks', "Unable to delete Ranks entries");
@@ -59,11 +60,19 @@ if (have_permission(SET_UP_PERMISSION)) {
         $ok = false;
       }
       if ($stmt->rowCount() > 0) {
-        record_event_delete_schedule(-1, "Deleting class $classid");
+        record_event(EVENT_SCHEDULE_DELETED, array('roundid' => -1,
+                                                   'other' => "Deleting class $classid"));
       }
     }
     if ($ok) {
-      record_event_delete_round($classid, -1);
+      $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                     array(':classid' => $classid));
+      if ($classname === false) {
+        $classname = '(No such class)';
+      }
+      record_event(EVENT_ROUND_DELETED, array('classid' => $classid,
+                                              'other' => $classname.', all rounds'));
+      
       $stmt = $db->prepare('DELETE FROM Rounds  WHERE classid = :classid');
       if (!$stmt->execute(array(':classid' => $classid))) {
         json_failure('delete-rounds', "Unable to delete Rounds entries");
@@ -86,7 +95,7 @@ if (have_permission(SET_UP_PERMISSION)) {
         $ok = false;
       }
       if ($stmt->rowCount() > 0) {
-        record_event_delete_class($classid);
+        record_event(EVENT_CLASS_DELETED, array('classid' => $classid));
       }
     }
     if ($ok) {

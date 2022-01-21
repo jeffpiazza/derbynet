@@ -17,17 +17,19 @@ if (!have_permission(SET_UP_PERMISSION)) {
   json_not_authorized();
   $ok = false;
 } else if ($_POST['purge'] == 'results') {
-  record_event_purge(EVENT_PURGE_RESULTS);
   $sql = 'UPDATE RaceChart SET finishtime = NULL, finishplace = NULL, completed = NULL';
   if (isset($_POST['roundid'])) {
+    $roundid = $_POST['roundid'];
+    record_event(EVENT_PURGE_RESULTS_ONE_ROUND, array('roundid' => $roundid));
     $stmt = $db->prepare($sql.' WHERE roundid = :roundid');
-    $stmt->execute(array(':roundid' => $_POST['roundid']));
+    $stmt->execute(array(':roundid' => $roundid));
   } else {
+    record_event(EVENT_PURGE_RESULTS);
     // Also: action.result.delete.inc, $_POST['roundid'] = 'all'
     $db->exec($sql);
   }
 } else if ($_POST['purge'] == 'schedules') {
-  record_event_purge(EVENT_PURGE_SCHEDULES);
+  record_event(EVENT_PURGE_SCHEDULES);
   $sql = 'DELETE FROM RaceChart';
   if (isset($_POST['roundid'])) {
     $stmt = $db->prepare($sql.' WHERE roundid = :roundid');
@@ -36,7 +38,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     $db->exec($sql);
   }
 } else if ($_POST['purge'] == 'racers') {
-  record_event_purge(EVENT_PURGE_RACERS);
+  record_event(EVENT_PURGE_RACERS);
   $db->exec('UPDATE Awards SET racerid = 0');
   $db->exec('DELETE FROM RaceChart');
   $db->exec('DELETE FROM Roster');
@@ -50,7 +52,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
   }
   delete_from_raceinfo('fake-racers');
 } else if ($_POST['purge'] == 'awards') {
-  record_event_purge(EVENT_PURGE_AWARDS);
+  record_event(EVENT_PURGE_AWARDS);
   $db->exec('DELETE FROM Awards');
 } else {
   json_failure('not-recognized', "Unrecognized purge operation: ".$_POST['purge']);

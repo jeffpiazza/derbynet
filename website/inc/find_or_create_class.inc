@@ -18,7 +18,9 @@ function create_class($classname, $with_first_round = true) {
   $classid = read_single_value('SELECT classid FROM Classes WHERE class = :classname',
                                array(':classname' => $classname));
   if (schema_version() >= 2) {
-    record_event_create_class($classid, $classname);
+    record_event(EVENT_CLASS_ADDED,
+                 array('classid' => $classid,
+                       'other' => $classname));
     $stmt = $db->prepare('UPDATE Classes'
                          .' SET sortorder = :sortorder'
                          .' WHERE classid = :classid');
@@ -28,6 +30,7 @@ function create_class($classname, $with_first_round = true) {
 
   // Creating a class usually requires creating a corresponding 1st racing round
   if ($with_first_round) {
+    // TODO make_new_round from roster.inc
     $stmt = $db->prepare('INSERT INTO Rounds(round, classid)'
                          .' SELECT 1, classid'
                          .' FROM Classes'
@@ -36,7 +39,14 @@ function create_class($classname, $with_first_round = true) {
                          .'  WHERE Rounds.classid = Classes.classid'
                          .'    AND Rounds.round = 1)');
     $stmt->execute(array(':classid' => $classid));
-    record_event_create_round(-1, $classid, 1);
+
+    $roundid = read_single_value('SELECT roundid FROM Rounds'
+                                 .' WHERE round = 1'
+                                 .'  AND classid = :classid',
+                                 array(':classid' => $classid));
+    record_event(EVENT_ROUND_ADDED, array('roundid' => $roundid,
+                                          'classid' => $classid,
+                                          'other' => 'round 1'));
   }
 
   return $classid;
@@ -70,7 +80,9 @@ function find_or_create_rank($rankname, $classid) {
                                 array(':rankname' => $rankname,
                                       ':classid' => $classid));
     if (schema_version() >= 2) {
-      record_event_create_rank($classid, $rankid, $rankname);
+      record_event(EVENT_RANK_ADDED, array('classid' => $classid,
+                                           'rankid' => $rankid,
+                                           'other' => $rankname));
       $sortorder = read_single_value('SELECT 1 + MAX(sortorder) FROM Ranks WHERE classid = :classid',
                                      array(':classid' => $classid));
       if ($sortorder === false) {

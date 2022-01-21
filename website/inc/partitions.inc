@@ -88,7 +88,7 @@ function find_or_create_partition($name) {
                       .' VALUES(:name, :rankid,'
                       .'         (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Partitions))',
                       array(':name' => $name, ':rankid' => $rankid));
-    // TODO record_event_create_class($classid, $classname);
+    // TODO record_event EVENT_CLASS_ADDED $classid, $classname
     $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                                     array(':name' => $name));
   }    

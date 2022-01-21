@@ -173,7 +173,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
                                         array(':photo' => $path,
                                               ':racerid' => $racerid));
         record_event($photo_repository->name() == 'head' ? EVENT_RACER_PHOTO_ASSIGN : EVENT_CAR_PHOTO_ASSIGN,
-                     $racerid);
+                     array('racerid' => $racerid));
 
         $row = array('racerid' => $racerid,
                      $column_name => $path);

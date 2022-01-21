@@ -10,7 +10,7 @@ require_once('inc/racing-state.inc');
 require_once('inc/events.inc');
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
-  record_event_delete_schedule($roundid, '');
+  record_event(EVENT_SCHEDULE_DELETED, array('roundid' => $roundid, 'other' => ''));
   $stmt = $db->prepare('DELETE FROM RaceChart WHERE roundid = :roundid');
   $stmt->execute(array(':roundid' => $roundid));
 

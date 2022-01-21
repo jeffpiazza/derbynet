@@ -29,7 +29,9 @@ if (have_permission(SET_UP_PERMISSION)) {
                                   array(':rankname' => $rankname,
                                         ':classid' => $classid));
       if (schema_version() >= 2) {
-        record_event_create_rank($classid, $rankid, $rankname);
+        record_event(EVENT_RANK_ADDED, array('classid' => $classid,
+                                             'rankid' => $rankid,
+                                             'other' => $rankname));
         $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
                                     array(':classid' => $classid));
         $stmt = $db->prepare('UPDATE Ranks'
