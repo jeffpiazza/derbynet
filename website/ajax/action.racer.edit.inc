@@ -84,14 +84,15 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     $ok = take_action_silently('UPDATE RegistrationInfo '.$assignments
                                .' WHERE racerid = :racerid', $values);
   }
-  if ($ok && isset($classid)) {
+
+  if ($ok && isset($values[':classid'])) {
     $ok = take_action_silently('UPDATE Roster'
                                .' SET roundid = :new_roundid,'
                                .'     classid = :classid'
                                .' WHERE racerid = :racerid'
                                .' AND roundid = :old_roundid',
                                array(':new_roundid' => $new_roundid,
-                                     ':classid' => $classid,
+                                     ':classid' => $values[':classid'],
                                      ':racerid' => $racerid,
                                      ':old_roundid' => $old_roundid));
   }
