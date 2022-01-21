@@ -7,6 +7,9 @@ Visit http://jeffpiazza.github.io/derbynet/ for more information about DerbyNet.
 
 RUN apt update
 RUN apt install -y php-fpm php-curl php-gd php-sqlite3
+# php-odbc installs OK on a separate line, but not when added to the previous line.
+# No idea why
+RUN apt install -y php-odbc
 RUN apt install -y nginx ssl-cert
 RUN apt install -y supervisor
 
