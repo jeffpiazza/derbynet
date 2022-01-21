@@ -19,7 +19,7 @@ public class NewBold extends TimerDeviceWithProfile {
                 SerialPort.PARITY_NONE)
         .gate_state_is_knowable(false)
         .setup(" ")
-        .match("^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)", Event.LANE_RESULT, 1, 2)
+        .match("^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s|)", Event.LANE_RESULT, 1, 2)
         .heat_prep(" ");
   }
 }
