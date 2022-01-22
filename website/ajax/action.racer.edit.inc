@@ -73,9 +73,6 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   }
 
   if ($ok) {
-    $new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
-                                     array(':classid' => $classid));
-
     $old_classid = read_single_value('SELECT classid FROM RegistrationInfo WHERE racerid = :racerid',
                                      array(':racerid' => $racerid));
     $old_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
@@ -86,6 +83,9 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
   }
 
   if ($ok && isset($values[':classid'])) {
+    $new_roundid = read_single_value('SELECT roundid FROM Rounds WHERE round = 1 AND classid = :classid',
+                                     array(':classid' => $values[':classid']));
+
     $ok = take_action_silently('UPDATE Roster'
                                .' SET roundid = :new_roundid,'
                                .'     classid = :classid'
