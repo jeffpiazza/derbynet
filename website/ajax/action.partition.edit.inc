@@ -43,6 +43,11 @@ if ($ok) {
                       .'                  WHERE partitionid = :partitionid)',
                       array(':name' => $name,
                             ':partitionid' => $partitionid));
+    read_single_value('UPDATE Ranks SET rank = :name'
+                      .' WHERE rankid = (SELECT rankid FROM Partitions'
+                      .'                 WHERE partitionid = :partitionid)',
+                      array(':name' => $name,
+                            ':partitionid' => $partitionid));
     break;
   case 'one-group':
     read_single_value('UPDATE Ranks SET rank = :name'
