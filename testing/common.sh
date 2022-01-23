@@ -314,3 +314,12 @@ function staged_heat6() {
             ($6 == 0 or map(select ( .lane == 6 ))[0].carnumber == $6)" >/dev/null || \
         test_fails
 }
+
+Q='"'
+
+# "$1" is a (unique) prefix for the rank name sought
+# E.g. WOLF_RANK=$(rankid_of "White")
+rankid_of() {
+    NOANNOUNCE=1 curl_getj "action.php?query=class.list" \
+        | jq ".classes | map(.subgroups) | add | map(select(.name | startswith($Q$1$Q)))[0].rankid"
+}

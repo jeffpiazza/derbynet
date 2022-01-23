@@ -43,6 +43,7 @@ public interface Message {
       System.out.println("   Sending IDENTIFIED");
       StringBuilder sb = new StringBuilder();
       sb.append("message=IDENTIFIED");
+      sb.append("&interface=jar");
       sb.append("&lane_count=").append(nlanes);
       sb.append("&timer=").append(timer);
       sb.append("&confirmed=").append(confirmed ? "1" : "0");
