@@ -43,6 +43,9 @@ class TimerEvent {
 
   static send(event, args) {
     if (event === undefined) throw 'undefined event';
+    if (Flag.debug_serial.value) {
+      g_logger.debug_msg('send ' + event);
+    }
     setTimeout(this.trigger.bind(this), 0, event, args);
   }
 
@@ -55,6 +58,9 @@ class TimerEvent {
   }
   
   static trigger(event, args) {
+    if (Flag.debug_serial.value) {
+      g_logger.debug_msg('trigger ' + event);
+    }
     for (var i = 0; i < this.handlers.length; ++i) {
       try {
         this.handlers[i].onEvent(event, args);

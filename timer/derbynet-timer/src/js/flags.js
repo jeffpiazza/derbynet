@@ -35,6 +35,9 @@ class Flag {
   static fasttrack_automatic_gate_release = new Flag(
     "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed");
 
+  static debug_serial = new Flag(
+    "debug-io", false, "Enable debugging for low-level serial communication");
+
   name;
   type;
   value;

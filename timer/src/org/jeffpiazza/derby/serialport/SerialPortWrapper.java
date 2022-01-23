@@ -214,6 +214,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
         if (s == null || s.length() == 0) {
           break;
         }
+        if (Flag.debug_io.value()) {
+          LogWriter.debugMsg("read(" + describeString(s) + ")");
+        }
+
         synchronized (leftover) {
           s = leftover + s;
           synchronized (detectors) {
@@ -309,6 +313,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
         if (leftover.length() > 0 && Flag.newline_expected_ms.value() > 0
             && System.currentTimeMillis() - last_char_received
             > Flag.newline_expected_ms.value()) {
+          if (Flag.debug_io.value()) {
+            LogWriter.debugMsg("infer newline(" + describeString(leftover) + ")");
+          }
+          // Don't call enqueueLine here, as we want the string to return now.
           s = applyDetectors(leftover);
           leftover = "";
           if (s.length() == 0) {
@@ -370,5 +378,22 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public void writeAndDrainResponse(String cmd) throws SerialPortException {
     writeAndDrainResponse(cmd, 1, 2000);
+  }
+
+  private static String describeString(String s) {
+    for (int i = s.length() - 1; i >= 0; --i) {
+      int c = s.codePointAt(i);
+      if (20 <= c && c < 127) {
+      } else if (c == 10) {
+        s = s.substring(0, i) + "\\n" + s.substring(i + 1);
+      } else if (c == 9) {
+        s = s.substring(0, i) + "\\t" + s.substring(i + 1);
+      } else if (c == 13) {
+        s = s.substring(0, i) + "\\r" + s.substring(i + 1);
+      } else {
+        s = s.substring(0, i) + "\\{" + c + "}" + s.substring(i + 1);
+      }
+    }
+    return s;
   }
 }

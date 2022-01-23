@@ -137,6 +137,10 @@ public abstract class Flag<T> {
       = BooleanFlag.settable("fasttrack-automatic-gate-release",
                              "FastTrack light tree and automatic gate release installed");
 
+  public static final Flag<Boolean> debug_io
+      = BooleanFlag.settable("debug-io",
+                             "Enable debugging for low-level serial communication");
+
   public Flag(String name, T value, String description) {
     this.name = name;
     this.value = value;

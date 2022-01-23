@@ -119,7 +119,7 @@ class StateMachine {
         this.first_gate_open_ms = 0;
       }
       console.log(initial + ' >--' + event + '--> ' + this.state);
-      // g_logger.internal_msg(initial + ' >--' + event + '--> ' + this.state);
+      g_logger.internal_msg(initial + ' >--' + event + '--> ' + this.state);
     }
   }
 

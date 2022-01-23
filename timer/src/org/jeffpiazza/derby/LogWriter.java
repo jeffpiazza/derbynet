@@ -170,6 +170,7 @@ public class LogWriter {
   protected static final String INCOMING = "<-- ";
   protected static final String OUTGOING = "--> ";
   protected static final String INTERNAL = "INT ";
+  protected static final String DEBUG = "DBG ";
   protected static final String MATCHER  = "  M ";
   protected static final String MATCHER_MATCHED = "* M ";
 
@@ -177,6 +178,7 @@ public class LogWriter {
   protected static final String INFO_CHANNEL = "I";
   protected static final String SERIAL_CHANNEL = "S\t";
   protected static final String HTTP_CHANNEL = "H\t\t";
+  protected static final String DEBUG_CHANNEL = "*\t\t";
 
   protected static final SimpleDateFormat hh_mm_ss
       = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -251,6 +253,11 @@ public class LogWriter {
       write(s, SERIAL_CHANNEL, key);
       writeRemoteLogFragment(key, s);
     }
+  }
+
+  public static void debugMsg(String s) {
+    write(s, DEBUG_CHANNEL, DEBUG);
+    writeRemoteLogFragment(DEBUG, s);
   }
 
   public static void simulationLog(String msg) {

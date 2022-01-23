@@ -9,6 +9,22 @@
 
 const COMMAND_DRAIN_MS = 100;
 
+function describeString(s) {
+  for (var i = s.length - 1; i >= 0; --i) {
+    var c = s.charCodeAt(i);
+    if (20 <= c && c < 127) {
+    } else if (c == 10) {
+      s = s.substring(0, i) + "\\n" + s.substring(i + 1);
+    } else if (c == 9) {
+      s = s.substring(0, i) + "\\t" + s.substring(i + 1);
+    } else if (c == 13) {
+      s = s.substring(0, i) + "\\r" + s.substring(i + 1);
+    } else {
+      s = s.substring(0, i) + "\\{" + c + "}" + s.substring(i + 1);
+    }
+  }
+  return s;
+}
 
 class PortWrapper {
   port;
@@ -69,11 +85,14 @@ class PortWrapper {
 
         if (value) {
           this.last_char_received = Date.now();
+          if (Flag.debug_serial.value) {
+            g_logger.debug_msg('      read(' + describeString(value) + ')');
+          }
           this.leftover += utf8decoder.decode(value);
           var cr;
           while ((cr = this.leftover.indexOf('\n')) >= 0) {
-            this.enqueueLine(this.leftover.substr(0, cr));
-            this.leftover = this.leftover.substr(cr + 1);
+            this.enqueueLine(this.leftover.substring(0, cr));
+            this.leftover = this.leftover.substring(cr + 1);
           }
         }
 
@@ -115,6 +134,7 @@ class PortWrapper {
   }
   
   enqueueLine(line) {
+    line = line.trim();
     if (line.length > 0) {
       g_logger.serial_in(line);
     }
@@ -169,6 +189,10 @@ class PortWrapper {
     }
     if (this.leftover.length > 0 &&
         Date.now() - this.last_char_received > Flag.newline_expected_ms.value) {
+      if (Flag.debug_serial.value) {
+        g_logger.debug_msg('   infer newline(' + describeString(this.leftover) + ')');
+      }
+      // Don't call enqueueLine here, as we want the string to return now.
       var s = this.applyDetectors(this.leftover);
       this.leftover = "";
       if (s.length > 0) {

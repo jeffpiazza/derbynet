@@ -63,6 +63,12 @@ class Logger {
     }
   }
 
+  debug_msg(s) {
+    if (this.do_logging) {
+      this.write_decorated('* DBG ', s);
+    }
+  }
+
   host_in(s) {  // Message from host
     if (this.do_logging) {
       this.write_decorated('H <-- ', s);
