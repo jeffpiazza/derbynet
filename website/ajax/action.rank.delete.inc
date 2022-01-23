@@ -33,8 +33,11 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
 
     if ($ok) {
+      $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
+                                    array(':rankid' => $rankid), '(No rank name)');
       record_event(EVENT_RANK_DELETED, array('classid' => -1,
-                                             'rankid' => $rankid));
+                                             'rankid' => $rankid,
+                                             'other' => $rankname));
       $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
       if (!$stmt->execute(array(':rankid' => $rankid))) {
         json_failure('delete-ranks', "Unable to delete Ranks entries");

@@ -14,13 +14,16 @@
 
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
+require_once('inc/class_add_or_delete.inc');
+require_once('inc/events.inc');
 
 function move_partition($div_id, $group_field, $group_id, $from_group_field, $from_group_id) {
   global $db;
 
+  $name = read_single_value("SELECT name FROM Partitions WHERE partitionid = :div_id",
+                            array(':div_id' => $div_id));
+
   if ($group_field == 'classid') {
-    $name = read_single_value("SELECT name FROM Partitions WHERE partitionid = :div_id",
-                              array(':div_id' => $div_id));
     if ($group_id < 0) {
       $group_id = find_or_create_class($name);
     }
@@ -28,6 +31,7 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
     // Make a new subgroup for this partition
     $classid = $group_id;
     $rankid = find_or_create_rank($name, $group_id);
+
   } else {
     if ($group_id < 0) {
       $group_id = find_or_create_rank($name, -$group_id);
@@ -37,6 +41,14 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
                                  array(':group_id' => $group_id));
   }
 
+  $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                 array(':classid' => $classid), '(No such group)');
+  $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
+                                array(':rankid' => $rankid), '(No such subgroup)');
+  record_event(EVENT_PARTITION_MOVED,
+                 array('other' => $name.' to group '.$classname.', subgroup '.$rankname));
+
+  
   // Delete roster entries for affected racers.  After moving the partition,
   // fill_in_missing_roster_entries() will create new roster entries.  (This
   // ignores from_group_field and from_group_id, so may needlessly delete and

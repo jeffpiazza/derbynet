@@ -13,6 +13,8 @@ require_once(sql_file_path('column-widths'));
 require_once('inc/newracer.inc');
 require_once('inc/classes.inc');
 require_once('inc/aggregate_round.inc');
+require_once('inc/class_add_or_delete.inc');
+require_once('inc/rank_add_or_delete.inc');
 
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['name'])) {

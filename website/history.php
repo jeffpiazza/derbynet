@@ -155,12 +155,16 @@ class EventFormatter {
       return 'Created group '.htmlspecialchars($event['other'], ENT_QUOTES, 'UTF-8')
           .' ('.$event['classid'].')';
     case EVENT_CLASS_DELETED:
-      return 'Deleted group '.$event['classid'];
+      return "Deleted group $event[other] ($event[classid])";
     case EVENT_RANK_ADDED:
       return 'Created subgroup '.htmlspecialchars($event['other'], ENT_QUOTES, 'UTF-8')
           .' ('.$event['rankid'].' in group '.$event['classid'].')';
     case EVENT_RANK_DELETED:
-      return "Deleted subgroup $event[rankid] from group $event[classid]";
+      if ($event['classid'] < 0) {
+        return "Deleted all subgroups from group $event[other] ($event[classid])";
+      } else {
+        return "Deleted subgroup $event[other] ($event[rankid])";
+      }
     case EVENT_ROUND_ADDED:
       return "Created $event[other] for group $event[classid] (roundid $event[roundid])";
     case EVENT_ROUND_DELETED:
@@ -182,7 +186,14 @@ class EventFormatter {
       return "Purged awards";
       
     case EVENT_ROUND_DELETED:
-      return "Delete round $event[roundid]: $event[other]";
+      return "Deleted round $event[roundid]: $event[other]";
+
+    case EVENT_GROUP_FORMATION_RULE_APPLIED:
+      return "Changed group formation rule, $event[other]";
+    case EVENT_PARTITION_MOVED:
+      return "Moved partition $event[other]";
+    case EVENT_PARTITION_RENAMED:
+      return "Renamed partition $event[other]";
 
     default:
       return json_encode($event);

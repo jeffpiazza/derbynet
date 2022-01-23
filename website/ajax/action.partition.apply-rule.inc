@@ -4,7 +4,7 @@
 
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
-
+require_once('inc/events.inc');
 
 function form_groups_by_rule($rule) {
   global $db;
@@ -76,6 +76,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
            > 0) {
   json_failure('results-exist', 'Racing results already exist.');
 } else {
+  record_event(EVENT_GROUP_FORMATION_RULE_APPLIED,
+               array('other' => group_formation_rule().' -> '.$_POST['rule']));
   write_group_formation_rule($_POST['rule']);
 
   form_groups_by_rule($_POST['rule']);

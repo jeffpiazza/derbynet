@@ -2,7 +2,8 @@
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
-require_once('inc/find_or_create_class.inc');
+require_once('inc/class_add_or_delete.inc');
+require_once('inc/rank_add_or_delete.inc');
 require_once('inc/partitions.inc');
 require_once('inc/events.inc');
 

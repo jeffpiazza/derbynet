@@ -41,6 +41,7 @@ define('EVENT_CLASS_ADDED', 200);
 define('EVENT_RANK_ADDED', 201);
 define('EVENT_ROUND_ADDED', 202);
 define('EVENT_SCHEDULE_ADDED', 203);
+define('EVENT_PARTITION_ADDED', 204);
 
 // Not yet implemented:
 define('EVENT_PLAYLIST_ADDED', 209);
@@ -51,7 +52,38 @@ define('EVENT_CLASS_DELETED', 301);
 define('EVENT_RANK_DELETED', 302);
 define('EVENT_ROUND_DELETED', 303);
 define('EVENT_SCHEDULE_DELETED', 303);
+define('EVENT_PARTITION_DELETED', 304);
 
+define('EVENT_GROUP_FORMATION_RULE_APPLIED', 401);
+define('EVENT_PARTITION_MOVED', 402);
+define('EVENT_PARTITION_RENAMED', 403);
+
+define('EVENT_ACTIONS_TABLE',
+array(
+  'award.adhoc', 'award.delete', 'award.edit', 'award.import',
+  'award.order', 'award.present', 'award.winner', 'award.xbs',
+  'ballot.open',
+  'class.add', 'class.delete', 'class.edit', 'class.order',
+  'database.execute', 'database.purge',
+  'file.directory.new.nodata',
+  'heat.reinstate', 'heat.rerun', 'heat.select',
+  'kiosk.assign', 'partition.add', 'partition.apply-rule',
+  'partition.delete', 'partition.edit', 'partition.move', 'partition.order',
+  'photo.assign', 'photo.crop', 'photo.delete', 'photo.rotate', 'photo.upload',
+  'playlist.add', 'playlist.delete', 'playlist.edit', 'playlist.order', 'playlist.start',
+  'racer.add', 'racer.bulk', 'racer.delete', 'racer.edit', 'racer.fake', 'racer.import', 'racer.pass',
+  'rank.add', 'rank.delete', 'rank.edit', 'rank.order',
+  'replay.message', 'replay.test', 'replay.trigger',
+  'result.delete', 'result.import', 'result.write',
+  'roster.delete', 'roster.new',
+  'scene.add', 'scene.apply', 'scene.delete', 'scene.setkiosk',
+  'schedule.generate', 'schedule.reschedule', 'schedule.unschedule',
+  'settings.write', 'setup.nodata',
+  // 'action.timer-message',
+  'timer.assign-device', 'timer.assign-flag', 'timer.assign-port', 'timer.remote-start', 'timer.test',
+  'video.upload',
+  'vote.cast',
+));
 
 function create_events_table() {
   run_sql_script('events-table');

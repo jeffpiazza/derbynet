@@ -64,38 +64,58 @@ function find_or_create_class($classname, $with_first_round = true) {
   return $classid;
 }
 
-function find_or_create_rank($rankname, $classid) {
+function delete_class($classid) {
   global $db;
-  $rankname = substr(trim($rankname), 0, RANK_COLUMN_WIDTH);
-  $rankid = read_single_value('SELECT rankid FROM Ranks'
-                              .' WHERE rank = :rankname AND classid = :classid',
-                              array(':rankname' => $rankname,
-                                    ':classid' => $classid));
-  if ($rankid === false) {
-    $stmt = $db->prepare('INSERT INTO Ranks(rank, classid) VALUES(:rankname, :classid)');
-    $stmt->execute(array(':rankname' => $rankname,
-                         ':classid' => $classid));
-    $rankid = read_single_value('SELECT rankid FROM Ranks'
-                                .' WHERE rank = :rankname AND classid = :classid',
-                                array(':rankname' => $rankname,
-                                      ':classid' => $classid));
-    if (schema_version() >= 2) {
-      record_event(EVENT_RANK_ADDED, array('classid' => $classid,
-                                           'rankid' => $rankid,
-                                           'other' => $rankname));
-      $sortorder = read_single_value('SELECT 1 + MAX(sortorder) FROM Ranks WHERE classid = :classid',
-                                     array(':classid' => $classid));
-      if ($sortorder === false) {
-        $sortorder = 1;
-      }
-      $stmt = $db->prepare('UPDATE Ranks'
-                           .' SET sortorder = :sortorder'
-                           .' WHERE rankid = :rankid');
-      $stmt->execute(array(':sortorder' => $sortorder,
-                           ':rankid' => $rankid));
-    }
+
+  $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                 array(':classid' => $classid), '(No such class)');
+
+  if (read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
+                        array(':classid' => $classid)) > 0) {
+    record_event(EVENT_RANK_DELETED, array('classid' => $classid,
+                                           'rankid' => -1,
+                                           'other' => 'for class '.$classname));
+    $stmt = $db->prepare('DELETE FROM Ranks WHERE classid = :classid');
+    $stmt->execute(array(':classid' => $classid));
   }
 
-  return $rankid;
+  $stmt = $db->prepare('DELETE FROM RaceChart'
+                       .' WHERE roundid IN'
+                       .'  (SELECT roundid FROM Rounds'
+                       .'   WHERE classid = :classid)');
+  $stmt->execute(array(':classid' => $classid));
+  if ($stmt->rowCount() > 0) {
+    record_event(EVENT_SCHEDULE_DELETED, array('roundid' => -1,
+                                               'other' => "Deleting class $classname"));
+  }
+
+  // There might be Roster entries for an aggregate class
+  // For an organic class, the Roster table shouldn't have any entries for the
+  // class to be deleted, because the caller should have confirmed there are no racers in the class.
+  $stmt = $db->prepare('DELETE FROM Roster WHERE roundid IN'
+                       .'  (SELECT roundid FROM Rounds'
+                       .'   WHERE classid = :classid)');
+  $stmt->execute(array(':classid' => $classid));
+
+  if (read_single_value('SELECT COUNT(*) FROM Rounds WHERE classid = :classid',
+                        array(':classid' => $classid)) > 0) {
+    record_event(EVENT_ROUND_DELETED, array('classid' => $classid,
+                                            'other' => $classname.', all rounds'));
+    $stmt = $db->prepare('DELETE FROM Rounds  WHERE classid = :classid');
+    $stmt->execute(array(':classid' => $classid));
+  }
+
+  $stmt = $db->prepare('DELETE FROM Playlist WHERE classid = :classid');
+  $stmt->execute(array(':classid' => $classid));
+
+  $stmt = $db->prepare('DELETE FROM ConstituentClasses WHERE dependent = :classid');
+  $stmt->execute(array(':classid' => $classid));
+
+  $stmt = $db->prepare('DELETE FROM Classes WHERE classid = :classid');
+  $stmt->execute(array(':classid' => $classid));
+  if ($stmt->rowCount() > 0) {
+    record_event(EVENT_CLASS_DELETED, array('classid' => $classid, 'other' => $classname));
+  }
 }
+
 ?>

@@ -4,6 +4,7 @@
 // $_POST['name']
 
 require_once('inc/partitions.inc');
+require_once('inc/events.inc');
 
 // Renaming a partition should rename the corresponding group (by-partition) or subgroup (one-group)
 
@@ -30,6 +31,10 @@ if ($ok && read_single_value('SELECT COUNT(*) FROM Partitions'
 }
 
 if ($ok) {
+  $old_name = read_single_value('SELECT name FROM Partitions WHERE partitionid = :partitionid',
+                                array(':partitionid' => $partitionid), '(Not found)');
+  record_event(EVENT_PARTITION_RENAMED, array('other' => $old_name.' to '.$name));
+
   read_single_value('UPDATE Partitions SET name = :name WHERE partitionid = :partitionid',
                     array(':name' => $name,
                           ':partitionid' => $partitionid));

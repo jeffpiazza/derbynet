@@ -1,7 +1,8 @@
 <?php
 require_once('inc/data.inc');
 require_once('inc/plural.inc');
-require_once('inc/find_or_create_class.inc');
+require_once('inc/class_add_or_delete.inc');
+require_once('inc/rank_add_or_delete.inc');
 // ** Do not require inc/newracer.inc from here, as newracer.inc requires this file.
 
 define('DEFAULT_PARTITION_NAME', 'Default');
