@@ -100,7 +100,7 @@ curl_getj "action.php?query=award.list" | \
 ## Create "Younger" aggregate class of classes 1,2.  Should give classid=8
 curl_postj action.php "action=class.add&constituent_1=1&constituent_2=1&name=Younger" | check_jsuccess
 ## Create an award for the aggregate class.  Award rankid won't matter for an aggregate class award.
-curl_postj action.php "action=award.edit&awardid=new&awardtypeid=2&name=AggClass%20Award&class_and_rank=8,8" | check_jsuccess
+curl_postj action.php "action=award.edit&awardid=new&awardtypeid=2&name=AggClass%20Award&class_and_rank=8,0" | check_jsuccess
 
 curl_postj action.php "action=award.winner&awardid=6&racerid=48" | check_jfailure
 curl_postj action.php "action=award.winner&awardid=6&racerid=1" | check_jsuccess

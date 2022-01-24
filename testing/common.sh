@@ -77,6 +77,14 @@ function curl_postj() {
 	echo    >> $OUTPUT_CURL
 	echo post $1 $2 >> $OUTPUT_CURL
 	echo    >> $OUTPUT_CURL
+
+    if [[ -n "$DBCHECK" ]] ; then
+        if [[ ! "$2" =~ nodata ]] ; then
+            curl --location -s -b $COOKIES_CURL -c $COOKIES_CURL "$BASE_URL/action.php?query=database.check" \
+                | tee $DEBUG_CURL | check_jsuccess
+        fi
+    fi
+
 	curl --location -d "$2" -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/$1 | tee $DEBUG_CURL \
 		| tee -a $OUTPUT_CURL
 }

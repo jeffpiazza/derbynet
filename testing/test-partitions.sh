@@ -447,4 +447,4 @@ for RACERID in 5 10 15 20 25 30 35 40 45 49; do
 done
 curl_postj action.php "action=partition.delete&partitionid=3" | check_jsuccess
 
-
+curl_getj "action.php?query=database.check" | check_jsuccess

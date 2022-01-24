@@ -1,5 +1,9 @@
 <?php
 
+function new_sortorder_value($table) {
+  return read_single_value("SELECT 1 + COALESCE(MAX(sortorder), 0) FROM $table");
+}
+
 // $read_fields and $write_fields are as would be passed to $stmt->execute(), but the
 // keys, minus a colon, have to correspond with column names in the table.
 function get_or_create_id($idfield, $tablename, $read_fields, $write_fields = null) {
@@ -44,16 +48,20 @@ function get_or_create_id($idfield, $tablename, $read_fields, $write_fields = nu
 
 if (have_permission(SET_UP_PERMISSION)) {
   $classid = get_or_create_id('classid', 'Classes',
-                              array(':class' => $_POST['class']));
+                              array(':class' => $_POST['class']),
+                              array(':class' => $_POST['class'],
+                                    ':sortorder' => new_sortorder_value('Classes')));
   // Any rankid will do, but there needs to be at least one
   $rankid = get_or_create_id('rankid', 'Ranks',
                              array(':classid' => $classid),
                              array(':rank' => $_POST['class'],
-                                   ':classid' => $classid));
+                                   ':classid' => $classid,
+                                   ':sortorder' => new_sortorder_value('Ranks')));
   $partitionid = get_or_create_id('partitionid', 'Partitions',
                                  array(':rankid' => $rankid),
                                  array(':name' => $_POST['class'],
-                                       ':rankid' => $rankid));
+                                       ':rankid' => $rankid,
+                                       ':sortorder' => new_sortorder_value('Partitions')));
   $racerid = get_or_create_id('racerid', 'RegistrationInfo',
                               array(':lastname' => $_POST['lastname'],
                                     ':firstname' => $_POST['firstname'],
