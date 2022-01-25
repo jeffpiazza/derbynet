@@ -18,10 +18,18 @@ function export_results(callable $out, $name_style = FULL_NAME) {
   $headings[] = "CarNumber";
   $headings[] = "CarName";
   $headings[] = "FinishTime";
+  $headings[] = "Scale MPH";
   $headings[] = "FinishPlace";
   $headings[] = "Completed";
 
   $out($headings);
+
+  $track_length = read_raceinfo('track-length', 40);  // in feet
+  // $track_length / $finishtime gives feet per second.
+  //  * 3600 gives feet per hour
+  //  / 5280 gives miles per hour
+  //  * 25 gives scale miles per mile (not user-adjustable; makes a 7" derby car scale to 14.5 feet)
+  $fps_to_scale_mph = 3600 * 25 / 5280;
 
   $stmt = $db->query('SELECT class, round, heat, lane,'
                      .' firstname, lastname, carnumber, carname, finishtime, finishplace, completed'
@@ -45,7 +53,12 @@ function export_results(callable $out, $name_style = FULL_NAME) {
         array_push($values, $row['firstname'], $row['lastname']);
       }
       array_push($values, $row['carnumber'], $row['carname'],
-                 $row['finishtime'], $row['finishplace'], $row['completed']);
+                 $row['finishtime']);
+      // Scale MPH
+      array_push($values, $row['finishtime'] == 0 ? "--"
+                 : sprintf("%4.1f", $track_length / $row['finishtime'] * $fps_to_scale_mph));
+      array_push($values, $row['finishplace'], $row['completed']);
+                 
       $out($values);
     }
   } catch (Exception $e) {
