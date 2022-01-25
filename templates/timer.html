@@ -24,6 +24,13 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 
+<script type="text/javascript">
+var g_version = {branch: "@BRANCH@",
+                 revision: @REV_COUNT@,
+                 date: "@BUILD_DATE@"};
+var g_page_loaded;
+$(function() { g_page_loaded = Date.now(); });
+</script>
 <script type="text/javascript" src="js/timer/port_wrapper.js"></script>
 <script type="text/javascript" src="js/timer/ports.js"></script>
 <script type="text/javascript" src="js/timer/profiles.js"></script>

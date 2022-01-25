@@ -12,6 +12,10 @@ class Logger {
 
   scope = "";
 
+  first_stacktrace;  // Records the argument to the very first call to stacktrace,
+                     // so it can be reported when do_logging becomes true.
+  first_probe_start_time = -1;  // Date.now() when probing first started
+
   constructor(do_logging) {
     this.set_remote_logging(do_logging);
   }
@@ -32,11 +36,27 @@ class Logger {
   // 
   start_log() {
     this.write_decorated(' HELLO',
+                         '\n   version=' + g_version.branch + '-' + g_version.revision +
+                                 ', ' + g_version.date +
                          '\n   platform=' + navigator.platform +
                          '\n   vendor=' + navigator.vendor +
-                         '\n   userAgent=' + navigator.userAgent
+                         '\n   userAgent=' + navigator.userAgent +
+                         '\n   page loaded=' + ((Date.now() - g_page_loaded)/1000) + 's ago' +
+                         '\n   scan started=' + (this.first_probe_start_time < 0 ? 'Not yet'
+                                                 : ((Date.now() - this.first_probe_start_time)/1000)
+                                                   + 's ago')
                         );
+    if (this.first_stacktrace) {
+      this.internal_msg('Stacktrace recorded earlier:');
+      this.stacktrace(this.first_stacktrace);
+    }
     this.flush();
+  }
+
+  probing_started() {
+    if (this.first_probe_start_time < 0) {
+      this.first_probe_start_time = Date.now();
+    }
   }
 
   serial_in(s) {
@@ -76,6 +96,9 @@ class Logger {
   }
 
   stacktrace(err) {
+    if (!this.first_stacktrace) {
+      this.first_stacktrace = err;
+    }
     if (this.do_logging) {
       this.write_decorated('!!!!! ', err.toString());
       if (err.hasOwnProperty('stack')) {

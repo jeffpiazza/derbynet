@@ -39,6 +39,7 @@ class Prober {
       return;
     }
     this.probe_cycle_underway = true;
+    g_logger.probing_started();
     if (g_timer_proxy && g_timer_proxy.port_wrapper) {
       await g_timer_proxy.port_wrapper.close();
     }

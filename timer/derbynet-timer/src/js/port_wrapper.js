@@ -169,6 +169,9 @@ class PortWrapper {
       this.writer = this.port.writable.getWriter();
       try {
         await this.writer.write(this.encoder.encode(msg + this.eol));
+      } catch (err) {
+        g_logger.internal_msg('PortWrapper.write fails');
+        g_logger.stacktrace(err);
       } finally {
         this.writer.releaseLock();
         this.writer = null;

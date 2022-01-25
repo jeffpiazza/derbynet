@@ -182,7 +182,8 @@
       <mkdir dir="website/js/timer"/>
   </target>
 
-  <target name="timer.php">
+  <target name="timer.php" depends="generated-version.inc,
+                                    generated-build-date.inc, release-series">
         <copy file="templates/timer.html"
             tofile="website/timer.php" overwrite="true">
             <filterchain>
@@ -197,6 +198,15 @@
                 </replacetokens>
                 <replacetokens>
                     <token key="ELECTRON_ONLY_END" value="--&gt;"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="BRANCH" value="${release-series}"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="REV_COUNT" value="${git-rev-count}"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="BUILD_DATE" value="${TODAY}"/>
                 </replacetokens>
           </filterchain>
       </copy>
