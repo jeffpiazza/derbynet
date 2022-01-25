@@ -113,8 +113,18 @@ class Prober {
           continue;
         }
 
-        console.log("Probing for " + prof.name + ' on port ' + porti);
-        g_logger.internal_msg("Probing for " + prof.name + ' on port ' + porti);
+        var info = g_ports[porti].getInfo();
+        var label = '';
+        if (info.hasOwnProperty('usbProductId')) {
+          label = 'USB x' +
+            info.usbVendorId.toString(16).padStart(4, '0') + '/x' +
+            info.usbProductId.toString(16).padStart(4, '0');
+        } else {
+          label = '(built-in port)';
+        }
+
+        console.log("Probing for " + prof.name + ' on port ' + porti + ' ' + label);
+        g_logger.internal_msg("Probing for " + prof.name + ' on port ' + porti + ' ' + label);
 
         $("#profiles-list li").eq(profi).addClass('probing');
 
