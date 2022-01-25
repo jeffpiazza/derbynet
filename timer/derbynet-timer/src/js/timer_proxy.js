@@ -1,5 +1,13 @@
 'use strict';
 
+function zeroesToNines(time) {
+  if (time && time.match(/^0\.0+$/)) {
+    return time.replaceAll('0', '9');
+  }
+  return time;
+}
+
+
 class TimerProxy {
   port_wrapper;
   profile;
@@ -149,6 +157,10 @@ class TimerProxy {
       var prev = g_logger.scope;
       g_logger.scope = "event.on";
       try {
+        // Pack936 reported an issue with the 'rg' being sent too quickly after
+        // gate opening, causing the previous heat's results to be sent again.
+        // This 50ms pause should address that.
+        await this.port_wrapper.drain(50);
         await this.port_wrapper.writeCommandSequence(this.profile.on[event]);
       } finally {
         g_logger.scope = prev;
@@ -197,14 +209,16 @@ class TimerProxy {
       var lane = (49 <= lane_char && lane_char <= 57) ?
           lane_char - 49 + 1 :
           lane_char - 65 + 1;
+      var time = zeroesToNines(args[1]);
+      var place = 0;
+      if (args.length > 2 && args[2]) {
+        // ASCII 33 is '!', signifying place
+        place = args[2].charCodeAt(0) - 33 + 1;
+      }
+
       if (this.result != null) {
         var was_filled = this.result.isFilled();
-        var place = 0;
-        if (args.length > 2 && args[2]) {
-          // ASCII 33 is '!', signifying place
-          place = args[2].charCodeAt(0) - 33 + 1;
-        }
-        var valid = this.result.setLane(lane, args[1], place);
+        var valid = this.result.setLane(lane, time, place);
         // Send just a single RACE_FINISHED event, even if we get some extra
         // results for masked-out lanes, etc.
         if (valid && this.result.isFilled() && !was_filled) {

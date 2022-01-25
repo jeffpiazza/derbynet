@@ -38,7 +38,11 @@ public class Champ extends TimerDeviceWithProfile {
         .gate_watcher("rs" /* READ_START_SWITCH */,
                         new Profile.Detector("^0$", Event.GATE_CLOSED),
                         new Profile.Detector("^1$", Event.GATE_OPEN))
+        // rg = "Return results when race ends"
+        // Pack936 reported an issue with the 'rg' being sent too quickly after
+        // gate opening, causing the previous heat's results to be sent again.
         .on(Event.RACE_STARTED, "rg")
+        // ra = "Force end of race, return results, then reset"
         .on(Event.OVERDUE, "ra");
   }
 }

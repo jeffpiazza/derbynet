@@ -211,6 +211,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     Profile.CommandSequence custom = profile.on.get(event);
     if (custom != null) {
       try {
+        // Pack936 reported an issue with the 'rg' being sent too quickly after
+        // gate opening, causing the previous heat's results to be sent again.
+        // This 50ms pause should address that.
+        drainForMs(50);
         sendCommandSequence(custom);
       } catch (SerialPortException ex) {
         LogWriter.stacktrace(ex);
@@ -250,12 +254,13 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         int lane = ('1' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
+        String time = args[1];
         if (result != null) {
           boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
-            result.setLane(lane, args[1]);
+            result.setLane(lane, time);
           } else {
-            result.setLane(lane, args[1], args[2].charAt(0) - '!' + 1);
+            result.setLane(lane, time, args[2].charAt(0) - '!' + 1);
           }
           // Send just a single RACE_FINISHED event, even if we get some extra
           // results for masked-out lanes, etc.
