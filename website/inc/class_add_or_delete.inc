@@ -105,6 +105,9 @@ function delete_class($classid) {
     $stmt->execute(array(':classid' => $classid));
   }
 
+  $stmt = $db->prepare('DELETE FROM Awards WHERE classid = :classid');
+  $stmt->execute(array(':classid' => $classid));
+
   $stmt = $db->prepare('DELETE FROM Playlist WHERE classid = :classid');
   $stmt->execute(array(':classid' => $classid));
 
