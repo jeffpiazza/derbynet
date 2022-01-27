@@ -9,6 +9,7 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.TimerDeviceBase;
+import org.jeffpiazza.derby.devices.TimerDeviceUtils;
 import org.jeffpiazza.derby.devices.TimerResult;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
@@ -254,7 +255,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         int lane = ('1' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
-        String time = args[1];
+        String time = TimerDeviceUtils.zeroesToNines(args[1]);
         if (result != null) {
           boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {

@@ -116,13 +116,18 @@ public class TimerDeviceUtils {
     return null;
   }
 
+  public static String zeroesToNines(String time) {
+    Matcher m = zeroesPattern.matcher(time);
+    if (m.find()) {
+      return time.replace('0', '9');
+    }
+    return time;
+  }
+
   public static Message.LaneResult[] zeroesToNines(Message.LaneResult[] results) {
     for (Message.LaneResult r : results) {
       if (r != null && r.time != null) {
-        Matcher m = zeroesPattern.matcher(r.time);
-        if (m.find()) {
-          r.time = r.time.replace('0', '9');
-        }
+        r.time = zeroesToNines(r.time);
       }
     }
     return results;
