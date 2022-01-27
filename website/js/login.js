@@ -8,12 +8,12 @@ function handle_login(role, pwd) {
             success: function(data) {
               if (data.hasOwnProperty('outcome') &&
                   data.outcome.hasOwnProperty('summary') &&
-                  data.outcome.summary == 'success') {
+                  data.outcome.summary === 'success') {
 			    window.location.href = 'index.php';
-              } else if (data.hasOwnPropety('outcome') &&
+              } else if (data.hasOwnProperty('outcome') &&
                          data.outcome.hasOwnProperty('summary') &&
-                         data.outcome.summary == 'failure') {
-				alert("Login fails: " + data.outcome.summary.description);
+                         data.outcome.summary === 'failure') {
+				alert("Login fails: " + data.outcome.description);
 		      } else {
 				alert("Unrecognized XML: " + this.responseXML);
               }
