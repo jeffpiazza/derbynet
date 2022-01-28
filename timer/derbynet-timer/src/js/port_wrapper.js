@@ -59,11 +59,8 @@ class PortWrapper {
                            parity: params.parity || "none" /* none, even, odd */
                            /* flowcontrol: 'none' or flowcontrol: 'hardware' */
                          });
-
-    this.reader = this.port.readable.getReader();
-
-    // readLoop returns a Promise that only resolves when the port gets closed
-    this.readloop_closed = this.readLoop();
+    // Start the loop but don't wait for it
+    this.readLoop();
   }
 
   // https://wicg.github.io/serial/#close-method for alternative readUntilClosed
@@ -71,13 +68,16 @@ class PortWrapper {
     if (this.writer) {
       await this.writer.abort();
     }
+
     if (this.reader) {
       await this.reader.cancel();
     }
-    await this.readloop_closed;
+
+    await this.port.close();
   }
 
   async readLoop() {
+    this.reader = this.port.readable.getReader();
     let utf8decoder = new TextDecoder();
     try {
       while (true) {
@@ -94,6 +94,8 @@ class PortWrapper {
             this.enqueueLine(this.leftover.substring(0, cr));
             this.leftover = this.leftover.substring(cr + 1);
           }
+        } else if (Flag.debug_serial.value) {
+          g_logger.debug_msg('      read() returned with no value');
         }
 
         if (done) {
@@ -109,12 +111,6 @@ class PortWrapper {
       // Reader has been released, and cannot be used to cancel its previous owner stream
       this.reader = null;
     }
-  
-    if (this.port.readable) {
-      await this.port.readable.cancel();
-    }
-
-    await this.port.close();
   }
 
   noticeContact() {

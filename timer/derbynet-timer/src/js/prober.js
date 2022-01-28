@@ -30,6 +30,7 @@ class Prober {
     return false;
   }
 
+  give_up = false;
   probe_cycle_underway = false;
 
   // Returns immediately if a scan is already underway, but will start a new one
@@ -56,14 +57,15 @@ class Prober {
         }
       }
 
-      while (!g_timer_proxy) {
+      while (!g_timer_proxy && !this.give_up) {
         g_timer_proxy = await g_prober.probe();
       }
-      if (g_host_poller) {
+      if (g_host_poller && g_timer_proxy) {
         g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
       }
     } finally {
       this.probe_cycle_underway = false;
+      this.give_up = false;  // For next time
     }
   }
   

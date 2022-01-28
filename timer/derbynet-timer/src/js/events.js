@@ -65,7 +65,7 @@ class TimerEvent {
       try {
         this.handlers[i].onEvent(event, args);
       } catch (error) {
-        Logger.stacktrace(error);
+        g_logger.stacktrace(error);
       }
     }
   }
