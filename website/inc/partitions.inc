@@ -11,7 +11,7 @@ $labels = false;
 function labels() {
   global $labels;
   // Once per page load, I think.
-  if ($labels === false) {
+  if (!isset($labels) || $labels === false) {
     $supergroup = read_raceinfo('supergroup-label', 'Pack');
     $div_label = read_raceinfo('partition-label', 'Den');
     $labels = array(
@@ -116,11 +116,13 @@ function clean_up_empty_classes_and_ranks() {
             .' WHERE rankid NOT IN (SELECT DISTINCT rankid FROM Partitions)'
             .'   AND (classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
             .'      OR rankid > (SELECT MIN(rankid) FROM Ranks AS r2 WHERE r1.classid = r2.classid))');
-  $db->exec('DELETE FROM Classes'
-            .' WHERE classid NOT IN (SELECT DISTINCT classid FROM Ranks)'
-            .'   AND classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
-            .'   AND constituents = \'\''
-            .'   AND rankids = \'\'');
+  if (group_formation_rule() != 'one-group') {
+    $db->exec('DELETE FROM Classes'
+              .' WHERE classid NOT IN (SELECT DISTINCT classid FROM Ranks)'
+              .'   AND classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
+              .'   AND constituents = \'\''
+              .'   AND rankids = \'\'');
+  }
   
   $db->exec('DELETE FROM Rounds'
             .' WHERE classid NOT IN (SELECT classid FROM Classes)');

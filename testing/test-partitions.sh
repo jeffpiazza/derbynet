@@ -64,7 +64,7 @@ curl_postj action.php "action=partition.apply-rule&rule=one-group" | check_jsucc
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group" and .[0].count == 49 and (.[0].subgroups | length == 3)
+        and .[0].name == "All Racers" and .[0].count == 49 and (.[0].subgroups | length == 3)
         and .[0].subgroups[0].name == "Div 2"
         and .[0].subgroups[0].rankid == 2
         and .[0].subgroups[0].count == 19
@@ -80,7 +80,7 @@ curl_getj "action.php?query=poll&values=classes" | \
 curl_postj action.php "action=rank.order&rankid_1=1&rankid_2=2&rankid_3=3" | check_jsuccess
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group" and (.[0].subgroups | length == 3)
+        and .[0].name == "All Racers" and (.[0].subgroups | length == 3)
         and .[0].subgroups[0].name == "Default"
         and .[0].subgroups[0].rankid == 1
         and .[0].subgroups[1].name == "Div 2"
@@ -225,7 +225,7 @@ curl_getj "action.php?query=poll&values=classes" | \
 curl_postj action.php "action=partition.apply-rule&rule=one-group" | check_jsuccess
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group"
+        and .[0].name == "All Racers"
         and (.[0].subgroups | length == 3)
         and .[0].subgroups[0].name == "Div 3"
         and .[0].subgroups[1].name == "Div 2"
@@ -240,7 +240,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
 ' >/dev/null || test_fails
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group"
+        and .[0].name == "All Racers"
         and (.[0].subgroups | length == 3)
         and .[0].subgroups[0].name == "Div 2"
         and .[0].subgroups[1].name == "Div 3"
@@ -258,7 +258,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
 ' >/dev/null || test_fails
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group"
+        and .[0].name == "All Racers"
         and (.[0].subgroups | length == 3)
         and .[0].subgroups[0].name == "Div 2"
         and .[0].subgroups[1].name == "Div 3"
@@ -276,7 +276,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
 ' >/dev/null || test_fails
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 1
-        and .[0].name == "One Group"
+        and .[0].name == "All Racers"
         and (.[0].subgroups | length == 4)
         and .[0].subgroups[0].name == "Div 2"
         and .[0].subgroups[1].name == "Div 3"

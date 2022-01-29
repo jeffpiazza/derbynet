@@ -54,10 +54,10 @@ $(function() {
 
 <div id="race-rules">
 
-<?php if (read_single_value('SELECT COUNT(*) FROM Partitions') > 1) { ?>
   <input id="by-partition-radio" type="radio" name="form-groups-by" value="by-partition"/>
-   <label for="by-partition-radio">Race each <?php echo partition_label_lc(); ?> as a group</label>
-<?php } ?>
+   <label for="by-partition-radio">Race each
+       <span class="partition-label-lc"><?php echo partition_label_lc(); ?></span>
+       as a group</label>
 
 <input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
 <label for="one-group-radio">Race as one big group</label>
@@ -100,7 +100,8 @@ $(function() {
     to re-order.</p>
        
 <p class="instructions custom">
-    Drag <span class="partition-color">&nbsp;</span> <?php echo partition_label_pl_lc(); ?>
+    Drag <span class="partition-color">&nbsp;</span>
+          <span class="partition-label-pl-lc"><?php echo partition_label_pl_lc(); ?></span>
     onto <span class="group-color">&nbsp;</span> groups
     <span class="and-subgroups" style="white-space: nowrap;">
         and <span class="subgroup-color">&nbsp;</span> subgroups</span>
@@ -132,7 +133,7 @@ $(function() {
             data-on-text="<?php echo subgroup_label();?>"/>
     </div>
 
-    <h3>Add New <?php echo group_label(); ?></h3>
+    <h3>Add New <span class="group-label"><?php echo group_label(); ?></span></h3>
     <input id='add-class-name' name="name" type="text"/>
 
    <div class="ntrophies">
@@ -168,7 +169,7 @@ $(function() {
 
 <div id="edit_one_class_modal" class="modal_dialog hidden block_buttons">
   <form>
-    <h3><?php echo group_label(); ?> Name</h3>
+    <h3><span class="group-label"><?php echo group_label(); ?></span> Name</h3>
     <input id="edit_class_name" name="name" type="text"/>
 
    <div class="ntrophies">
@@ -198,7 +199,8 @@ $(function() {
     </div>
 
     <div id="edit_ranks_extension" class="hidden">
-      <input type="button" value="Add <?php echo subgroup_label(); ?>"
+      <input id="add_rank_button" type="button"
+             value="Add <?php echo subgroup_label(); ?>"
              onclick="show_add_rank_modal();" />
       <br/>
     </div>
@@ -208,7 +210,8 @@ $(function() {
            onclick="close_edit_one_class_modal();"/>
 
     <div id="delete_class_extension">
-    <input type="button" value="Delete <?php echo group_label(); ?>"
+    <input id="delete_class_button" type="button"
+           value="Delete <?php echo group_label(); ?>"
            class="delete_button"
            onclick="handle_delete_class();"/>
     </div>
@@ -216,7 +219,7 @@ $(function() {
 </div>
 
 <div id="add_rank_modal" class="modal_dialog hidden block_buttons">
-  <h3>Add New <?php echo subgroup_label(); ?></h3>
+  <h3>Add New <span class="subgroup-label"><?php echo subgroup_label(); ?></span></h3>
   <form>
     <input type="hidden" name="action" value="rank.add"/>
     <input type="hidden" name="classid"/>
@@ -229,7 +232,7 @@ $(function() {
 </div>
 
 <div id="edit_one_rank_modal" class="modal_dialog hidden block_buttons">
-  <h3>New <?php echo subgroup_label(); ?> Name</h3>
+  <h3>New <span class="subgroup-label"><?php echo subgroup_label(); ?></span> Name</h3>
   <form>
     <input id="edit_rank_name" name="name" type="text"/>
 
@@ -238,7 +241,8 @@ $(function() {
            onclick="close_edit_one_rank_modal();"/>
 
     <div id="delete_rank_extension">
-    <input type="button" value="Delete <?php echo subgroup_label(); ?>"
+    <input id="delete_rank_button" type="button"
+           value="Delete <?php echo subgroup_label(); ?>"
            class="delete_button"
            onclick="handle_delete_rank();"/>
     </div>

@@ -44,7 +44,7 @@ function poll_for_structure() {
   $.ajax('action.php',
          {type: 'GET',
           data: {query: 'poll',
-                 values: 'classes,partitions'},
+                 values: 'classes,partitions,race-structure'},
           success: function(data) {
             process_polling_data(data);
           }
@@ -53,10 +53,13 @@ function poll_for_structure() {
 
 $(function() { poll_for_structure(); });  // Draw initial structure
 
+
 function process_polling_data(data) {
   populate_racing_groups(data, $("#use-subgroups").is(':checked'));
   populate_aggregate_modal(data);
   populate_aggregates(data.classes);
+  populate_labels(data.labels);
+  // TODO Update show-subgroups and especially form-groups-by to match what's in data
 }
 
 function populate_racing_groups(data, using_subgroups) {
@@ -93,19 +96,22 @@ function populate_racing_groups(data, using_subgroups) {
     for (var j = 0; j < data.classes[i].subgroups.length; ++j) {
       var rankid = data.classes[i].subgroups[j].rankid;
       if (using_subgroups) {
+        var subg_p = $("<p/>")
+                    .addClass('rank-name')
+                    .text(data.classes[i].subgroups[j].name)
+                    .append($("<span/>").text("subgroup").addClass('label'))
+                    .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
+                            .addClass('count'));
+        if (rule != 'by-partition') {
+          subg_p.prepend($("<input type='button' value='Edit' class='edit-button'/>")
+                         .on('click', on_edit_rank));
+        }
         var subg = $("<li/>")
             .appendTo(subgroups)
             .addClass('subgroup')
             .attr('data-rankid', data.classes[i].subgroups[j].rankid)
             .attr('data-count', data.classes[i].subgroups[j].count)
-            .append($("<p/>")
-                    .addClass('rank-name')
-                    .text(data.classes[i].subgroups[j].name)
-                    .append($("<span/>").text("subgroup").addClass('label'))
-                    .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
-                            .addClass('count'))
-                    .prepend($("<input type='button' value='Edit' class='edit-button'/>")
-                             .on('click', on_edit_rank)));
+            .append(subg_p);
       } else {
         // If we're not showing subgroups, then append the UL for partitions directly to the LI for the class.
         var subg = cl;
@@ -354,4 +360,16 @@ function populate_aggregates(classes) {
         .attr('data-constituent-of', classes[i].name);
     }
   }
+}
+
+function populate_labels(labels) {
+  $("span.partition-label-lc").text(labels.partition[0].toLowerCase());
+  $("span.partition-label-pl-lc").text(labels.partition[1].toLowerCase());
+  $("span.group-label").text(labels.group[0]);
+  $("span.subgroup-label").text(labels.subgroup[0]);
+  $("#aggregate-by-div .flipswitch .off").text(labels.group[0]);
+  $("#aggregate-by-div .flipswitch .on").text(labels.subgroup[0]);
+  $("#add_rank_button").prop('value', "Add " + labels.subgroup[0]);
+  $("#delete_class_button").prop('value', "Delete " + labels.group[0]);
+  $("#delete_rank_button").prop('value', "Delete " + labels.subgroup[0]);
 }

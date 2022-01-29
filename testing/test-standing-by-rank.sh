@@ -146,9 +146,9 @@ curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22
     jq '.kind == "supergroup" and .key == "supergroup" and .name == "Pack"' | \
     expect_eq true
 
-curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22One Group%22%7D" | \
+curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22All Racers%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
-    jq '.kind == "class" and .key == "c1" and .name == "One Group"' | \
+    jq '.kind == "class" and .key == "c1" and .name == "All Racers"' | \
     expect_eq true
 curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | \
     jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
@@ -172,7 +172,7 @@ curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in Tigers'
 curl_getj "action.php?query=award.current" | expect_one Thanh
 
 curl_postj action.php "action=award.present&key=speed-3-1" | check_jsuccess
-curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in One Group'
+curl_getj "action.php?query=award.current" | expect_one '3rd Fastest in All Racers'
 curl_getj "action.php?query=award.current" | expect_one Jefferys
 
 curl_postj action.php "action=award.present&key=speed-3" | check_jsuccess

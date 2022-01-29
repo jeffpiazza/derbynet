@@ -35,7 +35,10 @@ function on_edit_class(event) {
   $("#constituent_extension").toggleClass('hidden', constituent_of == '');
   $("#constituent_owner").text(constituent_of);
 
-  $("#delete_class_extension").toggleClass('hidden', !(count == 0 && nrounds == 0 && constituent_of == ''));
+  var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
+  $("#delete_class_extension")
+    .toggleClass('hidden', !(count == 0 && nrounds == 0 &&
+                             constituent_of == '' && rule != 'one-group'));
   show_modal("#edit_one_class_modal", function () {
     $.ajax(g_action_url,
            {type: 'POST',

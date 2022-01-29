@@ -1,3 +1,7 @@
+/* global.css sets a specific size */
+.block_buttons h3 span {
+  font-size: 1em;
+}
 
 div#race-rules, ul#all-groups {
   width: 400px;

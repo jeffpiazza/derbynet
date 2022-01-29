@@ -15,7 +15,7 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
     // find_or_create_class will create a Rounds entry, if necessary.
-    $classid = find_or_create_class('One Group');
+    $classid = find_or_create_class('All Racers');
     // Trusting that partitions have unique names
     $stmt = $db->prepare('INSERT INTO Ranks(rank, classid, sortorder)'
                          .'     SELECT name, :classid, sortorder FROM Partitions');

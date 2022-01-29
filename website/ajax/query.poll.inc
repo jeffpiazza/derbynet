@@ -30,10 +30,6 @@ function json_common_1($key, &$now_running) {
     require_once('inc/json-current-heat.inc');
     json_out('current-heat', json_current_heat($now_running));
     break;
-  case 'partitions':
-    require_once('inc/json-partitions.inc');
-    json_out('partitions', json_partitions());
-    break;
   case 'heat-results':
     if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
       require_once('inc/timer-test.inc');
@@ -58,8 +54,17 @@ function json_common_1($key, &$now_running) {
     require_once('inc/json-last-heat.inc');
     json_out('last-heat', json_last_heat());
     break;
+  case 'partitions':
+    require_once('inc/json-partitions.inc');
+    json_out('partitions', json_partitions());
+    break;
   case 'precision':
     json_out('precision', get_finishtime_formatting_string() == "%6.4f" ? 4 : 3);
+    break;
+  case 'race-structure':
+    require_once('inc/partitions.inc');
+    json_out('group-formation-rule', group_formation_rule());
+    json_out('labels', labels());
     break;
   case 'racers':  
     require_once('inc/json-current-racers.inc');
