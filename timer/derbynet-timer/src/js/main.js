@@ -160,7 +160,7 @@ $(function() {
       case 'GATE_CLOSED':
         if (!isOpen) return
         isOpen = false;
-        beak;
+        break;
       case 'LOST_CONNECTION':
         $("#probe-button").prop('disabled', false);
         setTimeout(async function() {

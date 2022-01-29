@@ -69,7 +69,11 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     // Upon getting a new timer connection, choose a new name for server-side
     // timer log file (which we may well never create).
     $logs_dir = read_raceinfo('logs-directory', '');
-    if ($logs_dir ==='') {
+    if ($logs_dir !== '' && !is_dir($logs_dir)) {
+      write_raceinfo('logs-directory', '');
+      $logs_dir = '';
+    }
+    if ($logs_dir === '') {
       $logs_dir = sys_get_temp_dir();
     }
     if (!substr($logs_dir -1) !== DIRECTORY_SEPARATOR) {
@@ -229,6 +233,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
           .' round="'.$current['round'].'"'
           .' roundid="'.$current['roundid'].'"'
           .' heat="'.$current['heat'].'"'
+          .' lanes="'.$nlanes.'"'
           .'/>'."\n";
       if ($tstate == TIMER_CONNECTED) {
         $timer_state->to_state(TIMER_STAGING);
