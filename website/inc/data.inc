@@ -227,7 +227,7 @@ function get_running_round() {
 
   if (@$config['roundid'] == TIMER_TEST_ROUNDID) {
     $config['class'] = 'Timer Test';
-    $config['round'] = @$config['heat'];
+    $config['round'] = 1;
   } else if (@$config['roundid']) {
     $stmt = $db->prepare('SELECT round, class'
                          .' FROM Rounds'
