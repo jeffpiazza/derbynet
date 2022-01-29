@@ -4,6 +4,7 @@ require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/events.inc');
+require_once('inc/rank_add_or_delete.inc');
 
 function create_class($classname, $with_first_round = true) {
   global $db;
@@ -70,13 +71,10 @@ function delete_class($classid) {
   $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                  array(':classid' => $classid), '(No such class)');
 
-  if (read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
-                        array(':classid' => $classid)) > 0) {
-    record_event(EVENT_RANK_DELETED, array('classid' => $classid,
-                                           'rankid' => -1,
-                                           'other' => 'for class '.$classname));
-    $stmt = $db->prepare('DELETE FROM Ranks WHERE classid = :classid');
-    $stmt->execute(array(':classid' => $classid));
+  $stmt = $db->prepare('SELECT rankid FROM Ranks WHERE classid = :classid');
+  $stmt->execute(array(':classid' => $classid));
+  foreach ($stmt->fetchAll(PDO::FETCH_COLUMN, 0) as $rankid) {
+    delete_rank($rankid);
   }
 
   $stmt = $db->prepare('DELETE FROM RaceChart'
@@ -96,9 +94,10 @@ function delete_class($classid) {
                        .'  (SELECT roundid FROM Rounds'
                        .'   WHERE classid = :classid)');
   $stmt->execute(array(':classid' => $classid));
-
+  
   if (read_single_value('SELECT COUNT(*) FROM Rounds WHERE classid = :classid',
                         array(':classid' => $classid)) > 0) {
+    
     record_event(EVENT_ROUND_DELETED, array('classid' => $classid,
                                             'other' => $classname.', all rounds'));
     $stmt = $db->prepare('DELETE FROM Rounds  WHERE classid = :classid');

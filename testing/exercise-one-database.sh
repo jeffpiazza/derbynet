@@ -77,6 +77,7 @@ run_tests() {
     puppeteer_test checkin-empty-test.js
 
     `dirname $0`/test-partitions.sh "$BASE_URL"
+    `dirname $0`/test-racing-groups.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
     `dirname $0`/reset-database.sh "$BASE_URL"

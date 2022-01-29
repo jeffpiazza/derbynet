@@ -331,3 +331,11 @@ rankid_of() {
     NOANNOUNCE=1 curl_getj "action.php?query=class.list" \
         | jq ".classes | map(.subgroups) | add | map(select(.name | startswith($Q$1$Q)))[0].rankid"
 }
+classid_of() {
+    NOANNOUNCE=1 curl_getj "action.php?query=class.list" \
+        | jq ".classes | map(select(.name | startswith($Q$1$Q)))[0].classid"
+}
+partitionid_of() {
+    NOANNOUNCE=1 curl_getj "action.php?query=poll&values=partitions" \
+        | jq ".partitions | map(select(.name | startswith($Q$1$Q)))[0].partitionid"
+}

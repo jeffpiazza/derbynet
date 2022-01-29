@@ -38,4 +38,24 @@ function find_or_create_rank($rankname, $classid) {
 
   return $rankid;
 }
+
+function delete_rank($rankid) {
+  global $db;
+  // Assumes that there are no racers in this rank.
+  $rankname = read_single_value('SELECT rank FROM Ranks WHERE rankid = :rankid',
+                                array(':rankid' => $rankid), '(No rank name)');
+  record_event(EVENT_RANK_DELETED, array('classid' => -1,
+                                         'rankid' => $rankid,
+                                         'other' => $rankname));
+  $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
+  $stmt->execute(array(':rankid' => $rankid));
+
+  $stmt = $db->prepare('DELETE FROM Awards WHERE rankid = :rankid');
+  $stmt->execute(array(':rankid' => $rankid));
+
+  // If there are no racers in the rank, there shouldn't be any in any of the
+  // partitions, so safe to delete these.
+  $stmt = $db->prepare('DELETE FROM Partitions WHERE rankid = :rankid');
+  $stmt->execute(array(':rankid' => $rankid));
+}
 ?>

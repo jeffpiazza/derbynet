@@ -78,7 +78,8 @@ function find_or_create_partition($name) {
     switch (group_formation_rule()) {
     case 'one-group':
       // one-group: Find or create a rank
-      $rankid = find_or_create_rank($name, find_or_create_class('One Group'));
+      $rankid = find_or_create_rank($name,
+                                    read_single_value('SELECT MIN(classid) FROM Classes'));
       break;
     default:
       // by-partition or custom: Find or create a class
