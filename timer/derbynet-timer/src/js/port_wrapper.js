@@ -85,10 +85,11 @@ class PortWrapper {
 
         if (value) {
           this.last_char_received = Date.now();
+          var s = utf8decoder.decode(value);
           if (Flag.debug_serial.value) {
-            g_logger.debug_msg('      read(' + describeString(value) + ')');
+            g_logger.debug_msg('      read(' + describeString(s) + ')');
           }
-          this.leftover += utf8decoder.decode(value);
+          this.leftover += s;
           var cr;
           while ((cr = this.leftover.indexOf('\n')) >= 0) {
             this.enqueueLine(this.leftover.substring(0, cr));

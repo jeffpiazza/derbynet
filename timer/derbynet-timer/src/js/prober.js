@@ -18,6 +18,9 @@ class Prober {
     var re = new RegExp(prof.prober.responses[ri]);
     var s;
     while ((s = await pw.next(deadline)) != null) {
+      if (Flag.debug_serial.value) {
+        g_logger.debug_msg('   prober sees <<' + describeString(s) + '>>');
+      }
       if (re.test(s)) {
         ++ri;
         if (ri >= prof.prober.responses.length) {
@@ -27,6 +30,9 @@ class Prober {
       }
     }
 
+    if (Flag.debug_serial.value) {
+      g_logger.debug_msg('   probe match failed for /' + prof.prober.responses[ri] + '/');
+    }
     return false;
   }
 
