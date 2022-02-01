@@ -125,9 +125,9 @@ function classid_to_class(classid, classes) {
 function rankid_to_rank(rankid, classes) {
   if (rankid == 0) return "";
   for (var i = 0; i < classes.length; ++i) {
-    for (var j = 0; j < classes[i].ranks.length; ++j) {
-      if (classes[i].ranks[j].rankid == rankid) {
-        return classes[i].ranks[j].name;
+    for (var j = 0; j < classes[i].subgroups.length; ++j) {
+      if (classes[i].subgroups[j].rankid == rankid) {
+        return classes[i].subgroups[j].name;
       }
     }
   }
