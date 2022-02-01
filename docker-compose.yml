@@ -1,0 +1,10 @@
+version: '3'
+services:
+  derbynet:
+    ports:
+      - "4443:443"
+      - "8080:80"
+    hostname: derbynet
+    build:
+      context: .
+      dockerfile: installer/docker/Dockerfile 

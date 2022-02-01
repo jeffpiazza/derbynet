@@ -40,3 +40,5 @@ dist/
 adapter-webrtc/
 .idea
 *.iml
+# Vim backup files
+.*.sw?

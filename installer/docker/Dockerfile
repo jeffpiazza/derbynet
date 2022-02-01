@@ -19,7 +19,9 @@ RUN apt install -y supervisor
 ARG WWW_ROOT=/var/www/html
 
 WORKDIR $WWW_ROOT
-
+RUN install -d $WWW_ROOT/inc
+COPY templates/* $WWW_ROOT/inc
+RUN install -d -m 755 -o www-data -g www-data  $WWW_ROOT/local
 COPY website/ .
 RUN rm -rf ./local/* ./index*.html
 
@@ -34,7 +36,6 @@ COPY installer/docker/set-timeout.sh /usr/local/bin
 # Post-install actions from Debian derbynet_server installer:
 
 RUN mkdir -m 777 /var/lib/derbynet
-
 RUN echo '<?php $default_file_path = "/var/lib/derbynet"; ?>' > $WWW_ROOT/local/default-file-path.inc
 
 
