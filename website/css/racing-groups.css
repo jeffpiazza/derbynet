@@ -70,7 +70,7 @@ li.group p, li.aggregate p {
 }
 
 li.subgroup > p, .subgroup-color {
-  background-color: #b2cdf2;
+  background-color: #e8eb63;
 }
 li.subgroup p {
   margin: 0px;
@@ -84,6 +84,8 @@ li.partition > p, .partition-color {
   background-color: #939191;
 }
 
+/* For partitions that are "incompletely" part of a subgroup,
+  i.e., a partition that's split across more than one subgroup. */
 li.incomplete > p {
   /* border: dashed black 1px; */
   background: linear-gradient(to right,
