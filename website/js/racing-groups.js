@@ -1,6 +1,7 @@
 'use strict';
 
-function on_rule_change() {
+function on_rule_change(event, synthetic) {
+  if (synthetic) return;
   var val = $("input[type='radio'][name='form-groups-by']:checked").val();
   $.ajax('action.php',
          {type: 'POST',
@@ -15,8 +16,8 @@ function on_rule_change() {
 }
 $(function() { $("input[type='radio'][name='form-groups-by']").on('change', on_rule_change); });
 
-function on_use_subgroups_change(event, ignore) {
-  if (ignore) return;
+function on_use_subgroups_change(event, synthetic) {
+  if (synthetic) return;
 
   $.ajax('action.php',
          {type: 'POST',
@@ -55,17 +56,28 @@ $(function() { poll_for_structure(); });  // Draw initial structure
 
 
 function process_polling_data(data) {
+  $("#use-subgroups")
+    .prop('checked', data['use-subgroups'])
+    .trigger('change', /*synthetic*/true);
+
+  if (data['group-formation-rule'] != $("input[type='radio'][name='form-groups-by']:checked").val()) {
+    $("input[type='radio'][name='form-groups-by']").attr('checked', false);
+    $("input[type='radio'][name='form-groups-by'][value='" + data['group-formation-rule'] + "'")
+      .attr('checked', true)
+      .trigger('change', /*synthetic*/true);
+  }
+
   populate_racing_groups(data, $("#use-subgroups").is(':checked'));
   populate_aggregate_modal(data);
   populate_aggregates(data.classes);
   populate_labels(data.labels);
-  // TODO Update show-subgroups and especially form-groups-by to match what's in data
 }
 
 function populate_racing_groups(data, using_subgroups) {
   var all_groups = $("ul#all-groups");
   all_groups.children('li').not('#new-group').remove();
   var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
+  var partition_label_lc = data.labels.partition[0].toLowerCase();
 
   $("span.and-subgroups").toggleClass('hidden', !using_subgroups);
   $("p.instructions.custom").toggleClass('hidden', rule != 'custom');
@@ -85,7 +97,9 @@ function populate_racing_groups(data, using_subgroups) {
                 .addClass('class-name')
                 .text(data.classes[i].name)
                 // label and count are float-right, so the first span is rightmost
-                .append($("<span/>").text("group").addClass('label'))
+                .append($("<span/>").text(rule == 'by-partition'
+                                          ? partition_label_lc + " (group)"
+                                          : "group").addClass('label'))
                 .append($("<span/>").text("(" + data.classes[i].count + ")").addClass('count'))
                 .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                          .on('click', on_edit_class)));
@@ -99,7 +113,9 @@ function populate_racing_groups(data, using_subgroups) {
         var subg_p = $("<p/>")
                     .addClass('rank-name')
                     .text(data.classes[i].subgroups[j].name)
-                    .append($("<span/>").text("subgroup").addClass('label'))
+            .append($("<span/>").text(rule == 'one-group'
+                                      ? partition_label_lc + " (subgroup)"
+                                      : "subgroup").addClass('label'))
                     .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
                             .addClass('count'));
         if (rule != 'by-partition') {
@@ -141,6 +157,7 @@ function populate_racing_groups(data, using_subgroups) {
 }
 
 function populate_partitions_in_subgroup(subg, rankid, data) {
+  var partition_label_lc = data.labels.partition[0].toLowerCase();
   var divs = $("<ul/>")
       .appendTo(subg)
       .addClass('partitions');
@@ -153,11 +170,17 @@ function populate_partitions_in_subgroup(subg, rankid, data) {
         .appendTo(divs)
         .addClass('partition')
         .attr('data-partitionid', data.partitions[d].partitionid)
-        .toggleClass('incomplete', data.partitions[d].rankids.length > 1)
+    // TODO Remove "incomplete", which was to signify a partition that's not completely
+    // incorporated into a single rank.  These aren't allowed.
+        // .toggleClass('incomplete', data.partitions[d].rankids.length > 1)
         .append($("<p/>")
                 .text(data.partitions[d].name)
+                // label and count are float-right, so the first span is rightmost
+                .append($("<span/>").text(partition_label_lc).addClass('label'))
                 .append($("<span/>").text("(" + data.partitions[d].count + ")")
-                        .addClass('count')));
+                        .addClass('count'))
+                .prepend($("<input type='button' value='Edit' class='edit-button'/>")
+                         .on('click', on_edit_partition)));
   }
 }
 
@@ -363,6 +386,7 @@ function populate_aggregates(classes) {
 }
 
 function populate_labels(labels) {
+  $("span.partition-label").text(labels.partition[0]);
   $("span.partition-label-lc").text(labels.partition[0].toLowerCase());
   $("span.partition-label-pl-lc").text(labels.partition[1].toLowerCase());
   $("span.group-label").text(labels.group[0]);
@@ -370,6 +394,14 @@ function populate_labels(labels) {
   $("#aggregate-by-div .flipswitch .off").text(labels.group[0]);
   $("#aggregate-by-div .flipswitch .on").text(labels.subgroup[0]);
   $("#add_rank_button").prop('value', "Add " + labels.subgroup[0]);
-  $("#delete_class_button").prop('value', "Delete " + labels.group[0]);
-  $("#delete_rank_button").prop('value', "Delete " + labels.subgroup[0]);
+  $("#add_partition_button").prop('value', "Add " + labels.partition[0]);
+  $("#delete_class_button")
+    .prop('value', "Delete " + labels.group[0])
+    .prop('data-label', labels.group[0]);
+  $("#delete_rank_button")
+    .prop('value', "Delete " + labels.subgroup[0])
+    .prop('data-label', labels.subgroup[0]);
+  $("#delete_partition_button")
+    .prop('value', "Delete " + labels.partition[0])
+    .prop('data-label', labels.partition[0]);
 }

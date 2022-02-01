@@ -27,17 +27,9 @@ if (schema_version() < PARTITION_SCHEMA) {
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/racing-groups.js"></script>
-<script type="text/javascript" src="js/racing-groups-add-group.js"></script>
+<script type="text/javascript" src="js/racing-groups-add.js"></script>
 <script type="text/javascript" src="js/racing-groups-edit.js"></script>
 <script type="text/javascript">
-function use_subgroups() { return <?php echo json_encode(use_subgroups()); ?>; }
-function group_label() { return <?php echo json_encode(group_label()); ?>; }
-function group_label_plural() { return <?php echo json_encode(plural(group_label())); ?>; }
-function group_label_lc() { return <?php echo json_encode(group_label_lc()); ?>; }
-function subgroup_label() { return <?php echo json_encode(subgroup_label()); ?>; }
-function subgroup_label_plural() { return <?php echo json_encode(plural(subgroup_label())); ?>; }
-function subgroup_label_lc() { return <?php echo json_encode(subgroup_label_lc()); ?>; }
-
 $(function() {
     var rule = <?php echo json_encode(group_formation_rule()); ?>;
     $("input[name='form-groups-by'][value='" + rule + "']").prop('checked', true);
@@ -85,6 +77,7 @@ $(function() {
 </div>
 
 <div class="block_buttons">
+  <input id="add-partition-button" type="button" value="Add <?php echo partition_label(); ?>"/>
   <input id="add-aggregate-button" type="button" value="Add Aggregate"/>
 </div>
 
@@ -212,8 +205,9 @@ $(function() {
     <div id="delete_class_extension">
     <input id="delete_class_button" type="button"
            value="Delete <?php echo group_label(); ?>"
+           data-label="<?php echo group_label(); ?>"
            class="delete_button"
-           onclick="handle_delete_class();"/>
+           onclick="handle_delete_class(this);"/>
     </div>
   </form>
 </div>
@@ -243,8 +237,41 @@ $(function() {
     <div id="delete_rank_extension">
     <input id="delete_rank_button" type="button"
            value="Delete <?php echo subgroup_label(); ?>"
+           data-label="<?php echo subgroup_label(); ?>"
            class="delete_button"
-           onclick="handle_delete_rank();"/>
+           onclick="handle_delete_rank(this);"/>
+    </div>
+  </form>
+</div>
+
+
+<div id="add_partition_modal" class="modal_dialog hidden block_buttons">
+  <h3>Add New <span class="partition-label"><?php echo partition_label(); ?></span></h3>
+  <form>
+    <input type="hidden" name="action" value="partition.add"/>
+    <input name="name" type="text"/>
+
+    <input type="submit"/>
+    <input type="button" value="Cancel"
+           onclick="close_add_partition_modal();"/>
+  </form>
+</div>
+
+<div id="edit_one_partition_modal" class="modal_dialog hidden block_buttons">
+  <h3>New <span class="partition-label"><?php echo partition_label(); ?></span> Name</h3>
+  <form>
+    <input id="edit_partition_name" name="name" type="text"/>
+
+    <input type="submit"/>
+    <input type="button" value="Cancel"
+           onclick="close_edit_one_partition_modal();"/>
+
+    <div id="delete_partition_extension">
+    <input id="delete_partition_button" type="button"
+           value="Delete <?php echo partition_label(); ?>"
+           data-label="<?php echo partition_label(); ?>"
+           class="delete_button"
+           onclick="handle_delete_partition(this);"/>
     </div>
   </form>
 </div>

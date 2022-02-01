@@ -140,3 +140,26 @@ function on_add_subgroup(event) {
 function close_add_rank_modal() {
   close_modal("#add_rank_modal");
 }
+
+function on_add_partition(event) {
+  $("#add_partition_modal input[name='name']").val("");
+  show_modal("#add_partition_modal", function() {
+    close_add_partition_modal();
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: $("#add_partition_modal form").serialize(),
+            success: function(data) {
+              $("#cleanup")
+                .prop('checked', false)
+                .trigger('change', /*synthetic*/true);
+              poll_for_structure();
+            }});
+    return false;
+  });
+}
+
+function close_add_partition_modal() {
+  close_modal("#add_partition_modal");
+}
+
+$(function() { $("#add-partition-button").on('click', on_add_partition); });

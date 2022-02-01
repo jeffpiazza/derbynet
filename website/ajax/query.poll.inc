@@ -63,6 +63,7 @@ function json_common_1($key, &$now_running) {
     break;
   case 'race-structure':
     require_once('inc/partitions.inc');
+    json_out('use-subgroups', use_subgroups());
     json_out('group-formation-rule', group_formation_rule());
     json_out('labels', labels());
     break;

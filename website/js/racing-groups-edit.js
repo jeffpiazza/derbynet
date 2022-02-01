@@ -59,9 +59,9 @@ function close_edit_one_class_modal() {
   close_modal("#edit_one_class_modal");
 }
 
-function handle_delete_class() {
+function handle_delete_class(btn) {
   close_edit_one_class_modal();
-  if (confirm('Really delete ' + group_label_lc()
+  if (confirm('Really delete ' + $(btn).prop('data-label').toLowerCase()
               + ' "' + $('#edit_one_class_modal input[name="name"]').val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
@@ -109,10 +109,10 @@ function close_edit_one_rank_modal() {
   close_modal("#edit_one_rank_modal");
 }
 
-function handle_delete_rank() {
+function handle_delete_rank(btn) {
   var classid = $("#edit_rank_name").attr('data-classid');
   close_edit_one_rank_modal();
-  if (confirm('Really delete ' + subgroup_label_lc()
+  if (confirm('Really delete ' + $(btn).prop('data-label').toLowerCase()
               + ' "' + $("#edit_rank_name").val() + '"?')) {
     $.ajax(g_action_url,
            {type: 'POST',
@@ -120,9 +120,54 @@ function handle_delete_rank() {
                    rankid: $("#edit_rank_name").attr('data-rankid')
                   },
             success: function(data) {
-              repopulate_class_list(data);
-              repopulate_constituent_classes(data);
-              hide_ranks_except(classid);
+              poll_for_structure();
+            }
+           });
+  }
+  return false;
+}
+
+
+
+function on_edit_partition(event) {
+  var list_item = $(event.target).closest("li");
+  var partition_name = list_item.children("p").clone().find('span').remove().end().text();
+  $("#edit_partition_name").val(partition_name);
+
+  var count = list_item.attr('data-count');
+  $("#delete_partition_extension").toggleClass('hidden', count > 0);
+
+  show_modal("#edit_one_partition_modal", function() {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'partition.edit',
+                   partitionid: list_item.attr('data-partitionid'),
+                   name: $("#edit_partition_name").val()},
+            success: function(data) {
+              poll_for_structure();
+            }});
+
+    close_edit_one_partition_modal();
+    return false;
+  });
+}
+
+function close_edit_one_partition_modal() {
+  close_modal("#edit_one_partition_modal");
+}
+
+function handle_delete_partition(btn) {
+  var classid = $("#edit_partition_name").attr('data-classid');
+  close_edit_one_partition_modal();
+  if (confirm('Really delete ' + $(btn).prop('data-label').toLowerCase()
+              + ' "' + $("#edit_partition_name").val() + '"?')) {
+    $.ajax(g_action_url,
+           {type: 'POST',
+            data: {action: 'partition.delete',
+                   partitionid: $("#edit_partition_name").attr('data-partitionid')
+                  },
+            success: function(data) {
+              poll_for_structure();
             }
            });
   }
