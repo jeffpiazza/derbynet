@@ -131,6 +131,7 @@ class Prober {
         $("#profiles-list li").eq(profi).addClass('probing');
 
         var pw = new PortWrapper(port);
+        pw.eol = prof.options.eol;
         try {
           var opened_ok = true;
           await pw.open(prof.params)
