@@ -10,7 +10,7 @@ if (count($state) < 2) {
 $exposed = $state[0];
 $entry = $state[1];
 
-json_out('catalog-entry', $entry);
+json_out('catalog-entry', json_decode($entry));
 json_out('exposed', $exposed);
 
 ?>

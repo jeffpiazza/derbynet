@@ -112,7 +112,7 @@ $(function() {
                 }
 
                 if (data.hasOwnProperty('exposed')) {
-                  var new_exposed = data.exposed == '' ? 0 : data.exposed;
+                  var new_exposed = data.exposed == '' ? false : data.exposed;
                   if (new_exposed !== poller.exposed) {
                     changed = true;
                     poller.exposed = new_exposed;
