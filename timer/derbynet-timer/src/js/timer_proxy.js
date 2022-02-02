@@ -136,7 +136,7 @@ class TimerProxy {
     // TODO Save and restore port_wrapper.detectors, as these setup queries' detectors don't need to
     // live beyond this one-time use.
     if (this.profile.hasOwnProperty('setup_queries')) {
-      for (var i = 0; i < this.proffile.setup_queries.length; ++i) {
+      for (var i = 0; i < this.profile.setup_queries.length; ++i) {
         for (var j = 0; j < this.profile.setup_queries[i].matchers.length; ++j) {
           var d = new Detector(this.profile.setup_queries[i].matchers[j]);
           d.activateFor(COMMAND_DRAIN_MS);
