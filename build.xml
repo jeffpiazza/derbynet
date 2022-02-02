@@ -535,7 +535,8 @@
   <delete dir="dist"/>
 </target>
 
-<target name="docker" description="Build derbynet_server docker image">
+<target name="docker" depends="generated, timer-in-browser"
+        description="Build derbynet_server docker image">
     <exec executable="docker">
         <arg value="build"/>
         <arg value="--tag"/>

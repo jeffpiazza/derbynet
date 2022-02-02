@@ -35,6 +35,9 @@ COPY installer/docker/set-timeout.sh /usr/local/bin
 
 RUN mkdir -m 777 /var/lib/derbynet
 
+RUN test -d $WWW_ROOT/local && rm -rf $WWW_ROOT/local
+RUN mkdir -m 777 $WWW_ROOT/local
+
 RUN echo '<?php $default_file_path = "/var/lib/derbynet"; ?>' > $WWW_ROOT/local/default-file-path.inc
 
 
