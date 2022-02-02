@@ -30,14 +30,16 @@ class Detector {
   activateUntil(deadline) {
     this.active_until = deadline;
   }
-  
+
   apply(line) {
     if (!(this.active_until == 0 || Date.now() <= this.active_until)) {
       return line;
     }
     var m = line.match(this.regex);
     if (m != null) {
-      // TODO g_logger.serial_match(m[0]);
+      if (Flag.debug_serial.value) {
+        g_logger.serial_match( m[0] );
+      }
       this.applyInternalDetectors(m);
       var args = [];
       if (this.matcher.hasOwnProperty('args')) {

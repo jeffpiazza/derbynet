@@ -100,7 +100,7 @@ class TimerProxy {
     var prev = g_logger.scope;
     g_logger.scope = "poll_gate_once";
     try {
-      for (var i = 0; i < this.gate_watch_detectors; ++i) {
+      for (var i = 0; i < this.gate_watch_detectors.length; ++i) {
         this.gate_watch_detectors[i].activateUntil(deadline);
       }
       await this.port_wrapper.write(this.profile.gate_watcher.command);

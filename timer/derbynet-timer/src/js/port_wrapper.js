@@ -190,9 +190,11 @@ class PortWrapper {
     if (this.leftover.length > 0 &&
         Date.now() - this.last_char_received > Flag.newline_expected_ms.value) {
       if (Flag.debug_serial.value) {
-        g_logger.debug_msg('   infer newline(' + describeString(this.leftover) + ')');
+        g_logger.debug_msg('   infer new line for(' + describeString(this.leftover) + ')');
       }
+
       // Don't call enqueueLine here, as we want the string to return now.
+      g_logger.serial_in_inferred(this.leftover);
       var s = this.applyDetectors(this.leftover);
       this.leftover = "";
       if (s.length > 0) {

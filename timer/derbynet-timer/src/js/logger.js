@@ -65,6 +65,12 @@ class Logger {
     }
   }
 
+  serial_in_inferred(s) {
+    if (this.do_logging) {
+      this.write_decorated('S <-* ', s);
+    }
+  }
+
   serial_out(s) {
     if (this.do_logging) {
       this.write_decorated('S --> ', s);
