@@ -20,6 +20,7 @@ require_permission(SET_UP_PERMISSION);
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/timer.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
@@ -44,6 +45,7 @@ $(function() { g_page_loaded = Date.now(); });
 <script type="text/javascript" src="js/timer/host_poller.js"></script>
 <script type="text/javascript" src="js/timer/logger.js"></script>
 <script type="text/javascript" src="js/timer/prober.js"></script>
+<script type="text/javascript" src="js/timer/gui.js"></script>
 <script type="text/javascript" src="js/timer/main.js"></script>
 @ELECTRON_ONLY_START@
 <script type="text/javascript" src="js/timer/serial_port_event_listener.js"></script>
@@ -62,6 +64,23 @@ $(function() {
 });
 </script>
 @ELECTRON_ONLY_END@
+<script type="text/javascript">
+
+if (!g_standalone) {
+  $(window).bind("beforeunload", function(event) {
+    if (g_timer_proxy) {
+      // Chrome ignores the prompt and substitutes its own generic message.  Gee, thanks.
+      show_modal("#leaving_modal");
+      setTimeout(function() { close_modal("#leaving_modal"); }, 10000);
+      var prompt =
+          "Leaving this page will disconnect the timer.  Are you sure you want to exit?";
+      event.preventDefault();
+      event.returnValue = prompt;
+      return prompt;
+    }
+  });
+}
+</script>
 </head>
 <body>
 <div id="standalone-banner" class="banner">
@@ -106,6 +125,14 @@ $(function() {
   </div><!-- middle-container -->    
 
   <div id="lower-container">
+    <div id="racing-div" class="hidden">
+      <div id="racing-round"></div>
+      <div id="next-lanes"></div>
+      <div id="racing-state">IDLE</div>
+      <div id="racing-lanes"> </div>
+      <div id="events"></div>
+    </div>
+
     <div id="connect-button-div" class="block_buttons host hidden">
       <input id="connect-button" type="submit" form="host-side-form" value="Connect"/>
     </div><!-- No gap between inline-block elements

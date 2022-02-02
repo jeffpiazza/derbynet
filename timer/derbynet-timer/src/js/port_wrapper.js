@@ -13,6 +13,7 @@ function describeString(s) {
   for (var i = s.length - 1; i >= 0; --i) {
     var c = s.charCodeAt(i);
     if (20 <= c && c < 127) {
+      // Leave as-is, it's a normal printable character
     } else if (c == 10) {
       s = s.substring(0, i) + "\\n" + s.substring(i + 1);
     } else if (c == 9) {

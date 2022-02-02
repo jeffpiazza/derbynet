@@ -115,6 +115,7 @@ class StateMachine {
     }
 
     if (initial != this.state) {
+      $("#racing-state").text(this.state);
       if (this.state != 'SET') {
         this.first_gate_open_ms = 0;
       }

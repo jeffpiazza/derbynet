@@ -90,21 +90,21 @@ class Prober {
     var n_ports = g_ports.length;
 
     for (var porti in g_ports) {
-      $("#ports-list li").removeClass('probing')
-      if (g_ports.length != n_ports) {
+      Gui.probe_port(-1);
+
+      if (g_ports.length != n_ports || this.give_up) {
         break;
       }
 
       if (this.user_chosen_port >= 0 && this.user_chosen_port != porti) {
         continue;
       }
-      
-      $("#ports-list li").eq(porti).addClass('probing')
 
+      Gui.probe_port(porti);
       var port = g_ports[porti];
       for (var profi in profiles) {
-        $("#profiles-list li").removeClass('probing');
-        if (g_ports.length != n_ports) {
+        Gui.probe_profile(-1);
+        if (g_ports.length != n_ports || this.give_up) {
           break;
         }
         var prof = profiles[profi];
@@ -134,7 +134,7 @@ class Prober {
         console.log("Probing for " + prof.name + ' on port ' + porti + ' ' + label);
         g_logger.internal_msg("Probing for " + prof.name + ' on port ' + porti + ' ' + label);
 
-        $("#profiles-list li").eq(profi).addClass('probing');
+        Gui.probe_profile(profi);
 
         var pw = new PortWrapper(port);
         pw.eol = prof.options.eol;
@@ -144,7 +144,7 @@ class Prober {
             .catch((e) => {
               g_logger.internal_msg('Caught exception trying to open port ' + porti);
               g_logger.stacktrace(e);
-              $("#ports-list li").eq(porti).removeClass('probing').addClass('trouble');
+              Gui.probe_port_trouble(porti);
               opened_ok = false;
             });
           if (!opened_ok) {
@@ -163,18 +163,12 @@ class Prober {
           }
 
           if (timer_id !== false) {
-            console.log('*    Matched ' + prof.name + '!');
-            g_logger.internal_msg('IDENTIFIED ' + prof.name);
-
-            $("#ports-list li").eq(porti).removeClass('probing user-chosen').addClass('chosen');
-            $("#profiles-list li").eq(profi).removeClass('probing user-chosen').addClass('chosen');
-
-            TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id]);
-            $("#probe-button").prop('disabled', true);
+            this.on_successful_match(porti, profi, prof, timer_id);
 
             // Avoid closing pw on the way out:
             var pw0 = pw;
             pw = null;
+
             return new TimerProxy(pw0, prof);
           }
         } finally {
@@ -182,10 +176,20 @@ class Prober {
             await pw.close();
           }
         }
-        $("#profiles-list li").removeClass('probing chosen');
+        Gui.probe_profile(-1);
       }
-      $("#ports-list li").removeClass('probing chosen');
+      Gui.probe_port(-1);
     }
+  }
+
+  on_successful_match(porti, profi, prof, timer_id) {
+    console.log('*    Matched ' + prof.name + '!');
+    g_logger.internal_msg('IDENTIFIED ' + prof.name);
+
+    Gui.prober_complete(porti, profi);
+
+    TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id]);
+    $("#probe-button").prop('disabled', true);
   }
 }
 

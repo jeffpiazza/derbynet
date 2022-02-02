@@ -9,14 +9,14 @@
 class TimerEvent {
   /*
     IDENTIFIED
-    PREPARE_HEAT_RECEIVED, args are roundid, heat, lanemask (all integers)
+    PREPARE_HEAT_RECEIVED, args are roundid, heat, lanemask, lane_count, round (all integers), and class
     MASK_LANES, lanemask as arg (resets the timer)
     ABORT_HEAT_RECEIVED,
     // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
     GATE_OPEN,
     GATE_CLOSED,
     RACE_STARTED,
-    RACE_FINISHED,
+    RACE_FINISHED, args are roundid, heat, HeatResult
     // An OVERDUE event signals that expected results have not yet arrived
     LANE_RESULT, // Just one; args are lane and time (as strings)
     OVERDUE,
@@ -60,6 +60,16 @@ class TimerEvent {
   static trigger(event, args) {
     if (Flag.debug_serial.value) {
       g_logger.debug_msg('trigger ' + event);
+    }
+
+    if (event != 'GATE_OPEN' && event != 'GATE_CLOSED') {
+      if (event == 'PREPARE_HEAT_RECEIVED') {
+        Gui.show_event(event);
+      } else if (event == 'RACE_FINISHED') {
+        Gui.show_event(event + " id=" + args[0] + " heat=" + args[1] + " " + args[2]);
+      } else {
+        Gui.show_event(event + " " + (args || []).join(','));
+      }
     }
     for (var i = 0; i < this.handlers.length; ++i) {
       try {

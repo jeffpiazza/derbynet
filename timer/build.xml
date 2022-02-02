@@ -66,6 +66,15 @@
                 <replacetokens>
                     <token key="ELECTRON_ONLY_END" value=""/>
                 </replacetokens>
+                <replacetokens>
+                    <token key="BRANCH" value="${release-series}"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="REV_COUNT" value="${git-rev-count}"/>
+                </replacetokens>
+                <replacetokens>
+                    <token key="BUILD_DATE" value="${TODAY}"/>
+                </replacetokens>
           </filterchain>
       </copy>
   </target>
@@ -106,6 +115,7 @@
       <copy todir="${electron-dir}/src/js">
           <fileset dir="../website/js">
               <include name="jquery.js"/>
+              <include name="jquery-ui.min.js"/>
               <include name="mobile.js"/>
               <include name="ajax-setup.js"/>
               <include name="modal.js"/>
@@ -120,6 +130,7 @@
           <fileset dir="../website/img">
               <include name="derbynet.png"/>
               <include name="status/*.png"/>
+              <include name="timer/*.png"/>
           </fileset>
       </copy>
   </target>

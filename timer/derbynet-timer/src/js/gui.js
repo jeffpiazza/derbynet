@@ -33,25 +33,40 @@ class Gui {
     });
   }
 
-  static prepare_heat(group, round, heat, lanes, mask) {
-    $("#racing-round").text(group + (round > 1 ? " round " + round : '') + ", heat " + heat);
-    if ($("#racing-lanes .rlane").length != lanes) {
-      $("#racing-lanes").empty();
-      for (var lane = 1; lane <= lanes; ++lane) {
-        $("#racing-lanes").append($("<span class='rlane'></span>").text(lane));
-      }
-      // 4 is the border size for each lane box
-      $("#racing-lanes .rlane").css(
-        'width', ($("#racing-lanes").width() / lanes - 4) + 'px');
+  static _make_lanes(div, lanes, mask) {
+    div = $(div);
+
+    div.empty();
+    for (var lane = 1; lane <= lanes; ++lane) {
+      div.append($("<span class='rlane'></span>").text(lane));
     }
 
-    $("#racing-lanes .rlane").removeClass('masked');
+    var rlanes = div.find(".rlane");
+    // 4 is the border size for each lane box
+    rlanes.css('width', (div.width() / lanes - 4) + 'px');
     for (var zlane = 0; zlane < lanes; ++zlane) {
       if ((mask & (1 << zlane)) == 0) {
-        console.log('Masking lane ' + (zlane + 1));
-        $("#racing-lanes .rlane").eq(zlane).addClass('masked');
+        rlanes.eq(zlane).addClass('masked');
       }
     }
+  }
+
+  static prepare_heat(group, round, heat, lanes, mask) {
+    $("#racing-round").text(group + (round > 1 ? " round " + round : '') + ", heat " + heat);
+    Gui._make_lanes("#next-lanes", lanes, mask);
+    $("#next-lanes .rlane").each(function (i, lane) {
+      $(lane).append("<img src='img/timer/down.png'/>");
+    });
+  }
+
+  static mask_lanes(lanes, mask) {
+    Gui._make_lanes("#racing-lanes", lanes, mask);
+    $("#next-lanes .rlane").animate({opacity: 0});
+  }
+
+  // 1-based lane
+  static lane_result(lane) {
+    $("#racing-lanes .rlane").eq(lane - 1).empty().append("<img src='img/timer/checkerboard.png'/>");
   }
 
   static show_event(evt) {

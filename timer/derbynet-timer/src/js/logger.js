@@ -112,7 +112,8 @@ class Logger {
       }
     }
     console.error(err);
-    $("#messages").prepend($("<p/>").text(err.toString()).prepend("<img src='img/trouble-tiny.png'/>"));
+    $("#messages").prepend($("<p/>").text(err.toString())
+                           .prepend("<img src='img/timer/trouble-tiny.png'/>"));
   }
 
   write_decorated(key, s) {

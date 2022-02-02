@@ -35,6 +35,14 @@ class HeatResult {
     return this.lanemask == 0;
   }
 
+  toString() {
+    var v = [];
+    for (var i = 0; i < this.lane_results.length; ++i) {
+      v.push(this.lane_results[i]?.time);
+    }
+    return v.join();
+  }
+
   countLeadingZeros(x) {
     let y;
     let n = 32;

@@ -93,10 +93,17 @@ class HostPoller {
   sendMessage(msg) {
     msg['remote-start'] = this.remote_start ? 'YES' : 'NO';
     this.next_message_time = Date.now() + HEARTBEAT_PACE;
+    if (msg?.message != 'HEARTBEAT') {
+      console.log('sendMessage', msg);
+    }
     $.ajax(HostPoller.url,
            {type: 'POST',
             data: msg,
-            success: this.decodeResponse.bind(this)});
+            success: this.decodeResponse.bind(this),
+            error: function() {
+              console.error('sendMessage fails');
+            }
+           });
   }
 
   decodeResponse(response) {
@@ -113,7 +120,10 @@ class HostPoller {
     if ((nodes = response.getElementsByTagName("heat-ready")).length > 0) {
       var args = [parseInt(nodes[0].getAttribute('roundid')),
                   parseInt(nodes[0].getAttribute('heat')),
-                  parseInt(nodes[0].getAttribute('lane-mask'))];
+                  parseInt(nodes[0].getAttribute('lane-mask')),
+                  parseInt(nodes[0].getAttribute('lanes')),
+                  parseInt(nodes[0].getAttribute('round')),
+                  nodes[0].getAttribute('class')];
       if (g_logger.do_logging) {
         g_logger.host_in('Prepare heat ' + args.join(','));
       }

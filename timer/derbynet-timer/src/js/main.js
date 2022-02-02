@@ -65,21 +65,6 @@ function on_gesture_click() {
   on_scan_click();
 }
 
-if (!g_standalone) {
-  $(window).bind("beforeunload", function(event) {
-    if (g_timer_proxy) {
-      // Chrome ignores the prompt and substitutes its own generic message.  Gee, thanks.
-      show_modal("#leaving_modal");
-      setTimeout(function() { close_modal("#leaving_modal"); }, 10000);
-      var prompt =
-          "Leaving this page will disconnect the timer.  Are you sure you want to exit?";
-      event.preventDefault();
-      event.returnValue = prompt;
-      return prompt;
-    }
-  });
-}
-
 
 function on_user_port_selection(event) {
   // "this" is the <li> clicked

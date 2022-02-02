@@ -255,7 +255,8 @@
       <ant dir="${timer-dir}" target="timer-jar"/>
   </target>
 
-  <target name="timer-electron" depends="banner"
+  <target name="timer-electron" depends="banner, generated-version.inc,
+                                    generated-build-date.inc, release-series"
           description="Builds the stand-alone timer application">
       <ant dir="${timer-dir}" target="electron-app"/>
   </target>

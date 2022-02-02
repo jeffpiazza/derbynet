@@ -171,13 +171,19 @@ class TimerProxy {
       this.roundid = args[0];
       this.heat = args[1];
       var lanemask = args[2];
+      var lanes = args[3];
+      var round = args[4];
+      var group = args[5];
+
+      Gui.prepare_heat(group, round, this.heat, lanes, lanemask);
+
       var pause = Math.max(0,
                            this.lastFinishTime + Flag.delay_reset_after_race.value * 1000 - Date.now());
-      TimerEvent.sendAfterMs(pause, 'MASK_LANES', [lanemask]);
+      TimerEvent.sendAfterMs(pause, 'MASK_LANES', [lanemask, lanes]);
       break;
     }
     case 'MASK_LANES':
-      this.maskLanes(args[0]);
+      this.maskLanes(args[0], args[1]);
       break;
     case 'ABORT_HEAT_RECEIVED':
       this.lastFinishTime = 0;
@@ -215,6 +221,7 @@ class TimerProxy {
         // ASCII 33 is '!', signifying place
         place = args[2].charCodeAt(0) - 33 + 1;
       }
+      Gui.lane_result(lane);
 
       if (this.result != null) {
         var was_filled = this.result.isFilled();
@@ -244,8 +251,8 @@ class TimerProxy {
     }
   }
 
-  async maskLanes(lanemask) {
-    $("#heat-received").text('lane mask ' + lanemask);
+  async maskLanes(lanemask, lanes) {
+    Gui.mask_lanes(lanes, lanemask);
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
