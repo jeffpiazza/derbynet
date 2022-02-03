@@ -112,10 +112,27 @@ function clean_up_empty_classes_and_ranks() {
   // Organic classes include ranks for which a partition exists.
   // Aggregate classes have either non-empty constituents field or non-empty rankids field.
 
+  /* Some older SQLite implementations don't support this:
   $db->exec('DELETE FROM Ranks AS r1'
             .' WHERE rankid NOT IN (SELECT DISTINCT rankid FROM Partitions)'
             .'   AND (classid NOT IN (SELECT DISTINCT antecedent FROM ConstituentClasses)'
             .'      OR rankid > (SELECT MIN(rankid) FROM Ranks AS r2 WHERE r1.classid = r2.classid))');
+  */
+  $unused_ranks = $db->query('SELECT rankid, classid FROM Ranks WHERE rankid NOT IN (SELECT DISTINCT rankid FROM Partitions)')
+                     ->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($unused_ranks AS $rank) {
+    if (read_single_value('SELECT COUNT(*) FROM ConstituentClasses WHERE antecedent = :classid',
+                          array(':classid' => $rank['classid'])) > 0) {
+      if (read_single_value('SELECT MIN(rankid) FROM Ranks WHERE classid = :classid',
+                            array(':classid' => $rank['classid'])) == $rank['rankid']) {
+        // Don't delete the first rank of a class that's an antecedent to an aggregate
+        continue;
+      }
+    }
+    $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
+    $stmt->execute(array(':rankid' => $rank['rankid']));
+  }
+
   if (group_formation_rule() != 'one-group') {
     $db->exec('DELETE FROM Classes'
               .' WHERE classid NOT IN (SELECT DISTINCT classid FROM Ranks)'
