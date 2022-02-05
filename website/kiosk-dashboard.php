@@ -6,8 +6,28 @@ require_once('inc/authorize.inc');
 require_once('inc/scenes.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/standings.inc');
+require_once('inc/locked.inc');
 
 require_permission(PRESENT_AWARDS_PERMISSION);
+
+$urls = preferred_urls();
+if ($urls === false) {
+  // gethostname() may be something like "instance-1", possibly with a non-routable IP.
+  $addrs = gethostbynamel(gethostname());
+  $urls = array();
+
+  // IIS apparently doesn't set REQUEST_URI.
+  if (isset($_SERVER['REQUEST_URI'])) {
+	$uri = dirname($_SERVER['REQUEST_URI']);
+  } else {
+	$uri = '/...';
+  }
+
+  for ($i = 0; $i < count($addrs); ++$i) {
+    $urls[] = "http://".$addrs[$i].$uri;
+  }
+}
+if (count($urls) == 0) $urls = array("");
 
 ?><!DOCTYPE html>
 <html>
@@ -32,6 +52,9 @@ var g_current_scene = <?php echo json_encode(read_raceinfo('current_scene', ''),
                                              JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
                                                      JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+
+var g_url = <?php echo json_encode($urls[0],
+                                   JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
 </script>
 </head>
 <body>
@@ -161,6 +184,22 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
     <input type="submit" value="Configure Kiosk"/>
     <input type="button" value="Cancel"
       onclick='close_modal("#config_classes_modal");'/>
+  </form>
+</div>
+
+<div id='config_qrcode_modal' class="modal_dialog wide_modal hidden block_buttons">
+  <form>
+    <div>
+      <label for="qrcode-title">Page Title</label>
+      <input id="qrcode-title" type="text"/>
+    </div>
+    <div>
+      <label for="qrcode-content">QR Code</label>
+      <input id="qrcode-content" type="text"/>
+    </div>
+    <input type="submit" value="Configure Kiosk"/>
+    <input type="button" value="Cancel"
+      onclick='close_modal("#config_qrcode_modal");'/>
   </form>
 </div>
 

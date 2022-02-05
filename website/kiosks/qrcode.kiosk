@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>QRCode</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/qrcode.min.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<style type="text/css">
+h2 {
+  text-align: center;
+  width: 100%;
+  font-size: 50px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+#qrcode {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+</style>
+<script type="text/javascript">
+
+$(function() {
+    var dim = Math.round(Math.min(.8 * $(window).width(),
+                                  window.innerHeight - 250));
+    $("#qrcode").css('margin-left', (($(window).width() - dim) / 2) + 'px');
+
+    var qrcode = null;
+    var title = '';
+    var content = '';
+
+    KioskPoller.param_callback = function(parameters) {
+      console.log(parameters);
+      if (parameters.title != title) {
+        console.log('Changing title');
+        $("#qrcode-title").text(title = parameters.title);
+      }
+      if (parameters.content != content) {
+        console.log('Changing content');
+        if (!qrcode) {
+          qrcode = new QRCode(document.getElementById("qrcode"),
+                              {text: content = parameters.content,
+                                width: dim,
+                                height: dim,
+                                });
+        } else {
+          qrcode.clear();
+          qrcode.makeCode(content = parameters.content);
+        }
+      }
+    };
+  });
+</script>
+</head>
+<body>
+<?php
+require_once('inc/banner.inc');
+make_banner('', /* back_button */ false);
+?>
+
+<h2 id="qrcode-title"></h2>
+
+ <div id="qrcode">&nbsp;</div>
+
+<?php require('inc/ajax-failure.inc'); ?>
+</body>
+</html>
+

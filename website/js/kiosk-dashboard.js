@@ -92,6 +92,14 @@ var g_kiosk_page_handlers = {
       $('<label for="' + k_id + '">Confetti</label>').appendTo(kiosk_select);
     }
   },
+  'kiosks/qrcode.kiosk': {
+    configure: function(kiosk, kiosk_select) {
+      $('<input type="button" value="Configure"/>')
+        .on("click", /* selector */null, /* data: */kiosk,
+            /* handler */ show_config_qrcode_modal)
+        .appendTo(kiosk_select);
+    }
+  },
 };
 
 // Configuration function for parameters of {classids: [...]}
@@ -438,6 +446,25 @@ function show_config_classes_modal(event) {
   show_modal("#config_classes_modal", function(event) {
     close_modal("#config_classes_modal");
     post_new_params(kiosk, {classids: compute_classids()});
+    return false;
+  });
+}
+
+function show_config_qrcode_modal(event) {
+  var kiosk = event.data;  // { title, content }
+  $("#qrcode-content").val(g_url + "/vote.php");
+  if (kiosk.parameters) {
+    if (kiosk.parameters.title) {
+      $("#qrcode-title").val(kiosk.parameters.title);
+    }
+    if (kiosk.parameters.content) {
+      $("#qrcode-content").val(kiosk.parameters.content);
+    }
+  }
+  show_modal("#config_qrcode_modal", function(event) {
+    close_modal("#config_qrcode_modal");
+    post_new_params(kiosk, {title: $("#qrcode-title").val(),
+                            content: $("#qrcode-content").val()});
     return false;
   });
 }
