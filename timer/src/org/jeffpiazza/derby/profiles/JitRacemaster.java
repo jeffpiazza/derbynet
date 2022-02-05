@@ -38,7 +38,7 @@ public class JitRacemaster extends TimerDeviceWithProfile {
                 SerialPort.PARITY_NONE)
         .gate_state_is_knowable(false)
         // TODO filter escape characters from timer identifier string
-        .prober("V", "JIT, Inc", "Racemaster Software", "^Software Version")
+        .prober("V", "JIT, Inc.*Racemaster Software", "^Software Version")
         .setup("L")
         .match("^.*Place Single Lane Number:\\s*(\\d+)\\s+Time in Seconds:\\s*(\\d+\\.\\d{4,})",
                Event.LANE_RESULT, 1, 2)
