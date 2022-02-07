@@ -11,13 +11,15 @@ if [ $USER != "root" ] ; then
     exit 1
 fi
 
-read "This operation will install the DerbyNet Timer, configure systemd, and launch RaspiWiFi setup.
+echo "This operation will install the DerbyNet Timer, configure systemd, and launch RaspiWiFi setup.
 
 Press Ctrl+C to cancel."
+read
 
 # Install DerbyNet Timer
 wget -q -O- https://jeffpiazza.org/derbynet/debian/jeffpiazza_derbynet.gpg > /usr/share/keyrings/derbynet-archive-keyring.gpg
-echo "deb [arch=all signed-by=/usr/share/keyrings/derbynet-archive-keyring.gpg] " " https://jeffpiazza.org/derbynet/debian stable main" > /etc/apt/sources.list.d/derbynet.list
+echo "deb [arch=all signed-by=/usr/share/keyrings/derbynet-archive-keyring.gpg] " \
+" https://jeffpiazza.org/derbynet/debian stable main" > /etc/apt/sources.list.d/derbynet.list
 apt update
 apt install -y derbynet-timer
 
@@ -46,6 +48,7 @@ WantedBy=multi-user.target
 HEREDOC
 systemctl daemon-reload
 systemctl enable derbynet-timer.service
+systemctl start derbynet-timer.service
 
 # Install RaspiWiFi
 apt install -y git python3
