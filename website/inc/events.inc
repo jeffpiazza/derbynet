@@ -18,6 +18,10 @@ define('EVENT_CAR_PHOTO_ASSIGN', 3);
 define('EVENT_TIMER_MALFUNCTION', 20);
 // A 'FINISHED' message arrived when not in a racing state (
 define('EVENT_TIMER_RESULT_REFUSED', 25);
+// In-browser timer interface may get starved for events by the browser,
+// resulting in not getting a chance to send events to the server as often
+// as expected.
+define('EVENT_TIMER_OVERDUE', 30);
 
 define('EVENT_PURGE_RESULTS', 90);
 define('EVENT_PURGE_SCHEDULES', 91);
@@ -122,6 +126,13 @@ function record_event($action, $fields = []) {
   $sql1 .= ')';
   $sql2 .= ')';
   record_event_sql($sql1.$sql2, $params);
+}
+
+function record_event_to_limit($action, $max_events, $fields = []) {
+  if (read_single_value('SELECT COUNT(*) FROM Events WHERE action = :action',
+                        array(':action' => $action)) < $max_events) {
+    record_event($action, $fields);
+  }
 }
 
 // Call this BEFORE rewriting a heat result

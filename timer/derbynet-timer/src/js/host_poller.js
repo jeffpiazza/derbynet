@@ -92,7 +92,14 @@ class HostPoller {
 
   sendMessage(msg) {
     msg['remote-start'] = this.remote_start ? 'YES' : 'NO';
-    this.next_message_time = Date.now() + HEARTBEAT_PACE;
+    var now = Date.now();
+    if (now > this.next_message_time + HEARTBEAT_PACE) {
+      // The heartbeat loop above should be sending messages regularly, but
+      // apparently some browsers slow down non-frontmost windows, allowing
+      // arbitrary delays in responding to timeouts.
+      msg['overdue'] = now - this.next_message_time;
+    }
+    this.next_message_time = now + HEARTBEAT_PACE;
     if (msg?.message != 'HEARTBEAT') {
       console.log('sendMessage', msg);
     }

@@ -48,6 +48,10 @@ if (isset($_POST['remote-start'])) {
   $remote_start = $_POST['remote-start'];
 }
 
+if (isset($_POST['overdue'])) {
+  record_event_to_limit(EVENT_TIMER_OVERDUE, 1000, array('other' => $_POST['overdue']));
+}
+
 $message = $_POST['message'];
 
 $racing_state = get_racing_state();  // True if we're racing, false if not
@@ -159,10 +163,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
   } else if ($message == 'MALFUNCTION') {
     $error_string = isset($_POST['error']) ? $_POST['error'] : "Malfunction";
     if (!$timer_state->troubled()) {
-      record_event_sql('INSERT INTO Events(tstamp, action, other)'
-                       .' VALUES('.dbnow_expr().', :action, :other)',
-                       array(':action' => EVENT_TIMER_MALFUNCTION,
-                             ':other' => $error_string));
+      record_event(EVENT_TIMER_MALFUNCTION, array('other' => $error_string));
     }
     echo "\n  <success/>\n";
     if ($timer_state->state() == TIMER_NOT_CONNECTED) {
