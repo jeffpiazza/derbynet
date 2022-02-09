@@ -95,7 +95,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                    array(':roundid' => $roundid,
                          ':classid' => $classid,
                          ':racerid' => $racerid));
-  if ($json_out.outcome.summary != 'failure') {
+  if ($json_out['outcome']['summary'] != 'failure') {
     json_success();
   }
 } else {

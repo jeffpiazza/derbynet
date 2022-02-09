@@ -131,17 +131,19 @@ function all_kiosks() {
 
 function all_kiosk_pages_with_prefix($prefix) {
   $entries = array();
-  $dh = opendir($prefix);
-  if ($dh !== false) {
-    while (($entry = readdir($dh)) !== FALSE) {
-      if (substr($entry, -6) == ".kiosk") {
-        $brief = substr($entry, 0, -6);
-        $entries[] = array('brief' => $brief,
-                           'full' => $prefix.DIRECTORY_SEPARATOR.$entry);
+  if (is_dir($prefix)) {
+    $dh = opendir($prefix);
+    if ($dh !== false) {
+      while (($entry = readdir($dh)) !== FALSE) {
+        if (substr($entry, -6) == ".kiosk") {
+          $brief = substr($entry, 0, -6);
+          $entries[] = array('brief' => $brief,
+                             'full' => $prefix.DIRECTORY_SEPARATOR.$entry);
+        }
       }
+      closedir($dh);
     }
   }
-  closedir($dh);
 
   sort($entries);
 

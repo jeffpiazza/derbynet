@@ -76,7 +76,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     if ($logs_dir === '') {
       $logs_dir = sys_get_temp_dir();
     }
-    if (!substr($logs_dir -1) !== DIRECTORY_SEPARATOR) {
+    if (!substr($logs_dir, -1) !== DIRECTORY_SEPARATOR) {
       $logs_dir = $logs_dir . DIRECTORY_SEPARATOR;
     }
     write_raceinfo("timer-log",
