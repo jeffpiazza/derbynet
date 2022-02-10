@@ -149,6 +149,13 @@ $(function() {
       case 'LOST_CONNECTION':
         $("#probe-button").prop('disabled', false);
         setTimeout(async function() {
+          if (g_timer_proxy) {
+            // issue#187: after a lost connection, the timer proxy et al are
+            // still registered for events, and will duplicate the effect of the
+            // new timer proxy unless torn down.
+            await g_timer_proxy.teardown();
+            g_timer_proxy = null;
+          }
           g_timer_proxy = await g_prober.probe_until_found(); }, 0);
         break;
       }

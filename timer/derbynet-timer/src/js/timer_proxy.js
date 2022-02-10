@@ -152,6 +152,12 @@ class TimerProxy {
     TimerEvent.register(this);
   }
 
+  async teardown() {
+    TimerEvent.unregister(this);
+    TimerEvent.unregister(this.sm);
+    this.port_wrapper.close();
+  }
+
   async onEvent(event, args) {
     if (this.profile.hasOwnProperty('on') && this.profile.on.hasOwnProperty(event)) {
       var prev = g_logger.scope;
