@@ -108,7 +108,7 @@ function update_for_last_heat(json) {
   var rerun_type = json['last-heat'];
   var button = $("#rerun-button");
   var enable = true;
-  button.prop("data-rerun", rerun_type);
+  button.attr("data-rerun", rerun_type);
   if (rerun_type == 'recoverable') {
     button.val("Reinstate Heat");
   } else {
