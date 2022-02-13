@@ -1,3 +1,33 @@
+var g_clock_worker;
+if (window.Worker) {
+  g_clock_worker = new Worker('js/timer/clock-worker.js');
+  g_clock_worker.onmessage = function(e) {
+    var key = e.data.shift();
+    switch (key) {
+    case 'HEARTBEAT':
+      g_host_poller && g_host_poller.heartbeat();
+      break;
+    case 'POLL_TIMER':
+      g_timer_proxy && g_timer_proxy.poll_once();
+      break;
+    case 'EVENT':
+      var event = e.data[0];
+      var args = e.data[1];
+      TimerEvent.send(event, args);
+      break;
+    case 'LOGGER':
+      g_logger && g_logger.poll();
+      break;
+    default:
+      console.error('Unrecognized clock-worker message', e.data);
+    }
+  }
+} else {
+  // Insurance: don't crash if browser doesn't support web worker
+  //  (but it won't support web serial api)
+  g_clock_worker = {postMessage: function(data) { console.error('web workers not supported:', data); }};
+}
+
 $(function() {
   var profiles = all_profiles();
   for (var i = 0; i < profiles.length; ++i) {

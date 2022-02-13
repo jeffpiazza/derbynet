@@ -148,7 +148,7 @@ function update_for_current_round(current) {
 }
 
 function generate_timer_state_group(tstate) {
-    $("#timer_status_text").text(tstate.status);
+    $("#timer_status_text").text(tstate.message);
     $("#timer_status_icon").attr('src', tstate.icon);
     if (tstate.lanes != '' && tstate.lanes > 0) {
         $("#lane_count").text(tstate.lanes);

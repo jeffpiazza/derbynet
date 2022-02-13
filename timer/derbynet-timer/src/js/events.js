@@ -17,12 +17,10 @@ class TimerEvent {
     GATE_CLOSED,
     RACE_STARTED,
     RACE_FINISHED, args are roundid, heat, HeatResult
-    // An OVERDUE event signals that expected results have not yet arrived
     LANE_RESULT, // Just one; args are lane and time (as strings)
-    OVERDUE,
     // Eventually, overdue results give way to a GIVING_UP event,
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
-    GIVING_UP,
+    GIVING_UP,  // Giving up on overdue results
     LANE_COUNT, // Some timers report how many lanes
     START_RACE,  // Remote start requested
     LOST_CONNECTION
@@ -50,7 +48,7 @@ class TimerEvent {
   }
 
   static sendAfterMs(delay, event, args) {
-    setTimeout(this.trigger.bind(this), delay, event, args);
+    g_clock_worker.postMessage([event, delay, 'EVENT', event, args]);
   }
 
   static sendAt(when, event, args) {

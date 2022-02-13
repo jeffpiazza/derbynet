@@ -23,27 +23,23 @@ class HostPoller {
     TimerEvent.register(this);
     this.sendMessage({action: 'timer-message',
                       message: 'HELLO'});
-    this.heartbeat_loop();
   }
 
   offer_remote_start(v) {
     this.remote_start = v;
   }
 
-  async heartbeat_loop() {
-    while (true) {
-      if (Date.now() >= this.next_message_time) {
-        if (!this.identified) {
-          this.sendMessage({action: 'timer-message',
-                            message: 'HEARTBEAT',
-                            unhealthy: true});
-        } else {
-          this.sendMessage({action: 'timer-message',
-                            message: 'HEARTBEAT',
-                            confirmed: this.confirmed ? 1 : 0});
-        }
+  async heartbeat() {
+    if (Date.now() >= this.next_message_time) {
+      if (!this.identified) {
+        this.sendMessage({action: 'timer-message',
+                          message: 'HEARTBEAT',
+                          unhealthy: true});
+      } else {
+        this.sendMessage({action: 'timer-message',
+                          message: 'HEARTBEAT',
+                          confirmed: this.confirmed ? 1 : 0});
       }
-      await new Promise(r => setTimeout(r, this.next_message_time - Date.now()));
     }
   }
 
@@ -100,6 +96,7 @@ class HostPoller {
       msg['overdue'] = now - this.next_message_time;
     }
     this.next_message_time = now + HEARTBEAT_PACE;
+    g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
     if (msg?.message != 'HEARTBEAT') {
       console.log('sendMessage', msg);
     }
