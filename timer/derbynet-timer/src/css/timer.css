@@ -132,12 +132,14 @@
   margin: 20px;
 }
 
-#need-gesture-modal {
+#need-gesture-modal,
+#competing-modal {
   width: 400px;
   height: 200px;
   padding-top: 50px;
 }
-#need-gesture-modal p {
+#need-gesture-modal p,
+#competing-modal p {
   font-size: 18px;
   text-align: center;
 }

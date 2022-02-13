@@ -17,6 +17,8 @@ class HostPoller {
   identified = false;
   confirmed = true;  // TODO
 
+  competing = false;
+
   remote_start = false;
 
   constructor() {
@@ -100,14 +102,18 @@ class HostPoller {
     if (msg?.message != 'HEARTBEAT') {
       console.log('sendMessage', msg);
     }
-    $.ajax(HostPoller.url,
-           {type: 'POST',
-            data: msg,
-            success: this.decodeResponse.bind(this),
-            error: function() {
-              console.error('sendMessage fails');
-            }
-           });
+    if (this.competing) {
+      console.log('Squelching message to host');
+    } else {
+      $.ajax(HostPoller.url,
+             {type: 'POST',
+              data: msg,
+              success: this.decodeResponse.bind(this),
+              error: function() {
+                console.error('sendMessage fails');
+              }
+             });
+    }
   }
 
   decodeResponse(response) {
@@ -168,6 +174,26 @@ class HostPoller {
     }
     if ((nodes = response.getElementsByTagName("query")).length > 0) {
       Flag.sendFlagsMessage(this);
+    }
+    if ((nodes = response.getElementsByTagName("debug")).length > 0) {
+      for (var i = 0; i < nodes.length; ++i) {
+        console.log("<debug>");
+        console.log(nodes[i].textContent);
+      }
+    }
+    if ((nodes = response.getElementsByTagName("competing")).length > 0) {
+      this.competing = true;
+      show_modal("#competing-modal");
+      if (g_prober) {
+        g_prober.give_up = true;
+      }
+      g_timer_proxy && g_timer_proxy.teardown();
+      g_timer_proxy = null;
+      g_host_poller = null;
+
+      for (var i = 0; i < nodes.length; ++i) {
+        console.log("<competing>", nodes[i].textContent);
+      }
     }
   }
 }
