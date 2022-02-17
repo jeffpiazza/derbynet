@@ -749,11 +749,14 @@ class StandingsOracle {
 // Returns roundids for unscheduled or incompletely-raced rounds
 function unfinished_rounds() {
   global $db;
+  // GPRM databases may have RaceChart entries with null racerid for byes.
   $stmt = $db->query('SELECT roundid, classid FROM Rounds'
                      .' WHERE NOT EXISTS(SELECT 1 FROM RaceChart'
-                     .'                  WHERE RaceChart.roundid = Rounds.roundid)'
+                     .'                  WHERE RaceChart.roundid = Rounds.roundid'
+                     .'                    AND racerid IS NOT NULL)'
                      .' OR EXISTS(SELECT 1 FROM RaceChart'
                      .'           WHERE RaceChart.roundid = Rounds.roundid'
+                     .'             AND racerid IS NOT NULL'
                      .'             AND finishtime IS NULL AND finishplace IS NULL)');
   $result = array();
   foreach ($stmt as $row) {
