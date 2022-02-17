@@ -53,7 +53,6 @@ class HostPoller {
       this.identified = true;
       this.sendMessage({action: 'timer-message',
                         message: 'IDENTIFIED',
-                        interface: 'web',
                         // TODO lane_count, ident, options
                         timer: args[0],  // TODO No formal name
                         human: args[0],
