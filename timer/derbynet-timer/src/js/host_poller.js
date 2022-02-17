@@ -24,7 +24,9 @@ class HostPoller {
   constructor() {
     TimerEvent.register(this);
     this.sendMessage({action: 'timer-message',
-                      message: 'HELLO'});
+                      message: 'HELLO',
+                      interface: 'web',
+                      build: g_version.branch + "-" + g_version.revision});
   }
 
   offer_remote_start(v) {
@@ -91,7 +93,7 @@ class HostPoller {
   sendMessage(msg) {
     msg['remote-start'] = this.remote_start ? 'YES' : 'NO';
     var now = Date.now();
-    if (now > this.next_message_time + HEARTBEAT_PACE) {
+    if (now > this.next_message_time + HEARTBEAT_PACE && this.next_message_time != 0) {
       // The heartbeat loop above should be sending messages regularly, but
       // apparently some browsers slow down non-frontmost windows, allowing
       // arbitrary delays in responding to timeouts.

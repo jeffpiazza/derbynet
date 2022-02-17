@@ -163,7 +163,10 @@
                 <attribute name="Implementation-Version" value="${git-rev-count}${git-dirty} ${TODAY}"/> 
             </section>
             <section name="derbynet">
-                <attribute name="version" value="${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+                <attribute name="version"
+                           value="${release-series}-${git-rev-count}${git-dirty}-${DSTAMP}"/>
+                <attribute name="revision" value="${git-rev-count}${git-dirty}"/>
+                <attribute name="series" value="${release-series}"/>
             </section>
         </manifest>
 

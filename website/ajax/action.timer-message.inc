@@ -85,6 +85,12 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     }
     write_raceinfo("timer-log",
                    $logs_dir . "timer-" . date('Ymd-Hi-s') . ".log");
+    if (isset($_POST['interface'])) {
+      write_raceinfo('timer-interface',
+                     isset($_POST['build'])
+                     ? $_POST['interface'].'-'.$_POST['build']
+                     : $_POST['interface']);
+    }
     $last_contact = $timer_state->last_contact();
     $accept = true;
     if ($last_contact >= 0 && $last_contact + 1 >= time()) {
@@ -124,9 +130,6 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       $timer_state->to_state(TIMER_UNCONFIRMED);
     } else {
       $timer_state->to_state(TIMER_CONNECTED);
-    }
-    if (isset($_POST['interface'])) {  // 'web' for js-based interface
-      write_raceinfo('timer-interface', $_POST['interface']);
     }
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {

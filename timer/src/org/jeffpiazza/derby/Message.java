@@ -16,7 +16,14 @@ public interface Message {
   public static class Hello implements Message {
     public String asParameters() {
       System.out.println("   Sending HELLO");
-      return "message=HELLO";
+      StringBuilder sb = new StringBuilder();
+      sb.append("message=HELLO");
+      sb.append("&interface=jar");
+      sb.append("&build=")
+          .append(Version.series())
+          .append("-")
+          .append(Version.revision());
+      return sb.toString();
     }
   }
 
