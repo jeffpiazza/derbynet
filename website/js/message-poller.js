@@ -21,7 +21,7 @@ function MessagePoller(ms, recipient, on_message) {
             success: function(data) {
               var msgs = data.messages;
               for (var i = 0; i < msgs.length; ++i) {
-                on_message(mesgs[i]);
+                on_message(msgs[i]);
               }
             }
            });

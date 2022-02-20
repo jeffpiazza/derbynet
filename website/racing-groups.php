@@ -166,8 +166,8 @@ $(function() {
     <input id="edit_class_name" name="name" type="text"/>
 
    <div class="ntrophies">
-    <label for='edit-class-ntrophies'>Number of speed&nbsp;trophies:</label>
-    <select id='edit-class-ntrophies' name='ntrophies'>
+    <label for='edit_class_ntrophies'>Number of speed&nbsp;trophies:</label>
+    <select id='edit_class_ntrophies' name='ntrophies'>
       <option value="-1">Default</option>
       <option>0</option>
       <option>1</option>

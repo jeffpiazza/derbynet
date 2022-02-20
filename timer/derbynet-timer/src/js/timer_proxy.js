@@ -1,5 +1,13 @@
 'use strict';
 
+// Debugging notes when working without a timer:
+//  Click the "Start scanning" button, then
+//   g_prober.give_up = true;
+//
+//  var pw = new PortWrapper(g_ports[0]);
+//  pw.open({baud: 9600});
+//  g_timer_proxy = new TimerProxy(pw, all_profiles()[1]);
+
 function zeroesToNines(time) {
   if (time && time.match(/^0\.0+$/)) {
     return time.replaceAll('0', '9');
@@ -28,10 +36,15 @@ class TimerProxy {
   constructor(port_wrapper, profile) {
     this.port_wrapper = port_wrapper;
     this.profile = profile;
-    // start is async and runs forever
-    this.start();
+    this.setup();
   }
 
+  _queue_next_poll(poll_start) {
+    // Poll again after a delay
+    const kPollIntervalMs = 250;
+    g_clock_worker.postMessage(['POLL_TIMER', poll_start + kPollIntervalMs - Date.now(), 'POLL_TIMER']);
+  }
+  
   remote_start_profile() {
     if (Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K") {
       return {has_remote_start: true, command: "LG"};
@@ -44,52 +57,46 @@ class TimerProxy {
     return this.remote_start_profile()?.has_remote_start;
   }
 
-  async start() {
-    await this.setup();
-
+  async poll_once() {
+    // This is the main timer polling loop.  Transmissions initiated by the timer (most importantly,
+    // heat results) are handled asynchronously with detectors registered on the port_wrapper.
     try {
-      // The polling pace, in ms.
-      const kPollIntervalMs = 250;
-      // This is the main timer polling loop.  Transmissions initiated by the timer (most importantly,
-      // heat results) are handled asynchronously with detectors registered on the port_wrapper.
-      while (true) {
-        var poll_start = Date.now();
-        var state = this.sm.state;
+      var poll_start = Date.now();
+      var state = this.sm.state;
 
-        var commands = this.profile?.poll?.[state];
-        if (commands && !(Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K")) {
-          var prev = g_logger.scope;
-          g_logger.scope = "profile.poll";
-          try {
-            await this.port_wrapper.writeCommandSequence(commands);
-          } finally {
-            g_logger.scope = prev;
-          }
-        }
-
-        if (state == 'RUNNING' && this.overdue_time != 0 && Date.now() >= this.overdue_time) {
-          this.port_wrapper.noticeContact();
-          TimerEvent.send('OVERDUE');
-        }
-
-        if (this.profile?.gate_watcher && state != 'RUNNING' &&
-            !Flag.no_gate_watcher.value) {
-          this.port_wrapper.checkConnection();
-          await this.poll_gate_once();
-        }
-
-        // Avoid polling too often
-        var pause_ms = poll_start + kPollIntervalMs - Date.now();
-        if (pause_ms > 0) {
-          await new Promise(r => setTimeout(r, pause_ms));
+      var commands = this.profile?.poll?.[state];
+      if (commands && !(Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K")) {
+        var prev = g_logger.scope;
+        g_logger.scope = "profile.poll";
+        try {
+          await this.port_wrapper.writeCommandSequence(commands);
+        } finally {
+          g_logger.scope = prev;
         }
       }
-    } finally {
+
+      if (state == 'RUNNING' && this.overdue_time != 0 && Date.now() >= this.overdue_time) {
+        this.port_wrapper.noticeContact();
+        this.overdue_time = 0;  // Can't queue up more than one GIVING_UP event
+        TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'GIVING_UP');
+      }
+
+      if (this.profile?.gate_watcher && state != 'RUNNING' &&
+          !Flag.no_gate_watcher.value) {
+        this.port_wrapper.checkConnection();
+        await this.poll_gate_once();
+      }
+
+      this._queue_next_poll(poll_start);
+    } catch (error) {
       // These are global clean-ups that don't really belong here
+      console.log('timer_proxy poll caught error', error);
       g_timer_proxy = null;
       $("#probe-button").prop('disabled', false);
       $("#profiles-list li").removeClass('probing chosen');
       $("#ports-list li").removeClass('probing chosen');
+
+      throw error;
     }
     // Intentially not caught: "Reader is closed" thrown from PortWrapper
   }
@@ -150,6 +157,15 @@ class TimerProxy {
     this.sm = new StateMachine(this.profile.options.gate_state_is_knowable);
     TimerEvent.register(this.sm);
     TimerEvent.register(this);
+
+    // Start the polling loop:
+    this._queue_next_poll(Date.now());
+  }
+
+  async teardown() {
+    TimerEvent.unregister(this);
+    TimerEvent.unregister(this.sm);
+    this.port_wrapper.close();
   }
 
   async onEvent(event, args) {
@@ -240,9 +256,6 @@ class TimerProxy {
     case 'GATE_OPEN':
       break;
     case 'GATE_CLOSED':
-      break;
-    case 'OVERDUE':
-      TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'GIVING_UP');
       break;
     case 'GIVING_UP':
       break;

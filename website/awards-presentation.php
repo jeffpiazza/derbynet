@@ -86,7 +86,7 @@ foreach ($awards as $aw) {
   }
 }
 
-function compare_by_sort(&$lhs, &$rhs) {
+function compare_by_sort($lhs, $rhs) {
   if ($lhs['sort'] != $rhs['sort']) {
     return $lhs['sort'] < $rhs['sort'] ? -1 : 1;
   }

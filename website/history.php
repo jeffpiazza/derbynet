@@ -137,6 +137,8 @@ class EventFormatter {
       break;
     case EVENT_TIMER_RESULT_REFUSED:
       return 'Refused result, lane '.$event['lane'].': '.$event['other'];
+    case EVENT_TIMER_OVERDUE:
+      return 'Timer heartbeat transmission overdue by '.$event['other'].'ms';
     case EVENT_RESULT_DISCARDED: {
       return 'Discarded: lane '.$event['lane']
              .', car '.htmlspecialchars($this->RacerName($event), ENT_QUOTES, 'UTF-8')

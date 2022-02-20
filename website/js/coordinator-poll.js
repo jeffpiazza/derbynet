@@ -108,7 +108,7 @@ function update_for_last_heat(json) {
   var rerun_type = json['last-heat'];
   var button = $("#rerun-button");
   var enable = true;
-  button.prop("data-rerun", rerun_type);
+  button.attr("data-rerun", rerun_type);
   if (rerun_type == 'recoverable') {
     button.val("Reinstate Heat");
   } else {
@@ -148,7 +148,7 @@ function update_for_current_round(current) {
 }
 
 function generate_timer_state_group(tstate) {
-    $("#timer_status_text").text(tstate.status);
+    $("#timer_status_text").text(tstate.message);
     $("#timer_status_icon").attr('src', tstate.icon);
     if (tstate.lanes != '' && tstate.lanes > 0) {
         $("#lane_count").text(tstate.lanes);

@@ -34,7 +34,7 @@ function json_all_rounds(&$now_running) {
       'heats_scheduled' => $round['heats_scheduled'],
       'heats_run' => $round['heats_run'],
       'name' => $round['roundname']);
-    if ($roundid['roundid'] == $next_roundid) {
+    if ($roundid == $next_roundid) {
       $r['next-round'] = true;
     }
     $result[] = $r;

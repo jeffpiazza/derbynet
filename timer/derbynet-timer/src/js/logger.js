@@ -111,9 +111,7 @@ class Logger {
         this.write_decorated('!!!!! ', err.stack);
       }
     }
-    console.error(err);
-    $("#messages").prepend($("<p/>").text(err.toString())
-                           .prepend("<img src='img/timer/trouble-tiny.png'/>"));
+    Gui.trouble_message(err);
   }
 
   write_decorated(key, s) {
@@ -133,7 +131,6 @@ class Logger {
   }
 
   poll() {
-    var now = Date.now();
     if (this.buffer.length > 0) {
       this.flush();
     }
@@ -152,4 +149,3 @@ class Logger {
 }
 
 var g_logger = new Logger(false);
-setInterval(function () { g_logger.poll(); }, 250);

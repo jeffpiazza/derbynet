@@ -76,4 +76,10 @@ class Gui {
     }
     $("#events").append($("<div/>").text(evt));
   }
+
+  static trouble_message(err) {
+    console.error(err);
+    $("#messages").prepend($("<p/>").text(err.toString())
+                           .prepend("<img src='img/timer/trouble-tiny.png'/>"));
+  }
 }

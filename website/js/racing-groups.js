@@ -92,6 +92,7 @@ function populate_racing_groups(data, using_subgroups) {
         .attr('data-classid', data.classes[i].classid)
         .attr('data-count', data.classes[i].count)
         .attr('data-nrounds', data.classes[i].nrounds)
+        .attr('data-ntrophies', data.classes[i].ntrophies)
         // data-constituent-of
         .append($("<p/>")
                 .addClass('class-name')
@@ -345,6 +346,7 @@ function populate_aggregates(classes) {
         .attr('data-classid', classes[i].classid)
         .attr('data-count', classes[i].count)
         .attr('data-nrounds', classes[i].nrounds)
+        .attr('data-ntrophies', classes[i].ntrophies)
     // data-constituent-of
         .append($("<p/>")
                 .attr('data-classid', classes[i].classid)

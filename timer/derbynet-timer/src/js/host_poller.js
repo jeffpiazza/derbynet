@@ -17,33 +17,33 @@ class HostPoller {
   identified = false;
   confirmed = true;  // TODO
 
+  competing = false;
+
   remote_start = false;
 
   constructor() {
     TimerEvent.register(this);
     this.sendMessage({action: 'timer-message',
-                      message: 'HELLO'});
-    this.heartbeat_loop();
+                      message: 'HELLO',
+                      interface: 'web',
+                      build: g_version.branch + "-" + g_version.revision});
   }
 
   offer_remote_start(v) {
     this.remote_start = v;
   }
 
-  async heartbeat_loop() {
-    while (true) {
-      if (Date.now() >= this.next_message_time) {
-        if (!this.identified) {
-          this.sendMessage({action: 'timer-message',
-                            message: 'HEARTBEAT',
-                            unhealthy: true});
-        } else {
-          this.sendMessage({action: 'timer-message',
-                            message: 'HEARTBEAT',
-                            confirmed: this.confirmed ? 1 : 0});
-        }
+  async heartbeat() {
+    if (Date.now() >= this.next_message_time) {
+      if (!this.identified) {
+        this.sendMessage({action: 'timer-message',
+                          message: 'HEARTBEAT',
+                          unhealthy: true});
+      } else {
+        this.sendMessage({action: 'timer-message',
+                          message: 'HEARTBEAT',
+                          confirmed: this.confirmed ? 1 : 0});
       }
-      await new Promise(r => setTimeout(r, this.next_message_time - Date.now()));
     }
   }
 
@@ -53,7 +53,6 @@ class HostPoller {
       this.identified = true;
       this.sendMessage({action: 'timer-message',
                         message: 'IDENTIFIED',
-                        interface: 'web',
                         // TODO lane_count, ident, options
                         timer: args[0],  // TODO No formal name
                         human: args[0],
@@ -92,18 +91,30 @@ class HostPoller {
 
   sendMessage(msg) {
     msg['remote-start'] = this.remote_start ? 'YES' : 'NO';
-    this.next_message_time = Date.now() + HEARTBEAT_PACE;
+    var now = Date.now();
+    if (now > this.next_message_time + HEARTBEAT_PACE && this.next_message_time != 0) {
+      // The heartbeat loop above should be sending messages regularly, but
+      // apparently some browsers slow down non-frontmost windows, allowing
+      // arbitrary delays in responding to timeouts.
+      msg['overdue'] = now - this.next_message_time;
+    }
+    this.next_message_time = now + HEARTBEAT_PACE;
+    g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
     if (msg?.message != 'HEARTBEAT') {
       console.log('sendMessage', msg);
     }
-    $.ajax(HostPoller.url,
-           {type: 'POST',
-            data: msg,
-            success: this.decodeResponse.bind(this),
-            error: function() {
-              console.error('sendMessage fails');
-            }
-           });
+    if (this.competing) {
+      console.log('Squelching message to host');
+    } else {
+      $.ajax(HostPoller.url,
+             {type: 'POST',
+              data: msg,
+              success: this.decodeResponse.bind(this),
+              error: function() {
+                console.error('sendMessage fails');
+              }
+             });
+    }
   }
 
   decodeResponse(response) {
@@ -164,6 +175,26 @@ class HostPoller {
     }
     if ((nodes = response.getElementsByTagName("query")).length > 0) {
       Flag.sendFlagsMessage(this);
+    }
+    if ((nodes = response.getElementsByTagName("debug")).length > 0) {
+      for (var i = 0; i < nodes.length; ++i) {
+        console.log("<debug>");
+        console.log(nodes[i].textContent);
+      }
+    }
+    if ((nodes = response.getElementsByTagName("competing")).length > 0) {
+      this.competing = true;
+      show_modal("#competing-modal");
+      if (g_prober) {
+        g_prober.give_up = true;
+      }
+      g_timer_proxy && g_timer_proxy.teardown();
+      g_timer_proxy = null;
+      g_host_poller = null;
+
+      for (var i = 0; i < nodes.length; ++i) {
+        console.log("<competing>", nodes[i].textContent);
+      }
     }
   }
 }

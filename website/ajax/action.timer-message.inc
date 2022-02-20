@@ -48,6 +48,10 @@ if (isset($_POST['remote-start'])) {
   $remote_start = $_POST['remote-start'];
 }
 
+if (isset($_POST['overdue'])) {
+  record_event_to_limit(EVENT_TIMER_OVERDUE, 1000, array('other' => $_POST['overdue']));
+}
+
 $message = $_POST['message'];
 
 $racing_state = get_racing_state();  // True if we're racing, false if not
@@ -76,11 +80,31 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     if ($logs_dir === '') {
       $logs_dir = sys_get_temp_dir();
     }
-    if (!substr($logs_dir -1) !== DIRECTORY_SEPARATOR) {
+    if (!substr($logs_dir, -1) !== DIRECTORY_SEPARATOR) {
       $logs_dir = $logs_dir . DIRECTORY_SEPARATOR;
     }
     write_raceinfo("timer-log",
                    $logs_dir . "timer-" . date('Ymd-Hi-s') . ".log");
+    if (isset($_POST['interface'])) {
+      write_raceinfo('timer-interface',
+                     isset($_POST['build'])
+                     ? $_POST['interface'].'-'.$_POST['build']
+                     : $_POST['interface']);
+    }
+    $last_contact = $timer_state->last_contact();
+    $accept = true;
+    if ($last_contact >= 0 && $last_contact + 1 >= time()) {
+      $ua = read_raceinfo('timer-agent');
+      if ($ua && $ua != $_SERVER['HTTP_USER_AGENT']) {
+        $accept = false;
+        echo "<competing>".htmlspecialchars($ua, ENT_QUOTES, 'UTF-8')."</competing>\n";
+      }
+    }
+    // Record the user-agent string of the interface that most recently established contact.
+    // Previously-established interfaces will get <competing/> messages.
+    if ($accept) {
+      write_raceinfo('timer-agent', $_SERVER['HTTP_USER_AGENT']);
+    }
     echo "\n  <success/>\n";
     echo "    <query/>\n";
   } else if ($message == 'IDENTIFIED') {
@@ -106,9 +130,6 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       $timer_state->to_state(TIMER_UNCONFIRMED);
     } else {
       $timer_state->to_state(TIMER_CONNECTED);
-    }
-    if (isset($_POST['interface'])) {  // 'web' for js-based interface
-      write_raceinfo('timer-interface', $_POST['interface']);
     }
     echo "\n  <success/>\n";
   } else if ($message == 'STARTED') {
@@ -156,13 +177,14 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       // A good heartbeat converts unhealthy back to connected
       $timer_state->to_state(TIMER_CONNECTED);
     }
+    $ua = read_raceinfo('timer-agent');
+    if ($ua && $ua != $_SERVER['HTTP_USER_AGENT']) {
+      echo "<competing>".htmlspecialchars($ua, ENT_QUOTES, 'UTF-8')."</competing>\n";
+    }
   } else if ($message == 'MALFUNCTION') {
     $error_string = isset($_POST['error']) ? $_POST['error'] : "Malfunction";
     if (!$timer_state->troubled()) {
-      record_event_sql('INSERT INTO Events(tstamp, action, other)'
-                       .' VALUES('.dbnow_expr().', :action, :other)',
-                       array(':action' => EVENT_TIMER_MALFUNCTION,
-                             ':other' => $error_string));
+      record_event(EVENT_TIMER_MALFUNCTION, array('other' => $error_string));
     }
     echo "\n  <success/>\n";
     if ($timer_state->state() == TIMER_NOT_CONNECTED) {
@@ -196,7 +218,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       write_raceinfo('timer_current', '');
     }
   }
-  
+
   $tstate = $timer_state->state();
   if ($racing_state && ($tstate == TIMER_CONNECTED || $tstate == TIMER_UNCONFIRMED)) {
     // i.e., not staging or running

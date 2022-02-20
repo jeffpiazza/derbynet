@@ -85,7 +85,7 @@ var Lineup = {
 
       var nheats = current['number-of-heats'];
       if (nheats) {
-        var round_class_name = current.name;
+        var round_class_name = current['class'];
         $('.banner_title').text((round_class_name ? round_class_name + ', ' : '')
                                 + 'Heat ' + this.heat + ' of ' + nheats);
       }
