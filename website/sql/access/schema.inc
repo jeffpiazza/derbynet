@@ -21,7 +21,7 @@ return array_merge(
 'CREATE TABLE Awards'
 .'	('
 .'	AwardID     COUNTER,'
-.'	AwardName   VARCHAR (50),'
+.'	AwardName   VARCHAR (100),'
 .'	AwardTypeID INTEGER,'
 .'	ClassID     INTEGER,'
 .'	RankID      INTEGER,'
@@ -70,7 +70,7 @@ array(
 'CREATE TABLE Classes'
 .'	('
 .'	ClassID COUNTER,'
-.'	Class   VARCHAR (15)'
+.'	Class   VARCHAR (75)'
 .(expected_schema_version() < 2 ? '' : ',	SortOrder INTEGER')
 .'	)',
 
@@ -184,7 +184,7 @@ array(
 'CREATE TABLE Ranks'
 .'	('
 .'	RankID  COUNTER,'
-.'	Rank    VARCHAR (15),'
+.'	Rank    VARCHAR (75),'
 .'	ClassID INTEGER'
 .(expected_schema_version() < 2 ? '' : ',	SortOrder INTEGER')
 .'	)',
@@ -213,9 +213,9 @@ array(
 .'	('
 .'	RacerID          COUNTER,'
 .'	CarNumber        INTEGER,'
-.'	CarName          VARCHAR (20),'
-.'	LastName         VARCHAR (20),'
-.'	FirstName        VARCHAR (15),'
+.'	CarName          VARCHAR (30),'
+.'	LastName         VARCHAR (30),'
+.'	FirstName        VARCHAR (30),'
 .'	ClassID          INTEGER,'
 .'	RankID           INTEGER,'
 .'  PartitionID       INTEGER,'

@@ -70,7 +70,7 @@ cat >$GOLDEN <<EOF
             "count": 16,
             "nrounds": 0,
             "ntrophies": -1,
-            "name": "Bears and Fr\u00e8r",
+            "name": "Bears and Fr\u00e8res",
             "subgroups": [
                 {
                     "rankid": 8,
@@ -80,7 +80,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 3,
                     "count": 16,
-                    "name": "Bears and Fr\u00e8r"
+                    "name": "Bears and Fr\u00e8res"
                 }
             ]
         },
@@ -89,12 +89,12 @@ cat >$GOLDEN <<EOF
             "count": 16,
             "nrounds": 0,
             "ntrophies": -1,
-            "name": "Webelos (\"Webes",
+            "name": "Webelos (\"Webes\")",
             "subgroups": [
                 {
                     "rankid": 4,
                     "count": 16,
-                    "name": "Webelos (\"Webes"
+                    "name": "Webelos (\"Webes\")"
                 }
             ]
         },

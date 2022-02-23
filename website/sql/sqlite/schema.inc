@@ -14,7 +14,7 @@ array(
 
 "CREATE TABLE `Awards` ("
 ."  `awardid` INTEGER PRIMARY KEY, "
-."  `awardname` VARCHAR(50) NOT NULL, "
+."  `awardname` VARCHAR(100) NOT NULL, "
 ."  `awardtypeid` INTEGER NOT NULL DEFAULT 1, "
 ."  `classid` INTEGER, "
 ."  `rankid` INTEGER, "
@@ -45,7 +45,7 @@ array(
 
 "CREATE TABLE `Classes` ("
 ."  `classid` INTEGER PRIMARY KEY, "
-."  `class` VARCHAR(15) NOT NULL UNIQUE COLLATE NOCASE"
+."  `class` VARCHAR(75) NOT NULL UNIQUE COLLATE NOCASE"
 .(expected_schema_version() < 3 ? "" :
   // For aggregate classes, constituents is a comma-separated list of classids, and
   // durable is true if the aggregate class was created explicitly by the user, otherwise
@@ -110,7 +110,7 @@ make_index("RaceInfo", "itemkey"),
 
 "CREATE TABLE `Ranks` ("
 ."  `rankid` INTEGER PRIMARY KEY, "
-."  `rank` VARCHAR(15) NOT NULL COLLATE NOCASE, "
+."  `rank` VARCHAR(75) NOT NULL COLLATE NOCASE, "
 ."  `classid` INTEGER NOT NULL"
 .(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER ")
 .")",
@@ -122,9 +122,9 @@ make_index("Ranks", "rank"),
 "CREATE TABLE `RegistrationInfo` ("
 ."  `racerid` INTEGER PRIMARY KEY, "
 ."  `carnumber` INTEGER NOT NULL, "
-."  `carname` VARCHAR(20), "
-."  `lastname` VARCHAR(20) NOT NULL COLLATE NOCASE, "
-."  `firstname` VARCHAR(15) NOT NULL COLLATE NOCASE, "
+."  `carname` VARCHAR(30), "
+."  `lastname` VARCHAR(30) NOT NULL COLLATE NOCASE, "
+."  `firstname` VARCHAR(30) NOT NULL COLLATE NOCASE, "
 ."  `classid` INTEGER NOT NULL, "
 ."  `rankid` INTEGER NOT NULL, "
 ."  `partitionid` INTEGER NOT NULL,"
