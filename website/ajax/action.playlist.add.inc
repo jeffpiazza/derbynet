@@ -2,6 +2,9 @@
 
 // $_POST['classid']
 // $_POST['round']
+//
+// $_POST['sceneid_at_finish'] (optional)
+// $_POST['continue_racing'] (optional)
 
 // Parameters for roster.new, if needed
 // $_POST['top']
@@ -9,7 +12,7 @@
 
 // Parameters for schedule.generate, if needed
 // $_POST['n_times_per_lane']
-// $_POST['sceneid_at_finish'] or $_POST['continue_racing'] or nothing
+
 
 if (have_permission(SET_UP_PERMISSION)) {
   $ok = true;

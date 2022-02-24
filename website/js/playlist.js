@@ -9,6 +9,35 @@ function find_round(classid, roundno) {
   return null;
 }
 
+// The <select> for after racing includes options for:
+//  - Stop racing (val = 0)
+//  - Start next round (val = -1)
+//  - A sceneid (val > 0)
+//
+// sel is a jquery selector for the <select> entry,
+// all_scenes a list of scene entries
+function build_after_action_select(sel, all_scenes) {
+  sel = $(sel);
+  sel.empty()
+      .append($("<option>Stop</option>").attr('value', 0))
+      .append($("<option>Start Next Round</option>").attr('value', -1));
+  $.each(all_scenes, function(i, v) {
+    sel.append($("<option/>")
+               .attr('value', v.sceneid)
+               .text(v.name + " Scene"));
+  });
+}
+
+// Set entry.sceneid_at_finish, entry.continue_racing from
+// <select> element identified by sel.
+function read_after_action_select(sel, entry) {
+  var after = $(sel).val();
+  entry.sceneid_at_finish = after;
+  // continue_racing is only meaningful if sceneid_at_finish <= 0.  0 means stop
+  // (don't continue racing), -1 means continue to next round (continue racing).
+  entry.continue_racing = (after == 0 ? 0 : 1);
+}
+
 function maybe_change_playlist_message() {
   $("#top-of-queue").text(
     $("#queue-ul li").length == 0
@@ -27,6 +56,8 @@ function on_racing_scene_change() {
          });
 }
 
+// This populates the control for the "racing scene," the scene to activate
+// while racing is actually underway.
 function setup_racing_scene_control(all_scenes, current_scene) {
   $("#racing-scene").empty();
   var first_selection = -1;
@@ -95,10 +126,7 @@ function on_change_times_per_lane() {
 function on_change_sceneid_at_finish() {
   var li = $(this).closest('li');
   var entry = g_queue[li.index()];
-  var after = $(this).val();
-  entry.sceneid_at_finish = after;
-  entry.continue_racing = (after == 0 ? 0 : 1);
-
+  read_after_action_select(this, entry);
   update_playlist_entry_format($(this));
 
   on_playlist_entry_update(li);
@@ -194,7 +222,9 @@ function show_create_roster_dialog(classid, roundno) {
     // contruction will have to figure out the roundid only at the very last
     // moment.
     add_round_to_queue(classid, roundno,
-                       {top: $("#new-roster-top").val(),
+                       {after_action: $("#after-action-sel").val(),
+                        runs_per_lane: $("#schedule-reps").val(),
+                        top: $("#new-roster-top").val(),
                         bucketed:
                           roundno == 1 ? $("#bucketed_groups").is(':checked')
                           : g_use_subgroups ? $("#bucketed_subgroups").is(':checked')
@@ -204,16 +234,22 @@ function show_create_roster_dialog(classid, roundno) {
   });
 }
 
+// The after_action value is one of:
+//  - A sceneid (val > 0)
+//  - Stop racing (val = 0) : sceneid_at_finish = 0, continue_racing = 0
+//  - Start next round (val = -1): sceneid_at_finish = 0, continue_racing = 1
 function add_round_to_queue(classid, round, roster_params) {
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'playlist.add',
                  classid: classid,
                  round: round,
-                 top: roster_params ? roster_params.top : 0,
-                 bucketed: roster_params ? (roster_params.bucketed ? 1 : 0) : false,
-                 n_times_per_lane: 1,
-                 continue_racing: 1},
+                 top: roster_params.top || 0,
+                 bucketed: roster_params.bucketed ? 1 : 0,
+                 n_times_per_lane: roster_params.runs_per_lane,
+                 continue_racing: roster_params.after_action == 0 ? 0 : 1,
+                 sceneid_at_finish: roster_params.after_action,
+                },
           success: function(data) {
             if (data.hasOwnProperty('queue-entry')) {
               var entry = data['queue-entry'];
@@ -284,17 +320,19 @@ function append_playlist_entry_li(entry, all_scenes) {
     .append(reps);
 
   var after_sel = $("<select/>")
-      .attr('id', after_id)
-      .append($("<option>Stop</option>").attr('value', 0))
-      .append($("<option>Start Next Round</option>").attr('value', -1));
-  $.each(all_scenes, function(i, v) {
-    after_sel.append($("<option/>")
-                     .attr('value', v.sceneid)
-                     .text(v.name + " Scene"));
-  });
-
+      .attr('id', after_id);
   collapsible.append($("<label>After racing:</label>").attr('for', after_id))
     .append(after_sel);
+  build_after_action_select(after_sel, all_scenes);
+
+  if (entry.sceneid_at_finish > 0) {
+    after_sel.val(entry.sceneid_at_finish);
+  } else if (parseInt(entry.continue_racing)) {
+    after_sel.val(-1);
+  } else {  // stop
+    after_sel.val(0);
+  }
+  after_sel.on('change', on_change_sceneid_at_finish);
 
   var li = $("<li class='queue'/>")
       .attr('data-queueid', entry.queueid)
@@ -317,15 +355,6 @@ function append_playlist_entry_li(entry, all_scenes) {
       .append("<p class='gap'><span class='after-action'/></p>")
       .on('click', on_open_playlist_entry)
       .appendTo('#queue-ul');
-
-  if (entry.sceneid_at_finish > 0) {
-    after_sel.val(entry.sceneid_at_finish);
-  } else if (parseInt(entry.continue_racing)) {
-    after_sel.val(-1);
-  } else {  // stop
-    after_sel.val(0);
-  }
-  after_sel.on('change', on_change_sceneid_at_finish);
 
   update_playlist_entry_format(after_sel);
 
