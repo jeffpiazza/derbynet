@@ -120,7 +120,7 @@ function update_for_last_heat(json) {
     }
     if (results) {
       button.val("Re-Run This Heat");
-      button.prop("data-rerun", 'current');
+      button.attr("data-rerun", 'current');
     } else if (rerun_type == 'none') {
       button.val("Re-Run");
       enable = false;
