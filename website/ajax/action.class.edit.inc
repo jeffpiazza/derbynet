@@ -6,10 +6,11 @@
 
 require_once('inc/classes.inc');
 require_once('inc/partitions.inc');
+require_once(sql_file_path('column-widths'));
 
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['classid']) && isset($_POST['name'])) {
-    $name = trim($_POST['name']);
+    $name = substr(trim($_POST['name']), 0, CLASS_COLUMN_WIDTH);
     $stmt = $db->prepare('UPDATE Classes SET class = :name WHERE classid = :classid');
     $stmt->execute(array(':classid' => $_POST['classid'],
                          ':name' => $name));

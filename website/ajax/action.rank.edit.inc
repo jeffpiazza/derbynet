@@ -5,10 +5,11 @@
 
 require_once('inc/json-classes.inc');
 require_once('inc/partitions.inc');
+require_once(sql_file_path('column-widths'));
 
 if (have_permission(SET_UP_PERMISSION)) {
   if (isset($_POST['rankid']) && isset($_POST['name'])) {
-    $name = trim($_POST['name']);
+    $name = substr(trim($_POST['name']), 0, RANK_COLUMN_WIDTH);
     $stmt = $db->prepare('UPDATE Ranks SET rank = :name WHERE rankid = :rankid');
     $stmt->execute(array(':rankid' => $_POST['rankid'],
                          ':name' => $name));
