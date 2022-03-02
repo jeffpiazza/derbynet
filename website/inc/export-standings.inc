@@ -106,9 +106,9 @@ function export_standings(callable $out, $key, $presentation,
         $values[] = ordinal($row['best']);
         $values[] = ordinal($row['worst']);
       } else {
-        $values[] = sprintf($time_format, $row['avg']);
-        $values[] = sprintf($time_format, $row['best']);
-        $values[] = sprintf($time_format, $row['worst']);
+        $values[] = (float) sprintf($time_format, $row['avg']);
+        $values[] = (float) sprintf($time_format, $row['best']);
+        $values[] = (float) sprintf($time_format, $row['worst']);
       }
 
       $out($values);
