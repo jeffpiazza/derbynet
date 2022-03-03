@@ -87,8 +87,7 @@ $standings = new StandingsOracle();
 
 if (isset($_GET['debug'])) {
   echo "<pre>\n";
-  echo json_encode($standings->all_standings, JSON_PRETTY_PRINT | JSON_HEX_TAG);
-  echo json_encode($standings->result_summary, JSON_PRETTY_PRINT | JSON_HEX_TAG);
+  echo json_encode($standings->debug_summary(), JSON_PRETTY_PRINT | JSON_HEX_TAG);
   echo "</pre>\n";
 }
 ?>

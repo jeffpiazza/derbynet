@@ -170,6 +170,7 @@ class StandingsOracle {
   private $rankseq;
 
   private $unfinished_rounds;
+  private $sql;
   
   public $result_summary;
   public $all_standings;
@@ -292,31 +293,34 @@ class StandingsOracle {
     //
     // ORDER BY means rows are ordered from best showing to worst, which means
     // they're also ordered best to worst within any given group.
-    $stmt = $db->query('SELECT Rounds.roundid,'
-                       .' Rounds.classid as round_classid, Rounds.round, '
-                       .' RegistrationInfo.racerid, firstname, lastname, carnumber, carname,'
-                       // classid is the racer's 'native' class, not the round's class (e.g. Grand Finals)
-                       .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
-                       // base is the number of heats in the round
-                       .' COUNT(*) AS base, '
-                       .$scoring_expr.' AS score, '.$avg_expr.' AS avg,'
-                       .' MIN('.$raw_expr.') AS best, MAX('.$raw_expr.') AS worst'
-                       .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
-                                            'RaceChart.racerid = RegistrationInfo.racerid',
-                                            'Rounds',
-                                            'RaceChart.roundid = Rounds.roundid',
-                                            'Classes',
-                                            'RegistrationInfo.classid = Classes.classid',
-                                            'Ranks',
-                                            'RegistrationInfo.rankid = Ranks.rankid')
-                       .' WHERE passedinspection = 1 AND exclude = 0'
-                       .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
-                       // Of these, only the roundid and racerid are meaningful grouping keys; each of the other
-                       // values is uniquely determined by the racerid.
-                       .' GROUP BY Rounds.roundid, RegistrationInfo.racerid, RegistrationInfo.classid, '
-                       .'  Rounds.classid, class, RegistrationInfo.rankid, rank, firstname, lastname, carnumber'
-                       // lastname, firstname for reproducible ordering in the event of a tie
-                       .' ORDER BY '.$scoring_expr.', lastname, firstname');
+    $this->sql = ('SELECT Rounds.roundid,'
+                  .' Rounds.classid as round_classid, Rounds.round, '
+                  .' RegistrationInfo.racerid, firstname, lastname, carnumber, carname,'
+                  // classid is the racer's 'native' class, not the round's class (e.g. Grand Finals)
+                  .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
+                  // base is the number of heats in the round
+                  .' COUNT(*) AS base, '
+                  .$scoring_expr.' AS score, '.$avg_expr.' AS avg,'
+                  .' MIN('.$raw_expr.') AS best, MAX('.$raw_expr.') AS worst'
+                  .' FROM '.inner_join('RegistrationInfo', 'RaceChart',
+                                       'RaceChart.racerid = RegistrationInfo.racerid',
+                                       'Rounds',
+                                       'RaceChart.roundid = Rounds.roundid',
+                                       'Classes',
+                                       'RegistrationInfo.classid = Classes.classid',
+                                       'Ranks',
+                                       'RegistrationInfo.rankid = Ranks.rankid')
+                  .' WHERE passedinspection = 1 AND exclude = 0'
+                  .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)'
+                  // Of these, only the roundid and racerid are meaningful
+                  // grouping keys; each of the other values is uniquely
+                  // determined by the racerid.
+                  .' GROUP BY Rounds.roundid, RegistrationInfo.racerid,'
+                  .'          RegistrationInfo.classid, Rounds.classid, class,'
+                  .'          RegistrationInfo.rankid, rank, firstname, lastname, carnumber'
+                  // lastname, firstname for reproducible ordering in the event of a tie
+                  .' ORDER BY '.$scoring_expr.', lastname, firstname');
+    $stmt = $db->query($this->sql);
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $result = array();
     foreach ($stmt as $row) {
@@ -744,15 +748,25 @@ class StandingsOracle {
 
     return $catalog;
   }
+
+  function debug_summary() {
+    return array('class_details' => $this->class_details,
+                 'unfinished_rounds' => $this->unfinished_rounds,
+                 'sql' => $this->sql,
+                 'result_summary' => $this->result_summary,
+                 'all_standings' => $this->all_standings);
+  }
 }
 
 // Returns roundids for unscheduled or incompletely-raced rounds
 function unfinished_rounds() {
   global $db;
-  // GPRM databases may have RaceChart entries with null racerid for byes.
+  // GPRM databases may have RaceChart entries with null racerid for byes.  A
+  // round is "unfinished" if it has no heats scheduled, or if there are
+  // scheduled heats that have no results.
   $stmt = $db->query('SELECT roundid, classid FROM Rounds'
                      .' WHERE NOT EXISTS(SELECT 1 FROM RaceChart'
-                     .'                  WHERE RaceChart.roundid = Rounds.roundid'
+                     .'           WHERE RaceChart.roundid = Rounds.roundid'
                      .'                    AND racerid IS NOT NULL)'
                      .' OR EXISTS(SELECT 1 FROM RaceChart'
                      .'           WHERE RaceChart.roundid = Rounds.roundid'
