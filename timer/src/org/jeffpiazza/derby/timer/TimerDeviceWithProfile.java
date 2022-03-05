@@ -286,6 +286,15 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       case GIVING_UP:
         break;
+      case GATE_WATCHER_NOT_SUPPORTED:
+        // For at least some FastTrack timers, it's a configuration option
+        // whether the timer will report the starting gate position or not.
+        // If it's not configured, then stop probing to avoid interference with
+        // reported results.
+        if (sm != null) {
+          sm.setGateStateNotKnowable();
+        }
+        break;
     }
   }
 
@@ -316,7 +325,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       }
     }
 
-    if (profile.gate_watcher != null
+    if (profile.gate_watcher != null && sm.gate_state_is_knowable()
         && sm.state() != StateMachine.State.RUNNING) {
       // Required in MARK in order to energize the gate switch and detect
       // open-to-closed.  (Actually the sequence is:

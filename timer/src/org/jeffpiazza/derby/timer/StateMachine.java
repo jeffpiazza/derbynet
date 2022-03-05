@@ -153,6 +153,7 @@ public class StateMachine implements Event.Handler {
     return next;
   }
 
+  public boolean gate_state_is_knowable() { return gate_state_is_knowable; }
   public void setGateStateNotKnowable() {
     gate_state_is_knowable = false;
   }

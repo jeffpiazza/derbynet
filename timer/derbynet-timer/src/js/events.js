@@ -23,7 +23,8 @@ class TimerEvent {
     GIVING_UP,  // Giving up on overdue results
     LANE_COUNT, // Some timers report how many lanes
     START_RACE,  // Remote start requested
-    LOST_CONNECTION
+    LOST_CONNECTION,
+    GATE_WATCHER_NOT_SUPPORTED
   */
 
   static handlers = [];

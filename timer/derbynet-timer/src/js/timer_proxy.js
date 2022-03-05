@@ -81,8 +81,8 @@ class TimerProxy {
         TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'GIVING_UP');
       }
 
-      if (this.profile?.gate_watcher && state != 'RUNNING' &&
-          !Flag.no_gate_watcher.value) {
+      if (this.profile?.gate_watcher && this.sm.gate_state_is_knowable &&
+          state != 'RUNNING' && !Flag.no_gate_watcher.value) {
         this.port_wrapper.checkConnection();
         await this.poll_gate_once();
       }
@@ -260,6 +260,9 @@ class TimerProxy {
     case 'GIVING_UP':
       break;
     case 'LOST_CONNECTION':
+      break;
+    case 'GATE_WATCHER_NOT_SUPPORTED':
+      this.sm.gate_state_is_knowable = false;
       break;
     }
   }

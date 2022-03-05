@@ -61,11 +61,13 @@ public class FastTrack extends TimerDeviceWithProfile {
                ? new String[]{"RE", "N1", "RF"}
                : new String[]{"RE", "N1", "N2", "RF"})
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
-        .match("RG0", Event.GATE_OPEN)
-        .match("RG1", Event.GATE_CLOSED)
         .heat_prep("MG", "M", 'A')
-        .gate_watcher("RG");
-    // TODO An "X" after RG means option disabled
+        .gate_watcher("RG" /* Read start switch condition */,
+                      new Profile.Detector("RG0", Event.GATE_OPEN),
+                      new Profile.Detector("RG1", Event.GATE_CLOSED),
+                      // An "X" after RG means option disabled
+                      new Profile.Detector("^X$",
+                          Event.GATE_WATCHER_NOT_SUPPORTED));
     if (Flag.fasttrack_automatic_gate_release.value()) {
       profile.remote_start(true, "LG");
     } else {
