@@ -132,6 +132,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   protected void setUp() throws SerialPortException {
+    // For those timers that have a setup_query for it,
+    // need to be able to receive LANE_COUNT event
+    Event.register(this);
+
     for (Profile.Detector detector_config : profile.matchers) {
       portWrapper.registerDetector(new ProfileDetector(detector_config));
     }
@@ -177,12 +181,21 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     drainForMs(COMMAND_DRAIN_MS);
   }
 
+  private boolean ok_to_poll = true;
+  private synchronized void suspendPolling() { ok_to_poll = false; }
+  private synchronized void resumePolling() { ok_to_poll = true; }
+  private synchronized boolean okToPoll() { return ok_to_poll; }
+
   protected void maskLanes(int lanemask) {
+    suspendPolling();
     try {
       if (profile.heat_prep != null) {
         if (profile.heat_prep.unmask != null) {
+          drainForMs();
           portWrapper.write(profile.heat_prep.unmask);
-          int nlanes = Math.max(detected_lane_count, profile.options.max_lanes);
+          int nlanes = detected_lane_count == 0
+                       ? profile.options.max_lanes
+                       : detected_lane_count;
           for (int lane = 0; lane < nlanes; ++lane) {
             if ((lanemask & (1 << lane)) == 0) {
               drainForMs();
@@ -200,6 +213,8 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       result = new TimerResult(lanemask);
     } catch (SerialPortException ex) {
       LogWriter.stacktrace(ex);
+    } finally {
+      resumePolling();
     }
   }
 
@@ -209,6 +224,13 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   public void onEvent(Event event, String[] args) {
+    // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
+    // (at least) needs to stop while race is running.  (Issue #200.)
+    if (sm == null) {
+      sm = new StateMachine(profile.options.gate_state_is_knowable);
+    }
+    sm.onEvent(event, args);
+
     Profile.CommandSequence custom = profile.on.get(event);
     if (custom != null) {
       try {
@@ -227,6 +249,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         // prepareHeat set a delayed event to apply the lane mask and reset the
         // timer
         maskLanes(lanemask);
+        overdueTime = 0;  // Insurance, not necessary
         break;
       case ABORT_HEAT_RECEIVED:
         lastFinishTime = 0;
@@ -248,6 +271,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         }
         roundid = heat = 0;
         result = null;
+        overdueTime = 0;
         break;
 
       case LANE_RESULT: {
@@ -299,13 +323,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   public void poll() throws SerialPortException, LostConnectionException {
-    long deadline = System.currentTimeMillis() + POLL_RESPONSE_DEADLINE_MS;
-
-    if (sm == null) {
-      sm = new StateMachine(profile.options.gate_state_is_knowable);
-      Event.register(this);
-      Event.register(sm);
+    if (sm == null || !okToPoll()) {
+      return;
     }
+    long deadline = System.currentTimeMillis() + POLL_RESPONSE_DEADLINE_MS;
 
     if (sm.state() == StateMachine.State.RUNNING && overdueTime != 0
         && System.currentTimeMillis() >= overdueTime) {
@@ -315,6 +336,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       // so we don't start assuming that we've lost contact with the timer when
       // gatewatcher polling resumes.
       portWrapper.noticeContact();
+      overdueTime = 0;  // Only send one OVERDUE event
       Event.send(Event.OVERDUE);
     }
 

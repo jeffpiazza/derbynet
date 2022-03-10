@@ -74,7 +74,7 @@ class HostPoller {
           }
         }
       }
-      console.log(msg);
+
       g_logger.internal_msg('RACE_FINISHED: ' + JSON.stringify(msg));
       this.sendMessage(msg);
       break;

@@ -28,7 +28,7 @@ class TimerProxy {
 
   sm;  // State machine
 
-  detected_lane_count;
+  detected_lane_count = 0;
   // If not zero, a deadline for expecting heat results
   overdue_time;
 
@@ -36,6 +36,9 @@ class TimerProxy {
   constructor(port_wrapper, profile) {
     this.port_wrapper = port_wrapper;
     this.profile = profile;
+    if (this.profile?.options?.eol !== undefined) {
+      this.port_wrapper.eol = this.profile.options.eol;
+    }
     this.setup();
   }
 
@@ -118,9 +121,10 @@ class TimerProxy {
   }
 
   async setup() {
-    if (this.profile?.options?.eol !== undefined) {
-      this.port_wrapper.eol = this.profile.options.eol;
-    }
+    // For those timers that have a setup_query for it,
+    // need to be able to receive LANE_COUNT event
+    TimerEvent.register(this);
+
     if (this.profile?.matchers) {
       for (var i = 0; i < this.profile.matchers.length; ++i) {
         this.port_wrapper.detectors.push(new Detector(this.profile.matchers[i]));
@@ -155,8 +159,6 @@ class TimerProxy {
     }
 
     this.sm = new StateMachine(this.profile.options.gate_state_is_knowable);
-    TimerEvent.register(this.sm);
-    TimerEvent.register(this);
 
     // Start the polling loop:
     this._queue_next_poll(Date.now());
@@ -169,6 +171,13 @@ class TimerProxy {
   }
 
   async onEvent(event, args) {
+    // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
+    // (at least) needs to stop while race is running.  (Issue #200.)
+    if (this.sm) {
+      // A LANE_COUNT event may arise during probing, before we have a state machine.
+      this.sm.onEvent(event, args);
+    }
+
     if (this.profile.hasOwnProperty('on') && this.profile.on.hasOwnProperty(event)) {
       var prev = g_logger.scope;
       g_logger.scope = "event.on";
@@ -184,6 +193,7 @@ class TimerProxy {
     }
     switch (event) {
     case 'PREPARE_HEAT_RECEIVED': {
+      this.overdue_time = 0;  // Insurance, not really necessary
       this.roundid = args[0];
       this.heat = args[1];
       var lanemask = args[2];
@@ -224,6 +234,7 @@ class TimerProxy {
       this.roundid = 0;
       this.heat = 0;
       this.result = null;
+      this.overdue_time = 0;
       break;
     case 'LANE_RESULT': {
       var lane_char = args[0].charCodeAt(0);
@@ -251,7 +262,7 @@ class TimerProxy {
       break;
     }
     case 'LANE_COUNT':
-      this.detected_lane_count = args[0].charCountAt(0) - 49 + 1;
+      this.detected_lane_count = args[0].charCodeAt(0) - 49 + 1;
       break;
     case 'GATE_OPEN':
       break;
@@ -272,9 +283,11 @@ class TimerProxy {
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
-        console.log('unmasking: ' + this.profile.heat_prep.unmask);
+        await this.port_wrapper.drain();
         await this.port_wrapper.write(this.profile.heat_prep.unmask);
-        var nlanes = Math.max(this.detected_lane_count || 0, this.profile?.options?.max_lanes || 0);
+        var nlanes = this.detected_lane_count == 0
+                       ? this.profile?.options?.max_lanes || 0
+                       : this.detected_lane_count;
         for (var lane = 0; lane < nlanes; ++lane) {
           if ((lanemask & (1 << lane)) == 0) {
             console.log('masking lane ' + lane + ': ' + this.profile.heat_prep.mask +

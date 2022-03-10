@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby.timer;
 
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 
 // Despite differences between different timers, the basic state machine to
@@ -50,6 +51,39 @@ public class StateMachine implements Event.Handler {
     return currentState;
   }
 
+
+  // first_gate_change_ms marks the time at which a first GATE_OPEN is received
+  // while the gate is believed to be closed, or the first GATE_CLOSED is
+  // received while the gate is believed to be open.  When a confirming event
+  // occurs after Flags.min_gate_time (in ms) has passed, the believed gate state
+  // changes to match.  If a conflicting GATE_OPEN/GATE_CLOSED event occurs (i.e.,
+  // confirming the current believed state), first_gate_change_ms resets to zero.
+  private long first_gate_change_ms = 0;
+  private boolean gate_is_believed_closed = false;
+
+  // Returns true if the GATE_OPEN/GATE_CLOSED event should be interpreted as
+  // conveying a new gate state.
+  private boolean gateEventMarksAChange(boolean event_says_closed) {
+    if (event_says_closed == gate_is_believed_closed) {
+      // The event just confirms what we already believed, overriding any
+      // recent conflicting events.
+      first_gate_change_ms = 0;
+    } else {
+      // Issue #35: If we have an apparent state change, don't record it
+      // until it's stayed in the new state for a minimum length of time.
+      // (Original issue report involved a SmartLine timer.)
+      long now = System.currentTimeMillis();
+      if (first_gate_change_ms == 0) {  // First gate change event
+        first_gate_change_ms = now;
+      } else if (now - first_gate_change_ms > Flag.min_gate_time.value()) {
+        gate_is_believed_closed = event_says_closed;
+        first_gate_change_ms = 0;
+        return true;
+      }
+    }
+    return false;
+  }
+
   public synchronized void onEvent(Event e, String[] args) {
     if (!gate_state_is_knowable) {
       if (e == Event.GATE_CLOSED || e == Event.GATE_OPEN) {
@@ -73,7 +107,12 @@ public class StateMachine implements Event.Handler {
       case MARK:
         switch (e) {
           case GATE_CLOSED:
-            currentState = State.SET;
+            if (gateEventMarksAChange(true)) {
+              currentState = State.SET;
+            }
+            break;
+          case GATE_OPEN:
+            gateEventMarksAChange(false);
             break;
           case ABORT_HEAT_RECEIVED:
             currentState = State.IDLE;
@@ -101,13 +140,15 @@ public class StateMachine implements Event.Handler {
             currentState = unexpected(e, State.SET);
             break;
           case GATE_OPEN:
-            Event.send(Event.RACE_STARTED);
+            if (gateEventMarksAChange(false)) {
+              Event.send(Event.RACE_STARTED);
+            }
+            break;
+          case GATE_CLOSED:
+            gateEventMarksAChange(true);
             break;
           case RACE_STARTED:
             currentState = State.RUNNING;
-            break;
-          case GATE_CLOSED:
-            currentState = State.SET;
             break;
           case RACE_FINISHED:
           case GIVING_UP:

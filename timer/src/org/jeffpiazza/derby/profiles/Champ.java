@@ -32,15 +32,17 @@ public class Champ extends TimerDeviceWithProfile {
                  // Set to known state
                  "ol0" /* report lane 1 as "A" */,
                  "op3" /* set place character '!' */)
-        .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT))
+        .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT, 1))
         .heat_prep("om0", "om", '1')
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .gate_watcher("rs" /* READ_START_SWITCH */,
                         new Profile.Detector("^0$", Event.GATE_CLOSED),
                         new Profile.Detector("^1$", Event.GATE_OPEN))
         // rg = "Return results when race ends"
-        // Pack936 reported an issue with the 'rg' being sent too quickly after
-        // gate opening, causing the previous heat's results to be sent again.
+        // Any gate polling sent after this apparently causes the 'rg' to be
+        // canceled.  Also, Pack936 reported an issue with the 'rg' being sent
+        // too quickly after gate opening, causing the previous heat's results
+        // to be sent again.
         .on(Event.RACE_STARTED, "rg")
         // ra = "Force end of race, return results, then reset"
         .on(Event.OVERDUE, "ra");

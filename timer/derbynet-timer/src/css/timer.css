@@ -103,7 +103,9 @@
   border: solid black 2px;
   text-align: center;
 }
-.rlane.masked {
+
+              .rlane.masked,
+#racing-lanes .rlane.masked {
   border: solid white 2px;
 }
 .rlane img {

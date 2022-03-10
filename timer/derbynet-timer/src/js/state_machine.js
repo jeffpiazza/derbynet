@@ -9,16 +9,41 @@ class StateMachine {
   // Not used for much
   gate_state_is_knowable = true;
 
-  // first_gate_open_ms marks the time at which a first GATE_OPEN is received
-  // while in SET state, or zero if no believable GATE_OPEN has yet been
-  // received.  If a GATE_CLOSED is received, first_gate_open_ms resets to zero.
-  // When a subsequent GATE_OPEN is received after Flag.min_gate_time (in ms)
-  // has passed, then a RACE_STARTED event can be sent.
-  first_gate_open_ms = 0;
-
   constructor(gate_state_is_knowable) {
     console.log('gate_state_is_knowable:', gate_state_is_knowable);
     this.gate_state_is_knowable = gate_state_is_knowable;
+  }
+
+  // first_gate_change_ms marks the time at which a first GATE_OPEN is received
+  // while the gate is believed to be closed, or the first GATE_CLOSED is
+  // received while the gate is believed to be open.  When a confirming event
+  // occurs after Flags.min_gate_time (in ms) has passed, the believed gate state
+  // changes to match.  If a conflicting GATE_OPEN/GATE_CLOSED event occurs (i.e.,
+  // confirming the current believed state), first_gate_change_ms resets to zero.
+  first_gate_change_ms = 0;
+  gate_is_believed_closed = false;
+
+  // Returns true if the GATE_OPEN/GATE_CLOSED event should be interpreted as
+  // conveying a new gate state.
+  gateEventMarksAChange(event_says_closed) {
+    if (event_says_closed == this.gate_is_believed_closed) {
+      // The event just confirms what we already believed, overriding any
+      // recent conflicting events.
+      this.first_gate_change_ms = 0;
+    } else {
+      // Issue #35: If we have an apparent state change, don't record it
+      // until it's stayed in the new state for a minimum length of time.
+      // (Original issue report involved a SmartLine timer.)
+      var now = Date.now();
+      if (this.first_gate_change_ms == 0) {  // First gate change event
+        this.first_gate_change_ms = now;
+      } else if (now - this.first_gate_change_ms > Flag.min_gate_time.value) {
+        this.gate_is_believed_closed = event_says_closed;
+        this.first_gate_change_ms = 0;
+        return true;
+      }
+    }
+    return false;
   }
 
   onEvent(event, args) {
@@ -45,7 +70,12 @@ class StateMachine {
     case 'MARK':
       switch (event) {
       case 'GATE_CLOSED':
-        this.state = 'SET';
+        if (this.gateEventMarksAChange(true)) {
+          this.state = 'SET';
+        }
+        break;
+      case 'GATE_OPEN':
+        this.gateEventMarksAChange(false);
         break;
       case 'ABORT_HEAT_RECEIVED':
         this.state = 'IDLE';
@@ -73,18 +103,15 @@ class StateMachine {
         this.state = this.unexpected(event, 'SET');
         break;
       case 'GATE_OPEN':
-        if (this.first_gate_open_ms == 0) {
-          this.first_gate_open_ms = Date.now();
-        } else if (Date.now() - this.first_gate_open_ms >= Flag.min_gate_time.value) {
-          this.state = 'RUNNING';
+        if (this.gateEventMarksAChange(false)) {
           TimerEvent.send('RACE_STARTED');
         }
         break;
+      case 'GATE_CLOSED':
+        this.gateEventMarksAChange(true);
+        break;
       case 'RACE_STARTED':
         this.state = 'RUNNING';
-        break;
-      case 'GATE_CLOSED':
-        this.first_gate_open_ms = 0;
         break;
       case 'RACE_FINISHED':
       case 'GIVING_UP':
