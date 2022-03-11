@@ -13,13 +13,13 @@ if (window.Worker) {
     case 'EVENT':
       var event = e.data[0];
       var args = e.data[1];
-      TimerEvent.send(event, args);
+      TimerEvent.trigger(event, args);
       break;
     case 'LOGGER':
       g_logger && g_logger.poll();
       break;
     default:
-      console.error('Unrecognized clock-worker message', e.data);
+      console.error('Unrecognized message from clock-worker', key, e.data);
     }
   }
 } else {
@@ -141,6 +141,13 @@ async function on_new_port_click() {
 
 
 async function update_ports_list() {
+  g_ports.sort((p1, p2) => {
+    var p1_usb = p1.getInfo()?.usbProductId && true;
+    var p2_usb = p2.getInfo()?.usbProductId && true;
+    return p1_usb == p2_usb ? 0
+      : p1_usb ? -1 : 1;
+  });
+
   $("#ports-list li").slice(g_ports.length).remove();
   while ($("#ports-list li").length < g_ports.length) {
     // If ports have been added, the old ports may not be in the same positions,
@@ -196,7 +203,6 @@ $(function() {
 
 // The "Scan" button
 async function on_scan_click() {
-  console.log('on_scan_click');
   g_prober.probe_until_found();
 }
 

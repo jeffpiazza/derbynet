@@ -45,7 +45,8 @@ class TimerEvent {
     if (Flag.debug_serial.value) {
       g_logger.debug_msg('send ' + event);
     }
-    setTimeout(this.trigger.bind(this), 0, event, args);
+
+    g_clock_worker.postMessage([null, 0, 'EVENT', event, args]);
   }
 
   static sendAfterMs(delay, event, args) {
