@@ -335,9 +335,6 @@ function disable_preview(msg) {
   }
 }
 
-// In (some versions of) Safari, if Flash isn't enabled, the Webcam instance
-// just silently fails to load.  We want to present a modal to the user in that
-// case, so make clear what the issue is.
 function arm_webcam_dialog() {
   var loaded = false;
   Webcam.on('load', function() { loaded = true; });
@@ -347,11 +344,6 @@ function arm_webcam_dialog() {
     loaded = true;
     disable_preview(msg);
   });
-  setTimeout(function() {
-    if (!loaded) {
-      disable_preview('You may have to enable Flash, or give permission to use your webcam.');
-    }
-  }, 5000);
 }
 
 // For #photo_drop form:
@@ -366,14 +358,14 @@ Dropzone.options.photoDrop = {
   sending: function(xhr, form_data) {
     preserve_autocrop_state();
   },
-  success: function(file, response) {
+  success: function(file, data) {
     this.removeFile(file);
 
-    var data = $.parseXML(response);
-    var photo_url_element = data.getElementsByTagName('photo-url');
-    if (photo_url_element.length > 0) {
-      $("#photo-" + $("#photo_modal_racerid").val() + " img[data-repo='" + $("#photo_modal_repo").val() + "']").attr(
-        'src', photo_url_element[0].childNodes[0].nodeValue);
+    if (data.hasOwnProperty('photo-url')) {
+      var photo_url = data['photo-url'];
+      $("#photo-" + $("#photo_modal_racerid").val()
+        + " img[data-repo='" + $("#photo_modal_repo").val() + "']")
+      .attr('src', photo_url);
     }
 
     close_modal("#photo_modal");
@@ -388,6 +380,7 @@ function setup_webcam() {
 	dest_height: g_height,
 	crop_width: g_width,
 	crop_height: g_height,
+    enable_flash: false,
   };
   if (g_cameraIndex < g_cameras.length && g_cameras[g_cameraIndex]) {
 	settings['constraints'] = {
@@ -503,10 +496,9 @@ function take_snapshot(racerid, repo, photo_base_name) {
             contentType: false,
             processData: false,
             success: function(data) {
-              var photo_url_element = data.getElementsByTagName('photo-url');
-              if (photo_url_element.length > 0) {
-                $("#photo-" + racerid + " img[data-repo='" + repo + "']").attr(
-                  'src', photo_url_element[0].childNodes[0].nodeValue);
+              if (data.hasOwnProperty('photo-url')) {
+                var photo_url = data['photo-url'];
+                $("#photo-" + racerid + " img[data-repo='" + repo + "']").attr('src', photo_url);
               }
             }
            });
