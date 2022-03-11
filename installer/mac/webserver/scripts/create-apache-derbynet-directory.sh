@@ -35,6 +35,7 @@ cat <<EOF | sed -e "s/SERVERNAME/$SERVERNAME/" >$DSTVOLUME/private/etc/apache2/d
     Allow from all
 </Directory>
 
+Listen 443
 <VirtualHost *:443>
     ServerName SERVERNAME
     ServerAlias localhost
