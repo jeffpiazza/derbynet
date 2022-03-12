@@ -43,6 +43,7 @@ class Prober {
   // if not.
   async probe_until_found() {
     if (this.probe_cycle_underway) {
+      console.log('probe_until_found quits because probe cycle underway');
       return;
     }
     this.probe_cycle_underway = true;

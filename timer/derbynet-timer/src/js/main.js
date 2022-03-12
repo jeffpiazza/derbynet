@@ -184,8 +184,12 @@ $(function() {
         isOpen = false;
         break;
       case 'LOST_CONNECTION':
+        console.log('Handling LOST_CONNECTION event.');
         $("#probe-button").prop('disabled', false);
         setTimeout(async function() {
+          // TODO This conditional teardown call doesn't seem to happen.
+          // Fortunately TimerProxy unregisters itself now, upon receiving a
+          // LOST_CONNECTION event.
           if (g_timer_proxy) {
             // issue#187: after a lost connection, the timer proxy et al are
             // still registered for events, and will duplicate the effect of the
@@ -193,7 +197,10 @@ $(function() {
             await g_timer_proxy.teardown();
             g_timer_proxy = null;
           }
-          g_timer_proxy = await g_prober.probe_until_found(); }, 0);
+          console.log('Starting probe after lost connection');
+          await g_prober.probe_until_found();
+          console.log('Probe complete: g_timer_proxy=', g_timer_proxy);
+        }, 0);
         break;
       }
       console.log('onEvent: ' + event + ' ' + (args || []).join(','));

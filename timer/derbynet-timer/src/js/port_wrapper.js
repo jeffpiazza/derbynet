@@ -119,9 +119,11 @@ class PortWrapper {
     this.last_char_received = Date.now();
   }
 
+  simulate_lost_connection = false;
   async checkConnection() {
     var age = Date.now() - this.last_char_received;
-    if (age > /*LOST_CONTACT_THRESHOLD*/2000) {
+    if (age > /*LOST_CONTACT_THRESHOLD*/2000 || this.simulate_lost_connection) {
+      this.simulate_lost_connection = false;
       g_logger.internal_msg('PortWrapper.checkConnection detects lost connection by inactivity');
       console.log('PortWrapper.checkConnection detects lost connection by inactivity');
       await this.close();

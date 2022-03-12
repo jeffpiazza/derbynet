@@ -166,7 +166,6 @@ class TimerProxy {
 
   async teardown() {
     TimerEvent.unregister(this);
-    TimerEvent.unregister(this.sm);
     this.port_wrapper.close();
   }
 
@@ -271,6 +270,8 @@ class TimerProxy {
     case 'GIVING_UP':
       break;
     case 'LOST_CONNECTION':
+      console.log('TimerProxy sees lost connection', this);
+      TimerEvent.unregister(this);
       break;
     case 'GATE_WATCHER_NOT_SUPPORTED':
       this.sm.gate_state_is_knowable = false;
