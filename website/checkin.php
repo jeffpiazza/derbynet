@@ -199,6 +199,9 @@ $(function () {
 var partitions = <?php echo json_encode($partitions,
                                         JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
                                         JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS); ?>;
+var partition_label_pl = <?php echo json_encode(partition_label_pl(),
+                                        JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
+                                        JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS); ?>;
 
 $("#edit_partition").empty();
 for (var i in partitions) {
@@ -210,7 +213,7 @@ for (var i in partitions) {
 }
 var opt = $("<option/>")
     .attr('value', -1)
-    .text("(Edit partitions)");
+.text("(Edit " + partition_label_pl + ")");
 opt.appendTo("#edit_partition");
 opt.clone().appendTo("#bulk_who");
 
@@ -358,7 +361,7 @@ mobile_select_refresh($("#bulk_who"));
     
       <input type="submit"/>
       <input type="button" value="Cancel"
-        onclick='close_secondary_modal("#bulk_details_modal");'/>
+        onclick='pop_modal("#bulk_details_modal");'/>
     </form>
 </div>
 

@@ -85,14 +85,6 @@ function close_modal_leave_background(modal_selector) {
   do_close_modal(modal_selector, false);
 }
 
-function pop_modal() {
-  var modal_selector = g_modal_dialogs[g_modal_dialogs.length - 1];
-  do_close_modal(modal_selector,
-                 ["", "#modal_background",
-                  "#second_modal_background",
-                  "#third_modal_background"][g_modal_dialogs.length]);
-}
-
 // If we want to morph one dialog into another, at the same level; everything's
 // the same except as do_close_modal for fading the background.  Because the
 // background's not affected, the level of the modal doesn't matter.
@@ -129,4 +121,20 @@ function show_tertiary_modal(modal_selector, focus, submit_handler) {
 
 function close_tertiary_modal(modal_selector) {
   do_close_modal(modal_selector, "#third_modal_background");
+}
+
+function push_modal(modal_selector, focus, submit_handler) {
+  do_show_modal(modal_selector, focus, submit_handler,
+                ["#modal_background",
+                 "#second_modal_background",
+                 "#third_modal_background"][g_modal_dialogs.length],
+                11000 + 2000 * g_modal_dialogs.length);
+}
+
+function pop_modal() {
+  var modal_selector = g_modal_dialogs[g_modal_dialogs.length - 1];
+  do_close_modal(modal_selector,
+                 ["", "#modal_background",
+                  "#second_modal_background",
+                  "#third_modal_background"][g_modal_dialogs.length]);
 }

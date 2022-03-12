@@ -65,6 +65,8 @@ function handlechange_xbs(cb) {
          });
 }
 
+// Some <select> controls for choosing partitions have an "(Edit partitions)" entry
+// for manipulating the list of partitions.
 function on_edit_partition_change(select, partitions_modal) {
   var select = $(select);
   if (select.val() < 0) {
@@ -72,8 +74,7 @@ function on_edit_partition_change(select, partitions_modal) {
     while (g_modal_dialogs.length > 1) {
       pop_modal();
     }
-    close_modal_leave_background(g_modal_dialogs[0]);
-    show_modal(partitions_modal);
+    push_modal(partitions_modal);
   }
 }
 

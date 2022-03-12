@@ -14,7 +14,8 @@ $partitionid = $_POST['partitionid'];
 if ($ok && read_single_value('SELECT COUNT(*) FROM RegistrationInfo'
                              .' WHERE partitionid = :partitionid',
                              array(':partitionid' => $partitionid)) > 0) {
-  json_failure('in-use', 'Partition has racers assigned');
+  json_failure('in-use',
+               'The '.partition_label_lc().' cannot be deleted because it has racers assigned');
   $ok = false;
 }
 

@@ -83,7 +83,7 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
   var show_add_partition_modal = function() {
     name_field.val("");
     delete_ext.addClass('hidden');
-    show_secondary_modal(naming_modal, name_field, function(event) {
+    push_modal(naming_modal, name_field, function(event) {
       pop_modal();
 
       $.ajax('action.php',
@@ -110,7 +110,7 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
     delete_ext.toggleClass('hidden', li.attr('data-count') != 0);
     delete_ext.attr('data-partitionid', li.attr('data-partitionid'));
 
-    show_secondary_modal(naming_modal, name_field, function(event) {
+    push_modal(naming_modal, name_field, function(event) {
       pop_modal();
       $.ajax('action.php',
              {type: 'POST',

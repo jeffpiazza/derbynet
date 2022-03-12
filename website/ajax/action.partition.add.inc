@@ -14,13 +14,13 @@ if ($ok && !have_permission(CONTROL_RACE_PERMISSION)) {
 $name = trim($_POST['name']);
 
 if ($ok && (empty($name) || $name === '')) {
-  json_failure('no-name', 'Partition name may not be empty');
+  json_failure('no-name', 'A '.partition_label_lc().' must have a name.');
   $ok = false;
 }
 
 if ($ok && read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                              array(':name' => $name)) !== false) {
-  json_failure('already-exists', 'A partition named '.$name.' already exists.');
+  json_failure('already-exists', 'A '.partition_label_lc().' named '.$name.' already exists.');
   $ok = false;
 }
 
