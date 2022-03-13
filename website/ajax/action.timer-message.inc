@@ -126,6 +126,12 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     if (isset($_POST['options'])) {
       write_raceinfo('timer-options', $_POST['options']);
     }
+    if (@$_POST['vid']) {
+      write_raceinfo('timer-vid', $_POST['vid']);
+    }
+    if (@$_POST['pid']) {
+      write_raceinfo('timer-pid', $_POST['pid']);
+    }
     if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
       $timer_state->to_state(TIMER_UNCONFIRMED);
     } else {

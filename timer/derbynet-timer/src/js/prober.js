@@ -189,7 +189,14 @@ class Prober {
 
     Gui.prober_complete(porti, profi);
 
-    TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id]);
+    var vid = '';
+    var pid = '';
+    var usb_info = g_ports[porti].getInfo();
+    if (usb_info.hasOwnProperty('usbVendorId') && usb_info.hasOwnProperty('usbProductId')) {
+      vid = usb_info.usbVendorId.toString(16).padStart(4, '0');
+      pid = usb_info.usbProductId.toString(16).padStart(4, '0');
+    }
+    TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id, vid, pid]);
     $("#probe-button").prop('disabled', true);
   }
 }

@@ -56,7 +56,10 @@ class HostPoller {
                         // TODO lane_count, ident, options
                         timer: args[0],  // TODO No formal name
                         human: args[0],
-                        ident: args[1]});
+                        ident: args[1],
+                        vid: args[2],
+                        pid: args[3]
+                       });
       break;
     case 'RACE_STARTED':
       this.sendMessage({action: 'timer-message',
