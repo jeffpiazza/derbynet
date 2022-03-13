@@ -244,6 +244,10 @@ mobile_select_refresh($("#bulk_who"));
   <label for="edit_lastname">Last name:</label>
   <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
 
+  <label for="edit_partition"><?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?></label>
+  <select id="edit_partition"><!-- Populated by javascript --></select>
+
+  <br/>
   <label for="edit_carno">Car number:</label>
   <input id="edit_carno" type="text" name="edit_carno" value=""/>
   <br/>
@@ -252,10 +256,6 @@ mobile_select_refresh($("#bulk_who"));
   <input id="edit_carname" type="text" name="edit_carname" value=""/>
   <br/>
 
-  <label for="edit_partition"><?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?></label>
-  <select id="edit_partition"><!-- Populated by javascript --></select>
-
-  <br/>
   <label for="eligible">Trophy eligibility:</label>
     <input type="checkbox" class="flipswitch" name="eligible" id="eligible"
             data-wrapper-class="trophy-eligible-flipswitch"

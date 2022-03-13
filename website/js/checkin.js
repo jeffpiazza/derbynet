@@ -1,6 +1,43 @@
 // Requires dashboard-ajax.js
 // Requires modal.js
 
+// Maps partitionid to highest existing carnumber for that partitionid
+g_max_carnumbers = [];
+function poll_max_carnumbers() {
+  $.ajax(g_action_url,
+         {type: 'GET',
+          data: {query: 'poll',
+                 values: 'car-numbers'},
+          success: function (data) {
+            if (data.hasOwnProperty('car-numbers')) {
+              var carnos = data['car-numbers'];
+              for (var i = 0; i < carnos.length; ++i) {
+                g_max_carnumbers[parseInt(carnos[i].partitionid)] =
+                  carnos[i].max_carnumber;
+              }
+            }
+          }
+         });
+}
+function next_carnumber(partitionid) {
+  // NOTE: 100 * partitionid expression also in car-numbers poll query
+  return 1 + (g_max_carnumbers?.[partitionid] || (100 * partitionid));
+}
+$(function() {
+  setInterval(poll_max_carnumbers, 10000);
+  poll_max_carnumbers();
+
+  $("#edit_partition").on('change', function(event) {
+    // The car number field is updatable only for new racers
+    if ($("#edit_carno").attr('data-updatable')) {
+      var p = parseInt($("#edit_partition").val());
+      if (p && p >= 0) {
+        $("#edit_carno").val(next_carnumber(p));
+      }
+    }
+  });
+});
+
 // var g_order specified in checkin.php
 
 // For the photo_modal dialog, this boolean controls whether the racer gets
@@ -81,6 +118,7 @@ function on_edit_partition_change(select, partitions_modal) {
 function callback_after_partition_modal(op, arg) {
   console.log('callback_after_partition_modal', op, arg);
   if (op == 'add') {  // arg = {partitionid, name}
+    poll_max_carnumbers();
     var opt = $("<option/>")
       .attr('value', arg.partitionid)
         .text(arg.name);
@@ -89,10 +127,14 @@ function callback_after_partition_modal(op, arg) {
     // Delete "Default" partition, if any, after creating a real partition
     $("#edit_partition option[value=0]").remove();
     $("#bulk_who option[value=0]").remove();
-    // Move the "Edit Partitions" option to the end
     divid = -1;
-    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
-    $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
+    // Move the "Edit Partitions" option to the end and select the new partition
+    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"))
+      .val(arg.partitionid).trigger('change');
+    mobile_select_refresh("#edit_partition");
+    $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"))
+      .val(arg.partitionid);
+    mobile_select_refresh("#bulk_who");
   } else if (op == 'delete') {  // arg = {partitionid}
     $("#edit_partition option[value=" + arg.partitionid + "]").remove();
     $("#bulk_who option[value=" + arg.partitionid + "]").remove();
@@ -129,7 +171,7 @@ function show_edit_racer_form(racerid) {
   $("#edit_firstname").val(first_name);
   $("#edit_lastname").val(last_name);
 
-  $("#edit_carno").val(car_no);
+  $("#edit_carno").removeAttr('data-updatable').val(car_no);
   $("#edit_carname").val(car_name);
 
   $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
@@ -140,12 +182,10 @@ function show_edit_racer_form(racerid) {
 
   $("#delete_racer_extension").removeClass('hidden');
 
-  show_modal("#edit_racer_modal", function(event) {
+  show_modal("#edit_racer_modal", "#edit_carno", function(event) {
     handle_edit_racer();
     return false;
   });
-
-  $("#edit_carno").focus();
 }
 
 function show_new_racer_form() {
@@ -156,10 +196,12 @@ function show_new_racer_form() {
 
   $("#edit_lastname").val("");
 
-  $("#edit_carno").val(9999);
+  var partitionid = $("#edit_partition option").first().attr('value');
+  
+  $("#edit_carno").attr('data-updatable', '1').val(next_carnumber(partitionid));
   $("#edit_carname").val("");
 
-  $("#edit_partition").val($("#edit_partition option").first().attr('value'));
+  $("#edit_partition").val(partitionid);
   $("#edit_partition").change();
 
   $("#eligible").prop("checked", true);
@@ -167,7 +209,7 @@ function show_new_racer_form() {
 
   $("#delete_racer_extension").addClass('hidden');
   
-  show_modal("#edit_racer_modal", function(event) {
+  show_modal("#edit_racer_modal", "#edit_firstname", function(event) {
     handle_edit_racer();
     return false;
   });
