@@ -177,7 +177,8 @@ function show_edit_racer_form(racerid) {
   $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
   $("#edit_partition").change();
 
-  $("#eligible").prop("checked", ! $('#lastname-' + racerid).prop("data-exclude"));
+  $("#eligible").prop("checked",
+                      parseInt($('#lastname-' + racerid).attr("data-exclude")) == 0);
   $("#eligible").trigger("change", true);
 
   $("#delete_racer_extension").removeClass('hidden');
@@ -255,7 +256,7 @@ function handle_edit_racer() {
               $("#firstname-" + racerid).text(new_firstname);
               var ln = $("#lastname-" + racerid);
               ln.text(new_lastname);
-              ln.attr("data-exclude", exclude);
+              ln.attr("data-exclude", exclude ? 1 : 0);
               ln.parents('tr').toggleClass('exclude', exclude == 1);
               $("#car-number-" + racerid).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
@@ -863,7 +864,7 @@ function make_table_row(racer, xbs) {
 
   tr.append($('<td class="sort-lastname"/>')
             .attr('id', 'lastname-' + racer.racerid)
-            .attr('data-exclude', racer.exclude)
+            .attr('data-exclude', racer.exclude ? 1 : 0)
             .text(racer.lastname));
   tr.append($('<td class="sort-firstname"/>')
             .attr('id', 'firstname-' + racer.racerid)
