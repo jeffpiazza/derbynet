@@ -67,7 +67,6 @@ public class OlderFastTrackLegacy extends TimerDeviceBase {
       public String apply(String line) throws SerialPortException {
         Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
         if (m != null) {
-          has_ever_spoken = true;
           Message.LaneResult[] results
               = TimerDeviceUtils.extractResults(line, m.start(), m.end(),
                                                 MAX_LANES);

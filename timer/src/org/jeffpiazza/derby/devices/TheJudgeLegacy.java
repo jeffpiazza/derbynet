@@ -50,7 +50,6 @@ public class TheJudgeLegacy extends TimerDeviceBase {
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Checking Valid Lanes") >= 0) {
-        has_ever_spoken = true;
         timerIdentifier = s;
         LogWriter.serial("* 'The Judge' detected.");
         setUp();

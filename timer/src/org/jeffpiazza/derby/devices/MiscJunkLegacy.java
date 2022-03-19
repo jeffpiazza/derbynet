@@ -89,7 +89,6 @@ public class MiscJunkLegacy extends TimerDeviceCommon
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("vert=") >= 0) {
         timerIdentifier = s;
-        has_ever_spoken = true;
         // Responds either "P" or "O"
         portWrapper.writeAndWaitForResponse(RESET, 500);
 

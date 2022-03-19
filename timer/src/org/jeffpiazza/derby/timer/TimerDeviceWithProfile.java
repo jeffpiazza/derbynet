@@ -54,7 +54,6 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
   protected static final int PRE_PROBE_SETTLE_TIME_MS = 2000;
   protected static final int PROBER_RESPONSE_TIME_MS = 500;
-  protected static final int COMMAND_DRAIN_MS = 100;
   protected static final int POLL_RESPONSE_DEADLINE_MS = 100;
   protected static final int GIVE_UP_AFTER_OVERDUE_MS = 1000;
 
@@ -105,7 +104,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   private boolean doProbe() throws SerialPortException {
     if (profile.prober.pre_probe != null) {
       sendCommandSequence(profile.prober.pre_probe);
-      drainForMs(PRE_PROBE_SETTLE_TIME_MS);
+      portWrapper.drainForMs(PRE_PROBE_SETTLE_TIME_MS);
     }
 
     long deadline = System.currentTimeMillis() + PROBER_RESPONSE_TIME_MS;
@@ -114,7 +113,6 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     Pattern p = Pattern.compile(profile.prober.responses[pi++]);
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
-      has_ever_spoken = true;
       Matcher m = p.matcher(s);
       if (m.find()) {
         if (pi >= profile.prober.responses.length) {
@@ -154,11 +152,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     for (Profile.Query query : profile.setup_queries) {
       for (Profile.Detector detector_config : query.matchers) {
         ProfileDetector detector = new ProfileDetector(detector_config, false);
-        detector.activateFor(COMMAND_DRAIN_MS);
+        detector.activateFor(SerialPortWrapper.COMMAND_DRAIN_MS);
         portWrapper.registerDetector(detector);
       }
       portWrapper.write(query.command);
-      drainForMs();
+      portWrapper.drainForMs();
     }
   }
 
@@ -166,20 +164,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       throws SerialPortException {
     for (String cmd : commands.commands) {
       portWrapper.write(cmd);
-      drainForMs();
+      portWrapper.drainForMs();
     }
   }
 
-  protected void drainForMs(int ms) {
-    long deadline = System.currentTimeMillis() + ms;
-    while (portWrapper.next(deadline) != null) {
-      has_ever_spoken = true;
-    }
-  }
-
-  protected void drainForMs() {
-    drainForMs(COMMAND_DRAIN_MS);
-  }
 
   private boolean ok_to_poll = true;
   private synchronized void suspendPolling() { ok_to_poll = false; }
@@ -191,24 +179,24 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     try {
       if (profile.heat_prep != null) {
         if (profile.heat_prep.unmask != null) {
-          drainForMs();
+          portWrapper.drainForMs();
           portWrapper.write(profile.heat_prep.unmask);
           int nlanes = detected_lane_count == 0
                        ? profile.options.max_lanes
                        : detected_lane_count;
           for (int lane = 0; lane < nlanes; ++lane) {
             if ((lanemask & (1 << lane)) == 0) {
-              drainForMs();
+              portWrapper.drainForMs();
               portWrapper.write(profile.heat_prep.mask
                   + (char) (profile.heat_prep.lane + lane));
             }
           }
         }
         if (profile.heat_prep.reset != null) {
-          drainForMs();
+          portWrapper.drainForMs();
           portWrapper.write(profile.heat_prep.reset);
         }
-        drainForMs();
+        portWrapper.drainForMs();
       }
       result = new TimerResult(lanemask);
     } catch (SerialPortException ex) {
@@ -237,7 +225,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         // Pack936 reported an issue with the 'rg' being sent too quickly after
         // gate opening, causing the previous heat's results to be sent again.
         // This 50ms pause should address that.
-        drainForMs(50);
+        portWrapper.drainForMs(50);
         sendCommandSequence(custom);
       } catch (SerialPortException ex) {
         LogWriter.stacktrace(ex);
@@ -377,6 +365,6 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   @Override
   public void remoteStart() throws SerialPortException {
     portWrapper.write(profile.remote_start.command);
-    drainForMs();
+    portWrapper.drainForMs();
   }
 }

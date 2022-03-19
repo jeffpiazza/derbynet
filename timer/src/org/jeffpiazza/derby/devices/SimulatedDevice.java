@@ -30,7 +30,9 @@ public class SimulatedDevice extends TimerDeviceBase
   public boolean probe() throws SerialPortException {
     // 50% chance of "discovering" our fake device on a given port
     if (random.nextFloat() < 0.50) {
-      has_ever_spoken = !Flag.simulate_has_not_spoken.value();
+      if (!Flag.simulate_has_not_spoken.value()) {
+        portWrapper.setHasEverSpoken();
+      }
       return true;
     }
     return false;

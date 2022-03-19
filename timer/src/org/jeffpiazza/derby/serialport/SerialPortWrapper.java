@@ -27,6 +27,8 @@ import org.jeffpiazza.derby.timer.ProfileDetector;
 // port.removeEventListener();
 //
 public class SerialPortWrapper implements SerialPortEventListener {
+  public static final int COMMAND_DRAIN_MS = 100;
+
   private SerialPort port;
   // A sequence of end-of-line characters that should be written
   // at the end of each write().
@@ -45,6 +47,9 @@ public class SerialPortWrapper implements SerialPortEventListener {
   // System time in millis when we last received an event from the serial
   // port; used to detect lost contact.
   private long last_contact;
+
+  // Latches true if any data has been received from the timer.
+  private boolean has_ever_spoken = false;
 
   // A Detector looks for asynchronously-provided data in the data stream.
   // Ordinary Detectors get applied to a complete newly-received line of data
@@ -219,6 +224,7 @@ public class SerialPortWrapper implements SerialPortEventListener {
         }
 
         synchronized (leftover) {
+          has_ever_spoken = true;
           s = leftover + s;
           synchronized (detectors) {
             if (earlyDetector != null) {
@@ -365,6 +371,24 @@ public class SerialPortWrapper implements SerialPortEventListener {
 
   public void drain() {
     drain(System.currentTimeMillis() + 500, 1);
+  }
+
+  public void drainForMs(int ms) {
+    long deadline = System.currentTimeMillis() + ms;
+    while (next(deadline) != null)
+      ;
+  }
+
+  public void drainForMs() {
+    drainForMs(COMMAND_DRAIN_MS);
+  }
+
+  public boolean hasEverSpoken() {
+    return has_ever_spoken;
+  }
+
+  public void setHasEverSpoken() {
+    has_ever_spoken = true;
   }
 
   public void writeAndDrainResponse(String cmd, int expectedLines, int timeout)

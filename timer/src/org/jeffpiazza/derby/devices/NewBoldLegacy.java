@@ -82,7 +82,6 @@ public class NewBoldLegacy extends TimerDeviceBase {
       while (!line.isEmpty()) {
         Matcher m = singleLanePattern.matcher(line);
         if (m.find()) {
-          has_ever_spoken = true;
           int lane = Integer.parseInt(m.group(1));
           String time = m.group(2);
           if (lane != 0) {

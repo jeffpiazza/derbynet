@@ -107,7 +107,6 @@ public class FastTrackLegacy extends TimerDeviceCommon implements
     String s;
     while ((s = portWrapper.next(deadline)) != null) {
       if (s.indexOf("Micro Wizard") >= 0 || s.indexOf("MICRO WIZARD") >= 0) {
-        has_ever_spoken = true;
         s = portWrapper.next(deadline);
         if (s.startsWith("K")) {
           timerIdentifier = s;
