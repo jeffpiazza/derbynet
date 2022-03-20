@@ -79,4 +79,6 @@ public interface TimerDevice {
   void poll() throws SerialPortException, LostConnectionException;
 
   void close();
+
+  RemoteStartInterface getRemoteStart();
 }

@@ -9,7 +9,7 @@ import org.jeffpiazza.derby.Timestamp;
 
 public abstract class TimerDeviceCommon
     extends TimerDeviceBase
-    implements TimerDevice, RacingStateMachine.TransitionCallback {
+    implements RacingStateMachine.TransitionCallback {
 
   protected RacingStateMachine rsm;
   protected String timerIdentifier;

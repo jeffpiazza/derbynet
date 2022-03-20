@@ -6,7 +6,7 @@ import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
-public class SmartLineLegacy extends TimerDeviceCommon implements TimerDevice {
+public class SmartLineLegacy extends TimerDeviceCommon {
   private int numberOfLanes;  // Detected at probe time
 
   private static final String READ_DECIMAL_PLACES = "od\r";

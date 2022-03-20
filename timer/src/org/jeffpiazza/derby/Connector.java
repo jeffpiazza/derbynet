@@ -129,17 +129,14 @@ public class Connector {
     httpTask.registerRemoteStart(new HttpTask.RemoteStartCallback() {
       @Override
       public boolean hasRemoteStart() {
-        if (timerTask.device() instanceof RemoteStartInterface) {
-          RemoteStartInterface rs = (RemoteStartInterface) timerTask.device();
-          return rs.hasRemoteStart();
-        }
-        return false;
+        RemoteStartInterface rs = timerTask.device().getRemoteStart();
+        return rs != null && rs.hasRemoteStart();
       }
 
       @Override
       public void remoteStart() {
-        if (timerTask.device() instanceof RemoteStartInterface) {
-          RemoteStartInterface rs = (RemoteStartInterface) timerTask.device();
+        RemoteStartInterface rs = timerTask.device().getRemoteStart();
+        if (rs != null) {
           try {
             LogWriter.serial("Executing remote-start");
             rs.remoteStart();

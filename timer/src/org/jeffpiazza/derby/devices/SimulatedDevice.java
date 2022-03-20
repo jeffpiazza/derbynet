@@ -11,8 +11,7 @@ import org.jeffpiazza.derby.Message;
 
 // For testing the web server and the derby-timer framework, simulate
 // a device class
-public class SimulatedDevice extends TimerDeviceBase
-    implements RemoteStartInterface {
+public class SimulatedDevice extends TimerDeviceBase {
   private HeatRunner runningHeat = null;
 
   private Random random;
@@ -78,14 +77,21 @@ public class SimulatedDevice extends TimerDeviceBase
     }
   }
 
-  @Override
-  public boolean hasRemoteStart() {
-    return true;
-  }
+  private RemoteStartInterface remote_start = new RemoteStartInterface() {
+    @Override
+    public boolean hasRemoteStart() {
+      return true;
+    }
+
+    @Override
+    public void remoteStart() throws SerialPortException {
+      System.out.println("SimulatedDevice.remoteStart called");
+    }
+  };
 
   @Override
-  public void remoteStart() throws SerialPortException {
-    System.out.println("SimulatedDevice.remoteStart called");
+  public RemoteStartInterface getRemoteStart() {
+    return remote_start;
   }
 
   private long pollCount = 0;

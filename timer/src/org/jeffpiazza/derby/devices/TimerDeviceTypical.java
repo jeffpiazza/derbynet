@@ -18,7 +18,7 @@ import org.jeffpiazza.derby.Timestamp;
 //  onTransition()
 public abstract class TimerDeviceTypical
     extends TimerDeviceBase
-    implements TimerDevice, RacingStateMachine.TransitionCallback {
+    implements RacingStateMachine.TransitionCallback {
   protected RacingStateMachine rsm;
 
   // Keeps track of last known state of the gate

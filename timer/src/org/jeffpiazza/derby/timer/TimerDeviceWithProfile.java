@@ -14,12 +14,16 @@ import org.jeffpiazza.derby.devices.TimerResult;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class TimerDeviceWithProfile extends TimerDeviceBase
-    implements Event.Handler, RemoteStartInterface {
+    implements Event.Handler {
   public TimerDeviceWithProfile(SerialPortWrapper portWrapper, Profile profile) {
     super(portWrapper);
     this.profile = profile;
 
     portWrapper.setEndOfLine(profile.options.eol);
+
+    if (profile.remote_start != null) {
+      remote_start = new ProfileRemoteStart(portWrapper, profile.remote_start);
+    }
   }
 
   @Override
@@ -36,6 +40,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
   private Profile profile;
   private StateMachine sm;
+  private RemoteStartInterface remote_start = null;
   private String timerIdentifier;
   private int detected_lane_count = 0;
 
@@ -167,7 +172,6 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       portWrapper.drainForMs();
     }
   }
-
 
   private boolean ok_to_poll = true;
   private synchronized void suspendPolling() { ok_to_poll = false; }
@@ -358,13 +362,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   @Override
-  public boolean hasRemoteStart() {
-    return profile.remote_start != null && profile.remote_start.has_remote_start;
-  }
-
-  @Override
-  public void remoteStart() throws SerialPortException {
-    portWrapper.write(profile.remote_start.command);
-    portWrapper.drainForMs();
+  public RemoteStartInterface getRemoteStart() {
+    return remote_start;
   }
 }

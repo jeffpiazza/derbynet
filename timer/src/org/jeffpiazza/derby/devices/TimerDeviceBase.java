@@ -113,4 +113,9 @@ public abstract class TimerDeviceBase implements TimerDevice {
           .log(Level.SEVERE, null, ex);
     }
   }
+
+  @Override
+  public RemoteStartInterface getRemoteStart() {
+    return null;
+  }
 }
