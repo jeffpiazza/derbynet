@@ -71,4 +71,4 @@ with open(scanner_device, 'rb') as fp:
             elif ev[INEV_CODE] in keys:
                 ss += keys[ev[INEV_CODE]]
 
-print ss
+print(ss)
