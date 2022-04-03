@@ -16,6 +16,7 @@ $nlanes = get_lane_count();
 <link rel="stylesheet" type="text/css" href="css/now-racing-columnar.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript" src="js/now-racing-overlay.js"></script>
 <script type="text/javascript" src="js/now-racing-columnar.js"></script>
 <script type="text/javascript">
