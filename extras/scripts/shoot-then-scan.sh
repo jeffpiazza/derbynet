@@ -40,6 +40,10 @@ loop_to_capture_tethered() {
     cat <<EOF >"$HOOK_SCRIPT"
 #! /bin/sh
 if [ "\$ACTION" = "download" ] ; then
+    # For "announce" command definition:
+    . "$LIB_DIR"/photo-preamble.sh
+    . "$LIB_DIR"/photo-functions.sh
+
     # The file is already downloaded from the camera by the time 
     # this action comes
     >&2 echo Download action "\$ARGUMENT"
