@@ -4,14 +4,21 @@ require_once('inc/partitions.inc');
 
 function export_roster(callable $out) {
   global $db;
+
+  $use_groups = use_groups();
+  $use_subgroups = use_subgroups();
+
   $headings = array();
   $headings[] = "First Name";
   $headings[] = "Last Name";
   $headings[] = "Car Number";
   $headings[] = "Car Name";
-  $headings[] = group_label();
-  $headings[] = subgroup_label();
-  $headings[] = 'Passed?';
+  if ($use_groups) {
+    $headings[] = group_label();
+  }
+  if ($use_subgroups) {
+    $headings[] = subgroup_label();
+  }
   $headings[] = 'Excluded?';
 
   $out($headings);
@@ -31,21 +38,26 @@ function export_roster(callable $out) {
                      .' FROM '.inner_join('RegistrationInfo',
                                           'Classes', 'RegistrationInfo.classid = Classes.classid',
                                           'Ranks', 'RegistrationInfo.rankid = Ranks.rankid')
-                     // TODO passed?  excluded?
+                     .' WHERE passedinspection = 1'
                      .' ORDER BY '.'lastname, firstname'
     );
   if ($stmt === false) {
     // TODO
   }
   foreach ($stmt as $row) {
-    $out(array($row['firstname'],
-               $row['lastname'],
-               $row['carnumber'],
-               $row['carname'],
-               $row['classname'],
-               $row['rankname'],
-               $row['passedinspection'],
-               $row['exclude']));
+    $line = array($row['firstname'],
+                  $row['lastname'],
+                  $row['carnumber'],
+                  $row['carname']);
+    if ($use_groups) {
+      $line[] = $row['classname'];
+    }
+    if ($use_subgroups) {
+      $line[] = $row['rankname'];
+    }
+    $line[] = $row['exclude'];
+
+    $out($line);
   }
 }
 

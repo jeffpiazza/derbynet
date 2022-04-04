@@ -44,6 +44,15 @@ function export_all() {
   export_awards(function($row) use (&$awards) { $awards[] = $row; });
   $workbook[] = array('Awards', $awards);
 
+  // Javascript XLSX doesn't allow sheet names to contain : \ / ? * [ ], or to
+  // exceed 31 characters
+  foreach ($workbook as $w) {
+    $w[0] = str_replace(array('/', '\\', '?', '*', '[', ']'), '-', $w[0]);
+    if (strlen($w[0]) > 31) {
+      $w[0] = substr($w[0], 0, 31);
+    }
+  }
+
   return $workbook;
 }
 
