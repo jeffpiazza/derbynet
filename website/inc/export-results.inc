@@ -2,8 +2,11 @@
 require_once('inc/name-mangler.inc');
 
 // $output is a file handle for writing
-function export_results(callable $out, $name_style = FULL_NAME) {
+function export_results(callable $out) {
   global $db;
+
+  $name_style = read_name_style();
+
   $headings = array();
   $headings[] = "Class";
   $headings[] = "Round";

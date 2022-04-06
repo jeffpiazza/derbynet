@@ -1,16 +1,22 @@
 <?php
 
 require_once('inc/partitions.inc');
+require_once('inc/name-mangler.inc');
 
 function export_roster(callable $out) {
   global $db;
 
   $use_groups = use_groups();
   $use_subgroups = use_subgroups();
+  $name_style = read_name_style();
 
   $headings = array();
-  $headings[] = "First Name";
-  $headings[] = "Last Name";
+  if ($name_style == FULL_NAME) {
+    $headings[] = "First Name";
+    $headings[] = "Last Name";
+  } else {
+    $headings[] = "Name";
+  }
   $headings[] = "Car Number";
   $headings[] = "Car Name";
   if ($use_groups) {
@@ -45,10 +51,16 @@ function export_roster(callable $out) {
     // TODO
   }
   foreach ($stmt as $row) {
-    $line = array($row['firstname'],
-                  $row['lastname'],
-                  $row['carnumber'],
-                  $row['carname']);
+    if ($name_style == FULL_NAME) {
+      $line = array($row['firstname'],
+                    $row['lastname']);
+    } else {
+      $line = array(mangled_name($row, $name_style));
+    }
+
+    $line[] = $row['carnumber'];
+    $line[] = $row['carname'];
+
     if ($use_groups) {
       $line[] = $row['classname'];
     }
