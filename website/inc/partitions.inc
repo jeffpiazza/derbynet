@@ -159,16 +159,15 @@ function clean_up_empty_classes_and_ranks() {
 }
 
 // Updates sortorder fields for Partitions to agree with ordering of classes and
-// ranks.  If members of a partition fall in more than class or rank, the
-// ordering for the partition will be based on the first appearance among classes
-// and ranks.
+// ranks.
 function reorder_partitions() {
   global $db;
-  $stmt = $db->prepare('SELECT DISTINCT partitionid FROM '
-                       .inner_join('RegistrationInfo', 'Classes',
-                                   'RegistrationInfo.classid = Classes.classid',
-                                   'Ranks',
-                                   'RegistrationInfo.rankid = Ranks.rankid')
+
+  $stmt = $db->prepare('SELECT partitionid FROM '
+                       .inner_join('Partitions', 'Ranks',
+                                   'Partitions.rankid = Ranks.rankid',
+                                   'Classes',
+                                   'Classes.classid = Ranks.classid')
                        .' ORDER BY Classes.sortorder, Ranks.sortorder');
   $stmt->execute();
 
