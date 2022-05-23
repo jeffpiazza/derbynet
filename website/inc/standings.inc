@@ -177,21 +177,13 @@ class StandingsOracle {
   // Maps catalog key to number of entries included in those standings
   public $catalog_counts;
 
-  // Returns classid => {classid:, class:, unscheduled:, unfinished:,
+  // Returns classid => {classid:, class:,
   //                     constituents:, rankids:, rolls_up_to:, rounds: ... }
   private function make_class_details() {
     global $db;
     $stmt = $db->prepare('SELECT classid, class,'
                          .(schema_version() >= 3 ? ' constituents, ' : '\'\' AS constituents, ')
-                         .(schema_version() >= 5 ? ' rankids, ' : '\'\' AS rankids, ')
-                         .' EXISTS(SELECT 1 FROM Rounds WHERE Rounds.classid = Classes.classid'
-                         .'        AND NOT EXISTS(SELECT 1 FROM RaceChart'
-                         .'                       WHERE RaceChart.roundid = Rounds.roundid))'
-                         .'   AS unscheduled,'
-                         .' EXISTS(SELECT 1 FROM RaceChart JOIN Rounds USING (roundid)'
-                         .'             WHERE Rounds.classid = Classes.classid'
-                         .'               AND finishtime IS NULL AND finishplace IS NULL)'
-                         .'   AS unfinished'
+                         .(schema_version() >= 5 ? ' rankids ' : '\'\' AS rankids ')
                          .' FROM Classes');
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -682,7 +674,8 @@ class StandingsOracle {
       $details = $this->class_details[$classid];
       if (count($details['rounds']) > 0) {
         $rounds = $details['rounds'];
-        // The final round for a class is listed first
+        // The final round for a class is listed first.
+        // Skip any unfinished rounds to get to the last completed round.
         do {
           $scoring_roundid = array_shift($rounds)['roundid'];
         } while (isset($this->unfinished_rounds[$scoring_roundid]));
@@ -761,13 +754,12 @@ class StandingsOracle {
 // Returns roundids for unscheduled or incompletely-raced rounds
 function unfinished_rounds() {
   global $db;
-  // GPRM databases may have RaceChart entries with null racerid for byes.  A
-  // round is "unfinished" if it has no heats scheduled, or if there are
-  // scheduled heats that have no results.
+  // GPRM databases may have RaceChart entries with null racerid for byes; these
+  // do not mark an unfinished heat.  A round is "unfinished" if it has no heats
+  // scheduled, or if there are scheduled heats that have no results.
   $stmt = $db->query('SELECT roundid, classid FROM Rounds'
                      .' WHERE NOT EXISTS(SELECT 1 FROM RaceChart'
-                     .'           WHERE RaceChart.roundid = Rounds.roundid'
-                     .'                    AND racerid IS NOT NULL)'
+                     .'           WHERE RaceChart.roundid = Rounds.roundid)'
                      .' OR EXISTS(SELECT 1 FROM RaceChart'
                      .'           WHERE RaceChart.roundid = Rounds.roundid'
                      .'             AND racerid IS NOT NULL'
