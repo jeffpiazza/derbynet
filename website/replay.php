@@ -190,8 +190,6 @@ function on_device_selection(selectq) {
   }
 }
 
-$(window).on('resize', function(event) { on_setup(); });
-
 $(function() {
     if (typeof(window.MediaRecorder) == 'undefined') {
       g_upload_videos = false;
@@ -313,7 +311,13 @@ function on_proceed() {
 
   if (document.getElementById('go-fullscreen').checked) {
     if (screenfull.enabled) {
+      // Temporarily remove resize handler while switching to fullscreen, to
+      // avoid having to click "Proceed" again.
+      $(window).off('resize');
       screenfull.request();
+      setTimeout(function() {
+          $(window).on('resize', function(event) { on_setup(); });
+        }, 2000);
     }
   }
 
@@ -327,6 +331,8 @@ function on_setup() {
   $("#click-shield").addClass('hidden');
   $("#replay-setup").show('slide', {direction: 'down'});
 }
+
+$(window).on('resize', function(event) { on_setup(); });
 
 </script>
 </head>
