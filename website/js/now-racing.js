@@ -1,3 +1,22 @@
+
+// This function receives messages from the surrounding replay kiosk, if there
+// is one.
+function on_message(msg) {
+  if (msg == 'replay-started') {
+    // TODO There's a race here: if the flyers have already started when replay takes
+    // over the screen, the audience may not get to see the whole thing.
+    Poller.suspended = true;
+    Lineup.hold();
+  } else if (msg == 'replay-ended') {
+    // Start the timer that blocks advancing to the next heat
+    Lineup.start_display_linger();
+    Lineup.release();
+    Poller.suspended = false;
+    FlyerAnimation.enable_flyers();
+  }
+}
+$(function() { window.onmessage = function(e) { on_message(e.data); }; });
+
 var Lineup = {
   // heat and roundid identify the lineup currently displayed.  They're also
   // sent in the polling query to tell the server what lineup we'd want results
@@ -383,28 +402,9 @@ function resize_table() {
   FontAdjuster.table_resized();
 }
 
-// This function receives messages from the surrounding replay kiosk, if there
-// is one.
-function on_message(msg) {
-  if (msg == 'replay-started') {
-    // TODO There's a race here: if the flyers have already started when replay takes
-    // over the screen, the audience may not get to see the whole thing.
-    Poller.suspended = true;
-    Lineup.hold();
-  } else if (msg == 'replay-ended') {
-    // Start the timer that blocks advancing to the next heat
-    Lineup.start_display_linger();
-    Lineup.release();
-    Poller.suspended = false;
-    FlyerAnimation.enable_flyers();
-  }
-}
-
 $(function () {
   resize_table();
   $(window).resize(function() { resize_table(); });
-
-  window.onmessage = function(e) { on_message(e.data); };
 
   // This 1-second delay is to let the initial resizing take effect
   setTimeout(function() { Poller.poll_for_update(0, 0); }, 1000);

@@ -1,5 +1,16 @@
 'use strict';
 
+// This function receives messages from the surrounding replay kiosk, if there
+// is one.
+function on_message(msg) {
+  if (msg == 'replay-started') {
+    Poller.suspended = true;
+  } else if (msg == 'replay-ended') {
+    Poller.suspended = false;
+  }
+}
+$(function() { window.onmessage = function(e) { on_message(e.data); }; });
+
 
 var Poller = {
   // Timestamp when the last polling request was sent; used by watchdog to
@@ -12,6 +23,9 @@ var Poller = {
 
   // If we're being shown within a replay iframe, suspend polling while a replay
   // is showing and we're not visible; resume when we have the display again.
+  // We keep setting timeouts (which makes the watchdog happy), but when
+  // suspended, poll_for_update just queues another request rather than asking
+  // the server for anything.
   suspended: false,
 
   // Queues the next poll request when processing of the current request has
@@ -66,7 +80,7 @@ var Poller = {
 };
 
 class ResultAnimator {
-  // Set to true during animation and "linger" time that follows
+  // Set to true during animation and the "linger" time that follows
   animation_running;
   // Set to true to avoid repeating the animation
   results_written;
@@ -80,7 +94,8 @@ class ResultAnimator {
     this.results_written = false;
   }
 
-  waiting_for_results() { return ! this.results_written; }
+  // Returns true if it's OK to update the page to show a new heat (i.e., the
+  // results of the previous heat have lingered long enough for the viewers).
   ok_to_change() { return ! this.animation_running; }
 
   async onHeatResults(precision, heat_results) {
@@ -195,7 +210,7 @@ function process_polling_result(data) {
                    .attr('src', "photo.php/car/racer/" + racerid + "/" + car_wxh + "/0")
                    .css({'max-width': lane_width})
                    .on('load', vcenter_image))
-          .find("div.name").text((data.racers[i].carnumber + ' ' + data.racers[i].carname).trim());
+          .find("div.name").text(data.racers[i].carnumber);
         racer_entry.find("div.racer")
           .prepend($("<img/>")
                    .attr('src', "photo.php/head/racer/" + racerid + "/" + racer_wxh + "/0")

@@ -68,6 +68,11 @@ div.car img {
   margin-right: auto;
   object-fit: scale-down;
 }
+div.car div.name {
+  font-size: 4vh;
+  height: 5vh;
+}
+
 div.racer {
   height: 38vh;
   position: relative;

@@ -79,5 +79,7 @@ for ($lane = 1; $lane <= $nlanes; ++$lane) {
  <p>Check timer.</p>
 </div>
 
+<?php require_once('inc/ajax-failure.inc'); ?>
+
 </body>
 </html>
