@@ -12,34 +12,34 @@ function create_timer_settings_table() {
 function decode_timer_flags($params) {
   global $db;
   try {
-    read_single_value('DELETE FROM TimerSettings WHERE pending IS NULL');
+    execute_once('DELETE FROM TimerSettings WHERE pending IS NULL');
     foreach ($params as $p => $v) {
       if (substr($p, 0, 5) == "flag-") {
         $vv = explode(':', $v, 2);
-        read_single_value('INSERT INTO TimerSettings(kind, key, type, value)'
-                          .' VALUES(:kind, :key, :type, :value)',
-                          array(':kind' => 'flag',
-                                ':key' => substr($p, 5),
-                                ':type' => $vv[0],
-                                ':value' => $vv[1]));
+        execute_once('INSERT INTO TimerSettings(kind, key, type, value)'
+                     .' VALUES(:kind, :key, :type, :value)',
+                     array(':kind' => 'flag',
+                           ':key' => substr($p, 5),
+                           ':type' => $vv[0],
+                           ':value' => $vv[1]));
       } else if (substr($p, 0, 5) == "desc-") {
-        read_single_value('UPDATE TimerSettings SET description = :desc'
-                          .' WHERE kind = :kind AND key = :key',
-                          array(':kind' => 'flag',
-                                ':key' => substr($p, 5),
-                                ':desc' => $v));
+        execute_once('UPDATE TimerSettings SET description = :desc'
+                     .' WHERE kind = :kind AND key = :key',
+                     array(':kind' => 'flag',
+                           ':key' => substr($p, 5),
+                           ':desc' => $v));
       } else if ($p == "ports") {
-        read_single_value('INSERT INTO TimerSettings(kind, key, value)'
-                          .' VALUES(:kind, :key, :value)',
-                          array(':kind' => 'ports',
-                                ':key' => $p,
-                                ':value' => $v));
+        execute_once('INSERT INTO TimerSettings(kind, key, value)'
+                     .' VALUES(:kind, :key, :value)',
+                     array(':kind' => 'ports',
+                           ':key' => $p,
+                           ':value' => $v));
       } else if (substr($p, 0, 7) == "device-") {
-        read_single_value('INSERT INTO TimerSettings(kind, key, description)'
-                          .' VALUES(:kind, :key, :desc)',
-                          array(':kind' => 'device',
-                                ':key' => substr($p, 7),
-                                ':desc' => $v));
+        execute_once('INSERT INTO TimerSettings(kind, key, description)'
+                     .' VALUES(:kind, :key, :desc)',
+                     array(':kind' => 'device',
+                           ':key' => substr($p, 7),
+                           ':desc' => $v));
       }
     }
   } catch (PDOException $p) {
@@ -78,9 +78,9 @@ function send_timer_assignments() {
       }
     }
     if ($any_assigned) {
-      read_single_value('UPDATE TimerSettings SET pending = NULL');
-      read_single_value('DELETE FROM TimerSettings WHERE kind = :kind',
-                        array(':kind' => 'pending-device'));
+      execute_once('UPDATE TimerSettings SET pending = NULL');
+      execute_once('DELETE FROM TimerSettings WHERE kind = :kind',
+                   array(':kind' => 'pending-device'));
       echo "  <query/>\n";
     }
   } catch (PDOException $pdo) {

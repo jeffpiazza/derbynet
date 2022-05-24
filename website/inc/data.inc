@@ -85,6 +85,13 @@ function read_single_value($sql, $params = array(), $def = false) {
   return $row[0];
 }
 
+function execute_once($sql, $params = array()) {
+  global $db;
+  $rs = $db->prepare($sql);
+  $rs->execute($params);
+  $rs->closeCursor();
+}
+
 
 // The RaceInfo table is just a simple ItemKey/ItemValue association, and stores individual
 // configuration settings from GPRM.  As long as there aren't any name conflicts, we can add a 

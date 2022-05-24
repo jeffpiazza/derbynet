@@ -35,31 +35,31 @@ if ($ok) {
                                 array(':partitionid' => $partitionid), '(Not found)');
   record_event(EVENT_PARTITION_RENAMED, array('other' => $old_name.' to '.$name));
 
-  read_single_value('UPDATE Partitions SET name = :name WHERE partitionid = :partitionid',
-                    array(':name' => $name,
-                          ':partitionid' => $partitionid));
+  execute_once('UPDATE Partitions SET name = :name WHERE partitionid = :partitionid',
+               array(':name' => $name,
+                     ':partitionid' => $partitionid));
 
   switch (group_formation_rule()) {
   case 'by-partition':
-    read_single_value('UPDATE Classes SET class = :name'
-                      .' WHERE classid = (SELECT classid'
-                      .'                  FROM '.inner_join('Partitions', 'Ranks',
-                                                            'Partitions.rankid = Ranks.rankid')
-                      .'                  WHERE partitionid = :partitionid)',
-                      array(':name' => $name,
-                            ':partitionid' => $partitionid));
-    read_single_value('UPDATE Ranks SET rank = :name'
-                      .' WHERE rankid = (SELECT rankid FROM Partitions'
-                      .'                 WHERE partitionid = :partitionid)',
-                      array(':name' => $name,
-                            ':partitionid' => $partitionid));
+    execute_once('UPDATE Classes SET class = :name'
+                 .' WHERE classid = (SELECT classid'
+                 .'                  FROM '.inner_join('Partitions', 'Ranks',
+                                                       'Partitions.rankid = Ranks.rankid')
+                 .'                  WHERE partitionid = :partitionid)',
+                 array(':name' => $name,
+                       ':partitionid' => $partitionid));
+    execute_once('UPDATE Ranks SET rank = :name'
+                 .' WHERE rankid = (SELECT rankid FROM Partitions'
+                 .'                 WHERE partitionid = :partitionid)',
+                 array(':name' => $name,
+                       ':partitionid' => $partitionid));
     break;
   case 'one-group':
-    read_single_value('UPDATE Ranks SET rank = :name'
-                      .' WHERE rankid = (SELECT rankid FROM Partitions'
-                      .'                 WHERE partitionid = :partitionid)',
-                      array(':name' => $name,
-                            ':partitionid' => $partitionid));
+    execute_once('UPDATE Ranks SET rank = :name'
+                 .' WHERE rankid = (SELECT rankid FROM Partitions'
+                 .'                 WHERE partitionid = :partitionid)',
+                 array(':name' => $name,
+                       ':partitionid' => $partitionid));
     break;
   }
 

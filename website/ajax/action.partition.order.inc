@@ -23,14 +23,14 @@ if ($ok) {
 
   switch (group_formation_rule()) {
   case 'by-partition':
-    read_single_value('UPDATE Classes SET sortorder = (SELECT Partitions.sortorder'
-                      .'                             FROM '.inner_join('Partitions', 'Ranks',
-                                                                       'Partitions.rankid = Ranks.rankid')
-                      .'                             WHERE Ranks.classid = Classes.classid)');
+    execute_once('UPDATE Classes SET sortorder = (SELECT Partitions.sortorder'
+                 .'                             FROM '.inner_join('Partitions', 'Ranks',
+                                                                  'Partitions.rankid = Ranks.rankid')
+                 .'                             WHERE Ranks.classid = Classes.classid)');
     break;
   case 'one-group':
-    read_single_value('UPDATE Ranks SET sortorder = (SELECT Partitions.sortorder FROM Partitions'
-                      .'                             WHERE Partitions.rankid = Ranks.rankid)');
+    execute_once('UPDATE Ranks SET sortorder = (SELECT Partitions.sortorder FROM Partitions'
+                 .'                             WHERE Partitions.rankid = Ranks.rankid)');
     break;
   }
   
