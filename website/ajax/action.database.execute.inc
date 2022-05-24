@@ -37,7 +37,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     }
   }
   
-  run_sql_script($_POST['script'], /* write_xml */ true);
+  run_sql_script($_POST['script']);
 
   if ($values_found) {
     write_raceinfo('photo-directory', $photo_dir);

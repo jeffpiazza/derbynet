@@ -15,6 +15,7 @@
 */
 
 require_once('inc/export-schema.inc');
+require_once('inc/sql-script.inc');
 
 start_response();
 echo "\n";
@@ -51,6 +52,9 @@ if (have_permission(SET_UP_PERMISSION)) {
     echo substr($xml, $pos, $rpos - $pos);
     echo "</data>\n";
   } else {
+
+    run_sql_script('schema');
+    
     foreach ($json as $table_entry) {
       $tablename = $table_entry["table"];
       $schema_columns = $schema[$tablename];  // An array of column names, id column first
