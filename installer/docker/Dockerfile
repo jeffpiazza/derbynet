@@ -1,15 +1,21 @@
 ## docker build -t derbynet_server -f installer/docker/Dockerfile .
 
-FROM ubuntu
+FROM ubuntu:21.04
 LABEL org.opencontainers.image.authors=jeffpiazza
 LABEL description="DerbyNet is the new standard in race management software for Pinewood Derby events.  \
 Visit http://jeffpiazza.github.io/derbynet/ for more information about DerbyNet."
 
+# I don't know when PHP picked up a dependency on tzdata and requires it be
+# configured, but that seems to be the case now.  Eastern time is convenient for
+# me, but may not be the best choice for everyone.
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apt update
-RUN apt install -y php-fpm php-curl php-gd php-sqlite3
+RUN apt install -y php7.4-fpm php7.4-curl php7.4-gd php7.4-sqlite3
 # php-odbc installs OK on a separate line, but not when added to the previous line.
 # No idea why
-RUN apt install -y php-odbc
+RUN apt install -y php7.4-odbc
 RUN apt install -y nginx ssl-cert
 RUN apt install -y supervisor
 
