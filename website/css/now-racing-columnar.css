@@ -48,31 +48,55 @@ div.heat_time {
   text-align: center;
   background-color: #c0c0c0;
 }
-div.name {
-  background-color: black;
-  color: white;
-  text-align: center;
-  font-size: 2vh;
-  height: 3vh;
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-}
 
 div.car {
   height: 29vh;
   position: relative;
 }
 div.car img {
+  /* margins get computed and set by js code */
   margin-left: auto;
   margin-right: auto;
   object-fit: scale-down;
 }
-div.car div.name {
+/* This is the field for the car number (only) */
+div.car div.number {
+  background-color: black;
+  color: white;
+  text-align: center;
   font-size: 4vh;
   height: 5vh;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
 }
-
+div.car div.carname {
+  display: none;  /* becomes display: block if there's text. */
+  /* white-space: nowrap;
+     overflow: hidden; */
+  position: absolute;
+  bottom: 5vh;
+  width: 100%;
+  font-size: 3vh;
+  text-align: center;
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+}
+/* Finish place written over the top of the car image and number with a
+   transparent background. */
+div.car div.place {
+  position: absolute;
+  width: 100%;
+  bottom: 5vh;
+  text-align: center;
+  /* Match the image height, or height of div.car - height of div.number */
+  font-size: 24vh;
+  font-weight: bold;
+  line-height: 1em;
+  color: red;
+  background: transparent;
+  /* Becomes semi-transparent via animation after appearing */
+}
 div.racer {
   height: 38vh;
   position: relative;
@@ -81,6 +105,30 @@ div.racer img {
   margin-left: auto;
   margin-right: auto;
   object-fit: scale-down;
+}
+div.racer div.note {
+  display: none;  /* becomes display: block if there's text. */
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  text-align: center;
+  overflow: hidden;
+  font-size: 2vh;
+  position: absolute;
+  bottom: 4vh;
+  width: 100%;
+}
+div.racer div.name {
+  background-color: black;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 3vh;
+  height: 4vh;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  text-align: center;
 }
 
 div.bottom-banner {

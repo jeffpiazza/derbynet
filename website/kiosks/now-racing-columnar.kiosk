@@ -47,6 +47,8 @@ for ($lane = 1; $lane <= $nlanes; ++$lane) {
     <div class="lane">
       <div class="lane_number"><?php echo $lane; ?></div>
       <div class="rollable">
+<?php  // Don't be fooled -- this is just the initial, empty racer-entry for each lane.
+       // Real content is created by javascript code dynamically. ?> 
 
         <div class="racer-entry" data-heat-key="" data-racerid="">
           <div class="heat_time"> &nbsp; </div>

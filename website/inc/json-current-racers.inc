@@ -18,7 +18,8 @@ function json_current_racers(&$now_running, $name_style, $photo_render, $photo_r
   $stmt = $db->prepare('SELECT lane, RegistrationInfo.racerid,'
                        .' carnumber, lastname, firstname, carname, rank,'
                        .' finishtime, finishplace, imagefile, '
-                       .(schema_version() >= 2 ? 'carphoto' : "'' AS carphoto")
+                       .(schema_version() >= 2 ? 'carphoto' : "'' AS carphoto").', '
+                       .(schema_version() >= PARTITION_SCHEMA ? ' note' : "'' AS note")
                        .' FROM '
                        .inner_join('RaceChart', 'RegistrationInfo',
                                    'RaceChart.racerid = RegistrationInfo.racerid',
@@ -38,6 +39,7 @@ function json_current_racers(&$now_running, $name_style, $photo_render, $photo_r
       'name' => mangled_name($row, $name_style),
       'carname' => $row['carname'],
       'carnumber' => $row['carnumber'],
+      'note' => $row['note'],
       'photo' => $photo_render ? $photo_render->url_for_row($row) : '',
       'finishtime' => $row['finishtime'] ? sprintf($time_format, $row['finishtime']) : '',
       'finishplace' => $row['finishplace'] ? $row['finishplace'] : '');

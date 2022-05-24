@@ -109,16 +109,26 @@ class ResultAnimator {
 
     for (var i = 0; i < heat_results.length; ++i) {
       let lane = heat_results[i].lane;
-      let div = $("div.lane").eq(lane - 1).find("div.racer-entry:first div.heat_time");
-      div.text(Number.parseFloat(heat_results[i].time).toFixed(precision))
+      let racer_entry_div = $("div.lane").eq(lane - 1).find("div.racer-entry:first");
+      let time_div = racer_entry_div.find("div.heat_time");
+      time_div.text(Number.parseFloat(heat_results[i].time).toFixed(precision))
         .css({'background-color': 'red'});
-      await new Promise(function(result) {
-        // setTimeout(function() {
-        div.animate({'backgroundColor': '#c0c0c0'},
-                    300,
-                    function() { result(true); });
-        // }, 1000);
+      let time_animation = new Promise(function(result) {
+        time_div.animate({'backgroundColor': '#c0c0c0'},
+                         300,
+                         function() { result(true); });
       });
+      let place_div = racer_entry_div.find("div.place");
+      // Instead of text, it might look better to work up images for the place,
+      // with background shadow, etc., as needed.
+      place_div.text(i + 1)
+        .css({'background-color': 'white'});
+      let place_animation = new Promise(function(result) {
+        place_div.animate({'background-color': 'rgba(255,255,255,0.6)'},
+                          300,
+                          function() { result(true); });
+      });
+      await Promise.all([time_animation, place_animation]);
     }
     this.results_written = true;
 
@@ -132,7 +142,12 @@ var g_result_animator = new ResultAnimator();
 
 function vcenter_image(event) {
   var target = $(event.target);
-  var parent_height = target.parent().height() - target.parent().find('div.name').height();
+  // "parent" is either div.car (which has a div.number to account for), or div.racer (which has div.name).
+  // This doesn't account for div.carname or div.note, because we want the images to line up across racers,
+  // and not bounce up and down depending on what attributes the racer has.
+  var parent_height = target.parent().height() - target.parent().find('div.name').height()
+      - target.parent().find('div.number').height();
+
   target.css('margin-top', (parent_height - target.height()) / 2);
   target.css('margin-left', (target.parent().width() - target.width()) / 2);
 }
@@ -188,14 +203,17 @@ function process_polling_result(data) {
             .attr('data-heat', current_heat.heat)
             .append($("<div>&nbsp;</div>").addClass("heat_time"))
             .append($("<div/>").addClass("car")
-                    .append($("<div/>").addClass("name")))
+                    .append($("<div/>").addClass("carname"))
+                    .append($("<div/>").addClass("number"))
+                    .append($("<div/>").addClass("place")))
             .append($("<div/>").addClass("racer")
+                    .append($("<div/>").addClass("note"))
                     .append($("<div/>").addClass("name")));
       }
 
       var lane_width = $(window).width() / g_number_of_lanes;
       var car_wxh = lane_width + 'x' +
-          ($("div.lane div.car").height() - $("div.lane div.car div.name").height());
+          ($("div.lane div.car").height() - $("div.lane div.car div.number").height());
       var racer_wxh = lane_width + 'x' +
           ($("div.lane div.racer").height() - $("div.lane div.racer div.name").height());
 
@@ -205,18 +223,24 @@ function process_polling_result(data) {
         var racerid = data.racers[i].racerid;
         var racer_entry = $("div.lane").eq(lane - 1).find("div.racer-entry").last();
         racer_entry.attr('data-racerid', racerid);
-        racer_entry.find("div.car")
-          .prepend($("<img/>")
-                   .attr('src', "photo.php/car/racer/" + racerid + "/" + car_wxh + "/0")
-                   .css({'max-width': lane_width})
-                   .on('load', vcenter_image))
-          .find("div.name").text(data.racers[i].carnumber);
-        racer_entry.find("div.racer")
-          .prepend($("<img/>")
-                   .attr('src', "photo.php/head/racer/" + racerid + "/" + racer_wxh + "/0")
-                   .css({'max-width': lane_width})
-                   .on('load', vcenter_image));
-        racer_entry.find("div.racer").find("div.name").text(data.racers[i].name);
+        let div_car = racer_entry.find("div.car");
+        div_car.prepend($("<img/>")
+                        .attr('src', "photo.php/car/racer/" + racerid + "/" + car_wxh + "/0")
+                        .css({'max-width': lane_width})
+                        .on('load', vcenter_image));
+        div_car.find("div.number").text(data.racers[i].carnumber);
+        if (data.racers[i].carname) {
+          div_car.find("div.carname").css({'display': 'block'}).text(data.racers[i].carname);
+        }
+        let div_racer = racer_entry.find("div.racer");
+        div_racer.prepend($("<img/>")
+                          .attr('src', "photo.php/head/racer/" + racerid + "/" + racer_wxh + "/0")
+                          .css({'max-width': lane_width})
+                          .on('load', vcenter_image));
+        div_racer.find("div.name").text(data.racers[i].name);
+        if (data.racers[i].note) {
+          div_racer.find("div.note").css({'display': 'block'}).text(data.racers[i].note);
+        }
       }
     }
 
