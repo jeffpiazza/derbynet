@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Shoot-then-Scan
+Encoding=UTF-8
+Exec=lxterminal -e "/usr/share/derbynet/scripts/shoot-then-scan.sh"
+X-GNOME-Autostart-enabled=true

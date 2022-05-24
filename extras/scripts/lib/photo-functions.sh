@@ -3,8 +3,11 @@
 # This shared script provides definitions for several behaviors shared among the
 # various photo scripts.
 
-# The gvfs daemon conflicts with chdkptp and prevents correct operation of the script,
-# so kill it if it's running.
+# If not disabled, the gvfs daemon grabs the connected camera before gphoto2 or
+# chdkptp can.  The better solution is:
+#    systemctl --user stop gvfs-daemon
+#    systemctl --user mask gvfs-daemon
+# during installation.
 killall_gvfs_volume_monitor() {
     NOW=`date +%s`
     DEADLINE=`expr $NOW + 120`
@@ -12,6 +15,8 @@ killall_gvfs_volume_monitor() {
     # try to kill it.  We don't want to commit resources to running this process
     # indefinitely, though.
     while [ `date +%s` \< $DEADLINE ] ; do
+        sudo systemctl --user stop gvfs-daemon
+        # There are actually a bunch of these gvfs-xxx-volume-monitor daemons, so this is likely not enough.  Stopping the gvfs-daemon user
         sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
         sleep 4s
     done &
