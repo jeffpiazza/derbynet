@@ -36,7 +36,8 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
     .' imagefile,'
-    .(schema_version() < 2 ? ' \'\' as carphoto' : ' carphoto')
+    .(schema_version() < 2 ? ' \'\' as carphoto' : ' carphoto').', '
+    .(schema_version() < PARTITION_SCHEMA ? ' \'\' as note' : ' note')
     .' FROM '.inner_join('RegistrationInfo', 'Classes',
                          'RegistrationInfo.classid = Classes.classid',
                          'Ranks',
