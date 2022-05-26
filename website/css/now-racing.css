@@ -128,8 +128,11 @@ td.test-only img {
 }
 
 .name .subtitle {
-    font-size: 75%;
-    font-style: italic;
+  font-size: 75%;
+}
+.name .carname {
+  font-size: 75%;
+  font-style: italic;
 }
 
 #overlay_background {

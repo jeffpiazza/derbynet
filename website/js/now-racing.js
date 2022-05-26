@@ -140,12 +140,10 @@ var Lineup = {
           }
 
           if (r.hasOwnProperty('carname') && r.carname != '') {
-            $('[data-lane="' + lane + '"] .name').append(' <span id="carname-' + lane + '" class="subtitle"/>');
-            $('#carname-' + lane).text('"' + r.carname + '"');
+            $('[data-lane="' + lane + '"] .name').append($("<div class='carname'/>").text(r.carname));
           }
-          if (r.hasOwnProperty('subgroup')) {
-            $('[data-lane="' + lane + '"] .name').append(' <span id="subgroup-' + lane + '" class="subtitle"/>');
-            $('#subgroup-' + lane).text(r.subgroup);
+          if (r.hasOwnProperty('note') && r.note != '') {
+            $('[data-lane="' + lane + '"] .name').append($("<div class='subtitle'/>").text(r.note));
           }
 
           $('[data-lane="' + lane + '"] .carnumber').text(r.carnumber);
