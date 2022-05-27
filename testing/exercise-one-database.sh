@@ -164,7 +164,7 @@ elif [ "$DBTYPE" == "access" ] ; then
 else
     tput setaf 1  # red text
     echo Unrecognized database type: $DBTYPE
-    echo Known types are: sqlite access
+    echo Known types are: sqlite access ez none
     tput setaf 0  # black text
     exit 1
 fi

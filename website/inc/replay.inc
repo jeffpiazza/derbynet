@@ -73,7 +73,11 @@ function send_replay_message($cmd) {
     } catch (PDOException $e) {
         error_log("send_replay_message: beginTransaction throws " + $e);
     }
-    $db->setAttribute(PDO::ATTR_AUTOCOMMIT);
+    try {
+      $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
+    } catch (PDOException $e) {
+      error_log("send_replay_message: set autocommit throws " + $e);
+    }
     return true;
   } else {
     return false;

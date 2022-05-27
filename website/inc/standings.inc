@@ -677,8 +677,13 @@ class StandingsOracle {
         // The final round for a class is listed first.
         // Skip any unfinished rounds to get to the last completed round.
         do {
-          $scoring_roundid = array_shift($rounds)['roundid'];
-        } while (isset($this->unfinished_rounds[$scoring_roundid]));
+          $sr = array_shift($rounds);
+          if (!is_null($sr)) {
+            $scoring_roundid = $sr['roundid'];
+          } else {
+            $scoring_roundid = null;
+          }
+        } while (!is_null($scoring_roundid) && isset($this->unfinished_rounds[$scoring_roundid]));
 
         $this->class_keys[$classid] = stkey_round($scoring_roundid);
 
