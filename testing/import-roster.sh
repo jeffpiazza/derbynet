@@ -9,7 +9,10 @@ source `dirname $0`/common.sh
 # racerid's are assigned in order, starting with 1 (assuming an empty database).
 # The car numbers in this data set are constructed so that car number mod 100 gives the racerid.
 
-curl_postj action.php "action=racer.import&firstname=Adolfo \"Dolf\"&lastname=Asher&partition=Lions %26 Tigers&carnumber=101" | check_jsuccess
+curl_postj action.php "action=racer.import&firstname=Adolfo \"Dolf\"&lastname=Asher&partition=Lions %26 Tigers&carnumber=101&note_from=Anywhere" | check_jsuccess
+curl_getj "action.php?query=racer.list" | \
+    jq -e '.racers | map(select(.lastname=="Asher"))[0].note_from == "Anywhere"' > /dev/null || test_fails
+
 curl_postj action.php "action=racer.import&firstname=Angelo&lastname=Alas&partition=White's Wolves&carnumber=202" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Antoine&lastname=Akiyama&partition=Bears%20and%20Fr%C3%A8res&carnumber=303" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Arden&lastname=Aziz&partition=Webelos (\"Webes\")&carnumber=504" | check_jsuccess

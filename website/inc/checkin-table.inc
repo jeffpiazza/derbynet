@@ -5,17 +5,18 @@ require_once('inc/photo-config.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/xbs.inc');
 
-function json_table_row_for_id($racerid) {
+function checkin_table_SELECT_FROM_sql() {
   $xbs_award_name = xbs_award();
   $schema_version = schema_version();
-  $row = read_single_row(
+  return
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
     .($schema_version < 2 ? " '' AS carphoto," : " carphoto,")
     .($schema_version < PARTITION_SCHEMA
       ? " 1 AS partitionid, 1 AS partition_sortorder, '".DEFAULT_PARTITION_NAME."' AS partition_name,"
+      ." '' AS note,"
       : " Partitions.partitionid AS partitionid,"
         ." Partitions.sortorder AS partition_sortorder,"
-        ." Partitions.name AS partition_name,")
+        ." Partitions.name AS partition_name, note,")
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
     .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
@@ -31,8 +32,14 @@ function json_table_row_for_id($racerid) {
                             'Ranks',
                             'RegistrationInfo.rankid = Ranks.rankid',
                             'Partitions',
-                            'RegistrationInfo.partitionid = Partitions.partitionid'))
-    .' WHERE RegistrationInfo.racerid = :racerid',
+                            'RegistrationInfo.partitionid = Partitions.partitionid'));
+ }
+
+function json_table_row_for_id($racerid) {
+  $xbs_award_name = xbs_award();
+  $schema_version = schema_version();
+  $row = read_single_row(
+    checkin_table_SELECT_FROM_sql().' WHERE RegistrationInfo.racerid = :racerid',
     array(':racerid' => $racerid),
     PDO::FETCH_ASSOC);
 
@@ -51,6 +58,7 @@ function json_table_row(&$row, $n = 0) {
     'partitionid' => $row['partitionid'],
     'partition' => $row['partition_name'],
     'partition_sortorder' => $row['partition_sortorder'],
+    'note' => /* is_null($row['note']) ? '' :*/ $row['note'],
     'classid' => $row['classid'],
     'class' => $row['class'],
     'rankid' => $row['rankid'],

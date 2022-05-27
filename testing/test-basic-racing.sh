@@ -90,11 +90,19 @@ user_login_coordinator
 ### Editing racers
 
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Arrows'` -eq 1 ] || test_fails Initial class
-curl_postj action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4" | check_jsuccess
+curl_postj action.php "action=racer.edit&racer=5&firstname=Zuzu&lastname=Zingelo&carno=999&carname=Z-Car&rankid=4&note_from=Suburbia" | check_jsuccess
+## To construct the checkin table, checkin.php includes a bunch of javascript
+## addRow0 calls manufactured by PHP code.
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"firstname":"Zuzu"'` -eq 1 ] || test_fails Firstname change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"lastname":"Zingelo"'` -eq 1 ] || test_fails Lastname change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"class":"Webelos'` -eq 1 ] || test_fails Class change
 [ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"carnumber":999'` -eq 1 ] || test_fails Car number change
+[ `curl_get checkin.php | grep '"racerid":5,' | grep -c '"note":"Suburbia"'` -eq 1 ] || test_fails note_from change
+
+curl_get checkin.php | expect_count '"note":null' 0
+# Not sure how many, but the pattern is:
+#   curl_get checkin.php | expect_count '"note":""' 10
+
 
 ### Overwriting manual heat results: Clobber Dereck Dreier's results to all be 8.888
 curl_postj action.php "action=heat.select&roundid=1&heat=1&now_racing=0" | check_jsuccess

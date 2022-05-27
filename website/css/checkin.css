@@ -7,8 +7,12 @@ tr.highlight td {
   background-color: #ff8080;
 }
 
+div.carname {
+  font-style: italic;
+}
+
 #edit_racer_modal {
-    width: 400px;
+    width: 600px;
 }
 
 #rank_missing img {
@@ -112,9 +116,26 @@ input.white-button {
   top: 0px;
 }
 
+#edit_racer_modal #left-edit {
+  display: inline-block;
+  vertical-align: top;
+  width: 290px; 
+}
+#edit_racer_modal #right-edit {
+  display: inline-block;
+  vertical-align: top;
+  width: 290px;
+  margin-left: 15px;
+}
+
+#edit_racer_modal .partition_mselect {
+  margin-top: 11px;
+  margin-bottom: 12px;
+}
+
 #edit_racer_modal .flipswitch {
   font-size: 24px;
-  margin-left: 90px;
+  margin-left: 37px;
   margin-bottom: 30px;
 }
 #edit_racer_modal .block_buttons input,
@@ -133,7 +154,7 @@ input.white-button {
   line-height: 1.0;
 }
 #delete_racer_extension {
-  /* padding-top: 40px; */
+  padding-top: 30px;
 }
 
 

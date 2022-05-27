@@ -87,6 +87,8 @@ function all_partitions() {
                                                             'required' => false),
                                        'carname' => array('name' => "Car Name",
                                                           'required' => false),
+                                       'note_from' => array('name' => 'From',
+                                                            'required' => false),
                                        'exclude' => array('name' => 'Exclude?',
                                                           'required' => false)),
                                      array(

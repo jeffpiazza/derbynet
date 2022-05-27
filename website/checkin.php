@@ -106,7 +106,7 @@ make_banner('Racer Check-In');
     <th>Photo</th>
     <th><?php echo column_header('Last Name', 'name'); ?></th>
     <th>First Name</th>
-    <th>Car Name</th>
+    <th>Car Name &amp; From</th>
     <th>Passed?</th>
     <?php if ($xbs) {
         echo '<th>'.$xbs_award_name.'</th>';
@@ -143,31 +143,7 @@ make_banner('Racer Check-In');
 
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
-  $sql = 'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
-      .(schema_version() < 2 ? "" : " carphoto,")
-      .(schema_version() < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
-      .(schema_version() < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
-      .(schema_version() < PARTITION_SCHEMA
-        ? " 1 AS partitionid, 1 AS partition_sortorder, '".DEFAULT_PARTITION_NAME."' AS partition_name,"
-        : " Partitions.partitionid AS partitionid,"
-         ." Partitions.sortorder AS partition_sortorder,"
-         ." Partitions.name AS partition_name,")
-      .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
-      .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.racerid = RegistrationInfo.racerid) AS scheduled,'
-      .' EXISTS(SELECT 1 FROM RaceChart WHERE RaceChart.classid = RegistrationInfo.classid) AS denscheduled,'
-      .' EXISTS(SELECT 1 FROM Awards WHERE Awards.awardname = \''.addslashes($xbs_award_name).'\' AND'
-      .'                                   Awards.racerid = RegistrationInfo.racerid) AS xbs'
-      .' FROM '.(schema_version() < PARTITION_SCHEMA 
-               ? inner_join('RegistrationInfo', 'Classes',
-                            'RegistrationInfo.classid = Classes.classid',
-                            'Ranks',
-                            'RegistrationInfo.rankid = Ranks.rankid')
-               : inner_join('RegistrationInfo', 'Classes',
-                            'RegistrationInfo.classid = Classes.classid',
-                            'Ranks',
-                            'RegistrationInfo.rankid = Ranks.rankid',
-                            'Partitions',
-                            'RegistrationInfo.partitionid = Partitions.partitionid'))
+$sql = checkin_table_SELECT_FROM_sql()
     .' ORDER BY '
           .($order == 'car' ? 'carnumber, lastname, firstname' :
             ($order == 'class'  ? 'class_sort, rank_sort, lastname, firstname' :
@@ -188,6 +164,9 @@ $n = 1;
 foreach ($stmt as $rs) {
   // TODO
   $rs['rankseq'] = $ranks[$rs['rankid']]['seq'];
+  if (is_null($rs['note'])) {
+    $rs['note'] = '';
+  }
   echo "addrow0(".json_encode(json_table_row($rs, $n),
                               JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES |
                               JSON_HEX_AMP | JSON_HEX_TAG | JSON_HEX_APOS).");\n";
@@ -235,45 +214,52 @@ mobile_select_refresh($("#bulk_who"));
 
 
 <div id='edit_racer_modal' class="modal_dialog hidden block_buttons">
-<form id="editracerform">
+  <form id="editracerform">
+    <div id="left-edit">
+      <label for="edit_firstname">First name:</label>
+      <input id="edit_firstname" type="text" name="edit_firstname" value=""/>
+      <label for="edit_lastname">Last name:</label>
+      <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
 
-  <input id="edit_racer" type="hidden" name="racer" value=""/>
+      <label for="edit_carno">Car number:</label>
+      <input id="edit_carno" type="text" name="edit_carno" value=""/>
 
-  <label for="edit_firstname">First name:</label>
-  <input id="edit_firstname" type="text" name="edit_firstname" value=""/>
-  <label for="edit_lastname">Last name:</label>
-  <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
+      <label for="edit_carname">Car name:</label>
+      <input id="edit_carname" type="text" name="edit_carname" value=""/>
+    </div>
 
-  <label for="edit_partition"><?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?></label>
-  <select id="edit_partition"><!-- Populated by javascript --></select>
+    <div id="right-edit">
+      <label for="edit_partition">
+        <?php echo htmlspecialchars(partition_label().':', ENT_QUOTES, 'UTF-8'); ?>
+      </label>
+      <!-- Populated by javascript -->
+      <select id="edit_partition" data-wrapper-class="partition_mselect"></select>
 
-  <br/>
-  <label for="edit_carno">Car number:</label>
-  <input id="edit_carno" type="text" name="edit_carno" value=""/>
-  <br/>
+      <label for="edit_note_from">From (if desired):</label>
+      <input id="edit_note_from" type="text" name="edit_note_from" value=""/>
 
-  <label for="edit_carname">Car name:</label>
-  <input id="edit_carname" type="text" name="edit_carname" value=""/>
-  <br/>
-
-  <label for="eligible">Trophy eligibility:</label>
-    <input type="checkbox" class="flipswitch" name="eligible" id="eligible"
+      <label for="eligible">Trophy eligibility:</label>
+      <input type="checkbox" class="flipswitch" name="eligible" id="eligible"
             data-wrapper-class="trophy-eligible-flipswitch"
             data-off-text="Excluded"
             data-on-text="Eligible"/>
-  <br/>
-  <input type="submit"/>
-  <input type="button" value="Cancel"
-    onclick='close_modal("#edit_racer_modal");'/>
+      <br/>
 
-  <div id="delete_racer_extension">
-    <input type="button" value="Delete Racer"
+      <input type="submit"/>
+      <input type="button" value="Cancel"
+        onclick='close_modal("#edit_racer_modal");'/>
+
+      <div id="delete_racer_extension">
+        <input type="button" value="Delete Racer"
            class="delete_button"
            onclick="handle_delete_racer();"/>
-  </div>
+      </div>
+    </div>
+
+  <input id="edit_racer" type="hidden" name="racer" value=""/>
+
 </form>
 </div>
-  
   
 <div id='photo_modal' class="modal_dialog hidden block_buttons">
   <form id="photo_drop" class="dropzone">

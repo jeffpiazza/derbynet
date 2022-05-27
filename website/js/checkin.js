@@ -165,6 +165,7 @@ function show_edit_racer_form(racerid) {
 
   var class_name = $('#class-' + racerid).text();
   var rank_name = $('#rank-' + racerid).text();
+  var note_from = $('#note-from-' + racerid).text();
 
   $("#edit_racer").val(racerid);
 
@@ -173,6 +174,7 @@ function show_edit_racer_form(racerid) {
 
   $("#edit_carno").removeAttr('data-updatable').val(car_no);
   $("#edit_carname").val(car_name);
+  $("#edit_note_from").val(note_from);
 
   $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
   $("#edit_partition").change();
@@ -183,7 +185,7 @@ function show_edit_racer_form(racerid) {
 
   $("#delete_racer_extension").removeClass('hidden');
 
-  show_modal("#edit_racer_modal", "#edit_carno", function(event) {
+  show_modal("#edit_racer_modal", "#edit_firstname", function(event) {
     handle_edit_racer();
     return false;
   });
@@ -201,6 +203,7 @@ function show_new_racer_form() {
   
   $("#edit_carno").attr('data-updatable', '1').val(next_carnumber(partitionid));
   $("#edit_carname").val("");
+  $("#edit_note_from").val("");
 
   $("#edit_partition").val(partitionid);
   $("#edit_partition").change();
@@ -225,6 +228,7 @@ function handle_edit_racer() {
   var new_lastname = $("#edit_lastname").val().trim();
   var new_carno = $("#edit_carno").val().trim();
   var new_carname = $("#edit_carname").val().trim();
+  var new_note_from = $("#edit_note_from").val().trim();
 
   var new_div_id = $("#edit_partition").val();
   var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_partition")).text();
@@ -239,6 +243,7 @@ function handle_edit_racer() {
                  lastname: new_lastname,
                  carno: new_carno,
                  carname: new_carname,
+                 note_from: new_note_from,
                  partitionid: new_div_id,
                  exclude: exclude},
           success: function(data) {
@@ -260,6 +265,7 @@ function handle_edit_racer() {
               ln.parents('tr').toggleClass('exclude', exclude == 1);
               $("#car-number-" + racerid).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
+              $("#note-from-" + racerid).text(new_note_from);
               console.log('Changing partition to ' + new_div_name);
               $("#div-" + racerid).attr('data-partitionid', new_div_id).text(new_div_name);
             }
@@ -710,7 +716,6 @@ function maybe_barcode(raw_search) {
   }
   
   scroll_and_flash_row(row);
-  console.log(g_action_on_barcode);
 
   var racerid = row.attr('data-racerid');
   if (g_action_on_barcode == "locate") {
@@ -870,8 +875,13 @@ function make_table_row(racer, xbs) {
             .attr('id', 'firstname-' + racer.racerid)
             .text(racer.firstname));
   tr.append($('<td/>')
-            .attr('id', 'car-name-' + racer.racerid)
-            .text(racer.carname));
+            .append($("<div/>")
+                    .attr('id', 'car-name-' + racer.racerid)
+                    .addClass('carname')
+                    .text(racer.carname))
+            .append($("<div/>")
+                    .attr('id', 'note-from-' + racer.racerid)
+                    .text(racer.note)));
 
   var checkin = $('<td class="checkin-status"/>').appendTo(tr);
   if (racer.scheduled) {

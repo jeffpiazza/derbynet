@@ -43,4 +43,6 @@ curl_postj action.php "action=racer.edit&racer=39&firstname=Jeffress&lastname=Ja
 # After changing a den, adding a new racer used to be a bug (extra Roster row).
 # The effect was observable extra entries for heats that included the
 # den-changed racer.
-curl_postj action.php "action=racer.add&firstname=Fred&lastname=Flintstone&carno=789&carname=&partitionid=2" | check_jsuccess
+curl_postj action.php "action=racer.add&firstname=Fred&lastname=Flintstone&carno=789&carname=&partitionid=2&note_from=Bedrock" | check_jsuccess
+curl_getj "action.php?query=racer.list" | \
+    jq -e '.racers | map(select(.carnumber == 789))[0].note_from == "Bedrock"' > /dev/null || test_fails

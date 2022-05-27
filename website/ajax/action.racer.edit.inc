@@ -67,6 +67,10 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     $assignments .= ', carname = :carname';
     $values[':carname'] = trim($_POST['carname']);
   }
+  if (isset($_POST['note_from'])) {
+    $assignments .= ', note = :note_from';
+    $values[':note_from'] = trim($_POST['note_from']);
+  }
   if (isset($_POST['exclude'])) {
     $assignments .= ', exclude = :exclude';
     $values[':exclude'] = $_POST['exclude'];
