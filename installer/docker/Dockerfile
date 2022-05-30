@@ -1,6 +1,6 @@
 ## docker build -t derbynet_server -f installer/docker/Dockerfile .
 
-FROM ubuntu:21.04
+FROM ubuntu
 LABEL org.opencontainers.image.authors=jeffpiazza
 LABEL description="DerbyNet is the new standard in race management software for Pinewood Derby events.  \
 Visit http://jeffpiazza.github.io/derbynet/ for more information about DerbyNet."
@@ -12,10 +12,10 @@ ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update
-RUN apt install -y php7.4-fpm php7.4-curl php7.4-gd php7.4-sqlite3
+RUN apt install -y php-fpm php-curl php-gd php-sqlite3
 # php-odbc installs OK on a separate line, but not when added to the previous line.
 # No idea why
-RUN apt install -y php7.4-odbc
+RUN apt install -y php-odbc
 RUN apt install -y nginx ssl-cert
 RUN apt install -y supervisor
 
@@ -39,24 +39,28 @@ COPY installer/docker/set-timeout.sh /usr/local/bin
 ##################################################
 # Post-install actions from Debian derbynet_server installer:
 
-RUN mkdir -m 777 /var/lib/derbynet
-
 RUN test -d $WWW_ROOT/local && rm -rf $WWW_ROOT/local
-RUN mkdir -m 777 $WWW_ROOT/local
 
-RUN echo '<?php $default_file_path = "/var/lib/derbynet"; ?>' > $WWW_ROOT/local/default-file-path.inc
-
+RUN mkdir -m 777 /var/lib/derbynet
+RUN echo '<?php $default_file_path = "/var/lib/derbynet"; ?>' > /var/lib/derbynet/default-file-path.inc
 
 # How large are the pictures you want to upload?  8M covers an 18-megapixel
 # photo.
 ENV MAX_UPLOAD_SIZE=16M
 
-RUN sed -i.pre-derbynet \
+RUN for INI in `find /etc/php -name php.ini` ; do \
+    sed -i.pre-derbynet \
     -e "s#^upload_max_filesize = [28]M#upload_max_filesize = $MAX_UPLOAD_SIZE#" \
     -e "s#^post_max_size = [2-8]M#post_max_size = $MAX_UPLOAD_SIZE#" \
     -e "s#^memory_limit = 128M#memory_limit = 256M#" \
     -e "s#^session.gc_maxlifetime = 1440#session.gc_maxlifetime = 28800#" \
-    /etc/php/7.4/fpm/php.ini
+    $INI ; \
+    done
+
+RUN sed -i \
+    -e "s#php.*-fpm.sock#php/php`ls /etc/php | tail -n 1`-fpm.sock#" \
+    -e "s#CONFIG_DIR .*#CONFIG_DIR /var/lib/derbynet;#" \
+    /etc/nginx/derbynet/location.snippet
 
 RUN sed -i -e '/^[ \t]*location \/ {/ i\
   include derbynet/location.snippet; \
@@ -91,4 +95,9 @@ VOLUME /var/lib/derbynet
 EXPOSE 80 443
 
 COPY installer/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+RUN sed -i \
+   -e "s#@PHP-FPM@#$(ls /usr/sbin/php-fpm* | tail -n 1)#" \
+   /etc/supervisor/conf.d/supervisord.conf
+
 CMD ["/usr/bin/supervisord"]

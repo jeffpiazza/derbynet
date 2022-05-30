@@ -13,6 +13,9 @@ function write_config_file($filename, $content) {
     return false;
   }
 
+  if (function_exists('opcache_invalidate')) {
+    opcache_invalidate($where);
+  }
   return true;
 }
 

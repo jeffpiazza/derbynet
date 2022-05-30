@@ -104,7 +104,10 @@ curl_postj action.php "action=racer.import&firstname=Willard&lastname=Woolfolk&p
 curl_postj action.php "action=racer.import&firstname=Soon&lastname=ToGo&partition=White's Wolves&carnumber=283" | check_jsuccess
 
 curl_getj "action.php?query=racer.list" | expect_one 'ToGo'
-curl_postj action.php "action=racer.delete&racer=83" | check_jsuccess
+
+TOGO_RACERID=$(jq  '.racers | map(select(.lastname == "ToGo"))[0].racerid'  testing/debug.curl)
+
+curl_postj action.php "action=racer.delete&racer=$TOGO_RACERID" | check_jsuccess
 curl_getj "action.php?query=racer.list" | expect_count 'ToGo' 0
 
 curl_postj action.php "action=racer.bulk&what=number&who=c4&start=501&renumber=1" | check_jsuccess
