@@ -31,6 +31,10 @@ body { margin: 0; }
 
 .thumblist li { z-index: 2; }
 
+.thumblist li.highlight {
+  background-color: #ff8080;
+}
+
 .thumbnail {
   display: inline-block;
   width: 150px;

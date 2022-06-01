@@ -25,6 +25,23 @@ div.carname {
     width: 720px;
 }
 
+#photo_modal #left-photo {
+  display: inline-block;
+  vertical-align: top;
+  width: 328px; 
+}
+#photo_modal #right-photo {
+  display: inline-block;
+  vertical-align: top;
+  width: 328px;
+  margin-left: 15px;
+}
+
+#thumb-link {
+  /* Don't know why this is necessary, but: */
+  height: 53px;
+}
+
 #preview {
     width:320px;
     height:240px;

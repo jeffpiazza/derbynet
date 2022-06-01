@@ -257,6 +257,7 @@ function handle_edit_racer() {
             if (data.hasOwnProperty('new-row')) {
               var row = addrow0(data['new-row']);
               flipswitch(row.find('input[type="checkbox"].flipswitch'));
+              setTimeout(function() { scroll_and_flash_row(row); }, 100);
             } else {
               $("#firstname-" + racerid).text(new_firstname);
               var ln = $("#lastname-" + racerid);
@@ -467,6 +468,11 @@ function show_photo_modal(racerid, repo) {
 
   set_autocrop_state(repo);
 
+  $("#thumb-link").attr('href',
+                        'photo-thumbs.php?repo=' + repo +
+                        '&racerid=' + racerid +
+                        '&back=checkin.php');
+
   // If the racer's already been checked in, don't offer "Capture & Check In" button
   $("#capture_and_check_in").toggleClass('hidden', $("#passed-" + racerid).prop('checked'));
 
@@ -493,6 +499,7 @@ function show_racer_photo_modal(racerid) {
   show_photo_modal(racerid, 'head');
 }
 function show_car_photo_modal(racerid) {
+  console.log('show_car_photo_modal', racerid);
   show_photo_modal(racerid, 'car');
 }
 

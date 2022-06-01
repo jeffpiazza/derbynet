@@ -39,6 +39,11 @@ show_photo_modal = async function(racerid, repo) {
 
   set_autocrop_state(repo);
 
+  $("#thumb-link").attr('href',
+                        'photo-thumbs.php?repo=' + repo +
+                        '&racerid=' + racerid +
+                        '&back=checkin.php');
+
   // If the racer's already been checked in, don't offer "Capture & Check In" button
   $("#capture_and_check_in").toggleClass('hidden', $("#passed-" + racerid).prop('checked'));
 

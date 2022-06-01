@@ -90,11 +90,15 @@ function photo_crop_expression($basename) {
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript">
 var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
+<?php if (isset($_GET['racerid'])) { ?>
+  $(function() { scroll_to_racerid(<?php echo $_GET['racerid']; ?>); });
+<?php } ?>
 </script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
 <body>
-<?php make_banner(($repo == 'head' ? 'Racer' : 'Car').' Photos'); ?>
+<?php make_banner(($repo == 'head' ? 'Racer' : 'Car').' Photos',
+                  isset($_GET['back']) ? $_GET['back'] : 'index.php'); ?>
 
 <div class="block_buttons">
 
@@ -129,9 +133,15 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
    <div id="center_buttons">
     <?php
         echo "<a class='button_link' id='refresh-button' onclick='window.location.reload();'>Refresh</a>";
-        echo "<a class='button_link' id='other-button'"
-             ." href='photo-thumbs.php?repo=".$other_repo."&amp;order=".$order."'>";
-        echo $other_repo == 'head' ? 'Racers' : 'Cars';
+        $url = "photo-thumbs.php?repo=$other_repo&amp;order=$order";
+        if (isset($_GET['racerid'])) {
+          $url .= "&amp;racerid=$_GET[racerid]";
+        }
+        if (isset($_GET['back'])) {
+          $url .= "&amp;back=$_GET[back]";
+        }
+        echo "<a id='other-button' class='button_link' href='$url'>";
+        echo   $other_repo == 'head' ? 'Racers' : 'Cars';
         echo "</a>";
     ?>
     </div>

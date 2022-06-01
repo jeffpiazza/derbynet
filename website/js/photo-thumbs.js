@@ -19,6 +19,24 @@
 //   </div>
 // </body>
 
+function scroll_to_racerid(racerid) {
+  var thumblist = $(".thumblist");
+  var racer = $("li[data-racer-id=" + racerid + "]");
+  $(".thumblist").animate({scrollTop: thumblist.scrollTop() +
+                           racer.offset().top - thumblist.offset().top},
+                          250);
+  racer.addClass('highlight');
+  setTimeout(function() {
+    racer.removeClass('highlight');
+  }, 250);
+  setTimeout(function() {
+    racer.addClass('highlight');
+  }, 500);
+  setTimeout(function() {
+    racer.removeClass('highlight');
+  }, 750);
+}
+
 // draggable and droppable elements with scope: "assign" are for
 // dragging unassigned photos to racers who are still without a photo.
 //

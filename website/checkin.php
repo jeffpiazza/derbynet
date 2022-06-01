@@ -269,9 +269,12 @@ mobile_select_refresh($("#bulk_who"));
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
 
     <h3>Capture <span id="racer_photo_repo"></span> photo for <span id="racer_photo_name"></span></h3>
+
     <div id="preview">
         <h2>Does your browser support webcams?</h2>
     </div>
+
+    <div id="left-photo">
 
     <?php
       if (headshots()->status() != 'ok') {
@@ -285,17 +288,24 @@ mobile_select_refresh($("#bulk_who"));
         <br/>
         <input type="submit" value="Capture Only"
           onclick='g_check_in = false;'/>
-        <input type="button" value="Switch Camera"
-          onclick='handle_switch_camera();'/>
         <input type="button" value="Cancel"
           onclick='close_photo_modal();'/>
+    </div>
+    </div>
+    <div id="right-photo">
+        <input type="button" value="Switch Camera"
+          onclick='handle_switch_camera();'/>
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
           <input type="checkbox" class="flipswitch" name="autocrop" id="autocrop" checked="checked"/>
         </div>
+<div>
+      <a id="thumb-link" class="button_link">To Photo Page</a>
+</div>
     </div>
-    <div class="dz-message"><span>NOTE: You can drop a photo here to upload instead</span></div>
+
+      <div class="dz-message"><span>NOTE: You can drop a photo here to upload instead</span></div>
   </form>
 </div>
 
