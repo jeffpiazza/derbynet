@@ -241,17 +241,31 @@ class PhotoRender {
     }
   }
 
-  // Constructs a file URL for the photo whose base name is $imagefile.
-  public function render_url($imagefile) {
+  public function cache_breaker_value($imagefile) {
+    $breaker = '';
     if ($imagefile != '') {
-      $imagefile = basename($imagefile);
-      $breaker = @filemtime($this->best_available_file_path($imagefile));
+      $basename = basename($imagefile);
+      $breaker = @filemtime($this->best_available_file_path($basename));
       // If best_available_file_path can't find any suitable version of the file
       // at all, $breaker will be FALSE from filemtime; use a 0 instead.
       if (!$breaker) {
         $breaker = 0;
       }
-      return 'photo.php/'.$this->repository->name().'/file/'.$this->label().'/'.urlencode($imagefile).'/'.$breaker;
+    }
+    return $breaker;
+  }
+
+  // Constructs a file URL for the photo whose base name is $imagefile.
+  public function render_url($imagefile) {
+    if ($imagefile != '') {
+      $basename = basename($imagefile);
+      $breaker = $this->cache_breaker_value($basename);
+      return 'photo.php/'.
+          $this->repository->name().
+          '/file/'.
+          $this->label().'/'.
+          urlencode($basename).'/'.
+          $breaker;
     } else {
       return '';
     }
@@ -279,6 +293,16 @@ class PhotoRender {
     return $this->url_for_file($row[$this->repository->column_name()], $row['racerid']);
   }
 
+  public function url_elements_for_row(&$row) {
+    $filepath = $row[$this->repository->column_name()];
+    if ($filepath) {
+      $basename = basename($filepath);
+      return array('basename' => $basename,
+                   'cache-breaker' => $this->cache_breaker_value($basename));
+    } else {
+      return null;
+    }
+  }
 
   public function find_or_make_image_file($image_name) {
     $target_file_path = $this->target_file_path($image_name);

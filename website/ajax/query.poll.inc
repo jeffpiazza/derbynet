@@ -50,6 +50,10 @@ function json_common_1($key, &$now_running) {
     require_once('inc/json-current-heat.inc');
     json_out('current-heat', json_current_heat($now_running));
     break;
+  case 'ondeck':
+    require_once('inc/json-ondeck.inc');
+    json_out('ondeck', json_ondeck($now_running));
+    break;
   case 'heat-results':
     if ($now_running['roundid'] == TIMER_TEST_ROUNDID) {
       require_once('inc/timer-test.inc');

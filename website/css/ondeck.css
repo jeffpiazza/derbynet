@@ -6,7 +6,9 @@
 	align: center;
 }
 
-.curgroup {  }
+.curgroup {
+  table-layout: fixed;
+}
 .group_title {  }
 
 .curgroup .group_title,
@@ -16,6 +18,9 @@
   background-color: #F7D117;
 }
 
+tr {
+  border: 0px solid black;
+}
 .curheat {
   border: 10px solid black;
 }
@@ -23,6 +28,7 @@
 .curgroup .d1 th {
   background-color: #023882;
   color: #ffffff;
+  width: 4vh;
 }
 
 td.in_prev {
@@ -95,9 +101,9 @@ th.nrows4 img {
   max-width: 200px;
 }
 
-.curheat .ondeck_photo.populated,
-.nextheat .ondeck_photo.populated,
-.exposed .ondeck_photo.populated {
+.curheat.populated .ondeck_photo,
+.nextheat.populated .ondeck_photo,
+.exposed.populated .ondeck_photo {
     display: block;
     margin-left: auto;
     margin-right: auto;

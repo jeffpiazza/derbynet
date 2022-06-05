@@ -48,7 +48,6 @@ curl_getj "action.php?query=poll.coordinator" | jq . > /dev/null
 curl_getj "action.php?query=poll.kiosk" > /dev/null
 curl_getj "action.php?query=poll.kiosk.all" > /dev/null
 curl_getj "action.php?query=roles.list"  > /dev/null
-curl_getj "action.php?query=poll.ondeck" > /dev/null
 curl_getj "action.php?query=poll&values=" > /dev/null
 
 cat >coordinator.index.tmp <<EOF
