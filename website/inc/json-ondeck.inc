@@ -36,7 +36,7 @@ function json_ondeck(&$now_running) {
   }
 
   $stmt = $db->prepare('SELECT resultid, roundid, class, heat, lane,'
-                       .' firstname, lastname, carnumber,'
+                       .' racerid, firstname, lastname, carnumber,'
                        .(schema_version() < 2 ? ' \'\' as' : '').' carphoto, '
                        .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
                        .' finishtime, finishplace, completed'
@@ -58,6 +58,7 @@ function json_ondeck(&$now_running) {
                      'class' => $row['class'],
                      'heat' => $row['heat'],
                      'lane' => $row['lane'],
+                     'racerid' => $row['racerid'],
                      'name' => mangled_name($row, $name_style),
                      'carnumber' => $row['carnumber'],
                      'result' => (empty($row['completed'])

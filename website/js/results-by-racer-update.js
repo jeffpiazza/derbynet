@@ -47,9 +47,9 @@ function rewrite_table_sections(rounds, keys, index, completed) {
     var signature = rounds[roundid];
     var tbody = $("#tbody_" + roundid);
 
-    if (round.textContent && tbody.attr('data-signature') != signature) {
+    if (/* round.textContent && */ tbody.attr('data-signature') != signature) {
       if (tbody.length == 0) {
-        console.log("Reloading page for new roundid " + round.textContent);
+        // console.log("Reloading page for new roundid " + round.textContent);
         // Wholly-new roundid implies added a new round; just reload rather than
         // try to guess where the new tbody should go.
         location.reload(true);

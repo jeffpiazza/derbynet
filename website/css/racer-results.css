@@ -1,0 +1,124 @@
+.group_spacer {
+   height: 30px;
+}
+
+.pre_group_title {
+	align: center;
+}
+
+.curgroup {
+  table-layout: fixed;
+}
+.group_title {  }
+
+.curgroup .group_title,
+.curgroup .pre_group_title {
+	/* Cub Scout blue & gold, respectively. */
+  border: 5px solid #023882;
+  background-color: #F7D117;
+}
+
+tr {
+  border: 0px solid black;
+}
+.curheat {
+  border: 10px solid black;
+}
+.curgroup .d0 th,
+.curgroup .d1 th {
+  background-color: #023882;
+  color: #ffffff;
+}
+
+td.in_prev {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: 50%;
+}
+.d1 td.in_prev {
+  background-image: url(../img/chevron-up-tan.svg);
+}
+.d0 td.in_prev {
+  background-image: url(../img/chevron-up-white.svg);
+}
+
+td .racer {
+  font-size: small;
+}
+
+img.racer-photo {
+  float: left;
+  height: 68px;
+}
+
+tbody tr:first-child th {
+  padding-top: 10px;
+}
+
+th.nrows1, th.nrows2, th.nrows3, th.nrows4 {
+    vertical-align: top;
+}
+.racer_label {
+    float: right;
+}
+th.nrows1 .racer_label {
+    margin-top: 19px;
+}
+th.nrows2 .racer_label {
+    margin-top: 52px;
+}
+th.nrows2 img {
+    margin-top: 34px;
+}
+
+th.nrows3 .racer_label {
+    margin-top: 86px;
+}
+th.nrows3 img {
+    margin-top: 68px;
+}
+
+th.nrows4 .racer_label {
+    margin-top: 120px;
+}
+th.nrows4 img {
+    margin-top: 102px;
+}
+
+/* Suppress the underline and coloring for these links. */
+.racer_link {
+   color: inherit;
+   text-decoration: none;
+}
+
+.ondeck_photo {
+    display: none;
+}
+.ondeck_photo img {
+  /* RENDER_ONDECK */
+  max-height: 100px;
+  max-width: 200px;
+}
+
+.curheat.populated .ondeck_photo,
+.nextheat.populated .ondeck_photo,
+.exposed.populated .ondeck_photo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
+}
+
+.heat_row {
+  cursor: pointer;
+}
+
+#photo_view_modal {
+  width: 650px;
+  text-align: center;
+}
+
+#photo_view_modal img {
+  max-width: 600px;
+  max-height: 600px;
+}

@@ -45,6 +45,8 @@ function repopulate_schedule(json) {
   var lane = 0;
   var rowno = 0;
   var row_has_photos = false;
+  var racerids = Array(nlanes).fill(null);
+  var prev_racerids = Array(nlanes).fill(null);
   for (var c = 0; c < json['ondeck']['chart'].length; ++c) {
     var cell = json['ondeck']['chart'][c];
     if (cell['roundid'] != roundid || cell['heat'] != heat) {
@@ -55,6 +57,8 @@ function repopulate_schedule(json) {
       var row = $("<tr/>").appendTo("table#schedule");
       ++rowno;
       row_has_photos = false;
+      prev_racerids = racerids;
+      racerids = Array(nlanes).fill(null);
       row.addClass('heat_row')
          .addClass('d' + (rowno % 2))
         .attr('id', 'heat_' + cell['roundid'] + '_' + cell['heat']);
@@ -71,7 +75,10 @@ function repopulate_schedule(json) {
     var td = $("<td/>").appendTo(row).css({'width': td_width_vh + 'vh'});
     td.addClass('lane_' + cell['lane'])
       .addClass('resultid_' + cell['resultid']);
-    // TODO addClass in_prev, expressing that this racer appears in preceding heat
+    if (prev_racerids.indexOf(cell['racerid']) >= 0) {
+      td.addClass('in_prev');
+    }
+    racerids[cell['lane']] = cell['racerid'];
     td.append($('<div/>').addClass('car').text(cell['carnumber']))
       .append($('<div/>').addClass('racer').text(cell['name']))
       .append($('<div/>').addClass('time').text(cell['result'].substring(1))
