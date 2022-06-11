@@ -186,6 +186,9 @@ function process_polled_data(data) {
     hash = hash_string(hash, kiosk.last_contact);
     hash = hash_string(hash, kiosk.page);
     hash = hash_string(hash, JSON.stringify(kiosk.parameters));
+
+    $("#kiosk_control_group .kiosk_control .reload p.reloading").eq(i)
+      .toggleClass('hidden', !kiosk.reload);
   }
   if (hash != g_kiosk_hash) {
     g_kiosk_hash = hash;
@@ -252,6 +255,12 @@ function generate_kiosk_control(index, kiosk, pages) {
       $("<p class=\"last_contact\"/>").text("Last contact: " + kiosk.age + "s ago"));
   }
   kiosk_ident.appendTo(kiosk_control);
+
+  kiosk_control.append($("<div/>").addClass('reload')
+                       .append($("<input type='button' value='Reload' onclick='reload_kiosk(this)'/>")
+                               .attr('kiosk-address', kiosk.address))
+                       .append($("<p class='reloading'>Reloading</p>")
+                               .toggleClass('hidden', !kiosk.reload)));
 
   var kiosk_select = $("<div class='kiosk-select'/>");
   kiosk_select.append("<label for=\"kiosk-page-" + index + "\">Displaying:</label>");
@@ -522,6 +531,18 @@ function post_new_params(kiosk, new_params) {
                  params: JSON.stringify(new_params)},
           success: function(data) {
             process_polled_data(data);
+          },
+         });
+}
+
+function reload_kiosk(btn) {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'kiosk.reload',
+                 address: $(btn).attr('kiosk-address')},
+          success: function() {
+            console.log('kiosk.reload for ' + $(btn).attr('kiosk-address'));
+            $(btn).closest(".reload").find("p.reloading").removeClass('hidden');
           },
          });
 }

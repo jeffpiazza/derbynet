@@ -29,13 +29,13 @@ var KioskPoller = (function(KioskPoller) {
                   location.reload(true);
                   return;
                 }
-	            if (data.hasOwnProperty('reload') && data.reload) {
+	            if (setting.reload) {
                   console.log("Forcing a reload because it was explicitly requested.");
                   location.reload(true);
                   return;
                 }
                 var params_string = '{}';
-                if (setting.hasOwnProperty('params') && setting.params.length !== 0) {
+                if (setting.params.length !== 0) {
                   console.log("setting.params=" + setting.params)
                   params_string = setting.params;
                 }

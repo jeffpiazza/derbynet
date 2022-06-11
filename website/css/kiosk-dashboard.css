@@ -47,6 +47,24 @@ div.mselect-inner select {
     bottom: 0;
 }
 
+.reload {
+  display: inline-block;
+  width: 175px;
+  margin-top: 50px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.block_buttons div.reload input {
+  width: 170px;
+}
+.reload p.reloading {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
 /* .block_buttons span wants to screw up the select font size */
 .kiosk-select  div.mselect {
   font-size: 24px;
@@ -54,7 +72,8 @@ div.mselect-inner select {
 
 .kiosk-select,
 .standings-control .reveal {
-    margin-left: 485px;
+  margin-left: 485px;
+  margin-right: 175px;
     min-height: 175px;
 }
 

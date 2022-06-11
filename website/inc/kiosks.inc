@@ -58,7 +58,6 @@ function parse_kiosk_params(&$row) {
 // 'params' (a customization string).
 function kiosk_page($addr) {
   global $db;
-
   do {  // Retry loop to allow for having to create the table
     $retry = false;
     try {
@@ -66,12 +65,24 @@ function kiosk_page($addr) {
       $stmt->execute(array(':address' => $addr));
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $stmt->closeCursor();
-      if ($row) {
+        if ($row) {
+        $row['reload'] = false;
         if (!isset($row['name'])) {
           $row['name'] = '';
         }
-        $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time().' WHERE address = :address');
-        $stmt->execute(array(':address' => $addr));
+        if (@$row['page'][0] == '!') {
+          $row['page'] = substr($row['page'], 1);
+          $row['reload'] = true;
+          $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time()
+                               .', page = :page'
+                               .' WHERE address = :address');
+          $stmt->execute(array(':address' => $addr,
+                               ':page' => $row['page']));
+        } else {
+          $stmt = $db->prepare('UPDATE Kiosks SET last_contact = '.time()
+                               .' WHERE address = :address');
+          $stmt->execute(array(':address' => $addr));
+        }
         if (@$row['page']) {
           parse_kiosk_params($row);
           return $row;
@@ -96,7 +107,19 @@ function kiosk_page($addr) {
   } while ($retry);
   // Return global kiosk-page RaceInfo setting, or identify.kiosk.
   return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'),
-               'params' => '');
+               'params' => '',
+               'reload' => false);
+}
+
+function mark_kiosk_for_reload($addr) {
+  global $db;
+  try {
+    $stmt = $db->prepare('UPDATE Kiosks SET page = \'!\' || page'
+                         .' WHERE address = :address'
+                         .' AND SUBSTR(page, 1, 1) <> \'!\'');
+    $stmt->execute(array(':address' => $addr));
+  } catch (PDOException $p) {
+  }
 }
 
 // Returns an array of {address, name, page, parameters, last_contact}
@@ -109,16 +132,23 @@ function all_kiosks() {
     // heard from in 10 minutes
     $stmt = $db->query('SELECT address, name, page, last_contact'
                        .' FROM Kiosks'
-                       .' WHERE '.time().' - last_contact < 600'
+                       .' WHERE '.time().' - last_contact < 60'
                        .' ORDER BY '
                        .'     CASE name WHEN \'Main\' THEN \'\' ELSE name END,'
                        .'        address, last_contact');
     foreach ($stmt as $row) {
+      if (@$row['page'][0] == '!') {
+        $row['page'] = substr($row['page'], 1);
+        $row['reload'] = true;
+      } else {
+        $row['reload'] = false;
+      }
       parse_kiosk_params($row);
       $kiosks[] = array('name' => $row['name'] ? $row['name'] : '',
                         'address' => $row['address'],
                         'last_contact' => $row['last_contact'],
                         'page' => $row['page'],
+                        'reload' => $row['reload'],
                         'age' => time() - $row['last_contact'],
                         'parameters' => $row['params']);
     }
@@ -172,6 +202,9 @@ function all_kiosk_pages() {
 // This function deletes "old" kiosks that haven't made contact for an hour
 // (3600 seconds) -- mainly this would be kiosks from testing that we don't want
 // to remain in the database on race day.
+//
+// Note that all_kiosks(), above, separately filters out kiosks that haven't
+// made contact much more recently.
 function drop_old_kiosks() {
   global $db;
   $stmt = $db->query('DELETE FROM Kiosks WHERE '.time().' - last_contact > 3600');
