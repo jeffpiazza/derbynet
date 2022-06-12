@@ -1,1 +1,1 @@
-Please visit the project web site at http://jeffpiazza.github.io/derbynet.
+Please visit us at https://derbynet.org
