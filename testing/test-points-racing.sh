@@ -110,9 +110,9 @@ curl_postj action.php "action=award.present&key=speed-2-1" | check_jsuccess
 curl_getj "action.php?query=award.current" | expect_one Asher
 
 curl_getj "action.php?query=poll&values=ondeck" | \
-    jq -r '.ondeck.chart | map(select(.resultid == 1))[0].result' | expect_eq 2nd
+    jq -r '.ondeck.chart | map(select(.resultid == 1))[0].result' | expect_eq z2nd
 curl_getj "action.php?query=poll&values=ondeck" | \
-    jq -r '.ondeck.chart | map(select(.resultid == 4))[0].result' | expect_eq 1st
+    jq -r '.ondeck.chart | map(select(.resultid == 4))[0].result' | expect_eq z1st
 
 # Test the tie in the standings:
 #
