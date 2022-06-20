@@ -33,6 +33,7 @@ function on_add_client() {
 var g_client_manager = new ViewClientManager(on_add_client);
 
 function on_device_selection(selectq) {
+  // mobile_select_refresh(selectq);
   // If a stream is already open, stop it.
   stream = document.getElementById("preview").srcObject;
   if (stream != null) {
@@ -62,20 +63,6 @@ function on_device_selection(selectq) {
     });
 }
 
-function build_device_picker() {
-  let selected = $("#device-picker :selected").prop('value');
-  video_devices(
-    selected,
-    (found, options) => {
-      let picker = $("#device-picker");
-      picker.empty()
-            .append(options)
-            .on('input', event => { on_device_selection(picker); });
-      picker.trigger("create");
-      on_device_selection(picker);
-    });
-}
-
 $(function() {
     if (typeof(navigator.mediaDevices) == 'undefined') {
       $("#no-camera-warning").removeClass('hidden');
@@ -84,10 +71,12 @@ $(function() {
         $("#no-camera-warning").append("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>");
       }
     } else {
-      navigator.mediaDevices.ondevicechange = function(event) { build_device_picker(); };
+      navigator.mediaDevices.ondevicechange = function(event) {
+        build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
+      };
     }
 
-    build_device_picker();
+    build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
 });
 
 function toggle_preview() {
@@ -103,7 +92,7 @@ function toggle_preview() {
 <div id="log"></div>
 
 <div class="block_buttons">
-  <video id="preview" autoplay muted playsinline></video>
+  <video id="preview" autoplay="true" muted="true" playsinline="true"></video>
 
   <div id="no-camera-warning" class="hidden">
      <h2 id='reject'>Access to cameras is blocked.</h2>

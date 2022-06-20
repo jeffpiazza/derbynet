@@ -45,6 +45,8 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/screenfull.min.js"></script>
+<!-- WebRTC adapter: a shim to insulate apps from spec changes and prefix differences in WebRTC.
+     Latest: https://webrtc.github.io/adapter/adapter-latest.js -->
 <script type="text/javascript" src="js/adapter.js"></script>
 <script type="text/javascript" src="js/message-poller.js"></script>
 <script type="text/javascript" src="js/viewer-signaling.js"></script>
@@ -154,6 +156,7 @@ function on_remote_stream_ready(stream) {
 }
 
 function on_device_selection(selectq) {
+  // mobile_select_refresh(selectq);
   // If a stream is already open, stop it.
   stream = document.getElementById("preview").srcObject;
   if (stream != null) {
@@ -198,23 +201,6 @@ $(function() {
     }
 });
 
-function build_device_picker() {
-  let selected = $("#device-picker :selected").prop('value');
-  video_devices(
-    selected,
-    (found, options) => {
-      options.push($("<option value='remote'>Remote Camera</option>"));
-      let picker = $("#device-picker");
-      picker.empty()
-            .append(options)
-            .on('input', event => { on_device_selection(picker); });
-      if (!found) {
-        on_setup();
-      }
-      picker.trigger("create");
-      on_device_selection(picker);
-    });
-}
 
 $(function() {
     if (typeof(navigator.mediaDevices) == 'undefined') {
@@ -224,10 +210,12 @@ $(function() {
         $("#no-camera-warning").append("<p>You may need to switch to <a href='" +  https_url + "'>" + https_url + "</a></p>");
       }
     } else {
-      navigator.mediaDevices.ondevicechange = function(event) { build_device_picker(); };
+      navigator.mediaDevices.ondevicechange = function(event) {
+        build_device_picker($("#device-picker"), /*include_remote*/true, on_device_selection, on_setup);
+      };
     }
 
-    build_device_picker();
+    build_device_picker($("#device-picker"), /*include_remote*/true, on_device_selection);
 });
 
 // Posts a message to the page running in the interior iframe.
@@ -369,7 +357,7 @@ $(window).on('resize', function(event) { on_setup(); });
   </div>
 
   <div id="preview-container">
-    <video id="preview" autoplay muted playsinline>
+    <video id="preview" autoplay="true" muted="true" playsinline="true">
     </video>
     <div id="waiting-for-remote" class="hidden">
       <p>Waiting for remote camera to connect...</p>

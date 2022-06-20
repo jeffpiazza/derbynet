@@ -8,7 +8,7 @@ PATTERN='Notice\|Warning\|Fatal'
 curl_get about.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get awards-editor.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get awards-presentation.php | sed -n -e "/$PATTERN/ { p; q 1 }"
-# camera.php
+curl_get camera.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get checkin.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 curl_get coordinator.php | sed -n -e "/$PATTERN/ { p; q 1 }"
 # curl_get export-json.php | sed -n -e "/$PATTERN/ { p; q 1 }"

@@ -71,11 +71,11 @@ var g_action_on_barcode = "<?php
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/webcam.js"></script>
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/partitions-modal.js"></script>
+<script type="text/javascript" src="js/video-device-picker.js"></script>
+<script type="text/javascript" src="js/photo-capture-modal.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
-<script type="text/javascript" src="js/checkin-es6.js"></script>
 </head>
 <body>
 <?php
@@ -260,7 +260,7 @@ mobile_select_refresh($("#bulk_who"));
 
 </form>
 </div>
-  
+
 <div id='photo_modal' class="modal_dialog hidden block_buttons">
   <form id="photo_drop" class="dropzone">
     <input type="hidden" name="action" value="photo.upload"/>
@@ -268,11 +268,11 @@ mobile_select_refresh($("#bulk_who"));
     <input type="hidden" id="photo_modal_racerid" name="racerid"/>
     <input type="hidden" name="MAX_FILE_SIZE" value="30000000" />
 
-    <h3>Capture <span id="racer_photo_repo"></span> photo for <span id="racer_photo_name"></span></h3>
+    <h3>Capture <span id="racer_photo_repo"></span>
+        photo for <span id="racer_photo_name"></span>
+    </h3>
 
-    <div id="preview">
-        <h2>Does your browser support webcams?</h2>
-    </div>
+    <video id="preview" autoplay="true" muted="true" playsinline="true"></video>
 
     <div id="left-photo">
 
@@ -293,8 +293,7 @@ mobile_select_refresh($("#bulk_who"));
     </div>
     </div>
     <div id="right-photo">
-        <input type="button" value="Switch Camera"
-          onclick='handle_switch_camera();'/>
+        <select id="device-picker"></select>
 
         <label id="autocrop-label" for="autocrop">Auto-crop after upload:</label>
         <div class="centered_flipswitch">
