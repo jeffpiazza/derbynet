@@ -8,6 +8,7 @@ require_once('inc/replay.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/events.inc');
 require_once('inc/timer-flags.inc');
+require_once('inc/timer-forensics.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -151,6 +152,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
         $results[$i] = $oldresults[$nlanes - $i - 1];
       }
     }
+    record_timer_finish($results);
     if (!$racing_state) {
       // TODO This might be a test run, or an actual race run while the "racing"
       // switch was off.  We should prompt the race coordinator and offer to

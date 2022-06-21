@@ -337,6 +337,8 @@ array(
 
 @include_once(sql_file_path('partitions')),
 
+@include_once(sql_file_path('timer-messages')),
+
 array(
 
 // --- Populate basic data

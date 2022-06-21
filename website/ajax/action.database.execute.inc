@@ -37,7 +37,9 @@ if (!have_permission(SET_UP_PERMISSION)) {
     }
   }
   
-  run_sql_script($_POST['script']);
+  list($ok, $executed) = run_sql_script($_POST['script']);
+
+  json_out('executed', $executed);
 
   if ($values_found) {
     write_raceinfo('photo-directory', $photo_dir);
@@ -53,8 +55,6 @@ if (!have_permission(SET_UP_PERMISSION)) {
     require_once('inc/update_schema.inc');
     after_update_schema($original_schema);
   }
-
-  json_success();
 }
 
 json_out('details', build_setup_page_details());

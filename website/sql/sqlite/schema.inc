@@ -184,6 +184,8 @@ make_index("Rounds", "round"),
 
 @include_once(sql_file_path('partitions')),
 
+@include_once(sql_file_path('timer-messages')),
+
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('photos-on-now-racing', 'head')",
