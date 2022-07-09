@@ -3,7 +3,10 @@
 // $_GET['order']:   name, class, rank, car, checkin
 // $_GET['render']:  Name of the render to use for images
 
+// $_GET['racerid']: If provided, restricts result to one racer
+// $_GET['barcode']: If provided, restricts result to one racer
 
+require_once('inc/barcode.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/events.inc');
 require_once('inc/photo-config.inc');
@@ -20,6 +23,17 @@ if (isset($_GET['render']))
 
 $headshot_render = headshots()->lookup($render_name);
 $carphoto_render = car_photo_repository()->lookup($render_name);
+
+$where = '';
+$params = array();
+if (@$_GET['racerid']) {
+  $where = ' WHERE racerid = :racerid';
+  $params[':racerid'] = $_GET['racerid'];
+}
+if (@$_GET['barcode']) {
+  $where = ' WHERE racerid = :racerid';
+  $params[':racerid'] = barcode_to_racerid($_GET['barcode']);
+}
 
 function order_by($order) {
   if ($order == 'car')
@@ -48,9 +62,11 @@ $sql = 'SELECT racerid, firstname, lastname, carnumber, carname, imagefile,'
                          'RegistrationInfo.classid = Classes.classid',
                          'Ranks',
                          'RegistrationInfo.rankid = Ranks.rankid')
+    .$where
     .' ORDER BY '.order_by($order);
 
-$stmt = $db->query($sql);
+$stmt = $db->prepare($sql);
+$stmt->execute($params);
 
 $racers = array();
 foreach ($stmt as $row) {
@@ -61,7 +77,7 @@ foreach ($stmt as $row) {
                     'carname' => $row['carname'],
                     'note_from' => $row['note'],
                     'headshot' => $headshot_render->render_url($row['imagefile']),
-                    'car_photo' => $carphoto_render->render_url($row['imagefile']),
+                    'car_photo' => $carphoto_render->render_url($row['carphoto']),
                     'classid' => $row['classid'],
                     'class' => $row['class'],
                     'rankid' => $row['rankid'],

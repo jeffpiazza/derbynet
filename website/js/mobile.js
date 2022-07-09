@@ -107,6 +107,7 @@ function flipswitch(checkboxes) {
 function flipswitch_refresh(checkboxes) {
   $(checkboxes).each(function(i, checkbox) {
     checkbox = $(checkbox);
+    checkbox.parent().toggleClass('checked', checkbox.is(':checked'));
     checkbox.siblings(".off").text(checkbox.attr('data-off-text') || 'Off');
     checkbox.siblings(".on").text(checkbox.attr('data-on-text') || 'On');
     flipswitch_resize_for_text(checkbox);

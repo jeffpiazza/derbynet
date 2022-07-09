@@ -1,0 +1,95 @@
+#preview-container {
+  position: relative;
+}
+
+video#preview {
+  position: fixed;
+  left: 0px;
+  top: 60px;
+  z-index: -100;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div#flash-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vh;
+  z-index: 100;
+  background: white;
+}
+
+#device-picker-div {
+  position: fixed;
+  top: 100px;
+  left: 0px;
+  right: 0px;
+}
+
+#slide-up {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0px; /* initially */
+  background: #3789fb;
+}
+#racer-div {
+  font-size: 24px;
+  text-align: center;
+  color: white;
+}
+#controls {
+  height: 74px;
+}
+
+#controls-inner {
+  display: inline-block;
+  width: 480px;
+  width: 514px; /* Allows for border and padding in escutcheons? */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.escutcheon {
+  display: inline-block;
+  vertical-align: top;
+  background: white;
+  height: 60px;
+  width: 120px;
+  padding: 4px;
+  margin-left: 60px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border-radius: 0.4em 0.4em 0.4em 0.4em;
+  cursor: pointer;
+  position: relative;
+}
+.escutcheon .click-blocker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0;
+  z-index: 50;
+}
+.escutcheon img {
+  vertical-align: middle;
+}
+
+.escutcheon img.thumbnail {
+  max-height: 61px;
+  max-width: 55px;
+}
+
+.escutcheon .flipswitch {
+  margin-left: 7px;
+}
+
+#canvas {
+  display: none;
+}
