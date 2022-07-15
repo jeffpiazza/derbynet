@@ -152,21 +152,9 @@ class HostPoller {
       for (var i = 0; i < nodes.length; ++i) {
         var name = nodes[i].getAttribute('flag');
         var v = nodes[i].getAttribute('value');
-        g_logger.host_in('assign-flag ' + name + ' = ' + v);
-        console.log('assign-flag flag=' + name + ', value=' + v);
-        for (var j = 0; j < Flag._all_flags.length; ++j) {
-          var flag = Flag._all_flags[j];
-          if (flag.name != name) {
-            continue;
-          }
-          console.log('   type=' + flag.type);
-          if (flag.type == 'bool') {
-            flag.value = (v == 'true');
-          } else if (flag.type == 'int') {
-            flag.value = parseInt(v);
-          } else {
-            flag.value = v;
-          }
+        var flag = Flag.find(name);
+        if (flag) {
+          flag.assign(v);
         }
       }
     }

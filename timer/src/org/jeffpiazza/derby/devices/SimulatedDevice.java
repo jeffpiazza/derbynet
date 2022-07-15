@@ -8,10 +8,11 @@ import java.util.Random;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.timer.Event;
 
 // For testing the web server and the derby-timer framework, simulate
 // a device class
-public class SimulatedDevice extends TimerDeviceBase {
+public class SimulatedDevice extends TimerDeviceBase implements Event.Handler {
   private HeatRunner runningHeat = null;
 
   private Random random;
@@ -32,6 +33,8 @@ public class SimulatedDevice extends TimerDeviceBase {
       if (!Flag.simulate_has_not_spoken.value()) {
         portWrapper.setHasEverSpoken();
       }
+      reloadRemoteStart();
+      Event.register(this);
       return true;
     }
     return false;
@@ -77,21 +80,36 @@ public class SimulatedDevice extends TimerDeviceBase {
     }
   }
 
-  private RemoteStartInterface remote_start = new RemoteStartInterface() {
-    @Override
-    public boolean hasRemoteStart() {
-      return true;
-    }
-
-    @Override
-    public void remoteStart() throws SerialPortException {
-      System.out.println("SimulatedDevice.remoteStart called");
-    }
-  };
+  private RemoteStartInterface remote_start;
 
   @Override
   public RemoteStartInterface getRemoteStart() {
     return remote_start;
+  }
+
+  private void reloadRemoteStart() {
+    if (Flag.dtr_gate_release.value()) {
+      remote_start = new RemoteStartInterface() {
+        @Override
+        public boolean hasRemoteStart() {
+          return true;
+        }
+
+        @Override
+        public void remoteStart() throws SerialPortException {
+          System.out.println("SimulatedDevice.remoteStart called");
+        }
+      };
+    } else {
+      remote_start = null;
+    }
+  }
+
+  @Override
+  public void onEvent(Event event, String[] args) {
+    if (event == Event.PROFILE_UPDATED) {
+      reloadRemoteStart();
+    }
   }
 
   private long pollCount = 0;

@@ -3,6 +3,8 @@ package org.jeffpiazza.derby.serialport;
 import jssc.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
@@ -121,6 +123,10 @@ public class SerialPortWrapper implements SerialPortEventListener {
     return setPortParams(baudRate, dataBits, stopBits, parity,
                          !Flag.clear_rts_dtr.value(),
                          !Flag.clear_rts_dtr.value());
+  }
+
+  public void setDtr(boolean enabled) throws SerialPortException {
+    port.setDTR(enabled);
   }
 
   public void setEndOfLine(String end_of_line) {
@@ -320,7 +326,8 @@ public class SerialPortWrapper implements SerialPortEventListener {
             && System.currentTimeMillis() - last_char_received
             > Flag.newline_expected_ms.value()) {
           if (Flag.debug_io.value()) {
-            LogWriter.debugMsg("infer newline(" + describeString(leftover) + ")");
+            LogWriter.
+                debugMsg("infer newline(" + describeString(leftover) + ")");
           }
           // Don't call enqueueLine here, as we want the string to return now.
           s = applyDetectors(leftover);

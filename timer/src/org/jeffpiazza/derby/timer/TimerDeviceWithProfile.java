@@ -1,28 +1,43 @@
 package org.jeffpiazza.derby.timer;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Timestamp;
+import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
+import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceBase;
 import org.jeffpiazza.derby.devices.TimerDeviceUtils;
 import org.jeffpiazza.derby.devices.TimerResult;
+import org.jeffpiazza.derby.profiles.AllProfiles;
+import org.jeffpiazza.derby.serialport.DtrRemoteStart;
 import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 
 public class TimerDeviceWithProfile extends TimerDeviceBase
     implements Event.Handler {
   public TimerDeviceWithProfile(SerialPortWrapper portWrapper, Profile profile) {
     super(portWrapper);
+    setProfile(profile);
+  }
+
+  private void setProfile(Profile profile) {
     this.profile = profile;
 
     portWrapper.setEndOfLine(profile.options.eol);
 
-    if (profile.remote_start != null) {
-      remote_start = new ProfileRemoteStart(portWrapper, profile.remote_start);
+    if (Flag.dtr_gate_release.value()) {
+      remote_start = new DtrRemoteStart(portWrapper);
+    } else {
+      remote_start
+          = profile.remote_start == null ? null
+            : new ProfileRemoteStart(portWrapper, profile.remote_start);
     }
   }
 
@@ -174,9 +189,18 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   }
 
   private boolean ok_to_poll = true;
-  private synchronized void suspendPolling() { ok_to_poll = false; }
-  private synchronized void resumePolling() { ok_to_poll = true; }
-  private synchronized boolean okToPoll() { return ok_to_poll; }
+
+  private synchronized void suspendPolling() {
+    ok_to_poll = false;
+  }
+
+  private synchronized void resumePolling() {
+    ok_to_poll = true;
+  }
+
+  private synchronized boolean okToPoll() {
+    return ok_to_poll;
+  }
 
   protected void maskLanes(int lanemask) {
     suspendPolling();
@@ -309,6 +333,15 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         // reported results.
         if (sm != null) {
           sm.setGateStateNotKnowable();
+        }
+        break;
+      case PROFILE_UPDATED:
+        Class<? extends TimerDevice> cl = getClass();
+        try {
+          Method m = cl.getMethod("profile");
+          setProfile((Profile) m.invoke(cl));
+        } catch (Throwable ex) {
+          Logger.getLogger(cl.getName()).log(Level.SEVERE, null, ex);
         }
         break;
     }

@@ -19,6 +19,7 @@ function zeroesToNines(time) {
 class TimerProxy {
   port_wrapper;
   profile;
+  remote_start;
   gate_watch_detectors;
 
   roundid;
@@ -36,6 +37,8 @@ class TimerProxy {
   constructor(port_wrapper, profile) {
     this.port_wrapper = port_wrapper;
     this.profile = profile;
+    this.remote_start =
+      profile?.remote_start ? new RemoteStart(port_wrapper, profile.remote_start) : null;
     if (this.profile?.options?.eol !== undefined) {
       this.port_wrapper.eol = this.profile.options.eol;
     }
@@ -47,17 +50,9 @@ class TimerProxy {
     const kPollIntervalMs = 250;
     g_clock_worker.postMessage(['POLL_TIMER', poll_start + kPollIntervalMs - Date.now(), 'POLL_TIMER']);
   }
-  
-  remote_start_profile() {
-    if (Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K") {
-      return {has_remote_start: true, command: "LG"};
-    } else {
-      return this.profile?.remote_start;
-    }
-  }
 
   has_remote_start() {
-    return this.remote_start_profile()?.has_remote_start;
+    return this.remote_start?.has_remote_start();
   }
 
   async poll_once() {
@@ -68,7 +63,7 @@ class TimerProxy {
       var state = this.sm.state;
 
       var commands = this.profile?.poll?.[state];
-      if (commands && !(Flag.fasttrack_automatic_gate_release.value && this.profile.key == "FastTrack-K")) {
+      if (commands) {
         var prev = g_logger.scope;
         g_logger.scope = "profile.poll";
         try {
@@ -215,10 +210,8 @@ class TimerProxy {
       this.roundid = this.heat = 0;
       break;
     case 'START_RACE':
-      {
-        if (this.has_remote_start()) {
-          this.port_wrapper.write(this.remote_start_profile().command);
-        }
+      if (this.remote_start) {
+        this.remote_start.remote_start();
       }
       break;
     case 'RACE_STARTED':

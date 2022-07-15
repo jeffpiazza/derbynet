@@ -3,6 +3,18 @@
 class Flag {
   static _all_flags = [];
 
+  static find(name) {
+    return Flag._all_flags.find(f => f.name == name);
+  }
+
+  static apply_all() {
+    for (var f of Flag._all_flags) {
+      if (f.on_apply_fn) {
+        f.on_apply_fn(f.value);
+      }
+    }
+  }
+
   static ignore_place = new Flag(
     "ignore-place", false, "Discard any place indications from timer");
 
@@ -33,7 +45,39 @@ class Flag {
     "Reset timer <nsec> seconds after heat start, default 11");
 
   static fasttrack_automatic_gate_release = new Flag(
-    "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed");
+    "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed")
+    .on_apply(function(v) {
+      var profiles = all_profiles();
+      for (var i = 0; i < profiles.length; ++i) {
+        if (profiles[i].key == "FastTrack-K") {
+          if (v) {
+            profiles[i].remote_start.has_remote_start = true;
+            profiles[i].poll = {};
+          } else {
+            profiles[i].remote_start.has_remote_start = false;
+            profiles[i].poll = {"MARK": {"commands": ["LR"]}};
+          }
+          break;
+        }
+      }
+    });
+
+  static dtr_gate_release = new Flag(
+    "dtr-gate-release", false, "EXPERIMENTAL Offer remote start via DTR signal (SCI device or similar)")
+    .on_apply(function(v) {
+      if (g_timer_proxy) {
+        if (v) {
+          if (!(g_timer_proxy.remote_start instanceof DtrRemoteStart)) {
+            g_timer_proxy.remote_start =
+              new DtrRemoteStart(g_timer_proxy.port_wrapper, g_timer_proxy.remote_start);
+          }
+        } else {
+          if (g_timer_proxy.remote_start instanceof DtrRemoteStart) {
+            g_timer_proxy.remote_start = g_timer_proxy.remote_start.profile_remote_start;
+          }
+        }
+      }
+    });
 
   static debug_serial = new Flag(
     "debug-io", false, "Enable debugging for low-level serial communication");
@@ -53,6 +97,27 @@ class Flag {
 
     Flag._all_flags.push(this);
   }
+
+  on_apply_fn;
+  on_apply(fn) {
+    this.on_apply_fn = fn;
+    return this;
+  }
+
+  assign(v) {  // v is a string
+    if (this.type == 'bool') {
+      this.value = (v == 'true');
+    } else if (this.type == 'int') {
+      this.value = parseInt(v);
+    } else {
+      this.value = v;
+    }
+
+    if (this.on_apply_fn) {
+      this.on_apply_fn(this.value);
+    }
+  }
+
 
   static sendFlagsMessage(poller) {
     var msg = {

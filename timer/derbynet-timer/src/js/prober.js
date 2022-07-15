@@ -67,8 +67,11 @@ class Prober {
       while (!g_timer_proxy && !this.give_up) {
         g_timer_proxy = await g_prober.probe();
       }
-      if (g_host_poller && g_timer_proxy) {
-        g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
+      if (g_timer_proxy) {
+        Flag.apply_all();
+        if (g_host_poller) {
+          g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
+        }
       }
     } finally {
       this.probe_cycle_underway = false;

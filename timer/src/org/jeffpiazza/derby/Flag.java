@@ -2,9 +2,15 @@ package org.jeffpiazza.derby;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jeffpiazza.derby.timer.Event;
 
 public abstract class Flag<T> {
   private static List<Flag> all_flags = new ArrayList<Flag>();
+
+  public interface OnApply {
+    // Must be idempotent, as it may be applied more than once.
+    public void apply(Flag f);
+  }
 
   public static final Flag<Boolean> version
       = BooleanFlag.readonly("v", "Show version");
@@ -135,7 +141,21 @@ public abstract class Flag<T> {
                              "FastTrack: Don't attempt reading features");
   public static final Flag<Boolean> fasttrack_automatic_gate_release
       = BooleanFlag.settable("fasttrack-automatic-gate-release",
-                             "FastTrack light tree and automatic gate release installed");
+                             "FastTrack light tree and automatic gate release installed").
+          on_apply(new OnApply() {
+            public void apply(Flag f) {
+              Event.send(Event.PROFILE_UPDATED);
+            }
+          });
+  public static final Flag<Boolean> dtr_gate_release
+      = BooleanFlag.settable("dtr-gate-release",
+                             "EXPERIMENTAL Offer remote start via DTR signal"
+                             + " (SCI device or similar)").
+          on_apply(new OnApply() {
+            public void apply(Flag f) {
+              Event.send(Event.PROFILE_UPDATED);
+            }
+          });
 
   public static final Flag<Boolean> debug_io
       = BooleanFlag.settable("debug-io",
@@ -182,8 +202,15 @@ public abstract class Flag<T> {
     for (Flag f : all_flags) {
       if (f.name().equals(flag)) {
         f.setValueText(value);
+        f.apply();
         return;
       }
+    }
+  }
+
+  public static void applyAll() {
+    for (Flag f : all_flags) {
+      f.apply();
     }
   }
 
@@ -213,10 +240,22 @@ public abstract class Flag<T> {
     return "   -" + name() + ": " + description;
   }
 
+  public Flag<T> on_apply(OnApply on_apply) {
+    this.on_apply = on_apply;
+    return this;
+  }
+
+  public void apply() {
+    if (on_apply != null) {
+      on_apply.apply(this);
+    }
+  }
+
   protected final String name;
   protected T value;
   private String description;
   protected boolean is_settable;
+  protected OnApply on_apply;
 
   public static class BooleanFlag extends Flag<Boolean> {
     public static BooleanFlag settable(String name, String description) {

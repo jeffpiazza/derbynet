@@ -1,0 +1,48 @@
+events.js -- This is the central control mechanism.
+    TimerEvent.register(handler) registers an object to receive events.
+    TimerEvent.send(event, args) sends an event to all registered event handlers.
+
+host_poller.js -- handles communicating with the web server.  Messages from the
+server get converted into timer events, and relevant timer events get reported
+to the web server.
+
+port_wrapper.js -- Reads from the serial port, divides the input into lines, and
+applies detectors to each line.
+
+detector.js -- A detector is a regex that triggers an event upon matching (on
+text from the timer).  A "matcher" is the configuration (from a timer profile)
+used to construct a Detector.
+
+main.js -- Top-level orchestration for the in-browser timer interface.  Spawns a
+web worker for g_clock_worker from clock-worker.js; builds the list of profiles
+and the list of serial ports; and starts g_prober scanning on a click.
+
+clock-worker.js -- See main.js.
+
+result.js -- Times from a single heat get aggregated into a HeatResult object.
+
+serial_port_event_listener.js -- Receives events about serial ports being added
+or dropped (cabling changes).  Only used for standalone?
+
+timer_proxy.js -- Combines a port_wrapper and a profile, and acts as the
+interface to the timer device.  It periodically polls the timer device by
+queuing POLL_TIMER events for itself.
+
+profiles.js -- Generated from Java code, and hence not found in src/js directory.
+[  { name: "...",
+     key: "...",
+     params: { baud:, data:, stop:, parity: },
+     options: { max_lanes:, eol:, gate_state_is_knowable: },
+     prober: { pre_probe:, probe:, responses: [ ... ] },
+     setup: {commands: ["r", ...], },
+     setup_queries: [{command:, matchers:}]
+     matchers: [ { pattern:, event:, args: }, ... ],
+     poll: {"MARK": {commands: [ ... ]}},
+     gate_watcher: {command:, matchers:},
+     heat_prep: { unmask:, lane:, mask: },
+     on: { RACE_STARTED: { commands: }, ... },
+     remote_start: { has_remote_start:, command: }
+   } ]
+
+state_machine.js -- keeps track of the timer state based on gate open / gate
+closed events.
