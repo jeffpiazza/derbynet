@@ -2,6 +2,7 @@
 // $_POST['roundid'] = number, or 'all'
 // if $_POST['heat'], then just delete results for that heat only
 require_once('inc/events.inc');
+require_once('inc/event-lane-details.inc');
 
 if (have_permission(CONTROL_RACE_PERMISSION)) {
   $params = array();
@@ -28,7 +29,10 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     }
   }
 
-  record_event_for_discarded_heat($where, $params);
+  if (is_int($roundid) && is_int($heat)) {
+    // TODO Cover other cases, too.
+    record_event_for_discarded_heat($roundid, $heat);
+  }
 
   $sql .= $where;
   $stmt = $db->prepare($sql);

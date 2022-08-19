@@ -648,6 +648,14 @@ function process_coordinator_poll_json(json) {
       .append($("<h3 id='timer-testing-herald'>Simulated racing in progress</h3>")
               .append("<input class='stop-test' type='button'"
                       + " onclick='handle_stop_testing();' value='Stop'/>"));
+  } else if (json['refused-results'] > 0) {
+    $("#now-racing-group")
+          .empty()
+          .append($("<div id='timer-testing-herald'></div>")
+                  .append($("<h3></h3>")
+                          .append($("<span></span>").text(json['refused-results']))
+                          .append(" unexpected results from timer have been received."))
+                  .append("<p>Turn on racing mode or simulate racing if you wish to record results.</p>"));
   } else {
     $('#timer-testing-herald').remove();
   }

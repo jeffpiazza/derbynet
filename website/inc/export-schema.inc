@@ -86,9 +86,15 @@ if (schema_version() >= 8) {
   $schema['ConstituentClasses'] = array('antecedent', 'dependent');
   // Not sure when this was first introduced, but including in the export now
   $schema['Events'] = array('seq', 'tstamp', 'action', 'racerid', 'classid', 'rankid',
-                            'roundid', 'heat', 'lane', 'other');
+                            'roundid', 'heat', 'other');
   
   $schema['RegistrationInfo'][] = 'partitionid';
+}
+
+if (schema_version() >= 9) {
+  $schema['Events'][] = 'finishid';
+  $schema['EventLaneDetails'] = array('tresultid', 'finishid', 'lane',
+                                      'finishtime', 'finishplace', 'completed');
 }
 
 ?>

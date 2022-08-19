@@ -100,7 +100,9 @@ if (schema_version() < 8) {
 
 if (schema_version() < 9) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('timer-messages')));
+                         @include_once(sql_file_path('event-lane-details')));
+  // $updates[] = "ALTER TABLE Events DROP COLUMN lane";
+  $updates[] = "ALTER TABLE Events ADD COLUMN finishid INTEGER";
 
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '9')";

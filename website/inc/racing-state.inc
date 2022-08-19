@@ -84,6 +84,8 @@ function set_racing_state($state) {
   }
 
   write_raceinfo('NowRacingState', $state);
+  write_raceinfo('refused-results', 0);
+
   return true;
 }
 

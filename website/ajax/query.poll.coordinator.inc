@@ -18,6 +18,7 @@ json_out('racers', json_current_racers($now_running, FULL_NAME, /* photos */ fal
 json_out('timer-state', json_timer_state());
 json_out('replay-state', json_replay());
 json_out('last-heat', json_last_heat());
+json_out('refused-results', read_raceinfo('refused-results', 0));
 
 json_out('heat-results',
          json_heat_results(isset($_GET['roundid']) ? $_GET['roundid'] : '0',

@@ -29,17 +29,12 @@ define('EVENT_PURGE_RACERS', 92);
 define('EVENT_PURGE_AWARDS', 93);
 define('EVENT_PURGE_RESULTS_ONE_ROUND', 94);
 
-// A racer's heat result was discarded (we record the value that was discarded,
-// in case questions arise later).  (racerid, roundid, heat, lane, other)
-define('EVENT_RESULT_DISCARDED', 100);  // racerid, roundid, heat, lane, other(place)
+// A heat result was discarded.  (roundid, heat)
+define('EVENT_HEAT_RESULT_DISCARDED', 100);  // roundid, heat
 
-// RaceChart has its own 'completed' timestamp field, and usually that's enough.
-// Only if we discard results do we add a HEAT_COMPLETED event, after the fact,
-// for the heat.  The HEAT_COMPLETED event captures roundid, heat, and tstamp
-// only, the tstamp being for the previous value of the RaceChart 'completed'
-// field.
-define('EVENT_HEAT_COMPLETED', 101);  // roundid, heat
+define('EVENT_HEAT_RESULT_FROM_TIMER', 101);  // roundid, heat
 define('EVENT_HEAT_MANUALLY_ENTERED', 102);
+define('EVENT_HEAT_RESULT_REINSTATED', 103);
 
 define('EVENT_CLASS_ADDED', 200);
 define('EVENT_RANK_ADDED', 201);
@@ -132,46 +127,6 @@ function record_event_to_limit($action, $max_events, $fields = []) {
   if (read_single_value('SELECT COUNT(*) FROM Events WHERE action = :action',
                         array(':action' => $action)) < $max_events) {
     record_event($action, $fields);
-  }
-}
-
-// Call this BEFORE rewriting a heat result
-// $where is a WHERE clause against RaceChart for results being discarded.
-function record_event_for_discarded_heat($where, $params) {
-  global $db;
-  $stmt = $db->prepare('SELECT racerid, roundid, heat, lane, finishtime, finishplace'
-                       .' FROM RaceChart '.$where);
-  $stmt->execute($params);
-  foreach ($stmt as $old_result) {
-    record_event_sql('INSERT INTO Events(tstamp, action, racerid, roundid, heat, lane, other)'
-                     .' VALUES('.dbnow_expr().', :action, :racerid, :roundid, :heat, :lane, :other)',
-                     array(':action' => EVENT_RESULT_DISCARDED,
-                           ':racerid' => $old_result['racerid'],
-                           ':roundid' => $old_result['roundid'],
-                           ':heat' => $old_result['heat'],
-                           ':lane' => $old_result['lane'],
-                           ':other' => $old_result['finishtime']
-                           .' ('.ordinal($old_result['finishplace']).')'));
-  }
-}
-
-// $results maps lane to {time, place}
-function record_event_for_refused_result($results) {
-  foreach ($results as $lane => $r) {
-    if ($r) {
-      $other = '';
-      if (isset($r['time'])) {
-        $other .= $r['time'];
-      }
-      if (isset($r['place'])) {
-        $other .= ' ('.ordinal($r['place']).')';
-      }
-      record_event_sql('INSERT INTO Events(tstamp, action, lane, other)'
-                       .' VALUES('.dbnow_expr().', :action, :lane, :other)',
-                       array(':action' => EVENT_TIMER_RESULT_REFUSED,
-                             ':lane' => $lane + 1,
-                             ':other' => $other));
-    }
   }
 }
 

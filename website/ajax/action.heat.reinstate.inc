@@ -4,6 +4,7 @@ require_once('inc/last-heat.inc');
 require_once('inc/write-heat-results.inc');
 require_once('inc/racing-state.inc');
 require_once('inc/events.inc');
+require_once('inc/event-lane-details.inc');
 
 if (!have_permission(CONTROL_RACE_PERMISSION)) {
   json_not_authorized();
@@ -13,9 +14,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   $roundid = array_shift($last_heat);
   $heat = array_shift($last_heat);
 
-  record_event_for_discarded_heat('WHERE roundid = :roundid AND heat = :heat',
-                                  array(':roundid' => $roundid,
-                                        ':heat' => $heat));
+  record_event_for_reinstated_heat($roundid, $heat);
 
   $result_column = read_raceinfo_boolean('use-points') ? 'finishplace' : 'finishtime';
   $lane = 1;

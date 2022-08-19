@@ -11,7 +11,7 @@ return array(
 ."  rankid  INTEGER,"
 ."  roundid INTEGER,"
 ."  heat    INTEGER,"
-."  lane    INTEGER,"
+."  finishid  INTEGER,"  // FK to EventLaneDetails.finishid
 ."  other   VARCHAR(250)"
 ."	)",
 );

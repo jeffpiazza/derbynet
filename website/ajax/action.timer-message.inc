@@ -8,7 +8,7 @@ require_once('inc/replay.inc');
 require_once('inc/remote-start.inc');
 require_once('inc/events.inc');
 require_once('inc/timer-flags.inc');
-require_once('inc/timer-forensics.inc');
+require_once('inc/event-lane-details.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -152,13 +152,13 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
         $results[$i] = $oldresults[$nlanes - $i - 1];
       }
     }
-    record_timer_finish($results);
     if (!$racing_state) {
       // TODO This might be a test run, or an actual race run while the "racing"
       // switch was off.  We should prompt the race coordinator and offer to
       // record these times somewhere.
       echo "\n  <failure code='notracing'>Not racing now.</failure>\n";
-      record_event_for_refused_result($results);
+      write_raceinfo('refused-results', 1 + read_raceinfo('refused-results', 0));
+      record_timer_finish(EVENT_TIMER_RESULT_REFUSED, $results, null);
     } else {
       if (write_heat_results($results)) {
         send_replay_REPLAY();
@@ -166,6 +166,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
         $current = get_running_round();
         advance_heat($current, 'next', /* show failure */ false);
         $racing_state = get_racing_state();
+        record_timer_finish(EVENT_HEAT_RESULT_FROM_TIMER, $results, $current);
         echo "\n  <success/>\n";
       }
     }

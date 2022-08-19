@@ -26,6 +26,7 @@ function timer_test_start() {
                  ? $current['heat'] + 1
                  : 1);
   write_raceinfo('NowRacingState', 1);
+  write_raceinfo('refused-results', 0);
 }
 
 function timer_test_end() {

@@ -5,6 +5,7 @@
 require_once('inc/racing-state.inc');
 require_once('inc/autoadvance.inc');
 require_once('inc/events.inc');
+require_once('inc/event-lane-details.inc');
 require_once('inc/timer-state.inc');
 require_once('inc/last-heat.inc');
 require_once('inc/scenes.inc');
@@ -42,9 +43,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 
     capture_last_heat_results($roundid, $heat);
 
-    record_event_for_discarded_heat('WHERE roundid = :roundid AND heat = :heat',
-                                    array(':roundid' => $roundid,
-                                          ':heat' => $heat));
+    record_event_for_discarded_heat($roundid, $heat);
 
     $stmt = $db->prepare('UPDATE RaceChart'
                          .' SET finishtime = NULL, finishplace = NULL, completed = NULL'
