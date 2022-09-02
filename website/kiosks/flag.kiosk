@@ -29,7 +29,7 @@ require_once('inc/banner.inc');
 make_banner('', /* back_button */ false);
 ?>
 
-<img id="flag" src="image.php/Flag.svg"/>
+<img id="flag" src="image.php/flag"/>
 
 <?php require('inc/ajax-failure.inc'); ?>
 </body>

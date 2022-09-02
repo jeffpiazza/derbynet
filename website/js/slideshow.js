@@ -17,6 +17,7 @@ function mainphoto_onload(img) {
              'max-width': $("#photo-background").width()});
 }
 
+
 (function() {
   var current_racer_id = 0;
   // This cache breaker value is for the title slide image.  We want that image
@@ -32,67 +33,63 @@ function mainphoto_onload(img) {
     // If not in a kiosk, then KioskPoller will be undefined.
   }
 
-  function refresh_page(racer) {
+  var next_query = {'mode': 'slide',
+                    'file': ''};
+
+  // response: {'photo', 'inset', 'name', 'carname', 'carnumber', 'next'}
+  function refresh_page(response) {
+    console.log('refresh_page', response);
+    next_query = response.next;
+
     // There's always a div.next, which is hidden; we populate it with images
     // for the next racer.  When the next racer becomes current, the old
     // div.current gets removed, div.next becomes div.current, and we create a
     // new div.next.
     $("#photo-background div.current").remove();
-    var current = $("#photo-background div.next");
-    current.removeClass("next").addClass("current");
-    var next = $("<div class='next'></div>").appendTo("#photo-background");
-    if (racer) {
-      if (current.find("img.mainphoto").length == 0) {
-        current.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                       racer['main-photo'] + '"/>');
-      }
-      current.find("img.mainphoto").after('<p class="subtitle">' + 
-                     '<span class="carno">' + racer.carnumber + '</span>: ' +
-                     racer.name +
-                     (racer.carname ?
-                      '<br/><i>' + racer.carname + '</i>' : '') +
-                     '</p>');
-      if (racer.hasOwnProperty('inset-photo') &&
-          current.find("img.inset_photo").length == 0) {
-        current.append('<img class="inset_photo" src="' +
-                       racer['inset-photo'] + '"/>');
-      }
+    $("#photo-background div.next").removeClass("next").addClass("current");
 
-      // Preload the next image for better display
-      if (racer.hasOwnProperty('next-photo')) {
-        next.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                   racer['next-photo'] + '"/>');
+    var next = $("<div class='next'></div>").appendTo("#photo-background");
+
+    next.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
+                response['photo'] + '"/>');
+
+    if (response.hasOwnProperty('name')) {
+      var subtitle = $("<p class='subtitle'/>").text(response['name']).appendTo(next);
+      if (response.hasOwnProperty('carnumber')) {
+          subtitle.prepend(': ')
+              .prepend($("<span class='carno'/>").text(response['carnumber']));
       }
-      if (racer.hasOwnProperty('next-inset')) {
-        next.append('<img class="inset_photo" src="' +
-                   racer['next-inset'] + '"/>');
-      }
-    } else {
-      // We assume there's no img.mainphoto under current, because there
-      // shouldn't have been any 'next' racer last time.
-      // Also assumes g_title_slide defined in main page.
-      current.append('<img class="mainphoto" onload="mainphoto_onload(this)"'
-                     + ' src="image.php/slideshow_title.png"/>');
-      if (kiosk_parameters.title) {
-        $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(current);
-      }
+      if (response.hasOwnProperty('carname')) {
+        subtitle.append("<br/>")
+              .append($("<i/>").text(response['carname']));
+      }            
+    }
+
+    if (response.hasOwnProperty('inset')) {
+      next.append('<img class="inset_photo" src="' + response['inset'] + '"/>');
+    }
+
+    if (response.hasOwnProperty('title') && kiosk_parameters.title) {
+      $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(current);
     }
   }
 
   function photo_poll() {
+    next_query.query = 'photo.next';
     var classids = kiosk_parameters.classids;
+    if (classids && classids.length > 0) {
+      next_query.classids = classids.join(',');
+    }
     $.ajax('action.php',
            {type: 'GET',
-            data: {query: 'photo.next',
-                   racerid: current_racer_id,
-                   classids: classids && classids.length > 0 ? classids.join(',') : ''},
+            data: next_query,
             success: function(data) {
-              if (data.hasOwnProperty('racer')) {
-                current_racer_id = data.racer.racerid;
-                refresh_page(data.racer);
+              if (data.hasOwnProperty('photo')) {
+                refresh_page(data.photo);
               } else {
-                current_racer_id = 0;
-                refresh_page(null);
+                refresh_page({'photo': 'slide.php/title',
+                              'next': {'mode': 'slide',
+                                       'file': ''}});
               }
             }
            }
@@ -100,7 +97,8 @@ function mainphoto_onload(img) {
   }
 
   $(document).ready(function() {
-    $("#photo-background").height($("#photo-background").height() - $("#photo-background").position().top);
+    $("#photo-background").height($("#photo-background").height() -
+                                  $("#photo-background").position().top);
     photo_poll();
     setInterval(photo_poll, 10000);
   });

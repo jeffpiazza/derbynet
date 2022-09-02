@@ -67,6 +67,7 @@ function is_standard_config($basepath, $relpath) {
     }
     return array('relpath' => $relpath,
                  'database' => $db,
+                 'homedir' => $path,
                  'racers' => $racers,
                  'cars' => $cars);
   }

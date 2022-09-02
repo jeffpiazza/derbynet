@@ -15,7 +15,14 @@
   <body>
 
   <div id="photo-background" class="photo-background">
-    <div class="next"></div>
+    <div class="current">
+      <img class='mainphoto' onload='mainphoto_onload(this)'
+           src='slide.php/title'/>
+    </div>
+    <div class="next">
+      <img class='mainphoto' onload='mainphoto_onload(this)'
+           src='slide.php/title'/>
+    </div>
   </div>
 
   <?php require('inc/ajax-failure.inc'); ?>

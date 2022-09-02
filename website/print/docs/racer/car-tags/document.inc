@@ -6,13 +6,14 @@
 // - carry a barcode identifying the car
 // - optionally show a group-specific image
 
+require_once('inc/path-info.inc');
+
 class CarTagsDocument extends PrintableRacerDocument {
   function name() { return "Car Tag"; }
 
   function get_available_options() {
-    return array('rank_image' => array('type' => 'bool',
-                                       'desc' => 'Draw icon for rank'
-                                               .' (based on car number, 100-199=Tiger, etc.)',
+    return array('century_emblem' => array('type' => 'bool',
+                                       'desc' => 'Include emblems based on car number',
                                        'default' => true));
   }
   
@@ -43,17 +44,24 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->RotatedCenteredText($left + 1.4, 2.75,  $racer['note']);
 
     // Generic image set doesn't have rank images
-    if ($this->get_option('rank_image') && is_dir(image_file_path("ranks"))) {
+    if ($this->get_option('century_emblem') && is_dir(image_file_path("centuries"))) {
       // 2-inch rank image
       $this->pdf->SetXY($left, 5.5);
       $this->pdf->SetFont('Arial', '', 16);
       $this->pdf->SetFillColor(200, 200, 255);
-      $img_path = $this->path_to_rank_image($racer);
+      $img_path = $this->path_to_century_emblem($racer);
+      // $this->pdf->Rect($left, 5.5, 2.75, 2.00);
       if ($img_path) {
         list($width, $height) = @getimagesize($img_path);
         if ($height != 0) {
-          $dx = (2.75 - ($width/$height)*2.0) / 2;
-          $this->pdf->Image($img_path, $left + $dx, 5.5, 0, 2);
+          if ($width < $height) {
+            $img_height = 2.00;
+          } else {
+            $img_height = $height/$width * 2.00;
+          }
+          $dx = (2.75 - ($width/$height)*$img_height) / 2;
+          $this->pdf->Image($img_path, $left + $dx, 7.5 - $img_height,
+                            /* calculate width */0, $img_height);
         }
       }
     }
@@ -70,9 +78,9 @@ class CarTagsDocument extends PrintableRacerDocument {
   // classid to name is definitely unstable.  This is using the car number
   // instead, and assuming that the hundreds digit identifies which image is
   // desired.
-  static protected function path_to_rank_image(&$racer) {
-    $grade = min(6, intval($racer['carnumber'] / 100));
-    return image_file_path("ranks".DIRECTORY_SEPARATOR. $grade . '00-series.jpg');
+  static protected function path_to_century_emblem(&$racer) {
+    $grade = intval($racer['carnumber'] / 100);
+    return image_file_path("centuries".DIRECTORY_SEPARATOR. $grade . '00-series');
   }
 
   protected function RotatedCenteredName($cx, $cy, &$racer) {

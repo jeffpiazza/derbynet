@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/path-info.inc');
+
 function emit_images_dir_select($attrs = '') {
   $current = read_raceinfo('images-dir', 'Generic');
   $image_directories = @scandir(image_base_dir());

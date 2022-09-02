@@ -10,16 +10,20 @@ require_once('inc/photo-config.inc');
 <?php require('inc/stylesheet.inc'); ?>
     <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
     <link rel="stylesheet" type="text/css" href="css/slideshow.css"/>
-    <script type="text/javascript">
-        var g_title_slide = "<?php echo image_file_path('slideshow_title.png'); ?>";
-    </script>
     <script type="text/javascript" src="js/slideshow.js"></script>
   </head>
 
   <body>
   <?php make_banner('Slideshow'); ?>
   <div id="photo-background" class="photo-background">
-    <div class="next"></div>
+    <div class="current">
+      <img class='mainphoto' onload='mainphoto_onload(this)'
+           src='slide.php/title'/>
+    </div>
+    <div class="next">
+      <img class='mainphoto' onload='mainphoto_onload(this)'
+           src='slide.php/title'/>
+    </div>
   </div>
 
   </body>

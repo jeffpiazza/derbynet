@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/photo-config.inc');
+require_once('inc/path-info.inc');
 
 class GoldCupAwardDocument extends PrintableAwardDocument {
   function name() { return "Gold Cup Award Certificate"; }
@@ -103,7 +104,7 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
     }
 
     if ($this->get_option('logo')) {
-      $path = image_file_path('emblem.png');
+      $path = image_file_path('emblem');
       $this->pdf->Image($path, $left + 0.25, 6.75, 1.5,1.5);
     }
 

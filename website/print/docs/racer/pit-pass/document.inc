@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/path-info.inc');
+
 class PitPassDocument extends PrintableRacerDocument {
   function name() { return "Pit Pass"; }
 
@@ -159,8 +161,7 @@ class PitPassDocument extends PrintableRacerDocument {
   }
 
   protected function DrawLogo($x, $y) {
-    $this->pdf->Image(image_file_path('emblem.png'),
-                      $x, $y, 0.886, 0.886);
+    $this->pdf->Image(image_file_path('emblem'), $x, $y, 0.886, 0.886);
   }
 }
 

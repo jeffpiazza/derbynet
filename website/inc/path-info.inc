@@ -15,4 +15,50 @@ function path_info() {
     exit(0);
   }
 }
+
+
+function image_base_dir() {
+  return  dirname(__FILE__, 2).DIRECTORY_SEPARATOR."Images";
+}
+
+function image_file_path($filename) {
+  global $homedir;
+  if (isset($homedir)) {
+    $dir = $homedir.DIRECTORY_SEPARATOR.'imagery'.DIRECTORY_SEPARATOR;
+    $g = glob($dir.$filename.".*");
+    if ($g !== false && count($g) > 0) {
+      return $g[0];
+    }
+  }
+  $dir = image_base_dir().DIRECTORY_SEPARATOR
+       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR;
+  $g = glob($dir.$filename.".*");
+  if ($g !== false && count($g) > 0) {
+    return $g[0];
+  }
+  // Shouldn't get here
+  return $dir.$filename;
+}
+
+function slide_file_path($filename) {
+  global $homedir;
+  if (isset($homedir)) {
+    $dir = $homedir.DIRECTORY_SEPARATOR.'slides'.DIRECTORY_SEPARATOR;
+    $g = glob($dir.$filename.".*");
+    if ($g !== false && count($g) > 0) {
+      return $g[0];
+    }
+  }
+  $dir = image_base_dir().DIRECTORY_SEPARATOR
+       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
+       .$home_subdir.DIRECTORY_SEPARATOR;
+
+  $g = glob($dir.$filename.".*");
+  if ($g !== false && count($g) > 0) {
+    return $g[0];
+  }
+  // Shouldn't get here
+  return $dir.$filename;
+}
+
 ?>

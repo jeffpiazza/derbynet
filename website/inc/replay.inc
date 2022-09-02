@@ -65,7 +65,7 @@ function send_replay_message($cmd) {
           $db->commit();
         } catch (PDOException $e) {
           $db->rollBack();
-          error_log("send_replay_message: transaction rolled back: " + $e);
+          error_log("send_replay_message: transaction rolled back: " + $e->getMessage());
         }
       } else {
         error_log("send_replay_message: beginTransaction returns false");

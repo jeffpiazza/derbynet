@@ -96,6 +96,9 @@ if (locked_settings()) {
   $racers_subdir = '';
   $cars_subdir = '';
   $videos_subdir = '';
+  $imagery_subdir = '';
+  $slides_subdir = '';
+
   $new_database_path = '';
 
   if (isset($_POST['ez-new']) && $_POST['ez-new'] != "") {
@@ -124,6 +127,8 @@ if (locked_settings()) {
     $cars_subdir = $directory . DIRECTORY_SEPARATOR . 'cars';
     $videos_subdir = $directory . DIRECTORY_SEPARATOR . 'videos';
     $logs_subdir = $directory . DIRECTORY_SEPARATOR . 'logs';
+    $imagery_subdir = $directory . DIRECTORY_SEPARATOR . 'imagery';
+    $slides_subdir = $directory . DIRECTORY_SEPARATOR . 'slides';
     if ($ok) {
       if (!@mkdir($racers_subdir)) {
         json_failure('mkdir-racers', "Unable to create racers subdirectory.");
@@ -148,12 +153,25 @@ if (locked_settings()) {
         $ok = false;
       }
     }
+    if ($ok) {
+      if (!@mkdir($imagery_subdir)) {
+        json_failure('mkdir-imagery', "Unable to create imagery subdirectory.");
+        $ok = false;
+      }
+    }
+    if ($ok) {
+      if (!@mkdir($slides_subdir)) {
+        json_failure('mkdir-slides', "Unable to create slides subdirectory.");
+        $ok = false;
+      }
+    }
 
     umask($old_umask);
 
     if ($ok) {
       $new_database_path = $directory . DIRECTORY_SEPARATOR . 'derbynet.sqlite3';
       $connection_string = 'sqlite:'. $new_database_path;
+      $homedir = $directory;
       $dbuser = $dbpass = "";
     }
   } else if (isset($_POST['ez-old']) && $_POST['ez-old'] != "") {
@@ -163,10 +181,12 @@ if (locked_settings()) {
       $ok = false;
     } else {
       $connection_string = 'sqlite:'.$config['database'];
+      $homedir = $config['homedir'];
       $dbuser = $dbpass = "";
     }
   } else {
     $connection_string = $_POST['connection_string'];
+    $homedir = false;
     $dbuser = $_POST['dbuser'];
     $dbpass = $_POST['dbpass'];
   }
@@ -219,7 +239,7 @@ if (locked_settings()) {
   }
 
   if ($ok) {
-    $ok = write_database_config_file($connection_string, $dbuser, $dbpass, $options);
+    $ok = write_database_config_file($connection_string, $homedir, $dbuser, $dbpass, $options);
   }
 
   $config_roles = 'config-roles.inc';

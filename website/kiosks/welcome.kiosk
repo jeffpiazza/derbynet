@@ -16,7 +16,7 @@ max-height: 80vh;
 </head>
 <body>
 <div class="full_page_center">
-<img src="image.php/emblem.png"/>
+<img src="image.php/emblem"/>
 </div>
 <p class="kiosk_title">Welcome</p>
 

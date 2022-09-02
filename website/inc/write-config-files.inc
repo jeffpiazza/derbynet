@@ -21,15 +21,17 @@ function write_config_file($filename, $content) {
 
 // Returns true if successful
 // ====================================================================
-function write_database_config_file($connection_string, $dbuser, $dbpass, $options) {
+function write_database_config_file($connection_string, $homedir, $dbuser, $dbpass, $options) {
   // The setAttribute for ATTR_CASE allows interoperation with GPRM SQLite
   // databases.
   $exported_options = var_export($options, /* return */ true);
   $exported_connection = var_export($connection_string, true);
   $exported_dbuser = var_export($dbuser, true);
   $exported_dbpass = var_export($dbpass, true);
+  $exported_homedir = var_export($homedir, true);
   $content = <<<END
 <?php
+\$homedir = $exported_homedir;
 \$db_connection_string = $exported_connection;
 \$db = new PDO(\$db_connection_string, $exported_dbuser, $exported_dbpass,
                $exported_options);

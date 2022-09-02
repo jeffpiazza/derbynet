@@ -1,5 +1,6 @@
 <?php
 
+require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 
 class CheckInCardDocument extends PrintableRacerDocument {
@@ -20,7 +21,7 @@ class CheckInCardDocument extends PrintableRacerDocument {
   function DrawOneAt($x, $y, &$racer) {
     $this->pdf->Rect($x, $y, 3.375, 2.025, 'D');
 
-    $this->pdf->Image(image_file_path('emblem.png'),
+    $this->pdf->Image(image_file_path('emblem'),
                       $x + 0.05, $y + 0.05, 0.75, 0.75);
 
     $name = array(new SetFontTag('Times', '', 18), $racer['firstname']." ",
