@@ -48,7 +48,7 @@ class ImportRoster extends ImportCsvGenerator {
 
   protected function make_relabeling_section() {
     ?>
-    <label for="partition-label">A partition is called a(n):</label>
+    <label for="partition-label">A segment is called a(n):</label>
      <input id="partition-label" name="partition-label" type="text" class="not-mobile"
             value="<?php echo partition_label(); ?>"/>
     <?php

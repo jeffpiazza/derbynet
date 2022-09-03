@@ -173,7 +173,7 @@ $scoring = read_raceinfo('scoring', 0);
       <p>
         <input id="partition-label" name="partition-label" type="text" class="not-mobile"
                value="<?php echo partition_label(); ?>"/>
-        <label for="partition-label">Partition Label</label>
+        <label for="partition-label">Segment Label</label>
       </p>
 
       <p>Show racer names as:<br/>
