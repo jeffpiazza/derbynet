@@ -9,7 +9,7 @@ user_login_coordinator
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 
-# Turn on subgroups and split "Lions & Tigers" into 3 subgrouops: "Lions"(1), "Tigers"(6), and "Cougars"(7)
+# Turn on subgroups and split "Lions & Tigers" into 3 subgroups: "Lions"(1), "Tigers"(6), and "Cougars"(7)
 curl_postj action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_jsuccess
 curl_postj action.php "action=rank.edit&name=Lions&rankid=1" | check_jsuccess
 curl_postj action.php "action=rank.add&classid=1&name=Tigers" | check_jsuccess

@@ -9,7 +9,7 @@ user_login_coordinator
 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 
-`dirname $0`/outlaw-class.sh "$BASE_URL"
+`dirname $0`/import-csv-roster.sh  "$BASE_URL" "`dirname $0`/data/outlaw-class.csv"
 
 curl_postj action.php "action=settings.write&do-use-subgroups=1&do-use-subgroups-checkbox" | check_jsuccess
 curl_postj action.php "action=rank.edit&rankid=6&name=Siblings" | check_jsuccess

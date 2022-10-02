@@ -17,7 +17,16 @@ curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 1 and .[0].name == "Default"' >/dev/null || test_fails
 
 `dirname $0`/reset-database.sh "$BASE_URL"
-`dirname $0`/import-divided-roster.sh "$BASE_URL"
+`dirname $0`/import-csv-roster.sh "$BASE_URL" "`dirname $0`/data/divided-roster.csv"
+
+curl_getj "action.php?query=poll&values=partitions" | \
+    jq -e '.partitions | length == 3 and 
+                .[0].name == "Default" and 
+                .[0].count == 20 and
+                .[1].name == "Div 2" and
+                .[1].count == 19 and
+                .[2].name == "Div 3" and
+                .[2].count == 10' >/dev/null || test_fails
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 3 
