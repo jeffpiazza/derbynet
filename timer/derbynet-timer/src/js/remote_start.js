@@ -16,7 +16,7 @@ class RemoteStart {
 
   // If possible, trigger a gate release
   remote_start() {
-    if (this.profile_remote_start.has_remote_start()) {
+    if (this.has_remote_start()) {
       this.port_wrapper.write(this.profile_remote_start.command);
       this.port_wrapper.drain();
     }
