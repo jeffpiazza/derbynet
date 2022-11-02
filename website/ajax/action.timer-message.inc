@@ -61,9 +61,7 @@ $timer_state = new TimerState();     // An object carrying our idea of the timer
 start_response();
 
 if (have_permission(TIMER_MESSAGE_PERMISSION)) {
-  if ($remote_start == 'YES') {
-    set_has_remote_start();
-  }
+  set_has_remote_start($remote_start == 'YES');
 
   if ($message == 'HELLO') {
     // Timer begins in TIMER_SEARCHING, almost the same as unhealthy, until we

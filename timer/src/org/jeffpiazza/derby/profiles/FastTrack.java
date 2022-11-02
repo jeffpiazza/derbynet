@@ -67,12 +67,15 @@ public class FastTrack extends TimerDeviceWithProfile {
                       new Profile.Detector("RG1", Event.GATE_CLOSED),
                       // An "X" after RG means option disabled
                       new Profile.Detector("^X$",
-                          Event.GATE_WATCHER_NOT_SUPPORTED));
+                          Event.GATE_WATCHER_NOT_SUPPORTED))
+        .remote_start(false, "LG");
+
     if (Flag.fasttrack_automatic_gate_release.value()) {
-      profile.remote_start(true, "LG");
+      profile.remote_start.has_remote_start = true;
     } else {
       profile.during(StateMachine.State.MARK, "LR");
     }
+
     return profile;
   }
 }

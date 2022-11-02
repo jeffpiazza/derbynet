@@ -60,6 +60,9 @@ class Flag {
           break;
         }
       }
+      if (g_timer_proxy && g_host_poller) {
+        g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
+      }
     });
 
   static dtr_gate_release = new Flag(

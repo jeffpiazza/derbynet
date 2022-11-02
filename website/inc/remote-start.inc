@@ -2,8 +2,12 @@
 
 require_once('inc/data.inc');
 
-function set_has_remote_start() {
-    write_raceinfo('remote-start', time());
+function set_has_remote_start($v) {
+    if ($v) {
+        write_raceinfo('remote-start', time());
+    } else {
+        delete_from_raceinfo('remote-start');
+    }
 }
 
 function has_remote_start() {
