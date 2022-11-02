@@ -51,10 +51,10 @@ class Flag {
       for (var i = 0; i < profiles.length; ++i) {
         if (profiles[i].key == "FastTrack-K") {
           if (v) {
-            profiles[i].remote_start.has_remote_start = true;
+          //  profiles[i].remote_start.has_remote_start = true;
             profiles[i].poll = {};
           } else {
-            profiles[i].remote_start.has_remote_start = false;
+          //  profiles[i].remote_start.has_remote_start = false;
             profiles[i].poll = {"MARK": {"commands": ["LR"]}};
           }
           break;
