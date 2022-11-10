@@ -84,28 +84,20 @@
   margin-right: auto;
   margin-bottom: 50px;
 }
-#racing-state {
-  text-align: center;
-}
-#next-lanes {
-  margin-top: 10px;
-}
-#next-lanes .rlane {
-  display: inline-block;
-  border: solid white 2px;
-  text-align: center;
-}
+
 #racing-lanes {
   margin-bottom: 10px;
 }
-#racing-lanes .rlane {
+#racing-lanes .rlane,
+#last-reported-lanes .rlane {
   display: inline-block;
   border: solid black 2px;
   text-align: center;
 }
 
-              .rlane.masked,
-#racing-lanes .rlane.masked {
+                     .rlane.masked,
+#racing-lanes        .rlane.masked,
+#last-reported-lanes .rlane.masked {
   border: solid white 2px;
 }
 .rlane img {

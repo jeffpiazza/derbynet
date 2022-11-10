@@ -8,7 +8,7 @@ class HeatResult {
     this.lanemask = lanemask;
     var count = 32 - this.countLeadingZeros(lanemask);
     this.lane_results = [];
-    for (var lane = 1; lane <= count; ++lane) {
+    for (var lane = 0; lane < count; ++lane) {
       if ((lanemask & (1 << lane)) != 0) {
         this.lane_results.push({time: 0, place: 0});
       } else {

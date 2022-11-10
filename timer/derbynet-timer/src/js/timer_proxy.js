@@ -8,13 +8,6 @@
 //  pw.open({baud: 9600});
 //  g_timer_proxy = new TimerProxy(pw, all_profiles()[1]);
 
-function zeroesToNines(time) {
-  if (time && time.match(/^0\.0+$/)) {
-    return time.replaceAll('0', '9');
-  }
-  return time;
-}
-
 
 class TimerProxy {
   port_wrapper;
@@ -190,16 +183,9 @@ class TimerProxy {
       this.overdue_time = 0;  // Insurance, not really necessary
       this.roundid = args[0];
       this.heat = args[1];
-      var lanemask = args[2];
-      var lanes = args[3];
-      var round = args[4];
-      var group = args[5];
-
-      Gui.prepare_heat(group, round, this.heat, lanes, lanemask);
-
       var pause = Math.max(0,
                            this.lastFinishTime + Flag.delay_reset_after_race.value * 1000 - Date.now());
-      TimerEvent.sendAfterMs(pause, 'MASK_LANES', [lanemask, lanes]);
+      TimerEvent.sendAfterMs(pause, 'MASK_LANES', [/*lanemask=*/args[2], /*lanes=*/args[3]]);
       break;
     }
     case 'MASK_LANES':
@@ -229,22 +215,9 @@ class TimerProxy {
       this.overdue_time = 0;
       break;
     case 'LANE_RESULT': {
-      var lane_char = args[0].charCodeAt(0);
-      // ASCII 48 is '0', 57 is '9', 65 is 'A', 97 is 'a'
-      var lane = (49 <= lane_char && lane_char <= 57) ?
-          lane_char - 49 + 1 :
-          lane_char - 65 + 1;
-      var time = zeroesToNines(args[1]);
-      var place = 0;
-      if (args.length > 2 && args[2]) {
-        // ASCII 33 is '!', signifying place
-        place = args[2].charCodeAt(0) - 33 + 1;
-      }
-      Gui.lane_result(lane);
-
       if (this.result != null) {
         var was_filled = this.result.isFilled();
-        var valid = this.result.setLane(lane, time, place);
+        var valid = this.result.setLane(/*lane*/args[0], /*time*/args[1], /*place*/args[2]);
         // Send just a single RACE_FINISHED event, even if we get some extra
         // results for masked-out lanes, etc.
         if (valid && this.result.isFilled() && !was_filled) {
@@ -254,7 +227,7 @@ class TimerProxy {
       break;
     }
     case 'LANE_COUNT':
-      this.detected_lane_count = args[0].charCodeAt(0) - 49 + 1;
+      this.detected_lane_count = args[0];
       break;
     case 'GATE_OPEN':
       break;
@@ -273,7 +246,6 @@ class TimerProxy {
   }
 
   async maskLanes(lanemask, lanes) {
-    Gui.mask_lanes(lanes, lanemask);
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {

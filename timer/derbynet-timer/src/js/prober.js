@@ -152,7 +152,12 @@ class Prober {
               opened_ok = false;
             });
           if (!opened_ok) {
-            break;  // No more profiles for this port
+            // Remove the bad port.
+            g_ports.splice(porti, 1);
+            // If we tried opening the port when user_chosen_port wasn't zero,
+            // then user_chosen_port was the bad port, so set it to zero.
+            this.user_chosen_port = 0;
+            break;
           }
 
           var timer_id;
@@ -199,7 +204,8 @@ class Prober {
       vid = usb_info.usbVendorId.toString(16).padStart(4, '0');
       pid = usb_info.usbProductId.toString(16).padStart(4, '0');
     }
-    TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, timer_id, vid, pid]);
+    TimerEvent.sendAfterMs(1000, 'IDENTIFIED', [prof.name, prof.hasOwnProperty('prober'),
+                                                timer_id, vid, pid]);
     $("#probe-button").prop('disabled', true);
   }
 }

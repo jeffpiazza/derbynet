@@ -74,6 +74,7 @@ class PortWrapper {
       await this.reader.cancel();
     }
 
+    // TODO This may throw if the port is already closed (due to an error, e.g.)
     await this.port.close();
   }
 

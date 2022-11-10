@@ -15,7 +15,7 @@ class HostPoller {
 
   next_message_time = 0;
   identified = false;
-  confirmed = true;  // TODO
+  confirmed = true;
 
   competing = false;
 
@@ -51,15 +51,22 @@ class HostPoller {
     switch (event) {
     case 'IDENTIFIED':
       this.identified = true;
+      this.confirmed = args[1];
       this.sendMessage({action: 'timer-message',
                         message: 'IDENTIFIED',
                         // TODO lane_count, ident, options
                         timer: args[0],  // TODO No formal name
                         human: args[0],
-                        ident: args[1],
-                        vid: args[2],
-                        pid: args[3]
+                        confirmed: this.confirmed ? 1 : 0,
+                        ident: args[2],
+                        vid: args[3],
+                        pid: args[4]
                        });
+      break;
+    case 'LANE_RESULT':
+    case 'GATE_OPEN':
+    case 'GATE_CLOSED':
+      this.confirmed = true;
       break;
     case 'RACE_STARTED':
       this.sendMessage({action: 'timer-message',
@@ -120,6 +127,12 @@ class HostPoller {
     }
   }
 
+
+  // Avoid generating spurious PREPARE_HEAT_RECEIVED for announcements of the
+  // same heat
+  _roundid = -1;
+  _heat = -1;
+
   decodeResponse(response) {
     response = response.documentElement;
     var nodes;
@@ -138,10 +151,14 @@ class HostPoller {
                   parseInt(nodes[0].getAttribute('lanes')),
                   parseInt(nodes[0].getAttribute('round')),
                   nodes[0].getAttribute('class')];
-      if (g_logger.do_logging) {
-        g_logger.host_in('Prepare heat ' + args.join(','));
+      if (this._roundid != args[0] || this._heat != args[1]) {
+        this._roundid = args[0];
+        this._heat = args[1];
+        if (g_logger.do_logging) {
+          g_logger.host_in('Prepare heat ' + args.join(','));
+        }
+        TimerEvent.send('PREPARE_HEAT_RECEIVED', args);
       }
-      TimerEvent.send('PREPARE_HEAT_RECEIVED', args);
     }
     if ((nodes = response.getElementsByTagName("remote-start")).length > 0) {
       g_logger.host_in('START RACE');

@@ -8,7 +8,7 @@
 
 class TimerEvent {
   /*
-    IDENTIFIED
+    IDENTIFIED, profile_name, probed, timer_id, vid, pid
     PREPARE_HEAT_RECEIVED, args are roundid, heat, lanemask, lane_count, round (all integers), and class
     MASK_LANES, lanemask as arg (resets the timer)
     ABORT_HEAT_RECEIVED,
@@ -17,7 +17,9 @@ class TimerEvent {
     GATE_CLOSED,
     RACE_STARTED,
     RACE_FINISHED, args are roundid, heat, HeatResult
-    LANE_RESULT, // Just one; args are lane and time (as strings)
+    LANE_RESULT, lane (1-based), time (string), place (1-based or 0)
+    // (LANE_RESULT is triggered with three strings and processed before promulgating.)
+    //
     // Eventually, overdue results give way to a GIVING_UP event,
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
     GIVING_UP,  // Giving up on overdue results
@@ -62,15 +64,28 @@ class TimerEvent {
       g_logger.debug_msg('trigger ' + event);
     }
 
-    if (event != 'GATE_OPEN' && event != 'GATE_CLOSED') {
-      if (event == 'PREPARE_HEAT_RECEIVED') {
-        Gui.show_event(event);
-      } else if (event == 'RACE_FINISHED') {
-        Gui.show_event(event + " id=" + args[0] + " heat=" + args[1] + " " + args[2]);
-      } else {
-        Gui.show_event(event + " " + (args || []).join(','));
+    switch (event) {
+    case 'LANE_RESULT': {
+      var lane_char = args[0].charCodeAt(0);
+      // ASCII 48 is '0', 57 is '9', 65 is 'A', 97 is 'a'
+      var lane = (49 <= lane_char && lane_char <= 57) ?
+          lane_char - 49 + 1 :
+          lane_char - 65 + 1;
+      var place = 0;
+      if (args.length > 2 && args[2]) {
+        // ASCII 33 is '!', signifying place
+        place = args[2].charCodeAt(0) - 33 + 1;
       }
+
+      args = [lane, zeroesToNines(args[1]), place];
     }
+      break;
+
+    case 'LANE_COUNT':
+      args = [ args[0].charCodeAt(0) - 49 + 1 ];
+      break;
+    }
+
     for (var i = 0; i < this.handlers.length; ++i) {
       try {
         this.handlers[i].onEvent(event, args);
@@ -79,4 +94,11 @@ class TimerEvent {
       }
     }
   }
+}
+
+function zeroesToNines(time) {
+  if (time && time.match(/^0\.0+$/)) {
+    return time.replaceAll('0', '9');
+  }
+  return time;
 }

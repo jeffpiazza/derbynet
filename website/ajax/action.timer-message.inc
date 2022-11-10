@@ -178,8 +178,8 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       if (!$timer_state->unhealthy()) {
         $timer_state->to_state(TIMER_SEARCHING);
       }
-    } else if (isset($_POST['confirmed']) && $_POST['confirmed'] == 0) {
-      $timer_state->to_state(TIMER_UNCONFIRMED);
+    } else if (isset($_POST['confirmed'])) {
+      $timer_state->to_state($_POST['confirmed'] == 0 ? TIMER_UNCONFIRMED : TIMER_CONNECTED);
     } else if ($timer_state->unhealthy()) {
       // A good heartbeat converts unhealthy back to connected
       $timer_state->to_state(TIMER_CONNECTED);

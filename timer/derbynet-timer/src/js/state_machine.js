@@ -142,7 +142,7 @@ class StateMachine {
     }
 
     if (initial != this.state) {
-      $("#racing-state").text(this.state);
+      Gui.set_racing_state(this.state, this.gate_state_is_knowable);
       if (this.state != 'SET') {
         this.first_gate_open_ms = 0;
       }
