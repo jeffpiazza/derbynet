@@ -15,6 +15,7 @@
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
 require_once('inc/class_add_or_delete.inc');
+require_once('inc/rank_add_or_delete.inc');
 require_once('inc/events.inc');
 
 function move_partition($div_id, $group_field, $group_id, $from_group_field, $from_group_id) {
