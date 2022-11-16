@@ -69,7 +69,13 @@ $(function() {
     $("#port-button").addClass('hidden');
   }
   if (!('serial' in navigator)) {
-    $("#no-serial-api").removeClass('hidden');
+    if (!window.isSecureContext) {
+      var link = "https://" + window.location.hostname + window.location.pathname;
+      $("#no-serial-api-http p a").prop('href', link).text(link);
+      $("#no-serial-api-http").removeClass('hidden');
+    } else {
+      $("#no-serial-api").removeClass('hidden');
+    }
     show_modal("#no-serial-api-modal");
   } else if (!g_standalone) {
     setTimeout(async function() {

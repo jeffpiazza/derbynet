@@ -165,9 +165,23 @@ if (!g_standalone) {
 </div>
 
 <div id="no-serial-api-modal" class="modal_dialog hidden block_buttons">
-    <div id="no-serial-api">
-        This browser does not support <br/><b>Web Serial API</b><br/>and so cannot communicate with your timer.
-        Please try a different browser.
+    <div id="no-serial-api" class='hidden'>
+        <p>Communicating with your timer
+           requires browser support for the
+           <br/><b>Web Serial API</b>.</p>
+        <p>Please try a different browser.</p>
+        <p>(A recent version of
+           <br/><b>Chrome</b>,
+           <b>Edge</b>, or <b>Opera</b><br/>
+           browser is recommended.)</p>
+    </div>
+    <div id="no-serial-api-http" class='hidden'>
+        <p>Communicating with your timer
+           requires browser support for the
+          <br/><b>Web Serial API</b>.</p>
+        <p>Most browsers that support the API
+           require a "secure context;" <br/>
+           please try visiting <a></a> instead.</p>
     </div>
 </div>
 
