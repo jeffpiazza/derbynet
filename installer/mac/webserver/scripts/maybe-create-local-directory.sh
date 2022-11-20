@@ -11,9 +11,3 @@ test -e /Library/WebServer/Documents/derbynet/local/config-roles.inc && \
 grep -q -v JUDGING_PERMISSION /Library/WebServer/Documents/derbynet/local/config-roles.inc && \
     sed -i.bak -e 's/ASSIGN_RACER_IMAGE_PERMISSION/ASSIGN_RACER_IMAGE_PERMISSION | JUDGING_PERMISSION/' \
         /Library/WebServer/Documents/derbynet/local/config-roles.inc
-
-cat <<EOF > /Library/WebServer/Documents/derbynet/local/default-file-path.inc
-<?php
-\$default_file_path = "$HOME/Public/DerbyNet";
-?>
-EOF

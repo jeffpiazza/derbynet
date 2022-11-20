@@ -469,19 +469,42 @@
   </loadresource>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
+         match="US_ROOT_SSL=.*"
+         replace="US_ROOT_SSL=./www"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
          match="PHP_SELECT=php[0-9]*"
          replace="PHP_SELECT=${php-version}"/>
-  
   <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_user.ini"
          match="DISPLAY_PAGE_2=yes"
          replace="DISPLAY_PAGE_2=no"/>
 
-  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
-         match=";(extension=php_pdo_odbc.dll)"
-         replace="\1"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\core/apache2/conf/httpd.conf"
+         byline="true"
+         match="^(Define.*PHP_SELECT.*)"
+         replace="${line.separator}PassEnv DERBYNET_CONFIG_DIR DERBYNET_DATA_DIR${line.separator}${line.separator}\1"/>
+  <fixcrlf file="${uniserver-target}\UniServerZ\core/apache2/conf/httpd.conf" eol="dos"/>
+
+  <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_config.ini"
+           byline="true"
+           match="^\[ENV_VARS\]"
+           replace="[ENV_VARS]${line.separator}DERBYNET_DATA_DIR=%UniConPath%\\\\..\\\\Data"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\home\us_config\us_config.ini"
+           byline="true"
+           match="^\[ENV_VARS\]"
+           replace="[ENV_VARS]${line.separator}DERBYNET_CONFIG_DIR=%UniConPath%\\\\www\\\\local"/>
+  <fixcrlf file="${uniserver-target}\UniServerZ\home\us_config\us_config.ini" eol="dos"/>
 
   <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
-         match=";(extension=php_pdo_sqlite.dll)"
+         match=";(extension=.*pdo_odbc.*)"
+         replace="\1"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
+         match=";(extension=.*pdo_sqlite.*)"
+         replace="\1"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
+         match=";(extension=sqlite3.*)"
+         replace="\1"/>
+  <replaceregexp file="${uniserver-target}\UniServerZ\core\${php-version}\php_production.ini"
+         match=";(extension=odbc.*)"
          replace="\1"/>
 
   <delete>
@@ -495,11 +518,6 @@
     </fileset>
   </copy>
   <mkdir dir="${uniserver-target}\UniServerZ\www\local"/>
-  <echo file="${uniserver-target}\UniServerZ\www\local\default-file-path.inc"><![CDATA[<?php
-    $default_file_path=dirname(dirname(dirname(dirname(__FILE__)))).DIRECTORY_SEPARATOR."Data";
-  ?>
-  ]]>
-  </echo>
 
   <copy todir="${uniserver-target}">
     <fileset dir="${timer-jar-dir}">

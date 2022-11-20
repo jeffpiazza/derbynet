@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# This only works under strong assumptions about where DERBYNET_CONFIG_DIR
+# points; those assumptions are no longer true.
+##############################
 # Performs some basic tests on a newly-installed or partially-installed website.
 #
 # For a remote server, we wouldn't have access to the 'local' directory, so this
@@ -13,7 +16,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-if [ "$BASE_URL" = "localhost/derbynet" ]; then
+if [   0 = 1   -a   "$BASE_URL" = "localhost" ]; then
     if [ -d /Library/WebServer/Documents/derbynet/ ]; then
         # Mac
         BASEDIR=/Library/WebServer/Documents/derbynet
@@ -57,17 +60,16 @@ if [ "$BASE_URL" = "localhost/derbynet" ]; then
     curl_get index.php | expect_one "but isn't writable"
 
     ## ----------------------------------
-    echo '   ' With writable empty directory but no default path
+    # echo '   ' With writable empty directory but no default path
     chmod 0777 $BASEDIR/local
-    curl_get index.php | expect_one 'configure the database first'
+    # curl_get index.php | expect_one 'configure the database first'
 
-    curl_postj action.php "action=setup.nodata&ez-new=this-will-fail" | check_jfailure
+    # curl_postj action.php "action=setup.nodata&ez-new=this-will-fail" | check_jfailure
 
-    [ -z "`ls $BASEDIR/local`" ] || test_fails Unexpected files created!
+    # [ -z "`ls $BASEDIR/local`" ] || test_fails Unexpected files created!
 
     ## ----------------------------------
     echo '   ' Successful set-up
-    cp $BASEDIR/xlocalx/default-file-path.inc $BASEDIR/local
 
     curl_get index.php | expect_one 'configure the database first'
     curl_postj action.php "action=setup.nodata&ez-new=this-will-succeed" | check_jsuccess
@@ -95,6 +97,6 @@ if [ "$BASE_URL" = "localhost/derbynet" ]; then
 
 else
     tput setaf 2  # green text
-    echo Server is remote, so not testing ab initio set-up
+    echo Not testing ab initio set-up
     tput setaf 0  # black text
 fi

@@ -28,6 +28,9 @@ security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain 
 
 
 cat <<EOF | sed -e "s/SERVERNAME/$SERVERNAME/" >$DSTVOLUME/private/etc/apache2/derbynet/derbynet.conf
+SetEnv DERBYNET_CONFIG_DIR /Library/WebServer/Documents/derbynet/local
+SetEnv DERBYNET_DATA_DIR   $HOME/Public/Derbynet
+
 <Directory /Library/WebServer/Documents/derbynet>
     Options FollowSymLinks Indexes MultiViews
     AllowOverride All

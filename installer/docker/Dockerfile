@@ -39,10 +39,9 @@ COPY installer/docker/set-timeout.sh /usr/local/bin
 ##################################################
 # Post-install actions from Debian derbynet_server installer:
 
-RUN test -d $WWW_ROOT/local && rm -rf $WWW_ROOT/local
+RUN test -d $WWW_ROOT/local || mkdir -m 777 $WWW_ROOT/local
 
 RUN mkdir -m 777 /var/lib/derbynet
-RUN echo '<?php $default_file_path = "/var/lib/derbynet"; ?>' > /var/lib/derbynet/default-file-path.inc
 
 # How large are the pictures you want to upload?  8M covers an 18-megapixel
 # photo.
@@ -59,7 +58,6 @@ RUN for INI in `find /etc/php -name php.ini` ; do \
 
 RUN sed -i \
     -e "s#php.*-fpm.sock#php/php`ls /etc/php | tail -n 1`-fpm.sock#" \
-    -e "s#CONFIG_DIR .*#CONFIG_DIR /var/lib/derbynet;#" \
     /etc/nginx/derbynet/location.snippet
 
 RUN sed -i -e '/^[ \t]*location \/ {/ i\

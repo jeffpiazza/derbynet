@@ -191,7 +191,7 @@ function remove_prefixes($prefix, $entries) {
 }
 
 function all_kiosk_pages() {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   return remove_prefixes(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR,
                          array_merge(all_kiosk_pages_with_prefix(
                                        dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR.'kiosks'),

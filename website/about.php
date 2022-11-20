@@ -147,7 +147,7 @@ if (count($urls) == 0) {
 ?>
 <h4>Database Configuration</h4>
 <?php
-    $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+    $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
     if (have_permission(SET_UP_PERMISSION)) {
       $config_content = @file_get_contents($configdir.DIRECTORY_SEPARATOR.'config-database.inc',
                                            /* use_include_path */ true);

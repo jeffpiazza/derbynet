@@ -208,8 +208,8 @@ function plural_to_be($n, $single, $plural) {
 function diagnose_configuration() {
   global $db_connection_string;
 
-  $config_dir = isset($_SERVER['CONFIG_DIR'])
-      ? $_SERVER['CONFIG_DIR']
+  $config_dir = isset($_SERVER['DERBYNET_CONFIG_DIR'])
+      ? $_SERVER['DERBYNET_CONFIG_DIR']
       // dirname 2 levels up, because we're in the /inc subdirectory
       : (dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'local');
 

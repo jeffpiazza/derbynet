@@ -5,12 +5,12 @@
 // for multiple groups on a single shared hosting account.
 
 function locked_settings() {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   return file_exists($configdir.DIRECTORY_SEPARATOR.'settings.lock');
 }
 
 function preferred_urls() {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   try {
     // If present, the config-url should contain the whole url, e.g.,
     //  http://my-host.com/with/a/long/path

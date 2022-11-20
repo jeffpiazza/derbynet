@@ -25,12 +25,6 @@ grep -q -v JUDGING_PERMISSION /var/www/html/derbynet/local/config-roles.inc && \
     sed -i.bak -e 's/ASSIGN_RACER_IMAGE_PERMISSION/ASSIGN_RACER_IMAGE_PERMISSION | JUDGING_PERMISSION/' \
         /var/www/html/derbynet/local/config-roles.inc
 
-cat <<EOF >/var/www/html/derbynet/local/default-file-path.inc
-<?php
-\$default_file_path = "/var/lib/derbynet";
-?>
-EOF
-
 ######## PHP config
 
 # How large are the pictures you want to upload?  8M covers an 18-megapixel

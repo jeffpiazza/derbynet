@@ -1,7 +1,7 @@
 <?php
 
 function local_file_name($filename) {
-  $configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+  $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   return $configdir.DIRECTORY_SEPARATOR.$filename;
 }
 

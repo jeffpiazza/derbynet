@@ -1,5 +1,5 @@
 <?php
-$configdir = isset($_SERVER['CONFIG_DIR']) ? $_SERVER['CONFIG_DIR'] : 'local';
+$configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
 try {
     @include($configdir.DIRECTORY_SEPARATOR."config-database.inc");
 } catch (PDOException $p) {

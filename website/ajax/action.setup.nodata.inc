@@ -18,6 +18,7 @@ require_once('inc/standard-configs.inc');
 
 function error_handler($errno, $errstr, $errfile, $errline)
 {
+  global $g_errstr;
   $g_errstr = $errstr;
   return false;  // allow normal handling to continue
 }
