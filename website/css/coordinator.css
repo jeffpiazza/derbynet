@@ -107,6 +107,19 @@
   font-size: 24px;
 }
 
+#not-racing-warning {
+  width: 960px;
+  margin: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: #ff0000;
+  color: white;
+  border: 3px solid black;
+  text-shadow: unset;
+  font-size: 24px;
+}
+
 .current.control_group h3 {
   margin-top: 0px;
   font-size: x-large;

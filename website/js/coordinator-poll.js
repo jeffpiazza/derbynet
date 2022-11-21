@@ -660,6 +660,8 @@ function process_coordinator_poll_json(json) {
     $('#timer-testing-herald').remove();
   }
 
+  $("#not-racing-warning").toggleClass('hidden', json['current-heat']['now_racing']);;
+
   $("#playlist-start").toggleClass('hidden',
                                    !(json['current-heat'].roundid == -1 && json.rounds.some(r => r.next)));
 

@@ -34,6 +34,9 @@ var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
 <?php make_banner('Race Dashboard'); ?>
 
 <div class="double_control_column">
+  <div id="not-racing-warning" class="hidden">
+    Turn on racing mode or simulate racing if you wish to record results.
+  </div>
   <div id="now-racing-group" class="scheduling_control_group">
     <p>Waiting for poll.coordinator query...</p>
   </div>
