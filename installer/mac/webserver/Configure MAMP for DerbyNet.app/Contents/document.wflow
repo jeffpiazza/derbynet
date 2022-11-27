@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>512</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array/>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>affirmativeTitle</key>
+					<dict/>
+					<key>displayWarning</key>
+					<dict/>
+					<key>explanationText</key>
+					<dict/>
+					<key>negativeTitle</key>
+					<dict/>
+					<key>questionText</key>
+					<dict>
+						<key>tokenizedValue</key>
+						<array>
+							<string>This program will update the configuration for MAMP so it can run DerbyNet installed on this machine.</string>
+						</array>
+					</dict>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array/>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Ask for Confirmation.action</string>
+				<key>ActionName</key>
+				<string>Ask for Confirmation</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>affirmativeTitle</key>
+					<string>OK</string>
+					<key>displayWarning</key>
+					<false/>
+					<key>explanationText</key>
+					<string></string>
+					<key>negativeTitle</key>
+					<string>Cancel</string>
+					<key>questionText</key>
+					<string>This program will update the configuration for MAMP so it can run DerbyNet installed on this machine.</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.AskforConfirmation</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<true/>
+				<key>CanShowWhenRun</key>
+				<false/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>AMAskForConfirmationAction</string>
+				<key>IgnoresInput</key>
+				<true/>
+				<key>InputUUID</key>
+				<string>B23B40AA-9336-4ACC-B417-664198F7361C</string>
+				<key>Keywords</key>
+				<array>
+					<string>Message</string>
+					<string>Ask</string>
+					<string>Display</string>
+					<string>Prompt</string>
+					<string>Show</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>F9F6A61C-265B-4967-BFD5-29FB89BB4E65</string>
+				<key>UUID</key>
+				<string>D274C014-1D4B-4757-9006-A58D750ED6C8</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>Cancel</string>
+						<key>name</key>
+						<string>negativeTitle</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>displayWarning</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>explanationText</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string>OK</string>
+						<key>name</key>
+						<string>affirmativeTitle</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>questionText</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>431.000000:322.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Ask for Confirmation.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>2.0.3</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<dict/>
+					<key>CheckedForUserDefaultShell</key>
+					<dict/>
+					<key>inputMethod</key>
+					<dict/>
+					<key>shell</key>
+					<dict/>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.cocoa.string</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run Shell Script.action</string>
+				<key>ActionName</key>
+				<string>Run Shell Script</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<string># PATH=/usr/bin:/bin:/usr/sbin:/sbin
+APACHE_CONF_DIR=/Applications/MAMP/conf/apache
+HTTPD_CONF=$APACHE_CONF_DIR/httpd.conf
+HTTPD_SSL_CONF=$APACHE_CONF_DIR/extra/httpd-ssl.conf
+
+sed -i \
+    -e "s!^ *Listen *8888!Listen 80!" \
+    $HTTPD_CONF
+
+sed -i \
+    -e "s!^ *Listen *8888!Listen 80!" \
+    -e "s!^ *DocumentRoot .*!DocumentRoot \"/Library/WebServer/Documents/derbynet\"!" \
+    -e "s!^# *\(Include.*/httpd-ssl.conf\)!\1!" \
+    $HTTPD_CONF
+
+sed -i \
+    -e "s!^# *\(Include.*/httpd-ssl.conf\)!\1!" \
+    $HTTPD_CONF
+
+grep -s DERBYNET_DATA_DIR $HTTPD_CONF &amp;gt; /dev/null || \
+sed -i \
+    -e "/^DocumentRoot/ a\\
+SetEnv DERBYNET_DATA_DIR $HOME/Public/DerbyNet\\
+" $HTTPD_CONF
+
+grep -s DERBYNET_CONFIG_DIR $HTTPD_CONF &amp;gt; /dev/null || \
+sed -i \
+    -e "/^DocumentRoot/ a\\
+SetEnv DERBYNET_CONFIG_DIR /Library/WebServer/Documents/derbynet/local\\
+" $HTTPD_CONF
+
+
+######### SSL 
+
+SNAKEOIL_CERT=$APACHE_CONF_DIR/snakeoil.cert
+SNAKEOIL_KEY=$APACHE_CONF_DIR/snakeoil.key
+
+if [ ! -f $SNAKEOIL_CERT -o ! -f $SNAKEOIL_KEY ] ; then
+	openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
+    	-subj "/C=US/ST=Unknown/L=Unknown/O=DerbyNet user/CN=$USER" \
+	    -keyout $SNAKEOIL_KEY -out $SNAKEOIL_CERT
+fi
+
+sed -i \
+    -e "s!^ *DocumentRoot .*!DocumentRoot \"/Library/WebServer/Documents/derbynet\"!" \
+   $HTTPD_SSL_CONF
+
+sed -i \
+    -e "s!^SSLCertificateFile.*server.crt\"!SSLCertificateFile \"$SNAKEOIL_CERT\"!" \
+   $HTTPD_SSL_CONF
+
+sed -i \
+    -e "s!^SSLCertificateKeyFile.*server.key\"!SSLCertificateKeyFile \"$SNAKEOIL_KEY\"!" \
+   $HTTPD_SSL_CONF
+
+# The SSLMutex directive in httpd-ssl.conf elicits a complaint from Apache.
+# It may left over from some earlier versions of MAMP.
+sed -i \
+    -e "s!^SSLMutex!#SSLMutex!" \
+   $HTTPD_SSL_CONF</string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
+					<key>inputMethod</key>
+					<integer>0</integer>
+					<key>shell</key>
+					<string>/bin/zsh</string>
+					<key>source</key>
+					<string></string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.RunShellScript</string>
+				<key>CFBundleVersion</key>
+				<string>2.0.3</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunShellScriptAction</string>
+				<key>IgnoresInput</key>
+				<true/>
+				<key>InputUUID</key>
+				<string>9B7E85F1-D9B3-47CE-BF47-A881115F0484</string>
+				<key>Keywords</key>
+				<array>
+					<string>Shell</string>
+					<string>Script</string>
+					<string>Command</string>
+					<string>Run</string>
+					<string>Unix</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>48C6850F-BF94-4E50-8094-D337D58B698B</string>
+				<key>UUID</key>
+				<string>9DE540BE-535D-4331-A713-BED04B9670F1</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<integer>0</integer>
+						<key>name</key>
+						<string>inputMethod</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>CheckedForUserDefaultShell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>431.000000:1216.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array/>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.1.1</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Finder</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>appPath</key>
+					<dict>
+						<key>isPathPopUp</key>
+						<true/>
+						<key>variableUUIDsInMenu</key>
+						<array/>
+					</dict>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array/>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Launch Application.action</string>
+				<key>ActionName</key>
+				<string>Launch Application</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>appPath</key>
+					<string>/Applications/MAMP/MAMP.app</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.OpenApplication</string>
+				<key>CFBundleVersion</key>
+				<string>1.1.1</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<true/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>AMLaunchApplicationAction</string>
+				<key>InputUUID</key>
+				<string>0C1ACE11-4448-425B-ACF2-FAD14386E18A</string>
+				<key>Keywords</key>
+				<array>
+					<string>File</string>
+					<string>Open</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>A26E9ADE-663F-4EAF-939B-5C519E88AC18</string>
+				<key>UUID</key>
+				<string>45688468-6041-4721-B628-394AC326E4FD</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Finder</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>/System/Applications/Contacts.app</string>
+						<key>name</key>
+						<string>appPath</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>431.000000:1316.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Launch Application.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict>
+		<key>5BD51A7A-7C95-4968-BAFD-8882C1BD1F8A</key>
+		<dict>
+			<key>from</key>
+			<string>D274C014-1D4B-4757-9006-A58D750ED6C8 - D274C014-1D4B-4757-9006-A58D750ED6C8</string>
+			<key>to</key>
+			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
+		</dict>
+		<key>BBCB428B-64A8-417C-AFD9-EF3A6F93C778</key>
+		<dict>
+			<key>from</key>
+			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
+			<key>to</key>
+			<string>45688468-6041-4721-B628-394AC326E4FD - 45688468-6041-4721-B628-394AC326E4FD</string>
+		</dict>
+	</dict>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.application</string>
+	</dict>
+</dict>
+</plist>

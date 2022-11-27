@@ -354,6 +354,10 @@
             <include name="org.jeffpiazza.derbynet.after-macos-upgrade.plist"/>
         </fileset>
     </copy>
+    <copy todir="ROOT/Applications/DerbyNet/Configure MAMP for DerbyNet.app">
+        <fileset dir="installer/mac/webserver/Configure MAMP for DerbyNet.app">
+        </fileset>
+    </copy>
     <chmod perm="+x"
            file="ROOT/Applications/DerbyNet/maintenance/after-macos-upgrade.sh"/>
     <chmod perm="+x"
@@ -362,6 +366,8 @@
            file="ROOT/Applications/DerbyNet/maintenance/create-or-update-php-ini.sh"/>
     <chmod perm="+x"
            file="ROOT/Applications/DerbyNet/maintenance/update-apache-config.sh"/>
+    <chmod perm="+x"
+           file="ROOT/Applications/DerbyNet/Configure MAMP for DerbyNet.app/Contents/MacOS/Automator Application Stub"/>
     <copy todir="ROOT/Applications/DerbyNet/extras">
         <fileset dir="extras"/>
     </copy>
