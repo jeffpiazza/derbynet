@@ -1,0 +1,30 @@
+services:
+  nginx:
+    build: 
+      context: ./nginx
+    container_name: DerbyNet-nginx  
+    ports:   
+     - 8077:80
+    networks:
+      - DerbyNet
+    depends_on:
+      - php-fpm
+    volumes:
+      - ./website:/usr/share/nginx/html
+      - ./nginx/derbynet.conf:/etc/nginx/derbynet/location.snippet
+  php-fpm:
+    build: 
+      context: ./php-fpm
+      args:
+        TZ: America/New_York
+        MAX_UPLOAD_SIZE: 16M
+    container_name: DerbyNet-Backend
+    ports:
+      - 9999:9000
+    networks:
+      - DerbyNet
+    volumes:
+      - ./website:/usr/share/nginx/html
+      - ./data:/data
+networks:
+  DerbyNet:
