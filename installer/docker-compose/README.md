@@ -12,7 +12,9 @@ This docker-compose.yml file will spin up 2 docker containers and create a priva
 
 The docker-compose.yml file will create 2 directories in the current working directory, the first directory is 'website' which will grab a clone of the derbynet git repo website directory and the second directory which gets created is 'data' which gets mounted into the php-fpm container as a writeable area as /data.
 
-## TODO: Add comments.
+## TODO:
+
+Test more scenarios.
 
 ## USAGE:
 
