@@ -4,7 +4,7 @@ services:
       context: ./nginx
     container_name: DerbyNet-nginx  
     ports:   
-     - 8077:80
+     - 8077:80 #8077 is exposed, this can be changed to whatever is desired.
     networks:
       - DerbyNet
     depends_on:
@@ -16,11 +16,11 @@ services:
     build: 
       context: ./php-fpm
       args:
-        TZ: America/New_York
-        MAX_UPLOAD_SIZE: 16M
+        TZ: America/New_York #Should be set to your timezone
+        MAX_UPLOAD_SIZE: 16M #This should be a good number but if you are uploading huge photos then you may need to expand this.
     container_name: DerbyNet-Backend
     ports:
-      - 9999:9000
+      - 9999:9000 #Port does not need to be exposed, 9999 is used as a random usable port in my environment
     networks:
       - DerbyNet
     volumes:
