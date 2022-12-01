@@ -40,7 +40,7 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->RotatedCenteredText($left + 1.1, 2.75,  $racer['carname']);
 
     $this->pdf->SetFont('Times', '', 15);
-    $this->pdf->RotatedCenteredText($left + 1.4, 2.75,  $racer['note']);
+    $this->pdf->RotatedCenteredText($left + 1.4, 2.75,  is_null($racer['note']) ? "" : $racer['note']);
 
     // Generic image set doesn't have rank images
     if ($this->get_option('rank_image') && is_dir(image_file_path("ranks"))) {
