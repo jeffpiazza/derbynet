@@ -27,8 +27,9 @@ function preferred_urls_from_file() {
   return false;
 }
 
-function preferred_urls() {
+function preferred_urls($use_https = false) {
   $urls = preferred_urls_from_file();
+  $scheme = $use_https ? 'https' : $_SERVER['REQUEST_SCHEME'];
   if ($urls === false) {
     // gethostname() may be something like "instance-1", possibly with a non-routable IP.
     $addrs = gethostbynamel(gethostname());
@@ -37,12 +38,15 @@ function preferred_urls() {
     // IIS apparently doesn't set REQUEST_URI.
     if (isset($_SERVER['REQUEST_URI'])) {
       $uri = dirname($_SERVER['REQUEST_URI']);
+      if ($uri == "/") {
+        $uri = "";
+      }
     } else {
       $uri = '/...';
     }
 
     for ($i = 0; $i < count($addrs); ++$i) {
-      $urls[] = $_SERVER['REQUEST_SCHEME']."://".$addrs[$i].$uri;
+      $urls[] = $scheme."://".$addrs[$i].$uri;
     }
   }
   if (count($urls) == 0) $urls = array("");

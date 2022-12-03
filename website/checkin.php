@@ -70,19 +70,8 @@ var g_action_on_barcode = "<?php
   echo isset($_SESSION['barcode-action']) ? $_SESSION['barcode-action'] : "locate";
 ?>";
 
-
-var g_preferred_urls = <?php echo json_encode(preferred_urls(),
+var g_preferred_urls = <?php echo json_encode(preferred_urls(/*use_https=*/true),
                                               JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
-/*
-  $_SERVER
-<?php echo json_encode($_SERVER, JSON_PRETTY_PRINT); ?>
-
-  $_REQUEST
-<?php echo json_encode($_REQUEST, JSON_PRETTY_PRINT); ?>
-
-  $_SESSION
-<?php echo json_encode($_SESSION, JSON_PRETTY_PRINT); ?>
-*/
 </script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
