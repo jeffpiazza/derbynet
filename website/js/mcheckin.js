@@ -1,8 +1,6 @@
 
 
 $(function() {
-  setTimeout(function() { on_recognized_barcode({text: 'PWDid003'}); }, 2000);
-
   $("#controls-inner").css({'margin-left': ($(window).width() - $("#controls-inner").width()) / 2});
 
   console.log('Preview bottom', ($(window).height() - 110),
@@ -43,19 +41,33 @@ async function on_device_selection(selectq) {
       var max_height = $(window).height() - $("#banner").height() - /* slide-up height */110;
 
       console.log('Settings', settings);
+      //
+      // Safari: deviceId, frameRate 30, height 480, width 640
+      //
+      // Chrome: aspectRatio  1.7777777777777777
+      // deviceId
+      // frameRate 30
+      // groupId "2b17f86f2852500abda439c32a0f9566850dbe44ebdd8021d3ce05695e2db724"
+      // height 1080
+      // resizeMode "none"
+      // width 1920
       console.log('Available space (w,h)', $(window).width(), max_height);
-      console.log('Height required at max width', $(window).width() / settings.aspectRatio);
+      var aspect = settings.hasOwnProperty('aspectRatio') ? settings.aspectRatio
+          : settings.width / settings.height;
+      console.log('Height required at max width', $(window).width() / aspect);
+
+      mobile_select_refresh($("#device-picker"));
 
       $("#preview").css({'min-height': '',
                          'min-width': '',
                          'left': '',
                          'height': ''});
-      if (max_height >= $(window).width() / settings.aspectRatio) {
+      if (max_height >= $(window).width() / aspect) {
         // Display at max width in order not to be too tall
-        $("#preview").css({'min-height': 0, 'min-width': '100%', 'left': 0});
+        $("#preview").css({'min-height': 0, 'min-width': '100%', 'left': 'auto', 'right': 'auto'});
       } else {
         // Restrict to max height
-        var width = max_height * settings.aspectRatio;
+        var width = max_height * aspect;
         $("#preview").css({'min-height': max_height,
                            'height': max_height,
                            'min-width': width + 'px',
@@ -124,9 +136,14 @@ $(function() {
     });
   }
 
-  build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
+  // TODO Delay this until user explicit says they're ready
+//   build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
 });
 
+function start_camera() {
+  $("#instructions-background").addClass('hidden');
+  build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
+}
 
 function capture_photo(repo) {
   var photo_base_name = 'mobile-' + repo + '-' + g_barcode;

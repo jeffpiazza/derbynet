@@ -86,25 +86,8 @@ Check us out <a href="http://jeffpiazza.github.io/derbynet/" target="_blank">on 
 
 <?php
 $urls = preferred_urls();
-if ($urls === false) {
-  // gethostname() may be something like "instance-1", possibly with a non-routable IP.
-  $addrs = gethostbynamel(gethostname());
-  $urls = array();
 
-  // IIS apparently doesn't set REQUEST_URI.
-  if (isset($_SERVER['REQUEST_URI'])) {
-	$uri = dirname($_SERVER['REQUEST_URI']);
-  } else {
-	$uri = '/...';
-  }
-
-  for ($i = 0; $i < count($addrs); ++$i) {
-    $urls[] = "http://".$addrs[$i].$uri;
-  }
-}
-
-
-if (count($urls) == 0) {
+if (count($urls) == 0 || is_empty($urls[0])) {
   echo "<p>The local IP address for this server can't be determined.</p>\n";
 } else {
   echo '<p>It looks like you can use ';

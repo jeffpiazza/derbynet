@@ -11,23 +11,6 @@ require_once('inc/locked.inc');
 require_permission(PRESENT_AWARDS_PERMISSION);
 
 $urls = preferred_urls();
-if ($urls === false) {
-  // gethostname() may be something like "instance-1", possibly with a non-routable IP.
-  $addrs = gethostbynamel(gethostname());
-  $urls = array();
-
-  // IIS apparently doesn't set REQUEST_URI.
-  if (isset($_SERVER['REQUEST_URI'])) {
-	$uri = dirname($_SERVER['REQUEST_URI']);
-  } else {
-	$uri = '/...';
-  }
-
-  for ($i = 0; $i < count($addrs); ++$i) {
-    $urls[] = "http://".$addrs[$i].$uri;
-  }
-}
-if (count($urls) == 0) $urls = array("");
 
 ?><!DOCTYPE html>
 <html>

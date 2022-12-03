@@ -7,6 +7,7 @@ require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/classes.inc');
 require_once('inc/partitions.inc');
+require_once('inc/locked.inc');
 require_once('inc/checkin-table.inc');
 
 require_permission(CHECK_IN_RACERS_PERMISSION);
@@ -61,12 +62,27 @@ function column_header($text, $o) {
 <link rel="stylesheet" type="text/css" href="css/checkin.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/qrcode.min.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
 var g_order = '<?php echo $order; ?>';
 var g_action_on_barcode = "<?php
   echo isset($_SESSION['barcode-action']) ? $_SESSION['barcode-action'] : "locate";
 ?>";
+
+
+var g_preferred_urls = <?php echo json_encode(preferred_urls(),
+                                              JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+/*
+  $_SERVER
+<?php echo json_encode($_SERVER, JSON_PRETTY_PRINT); ?>
+
+  $_REQUEST
+<?php echo json_encode($_REQUEST, JSON_PRETTY_PRINT); ?>
+
+  $_SESSION
+<?php echo json_encode($_SESSION, JSON_PRETTY_PRINT); ?>
+*/
 </script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -83,8 +99,10 @@ make_banner('Racer Check-In');
 ?>
 
 <div class="block_buttons">
-  <img src="img/barcode.png" style="position: absolute; left: 16px; top: 80px;"
+  <img id="barcode-button" src="img/barcode.png"
       onclick="handle_barcode_button_click()"/>
+  <input id="mobile-button" type="button" value="Mobile"
+      onclick="handle_qrcode_button_click()"/>
 
   <input class="bulk_button"
         type="button" value="Bulk"
@@ -374,6 +392,18 @@ mobile_select_refresh($("#bulk_who"));
     <label for="barcode-handling-car">Capture car photo</label>
 
     <input type="submit" value="Close"/>
+  </form>
+</div>
+
+<div id="qrcode_settings_modal" class="modal_dialog wide_modal hidden block_buttons">
+  <form id="mobile-checkin-form">
+    <h2>Mobile Check-In</h2>
+    <div id="mobile-checkin-qrcode" style="width: 256px; margin-left: 122px;"></div>
+    <div id="mobile-checkin-title" style="text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 25px; margin-top: 10px;"></div>
+    <input id="mobile-checkin-url" name="mobile-checkin-url" type="text" />
+
+    <a id="mcheckin-link" class="button_link" href="mcheckin.php">Mobile Check-In &gt;</a>
+    <input type="button" value="Close" onclick="close_modal('#qrcode_settings_modal');"/>
   </form>
 </div>
 

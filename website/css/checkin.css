@@ -195,6 +195,25 @@ img.checkin-photo {
     max-width: 60px;
 }
 
+#barcode-button {
+  position: absolute;
+  left: 16px;
+  top: 80px;
+}
+
+#mobile-button {
+  position: absolute;
+  left: 100px;
+  top: 75px;
+  width: 100px;
+  height: 37px;
+  font-size: large;
+  line-height: 1.0;
+}
+#mcheckin-link {
+  margin-top: 50px;
+}
+
 #find-racer {
     position: fixed;
     bottom: 0px;

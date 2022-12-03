@@ -433,6 +433,28 @@ function on_barcode_handling_change() {
   return false;
 }
 
+function update_qrcode() {
+  $("#mobile-checkin-qrcode").empty();
+  $("#mobile-checkin-title").text($("#mobile-checkin-url").val());
+  new QRCode(document.getElementById('mobile-checkin-qrcode'),
+             {text: $("#mobile-checkin-url").val(),
+              width: 256,
+              height: 256});
+}
+function handle_qrcode_button_click() {
+  update_qrcode();
+  show_modal("#qrcode_settings_modal");
+}
+function on_mobile_checkin_submit() {
+  console.log('on_mobile_checkin_submit');
+  update_qrcode();
+  return false;
+}
+$(function() {
+  $("#mobile-checkin-url").val(g_preferred_urls[0] + "/mcheckin.php");
+  $("#mobile-checkin-form").on('submit', on_mobile_checkin_submit);
+});
+
 function global_keypress(event) {
   if ($(":focus").length == 0) {
     $(document).off("keypress");  // We want future keypresses to go to the search form

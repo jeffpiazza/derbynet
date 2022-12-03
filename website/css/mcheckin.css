@@ -1,10 +1,39 @@
-#preview-container {
-  position: relative;
+#instructions-background {
+  z-index: -200;
+  position: absolute;
+  right: 0px;
+  left: 0px;
+  top: 150px;
+  bottom: 150px;
+}
+#instructions {
+  width: 400px;
+  /* background-color: #c0c0c0; */
+  padding: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#instructions p {
+  font-size: 20px;
+}
+#step1 {
+  font-weight: bold;
+}  
+#instructions img {
+  border: 1px solid blue;
+}
+#instructions input {
+  margin-top: 50px;
+}
+#preview-frame {
+  display: inline-block;
 }
 
 video#preview {
   position: fixed;
   left: 0px;
+  left: auto;
+  right: auto;
   top: 60px;
   z-index: -100;
   margin-left: auto;

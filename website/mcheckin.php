@@ -1,5 +1,9 @@
 <?php @session_start();
 require_once('inc/banner.inc');
+require_once('inc/authorize.inc');
+
+// require_permission(CHECK_IN_RACERS_PERMISSION);
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -20,16 +24,29 @@ require_once('inc/banner.inc');
 <script type="text/javascript" src="js/mcheckin.js"></script>
 </head>
 <body>
-<?php make_banner('Mobile Check-In'); ?>
+<?php make_banner('Mobile Check-In', 'checkin.php'); ?>
+
+<div id="instructions-background">
+  <div id="instructions" class="block_buttons">
+    <p id="step1">Point your camera at the barcode identifying a racer.  Then:</p>
+    <p>Tap <img src="img/photo-headshot.png"/> to capture a picture of the racer.</p>
+    <p>Use the switch to mark the racer as checked in.</p>
+    <p>Tap <img src="img/photo-car.png"/> to capture a picture of the car.</p>
+
+    <input type="button" value="Start" onclick="start_camera()"/>
+ </div>
+</div>
+
 
 <video id="preview" autoplay muted playsinline>
 </video>
+
 
 <audio id="beep" src="img/barcode.mp3"></audio>
 
 
 <div id="device-picker-div">
-  <select id="device-picker" class="not-mobile"><option>Please wait</option></select>
+  <select id="device-picker" ><option>Please wait</option></select>
 </div>
 
 <div id="slide-up">
