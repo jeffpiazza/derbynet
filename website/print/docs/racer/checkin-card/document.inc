@@ -32,12 +32,12 @@ class CheckInCardDocument extends PrintableRacerDocument {
     $this->pdf->Rect($x + (3.375 - $w) / 2, $y + 0.55 - 18/72, $w, 18 / 72 * 1.5, 'F');
     $this->pdf->SetAlpha(1.0);
     $this->pdf->SetFillColor(0);  // black
-    
+
     $this->pdf->CenteredSequence($x + 3.375 / 2, $y + 0.55, $name);
 
     $this->pdf->CenteredSequence($x + 3.375 / 2, $y + 1.05,
                                  array(new SetFontTag('Times', 'B', 24),
-                                       $racer['carnumber']));
+                                       strval($racer['carnumber'])));
 
     $this->pdf->HorizontalBarcode($x + 0.6875, $y + 1.50, 2.0, 0.20, $racer['barcode']);
   }

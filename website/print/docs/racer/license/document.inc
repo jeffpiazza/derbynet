@@ -63,7 +63,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
     }
 
     $this->pdf->CenteredSequence($x + 1.75, $y + 1.5,
-                                 array(new SetFontTag('Arial', 'B', 24), $racer['carnumber']));
+                                 array(new SetFontTag('Arial', 'B', 24), strval($racer['carnumber'])));
 
     $this->pdf->SetFillColor(0);
     if ($this->get_option('use_barcode')) {

@@ -135,7 +135,7 @@ class CarSticker extends PrintableRacerDocument {
     /* Show the car number */
     $this->pdf->CenteredSequence($cx, $top + $this->params['carno_y'],
                                  array(new SetFontTag('Helvetica', 'B', $this->params['carno_font_size']),
-                                       $racer['carnumber']));
+                                       strval($racer['carnumber'])));
 
     if ($this->show_name) {
       $this->pdf->CenteredSequence($cx, $top + $this->params['name_y'],

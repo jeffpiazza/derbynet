@@ -101,12 +101,12 @@ class PitPassDocument extends PrintableRacerDocument {
     $this->pdf->SetFont('Times', '', 16);
     $this->pdf->SetTextColor(0, 0, 64);
     if ($this->y_coords['carname']) {
-      $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carname'], $racer['carname']);
+      $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carname'], strval($racer['carname']));
     }
 
     $this->pdf->SetFont('Helvetica', 'BI', 20);
     $this->pdf->SetTextColor(0, 0, 0);
-    $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carnumber'], $racer['carnumber']);
+    $this->pdf->CenteredText($x + 3.825/2, $y + $this->y_coords['carnumber'], strval($racer['carnumber']));
 
     // Event title in top border
     $event_title1 = $this->get_option('event_title1');
