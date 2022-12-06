@@ -38,6 +38,9 @@ curl_postj action.php "action=racer.edit&racer=11&firstname=Carroll&lastname=Cyb
 # Change a racer's den
 curl_postj action.php "action=racer.edit&racer=39&firstname=Jeffress&lastname=Jamison&carno=139&carname=&rankid=3" | check_jsuccess
 
+# Reject partitionid -1
+curl_postj action.php "action=racer.edit&racer=45&firstname=Savvy&lastname=Savant&carno=445&carname=&note_from=&partitionid=-1&exclude=0" | check_jfailure
+
 # TODO: There was a bug that the new-row returned from this was basically empty; this doesn't test that
 #
 # After changing a den, adding a new racer used to be a bug (extra Roster row).

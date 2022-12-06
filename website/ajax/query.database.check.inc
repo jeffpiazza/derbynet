@@ -139,6 +139,16 @@ check_empty('ranks-ambiguous-sort',
             .' HAVING COUNT(*) > 1');
 
 ////////////////////// RegistrationInfo
+check_empty('racer-partitionid',
+            'SELECT * FROM RegistrationInfo'
+            .' WHERE partitionid NOT IN (SELECT partitionid FROM Partitions)');
+check_empty('racer-classid',
+            'SELECT * FROM RegistrationInfo'
+            .' WHERE classid NOT IN (SELECT classid FROM Classes)');
+check_empty('racer-rankid',
+            'SELECT * FROM RegistrationInfo'
+            .' WHERE rankid NOT IN (SELECT rankid FROM Ranks)');
+
 ////////////////////// Roster
 check_empty('roster-roundid',
             'SELECT * FROM Roster WHERE roundid NOT IN (SELECT roundid FROM Rounds)');

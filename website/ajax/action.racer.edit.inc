@@ -18,16 +18,20 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
 
   if ($ok && isset($_POST['partitionid'])) {
     $partition_id = $_POST['partitionid'];
-    $assignments .= ', partitionid = :partitionid';
-    $values[':partitionid'] = $partition_id;
     $row = read_single_row('SELECT classid, rankid FROM Ranks'
                            .' WHERE rankid = (SELECT rankid FROM Partitions'
                            .'                 WHERE partitionid = :partitionid)',
                            array(':partitionid' => $partition_id), PDO::FETCH_ASSOC);
     if ($row) {
+      $assignments .= ', partitionid = :partitionid';
+      $values[':partitionid'] = $partition_id;
+
       $assignments .= ', classid = :classid, rankid = :rankid';
       $values[':classid'] = $row['classid'];
       $values[':rankid'] = $row['rankid'];
+    } else {
+      json_failure('nopartition', "Invalid segment number $partition_id");
+      $ok = false;
     }
   }
   if ($ok && isset($_POST['rankid'])) {
@@ -84,6 +88,9 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
 
     $ok = take_action_silently('UPDATE RegistrationInfo '.$assignments
                                .' WHERE racerid = :racerid', $values);
+    if (!$ok) {
+      json_failure('sql', "$info[0]-$info[1] $sql failed: $info[2]");
+    }
   }
 
   if ($ok && isset($values[':classid'])) {
@@ -99,12 +106,14 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
                                      ':classid' => $values[':classid'],
                                      ':racerid' => $racerid,
                                      ':old_roundid' => $old_roundid));
+
+    if (!$ok) {
+      json_failure('sql', "$info[0]-$info[1] $sql failed: $info[2]");
+    }
   }
 
   if ($ok) {
     json_success();
-  } else {
-    json_failure('sql', "$info[0]-$info[1] $sql failed: $info[2]");
   }
 } else {
   json_not_authorized();

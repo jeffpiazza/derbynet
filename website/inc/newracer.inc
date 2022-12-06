@@ -33,7 +33,8 @@ function insert_new_racer($values) {
 
   if (!isset($values['partitionid'])) {
     $values['partitionid'] = find_or_create_partition(
-      isset($values['partition']) ? $values['partition'] : DEFAULT_PARTITION_NAME);
+      (isset($values['partition']) && !empty($values['partition']))
+          ? $values['partition'] : DEFAULT_PARTITION_NAME);
   }
   
   if (!isset($values['carnumber']) || $values['carnumber'] == '') {

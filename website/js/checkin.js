@@ -74,8 +74,9 @@ function handlechange_xbs(cb) {
          });
 }
 
-// Some <select> controls for choosing partitions have an "(Edit partitions)" entry
-// for manipulating the list of partitions.
+// Two <select> controls for choosing partitions (namely, the one in the
+// #edit_racer_modal and the one in the #bulk_who for car numbering) have an
+// "(Edit partitions)" entry for manipulating the list of partitions.
 function on_edit_partition_change(select, partitions_modal) {
   var select = $(select);
   if (select.val() < 0) {
@@ -84,6 +85,9 @@ function on_edit_partition_change(select, partitions_modal) {
       pop_modal();
     }
     push_modal(partitions_modal);
+    select.val(select.prop('last-selected')).trigger('change');
+  } else {
+    select.prop('last-selected', select.val());
   }
 }
 
@@ -148,7 +152,8 @@ function show_edit_racer_form(racerid) {
   $("#edit_carname").val(car_name);
   $("#edit_note_from").val(note_from);
 
-  $("#edit_partition").val($('#div-' + racerid).attr('data-partitionid'));
+  var partitionid = $('#div-' + racerid).attr('data-partitionid');
+  $("#edit_partition").val(partitionid).prop('last-selected', partitionid);
   $("#edit_partition").change();
 
   $("#eligible").prop("checked",
@@ -177,7 +182,7 @@ function show_new_racer_form() {
   $("#edit_carname").val("");
   $("#edit_note_from").val("");
 
-  $("#edit_partition").val(partitionid);
+  $("#edit_partition").val(partitionid).prop('last-selected', partitionid);
   $("#edit_partition").change();
 
   $("#eligible").prop("checked", true);
