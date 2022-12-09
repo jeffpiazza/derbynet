@@ -30,7 +30,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
   page.setViewport({width: 1200,
                     height: 1800});
   if (debugging) {
-    page.on('console', msg => { console.log('REMOTE: ' + msg._text); });
+    page.on('console', msg => { console.log('REMOTE: ', msg._text); });
   }
 
   await page.goto(root + '/login.php');
@@ -831,7 +831,11 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
       return !manual_results_modal.hasClass('hidden') && manual_results_modal.css('opacity') >= 1;
     });
 
-    await page.evaluate(() => {
+    // Without this delay, there's some kind of race that results in an
+    // {"action":"heat.rerun","heat":"current"} message in addition to the expected result.write message.
+    await new Promise(r => setTimeout(r, 500));
+
+    await page.evaluate(async () => {
       $("input[name='lane1']").val('1.234');
       $("input[name='lane2']").val('2.34');
       $("input[name='lane3']").val('4.321');
