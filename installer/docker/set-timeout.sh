@@ -18,16 +18,14 @@ if [ "$#" -gt 0 ] ; then
     shift
 fi
 
-for INI in `find /etc/php -name php.ini` ; do
+for INI in `find /etc/php* -name php.ini` ; do
     sed -i \
         -e "s/^ *max_execution_time *= *[0-9][0-9]*/max_execution_time = $TIMEOUT/" \
         $INI
 done
-# Restart the master php-fpm process
-kill -USR2 $(supervisorctl pid php-fpm)
 
 
 sed -i \
     -e "/fastcgi_read_timeout/ s/.*/fastcgi_read_timeout $TIMEOUT;/" \
-    /etc/nginx/derbynet/location.snippet
+    /etc/nginx/http.d/default.conf
 nginx -s reload
