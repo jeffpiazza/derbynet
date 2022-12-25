@@ -562,12 +562,14 @@
 <target name="docker" depends="generated, timer-in-browser"
         description="Build derbynet_server docker image">
     <exec executable="docker">
-        <arg value="build"/>
-        <arg value="--tag"/>
-        <arg value="jeffpiazza/derbynet_server"/>
-        <arg value="--file"/>
-        <arg value="installer/docker/Dockerfile"/>
-        <arg value="."/>
+      <arg value="build"/>
+      <arg value="--platform"/>
+      <arg value="amd64"/>
+      <arg value="--tag"/>
+      <arg value="jeffpiazza/derbynet_server"/>
+      <arg value="--file"/>
+      <arg value="installer/docker/Dockerfile"/>
+      <arg value="."/>
     </exec>
 </target>
 
