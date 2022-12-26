@@ -60,6 +60,9 @@ li.partition {
 li.group > p, .group-color {
   background-color: #8da5c6;
 }
+li.group > ul.subgroups {
+  min-height: 20px;
+}
 li.aggregate > p {
   background-color: #72c5ac;
 }
@@ -104,10 +107,14 @@ li.constituent {
 }
 li.constituent p {
 }
-  
-li.ui-droppable-hover, p.ui-droppable-hover, div.ui-droppable-hover {
+
+li#new-group {
+    min-height: 50px;
+}
+li.ui-droppable-hover, p.ui-droppable-hover, div.ui-droppable-hover,
+li.ui-droppable-hover p {
   background-color: #ffcccc;
-  border: #ff0000 4px solid;
+  /* border: #ff0000 4px solid; */
 }
 
 span.label, span.count {

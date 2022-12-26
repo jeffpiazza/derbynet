@@ -25,7 +25,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
 curl_postj action.php "action=partition.apply-rule&rule=custom" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
-    jq -e '.classes | length == 1' > /dev/null || test_fails
+    jq -e '.classes | length == 0' > /dev/null || test_fails
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 0' > /dev/null || test_fails
 

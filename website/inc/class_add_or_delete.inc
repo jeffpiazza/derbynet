@@ -65,6 +65,23 @@ function find_or_create_class($classname, $with_first_round = true) {
   return $classid;
 }
 
+// Starting from $seed, come up with a string that's not the name of an existing class.
+function choose_unused_class_name($seed) {
+  global $db;
+  if (read_single_value('SELECT COUNT(*) FROM Classes WHERE class = :classname',
+                        array(':classname' => $seed)) == 0) {
+    // Use the original string, if possible
+    return $seed;
+  }
+  for ($i = 1; true; ++$i) {
+    $classname = $seed.'-'.$i;
+    if (read_single_value('SELECT COUNT(*) FROM Classes WHERE class = :classname',
+                          array(':classname' => $classname)) == 0) {
+      return $classname;
+    }
+  }
+}
+
 function delete_class($classid) {
   global $db;
 

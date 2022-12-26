@@ -1,6 +1,6 @@
 <?php
 
-// $_POST['rule']: one-group or by-partition
+// $_POST['rule']: 'one-group' or 'by-partition' (or 'custom')
 
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
@@ -82,9 +82,9 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 
   form_groups_by_rule($_POST['rule']);
 
-  if (isset($_POST['cleanup']) && $_POST['cleanup']) {
-    clean_up_empty_classes_and_ranks();
-  }
+  clean_up_empty_classes_and_ranks();
+
+  write_raceinfo('use-subgroups', ($_POST['rule'] == 'by-partition') ? 0 : 1);
 
   json_success();
 }

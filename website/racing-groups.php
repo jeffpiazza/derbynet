@@ -64,13 +64,6 @@ $(function() {
        <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
 </div>
 
-<div class="switch">
-<label for="cleanup">Remove unpopulated groups and subgroups?</label>
-<input id="cleanup" type="checkbox" class="flipswitch"
-     data-on-text="Yes" data-off-text="No"
-       <?php if (true) echo "checked=\"checked\""; ?>/>
-</div>
-
 <div style="margin-top: 10px;">
   <ul id="aggregate-groups" class="mlistview">
   </ul>
@@ -80,31 +73,20 @@ $(function() {
   <input id="add-partition-button" type="button" value="Add <?php echo partition_label(); ?>"/>
   <input id="add-aggregate-button" type="button" value="Add Aggregate"/>
 </div>
-
+      
 </div><!-- race-rules -->
 
 <div id="race-structure">
 
-<p class="instructions">
-    Drag <span class="group-color">&nbsp;</span> groups
-    <span class="and-subgroups">
-        and <span class="subgroup-color">&nbsp;</span> subgroups
-    </span>
-    to re-order.</p>
-       
-<p class="instructions custom">
-    Drag <span class="partition-color">&nbsp;</span>
-          <span class="partition-label-pl-lc"><?php echo partition_label_pl_lc(); ?></span>
-    onto <span class="group-color">&nbsp;</span> groups
-    <span class="and-subgroups" style="white-space: nowrap;">
-        and <span class="subgroup-color">&nbsp;</span> subgroups</span>
-    to customize.
-</p>
+<p class="instructions" id="drag-groups">Drag <span class="group-color">&nbsp;</span> groups to reorder.</p>
+<p class="instructions" id="drag-subgroups">Drag <span class="subgroup-color">&nbsp;</span> subgroups
+        to reorder<span id="or-to-move"> or to move to another group</span>.</p>
 
-<ul id="all-groups" class="mlistview">
+<ul id="all-groups">
 
-  <li id='new-group' class='group subgroup'>
-    <p>New Group</p>
+  <li id='new-group' class='group' data-classid="-1">
+    <p class='class-name'>New Group</p>
+    <ul class='subgroups'></ul>
   </li>
 </ul>
 
@@ -209,19 +191,6 @@ $(function() {
            class="delete_button"
            onclick="handle_delete_class(this);"/>
     </div>
-  </form>
-</div>
-
-<div id="add_rank_modal" class="modal_dialog hidden block_buttons">
-  <h3>Add New <span class="subgroup-label"><?php echo subgroup_label(); ?></span></h3>
-  <form>
-    <input type="hidden" name="action" value="rank.add"/>
-    <input type="hidden" name="classid"/>
-    <input name="name" type="text"/>
-
-    <input type="submit"/>
-    <input type="button" value="Cancel"
-           onclick="close_add_rank_modal();"/>
   </form>
 </div>
 

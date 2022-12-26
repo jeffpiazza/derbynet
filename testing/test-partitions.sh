@@ -104,7 +104,6 @@ curl_getj "action.php?query=poll&values=partitions" | \
         and .[2].name == "Div 3" and .[2].partitionid == 3
 ' >/dev/null || test_fails
 
-
 curl_postj action.php "action=partition.apply-rule&rule=by-partition" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
@@ -140,7 +139,7 @@ curl_getj "action.php?query=poll&values=classes" | \
 curl_postj action.php "action=partition.move&div_id=3&group_field=classid&group_id=1" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
-    jq -e '.classes | length == 3 
+    jq -e '.classes | length == 2
         and .[0].name == "Default" and (.[0].subgroups | length == 2)
         and .[0].subgroups[0].name == "Default"
         and .[0].subgroups[0].count == 20
@@ -152,10 +151,6 @@ curl_getj "action.php?query=poll&values=classes" | \
         and .[1].subgroups[0].name == "Div 2"
         and .[1].subgroups[0].count == 19
         and .[1].subgroups[0].rankid == 2
-        and .[2].name == "Div 3" and (.[2].subgroups | length == 1)
-        and .[2].subgroups[0].name == "Div 3"
-        and .[2].subgroups[0].count == 0
-        and .[2].subgroups[0].rankid == 3
 ' >/dev/null || test_fails
 
 curl_getj "action.php?query=poll&values=partitions" | \
@@ -165,7 +160,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
         and .[2].name == "Div 2"
 ' >/dev/null || test_fails
 
-curl_postj action.php "action=partition.apply-rule&rule=custom&cleanup=1" | check_jsuccess
+curl_postj action.php "action=partition.apply-rule&rule=custom" | check_jsuccess
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 2
@@ -186,10 +181,8 @@ curl_postj action.php "action=partition.move&div_id=3&group_field=classid&group_
 
 curl_getj "action.php?query=poll&values=classes" | \
     jq -e '.classes | length == 3
-        and .[0].name == "Default" and (.[0].subgroups | length == 2)
+        and .[0].name == "Default" and (.[0].subgroups | length == 1)
         and .[0].subgroups[0].name == "Default" and .[0].subgroups[0].rankid == 1
-        and .[0].subgroups[1].name == "Div 3" and .[0].subgroups[1].rankid == 4
-            and .[0].subgroups[1].count == 0
         and .[1].name == "Div 2" and (.[1].subgroups | length == 1)
         and .[1].subgroups[0].name == "Div 2" and .[1].subgroups[0].rankid == 2
         and .[2].name == "Div 3" and (.[2].subgroups | length == 1)
@@ -314,7 +307,7 @@ curl_getj "action.php?query=poll&values=partitions" | \
         and .[3].name == "New Div" and .[3].partitionid == 4
             and .[3].classids[0] == 4 and .[3].rankids[0] == 4
 ' >/dev/null || test_fails
-curl_postj action.php "action=partition.apply-rule&rule=custom&cleanup=1" | check_jsuccess
+curl_postj action.php "action=partition.apply-rule&rule=custom" | check_jsuccess
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 4
         and .[0].name == "Div 2" and .[0].partitionid == 2
@@ -336,7 +329,7 @@ curl_getj "action.php?query=poll&values=rounds" > /dev/null
 P1ROSTERSIZE=$(jq ".rounds | map(select(.classid==$P1CLASSID))[0].roster_size" $DEBUG_CURL)
 P2ROSTERSIZE=$(jq ".rounds | map(select(.classid==$P2CLASSID))[0].roster_size" $DEBUG_CURL)
 
-curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=$P1CLASSID&cleanup=1" | \
+curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=$P1CLASSID" | \
     check_jsuccess
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 4
@@ -360,7 +353,7 @@ curl_getj "action.php?query=poll&values=rounds" | \
 
 # Move the partition again, now to a new group: group_field = 'classid', group_id = -1;
 # check that the racers appear in a roster for the new class.
-curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=-1&cleanup=1" | \
+curl_postj action.php "action=partition.move&div_id=2&group_field=classid&group_id=-1" | \
     check_jsuccess
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 4
@@ -448,7 +441,7 @@ curl_getj "action.php?query=poll&values=rounds" | \
 ' >/dev/null || test_fails
 
 # Re-apply by-partition rule with cleanup
-curl_postj action.php "action=partition.apply-rule&rule=by-partition&cleanup=1" | check_jsuccess
+curl_postj action.php "action=partition.apply-rule&rule=by-partition" | check_jsuccess
 # Confirm empty class, rank, round, and roster still present
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 5
@@ -498,6 +491,87 @@ curl_getj "action.php?query=poll&values=rounds" | \
         and .[4].class == "Empty"
         and .[4].round == 1
         and .[4].roster_size == 0
+' >/dev/null || test_fails
+
+# apply-rule by-partition, then custom
+# Move a rank to an existing class
+# Move another rank to -1 from a like-named class
+curl_postj action.php "action=partition.apply-rule&rule=by-partition" | check_jsuccess
+curl_postj action.php "action=partition.apply-rule&rule=custom" | check_jsuccess
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e '.classes | length == 5
+        and .[0].name == "Div 3"
+        and .[0].count == 10
+        and (.[0].subgroups | length == 1)
+        and .[0].subgroups[0].name == "Div 3"
+        and .[1].name == "Div 1"
+        and .[1].count == 20
+        and (.[1].subgroups | length == 1)
+        and .[1].subgroups[0].name == "Div 1"
+        and .[2].name == "New Div"
+        and .[2].count == 0
+        and (.[2].subgroups | length == 1)
+        and .[2].subgroups[0].name == "New Div"
+        and .[3].name == "Div 2"
+        and .[3].count == 19
+        and (.[3].subgroups | length == 1)
+        and .[3].subgroups[0].name == "Div 2"
+        and .[4].name == "Empty"
+        and .[4].count == 0
+        and (.[4].subgroups | length == 1)
+        and .[4].subgroups[0].name == "Empty"
+' >/dev/null || test_fails
+
+# Move rankid 4 ("Empty") into classid 4 ("New Div"), so 
+curl_postj action.php "action=rank.move&rankid=4&classid=4" | check_jsuccess
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e '.classes | length == 4
+        and .[0].name == "Div 3"
+        and .[0].count == 10
+        and (.[0].subgroups | length == 1)
+        and .[0].subgroups[0].name == "Div 3"
+
+        and .[1].name == "Div 1"
+        and .[1].count == 20
+        and (.[1].subgroups | length == 1)
+        and .[1].subgroups[0].name == "Div 1"
+
+        and .[2].name == "New Div"
+        and .[2].count == 0
+        and (.[2].subgroups | length == 2)
+        and .[2].subgroups[0].name == "New Div"
+        and .[2].subgroups[1].name == "Empty"
+
+        and .[3].name == "Div 2"
+        and .[3].count == 19
+        and (.[3].subgroups | length == 1)
+        and .[3].subgroups[0].name == "Div 2"
+' >/dev/null || test_fails
+
+curl_postj action.php "action=rank.move&rankid=3&classid=-1" | check_jsuccess
+curl_getj "action.php?query=poll&values=classes" | \
+    jq -e '.classes | length == 4
+        and .[0].name == "Div 1"
+        and .[0].count == 20
+        and (.[0].subgroups | length == 1)
+        and .[0].subgroups[0].name == "Div 1"
+
+        and .[1].name == "New Div"
+        and .[1].count == 0
+        and (.[1].subgroups | length == 2)
+        and .[1].subgroups[0].name == "New Div"
+        and .[1].subgroups[1].name == "Empty"
+
+        and .[2].name == "Div 2"
+        and .[2].count == 19
+        and (.[2].subgroups | length == 1)
+        and .[2].subgroups[0].name == "Div 2"
+
+        and .[3].name == "Div 3-1"
+        and .[3].count == 10
+        and (.[3].subgroups | length == 1)
+        and .[3].subgroups[0].name == "Div 3"
+
 ' >/dev/null || test_fails
 
 # Move all the "Div 3" racers to "New Div", then delete "Div 3"

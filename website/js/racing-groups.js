@@ -6,8 +6,7 @@ function on_rule_change(event, synthetic) {
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'partition.apply-rule',
-                 rule: val,
-                 cleanup: $("input#cleanup").is(':checked') ? 1 : 0},
+                 rule: val},
           success: function(data) {
             console.log(data);
             poll_for_structure();
@@ -33,13 +32,6 @@ function on_use_subgroups_change(event, synthetic) {
          });
 }
 $(function() { $("#use-subgroups").on('change', on_use_subgroups_change); });
-
-function on_cleanup_change() {
-  if ($("input#cleanup").is(':checked')) {
-    on_rule_change();  // Force a no-op apply-rule action with cleanup
-  }
-}
-$(function() { $("input#cleanup").on('change', on_cleanup_change); });
 
 function poll_for_structure() {
   $.ajax('action.php',
@@ -67,25 +59,30 @@ function process_polling_data(data) {
       .trigger('change', /*synthetic*/true);
   }
 
-  populate_racing_groups(data, $("#use-subgroups").is(':checked'));
+  // Instructions
+  $("#drag-groups").toggleClass('hidden', data['group-formation-rule'] == 'one-group');
+  $("#drag-subgroups").toggleClass('hidden', data['group-formation-rule'] == 'by-partition');
+  $("#or-to-move").toggleClass('hidden', data['group-formation-rule'] != 'custom');
+
+  populate_racing_groups(data);
   populate_aggregate_modal(data);
   populate_aggregates(data.classes);
   populate_labels(data.labels);
 }
 
-function populate_racing_groups(data, using_subgroups) {
+function populate_racing_groups(data) {
   var all_groups = $("ul#all-groups");
   all_groups.children('li').not('#new-group').remove();
   var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
   var partition_label_lc = data.labels.partition[0].toLowerCase();
 
-  $("span.and-subgroups").toggleClass('hidden', !using_subgroups);
-  $("p.instructions.custom").toggleClass('hidden', rule != 'custom');
-  
+  var pigeonholed = false;  // Becomes true if any group has more than one subgroup
   for (var i = 0; i < data.classes.length; ++i) {
     if (data.classes[i].hasOwnProperty('constituents') && data.classes[i].constituents.length > 0) {
+      // Ignore aggregate groups here
       continue;
     }
+
     var cl = $("<li/>")
         .appendTo(all_groups)
         .addClass('group')
@@ -105,12 +102,14 @@ function populate_racing_groups(data, using_subgroups) {
                 .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                          .on('click', on_edit_class)));
 
-    var subgroups = $("<ul/>")
-        .appendTo(cl)
-        .addClass('subgroups');
-    for (var j = 0; j < data.classes[i].subgroups.length; ++j) {
-      var rankid = data.classes[i].subgroups[j].rankid;
-      if (using_subgroups) {
+    if (rule != 'by-partition') {
+      var subgroups = $("<ul/>")
+          .appendTo(cl)
+          .addClass('subgroups');
+      pigeonholed = pigeonholed || data.classes[i].subgroups.length > 1;
+      for (var j = 0; j < data.classes[i].subgroups.length; ++j) {
+        var rankid = data.classes[i].subgroups[j].rankid;
+
         var subg_p = $("<p/>")
                     .addClass('rank-name')
                     .text(data.classes[i].subgroups[j].name)
@@ -119,70 +118,21 @@ function populate_racing_groups(data, using_subgroups) {
                                       : "subgroup").addClass('label'))
                     .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
                             .addClass('count'));
-        if (rule != 'by-partition') {
-          subg_p.prepend($("<input type='button' value='Edit' class='edit-button'/>")
-                         .on('click', on_edit_rank));
-        }
-        var subg = $("<li/>")
+        subg_p.prepend($("<input type='button' value='Edit' class='edit-button'/>")
+                       .on('click', on_edit_rank));
+        $("<li/>")
             .appendTo(subgroups)
             .addClass('subgroup')
             .attr('data-rankid', data.classes[i].subgroups[j].rankid)
             .attr('data-count', data.classes[i].subgroups[j].count)
             .append(subg_p);
-      } else {
-        // If we're not showing subgroups, then append the UL for partitions directly to the LI for the class.
-        var subg = cl;
-      }
-      if (rule == 'custom') {
-        populate_partitions_in_subgroup(subg, rankid, data);
-      }
-    }
-    if (rule == 'custom') {
-      if (using_subgroups) {
-        $("<li/>").appendTo(subgroups)
-          .addClass('subgroup new-subgroup')
-          .attr('data-classid', data.classes[i].classid)
-          .on('click', on_add_subgroup)
-          .append($("<p/>").text("New Subgroup"));
       }
     }
   }
-
-  $("#new-group").appendTo(all_groups).toggleClass('hidden', rule != 'custom');
+  $("#new-group").appendTo(all_groups).toggleClass('hidden',
+                                                   rule != 'custom' || !pigeonholed);
   
   make_groups_sortable();
-
-  if (rule == 'custom') {
-    make_partitions_draggable_droppable(using_subgroups);
-  }
-}
-
-function populate_partitions_in_subgroup(subg, rankid, data) {
-  var partition_label_lc = data.labels.partition[0].toLowerCase();
-  var divs = $("<ul/>")
-      .appendTo(subg)
-      .addClass('partitions');
-  // This can have lower complexity with an index, but in practice it's not worth the trouble
-  for (var d = 0; d < data.partitions.length; ++d) {
-    if (!data.partitions[d].rankids.includes(rankid)) {
-      continue;
-    }
-    var div = $("<li/>")
-        .appendTo(divs)
-        .addClass('partition')
-        .attr('data-partitionid', data.partitions[d].partitionid)
-    // TODO Remove "incomplete", which was to signify a partition that's not completely
-    // incorporated into a single rank.  These aren't allowed.
-        // .toggleClass('incomplete', data.partitions[d].rankids.length > 1)
-        .append($("<p/>")
-                .text(data.partitions[d].name)
-                // label and count are float-right, so the first span is rightmost
-                .append($("<span/>").text(partition_label_lc).addClass('label'))
-                .append($("<span/>").text("(" + data.partitions[d].count + ")")
-                        .addClass('count'))
-                .prepend($("<input type='button' value='Edit' class='edit-button'/>")
-                         .on('click', on_edit_partition)));
-  }
 }
 
 function make_groups_sortable() {
@@ -196,7 +146,6 @@ function make_groups_sortable() {
         data['classid_' + (i + 1)] = $(this).attr('data-classid');
       });
       console.log(data);
-      
       $.ajax(g_action_url,
              {type: 'POST',
               data: data,
@@ -210,15 +159,43 @@ function make_groups_sortable() {
   });
 
   $("ul.subgroups").sortable({
-    items: "> li.subgroup:not(.new-subgroup)",
+    connectWith: "ul.subgroups",
+    // Drag from one group to another produces: update, remove, receive, update, stop.
+    helper: "clone",
+    items: "> li.subgroup",
+    receive: function(event, ui) {
+      // event.target is the ul receiving the element
+      console.log('receive', event, ui, 'item:', $(ui.item).text(), $(ui.item),
+                  'target:', $(event.target).prop('nodeName'),
+                  $(event.target).find('p').text(),
+                  $(event.target),
+                  $(event.target).find('li.subgroup'));
+      // $(ui.item).appendTo($(event.target));
+      var rankid = $(ui.item).attr('data-rankid');
+      var classid = $(event.target).closest('li.group').attr('data-classid');
+        $.ajax(g_action_url,
+               {type: 'POST',
+                data: {action: 'rank.move',
+                       rankid: rankid,
+                       classid: classid},
+                success: function(data) {
+                  // The #new-group li doesn't get deleted/recreated, so has to be
+                  // managed explicitly if a new subgroup was dropped on it.
+                  $("li#new-group ul.subgroups").empty();
+                  if (false && data.outcome.summary == 'success') {
+                    poll_for_structure();
+                  }
+                }
+               });
+    },
     stop: function(event, ui) {
+      // ui.item is the li.subgroup being moved.
       event.stopPropagation();
-      // Target is the ul
+      // ranks.order doesn't care about the classid; it just updates sortorder for the ranks in question.
       var data = {action: 'rank.order'};
-      $(event.target).find("li").each(function(i) {
+      $(ui.item).closest('ul.subgroups').find("li.subgroup").each(function(i) {
         data['rankid_' + (i + 1)] = $(this).attr('data-rankid');
       });
-      
       $.ajax(g_action_url,
              {type: 'POST',
               data: data,
@@ -229,106 +206,6 @@ function make_groups_sortable() {
               }
              });
     }
-  });
-}
-
-function make_partitions_draggable_droppable(using_subgroups) {
-  $("li.partition").draggable({
-    scope: 'custom-group',
-    helper: 'clone',
-    appendTo: 'body',
-    opacity: 0.5,
-    revert: 'invalid',
-    // This allows dragging a partition to create its own group.  Dragging to a
-    // group li (not its ul of subgroups) allows creating a subgroup within the
-    // group.
-    // connectToSortable: "ul#all-groups" 
-  });
-
-  $(using_subgroups ? "li.subgroup" : "li.group").droppable({
-    scope: 'custom-group',
-    accept: function(drag) {
-      // Don't accept a child element for dropping
-      return !$(this).has(drag).length; },
-    greedy: true,
-    drop: function(event, ui) {
-      console.log($(ui.draggable).find('p').eq(0).text() + ' dropped on ' +
-                  $(event.target).text());
-      var draggable = $(ui.draggable);
-      var div_id;
-      if (draggable.is('[data-partitionid]')) {
-        div_id = draggable.attr('data-partitionid');
-      } else {
-        console.log('Unrecognizable partition');
-        return;
-      }
-      var droppable = $(event.target);
-      var group_field;
-      var group_id;
-      var from_group_field;
-      var from_group_id;
-      if (droppable.attr('id') == 'new-group') {
-        group_field = 'classid';
-        group_id = -1;
-      } else if (droppable.hasClass('group')) {
-        group_field = 'classid';
-        group_id = droppable.closest('li[data-classid]').attr('data-classid');
-        from_group_field = 'classid';
-        from_group_id = draggable.closest('li[data-classid]').attr('data-classid');
-        if (from_group_id == group_id) {
-          console.log('draggable closest classid=' +
-                      draggable.closest('li[data-classid]').attr('data-classid'));
-          return;
-        }
-      } else if (droppable.hasClass('new-subgroup')) {
-        // Creating a new subgroup is expressed as moving to a known class
-        group_field = 'classid';
-        group_id = droppable.attr('data-classid');
-      } else if (droppable.hasClass('subgroup')) {
-        group_field = 'rankid';
-        group_id = droppable.closest('li').attr('data-rankid');
-        if (draggable.attr('data-rankid') == group_id) {
-          console.log('draggable closest rankid=' + draggable.attr('data-rankid'));
-          return;
-        }
-      } else {
-        console.log('Droppable not recognized: '); console.log(droppable);
-        return;
-      }
-
-      var data = {action: 'partition.move',
-                  div_id: div_id,
-                  group_field: group_field,
-                  group_id: group_id,
-                  cleanup: $("input#cleanup").is(':checked') ? 1 : 0};
-
-      if (draggable.hasClass('incomplete')) {
-        var from_li = draggable.parent().closest('li');
-        console.log('from_li:');console.log(from_li);
-        if (from_li.is('[data-classid]')) {
-          data.from_group_field = 'classid';
-          data.from_group_id = from_li.attr('data-classid');
-        } else if (from_li.is('[data-rankid]')) {
-          data.from_group_field = 'rankid';
-          data.from_group_id = from_li.attr('data-rankid');
-        } else {
-          console.log("Incomplete not recognized:"); console.log(draggable);
-        }
-      }
-
-      console.log(data);
-
-      $.ajax('action.php',
-             {type: 'POST',
-              data: data,
-              success: function(data) {
-                console.log(data);
-                if (data.outcome.summary == 'success') {
-                  poll_for_structure();
-                }
-              }
-             });
-    },
   });
 }
 
@@ -395,7 +272,6 @@ function populate_labels(labels) {
   $("span.subgroup-label").text(labels.subgroup[0]);
   $("#aggregate-by-div .flipswitch .off").text(labels.group[0]);
   $("#aggregate-by-div .flipswitch .on").text(labels.subgroup[0]);
-  $("#add_rank_button").prop('value', "Add " + labels.subgroup[0]);
   $("#add_partition_button").prop('value', "Add " + labels.partition[0]);
   $("#delete_class_button")
     .prop('value', "Delete " + labels.group[0])

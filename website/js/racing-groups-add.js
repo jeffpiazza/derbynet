@@ -117,30 +117,6 @@ function close_add_class_modal() {
 
 $(function() { $("#add-aggregate-button").on('click', on_add_aggregate); });
 
-function on_add_subgroup(event) {
-  var classid = $(event.target).closest('[data-classid]').attr('data-classid');
-  $("#add_rank_modal input[name='classid']").val(classid);    
-  $("#add_rank_modal input[name='name']").val("");
-
-  show_modal("#add_rank_modal", function() {
-    close_add_rank_modal();
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: $("#add_rank_modal form").serialize(),
-            success: function(data) {
-              $("#cleanup")
-                .prop('checked', false)
-                .trigger('change', /*synthetic*/true);
-              poll_for_structure();
-            }});
-    return false;
-  });
-}
-
-function close_add_rank_modal() {
-  close_modal("#add_rank_modal");
-}
-
 function on_add_partition(event) {
   $("#add_partition_modal input[name='name']").val("");
   show_modal("#add_partition_modal", function() {
