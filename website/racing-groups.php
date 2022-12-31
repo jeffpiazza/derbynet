@@ -46,6 +46,28 @@ $(function() {
 
 <div id="race-rules">
 
+<div class="labels">
+  <label for="supergroup-label">The full roster is a (or the)</label>
+  <input id="supergroup-label" name="supergroup-label" type="text" class="not-mobile"
+               value="<?php echo supergroup_label(); ?>"/>,
+  <label for="partition-label">and a sub-division is a(n)</label>
+  <input id="partition-label" name="partition-label" type="text" class="not-mobile"
+               value="<?php echo partition_label(); ?>"/>.
+</div>
+
+<div class="block_buttons">
+  <input id="add-partition-button" class="modest-button" type="button"
+         value="Add <?php echo partition_label(); ?>"/>
+</div>
+
+
+<div class="switch">
+<label for="use-subgroups">Use Subgroups?</label>
+<input id="use-subgroups" type="checkbox" class="flipswitch"
+     data-on-text="Yes" data-off-text="No"
+       <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
+</div>
+
   <input id="by-partition-radio" type="radio" name="form-groups-by" value="by-partition"/>
    <label for="by-partition-radio">Race each
        <span class="partition-label-lc"><?php echo partition_label_lc(); ?></span>
@@ -56,23 +78,6 @@ $(function() {
 
 <input id="custom-group-radio" type="radio" name="form-groups-by" value="custom"/>
 <label for="custom-group-radio">Custom racing groups</label>
-
-<div class="switch">
-<label for="use-subgroups">Use Subgroups?</label>
-<input id="use-subgroups" type="checkbox" class="flipswitch"
-     data-on-text="Yes" data-off-text="No"
-       <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
-</div>
-
-<div style="margin-top: 10px;">
-  <ul id="aggregate-groups" class="mlistview">
-  </ul>
-</div>
-
-<div class="block_buttons">
-  <input id="add-partition-button" type="button" value="Add <?php echo partition_label(); ?>"/>
-  <input id="add-aggregate-button" type="button" value="Add Aggregate"/>
-</div>
       
 </div><!-- race-rules -->
 
@@ -89,6 +94,14 @@ $(function() {
     <ul class='subgroups'></ul>
   </li>
 </ul>
+
+<ul id="aggregate-groups" class="mlistview">
+</ul>
+
+<div class="block_buttons">
+  <input id="add-aggregate-button" class="modest-button" type="button"
+         value="Add Aggregate"/>
+</div>
 
 </div><!-- race-structure -->
 

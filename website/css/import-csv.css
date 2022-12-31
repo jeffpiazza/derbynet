@@ -15,6 +15,7 @@ div#variations {
 }
 
 #variations #encoding {
+  font-size: 20px;
   float: right;
   display: inline-block;
 }

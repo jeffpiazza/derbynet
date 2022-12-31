@@ -137,7 +137,7 @@ function collectPartitionNames(columnNumber) {
 // other than "Den".
 function on_partition_label_change() {
   $("div[data-field='partition']").text($("#partition-label").val());
-  // TODO Update group_label() string in #state-of-play
+  $("#existing-partition-label").text($("#partition-label").val() + 's');
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'settings.write',

@@ -175,8 +175,8 @@ function buildEncodingSelector() {
   ];
 
   var encoding = $("#encoding");
-  encoding.append("<label for='select-encoding'>Encoding:</label>");
-  var select = $("<select id='select-encoding'></select>").appendTo(encoding);
+  var select = $("<select id='select-encoding'></select>").prependTo(encoding);
+  encoding.prepend("<label for='select-encoding'>Encoding:</label>");
 
   for (var cpi in codePageNames) {
     var cp = codePageNames[cpi];

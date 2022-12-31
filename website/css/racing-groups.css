@@ -3,9 +3,24 @@
   font-size: 1em;
 }
 
+ul#aggregate-groups {
+  margin-top: 10px;  
+  margin-left: 10px;
+}
 div#race-rules, ul#all-groups {
   width: 400px;
   margin-left: 10px;
+}
+
+div.labels {
+  font-size: 18px;
+}
+
+div.block_buttons input.modest-button {
+  width: auto;
+  padding: 5px 10px;
+  font-size: large;
+  margin-top: 10px;
 }
 
 div.switch label {
@@ -154,6 +169,7 @@ div#race-rules {
 div#race-structure {
   margin-left: 410px;
   height: 100%;
+  width: 420px;
 }
 div#new-group {
   margin-left: 1.2em;

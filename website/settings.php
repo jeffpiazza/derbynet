@@ -166,14 +166,15 @@ $scoring = read_raceinfo('scoring', 0);
     </div>
     <div class="settings_group_settings">
       <p>
+        <label for="supergroup-label">The full roster is a (or the)</label>
         <input id="supergroup-label" name="supergroup-label" type="text" class="not-mobile"
-               value="<?php echo supergroup_label(); ?>"/>
-        <label for="supergroup-label">Super-Group Label</label>
+               value="<?php echo supergroup_label(); ?>"/>,
       </p>
       <p>
-        <input id="partition-label" name="partition-label" type="text" class="not-mobile"
-               value="<?php echo partition_label(); ?>"/>
-        <label for="partition-label">Segment Label</label>
+        <label for="partition-label">and a sub-division is a(n)</label>
+        <input id="partition-label" name="partition-label"
+               type="text" class="not-mobile"
+               value="<?php echo partition_label(); ?>"/>.
       </p>
 
       <p>Show racer names as:<br/>

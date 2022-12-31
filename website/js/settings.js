@@ -84,8 +84,7 @@ function browse_for_photo_directory(photo_dir_selector) {
   });
 }
 
-// Respond to changes in supergroup label
-function on_label_change() {
+function on_supergroup_label_change() {
   $("span.supergroup-label").text($("#supergroup-label").val().toLowerCase());
 }
 
@@ -157,7 +156,7 @@ $(function() {
 
   $("#now-racing-linger-sec").on("keyup mouseup", on_linger_time_change);
 
-  $("#supergroup-label").on("keyup mouseup", on_label_change);
+  $("#supergroup-label").on("keyup mouseup", on_supergroup_label_change);
 
   $('#settings_form input, #settings_form select').on('change', function(e) {
     PostSettingChange($(this));

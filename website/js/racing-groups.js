@@ -13,7 +13,30 @@ function on_rule_change(event, synthetic) {
           }
          });
 }
-$(function() { $("input[type='radio'][name='form-groups-by']").on('change', on_rule_change); });
+$(function() {
+  $("input[type='radio'][name='form-groups-by']").on('change', on_rule_change);
+});
+
+function on_partition_label_change() {
+  var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
+  var part_label = $("#partition-label").val();
+  var part_label_lc = part_label.toLowerCase();
+  $(".group-label").text(part_label);
+  $("#add-partition-button").val("Add " + part_label);
+  $(".partition-label-lc").text(part_label_lc);
+  $(".group-label-lc").text(part_label_lc + " (group)");
+  $(".subgroup-label-lc").text( part_label_lc + " (subgroup)");
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'settings.write',
+                 'partition-label': $("#partition-label").val(),
+                 'supergroup-label': $("#supergroup-label").val()
+                }
+         });
+}
+$(function() {
+  $("#partition-label, #supergroup-label").on('keyup mouseup', on_partition_label_change);
+});
 
 function on_use_subgroups_change(event, synthetic) {
   if (synthetic) return;
@@ -78,7 +101,8 @@ function populate_racing_groups(data) {
 
   var pigeonholed = false;  // Becomes true if any group has more than one subgroup
   for (var i = 0; i < data.classes.length; ++i) {
-    if (data.classes[i].hasOwnProperty('constituents') && data.classes[i].constituents.length > 0) {
+    if (data.classes[i].hasOwnProperty('constituents') &&
+        data.classes[i].constituents.length > 0) {
       // Ignore aggregate groups here
       continue;
     }
@@ -95,10 +119,13 @@ function populate_racing_groups(data) {
                 .addClass('class-name')
                 .text(data.classes[i].name)
                 // label and count are float-right, so the first span is rightmost
-                .append($("<span/>").text(rule == 'by-partition'
-                                          ? partition_label_lc + " (group)"
-                                          : "group").addClass('label'))
-                .append($("<span/>").text("(" + data.classes[i].count + ")").addClass('count'))
+                .append($("<span/>").addClass('label')
+                        .toggleClass('group-label-lc', rule == 'by-partition')
+                        .text(rule == 'by-partition'
+                              ? partition_label_lc + " (group)"
+                              : "group"))
+                .append($("<span/>").addClass('count')
+                        .text("(" + data.classes[i].count + ")"))
                 .prepend($("<input type='button' value='Edit' class='edit-button'/>")
                          .on('click', on_edit_class)));
 
@@ -109,15 +136,13 @@ function populate_racing_groups(data) {
       pigeonholed = pigeonholed || data.classes[i].subgroups.length > 1;
       for (var j = 0; j < data.classes[i].subgroups.length; ++j) {
         var rankid = data.classes[i].subgroups[j].rankid;
-
         var subg_p = $("<p/>")
                     .addClass('rank-name')
                     .text(data.classes[i].subgroups[j].name)
-            .append($("<span/>").text(rule == 'one-group'
-                                      ? partition_label_lc + " (subgroup)"
-                                      : "subgroup").addClass('label'))
-                    .append($("<span/>").text("(" + data.classes[i].subgroups[j].count + ")")
-                            .addClass('count'));
+            .append($("<span/>").addClass('label subgroup-label-lc')
+                    .text(partition_label_lc + " (subgroup)"))
+            .append($("<span/>").addClass('count')
+                    .text("(" + data.classes[i].subgroups[j].count + ")"));
         subg_p.prepend($("<input type='button' value='Edit' class='edit-button'/>")
                        .on('click', on_edit_rank));
         $("<li/>")
