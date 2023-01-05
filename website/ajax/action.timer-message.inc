@@ -179,7 +179,15 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
         $timer_state->to_state(TIMER_SEARCHING);
       }
     } else if (isset($_POST['confirmed'])) {
-      $timer_state->to_state($_POST['confirmed'] == 0 ? TIMER_UNCONFIRMED : TIMER_CONNECTED);
+      if ($_POST['confirmed'] == 0) {
+        $timer_state->to_state(TIMER_UNCONFIRMED);
+      } else {
+        // #218: Don't let "confirmed" flip TIMER_STAGING or TIMER_RUNNING back to TIMER_CONNECTED
+        $tstate = $timer_state->state();
+        if ($tstate == TIMER_NOT_CONNECTED || $tstate == TIMER_SEARCHING || $tstate == TIMER_UNCONFIRMED) {
+          $timer_state->to_state(TIMER_CONNECTED);
+        }
+      }
     } else if ($timer_state->unhealthy()) {
       // A good heartbeat converts unhealthy back to connected
       $timer_state->to_state(TIMER_CONNECTED);
