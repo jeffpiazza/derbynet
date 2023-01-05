@@ -62,7 +62,7 @@ function slide_file_path($filename) {
   }
   $dir = image_base_dir().DIRECTORY_SEPARATOR
        .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
-       .$home_subdir.DIRECTORY_SEPARATOR;
+       .'slides'.DIRECTORY_SEPARATOR;
 
   $g = glob($dir.$filename.".*");
   if ($g !== false && count($g) > 0) {
