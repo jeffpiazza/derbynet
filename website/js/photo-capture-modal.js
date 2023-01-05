@@ -26,8 +26,6 @@ var g_autocrop_car = false;
 
 var g_cameras = new Array();
 var g_cameraIndex = 0;
-var g_width = 640;
-var g_height = 480;
 
 function set_autocrop_state(repo) {
   $("#autocrop").prop('checked', repo == 'head' ? g_autocrop_head : g_autocrop_car);
@@ -71,17 +69,6 @@ Dropzone.options.photoDrop = {
 
 
 window.addEventListener('orientationchange', function() {
-  if (screen.width < screen.height) {
-    g_width = 480;
-    g_height = 640;
-  } else {
-    g_width = 640;
-    g_height = 480;
-  }
-
-  // TODO-Webcam.reset();
-  // setup_webcam();
-  // Webcam.attach('#preview');
 });
 
 function on_device_selection(selectq) {
@@ -102,7 +89,9 @@ function on_device_selection(selectq) {
       // "ideal" 4K resolution is just an attempt to get the highest resolution
       // from the camera(s)
       width: { ideal: 3960 },
-      height: { ideal: 2160 }
+      // Including the height prompts Mac Chrome (at least) to offer 1080w x 1920h, which
+      // isn't really desirable.
+      // height: { ideal: 2160 }
     }
     })
     .then(function(stream) {
@@ -110,9 +99,35 @@ function on_device_selection(selectq) {
       for (var t = 0; t < stream.getVideoTracks().length; ++t) {
         console.log('  track', t, stream.getVideoTracks()[t].getSettings());
       }
-      document.getElementById("preview").srcObject = stream;
+      $("#preview")[0].srcObject = stream;
     });
 }
+
+$(function() {
+  var previewj = $("#preview");
+  var preview = previewj[0];
+  preview.addEventListener('loadedmetadata',
+                           (ev) => {
+                             console.log('preview loadedmetadata', preview.videoWidth, preview.videoHeight);
+                             if (preview.videoHeight == 0 || preview.videoWidth == 0) {
+                               console.log('metadata says 0');
+                               return;
+                             }
+                             // preview to be no bigger than 640w x 480h
+                             var aspect = preview.videoWidth / preview.videoHeight;
+                             if (aspect > 640 / 480) {
+                               previewj.width(640);
+                               previewj.height(640 / aspect);
+                             } else {
+                               previewj.height(480);
+                               previewj.width(480 * aspect);
+                             }
+                             // Containing modal is 720px wide with 20px padding.
+                             var margin = (720 - previewj.width()) / 2 - 20;
+                             previewj.css({'margin-left': margin,
+                                                'margin-right': margin});
+                           });
+});
 
 function show_photo_modal(racerid, repo) {
   var firstname = $('#firstname-' + racerid).text();
@@ -138,11 +153,6 @@ function show_photo_modal(racerid, repo) {
     take_snapshot(racerid, repo, lastname + '-' + firstname);
     return false;
   });
-
-  if (screen.width < screen.height) {
-    g_width = 480;
-    g_height = 640;
-  }
 
   if (typeof(navigator.mediaDevices) == 'undefined') {
     $("#no-camera-warning").removeClass('hidden');
@@ -186,8 +196,8 @@ function take_snapshot(racerid, repo, photo_base_name) {
   }
 
   var canvas = document.createElement('canvas');
-  canvas.width = 640;
-  canvas.height = 480;
+  canvas.width = $("#preview").width();
+  canvas.height = $("#preview").height();
   canvas.getContext('2d').drawImage($("#preview")[0], 0, 0, canvas.width, canvas.height);
   var image_data_url = canvas.toDataURL('image/jpeg');
   canvas.remove();
