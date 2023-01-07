@@ -52,23 +52,23 @@
 	<key>CFBundleURLTypes</key>
 	<array/>
 	<key>CFBundleVersion</key>
-	<string>512</string>
+	<string>520</string>
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>13E6049a</string>
+	<string>14A6270d</string>
 	<key>DTPlatformName</key>
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>12.6</string>
+	<string>13.1</string>
 	<key>DTSDKBuild</key>
-	<string>21G105</string>
+	<string>22C48</string>
 	<key>DTSDKName</key>
-	<string>macosx12.6.internal</string>
+	<string>macosx13.1.internal</string>
 	<key>DTXcode</key>
-	<string>1330</string>
+	<string>1400</string>
 	<key>DTXcodeBuild</key>
-	<string>13E6049a</string>
+	<string>14A6270d</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.9</string>
 	<key>LSUIElement</key>

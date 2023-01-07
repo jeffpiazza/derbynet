@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>512</string>
+	<string>520</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -172,12 +172,10 @@
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>431.000000:322.000000</string>
+				<string>431.000000:266.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Ask for Confirmation.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -243,22 +241,24 @@ sed -i \
     $HTTPD_CONF
 
 sed -i \
-    -e "s!^ *Listen *8888!Listen 80!" \
+    -e "s!^ *ServerName *localhost!# ServerName localhost!" \
+    $HTTPD_CONF
+
+sed -i \
     -e "s!^ *DocumentRoot .*!DocumentRoot \"/Library/WebServer/Documents/derbynet\"!" \
-    -e "s!^# *\(Include.*/httpd-ssl.conf\)!\1!" \
     $HTTPD_CONF
 
 sed -i \
     -e "s!^# *\(Include.*/httpd-ssl.conf\)!\1!" \
     $HTTPD_CONF
 
-grep -s DERBYNET_DATA_DIR $HTTPD_CONF &amp;gt; /dev/null || \
+grep -s DERBYNET_DATA_DIR $HTTPD_CONF || \
 sed -i \
     -e "/^DocumentRoot/ a\\
 SetEnv DERBYNET_DATA_DIR $HOME/Public/DerbyNet\\
 " $HTTPD_CONF
 
-grep -s DERBYNET_CONFIG_DIR $HTTPD_CONF &amp;gt; /dev/null || \
+grep -s DERBYNET_CONFIG_DIR $HTTPD_CONF || \
 sed -i \
     -e "/^DocumentRoot/ a\\
 SetEnv DERBYNET_CONFIG_DIR /Library/WebServer/Documents/derbynet/local\\
@@ -404,12 +404,10 @@ sed -i \
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>431.000000:1216.000000</string>
+				<string>431.000000:893.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -505,12 +503,10 @@ sed -i \
 						<string>0</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>431.000000:1316.000000</string>
+				<string>431.000000:993.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Launch Application.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -520,14 +516,14 @@ sed -i \
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>5BD51A7A-7C95-4968-BAFD-8882C1BD1F8A</key>
+		<key>19FD1D41-39B9-4EEA-BDB3-9170BB409FCB</key>
 		<dict>
 			<key>from</key>
 			<string>D274C014-1D4B-4757-9006-A58D750ED6C8 - D274C014-1D4B-4757-9006-A58D750ED6C8</string>
 			<key>to</key>
 			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
 		</dict>
-		<key>BBCB428B-64A8-417C-AFD9-EF3A6F93C778</key>
+		<key>C9E87984-CCEB-460A-AE34-B7A9E55C3BFD</key>
 		<dict>
 			<key>from</key>
 			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
