@@ -24,6 +24,18 @@ if (have_permission(SET_UP_PERMISSION)) {
                        .' WHERE rankid = :rankid');
   $stmt->execute(array(':classid' => $classid,
                        ':rankid' => $rankid));
+  $stmt = $db->prepare('UPDATE Roster'
+                       .' SET roundid = (SELECT roundid FROM Rounds'
+                       .'                WHERE classid = :classid'
+                       .'                  AND round = 1),'
+                       .'     classid = :classid2'
+                       .' WHERE racerid IN '
+                       .'  (SELECT racerid FROM RegistrationInfo WHERE rankid = :rankid)'
+                       .' AND roundid IN (SELECT roundid FROM Rounds'
+                       .'                 WHERE round = 1)');
+  $stmt->execute(array(':classid' => $classid,
+                       ':classid2' => $classid,
+                       ':rankid' => $rankid));
 
   clean_up_empty_classes_and_ranks();
 
