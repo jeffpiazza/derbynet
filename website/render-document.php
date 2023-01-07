@@ -6,6 +6,8 @@ session_start();
 //  ["DOCUMENT_URI"]=> "/derbynet/pack153/2019/render-document.php/racer/CarTagsDocument"
 //  ["SCRIPT_NAME"]=> "/derbynet/pack153/2019/render-document.php"
 
+// We're trying to extract the "racer/CarTagsDocument" part into $args variable
+
 function confirm_args($str) {
   $ex = explode('/', $str);
   while (count($ex) > 0 && $ex[0] == '') {
@@ -34,6 +36,23 @@ if (!$have_args && isset($_SERVER['ORIG_PATH_INFO'])) {
   // Rewrite rules e.g. for hosted DerbyNet may leave ORIG_PATH_INFO instead of PATH_INFO
   $args = $_SERVER['ORIG_PATH_INFO'];
   $have_args = confirm_args($args);
+}
+
+/*
+  'DOCUMENT_URI' => '/render-document.php/racer/CarTagsDocument',
+  'SCRIPT_NAME' => '/render-document.php/racer/CarTagsDocument',
+  'SCRIPT_FILENAME' => '/var/www/html/render-document.php',
+  'PATH_TRANSLATED' => '/var/www/html',
+  'PHP_SELF' => '/render-document.php/racer/CarTagsDocument',
+  'DOCUMENT_ROOT' => '/var/www/html',
+*/
+ if (!$have_args && isset($_SERVER['PHP_SELF']) && isset($_SERVER['DOCUMENT_ROOT']) &&
+     isset($_SERVER['SCRIPT_FILENAME']) &&
+     substr($_SERVER['SCRIPT_FILENAME'], 0, strlen($_SERVER['DOCUMENT_ROOT'])) == $_SERVER['DOCUMENT_ROOT'] &&
+     substr($_SERVER['PHP_SELF'], 0, strlen($_SERVER['SCRIPT_FILENAME']) - strlen($_SERVER['DOCUMENT_ROOT'])) ==
+     substr($_SERVER['SCRIPT_FILENAME'],  strlen($_SERVER['DOCUMENT_ROOT']))) {
+   $args = substr($_SERVER['PHP_SELF'], strlen($_SERVER['SCRIPT_FILENAME']) - strlen($_SERVER['DOCUMENT_ROOT']));
+   $have_args = confirm_args($args);
 }
 
 if (!$have_args) {

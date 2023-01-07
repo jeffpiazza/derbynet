@@ -20,6 +20,7 @@ RUN apk update && \
     apk add php-opcache && \
     apk add php-gd && \
     apk add php-curl && \
+    apk add php-iconv && \
     apk add php-session && \
     apk add php-pdo && \
     apk add php-pdo_sqlite && \
