@@ -94,7 +94,9 @@ function inspect_database() {
       if ($schema_version < 2) { $sorting_field = 'class'; }
 
       $dens = array();
-      foreach ($db->query('SELECT class FROM Classes ORDER BY '.$sorting_field) as $row) {
+      foreach ($db->query('SELECT class FROM Classes'
+                          .($schema_version < 3 ? '' : ' WHERE constituents IS NULL or constituents = \'\'')
+                          .' ORDER BY '.$sorting_field) as $row) {
         $dens[] = $row['class'];
       }
       $result['dens'] = $dens;

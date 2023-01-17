@@ -30,6 +30,7 @@ function on_edit_class(event) {
   var nrounds = list_item.attr('data-nrounds');
   $("#completed_rounds_extension").toggleClass('hidden', !(count == 0 && nrounds != 0));
   $("#completed_rounds_count").text(nrounds);
+  var is_aggregate = list_item.hasClass('aggregate');
 
   var constituent_of = list_item.is('[data-constituent-of]') ? list_item.attr('data-constituent-of') : '';
   $("#constituent_extension").toggleClass('hidden', constituent_of == '');
@@ -38,7 +39,8 @@ function on_edit_class(event) {
   var rule = $("input[type='radio'][name='form-groups-by']:checked").val();
   $("#delete_class_extension")
     .toggleClass('hidden', !(count == 0 && nrounds == 0 &&
-                             constituent_of == '' && rule != 'one-group'));
+                             constituent_of == '' &&
+                             (rule != 'one-group' || is_aggregate)));
   show_modal("#edit_one_class_modal", function () {
     $.ajax(g_action_url,
            {type: 'POST',

@@ -170,6 +170,9 @@ function make_groups_sortable() {
       $("ul#all-groups > li").each(function(i) {
         data['classid_' + (i + 1)] = $(this).attr('data-classid');
       });
+      $("ul#aggregate-groups > li").each(function(i) {
+        data['classid_' + (i + 1)] = $(this).attr('data-classid');
+      });
       console.log(data);
       $.ajax(g_action_url,
              {type: 'POST',

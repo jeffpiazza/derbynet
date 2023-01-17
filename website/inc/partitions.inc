@@ -24,7 +24,7 @@ function labels() {
       $labels['subgroup'] = array("Subgroup", "Subgroups");
       break;
     case 'one-group':
-      $labels['group'] = $labels['supergroup'];
+      $labels['group'] = array("Group", "Groups");
       $labels['subgroup'] = $labels['partition'];
       break;
     default:  // custom
