@@ -127,12 +127,6 @@ class HostPoller {
     }
   }
 
-
-  // Avoid generating spurious PREPARE_HEAT_RECEIVED for announcements of the
-  // same heat
-  _roundid = -1;
-  _heat = -1;
-
   decodeResponse(response) {
     response = response.documentElement;
     var nodes;
@@ -151,14 +145,10 @@ class HostPoller {
                   parseInt(nodes[0].getAttribute('lanes')),
                   parseInt(nodes[0].getAttribute('round')),
                   nodes[0].getAttribute('class')];
-      if (this._roundid != args[0] || this._heat != args[1]) {
-        this._roundid = args[0];
-        this._heat = args[1];
-        if (g_logger.do_logging) {
-          g_logger.host_in('Prepare heat ' + args.join(','));
-        }
-        TimerEvent.send('PREPARE_HEAT_RECEIVED', args);
+      if (g_logger.do_logging) {
+        g_logger.host_in('Prepare heat ' + args.join(','));
       }
+      TimerEvent.send('PREPARE_HEAT_RECEIVED', args);
     }
     if ((nodes = response.getElementsByTagName("remote-start")).length > 0) {
       g_logger.host_in('START RACE');

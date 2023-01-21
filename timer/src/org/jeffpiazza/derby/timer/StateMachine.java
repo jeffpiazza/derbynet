@@ -96,6 +96,7 @@ public class StateMachine implements Event.Handler {
         switch (e) {
           case PREPARE_HEAT_RECEIVED:
             currentState = State.MARK;
+            gate_is_believed_closed = false;
             break;
           case ABORT_HEAT_RECEIVED:
           case RACE_FINISHED:

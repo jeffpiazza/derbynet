@@ -102,7 +102,7 @@ if (count($urls) == 0 || empty($urls[0])) {
 ?>
 
 <p>Please include this page if you wish to report a bug, and
-   contact me at <a href="mailto:bugs@jeffpiazza.org">bugs@jeffpiazza.org</a>.</p>
+   contact me at <a href="mailto:bugs@derbynet.org">bugs@derbynet.org</a>.</p>
 
 <p>Your browser's User Agent string is<br/><span id="useragent"></span>.</p>
 
