@@ -2,8 +2,10 @@
 // SQLite
 require_once('inc/schema_version.inc');
 
-function make_index($table, $column) {
-  return "CREATE INDEX IF NOT EXISTS ".$table."_".$column." ON ".$table."(".$column.")";
+if (!function_exists('make_index')) {
+  function make_index($table, $column) {
+    return "CREATE INDEX IF NOT EXISTS ".$table."_".$column." ON ".$table."(".$column.")";
+  }
 }
 
 return array_merge(
@@ -35,9 +37,9 @@ make_index("Awards", "sort"),
 .")",
   ),
 
-@include_once(sql_file_path('audit-table')),
+@include(sql_file_path('audit-table')),
 
-@include_once(sql_file_path('events-table')),
+@include(sql_file_path('events-table')),
 
 array(
 
@@ -168,23 +170,23 @@ make_index("Rounds", "classid"),
 make_index("Rounds", "round"),
   ),
 
-@include_once(sql_file_path('kiosk-table')),
+@include(sql_file_path('kiosk-table')),
 
-@include_once(sql_file_path('message-queue-table')),
+@include(sql_file_path('message-queue-table')),
 
-@include_once(sql_file_path('scene-tables')),
+@include(sql_file_path('scene-tables')),
 
-@include_once(sql_file_path('playlist-table')),
+@include(sql_file_path('playlist-table')),
 
-@include_once(sql_file_path('award-type-values')),
+@include(sql_file_path('award-type-values')),
 
-@include_once(sql_file_path('balloting')),
+@include(sql_file_path('balloting')),
 
-@include_once(sql_file_path('timer-settings')),
+@include(sql_file_path('timer-settings')),
 
-@include_once(sql_file_path('partitions')),
+@include(sql_file_path('partitions')),
 
-@include_once(sql_file_path('event-lane-details')),
+@include(sql_file_path('event-lane-details')),
 
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",
