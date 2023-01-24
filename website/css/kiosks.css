@@ -3,6 +3,11 @@
   text-align: center;
 }
 
+.full_page_center img{
+  max-height:85vh;
+  max-width:100vw;
+  }
+  
 .kiosk_title {
   font-size: 9vh;
   text-align: center;
