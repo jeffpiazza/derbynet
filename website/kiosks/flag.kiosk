@@ -7,29 +7,22 @@
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
-<link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
 <style type="text/css">
-html {
-  background-color: rgb(230, 230, 230);
-}
-
-#flag {
-  margin-top: 50px;
-  display: block;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
+#flag {  
   border: 8px solid #efc100;
 }
 </style>
 </head>
+
 <body>
 <?php
 require_once('inc/banner.inc');
 make_banner('', /* back_button */ false);
 ?>
 
+<div class="full_page_center">
 <img id="flag" src="image.php/flag"/>
+</div>
 
 <?php require('inc/ajax-failure.inc'); ?>
 </body>
