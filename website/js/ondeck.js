@@ -56,6 +56,8 @@ function repopulate_schedule(json) {
       }
       var row = $("<tr/>").appendTo("table#schedule");
       ++rowno;
+	  //new heat reset lane count to zero to ensure correct byes are populated
+	  lane = 0;
       row_has_photos = false;
       prev_racerids = racerids;
       racerids = Array(nlanes).fill(null);
@@ -69,8 +71,8 @@ function repopulate_schedule(json) {
         .appendTo(row);
       roundid = cell['roundid'];
       heat = cell['heat'];
-    }
-    add_byes(cell['lane'] - 1 - lane);
+    } 
+    add_byes(row, cell['lane'] - 1 - lane);
 
     var td = $("<td/>").appendTo(row).css({'width': td_width_vh + 'vh'});
     td.addClass('lane_' + cell['lane'])
