@@ -26,9 +26,9 @@ if (schema_version() < 3) {
 
 if (schema_version() < 4) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('message-queue-table')),
-                         @include_once(sql_file_path('scene-tables')),
-                         @include_once(sql_file_path('playlist-table')));
+                         @include(sql_file_path('message-queue-table')),
+                         @include(sql_file_path('scene-tables')),
+                         @include(sql_file_path('playlist-table')));
 
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '4')";
@@ -43,7 +43,7 @@ if (schema_version() < 5) {
 
 if (schema_version() < 6) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('balloting')));
+                         @include(sql_file_path('balloting')));
 
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '6')";
@@ -51,7 +51,7 @@ if (schema_version() < 6) {
 
 if (schema_version() < 7) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('timer-settings')));
+                         @include(sql_file_path('timer-settings')));
 
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '7')";
@@ -59,7 +59,7 @@ if (schema_version() < 7) {
 
 if (schema_version() < 8) {
   $updates - array_merge($updates,
-                         @include_once(sql_file_path('partitions')));
+                         @include(sql_file_path('partitions')));
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN partitionid INTEGER";
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN note VARCHAR(255)";
   $updates[] = "CREATE TABLE ConstituentClasses ("
@@ -72,7 +72,7 @@ if (schema_version() < 8) {
 
 if (schema_version() < 9) {
   $updates = array_merge($updates,
-                         @include_once(sql_file_path('event-lane-details')));
+                         @include(sql_file_path('event-lane-details')));
   // $updates[] = "ALTER TABLE Events DROP COLUMN lane";
   $updates[] = "ALTER TABLE Events ADD COLUMN finishid INTEGER";
 

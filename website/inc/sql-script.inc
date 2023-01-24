@@ -12,7 +12,7 @@ function run_sql_script($scriptname) {
   $ok = true;
   $executed = array();
   try {
-    $sql_script = @include_once(sql_file_path($scriptname));
+    $sql_script = @include(sql_file_path($scriptname));
     if ($sql_script !== false) {
       foreach ($sql_script as $sql_stmt) {
         try {

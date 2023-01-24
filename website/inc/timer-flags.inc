@@ -1,10 +1,21 @@
 <?php
 
-
 require_once('inc/sql-script.inc');
 
+// The FLAGS message from the timer to the server leads to a decode_timer_flags
+// call, which populates the TimerSettings table with flags, flag descriptions,
+// ports, and timer types (devices) that the timer interface understands.
+//
+// For flags, changes from the user are written to the 'pending' column for the
+// flag entry.
+//
+// Device selection gets written to a new row with kind='pending-device'.
+//
+// Port selection sets 'pending' column for the single kind='ports' row.
+
+
 // If we're working with an unmigrated GPRM database, we may need to create a
-// kiosk table.
+// timer settings table.
 function create_timer_settings_table() {
   run_sql_script('timer-settings');
 }

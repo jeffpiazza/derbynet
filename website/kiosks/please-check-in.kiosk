@@ -24,7 +24,14 @@ body { overflow: hidden; }
   top: 100px;
   bottom: 0;
 }
-
+.wanted_container ul {
+    -moz-column-count: 5;
+    -moz-column-gap: 2vw;
+    -webkit-column-count: 5;
+    -webkit-column-gap: 2vw;
+    column-count: 5;
+    column-gap: 2vw;
+}
 .wanted_container li {
   font-size: 3vh;
 }

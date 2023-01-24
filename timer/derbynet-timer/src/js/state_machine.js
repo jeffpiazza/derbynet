@@ -59,6 +59,7 @@ class StateMachine {
       switch (event) {
       case 'PREPARE_HEAT_RECEIVED':
         this.state = 'MARK';
+        this.gate_is_believed_closed = false;
         break;
       case 'ABORT_HEAT_RECEIVED':
       case 'RACE_FINISHED':

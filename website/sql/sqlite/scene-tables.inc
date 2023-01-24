@@ -1,20 +1,22 @@
 <?php
 
-function make_scene($sceneid, $name, $main, $aux1, $aux2) {
-  $result = array();
-  $result[] = 'INSERT INTO Scenes(sceneid, name, sortorder)'
-                  .' VALUES('.$sceneid.', \''.$name.'\', '.$sceneid.')';
-  $result[] = 'INSERT INTO SceneKiosk(sceneid, kiosk_name, page)'
-          .' VALUES('.$sceneid.', \'Main\', \''.$main.'\')';
-  if (!empty($aux1)) {
+if (!function_exists('make_scene')) {
+  function make_scene($sceneid, $name, $main, $aux1, $aux2) {
+    $result = array();
+    $result[] = 'INSERT INTO Scenes(sceneid, name, sortorder)'
+              .' VALUES('.$sceneid.', \''.$name.'\', '.$sceneid.')';
     $result[] = 'INSERT INTO SceneKiosk(sceneid, kiosk_name, page)'
-            .' VALUES('.$sceneid.', \'Aux1\', \''.$aux1.'\')';
+              .' VALUES('.$sceneid.', \'Main\', \''.$main.'\')';
+    if (!empty($aux1)) {
+      $result[] = 'INSERT INTO SceneKiosk(sceneid, kiosk_name, page)'
+                .' VALUES('.$sceneid.', \'Aux1\', \''.$aux1.'\')';
+    }
+    if (!empty($aux2)) {
+      $result[] = 'INSERT INTO SceneKiosk(sceneid, kiosk_name, page)'
+                .' VALUES('.$sceneid.', \'Aux2\', \''.$aux2.'\')';
+    }
+    return $result;
   }
-  if (!empty($aux2)) {
-    $result[] = 'INSERT INTO SceneKiosk(sceneid, kiosk_name, page)'
-            .' VALUES('.$sceneid.', \'Aux2\', \''.$aux2.'\')';
-  }
-  return $result;
 }
 
 return array_merge(
