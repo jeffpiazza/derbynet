@@ -7,20 +7,13 @@
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
-<link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
 <style type="text/css">
-html {
-  background-color: rgb(230, 230, 230);
-}
-
-#flag {
-  margin-top: 16 px;
-  display: block;
+#flag {  
   border: 8px solid #efc100;
 }
-
 </style>
 </head>
+
 <body>
 <?php
 require_once('inc/banner.inc');
