@@ -1,8 +1,15 @@
 .full_page_center {
   width: 100%;
   text-align: center;
+  padding-top: 8px;
 }
 
+.full_page_center img{
+  max-height:80vh;
+  max-width:100vw;
+  text-align: center;
+  }
+  
 .kiosk_title {
   font-size: 9vh;
   text-align: center;
