@@ -71,7 +71,8 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetFont('Times', 'B', 36);
     $this->pdf->SetXY($left, 7.75);
     $this->pdf->SetFillColor(255, 255, 200);
-    $this->pdf->Cell(2.75, 0.5, $racer['carnumber'], /* border */ 0, /* ln */ 0, "C");
+    $this->pdf->Cell(2.75, 0.5, str_pad($value, 3, '0', STR_PAD_LEFT)$racer['carnumber'], /* border */ 0, /* ln */ 0, "C");
+
   }
 
   // Group (class) names may vary from one event to another, and the assignment of
