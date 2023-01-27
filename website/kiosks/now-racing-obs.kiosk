@@ -1,0 +1,103 @@
+<?php @session_start();
+$nlanes = get_lane_count();
+$use_points = read_raceinfo_boolean('use-points');
+$linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
+require_once('inc/banner.inc');
+?><!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Pack 785 OBS Layout Hack</title>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/global.css"/>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/now-racing-obs.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
+<script type="text/javascript" src="js/now-racing-overlay.js"></script>
+<script type="text/javascript" src="js/now-racing-OBS.js"></script>
+<script type="text/javascript" src="js/now-racing-adjust-fonts.js"></script>
+<?php if (@$simulated_polling_url) { ?>
+<script type="text/javascript" src="<?php echo @$simulated_polling_url; ?>"></script>
+<?php } ?>
+<?php // If $nlanes not yet set, then this page isn't ready for display.
+    if ($nlanes <= 0) {
+?><script type="text/javascript">
+$(function () {
+    setTimeout(function() {
+        console.log("Reloading because nlanes not set yet.");
+        location.reload(true);
+      },
+      5000);
+  });
+</script>
+<?php }  // if ($nlanes <= 0)
+?>
+<script type="text/javascript">
+var g_linger_ms = <?php echo $linger_ms; ?>;
+</script>
+</head>
+<body>
+<?php make_banner('Racing', /* back_button */ false); ?>
+<?php if ($nlanes > 0) { ?>
+<table id="main-table">
+
+<!--This part is edited to work with the OBS overlay. Tables are set to fixed
+# This edit sets a fixed table, cell, + font sizes to be shown in a 1920x1080 
+# web browser in OBS. Call this page using the link
+# http://<localhost>/kiosk.php?page=kiosks/now-racing-obs.kiosk
+-->
+<tr id="table-headers">
+    <th style="width: 80px;">Lane</th>
+    <th class='carnumber no-test' style="width: 120px;">Car</th>
+    <th class='no-test' style="width: 40%;">Racer</th>
+    <th class='no-test' style="width: 60%;">Carname</th>
+    <th style="width: 80px;">Place</th>
+<?php if (!$use_points) { ?>
+    <th style="width: 120px;">Time</th>
+    <th class='no-test' style="width: 120px;"><div id="speed-div">Speed <span class="aside">(scale MPH)</span></div></th>
+<?php } ?>
+</tr>
+
+<?php
+for ($i = 1; $i <= $nlanes; ++$i) {
+      echo '<tr data-lane="'.$i.'">'
+          .'<td class="lane" style="width: 80px; font-size: 48px;">'.$i.'</td>'
+          .'<td class="carnumber no-test" style="width: 80px; font-size: 48px;"></td>'
+          .'<td class="name no-test" style="width: 200px; font-size: 48px;"></td>'
+          .'<td class="carnombre no-test" style="width: 800px; font-size: 48px;"></td>'
+          .'<td class="place" style="width: 80px; font-size: 36px;"><span class="sp"/></td>';
+      if (!$use_points) {
+        echo '<td class="time" style="width: 80px; font-size: 20px;"></td>'
+            .'<td class="speed no-test" style="width: 80px; font-size: 20px;"></td>';
+      }
+      echo '</tr>'."\n";
+  }
+?>
+<!--end pack 785 edit-->
+
+</table>
+<?php
+  for ($i = 1; $i <= $nlanes; ++$i) {
+      echo '<div id="place'.$i.'" class="flying"><span>'.$i.'</span></div>'."\n";
+  }
+?>
+<?php } else { ?>
+<h2>Number of lanes not yet recorded...</h2>
+<?php } ?>
+
+<!--We don't want this showing up in the stream
+<//?php require_once('inc/ajax-failure.inc'); ?>
+
+<div id="overlay_background"></div>
+<div id="paused_overlay" class="overlay_foreground">
+ <img src="img/pause.png"/>
+</div>
+<div id="timer_overlay" class="overlay_foreground">
+ <img src="img/timer-red.png"/>
+ <p>Check timer.</p>
+</div>
+-->
+</body>
+</html>
