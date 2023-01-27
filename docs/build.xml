@@ -6,14 +6,22 @@
 
    <property name="dist"  location="dist"/>
 
-   <!-- Set soffice for Windows if that's where we are, otherwise use
-	standard (Mac) value -->
-   <condition property="soffice"
-	      value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
+   <!-- Set soffice for Windows if that's where we are, otherwise use standard (Mac) value -->
+   <condition property="soffice" value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
      <os family="windows"/>
    </condition>
-   <property name="soffice"
-	     location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
+
+   <!-- Set soffice for Linux if that's where we are, otherwise use standard (Mac) value -->
+   <!-- Debian may require installation of the "libreoffice-java-common" package -->
+   <condition property="soffice" value="/usr/bin/soffice">
+     <os family="unix"/>
+   </condition>
+  
+   <!-- Set soffice for Linux if that's where we are, otherwise use standard (Mac) value -->
+   <condition property="soffice" value="/Applications/LibreOffice.app/Contents/MacOS/soffice">
+     <os family="mac"/>
+   </condition>
+   
    <condition property="is_windows">
      <os family="windows"/>
    </condition>
