@@ -90,7 +90,7 @@ if ($prev_classid >= 0) {
 } else {
   make_banner('All Racers Have Checked In', false);
   echo '<div class="full_page_center">'."\n";
-  echo "<img src=\"image.php/emblem\"/ >\n";
+  echo "<img src=\"image.php/emblem\"/>\n";
   echo '</div>'."\n";
 }
 ?>
