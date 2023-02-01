@@ -79,6 +79,7 @@ var g_preferred_urls = <?php echo json_encode(preferred_urls(/*use_https=*/true)
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/partitions-modal.js"></script>
 <script type="text/javascript" src="js/video-device-picker.js"></script>
+<script type="text/javascript" src="js/imagecapture.js"></script>
 <script type="text/javascript" src="js/photo-capture-modal.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>

@@ -99,7 +99,15 @@ function on_device_selection(selectq) {
       for (var t = 0; t < stream.getVideoTracks().length; ++t) {
         console.log('  track', t, stream.getVideoTracks()[t].getSettings());
       }
+
       $("#preview")[0].srcObject = stream;
+      try {
+        console.log('Creating ImageCapture object');
+        $("#preview").data('image-capture', new ImageCapture(stream.getVideoTracks()[0]));
+      } catch(err) {
+        console.error('new ImageCapture failed', err);
+        $("#preview").data('image-capture', null);
+      }
     });
 }
 
@@ -177,6 +185,54 @@ function show_car_photo_modal(racerid) {
   show_photo_modal(racerid, 'car');
 }
 
+
+// =================
+
+function onTakePhotoButtonClick() {
+  imageCapture.takePhoto()
+  .then((blob) => createImageBitmap(blob))
+  .then((imageBitmap) => {
+    const canvas = document.querySelector('#takePhotoCanvas');
+    drawCanvas(canvas, imageBitmap);
+  })
+  .catch((error) => console.error(error));
+}
+
+/* Utils */
+
+function drawCanvas(canvas, img) {
+  canvas.width = getComputedStyle(canvas).width.split('px')[0];
+  canvas.height = getComputedStyle(canvas).height.split('px')[0];
+  let ratio  = Math.min(canvas.width / img.width, canvas.height / img.height);
+  let x = (canvas.width - img.width * ratio) / 2;
+  let y = (canvas.height - img.height * ratio) / 2;
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height,
+      x, y, img.width * ratio, img.height * ratio);
+}
+
+
+function onGrabFrameButtonClick() {
+  imageCapture.grabFrame()
+  .then(imageBitmap => {
+    const canvas = document.querySelector('#grabFrameCanvas');
+    drawCanvas(canvas, imageBitmap);
+  })
+  .catch(error => ChromeSamples.log(error));
+}
+
+function onTakePhotoButtonClick() {
+  imageCapture.takePhoto()
+  .then(blob => createImageBitmap(blob))
+  .then(imageBitmap => {
+    const canvas = document.querySelector('#takePhotoCanvas');
+    drawCanvas(canvas, imageBitmap);
+  })
+  .catch(error => ChromeSamples.log(error));
+}
+// =================
+
+
 function take_snapshot(racerid, repo, photo_base_name) {
   if (photo_base_name.length <= 1) {
     photo_base_name = 'photo';
@@ -196,9 +252,38 @@ function take_snapshot(racerid, repo, photo_base_name) {
   }
 
   var canvas = document.createElement('canvas');
+  if ($("#preview").data('image-capture')) {
+    console.log('image-capture exists!');
+    $("#preview").data('image-capture').grabFrame()
+      .then((image_bitmap) => {
+        console.info('image_bitmap is ', image_bitmap.width, image_bitmap.height);
+        console.info(image_bitmap);
+        canvas.width = image_bitmap.width;
+        canvas.height = image_bitmap.height;
+        canvas.getContext('2d').drawImage($("#preview")[0], 0, 0,
+                                          canvas.width, canvas.height);
+        send_canvas_photo(canvas, racerid, repo, photo_base_name);
+      })
+      .catch((error) => {
+        console.error('grabFrame error', error);
+        // If we didn't get an image bitmap (or had some other problem), then fall
+        // back to just capturing the preview window content.
+        send_photo_from_preview(canvas, racerid, repo, photo_base_name);
+      });
+  } else {
+    send_photo_from_preview(canvas, racerid, repo, photo_base_name);
+  }
+}
+
+function send_photo_from_preview(canvas, racerid, repo, photo_base_name) {
+  console.error('Falling back to preview capture', $("#preview").width(), $("#preview").height());
   canvas.width = $("#preview").width();
   canvas.height = $("#preview").height();
   canvas.getContext('2d').drawImage($("#preview")[0], 0, 0, canvas.width, canvas.height);
+  send_canvas_photo(canvas, racerid, repo, photo_base_name);
+}
+
+function send_canvas_photo(canvas, racerid, repo, photo_base_name) {
   var image_data_url = canvas.toDataURL('image/jpeg');
   canvas.remove();
 
@@ -214,7 +299,6 @@ function take_snapshot(racerid, repo, photo_base_name) {
   for (var i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-
   var blob = new Blob([ab], {type: 'image/jpeg'});
 
   // stuff into a form, so servers can easily receive it as a standard file upload
@@ -243,8 +327,8 @@ function take_snapshot(racerid, repo, photo_base_name) {
 
   // TODO-Webcam.reset();
   close_modal("#photo_modal");
-}
-
+  }
+  
 function close_photo_modal() {
   // TODO-Webcam.reset();
   close_modal("#photo_modal");
