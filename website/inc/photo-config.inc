@@ -84,6 +84,9 @@ class PhotoRepository {
     return $this->lookup_or_any($render_name)->url_for_file($imagefile, $racerid);
   }
 
+  // This only gives the list of renders that have been used for this PHP page
+  // instance -- custom renders created via lookup() for another page instance
+  // are completely unknown.
   public function all_renders() {
     return $this->all_renders;
   }
