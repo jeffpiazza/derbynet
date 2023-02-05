@@ -730,7 +730,7 @@ class StandingsOracle {
         }
 
         if (count($cl['constituents']) > 0) {
-          $catalog[] = array('name' => $cl['class'].' Qualifiing Rounds',
+          $catalog[] = array('name' => $cl['class'].' Qualifying Rounds',
                              'key' => stkey_qual($classid),
                              'presentation' => 'qual');
         }
