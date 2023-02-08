@@ -9,6 +9,17 @@ $(function() {
   console.log('window.inner', window.innerWidth, window.innerHeight);
 });
 
+var g_trouble_timeout = 0;
+function report_trouble(msg) {
+  clearTimeout(g_trouble_timeout);
+  $("#trouble").text(msg).removeClass('hidden');
+  g_trouble_timeout = setTimeout(close_trouble, 5000);
+}
+
+function close_trouble() {
+  $("#trouble").addClass('hidden');
+}
+
 var codeReader = new ZXingBrowser.BrowserMultiFormatOneDReader();
 
 // Last scanned barcode value
@@ -33,6 +44,7 @@ async function on_device_selection(selectq) {
     .then(function(stream) {
       var tracks = stream.getTracks();
       if (tracks.length < 1) {
+        report_trouble("No video streams available.");
         return;
       }
       var settings = tracks[0].getSettings();
@@ -78,8 +90,11 @@ async function on_device_selection(selectq) {
       codeReader.decodeFromStream(stream, 'preview',
                                   function(result, error, control) {
                                     if (result) {
+                                      console.log("Recognized barcode:", result);
                                       on_recognized_barcode(result);
                                     } else if (error && error.getKind() != "NotFoundException") {
+                                      report_trouble("ZXing error: " + error.getKind() + "\n\n" +
+                                                     error.toString());
                                       console.log('error', error.getKind(), error);
                                     }
                                   });
@@ -107,13 +122,18 @@ function on_recognized_barcode(result) {
             // classid, class, rankid, rank, passed, seq
             // TOOD partitionid
             console.log(json);
-            var racer = json['racers'][0];
-            $("#racer-div").text(racer.firstname + " " + racer.lastname +
-                                 "  " + racer.carnumber + " " + racer.carname);
-            update_thumbnail('head', racer.headshot);
-            update_checked_in(racer.passed);
-            update_thumbnail('car',  racer.carphoto);
-            $("#slide-up").animate({height: '110px'});
+            if (json['racers'].length == 0) {
+              report_trouble('No racer for that barcode');
+              console.log('Barcode reader result (not recognized)', result);
+            } else {
+              var racer = json['racers'][0];
+              $("#racer-div").text(racer.firstname + " " + racer.lastname +
+                                   "  " + racer.carnumber + " " + racer.carname);
+              update_thumbnail('head', racer.headshot);
+              update_checked_in(racer.passed);
+              update_thumbnail('car',  racer.carphoto);
+              $("#slide-up").animate({height: '110px'});
+            }
           }
          });
 }
@@ -142,6 +162,7 @@ $(function() {
 
 function start_camera() {
   $("#instructions-background").addClass('hidden');
+  $("#instructions-overlay, #instructions-overlay-background").removeClass('hidden');
   build_device_picker($("#device-picker"), /*include_remote*/false, on_device_selection);
 }
 
@@ -187,7 +208,10 @@ function capture_photo(repo) {
           contentType: false,
           processData: false,
           success: function(data) {
-            if (data.hasOwnProperty('thumbnail')) {
+            if (data.outcome.summary != 'success') {
+              report_trouble('Upload ' + data.outcome.code + ': ' + data.outcome.description);
+              console.log('Failed upload', data);
+            } else if (data.hasOwnProperty('thumbnail')) {
               update_thumbnail(repo, data['thumbnail']);
             }
           }
@@ -220,14 +244,7 @@ function on_checkin_button() {
               update_checked_in(!$("#checked_in").prop('checked'));
             } else {
               console.log(json);
-              $("<pre/>").appendTo("body").css({
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                height: '100vh',
-                width: '100vh',
-                'z-index': 100,
-                background: 'white'}).text(JSON.stringify(json, null, 2));
+              report_trouble(JSON.stringify(json, null, 2));
             }
           }
          });
