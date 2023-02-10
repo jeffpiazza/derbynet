@@ -654,7 +654,9 @@ function process_coordinator_poll_json(json) {
           .append($("<div id='timer-testing-herald'></div>")
                   .append($("<h3></h3>")
                           .append($("<span></span>").text(json['refused-results']))
-                          .append(" unexpected results from timer have been received."))
+                          .append(json['refused-results'] == 1
+                                  ? " unexpected result from timer has been received."
+                                  : " unexpected results from timer have been received."))
                   .append("<p>Turn on racing mode or simulate racing if you wish to record results.</p>"));
   } else {
     $('#timer-testing-herald').remove();

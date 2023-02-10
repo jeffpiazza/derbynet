@@ -4,6 +4,28 @@
 require_once('inc/photo-config.inc');
 require_once('inc/events.inc');
 
+function delete_photo_recursively($dir, $base_name) {
+  $dh = false;
+  try {
+    $dh = @opendir($dir);
+    if ($dh !== false) {
+      while (($filename = readdir($dh)) !== false) {
+        $fullpath = $dir.DIRECTORY_SEPARATOR.$filename;
+        if ($filename == $base_name) {
+          @unlink($fullpath);
+        } else if ($filename != "." && $filename != ".." && is_dir($fullpath)) {
+          delete_photo_recursively($fullpath, $base_name);
+        }
+      }
+    }
+  } catch (Exception $e) {
+    json_failure($e->getMessage());
+  } finally {
+    if ($dh !== false) {
+      closedir($dh);
+    }
+  }
+}
 
 if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
   $repo = photo_repository(isset($_POST['repo']) ? $_POST['repo'] : 'head');
@@ -13,6 +35,7 @@ if (have_permission(ASSIGN_RACER_IMAGE_PERMISSION)) {
       @unlink($photo_path);
     }
   }
+  delete_photo_recursively($repo->directory(), $_POST['photo']);
 
   $basename = basename($_POST['photo']);
   $column = $repo->column_name();

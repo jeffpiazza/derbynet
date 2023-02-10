@@ -2,7 +2,7 @@
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
 
-// require_permission(CHECK_IN_RACERS_PERMISSION);
+$_SESSION['permissions'] |= CHECK_IN_RACERS_PERMISSION | REVERT_CHECK_IN_PERMISSION | PHOTO_UPLOAD_PERMISSION;
 
 ?><!DOCTYPE html>
 <html>
@@ -38,8 +38,17 @@ require_once('inc/authorize.inc');
 </div>
 
 
+<div id="trouble" class="hidden" onclick="close_trouble();">
+</div>
+
 <video id="preview" autoplay muted playsinline>
 </video>
+
+<div id="instructions-overlay" class="hidden">
+Orient barcode like this.
+</div>
+<div id="instructions-overlay-background" class="hidden">
+</div>
 
 
 <audio id="beep" src="img/barcode.mp3"></audio>

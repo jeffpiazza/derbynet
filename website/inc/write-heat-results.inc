@@ -116,18 +116,19 @@ function write_heat_results($results) {
       // places if not all times were reported.
       usort($all_times, 'compare_by_finishtime');  // Now, index gives finish place - 1, except for ties
 
-      $place = count($all_times);
-      for ($p = $place; $p > 0; --$p) {
-        if (!isset($all_times[$p - 1]['finishtime'])) {
-          // TODO Can this happen?
+      $ntimes = count($all_times);
+      $place = 1;
+      for ($p = 0; $p < $ntimes; ++$p) {
+        if (!isset($all_times[$p]['finishtime'])) {
+          // $all_times_posted implies this shouldn't be possible.
           echo "\n<broken>\n";
           continue;
         }
-        $all_times[$p - 1]['finishplace'] = $place;
-        if ($p > 1 && $all_times[$p - 1]['finishtime'] == $all_times[$p - 2]['finishtime']) {
-          // Tie; don't decrement $place
+        $all_times[$p]['finishplace'] = $place;
+        if ($p + 1 < $ntimes && $all_times[$p]['finishtime'] == $all_times[$p + 1]['finishtime']) {
+          // Tie; don't increment $place
         } else {
-          $place = $p - 1;
+          $place = $p + 2;
         }
       }
     }

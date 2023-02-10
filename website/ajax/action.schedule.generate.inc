@@ -51,7 +51,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
     }
   }
 
-  assign_master_heats(round_number_from_roundid($roundid));
+  assign_master_heats();
   if (use_master_sched()) {
     $current = get_running_round();
     advance_heat($current, 'next-up', /* report failure */ false);

@@ -109,7 +109,7 @@ class ResultAnimator {
 
     for (var i = 0; i < heat_results.length; ++i) {
       let lane = heat_results[i].lane;
-      let racer_entry_div = $("div.lane").eq(lane - 1).find("div.racer-entry:first");
+      let racer_entry_div = $("div.lane").eq(lane_to_column(lane)).find("div.racer-entry:first");
       let time_div = racer_entry_div.find("div.heat_time");
       time_div.text(Number.parseFloat(heat_results[i].time).toFixed(precision))
         .css({'background-color': 'red'});
@@ -197,7 +197,7 @@ function process_polling_result(data) {
       for (var lane = 1; lane <= g_number_of_lanes; ++lane) {
         var racer_entry =
             $("<div class='racer-entry'/>")
-            .appendTo($("div.lane div.rollable").eq(lane - 1))
+            .appendTo($("div.lane div.rollable").eq(lane_to_column(lane)))
             .attr('data-heat-key', heat_key)
             .attr('data-roundid', current_heat.roundid)
             .attr('data-heat', current_heat.heat)
@@ -221,7 +221,7 @@ function process_polling_result(data) {
       for (var i = 0; i < data.racers.length; ++i) {
         var lane = data.racers[i].lane;
         var racerid = data.racers[i].racerid;
-        var racer_entry = $("div.lane").eq(lane - 1).find("div.racer-entry").last();
+        var racer_entry = $("div.lane").eq(lane_to_column(lane)).find("div.racer-entry").last();
         racer_entry.attr('data-racerid', racerid);
         let div_car = racer_entry.find("div.car");
         div_car.prepend($("<img/>")

@@ -46,9 +46,4 @@ function results_exist($roundid) {
                            array(':roundid' => $roundid));
 }
 
-function round_number_from_roundid($roundid) {
-  return read_single_value('SELECT round FROM Rounds WHERE roundid = :roundid',
-                           array(':roundid' => $roundid));
-}
-
 ?>

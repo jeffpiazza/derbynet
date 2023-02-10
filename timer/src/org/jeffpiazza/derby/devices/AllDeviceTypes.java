@@ -7,6 +7,7 @@ import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.profiles.BertDrake;
 import org.jeffpiazza.derby.profiles.FastTrack;
 import org.jeffpiazza.derby.profiles.Champ;
+import org.jeffpiazza.derby.profiles.ChampSRM;
 import org.jeffpiazza.derby.profiles.DerbyMagic9600;
 import org.jeffpiazza.derby.profiles.DerbyMagic;
 import org.jeffpiazza.derby.profiles.DerbyTimer;
@@ -24,6 +25,7 @@ public class AllDeviceTypes {
   private static final Class<? extends TimerDevice>[] allDeviceClasses
       = (Class<? extends TimerDevice>[]) new Class[]{
         Champ.class,
+        ChampSRM.class,
         FastTrack.class,
         FastTrackPSeries.class,
         TheJudge.class,

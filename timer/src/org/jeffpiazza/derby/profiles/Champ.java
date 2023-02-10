@@ -21,8 +21,12 @@ public class Champ extends TimerDeviceWithProfile {
         .max_lanes(6)
         // Pre-probe lets the timer settle
         .prober(new Profile.CommandSequence(""),
+                // January, 2023: New "Champ" timer responds with
+                // Rev H Copyright SRM Enterprises
+                // (not even a valid copyright)
                   "v", "eTekGadget SmartLine Timer")
         .setup("r" /* RESET */,
+               "ox0" /* Set Champ Timer mode instead of DTX */,
                  // Interrogate for a bunch of details here
                  "or" /* read auto-reset */,
                  "ol" /* read lane character */,

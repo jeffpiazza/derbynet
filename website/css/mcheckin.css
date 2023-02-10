@@ -25,8 +25,17 @@
 #instructions input {
   margin-top: 50px;
 }
-#preview-frame {
-  display: inline-block;
+
+#trouble {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 150px;
+  min-height: 200px;
+
+  background: red;
+  color: white;
+  text-align: center;
 }
 
 video#preview {
@@ -38,6 +47,29 @@ video#preview {
   z-index: -100;
   margin-left: auto;
   margin-right: auto;
+}
+#instructions-overlay,
+#instructions-overlay-background {
+  position: fixed;
+  top: 200px;
+  left: 50%;
+  margin-left: -200px;
+  width: 400px;
+  height: 40px;
+}
+#instructions-overlay {
+  z-index: 100;
+  border: red solid 2px;
+  color: red;
+  padding-top: 14px;
+  text-align: center;
+  font-weight: bold;
+}
+#instructions-overlay-background {
+  z-index: 95;
+  height: 58px; /* instructions height, plus 14px top padding plus 4px v. border */
+  background-color: white;
+  opacity: 20%;
 }
 
 div#flash-overlay {

@@ -1,6 +1,5 @@
 package org.jeffpiazza.derby.timer;
 
-import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 

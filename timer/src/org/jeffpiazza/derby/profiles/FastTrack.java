@@ -38,7 +38,7 @@ public class FastTrack extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    Profile profile = Profile.forTimer("FastTrack K-series", "FastTrack-K")
+    Profile profile = Profile.forTimer("FastTrack K- or Q-series", "FastTrack-K")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
@@ -52,15 +52,17 @@ public class FastTrack extends TimerDeviceWithProfile {
         //
         // COPYRIGHT (c) MICRO WIZARD 2002
         // K2 Version 1.05a  Serial Number <nnnnn>
-        .prober("RV", "Micro Wizard|MICRO WIZARD", "^K")
+        .prober("RV", "Micro Wizard|MICRO WIZARD", "^K|Model: Q")
         // RE: Reset eliminator mode
         // N1: "new" format
         // N2: enhanced format
         // RF: return features
         .setup(Flag.skip_enhanced_format.value()
                ? new String[]{"RE", "N1", "RF"}
+               // Q1 timer also supports an "N3" mode, which allows timers longer
+               // than 10 seconds.
                : new String[]{"RE", "N1", "N2", "RF"})
-        .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
+        .match(" *([A-Z])=(\\d+\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .heat_prep("MG", "M", 'A')
         .gate_watcher("RG" /* Read start switch condition */,
                       new Profile.Detector("RG0", Event.GATE_OPEN),
