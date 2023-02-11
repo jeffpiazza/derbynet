@@ -26,16 +26,19 @@ public class Champ extends TimerDeviceWithProfile {
                 // (not even a valid copyright)
                   "v", "eTekGadget SmartLine Timer")
         .setup("r" /* RESET */,
-               "ox0" /* Set Champ Timer mode instead of DTX */,
-                 // Interrogate for a bunch of details here
-                 "or" /* read auto-reset */,
-                 "ol" /* read lane character */,
-                 "od" /* read decimal places */,
-                 "op" /* read place character */,
-                 "rs" /* read start switch */,
-                 // Set to known state
-                 "ol0" /* report lane 1 as "A" */,
-                 "op3" /* set place character '!' */)
+               // The ox0 appears to cause the timer to stop responding for a
+               // second or two, ignoring at least all the commands that follow
+               // in this set-up.
+               /* "ox0",  Set Champ Timer mode instead of DTX */
+               // Interrogate for a bunch of details here
+               "or" /* read auto-reset */,
+               "ol" /* read lane character */,
+               "od" /* read decimal places */,
+               "op" /* read place character */,
+               "rs" /* read start switch */,
+               // Set to known state
+               "ol0" /* report lane 1 as "A" */,
+               "op3" /* set place character '!' */)
         .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT, 1))
         .heat_prep("om0", "om", '1')
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
