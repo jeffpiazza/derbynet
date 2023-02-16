@@ -58,6 +58,7 @@ run_tests() {
     `dirname $0`/test-extended-scheduling.sh "$BASE_URL"
 
     `dirname $0`/test-reschedule.sh "$BASE_URL"
+    `dirname $0`/test-rotation-schedule.sh "$BASE_URL"
 
 ############################## Standings by Rank ##############################
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"

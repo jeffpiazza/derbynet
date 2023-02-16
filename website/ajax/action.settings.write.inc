@@ -19,14 +19,14 @@ if (have_permission(SET_UP_PERMISSION)) {
   // 'do-use-subgroups-checkbox' parameter is passed will the presence or
   // absence of a 'do-use-subgroups' parameter be used to control the
   // 'use-subgroups' setting.
-  $failures = false;
+  $ok = true;
   $written = array();
 
   if (locked_settings()) {
     foreach(array('photo-dir', 'car-photo-dir', 'video-dir') as $post_key) {
       if (isset($_POST[$post_key])) {
         json_failure('locked', "Directory settings are locked and cannot be changed.");
-        $failures = true;
+        $ok = false;
       }
     }
   }
@@ -34,7 +34,7 @@ if (have_permission(SET_UP_PERMISSION)) {
   // ===========================================================================
   // Checkbox settings: look for "-checkbox" entry, and optional $_POST key for true
   // $_POST key => RaceInfo.itemkey
-  if (!$failures) {
+  if ($ok) {
     foreach(array('do-use-subgroups' => 'use-subgroups',
                   'one-trophy-per' => 'one-trophy-per',
                   'reverse-lanes' => 'reverse-lanes',
@@ -67,10 +67,10 @@ if (have_permission(SET_UP_PERMISSION)) {
     if (read_single_value('SELECT COUNT(*) FROM RaceChart'
                           .' WHERE COALESCE(completed, \'\') = \'\'') > 0) {
       json_failure('already-scheduled', "Remove unraced schedules before changing lane counts.");
-      $failures = true;
+      $ok = false;
     }
   }
-  if (!$failures) {
+  if ($ok) {
     foreach(array('n-lanes' => 'lane_count',
                   'track-length' => 'track-length',
                   'n-pack-trophies' => 'n-pack-trophies',
@@ -92,6 +92,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                   'timer-send-logs' => 'timer-send-logs',
                   'unused-lane-mask' => 'unused-lane-mask',
                   'max-runs-per-car' => 'max-runs-per-car',
+                  'rotation-schedule' => 'rotation-schedule',
                   'finish-formatting' => 'finish-formatting',
                   'scoring' => 'scoring',
                   'now-racing-linger-ms' => 'now-racing-linger-ms',
@@ -108,7 +109,7 @@ if (have_permission(SET_UP_PERMISSION)) {
                        "Value for $raceinfo_key could not be written."
                        .(schema_version() != expected_schema_version()
                          ? "<b>Upgrading the database schema may help.</b>" : ""));
-          $failures = true;
+          $ok = false;
         }
       }
     }
@@ -116,14 +117,12 @@ if (have_permission(SET_UP_PERMISSION)) {
 
   json_out('written', $written);
 
-  if ($num_picked == count($_POST)) {
-    // If $failures is set, then at least one of the settings had a problem, and
-    // we shouldn't claim success
-    if (!$failures) {
+  if ($ok) {
+    if ($num_picked == count($_POST)) {
       json_success();
+    } else {
+      json_failure('unrecognized', (count($_POST) - $num_picked)." unrecognized setting(s)");
     }
-  } else {
-    json_failure('unrecognized', (count($_POST) - $num_picked)." unrecognized setting(s)");
   }
 } else {
   json_not_authorized();

@@ -131,6 +131,10 @@ function json_common_1($key, &$now_running) {
     require_once('inc/json-rounds.inc');
     json_out('rounds', json_all_rounds($now_running));
     break;
+  case 'schedule':
+    require_once('inc/json-schedule.inc');
+    json_out('schedule', json_schedule($now_running['roundid']));
+    break;
   case 'timer-state':
     require_once('inc/json-timer-state.inc');
     json_out('timer-state', json_timer_state());
