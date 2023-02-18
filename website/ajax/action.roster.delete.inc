@@ -2,6 +2,7 @@
 
 require_once('inc/aggregate_round.inc');
 require_once('inc/events.inc');
+require_once('inc/racing-state.inc');
 
 if (!have_permission(CONTROL_RACE_PERMISSION)) {
   json_not_authorized();
@@ -38,6 +39,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 
       $stmt = $db->prepare('DELETE FROM Rounds WHERE roundid = :roundid');
       $stmt->execute(array(':roundid' => $roundid));
+      maybe_cancel_running_round($roundid);
       json_success();
       require('ajax/query.poll.coordinator.inc');
     }
