@@ -8,17 +8,7 @@ class DriversLicenseBackDocument extends PrintableRacerDocument {
   function name() { return "Driver's License Back"; }
 
   function get_available_options() {
-    return array(
-      'use_photo' => array('type' => 'bool',
-                           'desc' => 'Include racer\'s photo',
-                           'default' => true),
-      'use_barcode' => array('type' => 'bool',
-                             'desc' => 'Include barcode',
-                             'default' => true),
-      'date_of_issue' => array('type' => 'string',
-                               'desc' => 'Date of Issue',
-                               'default' => date('F j, Y')),
-      );
+    return array();
   }
 
   function StartDocument() {
@@ -30,21 +20,18 @@ class DriversLicenseBackDocument extends PrintableRacerDocument {
 
   function DrawOneAt($x, $y, &$racer) {   
     $this->pdf->RoundedRect(11.0-$x-3.5, $y, 3.5, 2.5, 0.125);
-
     $this->DrawBanner($x, $y);
 
-    if (!$this->get_option('use_photo')) {
-    } else 	if ($racer['carphoto']) {
-	  $this->pdf->Image($racer['carphoto'], 11.0-$x-3.5 + 0.5, $y + 0.5, 2.5);
-	  $this->pdf->StopTransform();
-	} else {
+    if ($racer['carphoto']) {
+      $this->pdf->Image($racer['carphoto'], 11.0-$x-3.5 + 0.5, $y + 0.5, 2.5);
+    } else {
       $this->pdf->SetFont('Arial', '', 10);
       $this->pdf->SetXY(11.0-$x-3.5 + 0.5, $y + 0.5);
       $this->pdf->SetFillColor(0x80);
       $this->pdf->Cell(2.5, 1.75, "No car photo", /* frame */ 1,
                        /* ln */ 0, /* align */ 'C', /* fill */ true);
-	}
-	$this->DrawBannerText($x, $y, $racer);
+    }
+    $this->DrawBannerText($x, $y, $racer);
   }
 
   // The "banner" comprises a blue horizontal line, with small lines above and below.
