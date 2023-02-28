@@ -312,7 +312,7 @@ class PhotoRender {
     if (!file_exists($target_file_path)) {
       $source = $this->find_source_render($image_name);
       if (!$source) {
-        return NULL;
+        return null;
       }
       $source_file_path = $source->file_path($image_name);
       if (substr($source_file_path, -4) == '.svg') {
@@ -321,9 +321,9 @@ class PhotoRender {
       if ($this->max_height() == 0 && $this->max_width() == 0) {
         return $source_file_path;
       } else {
-        list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
+        list($source_width, $source_height, $image_type) = @getimagesize($source_file_path);
         if ($source_height == 0) {
-          return FALSE;
+          return false;
         }
         $im = open_image($source_file_path, $image_type);
 
@@ -379,7 +379,7 @@ function open_image($filepath, $image_type) {
     return imagecreatefrompng($filepath);
   }
 
-  return FALSE;
+  return false;
 }
 
 function write_image($image, $filepath, $image_type) {
@@ -391,7 +391,7 @@ function write_image($image, $filepath, $image_type) {
   case IMAGETYPE_PNG:
     return imagepng($image, $filepath, 0);
   }
-  return FALSE;
+  return false;
 }
 
 function pseudo_mime_content_type($filename) {
