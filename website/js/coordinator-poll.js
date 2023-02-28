@@ -156,13 +156,9 @@ function generate_timer_state_group(tstate) {
 }
 
 function generate_replay_state_group(replay_state) {
-    $("#replay_status").text(replay_state.status);
-    $("#replay_status_icon").attr('src', replay_state.icon);
-    if (replay_state.connected) {
-        $("#test_replay").removeClass("hidden");
-    } else {
-        $("#test_replay").addClass("hidden");
-    }
+  $("#replay_status").text(replay_state.message);
+  $("#replay_status_icon").attr('src', replay_state.icon);
+  $("#test_replay").toggleClass("hidden", !replay_state.connected);
 }
 
 // Updates progress bars with new progress values

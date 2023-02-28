@@ -65,18 +65,18 @@ function send_replay_message($cmd) {
           $db->commit();
         } catch (PDOException $e) {
           $db->rollBack();
-          error_log("send_replay_message: transaction rolled back: " + $e->getMessage());
+          error_log("send_replay_message: transaction rolled back: ".$e->getMessage());
         }
       } else {
         error_log("send_replay_message: beginTransaction returns false");
       }
     } catch (PDOException $e) {
-        error_log("send_replay_message: beginTransaction throws " + $e);
+      error_log("send_replay_message: beginTransaction throws ".$e->getMessage());
     }
     try {
       $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
     } catch (PDOException $e) {
-      error_log("send_replay_message: set autocommit throws " + $e);
+      error_log("send_replay_message: set autocommit throws ".$e->getMessage());
     }
     return true;
   } else {
