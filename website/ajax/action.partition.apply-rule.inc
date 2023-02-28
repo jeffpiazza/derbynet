@@ -2,6 +2,7 @@
 
 // $_POST['rule']: 'one-group' or 'by-partition' (or 'custom')
 
+
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
 require_once('inc/events.inc');
@@ -12,6 +13,7 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Roster');
     $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
+    $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
     // find_or_create_class will create a Rounds entry, if necessary.
@@ -38,6 +40,7 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Roster');
     $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
+    $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
 
