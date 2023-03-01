@@ -114,8 +114,7 @@ function on_recognized_barcode(result) {
   $.ajax('action.php',
          {type: 'GET',
           data: {query: 'racer.list',
-                 barcode: result.text,
-                 render: '150x150',  // Thumbnail size
+                 barcode: result.text
                 },
           success: function(json) {
             // firstname, lastname, carnumber, carname, note_from, headshot, car_photo,

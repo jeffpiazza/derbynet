@@ -169,10 +169,12 @@ foreach ($rounds as $round) {
       $racer_label = '';
       // 68h images completely fill one row's height
       if ($rs['imagefile'] && $show_racer_photos) {
-        $racer_label .= '<img src="'.headshots()->url_for_racer($rs, '68h').'" class="racer-photo"/>';
+        $head_url = headshots()->url_for_racer($rs, RENDER_RACER_RESULTS);
+        $racer_label .= "<img src=\"$head_url\" class=\"racer-photo\"/>";
       }
       if (isset($rs['carphoto']) && $rs['carphoto'] && $show_car_photos) {
-        $racer_label .= '<img src="'.car_photo_repository()->url_for_racer($rs, '68h').'" class="racer-photo"/>';
+        $car_url = car_photo_repository()->url_for_racer($rs, RENDER_RACER_RESULTS);
+        $racer_label .= "<img src=\"$car_url\" class=\"racer-photo\"/>";
       }
       $racer_label .= '<div class="racer_label"><span class="racer">'
         .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').'</span>'

@@ -49,6 +49,7 @@ td .racer {
 img.racer-photo {
   float: left;
   height: 68px;
+  width: auto;
 }
 
 tbody tr:first-child th {

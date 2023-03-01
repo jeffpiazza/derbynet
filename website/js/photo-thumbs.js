@@ -63,7 +63,7 @@ function make_assignable(target) {
                                                     '\'' + g_photo_repo_name + '\', ' +
                                                     '\'' + photo_base_name + '\', 0)"' +
                       // RENDER_LISTVIEW (comment for code search)
-					  ' src="photo.php/' + g_photo_repo_name + '/file/80x80/' +
+					  ' src="photo.php/' + g_photo_repo_name + '/file/200x200/' +
 					  encodeURIComponent(photo_base_name) + '/' +
                       'q' + Date.now() + '"/>'); 
 	  make_discardable($(this).find(".assigned"));

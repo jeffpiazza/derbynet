@@ -35,9 +35,10 @@ function repopulate_schedule(json) {
 
   // $("table#schdule").width() is zero if the table is unpopulated
   // 26 = 2 * 13px padding
-  var photo_width_px = Math.floor($('html')[0].clientWidth  * td_width_vh / 100) - 26;
-  var photo_height_px = 100;
-  var rendername = photo_width_px + 'x' + photo_height_px;
+  // var photo_width_px = Math.floor($('html')[0].clientWidth  * td_width_vh / 100) - 26;
+  // var photo_height_px = 100;
+  // var rendername = photo_width_px + 'x' + photo_height_px;
+  var rendername = '200x200';  // RENDER_ONDECK
 
   // roundid and heat of the tr currently under construction
   var roundid = 0;
@@ -249,12 +250,14 @@ function scroll_to_current_heat() {
   if (nextheat.length == 0) {
     nextheat = curheat;
   }
-  $("html, body").animate(
-    {'scrollTop':  window.scrollY
-     + (curheat[0].getBoundingClientRect().top
-        + nextheat[0].getBoundingClientRect().bottom) / 2
-     - $(window).height()/2 },
-    {'duration': 1000});
+  if (curheat.size() != 0) {
+    $("html, body").animate(
+      {'scrollTop':  window.scrollY
+       + (curheat[0].getBoundingClientRect().top
+          + nextheat[0].getBoundingClientRect().bottom) / 2
+       - $(window).height()/2 },
+      {'duration': 1000});
+  }
 }
 
 var g_resized = true;

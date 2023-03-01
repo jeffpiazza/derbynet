@@ -11,20 +11,19 @@ define('RENDER_CROPPED', 'cropped');
 // ... based on ORIGINAL not CROPPED
 define('RENDER_WORKING', 'work');
 
-// jQuery Mobile limits images in a listview to be no more than 80 pixels
-define('RENDER_LISTVIEW', '80x80');
+// These smaller sizes represent thumbnail images for different purposes.
+// Rather than re-render to pixel-specific sizes, it's much more sensible to
+// agree on one modest size for all of these, and then use css
+// max-height/max-width where needed.
 
-// For assigning photos to racers, in photo-thumbs.php
-define('RENDER_THUMBNAIL', '150x150');
-
-// For the "on deck" display.  TODO This should be dynamically sized based on window/column size!
-define('RENDER_ONDECK', '200x100');
-
-// For display on checkin page: 60h, arbitrary width
-define('RENDER_CHECKIN', '0x60');
-
-// For display on award judging page
-define('RENDER_JUDGING', '100x100');
+// jQuery Mobile limits images in a listview to be no more than 80 pixels,
+// but this can be managed with css.
+define('RENDER_LISTVIEW', '200x200');  // formerly '80x80'
+define('RENDER_THUMBNAIL', '200x200');  // formerly '150x150'
+define('RENDER_CHECKIN', '200x200');  // formerly '0x60'
+define('RENDER_JUDGING', '200x200');  // formerly '100x100'
+define('RENDER_ONDECK', '200x200');  // formerly 200x100
+define('RENDER_RACER_RESULTS', '200x200');  // formerly 68h
 
 function photo_directory() {
   // For Windows:

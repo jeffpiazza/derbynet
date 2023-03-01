@@ -44,10 +44,6 @@ $(function() {
 <div id="all-lanes">
 <?php
 $now_running = get_running_round();
-$head_render = photo_repository('head')->lookup_or_any('330x239');
-$car_render = photo_repository('car')->lookup_or_any('239x239');
-
-$racers = json_current_racers($now_running, read_name_style(), $head_render, $car_render);
 
 for ($lane = 1; $lane <= $nlanes; ++$lane) {
 ?>
