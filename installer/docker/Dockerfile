@@ -38,7 +38,7 @@ RUN rm -rf $WWW_ROOT/local/* $WWW_ROOT/index*.html && \
 
 # The set-timeout.sh script may be needed to prevent timeouts under automated testing.
 # Under "normal" production use, stock timeouts are probably OK.
-COPY installer/docker/alpine-* installer/docker/set-timeout.sh /usr/local/bin
+COPY installer/docker/alpine-* installer/docker/set-timeout.sh /usr/local/bin/
 
 # How large are the pictures you want to upload?  8M covers an 18-megapixel
 # photo.
