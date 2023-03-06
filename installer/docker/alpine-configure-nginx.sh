@@ -7,6 +7,7 @@ for INI in `find /etc/php* -name php.ini` ; do \
     -e "s#^post_max_size = [2-8]M#post_max_size = $MAX_UPLOAD_SIZE#" \
     -e "s#^memory_limit = 128M#memory_limit = 256M#" \
     -e "s#^session.gc_maxlifetime = 1440#session.gc_maxlifetime = 28800#" \
+    -e "s#^include_path = .:/var/www/html#" \
     $INI ; \
 done
 
