@@ -39,6 +39,7 @@ EOF
 ## Rewrite the default nginx web site
 cat >/etc/nginx/http.d/default.conf <<EOF
 server {
+	ssl off
 	listen 80 default_server;
 	listen [::]:80 default_server;
 
