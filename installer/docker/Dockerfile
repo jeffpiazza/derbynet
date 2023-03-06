@@ -34,7 +34,7 @@ COPY website/ $WWW_ROOT
 RUN rm -rf $WWW_ROOT/local/* $WWW_ROOT/index*.html && \
     ( test -d $WWW_ROOT/local || mkdir -m 777 $WWW_ROOT/local ) && \
     mkdir -p -m 777 /var/lib/derbynet && \
-    mkdir /var/run/php
+    mkdir -p /var/run/php
 
 # The set-timeout.sh script may be needed to prevent timeouts under automated testing.
 # Under "normal" production use, stock timeouts are probably OK.
