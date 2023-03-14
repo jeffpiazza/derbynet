@@ -1,6 +1,17 @@
 .block_buttons span {
   font-size: 1em;
 }
+
+.pack-awards {
+  float: left;
+  margin-left: 15px;    
+}  
+.pack-awards label {
+  font-size: 16px;
+}
+.pack-awards label span.group-name {
+  font-weight: bold;
+}
 .center-select .mselect-inner {
   padding: .7em 1em;
 }

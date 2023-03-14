@@ -5,7 +5,6 @@ require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');
 require_once('inc/aggregate_round.inc');
 require_once('inc/schema_version.inc');
-require_once('inc/awards.inc');
 require_once('inc/voterid.inc');
 
 function maybe_populate_award_types() {
@@ -136,6 +135,7 @@ function add_speed_group($n, $bias, $classid, $rankid, $label, &$no_trophies_for
 // do away with add_speed_group entirely.
 function add_speed_awards(&$awards) {
   $one_trophy_per = read_raceinfo_boolean('one-trophy-per');
+  $pack_aggregate_id = read_raceinfo('pack-aggregate-id', 0);
 
   $standings = new StandingsOracle();
 
@@ -146,7 +146,7 @@ function add_speed_awards(&$awards) {
   $n_rank_trophies = read_raceinfo('n-rank-trophies', 0);
 
   list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
-
+  
   $max_den_trophies = $n_den_trophies;
   foreach ($classes as $classid => $cl) {
     $max_den_trophies = max($max_den_trophies, $cl['ntrophies']);
@@ -159,21 +159,32 @@ function add_speed_awards(&$awards) {
   $reserved_per_den = $max_den_trophies + $reserved_per_rank * $max_ranks_per_den;
   $reserved_overall = $n_pack_trophies + $reserved_per_den * count($classes);
 
+  // If we're using aggregate classes, then handling for pack-level awards has
+  // to change.  Especially if $one_trophy_per is on, we don't want to draw
+  // "pack-level" award winners out of the running for the grand finals class.
   $bias_for_pack = 0;
-  add_speed_group($n_pack_trophies, $bias_for_pack, null, null,
-                  supergroup_label(), $no_trophies_for,
-                  $standings->award_ladder_full_field(), $awards);
+  if ($standings->has_full_field_standings()) {
+      add_speed_group($n_pack_trophies, $bias_for_pack, null, null,
+                      supergroup_label(), $no_trophies_for,
+                      $standings->award_ladder_full_field(), $awards);
+  }
 
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
-  foreach (array_reverse(aggregate_classes()) as $agg_class) {
+  foreach (topological_sort(aggregate_classes()) as $agg_class) {
     ++$ordinal_class;
     $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
-    $ntrophies = $agg_class['ntrophies'];
-    if ($ntrophies < 0) $ntrophies = $n_den_trophies;
+    if ($agg_class['classid'] != $pack_aggregate_id) {
+      $group_name = $agg_class['class'];
+      $ntrophies = $agg_class['ntrophies'];
+      if ($ntrophies < 0) $ntrophies = $n_den_trophies;
+    } else {
+      $group_name = supergroup_label();
+      $ntrophies = $n_pack_trophies;
+    }
     if (!$one_trophy_per) $no_trophies_for = array();
     add_speed_group($ntrophies, $bias_for_den, $agg_class['classid'], null,
-                    $agg_class['class'], $no_trophies_for,
+                    $group_name, $no_trophies_for,
                     $standings->award_ladder_class($agg_class['classid']), $awards);
   }
 

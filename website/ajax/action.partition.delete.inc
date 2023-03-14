@@ -57,6 +57,7 @@ if ($ok) {
                  array(':classid' => $classid));
     execute_once('DELETE FROM Classes WHERE classid = :classid',
                  array(':classid' => $classid));
+    delete_from_raceinfo_with_value('pack-aggregate-id', $classid);
   }
 
   json_success();

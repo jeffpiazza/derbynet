@@ -100,6 +100,11 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
     $classids = array_unique($classids);
 
     $classid = create_aggregate_class($_POST['classname'], $classids, $rankids, false);
+    // When creating a new aggregate class as part of creating an aggregate
+    // round, we assume that this is a "Grand Finals" round to determine overall
+    // pack champions.  This choice can still be undone from the awards
+    // presentation screen if it's not the intent.
+    write_raceinfo('pack-aggregate-id', $classid);
   } else {
     $classid = $_POST['classid'];
   }

@@ -267,9 +267,18 @@ div#new-group {
 }
 
 #aggregate-constituents label {
-    display: inline-block;
-    width: 300px;
-    margin-right: 1em;
-    text-align: right;
-    font-weight: bold;
+  display: inline-block;
+  width: 300px;
+  margin-right: 1em;
+  text-align: right;
+  font-weight: bold;
+}
+
+#pack_agg_div {
+  margin-top: 15px;
+  margin-left: 25px;
+}
+
+#pack_agg_div span.group-name {
+  font-weight: bold;
 }

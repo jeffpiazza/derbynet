@@ -57,6 +57,8 @@ $name_style = read_name_style();
 $use_subgroups = use_subgroups();
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
+$agg_classes = aggregate_classes();
+$pack_aggregate_id = read_raceinfo('pack-aggregate-id', 0);
 
 $awards = array();
 $bias_overall = add_speed_awards($awards);
@@ -102,8 +104,28 @@ function compare_by_sort($lhs, $rhs) {
 // This shouldn't actually do anything:
 usort($awards, 'compare_by_sort');
 ?>
-
 <div class="block_buttons">
+
+<?php if (count($agg_classes) > 0) { ?>
+<div id="pack_agg_div" class="pack-awards">
+  <?php echo supergroup_label(); ?> speed awards:<br/>
+  <input id="pack-no" type="radio" name="pack-agg"
+    class="not-mobile" value="0" onchange="on_pack_agg_change()"
+        <?php echo $pack_aggregate_id == 0 ? "checked" : ""; ?> />
+  <label for="pack-no">Don't calculate any</label>
+  <?php
+    foreach ($agg_classes as $agg) {
+      echo "<br/>";
+      echo "<input id=\"pack-$agg[classid]\" type=\"radio\""
+            ." name=\"pack-agg\" class=\"not-mobile\" value=\"$agg[classid]\""
+            ." onchange=\"on_pack_agg_change()\""
+            ." ".($pack_aggregate_id == $agg['classid'] ? "checked" : "")
+            ."/> ";
+      echo "<label for=\"pack-$agg[classid]\">Use <span class=\"group-name\">$agg[class]</span> group</label>";
+    }
+  ?>
+</div>
+<?php } /* agg_classes for pack awards */ ?>
 
 <div class="center-select">
     <select id="awardtype-select">

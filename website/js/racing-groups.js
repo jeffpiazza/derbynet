@@ -26,6 +26,7 @@ function on_partition_label_change() {
   $(".partition-label-lc").text(part_label_lc);
   $(".group-label-lc").text(part_label_lc + " (group)");
   $(".subgroup-label-lc").text( part_label_lc + " (subgroup)");
+  $(".supergroup-label").text($("#supergroup-label").val());
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'settings.write',
@@ -55,6 +56,17 @@ function on_use_subgroups_change(event, synthetic) {
          });
 }
 $(function() { $("#use-subgroups").on('change', on_use_subgroups_change); });
+
+function on_pack_agg_change() {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'award.pack-aggregate',
+                 'pack-aggregate-id': $("#pack_agg_div input[type=radio]:checked").val()},
+          success: function() {}
+         });
+}
+// TODO initial value
+$(function() { $("#pack-no").on('change', on_pack_agg_change); });
 
 function poll_for_structure() {
   $.ajax('action.php',
@@ -89,7 +101,7 @@ function process_polling_data(data) {
 
   populate_racing_groups(data);
   populate_aggregate_modal(data);
-  populate_aggregates(data.classes);
+  populate_aggregates(data.classes, data['pack-aggregate-id']);
   populate_labels(data.labels);
 }
 
@@ -160,29 +172,39 @@ function populate_racing_groups(data) {
   make_groups_sortable();
 }
 
+function make_class_order_ajax() {
+  var data = {action: 'class.order'};
+  $("ul#all-groups > li").each(function(i) {
+    data['classid_' + (i + 1)] = $(this).attr('data-classid');
+  });
+  $("ul#aggregate-groups > li").each(function(i) {
+    data['classid_' + (i + 1)] = $(this).attr('data-classid');
+  });
+  console.log(data);
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: data,
+          success: function(data) {
+            if (data.outcome.summary == 'success') {
+              poll_for_structure();
+            }
+          }
+         });
+}
+
 function make_groups_sortable() {
   $("ul#all-groups").sortable({
     items: "> li:not(#new-group)",
     stop: function(event, ui) {
       event.stopPropagation();
+      make_class_order_ajax();
+    }
+  });
 
-      var data = {action: 'class.order'};
-      $("ul#all-groups > li").each(function(i) {
-        data['classid_' + (i + 1)] = $(this).attr('data-classid');
-      });
-      $("ul#aggregate-groups > li").each(function(i) {
-        data['classid_' + (i + 1)] = $(this).attr('data-classid');
-      });
-      console.log(data);
-      $.ajax(g_action_url,
-             {type: 'POST',
-              data: data,
-              success: function(data) {
-                if (data.outcome.summary == 'success') {
-                  poll_for_structure();
-                }
-              }
-             });
+  $("ul#aggregate-groups").sortable({
+    stop: function(event, ui) {
+      event.stopPropagation();
+      make_class_order_ajax();
     }
   });
 
@@ -237,9 +259,13 @@ function make_groups_sortable() {
   });
 }
 
-function populate_aggregates(classes) {
+function populate_aggregates(classes, pack_aggregate_id) {
   var agg_groups = $("ul#aggregate-groups");
   agg_groups.empty();
+
+  var pack_agg = $("#pack_agg_div");
+  pack_agg.addClass('hidden');
+  $(".pack-agg-option").remove();
 
   for (var i = 0; i < classes.length; ++i) {
     if (!(classes[i].hasOwnProperty('constituents') && classes[i].constituents.length > 0)) {
@@ -252,7 +278,7 @@ function populate_aggregates(classes) {
         .attr('data-count', classes[i].count)
         .attr('data-nrounds', classes[i].nrounds)
         .attr('data-ntrophies', classes[i].ntrophies)
-    // data-constituent-of
+    // data-constituent-of populated below
         .append($("<p/>")
                 .attr('data-classid', classes[i].classid)
                 .addClass('class-name')
@@ -286,10 +312,31 @@ function populate_aggregates(classes) {
 
     for (var v = 0; v < classes[i].constituents.length; ++v) {
       // If a given class is a constituent of multiple aggregates, the last one wins
-      $("li[data-classid='" + classes[i].constituents[v] + "']")
+      $("li[data-classid='" + classes[i].constituents[v].classid + "']")
         .attr('data-constituent-of', classes[i].name);
     }
+
+    pack_agg.removeClass('hidden');
+    $("<div/>").addClass('pack-agg-option')
+      .appendTo(pack_agg)
+      .append($("<input type=\"radio\" name=\"pack-agg\"/>")
+              .addClass('not-mobile')
+              .attr('id', 'pack-' + classes[i].classid)
+              .attr('value', classes[i].classid)
+              .on('change', on_pack_agg_change))
+      .append(" ")
+      .append($("<label/>")
+              .attr('for', 'pack-' + classes[i].classid)
+              .append('Use ')
+              .append($("<span/>").addClass('group-name').text(classes[i].name))
+              .append(' group'));
   }
+
+   $("#pack_agg_div input[type=radio]").each(
+    function(i, v) {
+      v = $(v);
+      v.prop('checked', v.attr('value') == pack_aggregate_id);
+    });
 }
 
 function populate_labels(labels) {

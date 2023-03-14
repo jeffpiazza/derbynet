@@ -55,11 +55,6 @@ $(function() {
                value="<?php echo partition_label(); ?>"/>.
 </div>
 
-<div class="block_buttons">
-  <input id="add-partition-button" class="modest-button" type="button"
-         value="Add <?php echo partition_label(); ?>"/>
-</div>
-
 
 <div class="switch">
 <label for="use-subgroups">Use Subgroups?</label>
@@ -78,7 +73,15 @@ $(function() {
 
 <input id="custom-group-radio" type="radio" name="form-groups-by" value="custom"/>
 <label for="custom-group-radio">Custom racing groups</label>
-      
+
+
+<div class="block_buttons" style="margin-top: 20px;">
+  <input id="add-partition-button" class="modest-button" type="button"
+         value="Add <?php echo partition_label(); ?>"/>
+  <input id="add-aggregate-button" class="modest-button" type="button"
+         value="Add Aggregate"/>
+</div>
+
 </div><!-- race-rules -->
 
 <div id="race-structure">
@@ -97,10 +100,12 @@ $(function() {
 
 <ul id="aggregate-groups" class="mlistview">
 </ul>
-
-<div class="block_buttons">
-  <input id="add-aggregate-button" class="modest-button" type="button"
-         value="Add Aggregate"/>
+<div id="pack_agg_div">
+  <span class="supergroup-label"><?php echo supergroup_label(); ?></span> speed awards:
+  <br/>
+  <input id="pack-no" type="radio" name="pack-agg" class="not-mobile" value="0"/>
+  <label for="pack-no">Don't calculate any</label>
+  <!-- div pack-agg-option -->
 </div>
 
 </div><!-- race-structure -->

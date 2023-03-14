@@ -96,10 +96,11 @@ function stkey_full_field() { return 'st-ff'; }
 
 /////////////////////////////////////////////////////////////////////////////////////
 // The finish places for standings result can be distilled into a "ladder",
-// represented as an array rungs, each rung being an array of racerids; the
+// represented as an array of rungs, each rung being an array of racerids; the
 // zero'th rung represents first place.  In the absence of ties, each rung holds
 // exactly one racerid.  If there's a tie, a rung will contain more than one
-// racerid, and one or more subsequent rungs will be empty.
+// racerid, and one or more subsequent rungs will be empty (e.g., a three-way
+// tie rung is followed by two empty rungs).
 /////////////////////////////////////////////////////////////////////////////////////
 
 // Assumes we're in the context of a GROUP BY for one racer and one roundid.
@@ -130,12 +131,6 @@ function sql_scoring_expression($finishtime, $finishplace) {
   } else {
     return "UNKNOWN_SCORING_METHOD";
   }
-}
-
-// Returns true if we can assess standings for the whole field --
-// either there are no aggregate classes or exactly one.
-function has_full_field_standings() {
-  return count(aggregate_classes()) == 0;
 }
 
 
@@ -171,7 +166,7 @@ class StandingsOracle {
 
   private $unfinished_rounds;
   private $sql;
-  
+
   public $result_summary;
   public $all_standings;
   // Maps catalog key to number of entries included in those standings
@@ -205,8 +200,8 @@ class StandingsOracle {
 
   private function add_rolls_up_to_relation() {
     // Seed the 'rolls_up_to' relation
-    foreach ($this->class_details as $classid => &$row) {
-      foreach ($row['constituents'] as $c) {
+    foreach ($this->class_details as $classid => &$cl_details) {
+      foreach ($cl_details['constituents'] as $c) {
         $this->class_details[$c]['rolls_up_to'][] = $classid;
       }
     }
@@ -214,12 +209,12 @@ class StandingsOracle {
     // Propagate 'rolls_up_to' relation across non-racing aggregate classes
     do {
       $repeat = false;
-      foreach ($this->class_details as $classid => &$row) {
-        foreach ($row['rolls_up_to'] as $c) {
+      foreach ($this->class_details as $classid => &$cl_details) {
+        foreach ($cl_details['rolls_up_to'] as $c) {
           if (count($this->class_details[$c]['rounds']) == 0) {
             foreach ($this->class_details[$c]['rolls_up_to'] as $q) {
-              if (!in_array($q, $row['rolls_up_to'])) {
-                $row['rolls_up_to'][] = $q;
+              if (!in_array($q, $cl_details['rolls_up_to'])) {
+                $cl_details['rolls_up_to'][] = $q;
                 $repeat = true;
               }
             }
@@ -247,9 +242,7 @@ class StandingsOracle {
   // racers and rounds in the database.  Each summary element gives:
   //    roundid -- round information
   //    round_classid -- the classid associated with the round -- may be an
-  //        aggregate class.  For non-racing aggregate classes, the round entry is
-  //        repeated with the classid of the non-racing aggregate class, if this
-  //        round serves to establish standing in the class.
+  //        aggregate class.
   //    racerid, firstname, lastname, carnumber, carname, classid, rankid -- racer
   //        information
   //    classid, class -- name of racer's (native) class (i.e., not "Grand Finals")
@@ -313,28 +306,24 @@ class StandingsOracle {
                   // lastname, firstname for reproducible ordering in the event of a tie
                   .' ORDER BY '.$scoring_expr.', lastname, firstname');
     $stmt = $db->query($this->sql);
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $result = array();
-    foreach ($stmt as $row) {
-      $result[] = $row;
-    }
-
-    return $result;
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
   // compute_all_standings takes the $result_summary (representing standings for
   // each racer in each individual round, merged together into one aggregate list)
   // and computes all the other categories of standings.
   //
-  // $ladders = compute_all_standings($result_summary)
+  // $ladders = compute_all_standings()
   //
-  // $ladders maps category keys to a ladder of finishers for one category.
+  // $ladders maps each category key to a ladder of finishers for that category.
   //
-  // compute_all_standings also annotates each entry of $result_summary with a
-  // outcome: field.  The outcome value is a map of standings key to ladder
-  // index in the ladder for the same key.
+  // compute_all_standings also annotates each entry of $this->result_summary
+  // with an outcome: field.  The outcome value is a map from standings key to
+  // ladder index in the ladder for the same key.  This is, for each racer's
+  // appearance in a racing round, that appearance gets marked up to indicate
+  // the racer's standing(s) determined by that appearance.
   private function compute_all_standings($for_awards = false) {
-    $trackers = array();  // An array of key => StandingsTracker
+    $trackers = array();  // An array of category key => StandingsTracker
 
     // $add_outcome records a category place in the annotation entry in $parallel.
     $add_outcome = function($key, &$entry) use (&$trackers) {
@@ -396,20 +385,15 @@ class StandingsOracle {
     }
   }
 
+  // The presence of any aggregate classes (especially a Grand Finals round)
+  // cancels the calculation of a full-field standings.
+  function has_full_field_standings() {
+    return $this->n_aggregates == 0;
+  }
+
   function award_ladder_full_field() {
-    if ($this->n_aggregates == 0) {
-      // stkey_full_field will have already been populated with every scoring
-      // round's result.
-      if (isset($this->all_standings[stkey_full_field()])) {
-        return $this->all_standings[stkey_full_field()];
-      } else {
-        return array();
-      }
-    } else if ($this->n_aggregates == 1) {
-      // We don't show a full-field standing if there are any aggregate classes,
-      // but for awards, if there's exactly one aggregate class, we guess that
-      // that aggregate is a grand final round to determine the full field.
-      return $this->award_ladder_class($this->aggregate_id);
+    if (isset($this->all_standings[stkey_full_field()])) {
+      return $this->all_standings[stkey_full_field()];
     } else {
       return array();
     }
@@ -465,7 +449,7 @@ class StandingsOracle {
       echo "<th class='col-subgroup'>".subgroup_label()."</th>";
       echo "<th class='col-insubgroup'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
     }
-    if (has_full_field_standings()) {
+    if ($this->has_full_field_standings()) {
       echo "<th class='col-insuper'>In ".supergroup_label()."</th>";
     }
     echo "<th class='col-inround'>In Round</th>";
@@ -581,7 +565,7 @@ class StandingsOracle {
       }
 
       // Place in pack
-      if (has_full_field_standings()) {
+      if ($this->has_full_field_standings()) {
         echo "<td class='col-insuper'>";
         if (isset($p[stkey_full_field()])) {
           echo $p[stkey_full_field()];
@@ -662,7 +646,7 @@ class StandingsOracle {
   public function standings_catalog() {
     $catalog = array();
 
-    if (has_full_field_standings()) {
+    if ($this->has_full_field_standings()) {
       $catalog[] = array('name' => supergroup_label(),
                          'key' => stkey_full_field(),
                          'presentation' => 'ff');
