@@ -51,22 +51,26 @@ if (have_permission(SET_UP_PERMISSION)) {
                               array(':class' => $_POST['class']),
                               array(':class' => $_POST['class'],
                                     ':sortorder' => new_sortorder_value('Classes')));
-  // Any rankid will do, but there needs to be at least one
+
+  // Rankid and partitionid are computed only in case needed for creating a new
+  // racer.  If the racer already exists, then at least one rank and partition
+  // should already exist, and fetching them does no harm.
   $rankid = get_or_create_id('rankid', 'Ranks',
+                             // Any rankid will do, but there needs to be at least one
                              array(':classid' => $classid),
                              array(':rank' => $_POST['class'],
                                    ':classid' => $classid,
                                    ':sortorder' => new_sortorder_value('Ranks')));
   $partitionid = get_or_create_id('partitionid', 'Partitions',
-                                 array(':rankid' => $rankid),
-                                 array(':name' => $_POST['class'],
-                                       ':rankid' => $rankid,
-                                       ':sortorder' => new_sortorder_value('Partitions')));
+                                  array(':rankid' => $rankid),
+                                  array(':name' => $_POST['class'],
+                                        ':rankid' => $rankid,
+                                        ':sortorder' => new_sortorder_value('Partitions')));
+
   $racerid = get_or_create_id('racerid', 'RegistrationInfo',
                               array(':lastname' => $_POST['lastname'],
                                     ':firstname' => $_POST['firstname'],
                                     ':carnumber' => $_POST['carnumber'],
-                                    ':partitionid' => $partitionid,
                                     ':classid' => $classid),
                               array(':lastname' => $_POST['lastname'],
                                     ':firstname' => $_POST['firstname'],
