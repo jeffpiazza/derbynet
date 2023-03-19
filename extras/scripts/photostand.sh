@@ -81,6 +81,12 @@ while true ; do
             fswebcam $FSWEBCAM_ARGS "$PHOTO_DIR/Car$CAR_NO.jpg"
             # fswebcam always returns 0, whether successful or not
             CAPTURE_OK=1
+        elif [ "$PHOTO_CAPTURE" = "raspistill" ] ; then
+            raspistill -o "$PHOTO_DIR/Car$CAR_NO.jpg" \
+                && CAPTURE_OK=1
+        elif [ "$PHOTO_CAPTURE" = "libcamera" ] ; then
+            libcamera-still -o "$PHOTO_DIR/Car$CAR_NO.jpg" \
+                && CAPTURE_OK=1
         else
             gphoto2 --filename "$PHOTO_DIR/Car$CAR_NO.jpg"  --force-overwrite \
                     --capture-image-and-download \
