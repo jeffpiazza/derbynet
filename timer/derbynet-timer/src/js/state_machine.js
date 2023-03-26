@@ -63,7 +63,7 @@ class StateMachine {
         break;
       case 'ABORT_HEAT_RECEIVED':
       case 'RACE_FINISHED':
-      case 'GIVING_UP':
+      case 'OVERDUE':
         this.state = this.unexpected(event, 'IDLE');
         break;
       }
@@ -90,7 +90,7 @@ class StateMachine {
           break;
         }
         // else intentional fall-through
-      case 'GIVING_UP':
+      case 'OVERDUE':
         this.state = this.unexpected(event, 'IDLE');
         break;
       }
@@ -115,7 +115,7 @@ class StateMachine {
         this.state = 'RUNNING';
         break;
       case 'RACE_FINISHED':
-      case 'GIVING_UP':
+      case 'OVERDUE':
         this.state = this.unexpected(event, 'IDLE');
         break;
       }
@@ -134,9 +134,9 @@ class StateMachine {
       case 'GATE_OPEN':
         this.state = 'RUNNING';
         break;
-        // GIVING_UP takes us back to a MARK state; if the gate is closed,
+        // OVERDUE takes us back to a MARK state; if the gate is closed,
         // that should transition immediately to SET.
-      case 'GIVING_UP':
+      case 'OVERDUE':
         this.state = 'MARK';
         break;
       }

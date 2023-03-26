@@ -68,8 +68,8 @@ class TimerProxy {
 
       if (state == 'RUNNING' && this.overdue_time != 0 && Date.now() >= this.overdue_time) {
         this.port_wrapper.noticeContact();
-        this.overdue_time = 0;  // Can't queue up more than one GIVING_UP event
-        TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'GIVING_UP');
+        this.overdue_time = 0;  // Can't queue up more than one OVERDUE event
+        TimerEvent.sendAfterMs(/*GIVE_UP_AFTER_OVERDUE_MS=*/1000, 'OVERDUE');
       }
 
       if (this.profile?.gate_watcher && this.sm.gate_state_is_knowable &&
@@ -233,7 +233,7 @@ class TimerProxy {
       break;
     case 'GATE_CLOSED':
       break;
-    case 'GIVING_UP':
+    case 'OVERDUE':
       break;
     case 'LOST_CONNECTION':
       console.log('TimerProxy sees lost connection', this);

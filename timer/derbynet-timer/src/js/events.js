@@ -20,9 +20,9 @@ class TimerEvent {
     LANE_RESULT, lane (1-based), time (string), place (1-based or 0)
     // (LANE_RESULT is triggered with three strings and processed before promulgating.)
     //
-    // Eventually, overdue results give way to a GIVING_UP event,
+    // Eventually, overdue results give way to a OVERDUE event,
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
-    GIVING_UP,  // Giving up on overdue results
+    OVERDUE,  // Giving up on overdue results
     LANE_COUNT, // Some timers report how many lanes
     START_RACE,  // Remote start requested
     LOST_CONNECTION,
