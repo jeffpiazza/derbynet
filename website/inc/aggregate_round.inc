@@ -171,7 +171,7 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                  array(':classid' => $classid));
   }
 
-  delete_from_raceinfo_with_value('pack-aggregate-id', $classid);
+  delete_from_raceinfo_with_value('full-field-calc', $classid);
 
   // Clean up any playlist entries for the deleted class.  When activated, a
   // playlist entry for a nonexistent class will create a new round for the

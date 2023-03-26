@@ -16,7 +16,7 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
-    delete_from_raceinfo('pack-aggregate-id');
+    delete_from_raceinfo('full-field-calc');
     // find_or_create_class will create a Rounds entry, if necessary.
     $classid = find_or_create_class('All Racers');
     // Trusting that partitions have unique names
@@ -44,7 +44,7 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
-    delete_from_raceinfo('pack-aggregate-id');
+    delete_from_raceinfo('full-field-calc');
 
     $db->exec('INSERT INTO Classes(class, sortorder) SELECT name, sortorder FROM Partitions');
     $db->exec('UPDATE RegistrationInfo'

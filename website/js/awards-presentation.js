@@ -86,8 +86,8 @@ function on_clear_awards() {
 function on_pack_agg_change() {
   $.ajax(g_action_url,
          {type: 'POST',
-          data: {action: 'award.pack-aggregate',
-                 'pack-aggregate-id': $("#pack_agg_div input[type=radio]:checked").val()},
+          data: {action: 'award.calc-rule',
+                 'full-field-calc': $("#pack_agg_div input[type=radio]:checked").val()},
           success: function() {
             location.reload(true);
           }

@@ -57,7 +57,7 @@ if (count($keys) >= 2) {
       $awardname = nth_fastest($place, $rankname);
     } else if (count($keys) == 3) {
       $classid = $keys[2];
-      $pack_aggregate_id = read_raceinfo('pack-aggregate-id', 0);
+      $pack_aggregate_id = read_raceinfo('full-field-calc', 0);
       if ($classid != $pack_aggregate_id) {
         $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
                                        array(':classid' => $classid));

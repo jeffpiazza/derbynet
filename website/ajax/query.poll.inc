@@ -90,7 +90,7 @@ function json_common_1($key, &$now_running) {
     json_out('use-subgroups', use_subgroups());
     json_out('group-formation-rule', group_formation_rule());
     json_out('labels', labels());
-    json_out('pack-aggregate-id', read_raceinfo('pack-aggregate-id', 0));
+    json_out('full-field-calc', read_raceinfo('full-field-calc', 0));
     break;
   case 'racers':  
     require_once('inc/json-current-racers.inc');

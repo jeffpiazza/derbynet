@@ -140,7 +140,7 @@ function clean_up_empty_classes_and_ranks() {
               .'   AND constituents = \'\''
               .'   AND rankids = \'\'');
   }
-  $db->exec('DELETE FROM RaceInfo WHERE itemkey = \'pack-aggregate-id\''
+  $db->exec('DELETE FROM RaceInfo WHERE itemkey = \'full-field-calc\''
             .' AND itemvalue NOT IN (SELECT classid FROM Classes)');
   
   $db->exec('DELETE FROM Rounds'

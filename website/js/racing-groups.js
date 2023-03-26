@@ -60,13 +60,68 @@ $(function() { $("#use-subgroups").on('change', on_use_subgroups_change); });
 function on_pack_agg_change() {
   $.ajax('action.php',
          {type: 'POST',
-          data: {action: 'award.pack-aggregate',
-                 'pack-aggregate-id': $("#pack_agg_div input[type=radio]:checked").val()},
+          data: {action: 'award.calc-rule',
+                 'full-field-calc': $("#pack_agg_div input[type=radio]:checked").val()},
           success: function() {}
          });
 }
-// TODO initial value
-$(function() { $("#pack-no").on('change', on_pack_agg_change); });
+// Initial value set when the rest of the radio buttons are populated, in
+// populate_aggregates.
+$(function() {
+  $("#pack-ok").on('change', on_pack_agg_change);
+  $("#pack-no").on('change', on_pack_agg_change);
+});
+
+function on_n_pack_trophies_change(write_setting = true) {
+  var ntrophies = $("#n-pack").val();
+  if (write_setting) {
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'settings.write',
+                   'n-pack-trophies': ntrophies},
+            success: function(data) {
+              if (data.outcome.summary != 'success') {
+                console.log(data);
+              }
+              poll_for_structure();
+            }
+           });
+  }
+  if (ntrophies > 0 && $("#pack-no:checked").length > 0) {
+    $("input[name=pack-agg]").val( [0] );
+    on_pack_agg_change();
+  }
+  $("#pack-no").attr('disabled', ntrophies > 0);
+  //$("label[for=pack-no]")
+  $("#dimmable-for-pack-no").css('opacity', ntrophies == 0 ? 1 : 0.5);
+  $("#why-not-pack-no").toggleClass('hidden', ntrophies == 0);
+}
+$(function() {
+  $("#n-pack").on('change', on_n_pack_trophies_change);
+  on_n_pack_trophies_change(/*write_setting*/false);
+});
+
+function post_settings_change(input) {
+  var values =  {action: 'settings.write'};
+  values[input.attr('name')] = input.val();
+  $.ajax('action.php',
+         {type: 'POST',
+          data: values,
+          success: function(data) {
+            if (data.outcome.summary == 'failure') {
+              console.log(data);
+              alert("Action failed: " + data.outcome.description);
+            }
+          },
+          error: function(jqXHR, ajaxSettings, thrownError) {
+            alert('Ajax error: ' + thrownError);
+          }
+         });
+}
+$(function() {
+  $("#n-den").on('change', function() { post_settings_change($("#n-den")); });
+  $("#n-rank").on('change', function() { post_settings_change($("#n-rank")); });
+});
 
 function poll_for_structure() {
   $.ajax('action.php',
@@ -101,7 +156,7 @@ function process_polling_data(data) {
 
   populate_racing_groups(data);
   populate_aggregate_modal(data);
-  populate_aggregates(data.classes, data['pack-aggregate-id']);
+  populate_aggregates(data.classes, data['full-field-calc']);
   populate_labels(data.labels);
 }
 
@@ -264,7 +319,12 @@ function populate_aggregates(classes, pack_aggregate_id) {
   agg_groups.empty();
 
   var pack_agg = $("#pack_agg_div");
-  pack_agg.addClass('hidden');
+
+  // Initially hide the selector if there are any pack-level awards.  The
+  // presence of any aggregate classes will (also) force the selector show.
+  if (false && $("#n-pack").val() > 0) {
+    pack_agg.addClass('hidden');
+  }
   $(".pack-agg-option").remove();
 
   for (var i = 0; i < classes.length; ++i) {
@@ -327,16 +387,12 @@ function populate_aggregates(classes, pack_aggregate_id) {
       .append(" ")
       .append($("<label/>")
               .attr('for', 'pack-' + classes[i].classid)
-              .append('Use ')
+              .append('Use standings from ')
               .append($("<span/>").addClass('group-name').text(classes[i].name))
               .append(' group'));
   }
 
-   $("#pack_agg_div input[type=radio]").each(
-    function(i, v) {
-      v = $(v);
-      v.prop('checked', v.attr('value') == pack_aggregate_id);
-    });
+  $("input[name=pack-agg]").val( [pack_aggregate_id] );
 }
 
 function populate_labels(labels) {

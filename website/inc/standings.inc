@@ -140,6 +140,11 @@ class StandingsOracle {
     $this->use_points = read_raceinfo_boolean('use-points');
     $this->use_groups = use_groups();
     $this->use_subgroups = use_subgroups();
+    // 0 for calculate normally (pack-ok)
+    // -1 for do not calculate (pack-no)
+    // +n for aggregate class n.
+    // We only care about whether it's normal calc or not.
+    $this->full_field_calc = read_raceinfo('full-field-calc', 0);
 
     list($classes, $this->classseq,  $this->ranks, $this->rankseq) = classes_and_ranks();
     $this->class_details = $this->make_class_details();
@@ -156,8 +161,7 @@ class StandingsOracle {
   private $use_points;
   private $use_groups;
   private $use_subgroups;
-  private $n_aggregates = 0;
-  private $aggregate_id;
+  private $full_field_calc;
 
   private $classseq;
   private $class_details;
@@ -187,10 +191,6 @@ class StandingsOracle {
     foreach ($stmt as $row) {
       $row['constituents'] = array_filter(explode(',', $row['constituents']), 'strlen');
       $row['rankids'] = array_filter(explode(',', $row['rankids']), 'strlen');
-      if (count($row['constituents'])) {
-        ++$this->n_aggregates;
-        $this->aggregate_id = $row['classid'];
-      }
       $row['rolls_up_to'] = array();  // Filled in by add_rolls_up_to_relation
       $row['rounds'] = array();  // Filled in by add_rounds_by_class, below
       $result[$row['classid']] = $row;
@@ -385,10 +385,11 @@ class StandingsOracle {
     }
   }
 
-  // The presence of any aggregate classes (especially a Grand Finals round)
-  // cancels the calculation of a full-field standings.
+
+  // Full-field standings might be determined by standings for some
+  // aggregate class, or simply not calculated at all.
   function has_full_field_standings() {
-    return $this->n_aggregates == 0;
+    return $this->full_field_calc == 0;
   }
 
   function award_ladder_full_field() {

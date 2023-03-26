@@ -57,7 +57,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
     $db->exec('DELETE FROM Classes');
   }
   delete_from_raceinfo('fake-racers');
-  delete_from_raceinfo('pack-aggregate-id');
+  delete_from_raceinfo('full-field-calc');
   cancel_running_round();
 } else if ($_POST['purge'] == 'awards') {
   record_event(EVENT_PURGE_AWARDS);

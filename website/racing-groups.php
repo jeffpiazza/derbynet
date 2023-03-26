@@ -46,6 +46,24 @@ $(function() {
 
 <div id="race-rules">
 
+
+<input id="by-partition-radio" type="radio" name="form-groups-by" value="by-partition"/>
+<label for="by-partition-radio">Race each
+       <span class="partition-label-lc"><?php echo partition_label_lc(); ?></span>
+       as a group</label>
+<input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
+<label for="one-group-radio">Race as one big group</label>
+<input id="custom-group-radio" type="radio" name="form-groups-by" value="custom"/>
+<label for="custom-group-radio">Custom racing groups</label>
+
+
+<div class="switch">
+  <label for="use-subgroups">Use Subgroups?</label>
+  <input id="use-subgroups" type="checkbox" class="flipswitch"
+       data-on-text="Yes" data-off-text="No"
+         <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
+</div>
+
 <div class="labels">
   <label for="supergroup-label">The full roster is a (or the)</label>
   <input id="supergroup-label" name="supergroup-label" type="text" class="not-mobile"
@@ -55,31 +73,39 @@ $(function() {
                value="<?php echo partition_label(); ?>"/>.
 </div>
 
+<h3>Awards</h3>
 
-<div class="switch">
-<label for="use-subgroups">Use Subgroups?</label>
-<input id="use-subgroups" type="checkbox" class="flipswitch"
-     data-on-text="Yes" data-off-text="No"
-       <?php if (use_subgroups()) echo "checked=\"checked\""; ?>/>
+<div class="n_default_trophies">
+   <input id="n-pack" name="n-pack-trophies" type="number" min="0" max="20" class="not-mobile"
+               value="<?php echo read_raceinfo('n-pack-trophies', 3); ?>"/>
+   <label for="n-pack">speed trophies at the
+               <span class="supergroup-label"><?php echo supergroup_label_lc(); ?></span> level</label>
 </div>
 
-  <input id="by-partition-radio" type="radio" name="form-groups-by" value="by-partition"/>
-   <label for="by-partition-radio">Race each
-       <span class="partition-label-lc"><?php echo partition_label_lc(); ?></span>
-       as a group</label>
+<div id="pack_agg_div">
+  <span class="supergroup-label"><?php echo supergroup_label(); ?></span> standings:
+  <br/>
+  <input id="pack-ok" type="radio" name="pack-agg" class="not-mobile" value="0"/>
+  <label for="pack-ok">Calculate normally</label>
+  <br/>
+  <input id="pack-no" type="radio" name="pack-agg" class="not-mobile" value="-1"/>
+  <label for="pack-no"><span id="dimmable-for-pack-no"><?php echo "Don't calculate"; ?></span>
+         <span id="why-not-pack-no">(needed for
+             <span class="supergroup-label"><?php echo supergroup_label(); ?></span>
+             trophies)</span></label>
+  <!-- div pack-agg-option -->
+</div>
 
-<input id="one-group-radio" type="radio" name="form-groups-by" value="one-group"/>
-<label for="one-group-radio">Race as one big group</label>
+<div class="n_default_trophies">
+  <input id="n-den" name="n-den-trophies" type="number" min="0" max="20" class="not-mobile"
+            value="<?php echo read_raceinfo('n-den-trophies', 3); ?>"/>
+  <label for="n-den">speed trophies per group</label>
+</div>
 
-<input id="custom-group-radio" type="radio" name="form-groups-by" value="custom"/>
-<label for="custom-group-radio">Custom racing groups</label>
-
-
-<div class="block_buttons" style="margin-top: 20px;">
-  <input id="add-partition-button" class="modest-button" type="button"
-         value="Add <?php echo partition_label(); ?>"/>
-  <input id="add-aggregate-button" class="modest-button" type="button"
-         value="Add Aggregate"/>
+<div class="n_default_trophies">
+        <input id="n-rank" name="n-rank-trophies" type="number" min="0" max="20" class="not-mobile"
+               value="<?php echo read_raceinfo('n-rank-trophies', 0); ?>"/>
+        <label for="n-rank">speed trophies per subgroup</label>
 </div>
 
 </div><!-- race-rules -->
@@ -98,14 +124,17 @@ $(function() {
   </li>
 </ul>
 
+<div class="block_buttons add_button">
+  <input id="add-partition-button" class="modest-button" type="button"
+         value="Add <?php echo partition_label(); ?>"/>
+</div>
+
 <ul id="aggregate-groups" class="mlistview">
 </ul>
-<div id="pack_agg_div">
-  <span class="supergroup-label"><?php echo supergroup_label(); ?></span> speed awards:
-  <br/>
-  <input id="pack-no" type="radio" name="pack-agg" class="not-mobile" value="0"/>
-  <label for="pack-no">Don't calculate any</label>
-  <!-- div pack-agg-option -->
+
+<div class="block_buttons add_button">
+  <input id="add-aggregate-button" class="modest-button" type="button"
+         value="Add Aggregate"/>
 </div>
 
 </div><!-- race-structure -->

@@ -58,7 +58,8 @@ $use_subgroups = use_subgroups();
 
 list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 $agg_classes = aggregate_classes();
-$pack_aggregate_id = read_raceinfo('pack-aggregate-id', 0);
+$pack_aggregate_id = read_raceinfo('full-field-calc', 0);
+$pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
 $awards = array();
 $bias_overall = add_speed_awards($awards);
@@ -106,13 +107,13 @@ usort($awards, 'compare_by_sort');
 ?>
 <div class="block_buttons">
 
-<?php if (count($agg_classes) > 0) { ?>
+<?php if ($pack_trophies > 0 && count($agg_classes) > 0) { ?>
 <div id="pack_agg_div" class="pack-awards">
-  <?php echo supergroup_label(); ?> speed awards:<br/>
-  <input id="pack-no" type="radio" name="pack-agg"
+  <?php echo supergroup_label(); ?> standings:<br/>
+  <input id="pack-ok" type="radio" name="pack-agg"
     class="not-mobile" value="0" onchange="on_pack_agg_change()"
         <?php echo $pack_aggregate_id == 0 ? "checked" : ""; ?> />
-  <label for="pack-no">Don't calculate any</label>
+  <label for="pack-ok">Calculate normally</label>
   <?php
     foreach ($agg_classes as $agg) {
       echo "<br/>";

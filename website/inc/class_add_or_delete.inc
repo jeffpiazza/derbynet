@@ -135,7 +135,7 @@ function delete_class($classid) {
   if ($stmt->rowCount() > 0) {
     record_event(EVENT_CLASS_DELETED, array('classid' => $classid, 'other' => $classname));
   }
-  delete_from_raceinfo_with_value('pack-aggregate-id', $classid);
+  delete_from_raceinfo_with_value('full-field-calc', $classid);
 }
 
 ?>

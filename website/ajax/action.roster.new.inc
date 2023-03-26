@@ -104,7 +104,7 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
     // round, we assume that this is a "Grand Finals" round to determine overall
     // pack champions.  This choice can still be undone from the awards
     // presentation screen if it's not the intent.
-    write_raceinfo('pack-aggregate-id', $classid);
+    write_raceinfo('full-field-calc', $classid);
   } else {
     $classid = $_POST['classid'];
   }
