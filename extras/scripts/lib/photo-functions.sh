@@ -15,7 +15,9 @@ killall_gvfs_volume_monitor() {
     # try to kill it.  We don't want to commit resources to running this process
     # indefinitely, though.
     while [ `date +%s` \< $DEADLINE ] ; do
-        sudo systemctl --user stop gvfs-daemon
+        # gvfs-daemon is a user daemon; in order to kill it, we need to run
+        # systemctl as the affected user, not root, so no sudo here.
+        systemctl --user stop gvfs-daemon
         # There are actually a bunch of these gvfs-xxx-volume-monitor daemons, so this is likely not enough.  Stopping the gvfs-daemon user
         sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
         sleep 4s

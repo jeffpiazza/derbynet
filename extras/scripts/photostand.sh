@@ -16,6 +16,10 @@
 # session.gc_maxlifetime, to be sure that session cookies won't get reclaimed
 # before we're done.
 #
+#
+# For turnkey operation:
+#  mkdir ~/.config/autostart && cp /usr/share/derbynet/autostart/photostand.desktop ~/.config/autostart
+#####################################################################################
 
 # Establish default values; photo-preamble will override from user config files.
 #  Looks in /dev/input/by-id for any of the scanner devs, or just any device at all.
