@@ -15,7 +15,29 @@ prepare_for_setup() {
     # Delete /Library/WebServer/Documents/xsite/local/config-database.inc
     #  and /Library/WebServer/Documents/xsite/local/config-roles.inc
     # and then delete the cookies file
-    user_login_coordinator
+    #
+    #user_login_coordinator
+    # But it's OK if the login fails owing to there being no config file.
+    PWD=$(sed -n -e "s/^RaceCoordinator://p" "${PASSWORDS_FILE:-`dirname $0`/default.passwords}")
+	echo    >> $OUTPUT_CURL
+	echo login RaceCoordinator >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+    SUCCESSFUL=1
+	curl --location -d "action=role.login&name=RaceCoordinator&password=$PWD" \
+        -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
+		| tee -a $OUTPUT_CURL | \
+        jq -s -e ' length > 0 and (map(.outcome.summary == "success") | all)' >/dev/null || SUCCESSFUL=0
+    if [ ! $SUCCESSFUL ] ; then
+        tput setaf 1  # red text
+        echo Initial login unsuccessful
+    fi
+    tput setaf 0  # black text
+
+    # TODO Summarize success or failure here
+}
+
+function user_login_coordinator() {
+    user_login RaceCoordinator
 }
 
 # $1 is the name of the .js file in puppeteer subdirectory
