@@ -16,9 +16,17 @@ function repopulate_schedule(json) {
   var nlanes = g_nlanes;
   var interleaved = json['current-heat']['use_master_sched'];
 
+  var th_width_vh = interleaved ? 10 : 4;
+  var td_width_vh = (100 - th_width_vh) / (nlanes || 1);
+
+  var rounds_map = {};
+  for (var i = 0; i < json['rounds'].length; ++i) {
+    rounds_map[json['rounds'][i]['roundid']] = json['rounds'][i];
+  }
+
   function add_byes(row, nbyes) {
     while (nbyes > 0) {
-      $("<td class='bye'/>").text("Bye").appendTo(row);
+      $("<td class='bye'/>").text("Bye").appendTo(row).css({'width': td_width_vh + 'vh'});
       --nbyes;
     }
   }
@@ -30,8 +38,19 @@ function repopulate_schedule(json) {
 
   $("table#schedule tr").remove();
 
-  var th_width_vh = interleaved ? 10 : 4;
-  var td_width_vh = (100 - th_width_vh) / (nlanes || 1);
+  {
+    // The first row sets the column widths, at least one some browsers, so we
+    // need an invisible sizing row before the divider
+    var sizer = $("<tr style='height: 0; border: none;'/>").appendTo('table#schedule');
+    sizer.append($('<th/>').css({'width': th_width_vh + 'vh', 'height': 0}));
+    for (var lane = 0; lane < nlanes; ++lane) {
+      sizer.append($('<td/>').css({'width': td_width_vh + 'vh',
+                                   'height': 0,
+                                   'padding': 0,
+                                   'border': 'none'}));
+    }
+  }
+
 
   // $("table#schdule").width() is zero if the table is unpopulated
   // 26 = 2 * 13px padding
@@ -44,6 +63,7 @@ function repopulate_schedule(json) {
   var roundid = 0;
   var heat = 0;
   var lane = 0;
+  var row;
   var rowno = 0;
   var row_has_photos = false;
   var racerids = Array(nlanes).fill(null);
@@ -51,11 +71,17 @@ function repopulate_schedule(json) {
   for (var c = 0; c < json['ondeck']['chart'].length; ++c) {
     var cell = json['ondeck']['chart'][c];
     if (cell['roundid'] != roundid || cell['heat'] != heat) {
+      if (cell['roundid'] != roundid && !interleaved) {
+        $("<tr/>").appendTo('table#schedule')
+          .append($("<th class='divider'/>")
+                  .attr('colspan', nlanes + 1)
+                  .text(rounds_map[cell['roundid']]['name']));
+      }
       if (row) {
         add_byes(row, nlanes - lane);
         row.toggleClass('populated', row_has_photos);
       }
-      var row = $("<tr/>").appendTo("table#schedule");
+      row = $("<tr/>").appendTo("table#schedule");
       ++rowno;
 	  //new heat reset lane count to zero to ensure correct byes are populated
 	  lane = 0;
@@ -66,7 +92,9 @@ function repopulate_schedule(json) {
          .addClass('d' + (rowno % 2))
         .attr('id', 'heat_' + cell['roundid'] + '_' + cell['heat']);
       $("<th/>").text(interleaved
-                      ? cell['class'] + ", Heat " + cell['heat']
+                      ? cell['class'] +
+                        (cell['round'] > 1 ? ", Round " + cell['round'] : "") +
+                        ", Heat " + cell['heat']
                       : "Heat " + cell['heat'])
         .css({'width': th_width_vh + 'vh'})
         .appendTo(row);
@@ -75,7 +103,7 @@ function repopulate_schedule(json) {
     } 
     add_byes(row, cell['lane'] - 1 - lane);
 
-    var td = $("<td/>").appendTo(row).css({'width': td_width_vh + 'vh'});
+    var td = $("<td class='chart'/>").appendTo(row).css({'width': td_width_vh + 'vh'});
     td.addClass('lane_' + cell['lane'])
       .addClass('resultid_' + cell['resultid']);
     if (prev_racerids.indexOf(cell['racerid']) >= 0) {
@@ -223,7 +251,7 @@ function update_schedule(json, current_heat, next_heat) {
       json['current-heat']['use_master_sched'] == current_heat['use_master_sched'] &&
       json['current-heat']['roundid'] == current_heat['roundid'] &&
       json['current-heat']['heat'] == current_heat['heat'] &&
-      json['ondeck']['chart'].length == $("table#schedule td:not(.bye)").length) {
+      json['ondeck']['chart'].length == $("table#schedule td.chart").length) {
     // No change, do nothing
   } else if (json['current-heat']['roundid'] == next_heat['roundid'] &&
              json['current-heat']['heat'] == next_heat['heat']) {
@@ -269,13 +297,13 @@ $(function() {
   var current_heat;
   var next_heat;
 
-  setInterval(function() {
+  function poll_for_chart() {
     if (!running) {
       running = true;
       $.ajax('action.php',
              {type: 'GET',
               data: {query: 'poll',
-                     values: 'ondeck,current-heat'},
+                     values: 'ondeck,rounds,current-heat'},
               success: function(json) {
                 if (g_resized) {
                   g_resized = false;
@@ -292,8 +320,9 @@ $(function() {
               }
              });
     }
-  },
-              1000);
+  }
+  setInterval(poll_for_chart, 1000);
+  poll_for_chart();
 });
 
 $(window).on('resize', function() {
