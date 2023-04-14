@@ -35,7 +35,7 @@ function json_ondeck(&$now_running) {
                             'heat' => $next['heat']);
   }
 
-  $stmt = $db->prepare('SELECT resultid, roundid, class, heat, lane,'
+  $stmt = $db->prepare('SELECT resultid, roundid, heat, lane,'
                        .' racerid, firstname, lastname, carnumber,'
                        .(schema_version() < 2 ? ' \'\' as' : '').' carphoto, '
                        .' finishtime, finishplace, completed'
@@ -54,7 +54,6 @@ function json_ondeck(&$now_running) {
   foreach ($stmt as $row) {
     $chart[] = array('resultid' => $row['resultid'],
                      'roundid' => $row['roundid'],
-                     'class' => $row['class'],
                      'heat' => $row['heat'],
                      'lane' => $row['lane'],
                      'racerid' => $row['racerid'],
