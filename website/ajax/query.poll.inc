@@ -105,7 +105,13 @@ function json_common_1($key, &$now_running) {
     } else {
       require_once('inc/photos-on-now-racing.inc');
       $render = false;
-      if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
+      $render2 = false;
+      if (isset($_GET['head-size'])) {
+        $render = photo_repository('head')->lookup_or_any($_GET['head-size']);
+        if (isset($_GET['car-size'])) {
+          $render2 = photo_repository('car')->lookup_or_any($_GET['car-size']);
+        }
+      } else if (isset($_GET['row-height']) && $_GET['row-height'] > 0) {
         if (isset($_GET['repo'])) {
           $photos = $_GET['repo'];
           if (!photo_repository($photos)) {
@@ -120,7 +126,8 @@ function json_common_1($key, &$now_running) {
         }
       }
 
-      json_out('racers', json_current_racers($now_running, read_name_style(), $render));
+      json_out('racers',
+               json_current_racers($now_running, read_name_style(), $render, $render2));
     }
     break;
   case 'replay-state':

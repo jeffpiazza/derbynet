@@ -286,7 +286,7 @@ class PhotoRender {
       return $this->render_url(basename($imagefile));
     } else {
       // A racer URL
-      return 'photo.php/'.$this->repository->name().'/racer/'.$racerid.'/'.time();
+      return 'photo.php/'.$this->repository->name().'/racer/'.$racerid.'/unrec-'.time();
     }
   }
 

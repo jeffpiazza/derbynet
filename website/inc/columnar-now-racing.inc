@@ -31,6 +31,14 @@ if (g_number_of_lanes == 0) {
     5000);
 }
 
+var g_column_width_exact = $(window).width() / (g_number_of_lanes == 0 ? 1 : g_number_of_lanes);
+var g_column_width = Math.round(g_column_width_exact);
+
+// 29vh (div.car) - 5vh (div.number, the car number)
+var g_car_photo_height = Math.floor(1 + 0.24 * $(window).height());
+// 38vh (div.racer) - 4vh (div.name)
+var g_racer_photo_height = Math.floor(1 + 0.34 * $(window).height());
+
 $(function() {
   for (lane = 1; lane <= g_number_of_lanes; ++lane) {
     $("div.lane").eq(lane_to_column(lane)).find("div.lane_number").text(lane);
