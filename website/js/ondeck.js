@@ -120,7 +120,7 @@ function repopulate_schedule(json) {
       photo_div
         .append($("<img/>")
                 .attr('src', car_photo_url(rendername, cell['carphoto']))
-                .attr('data-img', car_photo_url('WORK', cell['carphoto']))
+                .attr('data-img', car_photo_url('work', cell['carphoto']))
                 .attr('onclick', 'handle_photo_click(this);'));
       row_has_photos = true;
     }

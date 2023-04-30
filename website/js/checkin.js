@@ -21,7 +21,7 @@ function poll_max_carnumbers() {
 }
 function next_carnumber(partitionid) {
   // NOTE: 100 * partitionid expression also in car-numbers poll query
-  return 1 + (g_max_carnumbers?.[partitionid] || (100 * partitionid));
+  return 1 + (g_max_carnumbers[partitionid] || (100 * partitionid));
 }
 $(function() {
   setInterval(poll_max_carnumbers, 10000);
