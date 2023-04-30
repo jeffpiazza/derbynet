@@ -141,7 +141,7 @@ $(function() { setInterval(poll_as_replay, 250); });
 function on_stream_ready(stream) {
   $("#waiting-for-remote").addClass('hidden');
   g_recorder = new CircularFrameBuffer(stream, g_replay_options.length);
-  g_recorder.start();
+  g_recorder.start_recording();
   document.getElementById("preview").srcObject = stream;
 }
 
@@ -260,7 +260,7 @@ function on_replay() {
   g_replay_timeout = 0;
 
   announce_to_interior('replay-started');
-  g_recorder.stop();
+  g_recorder.stop_recording();
 
   let playback = document.querySelector("#playback");
   playback.width = $(window).width();
@@ -289,7 +289,7 @@ function on_replay() {
                           function() {
                             $("#playback-background").hide('slide');
                             announce_to_interior('replay-ended');
-                            g_recorder.start();
+                            g_recorder.start_recording();
                           });
     });
 }
