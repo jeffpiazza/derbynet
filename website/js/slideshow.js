@@ -70,7 +70,7 @@ function mainphoto_onload(img) {
     }
 
     if (response.hasOwnProperty('title') && kiosk_parameters.title) {
-      $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(current);
+      $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo($("div.current"));
     }
   }
 

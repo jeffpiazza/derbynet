@@ -503,6 +503,9 @@ function populate_classids(parameters) {
   } else {
     $("#config_classes_modal input[type='checkbox']").prop("checked", true);
   }
+  $("#config_classes_modal input[type='checkbox']").each(function() {
+    $(this).parent().toggleClass('checked', $(this).is(":checked"));
+  });
 }
 
 // Extract classids from user's choices in the UI
@@ -510,7 +513,7 @@ function compute_classids() {
   var any_unchecked = false;
   var classids = [];
   $("#config_classes_modal input[type='checkbox']").each(function() {
-    if ($(this).prop("checked")) {
+    if ($(this).is(":checked")) {
       classids.push(parseInt($(this).data("classid")));
     } else {
       any_unchecked = true;
