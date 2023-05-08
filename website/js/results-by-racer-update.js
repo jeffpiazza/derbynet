@@ -15,13 +15,20 @@ $(function() {
 function process_newresults(data) {
   var rounds = data['schedule-signature'];
 
-  $("tbody[data-roundid]").each(function() {
-    var roundid = $(this).attr('data-roundid');
-    if (!rounds.hasOwnProperty(roundid)) {
-      console.log("tbody for non-existent roundid " + roundid);
-      location.reload(true);
-    }
-  });
+  // When the page is contructed, it includes a tbody for every roundid that has
+  // scheduled heats, The mention of a new roundid in the update implies we need
+  // to reload the page to reflect newly-scheduled rounds.  The exception is if
+  // we're intentionally limiting the display to a single roundid
+  // (g_limited_to_roundid).
+  if (!g_limited_to_roundid) {
+    $("tbody[data-roundid]").each(function() {
+      var roundid = $(this).attr('data-roundid');
+      if (!rounds.hasOwnProperty(roundid)) {
+        console.log("tbody for non-existent roundid " + roundid);
+        location.reload(true);
+      }
+    });
+  }
 
   var keys = [];
   for (var r in rounds) {

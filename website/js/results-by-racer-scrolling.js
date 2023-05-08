@@ -68,4 +68,4 @@ function scroll_one() {
 }
 
 // TODO Don't scroll if we don't need to
-$(setInterval(scroll_one, 2000));
+setInterval(scroll_one, 2000);

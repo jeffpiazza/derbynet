@@ -12,6 +12,14 @@ $use_master_sched = use_master_sched();
 $high_water_rounds = high_water_rounds();
 
 $signatures = schedule_signature();
+
+$limit_to_roundid = false;
+if (isset($as_kiosk)) {
+  $params = kiosk_parameters();
+  if (isset($params['roundid'])) {
+    $limit_to_roundid = $params['roundid'];
+  }
+}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +27,11 @@ $signatures = schedule_signature();
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
+
 var g_as_kiosk = <?php echo isset($as_kiosk) ? "true" : "false"; ?>;
+
+var g_limited_to_roundid = <?php echo $limit_to_roundid ? "true" : "false"; ?>;
+
 </script>
 <?php
 if (isset($as_kiosk)) {
@@ -56,7 +68,9 @@ make_banner('Results By Racer', isset($as_kiosk) ? '' : 'index.php');
 $nlanes = get_lane_count_from_results();
 
 $now_running = get_running_round();
-running_round_header($now_running, /* Use RoundID */ TRUE);
+if (!$limit_to_roundid) {
+    running_round_header($now_running, /* Use RoundID */ true);
+}
 
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos = read_raceinfo_boolean('show-car-photos-rr');
@@ -75,8 +89,8 @@ $sql = 'SELECT RegistrationInfo.racerid,'
                          'Rounds', 'Rounds.roundid = Roster.roundid',
                          'Classes', 'Rounds.classid = Classes.classid')
     .' WHERE Rounds.roundid = RaceChart.roundid'
-    .(isset($_GET['racerid'])
-          ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
+    .($limit_to_roundid !== false ? " AND Rounds.roundid = $limit_to_roundid" : '')
+    .(isset($_GET['racerid']) ? " AND RaceChart.racerid = $_GET[racerid]" : '')
     .' ORDER BY '
     .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
     .'class, round, lastname, firstname, carnumber, resultid, lane';

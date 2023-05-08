@@ -65,7 +65,7 @@ function kiosk_page($addr) {
       $stmt->execute(array(':address' => $addr));
       $row = $stmt->fetch(PDO::FETCH_ASSOC);
       $stmt->closeCursor();
-        if ($row) {
+      if ($row) {
         $row['reload'] = false;
         if (!isset($row['name'])) {
           $row['name'] = '';
