@@ -22,7 +22,7 @@ define('RENDER_LISTVIEW', '200x200');  // formerly '80x80'
 define('RENDER_THUMBNAIL', '200x200');  // formerly '150x150'
 define('RENDER_CHECKIN', '200x200');  // formerly '0x60'
 define('RENDER_JUDGING', '200x200');  // formerly '100x100'
-define('RENDER_ONDECK', '200x200');  // formerly 200x100
+define('RENDER_ONDECK', '400x400');  // formerly 200x100
 define('RENDER_RACER_RESULTS', '200x200');  // formerly 68h
 
 function photo_directory() {
