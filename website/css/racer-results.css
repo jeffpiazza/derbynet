@@ -6,6 +6,18 @@
 	align: center;
 }
 
+td {
+  padding: 2px 14px;
+}
+
+td span.time {
+  font-size: 32px;
+}
+
+.scroll-bounding-rect {
+      overflow: hidden;
+}
+
 .curgroup {
   table-layout: fixed;
 }
@@ -94,11 +106,6 @@ th.nrows4 img {
 
 .ondeck_photo {
     display: none;
-}
-.ondeck_photo img {
-  /* RENDER_ONDECK */
-  max-height: 100px;
-  max-width: 200px;
 }
 
 .curheat.populated .ondeck_photo,

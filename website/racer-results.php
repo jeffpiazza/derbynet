@@ -51,15 +51,6 @@ if (isset($as_kiosk)) {
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <link rel="stylesheet" type="text/css" href="css/racer-results.css"/>
-<style>
-.scroll-bounding-rect {
-      overflow: hidden;
-}
-
-td span.time {
-  font-size: 24px /* 3vh */;
-}
-</style>
 </head>
 <body>
 <?php

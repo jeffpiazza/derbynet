@@ -81,7 +81,8 @@ function rewrite_table_sections(rounds, keys, index, completed) {
 function update_results(results) {
   for (var i = 0; i < results.length; ++i) {
     var result = results[i];
-    $("td.resultid_" + result.resultid + " span.time").text(result.outcome);
+    $("td.resultid_" + result.resultid + " span.time").text(
+      result.outcome[0] == 'x' ? result.outcome.substring(1) : result.outcome);
   }
 
   if (g_as_kiosk) {
