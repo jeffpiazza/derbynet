@@ -11,7 +11,20 @@ function url_for_cropped(&$row, $column_name, &$repository) {
 
 
 $done = false;
+
+// The three "modes" for the slide show are 'title', 'slide', and 'racer'.
+// 'title' isn't really a mode that the client would ask for, but it's a useful
+// way to represent a request for the title slide.  'slide' mode explicitly
+// assumes the client wants slides other than the title slide, and 'racer' mode
+// is looking for racer photos.
+//
+// A 'title' mode query would always produce a title slide.  A 'slide' mode
+// request tries to give the next slide alphabetically after the 'file'
+// argument; if there isn't one, then we advance to 'racer' mode.  'racer' mode
+// tries to return information about the next racer in racerid order; if there
+// isn't one, then we cycle back around to 'title' mode and give a title slide.
 $mode = 'title';
+
 if (isset($_GET['mode'])) {
   $mode = $_GET['mode'];
 }
@@ -38,11 +51,11 @@ if ($mode == 'slide') {
   // Look up the title slide only to exclude it as a base name.
   $title = basename(slide_file_path('title'));
   if (isset($homedir)) {
-    $dir = $homedir.DIRECTORY_SEPARATOR.'slides' /* TODO .DIRECTORY_SEPARATOR */;
+    $dir = $homedir.DIRECTORY_SEPARATOR.'slides';
     if (is_dir($dir) && is_readable($dir)) {
       if ($dh = opendir($dir)) {
         while (($file = readdir($dh)) !== false) {
-          if ($file > $f && $file != "." && $file != ".." && $file != $title) {
+          if ($file > $f && substr($file, 0, 1) != "." && $file != $title) {
             $results[] = $file;
           }
         }
@@ -59,6 +72,7 @@ if ($mode == 'slide') {
   }
 
   $mode = 'racer';
+  $racerid = 0;
 }
 
 if (!$done && $mode == 'racer') {

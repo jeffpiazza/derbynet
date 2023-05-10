@@ -24,7 +24,9 @@ function mainphoto_onload(img) {
   // to be cached for the duration of the slideshow.  Reloading the slideshow
   // will pick up any changes to the title slide image.
   var cachebreaker = Date.now();
-  var kiosk_parameters = {};
+  // g_kiosk_parameters is set in slideshow.php
+  var kiosk_parameters = g_kiosk_parameters;
+
   try {
     KioskPoller.param_callback = function(parameters) {
       kiosk_parameters = parameters;
@@ -38,7 +40,6 @@ function mainphoto_onload(img) {
 
   // response: {'photo', 'inset', 'name', 'carname', 'carnumber', 'next'}
   function refresh_page(response) {
-    console.log('refresh_page', response);
     next_query = response.next;
 
     // There's always a div.next, which is hidden; we populate it with images
@@ -48,10 +49,10 @@ function mainphoto_onload(img) {
     $("#photo-background div.current").remove();
     $("#photo-background div.next").removeClass("next").addClass("current");
 
-    var next = $("<div class='next'></div>").appendTo("#photo-background");
-
-    next.append('<img class="mainphoto" onload="mainphoto_onload(this)" src="' +
-                response['photo'] + '"/>');
+    var next = $("<div class='next'></div>").appendTo("#photo-background")
+        .append($("<img class='mainphoto'/>")
+                .attr('src', response['photo'])
+                .on('load', function() { mainphoto_onload(this); }));
 
     if (response.hasOwnProperty('name')) {
       var subtitle = $("<p class='subtitle'/>").text(response['name']).appendTo(next);
@@ -70,12 +71,12 @@ function mainphoto_onload(img) {
     }
 
     if (response.hasOwnProperty('title') && kiosk_parameters.title) {
-      $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo($("div.current"));
+      $('<p class="maintitle"></p>').text(kiosk_parameters.title).appendTo(next);
     }
   }
 
   function photo_poll() {
-    next_query.query = 'photo.next';
+    next_query.query = 'slide.next';
     var classids = kiosk_parameters.classids;
     if (classids && classids.length > 0) {
       next_query.classids = classids.join(',');
@@ -88,6 +89,7 @@ function mainphoto_onload(img) {
                 refresh_page(data.photo);
               } else {
                 refresh_page({'photo': 'slide.php/title',
+                              'title': true,
                               'next': {'mode': 'slide',
                                        'file': ''}});
               }
@@ -99,7 +101,18 @@ function mainphoto_onload(img) {
   $(document).ready(function() {
     $("#photo-background").height($("#photo-background").height() -
                                   $("#photo-background").position().top);
-    photo_poll();
+
+    refresh_page({'photo': 'slide.php/title',
+                  'title': true,
+                  'next': {'mode': 'slide',
+                           'file': ''}});
+    // We immediately refresh the page again, so any title text placed into
+    // 'next' by the first refresh will now become current.
+    refresh_page({'photo': 'slide.php/title',
+                  'title': true,
+                  'next': {'mode': 'slide',
+                           'file': ''}});
+
     setInterval(photo_poll, 10000);
   });
 }());

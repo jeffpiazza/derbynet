@@ -8,7 +8,7 @@ require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 
 // path_info (URL) should be:
-// image.php/filename
+// slide.php/filename
 
 $exploded = explode('/', path_info());
 if (count($exploded) == 2) {

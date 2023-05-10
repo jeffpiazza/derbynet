@@ -73,7 +73,7 @@ run_tests() {
 
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
-    `dirname $0`/test-photo-next.sh "$BASE_URL"
+    `dirname $0`/test-slide-next.sh "$BASE_URL"
 
     `dirname $0`/test-racer-query.sh "$BASE_URL"
 

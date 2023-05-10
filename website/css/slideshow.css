@@ -43,9 +43,12 @@ p.maintitle {
   font-size: 65px;
   font-weight: bold;
   text-align: center;
-  width: 100%;
-  bottom: 200px;
+  position: fixed;
   left: 0px;
+  width: 100%;
+  bottom: 50px;
+  margin: 0px;
+  background-color: rgba(255, 255, 255, 0.6);
 }
 
 .carno { font-weight: bold; }
