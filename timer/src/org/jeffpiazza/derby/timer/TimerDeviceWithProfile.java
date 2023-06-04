@@ -243,7 +243,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
     // (at least) needs to stop while race is running.  (Issue #200.)
     if (sm == null) {
-      sm = new StateMachine(profile.options.gate_state_is_knowable);
+      sm = new StateMachine(
+          profile.options.gate_state_is_knowable
+          && !Flag.no_gate_watcher.value());
     }
     sm.onEvent(event, args);
 
@@ -336,10 +338,19 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         }
         break;
       case PROFILE_UPDATED:
+        this.sm = null;  // We'll make a new one next time through.
+        // By convention, each different timer type has a Java class that derives
+        // from TimerDevicWithProfile and that exposes a static profile() method
+        // to manufacture a new instance of the Profile.
         Class<? extends TimerDevice> cl = getClass();
         try {
           Method m = cl.getMethod("profile");
           setProfile((Profile) m.invoke(cl));
+          if (this.roundid != 0) {
+            // Redo lane masking (esp. for Champ, which may need to send a new
+            // 'rg' when stopping gate watcher)
+            prepareHeat(this.roundid, this.heat, this.lanemask);
+          }
         } catch (Throwable ex) {
           Logger.getLogger(cl.getName()).log(Level.SEVERE, null, ex);
         }

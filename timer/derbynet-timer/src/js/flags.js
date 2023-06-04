@@ -17,7 +17,7 @@ class Flag {
 
   static ignore_place = new Flag(
     "ignore-place", false, "Discard any place indications from timer");
-
+ 
   static delay_reset_after_race = new Flag(
     "delay-reset-after-race", 10,
     "How long after race over before timer will be reset, default 10s.");
@@ -38,7 +38,12 @@ class Flag {
 
   static no_gate_watcher = new Flag(
     "no-gate-watcher", false,
-    "Disable interrogation of timer's gate state.");
+    "Disable interrogation of timer's gate state.")
+    .on_apply(function(v) {
+      console.log('no-gate-watcher flag changed to', v, Flag.no_gate_watcher.value);
+      // In Java, changing this flag sends a PROFILE_UPDATED event.
+      TimerEvent.send('GATE_WATCHER_CHANGED');
+    });
 
   static reset_after_start = new Flag(
     "reset-after-start", 11,

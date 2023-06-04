@@ -22,7 +22,7 @@ class HostPoller {
   remote_start = false;
 
   constructor() {
-    TimerEvent.register(this);
+    TimerEvent.register_unique(this);
     this.sendMessage({action: 'timer-message',
                       message: 'HELLO',
                       interface: 'web',
@@ -186,8 +186,7 @@ class HostPoller {
       if (g_prober) {
         g_prober.give_up = true;
       }
-      g_timer_proxy && g_timer_proxy.teardown();
-      g_timer_proxy = null;
+      TimerProxy.destroy();
       g_host_poller = null;
 
       for (var i = 0; i < nodes.length; ++i) {

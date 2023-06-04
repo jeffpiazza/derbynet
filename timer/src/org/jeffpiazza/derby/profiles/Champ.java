@@ -31,7 +31,7 @@ public class Champ extends TimerDeviceWithProfile {
                // in this set-up.
                /* "ox0",  Set Champ Timer mode instead of DTX */
                // Interrogate for a bunch of details here
-               "or" /* read auto-reset */,
+               "or" /* read auto-reset delay */,
                "ol" /* read lane character */,
                "od" /* read decimal places */,
                "op" /* read place character */,
@@ -40,7 +40,7 @@ public class Champ extends TimerDeviceWithProfile {
                "ol0" /* report lane 1 as "A" */,
                "op3" /* set place character '!' */)
         .setup("on", new Profile.Detector("^(\\d)$", Event.LANE_COUNT, 1))
-        .heat_prep("om0", "om", '1')
+        .heat_prep("om0", "om", '1', "rg")
         .match(" *([A-Z])=(\\d\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .gate_watcher("rs" /* READ_START_SWITCH */,
                         new Profile.Detector("^0$", Event.GATE_CLOSED),

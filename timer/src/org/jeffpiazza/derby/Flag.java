@@ -103,7 +103,12 @@ public abstract class Flag<T> {
 
   public static final Flag<Boolean> no_gate_watcher
       = BooleanFlag.settable("no-gate-watcher",
-                             "Disable interrogation of timer's gate state.");
+                             "Disable interrogation of timer's gate state.").
+          on_apply(new OnApply() {
+            public void apply(Flag f) {
+              Event.send(Event.PROFILE_UPDATED);
+            }
+          });
 
   public static final Flag<String> obs_uri
       = StringFlag.settable("obs-uri", null,

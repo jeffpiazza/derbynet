@@ -74,8 +74,12 @@ class PortWrapper {
       await this.reader.cancel();
     }
 
-    // TODO This may throw if the port is already closed (due to an error, e.g.)
-    await this.port.close();
+    try {
+      await this.port.close();
+    } catch (err) {
+      g_logger.internal_msg('PortWrapper.close catches', err);
+      g_logger.stacktrace(err);
+    }
   }
 
   async readLoop() {

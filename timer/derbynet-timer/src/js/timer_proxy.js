@@ -6,7 +6,7 @@
 //
 //  var pw = new PortWrapper(g_ports[0]);
 //  pw.open({baud: 9600});
-//  g_timer_proxy = new TimerProxy(pw, all_profiles()[1]);
+//  TimerProxy.create(pw, all_profiles()[1]);
 
 
 class TimerProxy {
@@ -26,6 +26,25 @@ class TimerProxy {
   // If not zero, a deadline for expecting heat results
   overdue_time;
 
+  static async create(port_wrapper, profile) {
+    this.destroy();
+    g_timer_proxy = new TimerProxy(port_wrapper, profile);
+
+    // For those timers that have a setup_query, need to be able to receive
+    // LANE_COUNT event
+    TimerEvent.register_unique(g_timer_proxy);
+
+    await g_timer_proxy.setup();
+  }
+
+  static destroy() {
+    if (g_timer_proxy) {
+      TimerEvent.unregister(g_timer_proxy);
+      g_timer_proxy.teardown();  // Closes the serial port
+      g_timer_proxy = null;
+    }
+  }
+  
   // port_wrapper is expected to be already opened
   constructor(port_wrapper, profile) {
     this.port_wrapper = port_wrapper;
@@ -35,7 +54,6 @@ class TimerProxy {
     if (this.profile?.options?.eol !== undefined) {
       this.port_wrapper.eol = this.profile.options.eol;
     }
-    this.setup();
   }
 
   _queue_next_poll(poll_start) {
@@ -82,7 +100,7 @@ class TimerProxy {
     } catch (error) {
       // These are global clean-ups that don't really belong here
       console.log('timer_proxy poll caught error', error);
-      g_timer_proxy = null;
+      TimerProxy.destroy();
       $("#probe-button").prop('disabled', false);
       $("#profiles-list li").removeClass('probing chosen');
       $("#ports-list li").removeClass('probing chosen');
@@ -109,10 +127,6 @@ class TimerProxy {
   }
 
   async setup() {
-    // For those timers that have a setup_query for it,
-    // need to be able to receive LANE_COUNT event
-    TimerEvent.register(this);
-
     if (this.profile?.matchers) {
       for (var i = 0; i < this.profile.matchers.length; ++i) {
         this.port_wrapper.detectors.push(new Detector(this.profile.matchers[i]));
@@ -146,14 +160,13 @@ class TimerProxy {
       }
     }
 
-    this.sm = new StateMachine(this.profile.options.gate_state_is_knowable);
+    this.sm = new StateMachine(this.profile.options.gate_state_is_knowable && !Flag.no_gate_watcher.value);
 
     // Start the polling loop:
     this._queue_next_poll(Date.now());
   }
 
   async teardown() {
-    TimerEvent.unregister(this);
     this.port_wrapper.close();
   }
 
@@ -237,10 +250,18 @@ class TimerProxy {
       break;
     case 'LOST_CONNECTION':
       console.log('TimerProxy sees lost connection', this);
-      TimerEvent.unregister(this);
+      TimerEvent.unregister(this);  // TODO
       break;
-    case 'GATE_WATCHER_NOT_SUPPORTED':
-      this.sm.gate_state_is_knowable = false;
+    case 'GATE_WATCHER_CHANGED':
+      // If polling resumes after no timer contact in a while, the port wrapper
+      // will incorrectly decide the connection is closed.
+      this.port_wrapper.noticeContact();
+      this.sm.gate_state_is_knowable = !Flag.no_gate_watcher.value;
+      if (this.roundid != 0) {
+        // This repeats part of maskLanes, specifically the 'rg' needed for
+        // Champ timer whenever we stop polling.
+        await this.resetForHeatPrep();
+      }
       break;
     }
   }
@@ -265,11 +286,15 @@ class TimerProxy {
           }
         }
       }
+      await this.resetForHeatPrep();
+      this.port_wrapper.drain();
+    }
+  }
+
+  async resetForHeatPrep() {
       if (this.profile.heat_prep.hasOwnProperty('reset')) {
         await this.port_wrapper.drain();
         await this.port_wrapper.write(this.profile.heat_prep.reset);
       }
-      this.port_wrapper.drain();
-    }
   }
 }

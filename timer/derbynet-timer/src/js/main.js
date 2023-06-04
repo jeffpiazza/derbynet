@@ -142,6 +142,7 @@ async function on_new_port_click() {
   // ports available, so the user gets the chance to choose
   await request_new_port();
   update_ports_list();
+  TimerProxy.destroy();  // In case there was a connection already established
   g_prober.probe_until_found();
 }
 
@@ -196,13 +197,10 @@ $(function() {
           // TODO This conditional teardown call doesn't seem to happen.
           // Fortunately TimerProxy unregisters itself now, upon receiving a
           // LOST_CONNECTION event.
-          if (g_timer_proxy) {
-            // issue#187: after a lost connection, the timer proxy et al are
-            // still registered for events, and will duplicate the effect of the
-            // new timer proxy unless torn down.
-            await g_timer_proxy.teardown();
-            g_timer_proxy = null;
-          }
+          TimerProxy.destroy();
+          // issue#187: after a lost connection, the timer proxy et al are
+          // still registered for events, and will duplicate the effect of the
+          // new timer proxy unless torn down.
           console.log('Starting probe after lost connection');
           await g_prober.probe_until_found();
           console.log('Probe complete: g_timer_proxy=', g_timer_proxy);

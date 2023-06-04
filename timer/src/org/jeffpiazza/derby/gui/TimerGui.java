@@ -3,6 +3,8 @@ package org.jeffpiazza.derby.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import org.jeffpiazza.derby.*;
@@ -38,6 +40,8 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
     portListController = new SerialPortListController(components.portList);
     components.portList.addListSelectionListener(portListController);
   }
+
+  public void addKeyListener(KeyListener k) { components.addKeyListener(k); }
 
   public void show() {
     components.setTitle("Derby Timer Management");
@@ -232,6 +236,8 @@ public class TimerGui implements RoleFinder.RoleFinderClient {
                  @Override
                  public void onLoginSuccess() {
                    setHttpStatus("Connected", green, icon_ok);
+                   // This may be useful if using a keyboard listener:
+                   // components.requestFocus();
                  }
 
                  @Override

@@ -47,12 +47,6 @@ class StateMachine {
   }
 
   onEvent(event, args) {
-    if (!this.gate_state_is_knowable) {
-      if (event == 'GATE_CLOSED' || event == 'GATE_OPEN') {
-        this.unexpected(event);
-      }
-    }
-
     var initial = this.state;
     switch (this.state) {
     case 'IDLE':
@@ -60,6 +54,10 @@ class StateMachine {
       case 'PREPARE_HEAT_RECEIVED':
         this.state = 'MARK';
         this.gate_is_believed_closed = false;
+        if (!this.gate_state_is_knowable) {
+          // Issue 270
+          TimerEvent.sendAfterMs(500, TimerEvent.GATE_CLOSED);
+        }
         break;
       case 'ABORT_HEAT_RECEIVED':
       case 'RACE_FINISHED':

@@ -133,6 +133,8 @@ public class TimerMain {
       }
       connector.setTimerGui(timerGui);
 
+      // timerGui.addKeyListener(new KeyboardListener());
+
       TimerTask timerTask = new TimerTask(Flag.portname.value(),
                                           Flag.devicename.value(), timerGui,
                                           connector);
