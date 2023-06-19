@@ -37,6 +37,60 @@ function address_for_current_kiosk() {
   return $addr;
 }
 
+function madlib_string($addr) {
+  $adjs = ['abundant', 'delightful', 'high', 'nutritious', 'square',
+              'adorable', 'dirty', 'hollow', 'obedient', 'steep', 'agreeable',
+              'drab', 'hot', 'obnoxious', 'sticky', 'alive', 'dry', 'hot',
+              'odd', 'straight', 'angry', 'dusty', 'huge', 'old-fashioned',
+              'strong', 'beautiful', 'eager', 'icy', 'orange', 'substantial',
+              'better', 'early', 'immense', 'panicky', 'sweet', 'bewildered',
+              'easy', 'important', 'petite', 'swift', 'big', 'elegant',
+              'inexpensive', 'plain', 'tall', 'bitter', 'embarrassed', 'itchy',
+              'powerful', 'tart', 'black', 'empty', 'jealous', 'prickly',
+              'tasteless', 'blue', 'faint', 'jolly', 'proud', 'teeny',
+              'boiling', 'faithful', 'juicy', 'puny', 'teeny-tiny', 'brave',
+              'famous', 'kind', 'purple', 'tender', 'breeze', 'fancy', 'large',
+              'purring', 'thankful', 'broad', 'fast', 'late', 'quaint',
+              'thoughtless', 'broken', 'fat', 'lazy', 'quick', 'tiny', 'bumpy',
+              'few', 'light', 'quiet', 'ugliest', 'calm', 'fierce', 'little',
+              'rainy', 'ugly', 'careful', 'filthy', 'lively', 'rapid', 'uneven',
+              'chilly', 'flaky', 'long', 'red', 'uninterested', 'chubby',
+              'flat', 'loose', 'relieved', 'unsightly', 'clean', 'fluffy',
+              'loud', 'repulsive', 'uptight', 'clever', 'freezing', 'low',
+              'rich', 'vast', 'clumsy', 'fresh', 'lumpy', 'rotten',
+              'victorious', 'cold', 'full', 'magnificent', 'round', 'warm',
+              'colossal', 'gentle', 'mammoth', 'salty', 'weak', 'cool',
+              'gifted', 'many', 'scary', 'wet', 'creepy', 'gigantic', 'massive',
+              'scrawny', 'west', 'crooked', 'glamorous', 'melted', 'screeching',
+              'whispering', 'cuddly', 'gray', 'messy', 'shallow', 'white',
+              'curly', 'greasy', 'miniature', 'short', 'wide', 'curved',
+              'great', 'modern', 'shy', 'wide-eyed', 'damaged', 'green',
+              'mushy', 'silly', 'witty', 'damp', 'grumpy', 'mysterious',
+              'skinny', 'wooden', 'dead', 'handsome', 'narrow', 'slow',
+              'worried', 'deafening', 'happy', 'nervous', 'small', 'wrong',
+              'deep', 'heavy', 'nice', 'soft', 'yellow', 'defeated', 'helpful',
+              'noisy', 'sparkling', 'young', 'delicious', 'helpless',
+              'numerous', 'sparse', 'yummy'];
+
+  $nouns = ['apple', 'fifth', 'scale', 'arithmetic', 'finger', 'seashore',
+               'badge', 'flock', 'sidewalk', 'basket', 'frame', 'sleet',
+               'basketball', 'furniture', 'smoke', 'battle', 'geese', 'bathtub',
+               'beast', 'ghost', 'nose', 'beetle', 'giraffe', 'sidewalk',
+               'beggar', 'governor', 'boy', 'brain', 'honey', 'stage', 'bubble',
+               'hope', 'station', 'bucket', 'income', 'throat', 'cactus',
+               'island', 'throne', 'cannon', 'jeans', 'title', 'cow', 'judge',
+               'toothbrush', 'celery', 'lamp', 'turkey', 'cellar', 'lettuce',
+               'umbrella', 'cloth', 'marble', 'underwear', 'coach', 'month',
+               'vacation', 'coast', 'north', 'south', 'east', 'west',
+               'vegetable', 'crate', 'ocean', 'poison', 'cream', 'patch',
+               'riddle', 'girl', 'plane', 'scale', 'donkey', 'playground',
+               'visitor', 'earthquake', 'poison', 'voyage', 'feast', 'riddle',
+               'year'];
+
+  $crc = crc32($addr);
+  return $adjs[$crc % count($adjs)]." ".$nouns[($crc >> 16) % count($nouns)];
+}
+
 // Splits $row['params'] into separate ['page'] and ['params'] fields.
 function parse_kiosk_params(&$row) {
   $ex = explode('#', $row['page'], 2);
@@ -146,6 +200,7 @@ function all_kiosks() {
       parse_kiosk_params($row);
       $kiosks[] = array('name' => $row['name'] ? $row['name'] : '',
                         'address' => $row['address'],
+                        'madlib' => madlib_string($row['address']),
                         'last_contact' => $row['last_contact'],
                         'page' => $row['page'],
                         'reload' => $row['reload'],

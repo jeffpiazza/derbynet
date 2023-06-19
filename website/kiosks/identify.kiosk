@@ -22,13 +22,15 @@ $(function () {
 <body>
 <?php
 require_once('inc/banner.inc');
-make_banner('Kiosk Identification', /* back_button */ false);
+make_banner('DerbyNet Kiosk', /* back_button */ false);
+
+$addr = address_for_current_kiosk();
 ?>
- <p class="kiosk_title">DerbyNet</p>
- <p class="kiosk_title"><?php echo address_for_current_kiosk(); ?></p>
+ <p class="kiosk_title"><?php echo madlib_string($addr); ?></p>
  <p id="kiosk_name" class="kiosk_title"></p>
  <div class="full_page_center">
    <p id="screensize"></p>
+   <p><?php echo $addr; ?></p>
    <div class="logo-frame">
      <img class="big-logo" src="img/derbynet-300.png"/>
    </div>
