@@ -375,6 +375,10 @@ function populate_aggregates(classes, pack_aggregate_id) {
       $("li[data-classid='" + classes[i].constituents[v].classid + "']")
         .attr('data-constituent-of', classes[i].name);
     }
+    for (var v = 0; v < classes[i]['constituent-ranks'].length; ++v) {
+      $("li[data-rankid='" + classes[i]['constituent-ranks'][v].rankid + "']")
+        .attr('data-constituent-of', classes[i].name);
+    }
 
     pack_agg.removeClass('hidden');
     $("<div/>").addClass('pack-agg-option')

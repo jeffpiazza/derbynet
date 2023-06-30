@@ -162,7 +162,7 @@ curl_postj action.php "action=partition.delete&partitionid=$CUS_PART_X" | check_
 [[ $(partitionid_of "Cus-Part-ModX") = null ]] || test_fails
 [[ $(rankid_of "Cus-Part-ModX") = null ]] || test_fails
 [[ $(classid_of "Cus-Part-ModX") = null ]] || test_fails
-[[ "$CUS_PART_X_RANK" = $(rankid_of "Cus-Part-X") ]] || test_fails
+[[ $(rankid_of "Cus-Part-X") = null ]] || test_fails
 [[ "$CUS_PART_X_CLASS" = $(classid_of "Cus-Part-X") ]] || test_fails
 
 # Add, rename, delete rank

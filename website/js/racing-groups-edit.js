@@ -89,7 +89,8 @@ function on_edit_rank(event) {
   // True if we're the only rank for this class:
   var only_rank = list_item.closest("ul.subgroups").find("li.subgroup").length == 1;
   var count = list_item.attr('data-count');
-  $("#delete_rank_extension").toggleClass('hidden', only_rank || (count > 0));
+  var constituent_of = list_item.is('[data-constituent-of]') ? list_item.attr('data-constituent-of') : '';
+  $("#delete_rank_extension").toggleClass('hidden', only_rank || (count > 0) || constituent_of != '');
   var classid = list_item.closest("ul").attr('data-classid');
   $("#edit_rank_name").attr('data-classid', classid);
   show_modal("#edit_one_rank_modal", function() {
