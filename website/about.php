@@ -177,7 +177,6 @@ if (isset($db)) {
            ." href='action.php?query=snapshot.get&amp;clean'>Cleaned</a>"
            ."</p>\n";
     }
-
   } catch (PDOException $p) {
     echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
   }
@@ -225,6 +224,12 @@ if (isset($db)) {
       }
       echo "</p>\n";
     }
+  }
+
+  if (have_permission(SET_UP_PERMISSION)) {
+    echo "<p class=''><a download='derbynet.pref'"
+           ." href='preferences.php'>Download Preferences</a>"
+           ."</p>\n";
   }
 ?>
 <h4>PHP Configuration Information</h4>

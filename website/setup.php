@@ -11,9 +11,11 @@ require_permission(SET_UP_PERMISSION);
 <title>DerbyNet Set-Up</title>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
+<link rel="stylesheet" type="text/css" href="css/dropzone.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/setup.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
@@ -65,13 +67,25 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 //]]>
 </script>
 
-<div id="offer_fake" class="block_buttons">
-  <p>For experimenting, you might want to make a</p>
-  <a class="button_link" href="fakeroster.php">Fake Roster</a>
-</div>
+<div id="right-float">
+  <div id="offer_fake" class="block_buttons">
+    <p>For experimenting, you might want to make a</p>
+    <a class="button_link" href="fakeroster.php">Fake Roster</a>
+  </div>
 
-<div id="remind_fake" class="block_buttons">
-<p>To remove the fake roster data, re-initialize the database, or click "Purge Data" and delete racers.</p>
+  <div id="remind_fake" class="block_buttons">
+  <p>To remove the fake roster data, re-initialize the database, or click "Purge Data" and delete racers.</p>
+  </div>
+
+  <p id="prefs-drop-intro">If you have a saved prefs file,</p>
+  <form id="prefs-drop" action="action.php" class="dropzone">
+    <p id="prefs-drop-msg" class="dz-message">Drop prefs file here</p>
+    <div class="fallback">
+      <input type="file" name="prefs" value="Upload Files"/>
+    </div>
+    <input type="hidden" name="action" value="preferences.upload"/>
+  </form>
+
 </div>
 
 <!-- Database -->
@@ -93,6 +107,7 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
     <div class="step_button block_buttons">
       <input id="schema_button" type="button"/>
     </div>
+
     <div id="schema_details" class="step_details"></div>
   </div>
 
@@ -150,7 +165,6 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <div class="step_button block_buttons">
     <a class="button_link" href="settings.php">Settings</a>
   </div>
-
   <div class="step_details"></div>
 </div>
 

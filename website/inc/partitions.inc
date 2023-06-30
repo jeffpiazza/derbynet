@@ -98,6 +98,14 @@ function find_or_create_partition($name) {
   return $partitionid;
 }
 
+function create_partition_in_existing_rank($name, $rankid) {
+  read_single_value('INSERT INTO Partitions(name, rankid, sortorder)'
+                    .' VALUES(:name, :rankid,'
+                    .'        (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Partitions))',
+                    array(':name' => $name,
+                          ':rankid' => $rankid));
+}
+
 function clean_up_empty_classes_and_ranks() {
   global $db;
 
