@@ -107,10 +107,12 @@ var g_replay_timeout = 0;
 var g_replay_timeout_epsilon = 0;
 
 function handle_replay_message(cmdline) {
+  console.log('* Replay message:', cmdline);
+  var root = g_video_name_root;
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
     parse_replay_options(cmdline);
-    on_replay();
+    on_replay(root);
   } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
     g_video_name_root = cmdline.substr(6).trim();
     g_preempted = false;
@@ -120,7 +122,7 @@ function handle_replay_message(cmdline) {
     // (Must be exactly one space between fields:)
     parse_replay_options(cmdline);
     if (!g_preempted) {
-      on_replay();
+      on_replay(root);
     }
   } else if (cmdline.startsWith("CANCEL")) {
   } else if (cmdline.startsWith("RACE_STARTS")) {
@@ -128,7 +130,7 @@ function handle_replay_message(cmdline) {
     g_replay_timeout = setTimeout(
       function() {
         g_preempted = true;
-        on_replay();
+        on_replay(root);
       },
       g_replay_options.length * 1000 - g_replay_timeout_epsilon);
   } else {
@@ -225,7 +227,7 @@ function announce_to_interior(msg) {
 
 function upload_video(root, blob) {
   if (blob) {
-    console.log("Uploading video");
+    console.log("Uploading video " + root + ".mkv");
     let form_data = new FormData();
     form_data.append('video', blob, root + ".mkv");
     form_data.append('action', 'video.upload');
@@ -245,12 +247,15 @@ function upload_video(root, blob) {
 // TODO My working theory is that the captureStream() from an offscreen canvas
 // doesn't produce any frames.
 
-function on_replay() {
+function on_replay(root) {
+  console.log('* on_replay');
+  if (root != g_video_name_root) {
+    console.log('** root=', root, ', g_video_name_root=', g_video_name_root);
+  }
   // Capture these global variables before starting the asynchronous operation,
   // because they're reasonably likely to be clobbered by another queued message
   // from the server.
   var upload = g_upload_videos;
-  var root = g_video_name_root;
   // If this is a replay triggered after RACE_START, make sure we don't start
   // another replay for the same heat.
 
