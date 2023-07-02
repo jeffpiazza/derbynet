@@ -52,6 +52,13 @@ p#summary {
   margin-right: auto;
 }
 
+p#summary .heatno,
+p#summary .round-class,
+p#summary .roundno {
+  font-weight: bold;
+  font-size: inherit;
+}
+
 #timer-sim {
   margin-left: auto;
   margin-right: auto;

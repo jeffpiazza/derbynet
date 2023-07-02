@@ -142,8 +142,9 @@ function process_timer_messages(data) {
   var heat = data.find('heat-ready');
   if (heat.length > 0) {
     heat = $(heat[0]);
-    $("#summary").html('Ready for heat ' + heat.attr('heat') +
-                       ' of<br/>' + heat.attr('class') + ", round " + heat.attr('round'));
+    $("#summary").html('Ready for heat <span class="heatno">' + heat.attr('heat') + '</span> of<br/>' +
+                       '<span class="round-class">' + heat.attr('class') + '</span>, ' +
+                       'round <span class="roundno">' + heat.attr('round') + '</span>');
     if (g_pending_heat &&
         g_pending_heat.attr('roundid') == heat.attr('roundid') &&
         g_pending_heat.attr('heat') == heat.attr('heat') &&
