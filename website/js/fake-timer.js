@@ -17,6 +17,8 @@ var g_timer_interval = 0;
 var g_auto_mode = false;
 // Seconds between heat ready and race start when in auto mode.
 var g_auto_mode_pace = 5;
+// The setTimeout id created by prepare_heat in auto mode -- start_timer will be called.
+var g_prepared_heat = 0;
 
 
 function on_lane_count_change() {
@@ -56,7 +58,9 @@ function prepare_heat(mask) {
   });
   $('#start-button').prop('disabled', false);
   if (g_auto_mode) {
-    setTimeout(start_timer, g_auto_mode_pace * 1000);
+    console.log('g_prepared_heat setTimeout for start_timer in ' + g_auto_mode_pace);
+    g_prepared_heat = setTimeout(function() { g_prepared_heat = 0; start_timer(); },
+                                 g_auto_mode_pace * 1000);
   }
 }
 
@@ -133,10 +137,15 @@ function process_timer_messages(data) {
 
   var abort = data.find('abort');
   if (abort.length > 0) {
+    console.log('abort heat');
     show_not_racing();
     reset_timer();
     $('#start-button').prop('disabled', true);
     g_pending_heat = 0;
+    clearTimeout(g_heat_ready_timer_id);
+    g_heat_ready_timer_id = 0;
+    clearTimeout(g_prepared_heat);
+    g_prepared_heat = 0;
   }
 
   var heat = data.find('heat-ready');
@@ -154,7 +163,9 @@ function process_timer_messages(data) {
       g_pending_heat = heat;
       if (g_heat_ready_timer_id == 0) {
         g_heat_ready_timer_id = setTimeout(function() {
-          prepare_heat(g_pending_heat.attr('lane-mask'));
+          if (g_pending_heat) {
+            prepare_heat(g_pending_heat.attr('lane-mask'));
+          }
           g_heat_ready_timer_id = 0;
         }, 1000);
       }

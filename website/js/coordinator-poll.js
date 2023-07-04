@@ -652,8 +652,7 @@ function process_coordinator_poll_json(json) {
                           .append($("<span></span>").text(json['refused-results']))
                           .append(json['refused-results'] == 1
                                   ? " unexpected result from timer has been received."
-                                  : " unexpected results from timer have been received."))
-                  .append("<p>Turn on racing mode or simulate racing if you wish to record results.</p>"));
+                                  : " unexpected results from timer have been received.")));
   } else {
     $('#timer-testing-herald').remove();
   }
@@ -661,7 +660,8 @@ function process_coordinator_poll_json(json) {
   $("#not-racing-warning").toggleClass('hidden', json['current-heat']['now_racing']);;
 
   $("#playlist-start").toggleClass('hidden',
-                                   !(json['current-heat'].roundid == -1 && json.rounds.some(r => r.next)));
+                                   !(json['current-heat'].roundid == -1 &&
+                                     json.rounds.some(r => r['next-round'])));
 
   // Hide the control group if there's nothing to show
   $("#supplemental-control-group").toggleClass("hidden",

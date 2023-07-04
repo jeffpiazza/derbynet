@@ -70,6 +70,13 @@ div.queued-round > p {
 
 #queue ul.mlistview div.queued-round.finished {
   background-color: #dddddd;
+  border: 3px #aaa solid;
+}
+
+#queue ul.mlistview div.queued-round.partial {
+  background-color: #eee;
+  background: linear-gradient(-45deg, #fff 25%, #eee 25%, #eee 50%, #fff 50%, #fff 75%, #eee 75%, #eee);
+  background-size: 20px 20px;
 }
 
 div.queued-round > p > img.triangle {
@@ -120,6 +127,19 @@ p.squeeze {
 
 #rounds-ul.mlistview > li.finished {
   background-color: #bbb;
+  border: 3px #aaa solid;
+}
+
+#rounds-ul.mlistview > li.partial {
+  background-color: #eee;
+  background: linear-gradient(-45deg, #fff 25%, #eee 25%, #eee 50%, #fff 50%, #fff 75%, #eee 75%, #eee);
+  background-size: 20px 20px;
+}
+
+#rounds-div ul.mlistview > li.current {
+  border-right-width: 10px;
+  border-right-color: red;
+  width: 250px;
 }
 
 #rounds-ul.mlistview > li > input[type=button] {
