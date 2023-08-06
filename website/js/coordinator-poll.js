@@ -312,6 +312,12 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                    + ' onclick="handle_master_next_up()" value="Next Up"/>');
   } else {
     if (round.heats_scheduled > 0 && round.heats_run == 0) {
+      if (round.unscheduled > 0) {
+        buttons.append(
+          $('<div class="late-arrival-prompt"></div>').text(
+            'The race schedule needs to be regenerated because a new racer has been added. ' +
+              'Start by removing the existing race schedule.'));
+      }
       buttons.append('<input type="button"'
                      + ' onclick="handle_unschedule_button(' + round.roundid
                      + ', \'' + round['class'].replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
@@ -328,10 +334,13 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                          " been determined.<br/>" +
                          "Enter the number of lanes on the <a href='settings.php'>Settings</a> page.</p>");
         }
-      } else if (false /* TODO: Reschedule is not ready for prime time */) {
-        buttons.append('<input type="button"' 
+      } else {
+        buttons.append(
+          $('<div class="late-arrival-prompt"></div>').text(
+            'The race schedule needs to be adjusted because a new racer has been added.'));
+        buttons.append('<input type="button" class="late-arrival-button"'
                        + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
-                       + ' value="Reschedule"/>');
+                       + ' value="Adjust Schedule"/>');
       }
     }
 

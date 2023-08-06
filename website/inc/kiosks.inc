@@ -176,14 +176,24 @@ function mark_kiosk_for_reload($addr) {
   }
 }
 
+function mark_all_kiosks_for_reload() {
+  global $db;
+  try {
+    $stmt = $db->prepare('UPDATE Kiosks SET page = \'!\' || page'
+                         .' WHERE SUBSTR(page, 1, 1) <> \'!\'');
+    $stmt->execute();
+  } catch (PDOException $p) {
+  }
+}
+
 // Returns an array of {address, name, page, parameters, last_contact}
 function all_kiosks() {
   global $db;
   $kiosks = array();
   try {
     drop_old_kiosks();
-    // Information for "old" kiosks remains in the database but we filter out those we haven't
-    // heard from in 10 minutes
+    // Information for "old" kiosks remains in the database but we filter out
+    // those we haven't heard from in 60 seconds.
     $stmt = $db->query('SELECT address, name, page, last_contact'
                        .' FROM Kiosks'
                        .' WHERE '.time().' - last_contact < 60'

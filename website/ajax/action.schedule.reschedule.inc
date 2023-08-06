@@ -2,11 +2,24 @@
 
 require_once('inc/schedule_utils.inc');
 require_once('inc/masterheat.inc');
+require_once('inc/kiosks.inc');
+require_once('inc/racing-state.inc');
+
+// Time limit for finding the "best" schedule for injection of a single racer.
+// (Usually this bounds the reschedule operation overall, but if an acceptable
+// schedule can't be found in the minimal number of heats, each additional heat
+// required resets the time limit.  It may be true that it's always possible to
+// find an acceptable schedule in the minimal number of heats, in which case the
+// disclaimer is moot.)
+define("INJECTION_TIME_LIMIT", 10);  // in seconds
 
 $roundid = $_POST['roundid'];
 $racerid = $_POST['racerid'];
 $dry_run = $_POST['dry-run'];
 $trace = $_POST['trace'];
+
+$now_running = get_running_round();
+
 
 function n_runs_per_lane($roundid) {
   global $db;
@@ -280,7 +293,7 @@ class LateArrival {
     }
   }
   private function inject_new_racer_once($new_racer_id) {
-    $this->deadline = time() + intdiv(10, $this->n_runs_per_lane);  // 10-second overall deadline
+    $this->deadline = time() + intdiv(INJECTION_TIME_LIMIT, $this->n_runs_per_lane);
     $this->keep_going = true;
     $this->best_proposal = null;
 
@@ -495,15 +508,30 @@ function update_race_chart($roundid, &$race_chart) {
 }
 
 // =========================================================
-if (have_permission(CONTROL_RACE_PERMISSION)) {
-
+if (!have_permission(CONTROL_RACE_PERMISSION)) {
+  json_not_authorized();
+} else {
   $t0 = time();
 
   $late = new LateArrival($roundid, $trace);
 
   $t1 = time();
 
-  $new_chart = $late->inject_new_racer($racerid);
+  if ($racerid) {
+    $new_chart = $late->inject_new_racer($racerid);
+  } else {
+    // Insert all the racers not already in the schedule
+    $racer_stmt = $db->prepare('SELECT racerid FROM Roster'
+                               .' WHERE roundid = :roundid'
+                               .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
+                               .'                WHERE racerid = Roster.racerid'
+                               .'                AND roundid = :roundid2)');
+    $racer_stmt->execute(array(':roundid' => $roundid,
+                               ':roundid2' => $roundid));
+    foreach ($racer_stmt as $racer_row) {
+      $new_chart = $late->inject_new_racer($racer_row['racerid']);
+    }
+  }
 
   $t2 = time();
 
@@ -526,18 +554,17 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       assign_master_heats();
     }
     $t4 = time();
-    json_out("times", array('load' => $t1 - $t0,
-                            'inject' => $t2 - $t1,
-                            'update' => $t3 - $t2,
-                            'master-heat' => $t4 - $t3,
-                            'internal' => $late->times));
+    json_out("timing", array('load' => $t1 - $t0,
+                             'inject' => $t2 - $t1,
+                             'update' => $t3 - $t2,
+                             'master-heat' => $t4 - $t3,
+                             'internal' => $late->times));
     if ($ok) {
       json_success();
+      mark_all_kiosks_for_reload();
+      require('ajax/query.poll.coordinator.inc');
     }
   } else {
     json_failure('nochart', 'Unable to build new schedule');
   }
-           
-} else {
-  json_not_authorized();
 }

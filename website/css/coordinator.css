@@ -21,6 +21,18 @@
   width: 200px;
 }
 
+.block_buttons input.late-arrival-button {
+  background: orange;
+  border: solid 3px black;
+}
+
+div.late-arrival-prompt {
+  background: orange;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+
 .heat-lineup {
   display: inline-block;
   width: 730px;
