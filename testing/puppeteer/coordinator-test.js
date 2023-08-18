@@ -296,7 +296,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds", "Repeat Round"],
+  assert.equal(["Repeat Round", "Add New Rounds"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {
@@ -1651,7 +1651,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                  return buttons;
                }));
 
-  assert.equal(["Add New Rounds","Repeat Round"],
+  assert.equal(["Repeat Round", "Add New Rounds"],
                await page.evaluate(function() {
                  var buttons = [];
                  $("#supplemental-control-group input[type='button']").each(function() {
