@@ -1,5 +1,7 @@
 <?php
-$award_name = read_raceinfo('xbs-award', 'Exclusively By Scout');
+require_once('inc/xbs.inc');
+
+$award_name = xbs_award();
 
 if (have_permission(CHECK_IN_RACERS_PERMISSION)) {
   $ok = true;
