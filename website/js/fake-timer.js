@@ -91,7 +91,7 @@ function start_timer() {
   setInterval(function() {
     var tr = $("#timer-sim-times");
     var t = (new Date()).getTime() - start;
-    if (t > 5000) {
+    if (false && t > 5000) {
       end_race();
     }
     t = (t / 1000).toFixed(3);
