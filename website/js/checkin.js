@@ -721,6 +721,7 @@ function make_table_row(racer, xbs) {
               .append($('<label/>')
                       .attr('for', 'xbs-' + racer.racerid)
                       .text(xbs + '?'))
+              .append('<br/>')
               .append($('<input type="checkbox" class="flipswitch"/>')
                       .attr('name', 'xbs-' + racer.racerid)
                       .prop('checked', racer.xbs)

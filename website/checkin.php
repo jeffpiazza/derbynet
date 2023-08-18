@@ -32,7 +32,7 @@ require_permission(CHECK_IN_RACERS_PERMISSION);
 // (and $xbs_award_name will be blank), and the checkboxes won't be
 // shown.
 $xbs = read_raceinfo_boolean('use-xbs');
-$xbs_award_name = read_raceinfo('xbs-award', 'Exclusively By Scout');
+$xbs_award_name = xbs_award();
 
 $order = '';
 if (isset($_GET['order']))
@@ -158,7 +158,8 @@ $sql = checkin_table_SELECT_FROM_sql()
              ($order == 'partition' ? 'partition_sortorder, lastname, firstname' :
               'lastname, firstname')));
 
-$stmt = $db->query($sql);
+$stmt = $db->prepare($sql);
+$stmt->execute(array(':xbs_award_name' => xbs_award()));
 ?>
 
 <script>

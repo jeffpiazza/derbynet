@@ -79,7 +79,7 @@ make_banner('Settings', 'setup.php');
 
 $use_subgroups = use_subgroups();
 $use_xbs = read_raceinfo_boolean('use-xbs');
-$xbs_award = read_raceinfo('xbs-award', 'Exclusively By Scout');
+$xbs_award = xbs_award();
 $use_master_sched = read_raceinfo_boolean('use-master-sched');
 $upload_videos = read_raceinfo_boolean('upload-videos');
 
@@ -168,13 +168,13 @@ $scoring = read_raceinfo('scoring', 0);
       <p>
         <label for="supergroup-label">The full roster is a (or the)</label>
         <input id="supergroup-label" name="supergroup-label" type="text" class="not-mobile"
-               value="<?php echo supergroup_label(); ?>"/>,
+               value="<?php echo htmlspecialchars( supergroup_label(), ENT_QUOTES, 'UTF-8'); ?>"/>,
       </p>
       <p>
         <label for="partition-label">and a sub-division is a(n)</label>
         <input id="partition-label" name="partition-label"
                type="text" class="not-mobile"
-               value="<?php echo partition_label(); ?>"/>.
+               value="<?php echo htmlspecialchars(partition_label(), ENT_QUOTES, 'UTF-8'); ?>"/>.
       </p>
 
       <p>Show racer names as:<br/>
@@ -225,7 +225,7 @@ $scoring = read_raceinfo('scoring', 0);
       </p>
       <p>
         <input id="xbs-award" name="xbs-award" type="text" class="not-mobile"
-               value="<?php echo $xbs_award; ?>"/>
+               value="<?php echo htmlspecialchars($xbs_award, ENT_QUOTES, 'UTF-8'); ?>"/>
         <label for="xbs-award">"Exclusively By Scout" award name (if used)</label>
       </p>
     </div>
