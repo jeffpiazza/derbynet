@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # This "preamble" script defines default values for a bunch of environment variables,
 # and then sources:
@@ -40,6 +40,7 @@ announce() {
             test -x /usr/bin/flite && flite -t "No network connection"
             ;;
         terminating)
+            test -x /usr/bin/flite && flite -t "Goodbye, cruel world"
             ;;
         idle)
             ;;

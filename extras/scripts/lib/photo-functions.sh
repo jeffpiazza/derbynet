@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # This shared script provides definitions for several behaviors shared among the
 # various photo scripts.
@@ -24,10 +24,19 @@ killall_gvfs_volume_monitor() {
     done &
 }
 
+check_for_barcode_quit() {
+    read -t 0.5 BARCODE
+    if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
+        announce terminating
+        sudo shutdown -h now
+    fi
+}
+
 # Test that we have a non-loopback network interface available
 check_for_network() {
     ON_NETWORK=0
     while [ $ON_NETWORK -eq 0 ]; do
+        check_for_barcode_quit
         ip -o address list | grep -v ' lo ' > /dev/null && ON_NETWORK=1
         if [ $ON_NETWORK -eq 0 ]; then
             echo Not on any network
@@ -55,6 +64,7 @@ do_login() {
     LOGIN_OK=0
     TMPFILE=`mktemp`
     while [ $LOGIN_OK -eq 0 ]; do
+        check_for_barcode_quit
         echo Logging in to $DERBYNET_SERVER
         announce sending
         curl --location \

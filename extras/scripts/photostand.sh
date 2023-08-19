@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # This script uses uses a bar code scanner and a tethered camera to automate
 # photo capture for your pinewood derby event.  See
@@ -36,6 +36,9 @@ SELF="$0"
 SELF_DIR=`dirname "$SELF"`
 LIB_DIR="$SELF_DIR/lib"
 
+# Grab keyboard focus, assuming photostand is the window title assigned by autostart file.
+command -v wmctrl >/dev/null && wmctrl -a photostand
+
 . "$LIB_DIR"/photo-preamble.sh
 . "$LIB_DIR"/photo-functions.sh
 READ_BARCODE="$LIB_DIR"/read_barcode.py
@@ -62,7 +65,8 @@ while true ; do
         sleep 5s
         continue
     fi
-    BARCODE=`$READ_BARCODE "$DEV"`
+    // BARCODE=`$READ_BARCODE "$DEV"`
+    read BARCODE
     echo Scanned $BARCODE
     CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
     if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
