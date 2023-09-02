@@ -135,8 +135,8 @@ public abstract class Flag<T> {
 
   public static final Flag<Integer> reset_after_start
       = IntegerFlag.settable("reset-after-start", 10,
-                             "TheJudge: Reset timer <nsec> seconds after heat "
-                             + "start, default 10");
+                             "Reset timer <nsec> seconds after heat start, "
+                                 + "default 10.  Set 0 for never.");
 
   public static final Flag<Boolean> skip_enhanced_format
       = BooleanFlag.settable("skip-enhanced-format",

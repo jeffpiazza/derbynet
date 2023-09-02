@@ -47,7 +47,7 @@ class Flag {
 
   static reset_after_start = new Flag(
     "reset-after-start", 11,
-    "Reset timer <nsec> seconds after heat start, default 11");
+    "Reset timer <nsec> seconds after heat start, default 11.  Set 0 for never.");
 
   static fasttrack_automatic_gate_release = new Flag(
     "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed")

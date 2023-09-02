@@ -57,9 +57,9 @@ manipulate_local_directory() {
     chmod 0777 $WEBDIR/local
 }
 
-if [   0 = 1   -a   "$BASE_URL" = "localhost" ]; then
+if [ "$BASE_URL" = "localhost" ]; then
     if [ -d ~/Public/DerbyNet/ ]; then
-        CONFIGDIR=~/PublicDerbyNet
+        CONFIGDIR=~/Public/DerbyNet
         DATADIR=~/Public/DerbyNet
     elif [ -d /Library/WebServer/Documents/derbynet/ ]; then
         # Mac
@@ -84,13 +84,27 @@ if [   0 = 1   -a   "$BASE_URL" = "localhost" ]; then
     if [ -n "$WEBDIR" ]; then
         manipulate_local_directory
     fi
-    # curl_get index.php | expect_one 'configure the database first'
-    # curl_postj action.php "action=setup.nodata&ez-new=this-will-fail" | check_jfailure
-    # [ -z "`ls $WEBDIR/local`" ] || test_fails Unexpected files created!
 
+    [ -f $CONFIGDIR/config-database.inc ] && \
+        mv $CONFIGDIR/config-database.inc $CONFIGDIR/xconfig-database.inc
+    [ -f $CONFIGDIR/config-roles.inc ] && \
+        mv $CONFIGDIR/config-roles.inc $CONFIGDIR/xconfig-roles.inc
+
+    restore_configs() {
+        echo Restoring configs
+        [ -f $CONFIGDIR/xconfig-database.inc ] && \
+            mv $CONFIGDIR/xconfig-database.inc $CONFIGDIR/config-database.inc
+        [ -f $CONFIGDIR/xconfig-roles.inc ] && \
+            mv $CONFIGDIR/xconfig-roles.inc $CONFIGDIR/config-roles.inc
+    }
+    trap 'restore_configs' 1 2 3 4 15
+    
     ## ----------------------------------
     echo '   ' Successful set-up
 
+    sleep 1
+
+    
     curl_get index.php | expect_one 'configure the database first'
     curl_postj action.php "action=setup.nodata&ez-new=this-will-succeed" | check_jsuccess
 
@@ -109,6 +123,8 @@ if [   0 = 1   -a   "$BASE_URL" = "localhost" ]; then
     rm -rf $DATADIR/$YEAR/this-will-succeed
     
     curl_get index.php | expect_one 'a problem opening the database'
+
+    restore_configs    
 
     ## ----------------------------------
     if [ -n "$WEBDIR" ] ; then
