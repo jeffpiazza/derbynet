@@ -4,10 +4,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public abstract class TimerDeviceBase implements TimerDevice {
-  protected SerialPortWrapper portWrapper;
+  protected TimerPortWrapper portWrapper;
 
   private RaceStartedCallback raceStartedCallback;
   private RaceFinishedCallback raceFinishedCallback;
@@ -17,7 +17,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
   protected int roundid;
   protected int heat;
 
-  protected TimerDeviceBase(SerialPortWrapper portWrapper) {
+  protected TimerDeviceBase(TimerPortWrapper portWrapper) {
     this.portWrapper = portWrapper;
     this.roundid = this.heat = 0;
   }
@@ -27,7 +27,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
     return AllDeviceTypes.toHumanString(this.getClass());
   }
 
-  public SerialPortWrapper getPortWrapper() {
+  public TimerPortWrapper getPortWrapper() {
     return portWrapper;
   }
 
@@ -107,7 +107,7 @@ public abstract class TimerDeviceBase implements TimerDevice {
   @Override
   public void close() {
     try {
-      portWrapper.closePort();
+      portWrapper.close();
     } catch (SerialPortException ex) {
       Logger.getLogger(TimerDeviceBase.class.getName())
           .log(Level.SEVERE, null, ex);

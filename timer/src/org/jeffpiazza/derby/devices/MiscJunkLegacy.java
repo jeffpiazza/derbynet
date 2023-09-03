@@ -7,10 +7,10 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class MiscJunkLegacy extends TimerDeviceCommon  {
-  public MiscJunkLegacy(SerialPortWrapper portWrapper) {
+  public MiscJunkLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper, null);
 
     // Can't pass to super constructor because of the call to okToPoll()
@@ -111,7 +111,7 @@ public class MiscJunkLegacy extends TimerDeviceCommon  {
       = Pattern.compile("(\\d) - (\\d+\\.\\d+)");
 
   private void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         if (line.equals("B")) {
           // The timer announces a race start with "B" and moves to RACING state.

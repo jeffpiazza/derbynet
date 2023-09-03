@@ -4,6 +4,7 @@ import javax.swing.*;
 import org.jeffpiazza.derby.gui.TimerGui;
 import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.TimerTask;
+import org.jeffpiazza.derby.serialport.SubprocessPortWrapper;
 
 // Three threads for three "actors":
 // timer polling loop runs on main thread,
@@ -146,6 +147,15 @@ public class TimerMain {
       }
       if (Flag.playback.value() != null) {
         timerTask.setPlayback();
+      }
+      if (!Flag.command.value().isEmpty()) {
+        LogWriter.info("Spawning subprocess");
+        SubprocessPortWrapper subprocessWrapper
+            = new SubprocessPortWrapper(Flag.command.value());
+
+        while (timerTask.device() == null) {
+          timerTask.injectDevice(timerTask.tryOnePortWrapper(subprocessWrapper));
+        }
       }
       timerTask.run();
     } catch (Throwable t) {

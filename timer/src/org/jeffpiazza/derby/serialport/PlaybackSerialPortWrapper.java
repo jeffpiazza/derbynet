@@ -10,7 +10,7 @@ import org.jeffpiazza.derby.LogWriter;
 
 // For testing a new TimerDevice class, this simulates the data arriving on
 // the serial port.
-public class PlaybackSerialPortWrapper extends SerialPortWrapper {
+public class PlaybackSerialPortWrapper extends EventDrivenPortWrapper {
   private static String[] program;
   private HashMap<String, Integer> commands_responses = new HashMap();
   private int program_counter = 0;
@@ -46,7 +46,6 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
 
   public PlaybackSerialPortWrapper()
       throws SerialPortException {
-    super(null);
     System.out.println("Creating simulated port wrapper");
     pushMessages();
     new Thread() {
@@ -65,7 +64,7 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
 
   private void pushMessages() {
     try {
-      read();
+      onPortDataPending();
     } catch (SerialPortException ex) {
     }
   }
@@ -140,6 +139,16 @@ public class PlaybackSerialPortWrapper extends SerialPortWrapper {
     return true;
   }
 
-  public void closePort() throws SerialPortException {
+  public void abandon() throws SerialPortException {
+  }
+
+  public void close() throws SerialPortException {
+  }
+
+  public void setDtr(boolean enabled) throws SerialPortException {
+  }
+
+  public String getPortName() {
+    return "Simulated Port";
   }
 }

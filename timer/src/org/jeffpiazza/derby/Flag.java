@@ -136,7 +136,7 @@ public abstract class Flag<T> {
   public static final Flag<Integer> reset_after_start
       = IntegerFlag.settable("reset-after-start", 10,
                              "Reset timer <nsec> seconds after heat start, "
-                                 + "default 10.  Set 0 for never.");
+                             + "default 10.  Set 0 for never.");
 
   public static final Flag<Boolean> skip_enhanced_format
       = BooleanFlag.settable("skip-enhanced-format",
@@ -166,6 +166,13 @@ public abstract class Flag<T> {
       = BooleanFlag.settable("debug-io",
                              "Enable debugging for low-level serial communication");
 
+  public static final Flag<List<String>> command
+      = StringListFlag.readonly("command",
+                                "Send and receive data to a spawned subprocess"
+                                + " instead of a serial port.  Use + tokens to"
+                                + " separate arguments, e.g.,"
+                                + " -command python3 + -u + '/path/to my/script'");
+
   public Flag(String name, T value, String description) {
     this.name = name;
     this.value = value;
@@ -179,17 +186,17 @@ public abstract class Flag<T> {
   }
 
   public static int parseCommandLineFlags(String[] args, int argc) {
-    boolean advanced;
+    boolean madeProgress;
     do {
-      advanced = false;
+      madeProgress = false;
       for (int i = 0; i < all_flags.size(); ++i) {
         int new_argc = all_flags.get(i).maybeParseCommandLine(args, argc);
         if (new_argc != argc) {
           argc = new_argc;
-          advanced = true;
+          madeProgress = true;
         }
       }
-    } while (advanced);
+    } while (madeProgress);
     return argc;
   }
 
@@ -425,5 +432,44 @@ public abstract class Flag<T> {
       }
       return argc;
     }
+  }
+
+  // A StringListFlag takes multiple values, separated by "+" tokens.  E.g.,
+  // -command python3 + -u + '/path/to my/script'
+  public static class StringListFlag extends Flag<List<String>> {
+    public static StringListFlag readonly(String name, String description) {
+      return new StringListFlag(name, description, false);
+    }
+
+    private StringListFlag(String name, String description,
+                           boolean settable) {
+      super(name, new ArrayList<String>(), description, settable);
+    }
+
+    @Override
+    public int maybeParseCommandLine(String[] args, int argc) {
+      if (argc + 1 >= args.length || !args[argc].equals("-" + name)) {
+        return argc;
+      }
+      value.add(args[argc + 1]);
+      argc += 2;
+      while (argc + 1 < args.length && args[argc].equals("+")) {
+        value.add(args[argc + 1]);
+        argc += 2;
+      }
+      return argc;
+    }
+
+    @Override
+    public String typeName() {
+      return "list-of-strings";
+    }
+
+    @Override
+    public void setValueText(String valueText) {
+      throw new UnsupportedOperationException(
+          "Assignment to " + name + " flag not supported.");
+    }
+
   }
 }

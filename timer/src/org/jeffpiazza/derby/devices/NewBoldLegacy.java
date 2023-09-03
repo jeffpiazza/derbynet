@@ -8,7 +8,7 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // TURBO  NewBold Products
 // 1 3.5109 3 3.1288 2 2.9831 4 3.5644
@@ -17,7 +17,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 // Returns results in finish order, with each entry giving the lane and time.
 // (shows 1st Place Lane #, 1st Place Time, 2nd Place Lane #, 2nd Place Time, ...)
 public class NewBoldLegacy extends TimerDeviceBase {
-  public NewBoldLegacy(SerialPortWrapper portWrapper) {
+  public NewBoldLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
   }
 

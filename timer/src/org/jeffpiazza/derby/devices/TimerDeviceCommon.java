@@ -4,8 +4,8 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public abstract class TimerDeviceCommon
     extends TimerDeviceBase
@@ -14,12 +14,12 @@ public abstract class TimerDeviceCommon
   protected RacingStateMachine rsm;
   protected String timerIdentifier;
 
-  protected TimerDeviceCommon(SerialPortWrapper portWrapper,
+  protected TimerDeviceCommon(TimerPortWrapper portWrapper,
                               GateWatcher gateWatcher) {
     this(portWrapper, gateWatcher, true);
   }
 
-  protected TimerDeviceCommon(SerialPortWrapper portWrapper,
+  protected TimerDeviceCommon(TimerPortWrapper portWrapper,
                               GateWatcher gateWatcher,
                               boolean gate_state_is_knowable) {
     super(portWrapper);
@@ -150,13 +150,13 @@ public abstract class TimerDeviceCommon
   public static abstract class GateWatcher {
     // Keeps track of last known state of the gate
     protected boolean gateIsClosed;
-    protected SerialPortWrapper portWrapper;
+    protected TimerPortWrapper portWrapper;
 
     // Tracks the clock time when the state first appeared to change, or 0 if
     // the interrogated gate state hasn't changed.
     protected long timeOfFirstChange = 0;
 
-    public GateWatcher(SerialPortWrapper portWrapper) {
+    public GateWatcher(TimerPortWrapper portWrapper) {
       this.portWrapper = portWrapper;
     }
 

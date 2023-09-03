@@ -2,11 +2,10 @@ package org.jeffpiazza.derby.devices;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jeffpiazza.derby.Message;
-
 import java.util.regex.*;
 import jssc.SerialPortException;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class TimerDeviceUtils {
   private static final Pattern finishPattern = Pattern.compile(
@@ -38,8 +37,8 @@ public class TimerDeviceUtils {
     return results;
   }
 
-  public static class SplittingDetector implements SerialPortWrapper.Detector {
-    public SplittingDetector(SerialPortWrapper.Detector inner) {
+  public static class SplittingDetector implements TimerPortWrapper.Detector {
+    public SplittingDetector(TimerPortWrapper.Detector inner) {
       this.inner = inner;
     }
 
@@ -68,7 +67,7 @@ public class TimerDeviceUtils {
       return builder.toString();
     }
 
-    private SerialPortWrapper.Detector inner;
+    private TimerPortWrapper.Detector inner;
   }
 
   // Returns either a Matcher that successfully matched within line, or null.

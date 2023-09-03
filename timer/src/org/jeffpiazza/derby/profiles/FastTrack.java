@@ -1,12 +1,12 @@
 package org.jeffpiazza.derby.profiles;
 
-import org.jeffpiazza.derby.timer.Profile;
 import jssc.SerialPort;
 import org.jeffpiazza.derby.Flag;
-import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
+import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.StateMachine;
+import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 /*
 From the Micro Wizard himself:
@@ -33,7 +33,7 @@ that people could make their own release gates and software and make it work wit
 our cable.
  */
 public class FastTrack extends TimerDeviceWithProfile {
-  public FastTrack(SerialPortWrapper portWrapper) {
+  public FastTrack(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

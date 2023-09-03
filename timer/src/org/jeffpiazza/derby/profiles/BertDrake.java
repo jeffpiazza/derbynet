@@ -1,7 +1,7 @@
 package org.jeffpiazza.derby.profiles;
 
 import jssc.SerialPort;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
@@ -11,7 +11,7 @@ import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 // Interface Protocol" is described at
 // http://drakedev.com/pinewood/protocol.html
 public class BertDrake extends TimerDeviceWithProfile {
-  public BertDrake(SerialPortWrapper portWrapper) {
+  public BertDrake(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

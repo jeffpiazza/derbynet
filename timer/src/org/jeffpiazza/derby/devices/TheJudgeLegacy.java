@@ -6,7 +6,7 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // TheJudge sends newlines at the start of a line, rather than at the end, which
 // means we have to do all the matching in the early detector.
@@ -23,7 +23,7 @@ Lane 2    3.2345 seconds    Place
 Race Over
  */
 public class TheJudgeLegacy extends TimerDeviceBase {
-  public TheJudgeLegacy(SerialPortWrapper portWrapper) {
+  public TheJudgeLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
   }
 
@@ -67,7 +67,7 @@ public class TheJudgeLegacy extends TimerDeviceBase {
   private static final Pattern raceOverPattern = Pattern.compile("Race Over.*");
 
   private void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m;
         if (matched(startRacePattern, line) != null) {

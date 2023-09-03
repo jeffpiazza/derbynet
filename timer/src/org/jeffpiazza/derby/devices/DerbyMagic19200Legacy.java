@@ -2,10 +2,10 @@ package org.jeffpiazza.derby.devices;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class DerbyMagic19200Legacy extends DerbyMagicLegacy {
-  public DerbyMagic19200Legacy(SerialPortWrapper portWrapper) {
+  public DerbyMagic19200Legacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
   }
 

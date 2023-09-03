@@ -4,7 +4,7 @@ package org.jeffpiazza.derby.devices;
 // OlderFastTrackDevice classes.
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class MicroWizard {
   public static final String PULSE_LASER_BIT = "LG";
@@ -45,7 +45,7 @@ public class MicroWizard {
   // reported "X" (disabled) for reading the start switch ("RG")
   public static final String RETURN_FEATURES = "RF";
 
-  public static void readFeatures(SerialPortWrapper portWrapper)
+  public static void readFeatures(TimerPortWrapper portWrapper)
       throws SerialPortException {
     if (!Flag.skip_read_features.value()) {
       // Capture features to the log, for diagnostic purposes
@@ -55,8 +55,8 @@ public class MicroWizard {
 
   // public static final String FORCE_PRINT = "RX";  // requires "Force Print" option
   // RX resets the timer, but then seems to make it unresponsive
-  public static void registerEarlyDetectorForReset(SerialPortWrapper portWrapper) {
-    portWrapper.registerEarlyDetector(new SerialPortWrapper.Detector() {
+  public static void registerEarlyDetectorForReset(TimerPortWrapper portWrapper) {
+    portWrapper.registerEarlyDetector(new TimerPortWrapper.Detector() {
       @Override
       public String apply(String s) throws SerialPortException {
         while (!s.isEmpty() && (s.charAt(0) == '@' || s.charAt(0) == '>')) {

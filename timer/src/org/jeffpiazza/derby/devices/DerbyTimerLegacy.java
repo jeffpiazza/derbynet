@@ -1,18 +1,18 @@
 package org.jeffpiazza.derby.devices;
 
 import java.util.ArrayList;
-import jssc.*;
-import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // This class supports the "Derby Timer" device, http://derbytimer.com
 public class DerbyTimerLegacy extends TimerDeviceTypical {
 
-  public DerbyTimerLegacy(SerialPortWrapper portWrapper) {
+  public DerbyTimerLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
 
     // Once started, we expect a race result within 10 seconds
@@ -78,7 +78,7 @@ public class DerbyTimerLegacy extends TimerDeviceTypical {
       "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)");
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       @Override
       public String apply(String line) throws SerialPortException {
         if (line.equals("RACE")) {

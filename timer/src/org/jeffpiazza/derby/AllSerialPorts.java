@@ -1,8 +1,9 @@
 package org.jeffpiazza.derby;
 
-import jssc.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+import jssc.SerialPortList;
 
 public class AllSerialPorts {
   public static String[] getNames() {

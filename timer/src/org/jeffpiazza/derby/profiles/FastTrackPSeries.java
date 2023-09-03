@@ -1,13 +1,13 @@
 package org.jeffpiazza.derby.profiles;
 
 import jssc.SerialPort;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 public class FastTrackPSeries extends TimerDeviceWithProfile {
-  public FastTrackPSeries(SerialPortWrapper portWrapper) {
+  public FastTrackPSeries(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

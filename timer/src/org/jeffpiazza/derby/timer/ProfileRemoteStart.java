@@ -2,13 +2,13 @@ package org.jeffpiazza.derby.timer;
 
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class ProfileRemoteStart implements RemoteStartInterface {
   private Profile.RemoteStart remote_start;
-  private SerialPortWrapper portWrapper;
+  private TimerPortWrapper portWrapper;
 
-  public ProfileRemoteStart(SerialPortWrapper portWrapper,
+  public ProfileRemoteStart(TimerPortWrapper portWrapper,
                             Profile.RemoteStart remote_start) {
     this.portWrapper = portWrapper;
     this.remote_start = remote_start;

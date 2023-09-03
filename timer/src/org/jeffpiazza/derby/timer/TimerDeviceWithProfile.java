@@ -10,19 +10,17 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Timestamp;
-import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceBase;
 import org.jeffpiazza.derby.devices.TimerDeviceUtils;
 import org.jeffpiazza.derby.devices.TimerResult;
-import org.jeffpiazza.derby.profiles.AllProfiles;
 import org.jeffpiazza.derby.serialport.DtrRemoteStart;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class TimerDeviceWithProfile extends TimerDeviceBase
     implements Event.Handler {
-  public TimerDeviceWithProfile(SerialPortWrapper portWrapper, Profile profile) {
+  public TimerDeviceWithProfile(TimerPortWrapper portWrapper, Profile profile) {
     super(portWrapper);
     setProfile(profile);
   }
@@ -172,7 +170,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     for (Profile.Query query : profile.setup_queries) {
       for (Profile.Detector detector_config : query.matchers) {
         ProfileDetector detector = new ProfileDetector(detector_config, false);
-        detector.activateFor(SerialPortWrapper.COMMAND_DRAIN_MS);
+        detector.activateFor(TimerPortWrapper.COMMAND_DRAIN_MS);
         portWrapper.registerDetector(detector);
       }
       portWrapper.write(query.command);

@@ -1,12 +1,12 @@
 package org.jeffpiazza.derby.devices;
 
-import jssc.*;
-import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-
 import java.util.regex.Matcher;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 /*
 From the Micro Wizard himself:
@@ -34,7 +34,7 @@ our cable.
 
 */
 public class FastTrackLegacy extends TimerDeviceCommon {
-  public FastTrackLegacy(SerialPortWrapper portWrapper) {
+  public FastTrackLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
       // Interrogates the starting gate's state.  CAUTION: polling while a
@@ -134,7 +134,7 @@ public class FastTrackLegacy extends TimerDeviceCommon {
   }
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
         if (m != null) {

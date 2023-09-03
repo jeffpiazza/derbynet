@@ -1,15 +1,13 @@
 package org.jeffpiazza.derby.serialport;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 
 public class DtrRemoteStart implements RemoteStartInterface {
-  private SerialPortWrapper portWrapper;
+  private TimerPortWrapper portWrapper;
 
-  public DtrRemoteStart(SerialPortWrapper port_wrapper) {
+  public DtrRemoteStart(TimerPortWrapper port_wrapper) {
     this.portWrapper = port_wrapper;
   }
 
