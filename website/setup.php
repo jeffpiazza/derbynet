@@ -77,15 +77,6 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
   <p>To remove the fake roster data, re-initialize the database, or click "Purge Data" and delete racers.</p>
   </div>
 
-  <p id="prefs-drop-intro">If you have a saved prefs file,</p>
-  <form id="prefs-drop" action="action.php" class="dropzone">
-    <p id="prefs-drop-msg" class="dz-message">Drop prefs file here</p>
-    <div class="fallback">
-      <input type="file" name="prefs" value="Upload Files"/>
-    </div>
-    <input type="hidden" name="action" value="preferences.upload"/>
-  </form>
-
 </div>
 
 <!-- Database -->
@@ -169,8 +160,16 @@ $(function() { populate_details(<?php echo $initial_details; ?>); });
 </div>
 
 <div id="directions_step" class="step_div">
-  <div class="status_icon"></div>
+  <div class="status_icon">&nbsp;</div>
   <div class="step_button block_buttons">
+    <p id="prefs-drop-intro">If you have a saved prefs file,</p>
+    <form id="prefs-drop" action="action.php" class="dropzone">
+      <p id="prefs-drop-msg" class="dz-message">Drop prefs file here</p>
+      <div class="fallback">
+        <input type="file" name="prefs" value="Upload Files"/>
+      </div>
+      <input type="hidden" name="action" value="preferences.upload"/>
+    </form>
   </div>
   <div class="step_details">
     <p>You may also want to visit

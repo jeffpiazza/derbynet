@@ -47,6 +47,7 @@
 #prefs-drop-intro {
   text-align: center;
   margin-block-end: 3px;
+  font-size: 18px;
 }
 #prefs-drop {
   border: 3px solid #023882;
@@ -54,12 +55,15 @@
   border-radius: 8px;
   height: 30px;
   min-height: 30px;
-  width: 275px;
+  width: 238px;
   text-align: center;
   padding-top: 2px;
+  margin-left: auto;
+  margin-right: auto;
 }
 #prefs-drop-msg {
   margin-block-start: 0px;
+  font-size: 16px;
 }
 .dz-default.dz-message {
   visibility: hidden;
