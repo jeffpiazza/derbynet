@@ -75,6 +75,13 @@ if ($is_action) {
   json_out('outcome', array('summary' => 'in-progress',
                             'code' => 'in-progress',
                             'description' => 'No outcome defined.'));
+  if (isset($db) && !($args['action'] == 'timer-message' && $args['message'] == 'HEARTBEAT')) {
+    try {
+      $logstmt = $db->prepare('INSERT INTO ActionHistory(received, request) VALUES('.dbnow_expr().', :args)');
+      $logstmt->execute(array(':args' => json_encode($args)));
+    } catch (PDOException $p) {
+    }
+  }
 }
 
 $prefix = $is_action ? 'action' : 'query';

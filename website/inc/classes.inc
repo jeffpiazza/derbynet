@@ -8,7 +8,7 @@ require_once('inc/schema_version.inc');
 function all_classes() {
   global $db;
   $stmt = $db->prepare('SELECT Classes.classid, class, rankid, rank, '
-                       .(schema_version() >= 3 ? 'ntrophies, ' : '-1 as ntrophies, ')
+                       .(schema_version() >= 3 ? 'Classes.ntrophies, ' : '-1 as ntrophies, ')
                        .(schema_version() >= 3 ? 'constituents, ' : '\'\' as constituents, ')
                        .(schema_version() >= 5 ? 'rankids, ' : '\'\' as rankids, ')
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.classid = Classes.classid) AS nclass,'
@@ -66,7 +66,7 @@ function classes_and_ranks() {
   $rankseq = array();
   foreach ($db->query('SELECT Classes.classid, class, rankid, rank,'
                       .(schema_version() >= 3
-                        ? 'constituents, ntrophies, '
+                        ? 'constituents, Classes.ntrophies AS ntrophies, '
                         : '\'\' AS constituents, -1 AS ntrophies, ')
                       .(schema_version() >= RANK_AGGREGATE_SCHEMA
                         ? 'rankids' : '\'\' AS rankids')
