@@ -146,13 +146,11 @@ async function on_new_port_click() {
   g_prober.probe_until_found();
 }
 
-
+// Updates the #ports-list <ul> with the current list of g_ports ports
 async function update_ports_list() {
   g_ports.sort((p1, p2) => {
-    var p1_usb = p1.getInfo()?.usbProductId && true;
-    var p2_usb = p2.getInfo()?.usbProductId && true;
-    return p1_usb == p2_usb ? 0
-      : p1_usb ? -1 : 1;
+    return (p1.getInfo()?.usbProductId || -1) -
+      (p2.getInfo()?.usbProductId || -1);
   });
 
   $("#ports-list li").slice(g_ports.length).remove();
@@ -167,8 +165,8 @@ async function update_ports_list() {
     var info = g_ports[i].getInfo();
     var label;
     if (info.hasOwnProperty('usbProductId')) {
-      label = 'USB x' +
-        info.usbVendorId.toString(16).padStart(4, '0') + '/x' +
+      label = 'USB device ' +
+        info.usbVendorId.toString(16).padStart(4, '0') + '/' +
         info.usbProductId.toString(16).padStart(4, '0');
     } else {
       label = 'Built-in port';

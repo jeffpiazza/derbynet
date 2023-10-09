@@ -31,6 +31,7 @@ class PortWrapper {
   port;
   constructor(port) {
     this.port = port;
+    this.port_is_open = false;  // Not yet
     this.leftover = "";
     this.lines = [];
   }
@@ -60,6 +61,7 @@ class PortWrapper {
                            parity: params.parity || "none" /* none, even, odd */
                            /* flowcontrol: 'none' or flowcontrol: 'hardware' */
                          });
+    this.port_is_open = true;
     // Start the loop but don't wait for it
     this.readLoop();
   }
@@ -74,11 +76,13 @@ class PortWrapper {
       await this.reader.cancel();
     }
 
-    try {
-      await this.port.close();
-    } catch (err) {
-      g_logger.internal_msg('PortWrapper.close catches', err);
-      g_logger.stacktrace(err);
+    if (this.port_is_open) {
+      try {
+        await this.port.close();
+      } catch (err) {
+        g_logger.internal_msg('PortWrapper.close catches', err);
+        g_logger.stacktrace(err);
+      }
     }
   }
 
