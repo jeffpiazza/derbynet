@@ -87,14 +87,20 @@ if ($ok && $update_fn == 'update_number') {
   }
 }
 
+$racer_renumberings = array();  // racerid to (new) car number
+
 function update_number($racerid) {
   global $update_sql;
   global $car_number;
+  global $racer_renumberings;
 
   // echo '<numbered racerid="'.$racerid.'" carnumber="'.$car_number.'"/>'."\n";
 
   $update_sql->execute(array(':carnumber' => $car_number,
                              ':racerid' => $racerid));
+
+  $racer_renumberings[$racerid] = $car_number;
+
   ++$car_number;
   return true;
 }
@@ -144,6 +150,10 @@ if ($ok) {
 }
 
 if ($ok) {
+  if (!empty($racer_renumberings)) {
+    record_action(array('action' => 'racer.*renumber', 'results' => $racer_renumberings));
+  }
+
   json_success();
 }
 

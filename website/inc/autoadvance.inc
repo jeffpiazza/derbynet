@@ -133,8 +133,7 @@ function advance_heat(&$current, $requested, $report_failure) {
     // recording the last one.
     send_replay_CANCEL();
 
-    write_raceinfo('RoundID', $roundid);
-    write_raceinfo('Heat', $heat);
+    set_current_heat($roundid, $heat);
 
     if ($requested = 'next-up' || $roundid != @$current['roundid']) {
       write_raceinfo('ClassID', read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',

@@ -14,6 +14,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     }
   }  
   reorder_partitions();
+  record_action_partition_structure();
   json_success();
 } else {
   json_failure('permission', "Not authorized");

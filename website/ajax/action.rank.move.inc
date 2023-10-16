@@ -39,6 +39,8 @@ if (have_permission(SET_UP_PERMISSION)) {
 
   clean_up_empty_classes_and_ranks();
 
+  record_action_partition_structure();
+
   json_success();
 } else {
   json_failure('permission', "Not authorized");

@@ -58,8 +58,9 @@ if ($ok) {
     execute_once('DELETE FROM Classes WHERE classid = :classid',
                  array(':classid' => $classid));
     delete_from_raceinfo_with_value('full-field-calc', $classid);
-
   }
 
+  record_action_partition_structure();
+  
   json_success();
 }

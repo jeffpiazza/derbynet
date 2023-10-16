@@ -26,14 +26,20 @@ require_once('inc/rank_add_or_delete.inc');
 
 function create_award($awardname, $awardtype, $classid, $rankid) {
   global $db;
+  $awardname = trim($awardname);
   $stmt = $db->prepare('INSERT INTO Awards(awardname, awardtypeid, classid, rankid, racerid, sort)'
                        .' VALUES(:awardname, (SELECT awardtypeid FROM AwardTypes WHERE awardtype = :awardtype),'
                        .'        :classid, :rankid, :racerid,'
                        .'        (SELECT 1 + MAX(sort) FROM Awards))');
-  $stmt->execute(array(':awardname' => trim($_POST['awardname']),
+  $stmt->execute(array(':awardname' => $awardname,
                        ':awardtype' => $awardtype,
                        ':classid' => $classid,
                        ':rankid' => $rankid));
+  record_action(array('action' => 'award.*create',
+                      'awardname' => $awardname,
+                      'awardtype' => $awardtype,
+                      'classid' => $classid,
+                      'rankid' => $rankid));
 }
 
 define('PREF_BOOL_SETTINGS', array(

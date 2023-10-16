@@ -2,6 +2,7 @@
 
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/partitions.inc');
 
 function after_update_schema($original_schema) {
   global $db;
@@ -12,6 +13,7 @@ function after_update_schema($original_schema) {
     $db->exec('UPDATE Partitions SET name = \''.DEFAULT_PARTITION_NAME.'\''
               .' WHERE name = \'* Not specified\'');
     $db->exec('UPDATE RegistrationInfo SET partitionid = rankid');
+    record_action_partition_structure();
 
     $stmt = $db->prepare('SELECT classid, constituents FROM Classes WHERE constituents <> \'\'');
     $stmt->execute();

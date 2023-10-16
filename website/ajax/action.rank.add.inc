@@ -32,6 +32,10 @@ if (have_permission(SET_UP_PERMISSION)) {
         record_event(EVENT_RANK_ADDED, array('classid' => $classid,
                                              'rankid' => $rankid,
                                              'other' => $rankname));
+        record_action(array('action' => 'rank.*create',
+                            'rank' => $rankname,
+                            'rankid' => $rankid,
+                            'classid' => $classid));
         $nranks = read_single_value('SELECT COUNT(*) FROM Ranks WHERE classid = :classid',
                                     array(':classid' => $classid));
         $stmt = $db->prepare('UPDATE Ranks'

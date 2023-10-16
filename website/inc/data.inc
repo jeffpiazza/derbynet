@@ -251,6 +251,29 @@ function get_running_round() {
   return $config;
 }
 
+function record_action($args) {
+  global $db;
+  try {
+    $logstmt = $db->prepare('INSERT INTO ActionHistory(received, request) VALUES('.dbnow_expr().', :args)');
+    $logstmt->execute(array(':args' => json_encode($args, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+  } catch (PDOException $p) {
+  }
+}
+
+function set_current_heat($roundid, $heat) {
+  global $db;
+  write_raceinfo('RoundID', $roundid);
+  write_raceinfo('Heat', $heat);
+
+  try {
+    $log = $db->prepare('INSERT INTO ActionHistory(received, request) VALUES('.dbnow_expr().', :args)');
+    $log->execute(array(':args' => json_encode(array('action' => 'heat.*advance',
+                                                     'roundid' => $roundid,
+                                                     'heat' => $heat))));
+  } catch (PDOException $p) {
+  }
+}
+
 // If not working with a timer device, or if DerbyNet is just running as a
 // companion to Grand Prix Race Manager (and so not actually running the race),
 // we want not to put up warnings about not having an active timer connection.

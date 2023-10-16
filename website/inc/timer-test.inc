@@ -21,18 +21,18 @@ function timer_test_start() {
     write_raceinfo('tt-roundid', $current['roundid']);
     write_raceinfo('tt-heat', $current['heat']);
   }
-  write_raceinfo('RoundID', TIMER_TEST_ROUNDID);
-  write_raceinfo('Heat', (isset($current['heat']) && $current['heat'] > 0)
-                 ? $current['heat'] + 1
-                 : 1);
+  set_current_heat(TIMER_TEST_ROUNDID,
+                   (isset($current['heat']) && $current['heat'] > 0)
+                   ? $current['heat'] + 1
+                   : 1);
   write_raceinfo('NowRacingState', 1);
   write_raceinfo('refused-results', 0);
 }
 
 function timer_test_end() {
   if (read_raceinfo('RoundID') == TIMER_TEST_ROUNDID) {
-    write_raceinfo('RoundID', read_raceinfo('tt-roundid', -1));
-    write_raceinfo('Heat', read_raceinfo('tt-heat', -1));
+    set_current_heat(read_raceinfo('tt-roundid', -1),
+                     read_raceinfo('tt-heat', -1));
     write_raceinfo('NowRacingState', 0);
     return true;
   }

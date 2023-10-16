@@ -38,6 +38,8 @@ if ($ok) {
                        array(':racerid' => $racerid));
 }
 
+record_action(array('action' => 'racer.*delete', 'racerid' => $racerid));
+
 if ($ok) {
   json_success();
   json_out('reload', true);

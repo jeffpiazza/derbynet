@@ -159,7 +159,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         } else {
           $racerid = barcode_to_racerid($_POST['barcode']);
           if (!$racerid) {
-            json_failure('barcode', "Barcode not recognized.");
+            json_failure('barcode', "Barcode ".$_POST['barcode']." not recognized.");
             $success = false;
           }
         }

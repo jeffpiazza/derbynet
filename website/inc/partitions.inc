@@ -93,6 +93,10 @@ function find_or_create_partition($name) {
     // TODO record_event EVENT_CLASS_ADDED $classid, $classname
     $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
                                     array(':name' => $name));
+    record_action(array('action' => 'partition.*create',
+                        'partitionid' => $partitionid,
+                        'name' => $name,
+                        'rankid' => $rankid));
   }    
 
   return $partitionid;
@@ -104,6 +108,11 @@ function create_partition_in_existing_rank($name, $rankid) {
                     .'        (SELECT 1 + COALESCE(MAX(sortorder), COUNT(*)) FROM Partitions))',
                     array(':name' => $name,
                           ':rankid' => $rankid));
+  record_action(array('action' => 'partition.*create',
+                      'partitionid' => read_single_value('SELECT partitionid FROM Partitions WHERE name = :name',
+                                                         array(':name' => $name)),
+                      'name' => $name,
+                      'rankid' => $rankid));
 }
 
 function clean_up_empty_classes_and_ranks() {
@@ -203,6 +212,36 @@ function all_partitions() {
     return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
   }
   return array();
+}
+
+function record_action_partition_structure() {
+  global $db;
+  $ranks = $db->query('SELECT rankid, classid, roundid'
+                      .' FROM Ranks'
+                      .' INNER JOIN Classes USING (classid)'
+                      .' INNER JOIN Rounds USING (classid)'
+                      .' WHERE round = 1'  // The only rounds that exist all have round = 1
+                      .' AND NOT EXISTS(SELECT 1 FROM Partitions WHERE rankid = Ranks.rankid)'
+                     .' ORDER BY rankid')
+                 ->fetchAll(PDO::FETCH_ASSOC);
+  $partition_map = $db->query('SELECT partitionid, classid, rankid, roundid'
+                              .' FROM Partitions'
+                              .' INNER JOIN Ranks USING (rankid)'
+                              .' INNER JOIN Classes USING (classid)'
+                              .' INNER JOIN Rounds USING (classid)'
+                              .' WHERE round = 1'  // The only rounds that exist all have round = 1
+                     .' ORDER BY partitionid')
+                 ->fetchAll(PDO::FETCH_ASSOC);
+  if (group_formation_rule() == 'one-group') {
+    record_action(array('action' => 'partition.*structure',
+                        'class' => 'All Racers',
+                        'partitions' => $partition_map,
+                        'ranks' => $ranks));
+  } else {
+    record_action(array('action' => 'partition.*structure',
+                        'partitions' => $partition_map,
+                        'ranks' => $ranks));
+  }
 }
 
 ?>

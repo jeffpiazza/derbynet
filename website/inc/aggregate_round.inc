@@ -165,6 +165,7 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                        .' AND (SELECT COUNT(*) FROM Rounds'
                        .'      WHERE classid = Classes.classid) <= 1');
   $stmt->execute(array(':classid' => $classid));
+  record_action(array('action' => 'class.*delete', 'classid' => $classid));
   if ($stmt->rowCount() > 0) {
     record_event(EVENT_CLASS_DELETED, array('classid' => $classid));
     execute_once('DELETE FROM ConstituentClasses WHERE dependent = :classid',
