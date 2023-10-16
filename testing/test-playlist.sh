@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh $BASE_URL
+RESET_SOURCE=playlist `dirname $0`/reset-database.sh $BASE_URL
 
 # $1 = car number
 # $2 = classname

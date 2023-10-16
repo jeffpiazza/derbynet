@@ -8,7 +8,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-"`dirname $0`/reset-database.sh" "$BASE_URL"
+RESET_SOURCE=rotation-schedule "`dirname $0`/reset-database.sh" "$BASE_URL"
 "`dirname $0`/import-roster.sh" "$BASE_URL"
 
 curl_postj action.php "action=settings.write&unused-lane-mask=0&n-lanes=6&rotation-schedule=1" | check_jsuccess

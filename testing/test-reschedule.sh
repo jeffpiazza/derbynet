@@ -10,7 +10,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-"`dirname $0`/reset-database.sh" "$BASE_URL"
+RESET_SOURCE=reschedule "`dirname $0`/reset-database.sh" "$BASE_URL"
 "`dirname $0`/import-roster.sh" "$BASE_URL"
 
 

@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=single-group `dirname $0`/reset-database.sh "$BASE_URL"
 
 curl_postj action.php "action=racer.import&firstname=Adolfo \"Dolf\"&lastname=Asher&carnumber=101" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Angelo&lastname=Alas&carnumber=202" | check_jsuccess

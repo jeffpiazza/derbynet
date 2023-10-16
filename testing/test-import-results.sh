@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh $BASE_URL
+RESET_SOURCE=import-results `dirname $0`/reset-database.sh $BASE_URL
 
 curl_postj action.php "action=result.import&class=Tiger&round=1&heat=1&lane=1&firstname=Matthew&lastname=Glennon&carnumber=105&finishtime=3.936&finishplace=3&completed=2015-03-08%2018:35:44" | check_jsuccess
 curl_postj action.php "action=result.import&class=Tiger&round=1&heat=1&lane=3&firstname=Burt&lastname=Desrosier&carnumber=303&finishtime=3.313&finishplace=2&completed=2015-03-08%2018:35:44" | check_jsuccess

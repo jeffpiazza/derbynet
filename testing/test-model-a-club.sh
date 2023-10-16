@@ -10,7 +10,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=modal-a-club `dirname $0`/reset-database.sh "$BASE_URL"
 
 
 for i in $(seq 1 100) ; do

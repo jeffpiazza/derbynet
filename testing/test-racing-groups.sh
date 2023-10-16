@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=racing-groups `dirname $0`/reset-database.sh "$BASE_URL"
 
 # Empty database behavior
 curl_getj "action.php?query=poll&values=race-structure" | \

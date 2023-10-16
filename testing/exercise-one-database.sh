@@ -49,7 +49,7 @@ puppeteer_test() {
 
 run_tests() {
 ############################## Basic Racing ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex0 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
 
@@ -98,14 +98,14 @@ run_tests() {
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
 ############################## Racing Groups and Partitions ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex1 `dirname $0`/reset-database.sh "$BASE_URL"
     puppeteer_test checkin-empty-test.js
 
     `dirname $0`/test-partitions.sh "$BASE_URL"
     `dirname $0`/test-racing-groups.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex2 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
@@ -123,7 +123,7 @@ run_tests() {
     `dirname $0`/test-aggregate-nonracing.sh "$BASE_URL"
 
 ############################## Snapshot Export and Import ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex3 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-unused-lanes.sh "$BASE_URL"
