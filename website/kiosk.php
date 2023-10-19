@@ -8,7 +8,7 @@ require_once('inc/permissions.inc');
 // up.
 @$_SESSION['permissions'] |= PRESENT_AWARDS_PERMISSION;
 
-$g_kiosk_parameters_string = '';
+$g_kiosk_parameters_string = '{}';
 function kiosk_parameters() {
   global $g_kiosk_parameters_string;
   return json_decode($g_kiosk_parameters_string, true);
