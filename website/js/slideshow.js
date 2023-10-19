@@ -29,7 +29,9 @@ function mainphoto_onload(img) {
 
   try {
     KioskPoller.param_callback = function(parameters) {
-      kiosk_parameters = parameters;
+      if (parameters != null) {
+        kiosk_parameters = parameters;
+      }
     };
   } catch (e) {
     // If not in a kiosk, then KioskPoller will be undefined.
