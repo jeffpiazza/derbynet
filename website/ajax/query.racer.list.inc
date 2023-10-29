@@ -53,7 +53,9 @@ $sql = 'SELECT racerid, firstname, lastname, carnumber, carname, imagefile,'
     .($schema_version < 2 ? "'' AS carphoto" : " carphoto,")
     .($schema_version < 2 ? "class" : "Classes.sortorder").' AS class_sort,'
     .($schema_version < 2 ? "rank" : "Ranks.sortorder").' AS rank_sort,'
-    .($schema_version < PARTITION_SCHEMA ? " '' AS note," : " note,")
+    .($schema_version < PARTITION_SCHEMA
+      ? " 0 AS partitionid, class AS partition, '' AS note,"
+      : " partitionid, (SELECT name FROM Partitions WHERE partitionid = RegistrationInfo.partitionid) AS partition, note,")
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, passedinspection, exclude,'
     .' (SELECT MAX(seq) FROM Events'
     .'  WHERE Events.racerid = RegistrationInfo.racerid'
@@ -75,6 +77,8 @@ foreach ($stmt as $row) {
                     'lastname' => $row['lastname'],
                     'carnumber' => $row['carnumber'],
                     'carname' => $row['carname'],
+                    'partitionid' => $row['partitionid'],
+                    'partition' => $row['partition'],
                     'note_from' => $row['note'],
                     'headshot' => $headshot_render->render_url($row['imagefile']),
                     'car_photo' => $carphoto_render->render_url($row['carphoto']),

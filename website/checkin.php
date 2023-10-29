@@ -100,6 +100,8 @@ make_banner('Racer Check-In');
 <?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
       <input type="button" value="New Racer"
         onclick='show_new_racer_form();'/>
+<?php } else { ?>
+          <div style='padding: 10px 15px; font-size: x-large; line-height: 1.3; margin-bottom: 20px; margin-top: 3px; '>&nbsp;</div>
 <?php } ?>
 </div>
 

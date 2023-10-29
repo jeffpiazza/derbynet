@@ -157,8 +157,6 @@ $bias = lane_bias_analysis();
 ?>
 </table>
 
-<p>TODO End of history</p>
-
 </div> <!-- content -->
 </body>
 </html>
