@@ -54,6 +54,12 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <mkdir dir="${debian-root}/etc/nginx/conf.d"/>
+        <copy todir="${debian-root}/etc/nginx/conf.d">
+          <fileset dir="${nginx-configs}/conf.d">
+            <include name="**"/>
+          </fileset>
+        </copy>
 
         <copy todir="${debian-root}/var/www/html">
             <fileset dir="${nginx-configs}">
