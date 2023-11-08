@@ -20,7 +20,7 @@ curl_postj action.php "action=settings.write&unused-lane-mask=2&n-lanes=4" | che
 # curl_getj "action.php?query=poll&values=racers,rounds"
 # curl_getj "action.php?query=racer.list"
 
-# Racer ids for roundid 1 arg 1, 6, 11, 16, 21, 26, ..., 81
+# Racer ids for roundid 1 are 1, 6, 11, 16, 21, 26, ..., 81
 
 # Checkin 2 racers for Lions & Tigers (roundid 1)
 curl_postj action.php "action=racer.pass&racer=1&value=1" | check_jsuccess
@@ -147,11 +147,143 @@ curl_postj action.php "action=schedule.reschedule&roundid=1&racerid=6&dry-run=1&
 echo 4 racers 4 lanes 1 masked 4 heats run add racer 6
 jq .chart testing/debug.curl
 
+echo ============================= Movement tests ==============================
 
-############## 4 lanes, 17 racers (roundid 2)
+## Test case: All racers for roundid 1 and 2 checked in, generate schedules,
+##   race one (arbitrary) heat in each, then move a raced racer from roundid 1 to roundid 2.
+curl_postj action.php "action=schedule.unschedule&roundid=1" | check_jsuccess
+curl_postj action.php "action=racer.bulk&what=checkin&who=c1&value=1" | check_jsuccess
+curl_postj action.php "action=racer.bulk&what=checkin&who=c2&value=1" | check_jsuccess
+curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |  .heats_scheduled == 17" >/dev/null || test_fails
+curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |  .heats_scheduled == 17" >/dev/null || test_fails
+
+curl_postj action.php "action=heat.select&roundid=1&heat=4" | check_jsuccess
+# Racer ids are 41, 51, 66
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+run_heat 1  4  141:1.210 - 151:1.160 166:1.110 x
+
+curl_postj action.php "action=heat.select&roundid=2&heat=6" | check_jsuccess
+# Racer ids are 82, 7, 22
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+run_heat 2  6  282:1.234 - 207:1.516 222:1.611 x
+
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e '.["current-heat"] | .roundid == 2 and .heat == 7' \
+       >/dev/null || test_fails
+
+echo ============= Move racer 61 from roundid 1 to roundid 2 ======================
+curl_postj action.php "action=racer.edit&racerid=61&partitionid=2" | check_jsuccess
+# That leaves racer 61 departed from roundid 1 and unscheduled in roundid 2
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 1 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+           .departed == 0 and .unscheduled == 1 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=1" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+            .departed == 0 and .unscheduled == 0 and .heats_scheduled == 16" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+           .departed == 0 and .unscheduled == 1 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+
+# Having added a new racer to roundid 2, rescheduling adds a new heat.
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=2" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 0 and .heats_scheduled == 16" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+            .departed == 0 and .unscheduled == 0 and .heats_scheduled == 18" \
+       >/dev/null || test_fails
+
+echo ============= Move racer 62 from roundid 2 to roundid 1 ======================
+curl_postj action.php "action=racer.edit&racerid=62&partitionid=1" | check_jsuccess
+# Merely moving the racer doesn't change the schedules
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 1 and .heats_scheduled == 16" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+           .departed == 1 and .unscheduled == 0 and .heats_scheduled == 18" \
+       >/dev/null || test_fails
+
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=1" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+            .departed == 1 and .unscheduled == 0 and .heats_scheduled == 18" \
+       >/dev/null || test_fails
+
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=2" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+            .departed == 0 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e '.["current-heat"] | .roundid == 2 and .heat == 7 and .now_racing == true' \
+       >/dev/null || test_fails
+
+# TODO The last raced heat at this point is heat 5, rather than heat 6,
+# so the correct next heat would be heat 6.
+
+echo ============= Move already-raced racer 41 from roundid 1 to roundid 2 ======================
+curl_postj action.php "action=racer.edit&racerid=41&partitionid=2" | check_jsuccess
+# Merely moving the racer doesn't change the schedules
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 1 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+           .departed == 0 and .unscheduled == 1 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=1" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+            .departed == 0 and .unscheduled == 1 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+
+curl_postj action.php "action=schedule.reschedule&trace=1&roundid=2" | check_jsuccess
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==1))[0] |
+           .departed == 0 and .unscheduled == 0 and .heats_scheduled == 17" \
+       >/dev/null || test_fails
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".rounds | map(select(.roundid==2))[0] |
+            .departed == 0 and .unscheduled == 0 and .heats_scheduled == 18" \
+       >/dev/null || test_fails
+
+
 echo ============= 4 lanes 17 racers roundid 2 ======================
 
 curl_postj action.php "action=database.purge&purge=schedules&roundid=1" | check_jsuccess
+curl_postj action.php "action=database.purge&purge=schedules&roundid=2" | check_jsuccess
 curl_postj action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
 curl_postj action.php "action=racer.bulk&what=checkin&who=c2&value=1" | check_jsuccess
 curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess

@@ -31,6 +31,7 @@ function json_all_rounds(&$now_running) {
       'roster_size' => $round['roster_size'],
       'passed' => $round['passed'],
       'unscheduled' => $round['unscheduled'],
+      'departed' => $round['departed'],
       'heats_scheduled' => $round['heats_scheduled'],
       'heats_run' => $round['heats_run'],
       'name' => $round['roundname']);

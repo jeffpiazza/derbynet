@@ -49,8 +49,12 @@ function all_rounds($by_class = true) {
 // Each entry has:
 //  {roundid, round, classid, class, groupid(=roundid), roundname,
 //    aggregate(0 or 1),
-//    roster_size, passed, unscheduled,
-//    heats_scheduled, heats_run}
+//    roster_size -- number of distinct racers in the round roster,
+//    passed -- number of racers in the round roster who've passed inspection
+//    unscheduled --  number of passed racers in the round roster without RaceChart entries
+//    departed -- number of racers in yet-to-run heats who are no longer in the roster
+//    heats_scheduled -- number of heats scheduled in the round
+//    heats_run -- number of completed heats in the round
 function all_rounds_with_counts($by_class = true) {
   global $db;
   $use_groups = use_groups();
@@ -74,12 +78,19 @@ function all_rounds_with_counts($by_class = true) {
                       .'   AND NOT EXISTS(SELECT 1 FROM RaceChart'
                       .'      WHERE RaceChart.roundid = Roster.roundid'
                       .'      AND RaceChart.racerid = Roster.racerid)) AS unscheduled,'
+                      .' (SELECT COUNT(DISTINCT racerid) FROM RaceChart'
+                      .'         WHERE roundid = Rounds.roundid'
+                      .'         AND (finishtime IS NULL'
+                      .'          AND finishplace IS NULL)'
+                      .'         AND NOT EXISTS(SELECT 1 FROM Roster'
+                      .'            WHERE racerid = RaceChart.racerid'
+                      .'              AND roundid = Rounds.roundid)) AS departed,'
                       .' (SELECT COUNT(DISTINCT heat) FROM RaceChart'
                       .'         WHERE roundid = Rounds.roundid) AS heats_scheduled,'
                       .' (SELECT COUNT(DISTINCT heat) FROM RaceChart'
                       .'         WHERE roundid = Rounds.roundid'
                       .'         AND (finishtime IS NOT NULL'
-                      .'         OR finishplace IS NOT NULL)) AS heats_run'
+                      .'           OR finishplace IS NOT NULL)) AS heats_run'
 					  .' FROM Rounds INNER JOIN Classes'
 					  .' ON Rounds.classid = Classes.classid'
 					  .' ORDER BY '
