@@ -291,6 +291,9 @@ class StandingsOracle {
                                        'RaceChart.racerid = RegistrationInfo.racerid',
                                        'Rounds',
                                        'RaceChart.roundid = Rounds.roundid',
+                                       'Roster',
+                                       'Roster.roundid = Rounds.roundid'
+                                       .' AND Roster.racerid = RaceChart.racerid',
                                        'Classes',
                                        'RegistrationInfo.classid = Classes.classid',
                                        'Ranks',

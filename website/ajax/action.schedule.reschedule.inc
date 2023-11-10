@@ -18,8 +18,6 @@ $racerid = $_POST['racerid'];
 $dry_run = $_POST['dry-run'];
 $trace = $_POST['trace'];
 
-$now_running = get_running_round();
-
 
 function n_runs_per_lane($roundid) {
   global $db;
@@ -44,6 +42,7 @@ class ScheduleAdjuster {
   private $lane_mask;  // 1's mark masked lanes NOT in use
   private $nlanes_usable;
   private $n_runs_per_lane;
+  private $now_running;  // classid, roundid, heat, now_racing
 
   // $race_chart is an array of heats, each heat being an array of $nlanes
   // elements populated with racerids.  If $race_chart[$h] is null, then the
@@ -120,7 +119,7 @@ class ScheduleAdjuster {
     $this->lane_mask = intval(read_raceinfo('unused-lane-mask', 0));
     $this->nlanes_usable = $this->nlanes - count_one_bits($this->lane_mask);
     $this->n_runs_per_lane = n_runs_per_lane($roundid);
-
+    $this->now_running = get_running_round();
     $this->load_race_chart();
 
     $heats_raced = 0;
@@ -421,6 +420,10 @@ class ScheduleAdjuster {
         $this->chart_modified = true;
         --$this->nheats;
         --$this->nheats_unraced;
+        if ($this->roundid == $this->now_running['roundid']) {
+          // Turn off "now racing" if we're changing the currently-running heat.
+          set_racing_state(false);
+        }
         return true;
       }
     }

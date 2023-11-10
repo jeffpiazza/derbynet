@@ -241,10 +241,10 @@ curl_getj "action.php?query=poll.coordinator" | \
        >/dev/null || test_fails
 
 curl_getj "action.php?query=poll.coordinator" | \
-    jq -e '.["current-heat"] | .roundid == 2 and .heat == 7 and .now_racing == true' \
+    jq -e '.["current-heat"] | .roundid == 2 and .heat == 7 and .now_racing == false' \
        >/dev/null || test_fails
 
-# TODO The last raced heat at this point is heat 5, rather than heat 6,
+# The last raced heat at this point is heat 5, rather than heat 6,
 # so the correct next heat would be heat 6.
 
 echo ============= Move already-raced racer 41 from roundid 1 to roundid 2 ======================
@@ -279,6 +279,65 @@ curl_getj "action.php?query=poll.coordinator" | \
             .departed == 0 and .unscheduled == 0 and .heats_scheduled == 18" \
        >/dev/null || test_fails
 
+curl_postj action.php "action=heat.select&roundid=2&heat=1" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+
+run_heat 2 1  141:2.685 - 217:1.037  232:1.239
+run_heat 2 2  237:2.203 - 161:2.066  141:3.484
+run_heat 2 3  242:3.397 - 252:3.462  161:1.462
+run_heat 2 4  247:1.374 - 141:1.791  272:3.399 x
+
+curl_postj action.php "action=heat.select&roundid=2&heat=6" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+
+run_heat 2 6  252:1.033 - 212:2.522  277:3.656
+run_heat 2 7  212:1.905 - 222:1.269  237:2.036
+run_heat 2 8  217:3.306 - 227:3.274  242:3.259
+run_heat 2 9  257:1.455 - 267:2.500  282:1.043
+run_heat 2 10 161:3.028 - 272:1.116  202:3.460
+run_heat 2 11 222:3.141 - 232:2.654  247:3.970
+run_heat 2 12 267:2.015 - 277:2.638  207:1.724
+run_heat 2 13 227:3.209 - 237:3.020  252:2.505
+run_heat 2 14 232:3.771 - 242:1.665  257:2.728
+run_heat 2 15 272:2.702 - 282:3.953  212:2.385
+run_heat 2 16 277:1.756 - 202:2.212  217:1.825
+run_heat 2 17 202:3.423 - 247:1.878  267:3.701
+run_heat 2 18 207:3.607 - 257:1.105  227:2.474 x
+
+curl_postj action.php "action=heat.select&roundid=1&heat=1" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+
+run_heat 1 1  262:1.220 - 111:3.969 126:2.213
+run_heat 1 2  136:1.996 - 262:3.471 131:2.107 x
+
+curl_postj action.php "action=heat.select&roundid=1&heat=4" | check_jsuccess
+curl_postj action.php "action=heat.select&now_racing=1" | check_jsuccess
+
+run_heat 1 4  146:1.605 - 156:3.410 171:1.066
+run_heat 1 5  181:1.775 - 106:2.603 121:1.963
+run_heat 1 6  151:2.006 - 116:2.242 176:3.638
+run_heat 1 7  111:2.940 - 121:3.589 136:2.095
+run_heat 1 8  116:2.154 - 126:3.967 -
+run_heat 1 9  156:3.899 - 166:3.795 181:3.820
+run_heat 1 10 106:1.681 - 171:2.746 101:3.013
+run_heat 1 11 121:1.838 - 131:2.441 146:1.674
+run_heat 1 12 166:2.077 - 176:2.199 106:1.620
+run_heat 1 13 126:2.674 - 136:3.644 151:2.212
+run_heat 1 14 131:2.028 - -         156:2.573
+run_heat 1 15 171:3.340 - 181:1.379 111:2.618
+run_heat 1 16 176:1.963 - 101:2.289 262:2.197
+run_heat 1 17 101:2.581 - 146:1.692 116:3.143 x
+
+# Racer 41's lone heat in roundid 1 would make it fastest in the round if it
+# were counted in standings.  This is to confirm it's not.
+curl_getj "action.php?query=standings" | \
+    jq -e ".standings | .["'"'"st-r1"'"'"][0][0] == 46 and
+                        .["'"'"st-r1"'"'"][1][0] == 51 and
+                        .["'"'"st-r1"'"'"][2][0] == 6 and
+                        .["'"'"st-r2"'"'"][0][0] == 57 and
+                        .["'"'"st-r2"'"'"][1][0] == 22 and
+                        .["'"'"st-r2"'"'"][2][0] == 17" \
+        >/dev/null || test_fails
 
 echo ============= 4 lanes 17 racers roundid 2 ======================
 
