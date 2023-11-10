@@ -12,12 +12,16 @@ function json_common_1($key, &$now_running) {
                    'awards' (via json_out_awards: award.winner) */ break;
   case 'catalog-entry': /* standings.reveal */ break;
   case 'best-times':
-    // TODO Needs refinement
-    $stmt = $db->prepare('SELECT carnumber, finishtime'
-                         .' FROM RaceChart JOIN RegistrationInfo'
-                         .' USING (racerid)'
-                         .' WHERE finishtime IS NOT NULL AND finishtime > 0'
-                         .' ORDER BY finishtime'
+    // If racing by place, there will be lots of #1's, and the "top 15" won't be
+    // particularly meaningful
+    $stmt = $db->prepare('SELECT carnumber, COALESCE(finishtime, finishplace) AS finishtime'
+                         .' FROM RaceChart'
+                         .' JOIN RegistrationInfo USING (racerid)'
+                         .' JOIN Roster USING (racerid, roundid)'
+                         .' WHERE (finishtime IS NOT NULL AND finishtime > 0)'
+                         .'    OR (finishtime IS NULL AND'
+                         .'        finishplace IS NOT NULL AND finishplace > 0)'
+                         .' ORDER BY COALESCE(finishtime, finishplace)'
                          .' LIMIT 15');
     $stmt->execute(array());
     json_out('best-times', $stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -49,6 +53,10 @@ function json_common_1($key, &$now_running) {
   case 'current-heat':
     require_once('inc/json-current-heat.inc');
     json_out('current-heat', json_current_heat($now_running));
+    break;
+  case 'current-reschedule':
+    require_once('inc/json-current-reschedule.inc');
+    json_out('current-reschedule', json_current_reschedule($now_running));
     break;
   case 'ondeck':
     require_once('inc/json-ondeck.inc');

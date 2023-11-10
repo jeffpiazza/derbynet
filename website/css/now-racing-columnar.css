@@ -210,3 +210,11 @@ body { overflow: hidden; }
 }
 
 
+#reschedule_overlay p {
+  color: #cf1f25;
+  font-size: xxx-large;
+  text-align: center;
+  font-weight: bold;
+  background: white;
+  opacity: 0.75;
+}

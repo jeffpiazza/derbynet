@@ -53,7 +53,8 @@ var Poller = {
       $.ajax('action.php',
              {type: 'GET',
               data: {query: 'poll',
-                     values: 'best-times,current-heat,heat-results,precision,racers,timer-trouble',
+                     values: 'best-times,current-heat,heat-results,precision,racers,' +
+                             'timer-trouble,current-reschedule',
                      'head-size': g_column_width + 'x' + g_racer_photo_height,
                      'car-size': g_column_width + 'x' + g_car_photo_height,
                      roundid: roundid,
@@ -183,6 +184,8 @@ function process_polling_result(data) {
     Overlay.show('#timer_overlay');
   } else if (!current_heat["now_racing"] && g_result_animator.ok_to_change()) {
     Overlay.show('#paused_overlay');
+  } else if (data["current-reschedule"]) {
+    Overlay.show('#reschedule_overlay');
   } else {
     Overlay.clear();
   }

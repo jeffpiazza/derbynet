@@ -92,6 +92,10 @@ for ($lane = 1; $lane <= $nlanes; ++$lane) {
  <img src="img/timer-red.png"/>
  <p>Check timer.</p>
 </div>
+<div id="reschedule_overlay" class="overlay_foreground">
+ <img src="img/warning-icon.png"/>
+ <p>Schedule adjustment needed.</p>
+</div>
 
 <?php require_once('inc/ajax-failure.inc'); ?>
 
