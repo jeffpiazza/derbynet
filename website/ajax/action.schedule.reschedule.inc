@@ -4,6 +4,7 @@ require_once('inc/schedule_utils.inc');
 require_once('inc/masterheat.inc');
 require_once('inc/kiosks.inc');
 require_once('inc/racing-state.inc');
+require_once('inc/rounds.inc');
 
 // Time limit for finding the "best" schedule for injection of a single racer.
 // (Usually this bounds the reschedule operation overall, but if an acceptable
@@ -310,15 +311,8 @@ class ScheduleAdjuster {
   // the round's Roster.
   public function remove_departed() {
     global $db;
-    $stmt = $db->prepare('SELECT DISTINCT racerid FROM RaceChart'
-                         .'         WHERE roundid = :roundid'
-                         .'         AND (finishtime IS NULL'
-                         .'          AND finishplace IS NULL)'
-                         .'         AND NOT EXISTS(SELECT 1 FROM Roster'
-                         .'            WHERE racerid = RaceChart.racerid'
-                         .'              AND roundid = :roundid2)');
-    $stmt->execute(array(':roundid' => $this->roundid,
-                         ':roundid2' => $this->roundid));
+    $stmt = $db->prepare('SELECT DISTINCT racerid '.sql_for_departed(':roundid'));
+    $stmt->execute(array(':roundid' => $this->roundid));
     $departed = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     foreach ($departed as $gone) {
       $this->has_byes = true;

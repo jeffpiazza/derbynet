@@ -294,25 +294,18 @@ function generate_current_round_control_group(round, current, timer_state) {
 }
 
 function reason_for_schedule_change(round) {
-  var why = '';
-
-  if (round.unscheduled > 0) {
-    if (round.unscheduled == 1) {
-      why += 'a new racer has been added';
+  var why = $('<ul/>');
+  for (var a = 0; a < round.adjustments.length; ++a) {
+    var who = round.adjustments[a];
+    var li = $('<li/>').appendTo(why)
+        .append($('<span/>').text(who.carnumber))
+        .append(' ')
+        .append($('<span/>').text(who.firstname + ' ' + who.lastname))
+    if (who.why == 'unscheduled') {
+      li.append(' isn\'t in the schedule.');
     } else {
-      why += round.unschedule + ' new racers have been added';
+      li.append(' is in the schedule but not the racing group.');
     }
-    if (round.departed > 0) {
-      why += ' and ';
-    }
-  }
-  if (round.departed > 0) {
-    if (round.departed == 1) {
-      why += 'a scheduled racer is';
-    } else {
-      why += round.departed + ' scheduled racers are';
-    }
-    why += ' no longer in the group';
   }
   return why;
 }
@@ -330,18 +323,20 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
     buttons = $("#now-racing-group-buttons");
   }
   buttons.empty();
+  buttons.parent().removeClass('adjustment-needed');
 
   if (round.roundid == -1) {
     buttons.append('<input type="button"'
                    + ' onclick="handle_master_next_up()" value="Next Up"/>');
   } else {
     if (round.heats_scheduled > 0 && round.heats_run == 0) {
-      if (round.unscheduled > 0 || round.departed > 0) {
-        buttons.append(
-          $('<div class="late-arrival-prompt"></div>').text(
-            'The race schedule needs to be regenerated because ' +
-              reason_for_schedule_change(round) + '. ' +
-              'Start by removing the existing race schedule.'));
+      if (round.adjustments.length > 0) {
+        buttons
+          .append($('<div class="late-arrival-prompt"></div>')
+                  .append('<p>The race schedule needs to be regenerated because:</p>')
+                  .append(reason_for_schedule_change(round))
+                  .append('<p>Start by removing the existing race schedule.</p>'))
+        .parent().addClass('adjustment-needed');
       }
       buttons.append('<input type="button"'
                      + ' onclick="handle_unschedule_button(' + round.roundid
@@ -361,14 +356,15 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                        "<a href='settings.php'>Settings</a> page.</p>");
       }
     }
-    if (round.heats_run > 0 && (round.unscheduled > 0 || round.departed > 0)) {
-      buttons.append(
-        $('<div class="late-arrival-prompt"></div>').text(
-          'The race schedule needs to be adjusted because ' +
-            reason_for_schedule_change(round) + '.'));
-      buttons.append('<input type="button" class="late-arrival-button"'
-                     + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
-                     + ' value="Adjust Schedule"/>');
+    if (round.adjustments.length > 0) {
+      buttons
+        .append($('<div class="late-arrival-prompt"></div>')
+                .append('<p>The race schedule needs to be adjusted because:</p>')
+                .append(reason_for_schedule_change(round)))
+        .append('<input type="button" class="late-arrival-button"'
+                + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
+                + ' value="Adjust Schedule"/>')
+        .parent().addClass('adjustment-needed');
     }
 
     if (round.heats_scheduled == 0 && round.heats_run == 0 &&
@@ -703,13 +699,6 @@ function process_coordinator_poll_json(json) {
   $("#supplemental-control-group").toggleClass("hidden",
                                                $("#add-new-rounds-button").hasClass("hidden") &&
                                                $("#now-racing-group-buttons").is(":empty"));
-}
-
-function process_coordinator_poll_response(xml) {
-  var poll = xml.documentElement.getElementsByTagName('coordinator_poll');
-  if (poll.length > 0) {
-    process_coordinator_poll_json(JSON.parse(poll[0].textContent));
-  }
 }
 
 function coordinator_poll() {
