@@ -1,6 +1,7 @@
 <?php
 
 require_once('inc/events.inc');
+require_once('inc/schema_version.inc');
 
 $value = isset($_POST['value']) ? $_POST['value'] : 1;
 $racerid = @$_POST['racer'];
@@ -31,7 +32,10 @@ function pass_racer($racerid, $value) {
 
   if ($ok_to_change) {
     if ($value || have_permission(REVERT_CHECK_IN_PERMISSION)) {
-      take_action_silently('UPDATE RegistrationInfo SET PassedInspection = :value'
+      take_action_silently('UPDATE RegistrationInfo'
+                           .' SET PassedInspection = :value'
+                           .($value && schema_version() < REGISTRATION_CHECKIN_SCHEMA ? ''
+                             : ',    checkin_time = '.floor(microtime(true) * 1000))
                            .' WHERE RacerID = :racer',
                            array(':value' => $value,
                                  ':racer' => $racerid));

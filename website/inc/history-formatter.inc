@@ -578,6 +578,8 @@ class HistoryActionFormatter {
       }
       return $msg;
 
+    case 'timer.*overdue':
+      return "Timer contact lost.";
     case 'timer-message':
       switch ($this->_action['message']) {
       case 'HELLO': return 'Timer makes contact';

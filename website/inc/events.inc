@@ -57,37 +57,13 @@ define('EVENT_GROUP_FORMATION_RULE_APPLIED', 401);
 define('EVENT_PARTITION_MOVED', 402);
 define('EVENT_PARTITION_RENAMED', 403);
 
-define('EVENT_ACTIONS_TABLE',
-array(
-  'award.adhoc', 'award.delete', 'award.edit', 'award.import',
-  'award.order', 'award.present', 'award.winner', 'award.xbs',
-  'ballot.open',
-  'class.add', 'class.delete', 'class.edit', 'class.order',
-  'database.execute', 'database.purge',
-  'file.directory.new.nodata',
-  'heat.reinstate', 'heat.rerun', 'heat.select',
-  'kiosk.assign', 'partition.add', 'partition.apply-rule',
-  'partition.delete', 'partition.edit', 'partition.move', 'partition.order',
-  'photo.assign', 'photo.crop', 'photo.delete', 'photo.rotate', 'photo.upload',
-  'playlist.add', 'playlist.delete', 'playlist.edit', 'playlist.order', 'playlist.start',
-  'racer.add', 'racer.bulk', 'racer.delete', 'racer.edit', 'racer.fake', 'racer.import', 'racer.pass',
-  'rank.add', 'rank.delete', 'rank.edit', 'rank.order',
-  'replay.message', 'replay.test', 'replay.trigger',
-  'result.delete', 'result.import', 'result.write',
-  'roster.delete', 'roster.new',
-  'scene.add', 'scene.apply', 'scene.delete', 'scene.setkiosk',
-  'schedule.generate', 'schedule.reschedule', 'schedule.unschedule',
-  'settings.write', 'setup.nodata',
-  // 'action.timer-message',
-  'timer.assign-device', 'timer.assign-flag', 'timer.assign-port', 'timer.remote-start', 'timer.test',
-  'video.upload',
-  'vote.cast',
-));
 
 function create_events_table() {
   run_sql_script('events-table');
 }
 
+// Old-style event recording code.  Leaving the calls in place but making them
+// no-ops.
 function record_event_sql($sql, $params) {
   global $db;
 
@@ -108,6 +84,7 @@ function record_event_sql($sql, $params) {
 }
 
 function record_event($action, $fields = []) {
+  return;
   $sql1 = 'INSERT INTO Events(tstamp, action';
   $sql2 = ' VALUES('.dbnow_expr().', :action';
   $params = array(':action' => $action);
@@ -124,56 +101,11 @@ function record_event($action, $fields = []) {
 }
 
 function record_event_to_limit($action, $max_events, $fields = []) {
+  return;
   if (read_single_value('SELECT COUNT(*) FROM Events WHERE action = :action',
                         array(':action' => $action)) < $max_events) {
     record_event($action, $fields);
   }
-}
-
-// Returns an array of racer records, in the order in which they had the
-// specified event action recorded
-function racers_with_actions($action) {
-  global $db;
-
-  $result = array();
-  try {
-    $stmt = $db->prepare('SELECT seq, RegistrationInfo.racerid, carnumber, lastname, firstname, carname, '
-                         .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank, imagefile'
-                         .' FROM '.inner_join('Events',
-                                              'RegistrationInfo',
-                                              'Events.racerid = RegistrationInfo.racerid',
-                                              'Classes',
-                                              'RegistrationInfo.classid = Classes.classid',
-                                              'Ranks',
-                                              'RegistrationInfo.rankid = Ranks.rankid')
-                         .' WHERE action = :action ORDER BY Events.seq DESC');
-    $stmt->execute(array(':action' => $action));
-    foreach ($stmt as $row) {
-      $result[] = array('seq' => $row['seq'],
-                        'racerid' => $row['racerid'],
-                        'carnumber' => $row['carnumber'],
-                        'lastname' => $row['lastname'],
-                        'firstname' => $row['firstname'],
-                        'carname' => $row['carname'],
-                        'classid' => $row['classid'],
-                        'class' => $row['class'],
-                        'rankid' => $row['rankid'],
-                        'rank' => $row['rank'],
-                        'imagefile' => $row['imagefile']);
-    }
-  } catch (PDOException $p) {
-    if (is_no_such_table_exception($p)) {
-      // Silently fail -- no events table implies no events
-    } else {
-      echo $p;
-    }
-  }
-  return $result;
-}
-
-// Returns an array of racer records, in the order in which they had racer photos assigned
-function racers_with_photos() {
-  return racers_with_actions(EVENT_RACER_PHOTO_ASSIGN);
 }
 
 ?>

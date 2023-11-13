@@ -1403,8 +1403,7 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
 
   // ================================= Simulated poll =============================================================
 
-    var poll_result = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-                       '<document><coordinator_poll>\n' +
+  var poll_result =
       "{\"current-heat\": {\"now_racing\": true,\n" +
                         "\"use_master_sched\": true,\n" +
                         "\"use_points\": false,\n" +
@@ -1584,12 +1583,9 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                    "\"heats_scheduled\": 0,\n" +
                    "\"heats_run\": 0,\n" +
                    "\"name\": \"Grand Finals, Round 1\"}]\n" +
-                             "}" +
-        '</coordinator_poll></document>';
-
-  await page.evaluate(function(xml) {
-    process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
-                poll_result);
+      "}";
+  await page.evaluate(function(json) { process_coordinator_poll_json(JSON.parse(json)); },
+                      poll_result);
 
   assert.equal({'now-racing': [2],
                 'ready-to-race': [],
@@ -1669,9 +1665,8 @@ puppeteer.launch({devtools: debugging, slowMo: 200}).then(async browser => {
                                             img => { return $(img).prop('src'); }));
 
   // A new poll response shouldn't close the control
-  await page.evaluate(function(xml) {
-    process_coordinator_poll_response((new DOMParser()).parseFromString(xml, 'text/xml')); },
-                poll_result);
+  await page.evaluate(function(json) { process_coordinator_poll_json(JSON.parse(json)); },
+                      poll_result);
 
   assert.includes("south", await page.$eval("#master-schedule-group .scheduling_control img",
                                             img => { return $(img).prop('src'); }));

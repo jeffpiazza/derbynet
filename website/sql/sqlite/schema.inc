@@ -135,6 +135,7 @@ make_index("Ranks", "rank"),
 ."  `passedinspection` TINYINT(1) DEFAULT 0, "
 ."  `imagefile` VARCHAR(255), "
 .(expected_schema_version() < 2 ? "" : "  `carphoto` VARCHAR(255), ")
+.(expected_schema_version() < REGISTRATION_CHECKIN_SCHEMA ? "" : "  `checkin_time` INTEGER, ")
 ."  `note` VARCHAR(255), "
 ."  `exclude` TINYINT(1) DEFAULT 0"
 .")",

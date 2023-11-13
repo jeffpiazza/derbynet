@@ -265,13 +265,9 @@ function set_current_heat($roundid, $heat) {
   write_raceinfo('RoundID', $roundid);
   write_raceinfo('Heat', $heat);
 
-  try {
-    $log = $db->prepare('INSERT INTO ActionHistory(received, request) VALUES('.dbnow_expr().', :args)');
-    $log->execute(array(':args' => json_encode(array('action' => 'heat.*advance',
-                                                     'roundid' => $roundid,
-                                                     'heat' => $heat))));
-  } catch (PDOException $p) {
-  }
+  record_action(array('action' => 'heat.*advance',
+                      'roundid' => $roundid,
+                      'heat' => $heat));
 }
 
 // If not working with a timer device, or if DerbyNet is just running as a

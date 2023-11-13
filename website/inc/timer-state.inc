@@ -68,9 +68,14 @@ class TimerState {
       $this->malfunction_expiration = $cooked[2];
       $this->malfunction_message = $cooked[3];
     }
-    
+
     if ($this->last_contact >= 0 && $this->last_contact + 60 < time()) {
+      $timed_out = ($this->state != TIMER_NOT_CONNECTED);
       $this->state = TIMER_NOT_CONNECTED;
+      if ($timed_out) {
+        $this->write(false);
+        record_action(array('action' => 'timer.*overdue'));
+      }
     }
     if ($this->malfunction_expiration != '' &&
         $this->malfunction_expiration != 0 &&
@@ -137,7 +142,7 @@ class TimerState {
       $this->to_state(TIMER_CONNECTED);
     }
   }
-  
+
   public function write($renew) {
     if ($renew && $this->last_contact >= 0) {
       $this->last_contact = time();

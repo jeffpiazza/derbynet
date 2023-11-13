@@ -330,7 +330,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                    + ' onclick="handle_master_next_up()" value="Next Up"/>');
   } else {
     if (round.heats_scheduled > 0 && round.heats_run == 0) {
-      if (round.adjustments.length > 0) {
+      if (round.adjustments && round.adjustments.length > 0) {
         buttons
           .append($('<div class="late-arrival-prompt"></div>')
                   .append('<p>The race schedule needs to be regenerated because:</p>')
@@ -356,7 +356,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                        "<a href='settings.php'>Settings</a> page.</p>");
       }
     }
-    if (round.adjustments.length > 0) {
+    if (round.adjustments && round.adjustments.length > 0) {
       buttons
         .append($('<div class="late-arrival-prompt"></div>')
                 .append('<p>The race schedule needs to be adjusted because:</p>')
