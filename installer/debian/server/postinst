@@ -12,7 +12,9 @@ fi
 
 ######## Create /var/lib/derbynet directory, for storing race information
 
-mkdir -m 777 /var/lib/derbynet 2>/dev/null || true
+mkdir -m 777 /var/lib/derbynet         2>/dev/null || true
+mkdir -m 777 /var/lib/derbynet/imagery 2>/dev/null || true
+mkdir -m 777 /var/lib/derbynet/slides  2>/dev/null || true
 
 ######## Create local directory, point to /var/lib/derbynet
 

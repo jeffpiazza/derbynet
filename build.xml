@@ -450,6 +450,8 @@
   <delete dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}"/>
   <mkdir dir="${uniserver-target}/Data"/>
+  <mkdir dir="${uniserver-target}/Data/imagery"/>
+  <mkdir dir="${uniserver-target}/Data/slides"/>
 
   <copy todir="${uniserver-target}">
     <fileset dir="${uniserver-unpacked}">

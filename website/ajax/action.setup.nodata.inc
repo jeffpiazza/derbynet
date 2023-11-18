@@ -244,7 +244,7 @@ if (locked_settings()) {
   }
 
   $config_roles = 'config-roles.inc';
-  if ($ok && !file_exists(local_file_name($config_roles))) {
+  if ($ok && !file_exists(data_folder_file_path($config_roles))) {
     write_config_roles_file($config_roles);
   }
 
@@ -280,7 +280,7 @@ if (locked_settings()) {
     // other role the config file specifies).
     unset($_SESSION['setting_up']);
 
-    @include_once(local_file_name($config_roles));
+    @include_once(data_folder_file_path($config_roles));
     if (!isset($post_setup_role)) {
       $post_setup_role = 'RaceCoordinator';
     }

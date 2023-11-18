@@ -43,32 +43,14 @@ if (isset($_GET['classids'])) {
 if ($mode == 'slide') {
   $f = $_GET['file'];
 
-  // TODO realpath
-  $results = array();
-
-  // Title slide could come from the local override directory or the selected
-  // stock directory.  Other slides can only come from local override directory.
-  // Look up the title slide only to exclude it as a base name.
-  $title = basename(slide_file_path('title'));
-  if (isset($homedir)) {
-    $dir = $homedir.DIRECTORY_SEPARATOR.'slides';
-    if (is_dir($dir) && is_readable($dir)) {
-      if ($dh = opendir($dir)) {
-        while (($file = readdir($dh)) !== false) {
-          if ($file > $f && substr($file, 0, 1) != "." && $file != $title) {
-            $results[] = $file;
-          }
-        }
-      }
-      closedir($dh);
-      if (count($results) > 0) {
-        sort($results);
-        json_out('photo', array('photo' => 'slide.php/'.pathinfo($results[0])['filename'],
-                                'next' => array('mode' => 'slide',
-                                                'file' => $results[0])));
-        $done = true;
-      }
-    }
+  $results = next_slides($f);
+  if (count($results) > 0) {
+    sort($results);
+    json_out('debug-results', $results);
+    json_out('photo', array('photo' => 'slide.php/'.pathinfo($results[0])['filename'],
+                            'next' => array('mode' => 'slide',
+                                            'file' => $results[0])));
+    $done = true;
   }
 
   $mode = 'racer';

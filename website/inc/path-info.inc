@@ -1,5 +1,7 @@
 <?php
 
+require_once('inc/write-config-files.inc');
+
 function path_info() {
   if (isset($_SERVER['PATH_INFO'])) {
     return $_SERVER['PATH_INFO'];
@@ -34,42 +36,81 @@ function image_base_dir() {
 
 function image_file_path($filename) {
   global $homedir;
+  // Look in folder for this specific event, first
   if (isset($homedir)) {
-    $dir = $homedir.DIRECTORY_SEPARATOR.'imagery'.DIRECTORY_SEPARATOR;
-    $g = glob($dir.$filename.".*");
+    $g = glob($homedir.DIRECTORY_SEPARATOR.'imagery'.DIRECTORY_SEPARATOR.$filename.".*");
     if ($g !== false && count($g) > 0) {
       return $g[0];
     }
   }
-  $dir = image_base_dir().DIRECTORY_SEPARATOR
-       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR;
-  $g = glob($dir.$filename.".*");
+  // Then look in top-level folder, shared across the installation
+  $g = glob(data_folder_file_path('imagery').DIRECTORY_SEPARATOR.$filename.".*");
+  if ($g !== false && count($g) > 0) {
+    return $g[0];
+  }
+  // Finally, look in selected image set
+  $g = glob(image_base_dir().DIRECTORY_SEPARATOR
+       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
+            .$filename.".*");
   if ($g !== false && count($g) > 0) {
     return $g[0];
   }
   // Shouldn't get here
-  return $dir.$filename;
+  return $filename;
 }
 
 function slide_file_path($filename) {
   global $homedir;
   if (isset($homedir)) {
-    $dir = $homedir.DIRECTORY_SEPARATOR.'slides'.DIRECTORY_SEPARATOR;
-    $g = glob($dir.$filename.".*");
+    $g = glob($homedir.DIRECTORY_SEPARATOR.'slides'.DIRECTORY_SEPARATOR.$filename.".*");
     if ($g !== false && count($g) > 0) {
       return $g[0];
     }
   }
-  $dir = image_base_dir().DIRECTORY_SEPARATOR
-       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
-       .'slides'.DIRECTORY_SEPARATOR;
+  $g = glob(data_folder_file_path('slides').DIRECTORY_SEPARATOR.$filename.".*");
+  if ($g !== false && count($g) > 0) {
+    return $g[0];
+  }
 
-  $g = glob($dir.$filename.".*");
+  // Slides that aren't customized are found in a subfolder of the image set
+  $g = glob(image_base_dir().DIRECTORY_SEPARATOR
+       .read_raceinfo("images-dir", 'Generic').DIRECTORY_SEPARATOR
+       .'slides'.DIRECTORY_SEPARATOR.$filename.".*");
   if ($g !== false && count($g) > 0) {
     return $g[0];
   }
   // Shouldn't get here
-  return $dir.$filename;
+  return $filename;
+}
+
+function enumerate_non_title_slides($dir, $current_slide) {
+  $results = array();
+  if (is_dir($dir) && is_readable($dir)) {
+    if ($dh = opendir($dir)) {
+      while (($file = readdir($dh)) !== false) {
+        if ($file > $current_slide && !str_starts_with($file, '.') &&
+            // TODO Check $file = 'title.'.pathinfo(...$file)['extension'] ?
+            !str_starts_with($file, 'title.')) {
+          $results[] = $file;
+        }
+      }
+    }
+    closedir($dh);
+  }
+  return $results;
+}
+
+function next_slides($f) {
+  global $homedir;
+  // TODO realpath
+  $results = array();
+
+  if (isset($homedir)) {
+    $results = array_merge($results, enumerate_non_title_slides($dir, $f));
+  }
+  $results = array_merge($results, enumerate_non_title_slides(data_folder_file_path('slides'), $f));
+
+  return $results;
 }
 
 ?>
