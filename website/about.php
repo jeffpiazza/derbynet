@@ -64,11 +64,13 @@ window.onload = function() {
   position: absolute;
   top: 100px;
   right: 50px;
-  height: 100px;
   width: 250px;
-  padding-top: 30px;
   text-align: center;
   background-color: #408040;
+}
+.capture-link p {
+    margin-top: 46px;
+    margin-bottom: 46px;
 }
 .capture-link a {
   color: white;
@@ -169,13 +171,18 @@ if (isset($db)) {
     echo '<p>Schema version '.$schema_version.' (expecting version '.expected_schema_version().')</p>'."\n";
 
     if (have_permission(SET_UP_PERMISSION)) {
-      echo "<p class='capture-link'>Download Database Snapshot:<br/>"
+      echo "<div class='capture-link'>"
+           ."<p class=''>Download Database Snapshot:<br/>"
            ."<a download='derbynet-".date('Ymd-His').".xml'"
            ." href='action.php?query=snapshot.get'>Complete</a>"
            ."<br/>or<br/>"
            ."<a download='derbynet-".date('Ymd-His').".xml'"
            ." href='action.php?query=snapshot.get&amp;clean'>Cleaned</a>"
-           ."</p>\n";
+           ."</p>"
+           ."<p style='border-top: 1px solid white; padding: 26px; margin-bottom: 0px;'>"
+           ."Download<br/><a download='derbynet.pref'"
+           ." href='preferences.php'>Preferences</a>"
+           ."</p></div>\n";
     }
   } catch (PDOException $p) {
     echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
@@ -224,12 +231,6 @@ if (isset($db)) {
       }
       echo "</p>\n";
     }
-  }
-
-  if (have_permission(SET_UP_PERMISSION)) {
-    echo "<p class=''><a download='derbynet.pref'"
-           ." href='preferences.php'>Download Preferences</a>"
-           ."</p>\n";
   }
 ?>
 <h4>PHP Configuration Information</h4>

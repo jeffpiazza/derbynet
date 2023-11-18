@@ -11,18 +11,19 @@ require_once('inc/rank_add_or_delete.inc');
 // write_settings, often the same as the itemkey written to the RaceInfo table.
 //
 // AWARD = (award name)
-// DIVISION = (partition name)
+// SEGMENT = (partition name)
 //
 // GROUP = (group name) starts a context that extends to the next ENDGROUP.
-// Within a group, SUBGROUPs, DIVISIONs, AWARDs, or NTROPHIES may appear within
+// Within a group, SUBGROUPs, SEGMENTs, AWARDs, or NTROPHIES may appear within
 // a group.
 //
 // SUBGROUP = (subgroup name) starts a context that extends to the next
-// ENDSUBGROUP.  Subgroups must appear only within a group.  DIVISIONs, AWARDs,
+// ENDSUBGROUP.  Subgroups must appear only within a group.  SEGMENTs, AWARDs,
 // or NTROPHIES may appear within a subgroup.
 //
 // AGGREGATE = (aggregate group name) starts a context that extends to the next
-// ENDAGGREGATE.
+// ENDAGGREGATE.  Within an aggregate context, CONSTITUENTGROUP or
+// CONSTITUENTSUBGROUPs may appear, but not a mix of the two.
 
 function create_award($awardname, $awardtype, $classid, $rankid) {
   global $db;
@@ -153,11 +154,11 @@ function set_preferences($content) {
       }
       continue;
     }
-    if ($line_tag == 'DIVISION' && isset($val)) {
+    if ($line_tag == 'SEGMENT' && isset($val)) {
       $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :val',
                                        array(':val' => $val));
       if ($partitionid !== false) {
-        json_failure('division-exists', "At line $lineno , DIVISION $val already exists.");
+        json_failure('division-exists', "At line $lineno , SEGMENT $val already exists.");
         return;
       }
       if (!is_null($curr_subgroup)) {
@@ -317,7 +318,7 @@ function dump_preferences() {
       // $result .= "  SUBGROUP = $row[rank]\n";
       // $result .= "  ENDSUBGROUP\n";
       // Relying on 1-1 correspondence between ranks and partitions
-      $result .= "  DIVISION = $row[rank]\n";
+      $result .= "  SEGMENT = $row[rank]\n";
     }
     if ($prev) {
       $result .= "ENDGROUP\n";
@@ -325,7 +326,7 @@ function dump_preferences() {
   } else {
     $result .= "## Divisions\n";
     foreach ($db->query('SELECT name FROM Partitions ORDER BY sortorder') as $part) {
-      $result .= "DIVISION = ".$part['name']."\n";
+      $result .= "SEGMENT = ".$part['name']."\n";
     }
   }
 
