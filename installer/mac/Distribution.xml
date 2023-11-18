@@ -18,18 +18,18 @@
     <choice id="org.jeffpiazza.derbynet.website" title="DerbyNet web site" visible="true">
         <pkg-ref id="org.jeffpiazza.derbynet.website"/>
     </choice>
-    <pkg-ref id="org.jeffpiazza.derbynet.website" version="8.0" onConclusion="none">derbynet.website.pkg</pkg-ref>
+    <pkg-ref id="org.jeffpiazza.derbynet.website" version="9.0" onConclusion="none">derbynet.website.pkg</pkg-ref>
     <choice id="org.jeffpiazza.derbynet.timer" visible="true"
             title="DerbyNet timer manager">
         <pkg-ref id="org.jeffpiazza.derbynet.timer"/>
     </choice>
-    <pkg-ref id="org.jeffpiazza.derbynet.timer" version="8.0" onConclusion="none">derbynet.timer.pkg</pkg-ref>
+    <pkg-ref id="org.jeffpiazza.derbynet.timer" version="9.0" onConclusion="none">derbynet.timer.pkg</pkg-ref>
     <choice id="org.jeffpiazza.derbynet.docs" title="DerbyNet user documention">
         <pkg-ref id="org.jeffpiazza.derbynet.docs"/>
     </choice>
-    <pkg-ref id="org.jeffpiazza.derbynet.docs" version="8.0" onConclusion="none">derbynet.docs.pkg</pkg-ref>
+    <pkg-ref id="org.jeffpiazza.derbynet.docs" version="9.0" onConclusion="none">derbynet.docs.pkg</pkg-ref>
     <choice id="org.jeffpiazza.derbynet.extras" title="DerbyNet script resources">
         <pkg-ref id="org.jeffpiazza.derbynet.extras"/>
     </choice>
-    <pkg-ref id="org.jeffpiazza.derbynet.extras" version="8.0" onConclusion="none">derbynet.extras.pkg</pkg-ref>
+    <pkg-ref id="org.jeffpiazza.derbynet.extras" version="9.0" onConclusion="none">derbynet.extras.pkg</pkg-ref>
 </installer-gui-script>
