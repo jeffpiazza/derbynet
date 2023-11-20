@@ -53,35 +53,77 @@ function get_replay() {
 }
 
 function send_replay_message($cmd) {
+  global $homedir;
   global $db;
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
-    // TODO: The trouble here is that the RaceInfo table's ItemValue may not be
-    // long enough for what we need, including file names
-    try {
-      if ($db->beginTransaction()) {
-        try {
-          write_raceinfo('replay_queue', read_raceinfo('replay_queue', '').$cmd."\n");
-          $db->commit();
-        } catch (PDOException $e) {
-          $db->rollBack();
-          error_log("send_replay_message: transaction rolled back: ".$e->getMessage());
+    if (isset($homedir) && is_dir($homedir) && is_writable($homedir)) {
+      $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'w+');
+      try {
+        if (flock($fp, LOCK_EX)) {
+          if (fseek($fp, 0, SEEK_END) == 0) {
+            fwrite($fp, $cmd."\n");
+          }
         }
-      } else {
-        error_log("send_replay_message: beginTransaction returns false");
+      } finally {
+        fclose($fp);
       }
-    } catch (PDOException $e) {
-      error_log("send_replay_message: beginTransaction throws ".$e->getMessage());
-    }
-    try {
-      $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
-    } catch (PDOException $e) {
-      error_log("send_replay_message: set autocommit throws ".$e->getMessage());
+    } else {
+      // TODO: The trouble here is that the RaceInfo table's ItemValue may not be
+      // long enough for what we need, including file names
+      try {
+        if ($db->beginTransaction()) {
+          try {
+            write_raceinfo('replay_queue', read_raceinfo('replay_queue', '').$cmd."\n");
+            $db->commit();
+          } catch (PDOException $e) {
+            $db->rollBack();
+            error_log("send_replay_message: transaction rolled back: ".$e->getMessage());
+          }
+        } else {
+          error_log("send_replay_message: beginTransaction returns false");
+        }
+      } catch (PDOException $e) {
+        error_log("send_replay_message: beginTransaction throws ".$e->getMessage());
+      }
+      try {
+        $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
+      } catch (PDOException $e) {
+        error_log("send_replay_message: set autocommit throws ".$e->getMessage());
+      }
     }
     return true;
   } else {
     return false;
   }
+}
+
+function drain_queue() {
+  global $homedir;
+  global $db;
+  $queue = '';
+  if (isset($homedir) && is_dir($homedir) && is_writable($homedir)) {
+    $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'w+');
+    try {
+      if (flock($fp, LOCK_EX)) {
+        $queue = stream_get_contents($fp);
+        ftruncate($fp, 0);
+      }
+    } finally {
+      fclose($fp);
+    }
+  } else {
+    $db->beginTransaction();
+    $queue = read_raceinfo('replay_queue');
+    write_raceinfo('replay_queue', '');
+    $db->commit();
+    try {
+      $db->setAttribute(PDO::ATTR_AUTOCOMMIT, true);
+    } catch (PDOException $p) {
+    }
+  }
+
+  return array_filter(explode("\n", $queue), 'not_empty_string');
 }
 
 function send_replay_TEST() {
