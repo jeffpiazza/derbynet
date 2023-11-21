@@ -52,7 +52,7 @@ function workbook_json() {
    // START_JSON
    return   <?php
        // Tests depend on the export JSON being on one line, so don't use JSON_PRETTY_PRINT
-       echo json_encode($workbook, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+       echo json_encode($workbook, JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP | JSON_NUMERIC_CHECK); ?>;
    // END_JSON
 }
 </script>
