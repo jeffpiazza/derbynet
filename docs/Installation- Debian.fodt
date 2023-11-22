@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <office:document xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:officeooo="http://openoffice.org/2009/office" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:rpt="http://openoffice.org/2005/report" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.text">
- <office:meta><meta:creation-date>2017-02-19T16:00:46.777805000</meta:creation-date><meta:editing-duration>P3DT22M7S</meta:editing-duration><meta:editing-cycles>43</meta:editing-cycles><meta:generator>LibreOffice/7.5.0.3$MacOSX_AARCH64 LibreOffice_project/c21113d003cd3efa8c53188764377a8272d9d6de</meta:generator><dc:date>2023-04-10T07:08:08.829690910</dc:date><meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="5" meta:paragraph-count="67" meta:word-count="1256" meta:character-count="8721" meta:non-whitespace-character-count="7475"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-02-19T16:00:45.871134000"/></office:meta>
+ <office:meta><meta:creation-date>2017-02-19T16:00:46.777805000</meta:creation-date><meta:editing-duration>P3DT54M26S</meta:editing-duration><meta:editing-cycles>49</meta:editing-cycles><meta:generator>LibreOffice/7.5.0.3$MacOSX_AARCH64 LibreOffice_project/c21113d003cd3efa8c53188764377a8272d9d6de</meta:generator><dc:date>2023-11-21T19:36:28.469207170</dc:date><meta:document-statistic meta:table-count="1" meta:image-count="0" meta:object-count="0" meta:page-count="5" meta:paragraph-count="68" meta:word-count="1239" meta:character-count="8611" meta:non-whitespace-character-count="7379"/><meta:template xlink:type="simple" xlink:actuate="onRequest" xlink:title="DerbyNet Docs Template" xlink:href="../../../../../Library/Application%20Support/LibreOffice/4/user/template/DerbyNet%20Docs%20Template.ott" meta:date="2017-02-19T16:00:45.871134000"/></office:meta>
  <office:settings>
   <config:config-item-set config:name="ooo:view-settings">
-   <config:config-item config:name="ViewAreaTop" config:type="long">28471</config:config-item>
+   <config:config-item config:name="ViewAreaTop" config:type="long">61205</config:config-item>
    <config:config-item config:name="ViewAreaLeft" config:type="long">0</config:config-item>
    <config:config-item config:name="ViewAreaWidth" config:type="long">28122</config:config-item>
-   <config:config-item config:name="ViewAreaHeight" config:type="long">15021</config:config-item>
+   <config:config-item config:name="ViewAreaHeight" config:type="long">15722</config:config-item>
    <config:config-item config:name="ShowRedlineChanges" config:type="boolean">true</config:config-item>
    <config:config-item config:name="InBrowseMode" config:type="boolean">false</config:config-item>
    <config:config-item-map-indexed config:name="Views">
     <config:config-item-map-entry>
      <config:config-item config:name="ViewId" config:type="string">view2</config:config-item>
-     <config:config-item config:name="ViewLeft" config:type="long">13838</config:config-item>
-     <config:config-item config:name="ViewTop" config:type="long">32905</config:config-item>
+     <config:config-item config:name="ViewLeft" config:type="long">7878</config:config-item>
+     <config:config-item config:name="ViewTop" config:type="long">35759</config:config-item>
      <config:config-item config:name="VisibleLeft" config:type="long">0</config:config-item>
-     <config:config-item config:name="VisibleTop" config:type="long">28471</config:config-item>
+     <config:config-item config:name="VisibleTop" config:type="long">61205</config:config-item>
      <config:config-item config:name="VisibleRight" config:type="long">28120</config:config-item>
-     <config:config-item config:name="VisibleBottom" config:type="long">43490</config:config-item>
+     <config:config-item config:name="VisibleBottom" config:type="long">76925</config:config-item>
      <config:config-item config:name="ZoomType" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutColumns" config:type="short">0</config:config-item>
      <config:config-item config:name="ViewLayoutBookMode" config:type="boolean">false</config:config-item>
@@ -136,7 +136,7 @@
    <config:config-item config:name="PrinterName" config:type="string"/>
    <config:config-item config:name="DoNotJustifyLinesWithManualBreak" config:type="boolean">false</config:config-item>
    <config:config-item config:name="ChartAutoUpdate" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="Rsid" config:type="int">4562305</config:config-item>
+   <config:config-item config:name="Rsid" config:type="int">4641928</config:config-item>
    <config:config-item config:name="AddFrameOffsets" config:type="boolean">false</config:config-item>
   </config:config-item-set>
  </office:settings>
@@ -153,6 +153,7 @@
   <style:font-face style:name="Courier New" svg:font-family="&apos;Courier New&apos;" style:font-family-generic="modern" style:font-pitch="fixed"/>
   <style:font-face style:name="Courier New1" svg:font-family="&apos;Courier New&apos;" style:font-family-generic="modern" style:font-pitch="variable"/>
   <style:font-face style:name="CourierNewPSMT" svg:font-family="CourierNewPSMT"/>
+  <style:font-face style:name="Helvetica" svg:font-family="Helvetica"/>
   <style:font-face style:name="Liberation Mono" svg:font-family="&apos;Liberation Mono&apos;" style:font-family-generic="modern" style:font-pitch="fixed"/>
   <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="swiss" style:font-pitch="variable"/>
   <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
@@ -165,8 +166,8 @@
  </office:font-face-decls>
  <office:styles>
   <style:default-style style:family="graphic">
-   <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.1181in" draw:shadow-offset-y="0.1181in" draw:start-line-spacing-horizontal="0.1114in" draw:start-line-spacing-vertical="0.1114in" draw:end-line-spacing-horizontal="0.1114in" draw:end-line-spacing-vertical="0.1114in" style:flow-with-text="false"/>
-   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:writing-mode="lr-tb" style:font-independent-line-spacing="false">
+   <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap" draw:shadow-offset-x="0.1181in" draw:shadow-offset-y="0.1181in" draw:start-line-spacing-horizontal="0.1114in" draw:start-line-spacing-vertical="0.1114in" draw:end-line-spacing-horizontal="0.1114in" draw:end-line-spacing-vertical="0.1114in" style:writing-mode="lr-tb" style:flow-with-text="false"/>
+   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:line-break="strict" style:font-independent-line-spacing="false">
     <style:tab-stops/>
    </style:paragraph-properties>
    <style:text-properties style:use-window-font-color="true" loext:opacity="0%" loext:color-lum-mod="100%" loext:color-lum-off="0%" style:font-name="Liberation Serif" fo:font-size="12pt" fo:language="en" fo:country="US" style:letter-kerning="true" style:font-name-asian="SimSun" style:font-size-asian="10.5pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="Lucida Sans1" style:font-size-complex="12pt" style:language-complex="hi" style:country-complex="IN"/>
@@ -583,23 +584,35 @@
    <style:paragraph-properties style:page-number="auto"/>
    <style:text-properties officeooo:rsid="0020662a" officeooo:paragraph-rsid="0020662a"/>
   </style:style>
-  <style:style style:name="P79" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:paragraph-rsid="0031926b"/>
+  <style:style style:name="P79" style:family="paragraph" style:parent-style-name="Command_20_Line">
+   <style:text-properties fo:font-size="10pt" style:font-size-asian="10pt" style:font-size-complex="10pt"/>
   </style:style>
-  <style:style style:name="P80" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="002df53e" officeooo:paragraph-rsid="0031926b"/>
+  <style:style style:name="P80" style:family="paragraph" style:parent-style-name="Heading_20_2">
+   <style:text-properties officeooo:rsid="0046d488" officeooo:paragraph-rsid="0046d488"/>
   </style:style>
-  <style:style style:name="P81" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="002df53e" officeooo:paragraph-rsid="003db97d"/>
+  <style:style style:name="P81" style:family="paragraph" style:parent-style-name="Standard">
+   <style:text-properties officeooo:rsid="0046d488" officeooo:paragraph-rsid="0046d488"/>
   </style:style>
   <style:style style:name="P82" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="0031926b" officeooo:paragraph-rsid="0031926b"/>
+   <style:text-properties officeooo:paragraph-rsid="0031926b"/>
   </style:style>
   <style:style style:name="P83" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
-   <style:text-properties officeooo:rsid="0031926b" officeooo:paragraph-rsid="003efca2"/>
+   <style:text-properties officeooo:rsid="002df53e" officeooo:paragraph-rsid="0031926b"/>
   </style:style>
   <style:style style:name="P84" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="002df53e" officeooo:paragraph-rsid="003db97d"/>
+  </style:style>
+  <style:style style:name="P85" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="0031926b" officeooo:paragraph-rsid="0031926b"/>
+  </style:style>
+  <style:style style:name="P86" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
+   <style:text-properties officeooo:rsid="0031926b" officeooo:paragraph-rsid="003efca2"/>
+  </style:style>
+  <style:style style:name="P87" style:family="paragraph" style:parent-style-name="Text_20_body" style:list-style-name="L1">
    <style:text-properties officeooo:rsid="00324a29" officeooo:paragraph-rsid="0033a60f"/>
+  </style:style>
+  <style:style style:name="P88" style:family="paragraph" style:parent-style-name="Text_20_body">
+   <style:text-properties officeooo:paragraph-rsid="0046d488"/>
   </style:style>
   <style:style style:name="T1" style:family="text">
    <style:text-properties officeooo:rsid="00217dbd"/>
@@ -764,34 +777,40 @@
    <style:text-properties fo:font-weight="bold" officeooo:rsid="003efca2" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
   <style:style style:name="T55" style:family="text">
-   <style:text-properties officeooo:rsid="003db97d"/>
+   <style:text-properties fo:font-weight="bold" officeooo:rsid="0046d488" style:font-weight-asian="bold" style:font-weight-complex="bold"/>
   </style:style>
   <style:style style:name="T56" style:family="text">
-   <style:text-properties officeooo:rsid="003efca2"/>
+   <style:text-properties officeooo:rsid="003db97d"/>
   </style:style>
   <style:style style:name="T57" style:family="text">
-   <style:text-properties officeooo:rsid="00408ec0"/>
+   <style:text-properties officeooo:rsid="003efca2"/>
   </style:style>
   <style:style style:name="T58" style:family="text">
-   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="10pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+   <style:text-properties officeooo:rsid="00408ec0"/>
   </style:style>
   <style:style style:name="T59" style:family="text">
-   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt"/>
+   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="10pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
   </style:style>
   <style:style style:name="T60" style:family="text">
-   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt"/>
   </style:style>
   <style:style style:name="T61" style:family="text">
-   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt" officeooo:rsid="0040d085" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
   </style:style>
   <style:style style:name="T62" style:family="text">
-   <style:text-properties fo:color="#00007f" loext:opacity="100%" style:font-name="CourierNewPSMT" fo:font-size="9pt"/>
+   <style:text-properties style:font-name="CourierNewPSMT" fo:font-size="9pt" officeooo:rsid="0040d085" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
   </style:style>
   <style:style style:name="T63" style:family="text">
-   <style:text-properties fo:color="#00007f" loext:opacity="100%" style:font-name="CourierNewPSMT" fo:font-size="9pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+   <style:text-properties fo:color="#00007f" loext:opacity="100%" style:font-name="CourierNewPSMT" fo:font-size="9pt"/>
   </style:style>
   <style:style style:name="T64" style:family="text">
+   <style:text-properties fo:color="#00007f" loext:opacity="100%" style:font-name="CourierNewPSMT" fo:font-size="9pt" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+  </style:style>
+  <style:style style:name="T65" style:family="text">
    <style:text-properties fo:color="#00007f" loext:opacity="100%" style:font-name="CourierNewPSMT" fo:font-size="9pt" officeooo:rsid="00459d81" fo:background-color="#bfbfbf" loext:char-shading-value="0" style:font-size-asian="9pt" style:font-size-complex="9pt"/>
+  </style:style>
+  <style:style style:name="T66" style:family="text">
+   <style:text-properties officeooo:rsid="0046d488"/>
   </style:style>
   <text:list-style style:name="L1">
    <text:list-level-style-number text:level="1" text:style-name="Numbering_20_Symbols" loext:num-list-format="%1%." style:num-suffix="." style:num-format="1">
@@ -900,18 +919,19 @@
     </table:table-row>
    </table:table>
    <text:h text:style-name="P50" text:outline-level="1">Adding the DerbyNet Apt Repository</text:h>
-   <text:p text:style-name="Text_20_body">Debian-based systems use the “apt” package management system to download and install software. <text:s/><text:span text:style-name="T45">DerbyNet is available in its own repository, but is not part of the standard Raspian repository.</text:span> <text:s/>The following commands will allow apt to access the repository containing DerbyNet packages:</text:p>
+   <text:p text:style-name="P88">Debian-based systems use the “<text:span text:style-name="T52">apt</text:span>” package management system to download and install software. <text:s/><text:span text:style-name="T45">DerbyNet is available in its own repository. <text:s/></text:span><text:span text:style-name="T66">To allow </text:span><text:span text:style-name="T55">apt</text:span><text:span text:style-name="T66"> to access the DerbyNet packages, do one of the following:</text:span></text:p>
+   <text:h text:style-name="P80" text:outline-level="2">The Easy Method</text:h>
+   <text:p text:style-name="P81">The easiest method for adding the DerbyNet repository for <text:span text:style-name="T52">apt</text:span> is to copy and paste the following command to download and execute a shell script. <text:s/></text:p>
+   <text:p text:style-name="P79"><text:line-break/><text:span text:style-name="T66">wget -q -O -</text:span> <text:a xlink:type="simple" xlink:href="https://derbynet.org/debian-install.sh" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://derbynet.org/debian-install.sh</text:a> | sh<text:line-break/></text:p>
+   <text:h text:style-name="P80" text:outline-level="2">The Manual Method</text:h>
+   <text:p text:style-name="P88">The <text:span text:style-name="T66">debian-install.sh script contains the f</text:span>ollowing commands. <text:s/><text:span text:style-name="T66">If you prefer, you can enter them by hand instead of downloading the shell script</text:span>:</text:p>
    <text:p text:style-name="P72">sudo apt-get update</text:p>
-   <text:p text:style-name="P54"><text:span text:style-name="T32">sudo apt-get install -</text:span><text:span text:style-name="T33">y </text:span><text:span text:style-name="T32">apt-transport-https<text:line-break/><text:line-break/>wge</text:span><text:span text:style-name="T35">t -q -</text:span><text:span text:style-name="T40">O- </text:span><text:a xlink:type="simple" xlink:href="https://jeffpiazza.org/derbynet/debian/jeffpiazza_derbynet.gpg" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T35">https://derbynet.</text:span><text:span text:style-name="T42">org</text:span><text:span text:style-name="T35">/debian/derbynet.gpg</text:span></text:a><text:span text:style-name="T35"> | \<text:line-break/> <text:s/>sudo </text:span><text:span text:style-name="T25">tee /usr/share/keyrings/</text:span><text:span text:style-name="T26">derbynet</text:span><text:span text:style-name="T25">-archive-keyring.gpg &gt; /</text:span><text:span text:style-name="T27">dev/null</text:span><text:span text:style-name="T35"><text:line-break/><text:line-break/>echo </text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35">deb [arch=all </text:span><text:span text:style-name="T39">signed-by=</text:span><text:span text:style-name="T25">/usr/share/keyrings/</text:span><text:span text:style-name="T26">derbynet-archive-keyring</text:span><text:span text:style-name="T39">.gpg</text:span><text:span text:style-name="T35">] </text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35"> </text:span><text:span text:style-name="T39">\</text:span><text:span text:style-name="T35"><text:line-break/> <text:s text:c="8"/></text:span><text:span text:style-name="T37">&quot; </text:span><text:a xlink:type="simple" xlink:href="https://jeffpiazza.org/derbynet/debian" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T35">https://derbynet.</text:span><text:span text:style-name="T42">org</text:span><text:span text:style-name="T35">/debian</text:span></text:a><text:span text:style-name="T35"> </text:span><text:span text:style-name="T36">stable</text:span><text:span text:style-name="T35"> main</text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35"> | \<text:line-break/> <text:s/>sudo tee /etc/apt/sources.list.d/derbynet.list &gt; /dev/null<text:line-break/><text:line-break/>sudo apt-get update</text:span></text:p>
-   <text:p text:style-name="Text_20_body">(The commands above also ensure that apt supports https-based repositories, and downloads the key used to sign the DerbyNet repository.)</text:p>
-   <text:p text:style-name="Text_20_body">Note that apt requires an internet connection to download packages from the repository. <text:s/>After installation is complete, you can run the installed software without access to the public internet.</text:p>
-   <text:h text:style-name="P74" text:outline-level="1">If apt Says There’s No “Release” File</text:h>
-   <text:p text:style-name="P75">Older versions of apt authenticate a repository differently than more recent versions. <text:s/>If you see an error message <text:span text:style-name="T57">that the repository “does not have a Release file,” these commands are likely to be more </text:span><text:soft-page-break/><text:span text:style-name="T57">successful:</text:span></text:p>
-   <text:p text:style-name="P73"><text:span text:style-name="T58">wge</text:span><text:span text:style-name="T60">t -q -O- </text:span><text:span text:style-name="T63">https://derbynet.</text:span><text:span text:style-name="T64">org</text:span><text:span text:style-name="T63">/debian/derbynet.gpg </text:span><text:span text:style-name="T60">| \<text:line-break/> sudo apt-key add - <text:line-break/><text:line-break/>echo &quot;deb [arch=all] </text:span><text:span text:style-name="T63">https://derbynet.</text:span><text:span text:style-name="T64">org</text:span><text:span text:style-name="T63">/debian </text:span><text:span text:style-name="T60">stable main&quot; | \<text:line-break/> <text:s/>sudo tee /etc/apt/sources.list.d/derbynet.list &gt; /dev/null<text:line-break/><text:line-break/></text:span><text:span text:style-name="T41">sudo apt-get update</text:span></text:p>
-   <text:h text:style-name="P9" text:outline-level="1">If You Previously Installed derbynet</text:h>
-   <text:p text:style-name="Text_20_body">If you have previously installed the monolithic derbynet package <text:span text:style-name="T45">(v2.0 or earlier)</text:span>, <text:span text:style-name="T45">apt may refuse to </text:span>install any of the <text:span text:style-name="T10">new</text:span> debs <text:span text:style-name="T10">until the</text:span> older derbynet package <text:span text:style-name="T10">is removed</text:span>. <text:s/><text:span text:style-name="T10">It may be easiest to do this explicitly, before installing any of the new debs:</text:span></text:p>
-   <text:p text:style-name="P26">sudo apt-get <text:span text:style-name="T45">remove</text:span> derbynet</text:p>
-   <text:p text:style-name="Text_20_body">All of the functionality previously offered by the old derbynet package is provided through the new packages.</text:p>
+   <text:p text:style-name="P54"><text:span text:style-name="T32">sudo apt-get install -</text:span><text:span text:style-name="T33">y </text:span><text:span text:style-name="T32">apt-transport-https<text:line-break/><text:line-break/>wge</text:span><text:span text:style-name="T35">t -q -</text:span><text:span text:style-name="T40">O- </text:span><text:a xlink:type="simple" xlink:href="https://jeffpiazza.org/derbynet/debian/jeffpiazza_derbynet.gpg" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T35">https://derbynet.</text:span><text:span text:style-name="T42">org</text:span><text:span text:style-name="T35">/debian/derbynet.gpg</text:span></text:a><text:span text:style-name="T35"> | \<text:line-break/> <text:s/>sudo </text:span><text:span text:style-name="T25">tee /usr/share/keyrings/</text:span><text:span text:style-name="T26">derbynet</text:span><text:span text:style-name="T25">-archive-keyring.gpg &gt; /</text:span><text:span text:style-name="T27">dev/null</text:span><text:span text:style-name="T35"><text:line-break/><text:line-break/>echo </text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35">deb [arch=all </text:span><text:span text:style-name="T39">signed-by=</text:span><text:span text:style-name="T25">/usr/share/keyrings/</text:span><text:span text:style-name="T26">derbynet-archive-keyring</text:span><text:span text:style-name="T39">.gpg</text:span><text:span text:style-name="T35">] </text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35"> </text:span><text:span text:style-name="T39">\</text:span><text:span text:style-name="T35"><text:line-break/> <text:s text:c="8"/></text:span><text:span text:style-name="T37">&quot; </text:span><text:a xlink:type="simple" xlink:href="https://jeffpiazza.org/derbynet/debian" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link"><text:span text:style-name="T35">https://derbynet.</text:span><text:span text:style-name="T42">org</text:span><text:span text:style-name="T35">/debian</text:span></text:a><text:span text:style-name="T35"> </text:span><text:span text:style-name="T36">stable</text:span><text:span text:style-name="T35"> main</text:span><text:span text:style-name="T37">&quot;</text:span><text:span text:style-name="T35"> | \<text:line-break/> <text:s/>sudo tee /etc/apt/sources.list.d/derbynet.list &gt; /dev/null<text:line-break/></text:span><text:soft-page-break/><text:span text:style-name="T35"><text:line-break/>sudo apt-get update</text:span></text:p>
+   <text:p text:style-name="Text_20_body">(The commands above also ensure that <text:span text:style-name="T52">apt</text:span> supports https-based repositories, and downloads the key used to sign the DerbyNet repository.)</text:p>
+   <text:p text:style-name="Text_20_body">Note that <text:span text:style-name="T52">apt</text:span> requires an internet connection to download packages from the repository. <text:s/>After installation is complete, you can run the installed software without access to the public internet.</text:p>
+   <text:h text:style-name="Heading_20_2" text:outline-level="2">If apt Says There’s No “Release” File</text:h>
+   <text:p text:style-name="P75"><text:span text:style-name="T66">V</text:span>ersions of <text:span text:style-name="T52">apt</text:span> <text:span text:style-name="T66">earlier than 1.1 </text:span>authenticate a repository differently than more recent versions. <text:s/>If you see an error message <text:span text:style-name="T58">that the repository “does not have a Release file,” these commands are likely to be more successful:</text:span></text:p>
+   <text:p text:style-name="P73"><text:span text:style-name="T59">wge</text:span><text:span text:style-name="T61">t -q -O- </text:span><text:span text:style-name="T64">https://derbynet.</text:span><text:span text:style-name="T65">org</text:span><text:span text:style-name="T64">/debian/derbynet.gpg </text:span><text:span text:style-name="T61">| \<text:line-break/> sudo apt-key add - <text:line-break/><text:line-break/>echo &quot;deb [arch=all] </text:span><text:span text:style-name="T64">https://derbynet.</text:span><text:span text:style-name="T65">org</text:span><text:span text:style-name="T64">/debian </text:span><text:span text:style-name="T61">stable main&quot; | \<text:line-break/> <text:s/>sudo tee /etc/apt/sources.list.d/derbynet.list &gt; /dev/null<text:line-break/><text:line-break/></text:span><text:span text:style-name="T41">sudo apt-get update</text:span></text:p>
    <text:h text:style-name="P17" text:outline-level="1">Installing derbynet-server</text:h>
    <text:p text:style-name="Text_20_body">After adding the DerbyNet repository (see above), install derbynet-server with the following command:</text:p>
    <text:p text:style-name="P15"><text:span text:style-name="T15">sudo apt-get install </text:span><text:span text:style-name="T16">derbynet-server</text:span></text:p>
@@ -936,48 +956,48 @@
    <text:p text:style-name="P3">s<text:span text:style-name="T13">udo </text:span><text:span text:style-name="T22">apt-get install</text:span><text:span text:style-name="T13"> derbynet-extras</text:span></text:p>
    <text:p text:style-name="Text_20_body">derbynet-extras has no dependencies, and should install without complaint. <text:s/>Look through /usr/share/derbynet to see what’s available.</text:p>
    <text:h text:style-name="Heading_20_1" text:outline-level="1"><text:span text:style-name="T51">Turn-Key</text:span> <text:span text:style-name="T51">Clients on</text:span> Raspberry Pi</text:h>
-   <text:p text:style-name="P60">The Raspberry Pi is especially well suited to act as <text:span text:style-name="T55">dedicated </text:span>a DerbyNet client, including being a kiosk or connecting to a timer. <text:s/>This section discusses <text:span text:style-name="T55">setting up a Raspberry Pi as a dedicated DerbyNet client.</text:span></text:p>
-   <text:h text:style-name="Heading_20_2" text:outline-level="2"><text:span text:style-name="T55">T</text:span>he <text:span text:style-name="T55">Raspberry Pi </text:span>/boot Partition</text:h>
+   <text:p text:style-name="P60">The Raspberry Pi is especially well suited to act as <text:span text:style-name="T56">dedicated </text:span>a DerbyNet client, including being a kiosk or connecting to a timer. <text:s/>This section discusses <text:span text:style-name="T56">setting up a Raspberry Pi as a dedicated DerbyNet client.</text:span></text:p>
+   <text:h text:style-name="Heading_20_2" text:outline-level="2"><text:span text:style-name="T56">T</text:span>he <text:span text:style-name="T56">Raspberry Pi </text:span>/boot Partition</text:h>
    <text:p text:style-name="Text_20_body">The Raspberry Pi boots from an SD or micro-SD card. <text:s/>The card includes<text:span text:style-name="T46"> two partitions: the main partition, and </text:span>a small<text:span text:style-name="T46">er</text:span> /boot partition. <text:s/>While the main partition uses one of the Linux-only &apos;ext&apos; file systems, the /boot partition is a vfat file system. <text:s/><text:span text:style-name="T51">vfat, and hence</text:span> the /boot partition, can be read and written<text:span text:style-name="T46"> </text:span>by Windows, Mac, and Linux systems.</text:p>
    <text:h text:style-name="P61" text:outline-level="2">/boot/wpa_supplicant.conf</text:h>
-   <text:p text:style-name="P60">When Raspbian starts up, if a /boot/wpa_supplicant.conf file is present, it is moved to the /etc/wpa_supplicant directory. <text:s/>This allows <text:span text:style-name="T55">a Windows, Mac, or Linux machine to write </text:span>a WiFi configuration <text:span text:style-name="T55">directly</text:span> to the card. <text:s/>(<text:a xlink:type="simple" xlink:href="https://www.raspberrypi.org/blog/another-update-raspbian/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.raspberrypi.org/blog/another-update-raspbian/</text:a>)</text:p>
+   <text:p text:style-name="P60">When Raspbian starts up, if a /boot/wpa_supplicant.conf file is present, it is moved to the /etc/wpa_supplicant directory. <text:s/>This allows <text:span text:style-name="T56">a Windows, Mac, or Linux machine to write </text:span>a WiFi configuration <text:span text:style-name="T56">directly</text:span> to the card. <text:s/>(<text:a xlink:type="simple" xlink:href="https://www.raspberrypi.org/blog/another-update-raspbian/" text:style-name="Internet_20_link" text:visited-style-name="Visited_20_Internet_20_Link">https://www.raspberrypi.org/blog/another-update-raspbian/</text:a>)</text:p>
    <text:h text:style-name="P59" text:outline-level="2">/boot/derbynet.conf and /etc/derbynet.conf</text:h>
    <text:p text:style-name="P58">Several scripts <text:span text:style-name="T51">in derbynet-extras and derbynet-timer</text:span> retrieve configuration information from two possible configuration files: <text:span text:style-name="T17">/etc/derbynet.conf</text:span> and <text:span text:style-name="T17">/boot/derbynet.conf</text:span>. <text:s/>If both files are present, settings in <text:span text:style-name="T17">/boot/derbynet.conf</text:span><text:span text:style-name="T48"> take precedence over those in </text:span><text:span text:style-name="T17">/etc/derbynet.conf</text:span><text:span text:style-name="T48">.</text:span></text:p>
    <text:p text:style-name="P64"><text:span text:style-name="T48">The derbynet-extras package writes a </text:span><text:span text:style-name="T50">skeleton</text:span><text:span text:style-name="T48"> </text:span><text:span text:style-name="T17">/</text:span><text:span text:style-name="T21">etc/derbynet.conf </text:span><text:span text:style-name="T50">file. <text:s/>On Raspbian, the installer also copies the same skeleton to</text:span><text:span text:style-name="T48"> </text:span><text:span text:style-name="T17">/</text:span><text:span text:style-name="T21">b</text:span><text:span text:style-name="T17">oot/derbynet.conf</text:span><text:span text:style-name="T48">, </text:span><text:span text:style-name="T50">where it</text:span><text:span text:style-name="T48"> can be subsequently </text:span><text:soft-page-break/><text:span text:style-name="T48">customized by putting the card in a Windows, Mac, or Linux machine.</text:span></text:p>
    <text:p text:style-name="P62"><text:span text:style-name="T48">Nothing in the derbynet-server packages consults the</text:span><text:span text:style-name="T49"> </text:span><text:span text:style-name="T19">derbynet.conf</text:span><text:span text:style-name="T49"> </text:span><text:span text:style-name="T48">files; they are exclusively for configuring DerbyNet client scripts. </text:span></text:p>
    <text:h text:style-name="P38" text:outline-level="2">Turn-key<text:span text:style-name="T51"> </text:span>Kiosk on a Raspberry Pi</text:h>
    <text:p text:style-name="P35">If you know in advance what either the DNS name or IP address for the DerbyNet web server will be, you can configure a Raspberry Pi so that it becomes a kiosk as soon as it&apos;s plugged in, with no additional intervention required. <text:s/><text:span text:style-name="T12">derbynet-extras includes scripts and configuration files to make this easy. <text:s/>Follow these steps:</text:span></text:p>
-   <text:list xml:id="list3580704353" text:style-name="L1">
+   <text:list xml:id="list613562853" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P80">Copy the autostart file to the local autostart directory:</text:p>
+     <text:p text:style-name="P83">Copy the autostart file to the local autostart directory:</text:p>
     </text:list-item>
    </text:list>
    <text:p text:style-name="P27">mkdir ~/.config/autostart<text:line-break/><text:line-break/>cp /usr/share/derbynet/autostart/kiosk.desktop \<text:line-break/> <text:s text:c="2"/>~/.config/autostart</text:p>
-   <text:list xml:id="list70810911276527" text:continue-numbering="true" text:style-name="L1">
+   <text:list xml:id="list193629982640376" text:continue-numbering="true" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P79"><text:span text:style-name="T3">Optional: </text:span><text:span text:style-name="T30">Choose your browser. <text:s/>There are several web browsers available for the Raspberry Pi. <text:s/>By default, the script at </text:span><text:span text:style-name="T18">/usr/share/derbynet/scripts/kiosk.sh</text:span><text:span text:style-name="T29"> will select a browser to use based on what browsers are installed. If you prefer to use a different browser, edit a config file (e.g., </text:span><text:span text:style-name="T18">/etc/derbynet.conf</text:span><text:span text:style-name="T29">). See the comments at the top of the </text:span><text:span text:style-name="T18">kiosk.sh</text:span><text:span text:style-name="T29"> script for further details.</text:span></text:p>
+     <text:p text:style-name="P82"><text:span text:style-name="T3">Optional: </text:span><text:span text:style-name="T30">Choose your browser. <text:s/>There are several web browsers available for the Raspberry Pi. <text:s/>By default, the script at </text:span><text:span text:style-name="T18">/usr/share/derbynet/scripts/kiosk.sh</text:span><text:span text:style-name="T29"> will select a browser to use based on what browsers are installed. If you prefer to use a different browser, edit a config file (e.g., </text:span><text:span text:style-name="T18">/etc/derbynet.conf</text:span><text:span text:style-name="T29">). See the comments at the top of the </text:span><text:span text:style-name="T18">kiosk.sh</text:span><text:span text:style-name="T29"> script for further details.</text:span></text:p>
     </text:list-item>
     <text:list-item>
-     <text:p text:style-name="P82">Enter the address of your DerbyNet server. <text:s/><text:span text:style-name="T31">Your kiosk browser needs to be pointed to your DerbyNet web server. <text:s/>For true turn-key operation, you must configure your kiosk with the DNS name or IP address of the DerbyNet web server.</text:span></text:p>
+     <text:p text:style-name="P85">Enter the address of your DerbyNet server. <text:s/><text:span text:style-name="T31">Your kiosk browser needs to be pointed to your DerbyNet web server. <text:s/>For true turn-key operation, you must configure your kiosk with the DNS name or IP address of the DerbyNet web server.</text:span></text:p>
     </text:list-item>
    </text:list>
    <text:p text:style-name="P45">Edit the <text:span text:style-name="T17">/boot/derbynet.conf</text:span> configuration file to set the value for the DERBYNET_SERVER variable.</text:p>
-   <text:list xml:id="list70810406264867" text:continue-numbering="true" text:style-name="L1">
+   <text:list xml:id="list193630159625636" text:continue-numbering="true" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P84">If you have a screen saver installed, you will probably want to disable it. </text:p>
+     <text:p text:style-name="P87">If you have a screen saver installed, you will probably want to disable it. </text:p>
     </text:list-item>
    </text:list>
    <text:h text:style-name="P63" text:outline-level="2">Turn-Key Timer Client on a Raspberry Pi</text:h>
-   <text:p text:style-name="P64">If you installed the derbynet-timer package, you can set up a Raspberry Pi to <text:span text:style-name="T56">act as the intermediary between your track timer and the DerbyNet web server. <text:s/>For more details about the timer-to-web-server communication path, see the “</text:span><text:span text:style-name="T54">Timer Operations”</text:span><text:span text:style-name="T56"> document that accompanies this installation guide in the </text:span><text:span text:style-name="T54">/</text:span><text:span text:style-name="T53">usr/share/derbynet</text:span><text:span text:style-name="T54">/docs</text:span><text:span text:style-name="T56"> folder.</text:span></text:p>
-   <text:list xml:id="list70810418097880" text:continue-list="list70810406264867" text:style-name="L1">
+   <text:p text:style-name="P64">If you installed the derbynet-timer package, you can set up a Raspberry Pi to <text:span text:style-name="T57">act as the intermediary between your track timer and the DerbyNet web server. <text:s/>For more details about the timer-to-web-server communication path, see the “</text:span><text:span text:style-name="T54">Timer Operations”</text:span><text:span text:style-name="T57"> document that accompanies this installation guide in the </text:span><text:span text:style-name="T54">/</text:span><text:span text:style-name="T53">usr/share/derbynet</text:span><text:span text:style-name="T54">/docs</text:span><text:span text:style-name="T57"> folder.</text:span></text:p>
+   <text:list xml:id="list193629705579466" text:continue-list="list193630159625636" text:style-name="L1">
     <text:list-item text:start-value="1">
-     <text:p text:style-name="P81">Copy the autostart file to the local autostart directory:</text:p>
+     <text:p text:style-name="P84">Copy the autostart file to the local autostart directory:</text:p>
     </text:list-item>
    </text:list>
    <text:p text:style-name="P30"><text:span text:style-name="T23">mkdir ~/.config/autostart<text:line-break/><text:line-break/>cp /usr/share/derbynet/autostart/</text:span><text:span text:style-name="T24">derby-timer</text:span><text:span text:style-name="T23">.desktop \<text:line-break/> <text:s text:c="2"/>~/.config/autostart</text:span></text:p>
-   <text:list xml:id="list70809926415611" text:continue-numbering="true" text:style-name="L1">
+   <text:list xml:id="list193629859208905" text:continue-numbering="true" text:style-name="L1">
     <text:list-item>
-     <text:p text:style-name="P83"><text:span text:style-name="T31">Edit (or create) a </text:span><text:span text:style-name="T20">derbynet.conf</text:span><text:span text:style-name="T31"> configuration file (either </text:span><text:span text:style-name="T18">/etc/derbynet.conf</text:span><text:span text:style-name="T31"> or </text:span><text:span text:style-name="T18">/boot/derbynet.conf</text:span><text:span text:style-name="T31">; see above) to set the value for the DERBYNET_SERVER variable </text:span><text:soft-page-break/><text:span text:style-name="T31">to </text:span>the <text:span text:style-name="T56">DNS name or IP </text:span>address of your DerbyNet server.<text:span text:style-name="T31"> <text:s text:c="2"/>(As described above, the derbynet-extras package writes a skeleton version of these files which you can subsequently modify.)</text:span></text:p>
+     <text:p text:style-name="P86"><text:span text:style-name="T31">Edit (or create) a </text:span><text:span text:style-name="T20">derbynet.conf</text:span><text:span text:style-name="T31"> configuration file (either </text:span><text:span text:style-name="T18">/etc/derbynet.conf</text:span><text:span text:style-name="T31"> or </text:span><text:span text:style-name="T18">/boot/derbynet.conf</text:span><text:span text:style-name="T31">; see above) to set the value for the DERBYNET_SERVER variable </text:span><text:soft-page-break/><text:span text:style-name="T31">to </text:span>the <text:span text:style-name="T57">DNS name or IP </text:span>address of your DerbyNet server.<text:span text:style-name="T31"> <text:s text:c="2"/>(As described above, the derbynet-extras package writes a skeleton version of these files which you can subsequently modify.)</text:span></text:p>
     </text:list-item>
    </text:list>
   </office:text>
