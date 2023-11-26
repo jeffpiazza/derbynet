@@ -97,11 +97,11 @@ function repopulate_schedule(json) {
       row.addClass('heat_row')
          .addClass('d' + (rowno % 2))
         .attr('id', 'heat_' + cell['roundid'] + '_' + cell['heat']);
-      $("<th/>").text(interleaved
-                      ? cell['class'] +
-                        (cell['round'] > 1 ? ", Round " + cell['round'] : "") +
-                        ", Heat " + cell['heat']
-                      : "Heat " + cell['heat'])
+      var row_label = "Heat " + cell['heat'];
+      if (interleaved) {
+        row_label = rounds_map[cell['roundid']]['name'] + ', ' + row_label;
+      }
+      $("<th/>").text(row_label)
         .css({'width': th_width_vw + 'vw'})
         .appendTo(row);
       roundid = cell['roundid'];
@@ -370,7 +370,7 @@ $(function() {
       $.ajax('action.php',
              {type: 'GET',
               data: {query: 'poll',
-                     values: 'ondeck,rounds,current-heat'},
+                     values: 'ondeck,rounds,current-heat,current-reschedule'},
               success: function(json) {
                 if (g_resized) {
                   g_resized = false;
