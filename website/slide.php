@@ -8,14 +8,20 @@ require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 
 // path_info (URL) should be:
-// slide.php/filename
+// slide.php/title   (no extension for title slide)
+//   or
+// slide.php/my-great-slide.png
 
 $exploded = explode('/', path_info());
-if (count($exploded) == 2) {
-  $file_path = slide_file_path($exploded[1]);
-} else {
+if (count($exploded) != 2) {
+  // Not for probing around the file system
   exit(1);
 }
+$glob = $exploded[1];
+if ($glob == 'title') {
+  $glob = 'title.*';
+}
+$file_path = slide_file_path($glob);
 
 
 if (is_readable($file_path)) {

@@ -87,6 +87,7 @@ function mainphoto_onload(img) {
            {type: 'GET',
             data: next_query,
             success: function(data) {
+              console.log('slideshow next', data);
               if (data.hasOwnProperty('photo')) {
                 refresh_page(data.photo);
               } else {

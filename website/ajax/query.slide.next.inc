@@ -45,9 +45,8 @@ if ($mode == 'slide') {
 
   $results = next_slides($f);
   if (count($results) > 0) {
-    sort($results);
     json_out('debug-results', $results);
-    json_out('photo', array('photo' => 'slide.php/'.pathinfo($results[0])['filename'],
+    json_out('photo', array('photo' => 'slide.php/'.$results[0],
                             'next' => array('mode' => 'slide',
                                             'file' => $results[0])));
     $done = true;
