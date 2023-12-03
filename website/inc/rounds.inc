@@ -80,7 +80,7 @@ function all_rounds_with_counts($by_class = true) {
   $use_groups = use_groups();
   $stmt = $db->query('SELECT roundid, roundid AS groupid, round,'
                      .' Classes.classid, class,'
-                     .' constituents > \'\' AS aggregate,'
+                     .(schema_version() >= 3 ? ' constituents > \'\' AS aggregate,' : '0 AS aggregate,')
                      .($use_groups ? " class || ', ' ||" : "")
                      .' \'Round \' || round AS roundname,'
                      .' (SELECT COUNT(*) FROM Roster'
