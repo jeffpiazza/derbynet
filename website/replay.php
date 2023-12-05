@@ -63,8 +63,6 @@ function logmessage(txt) {
   }
 }
 
-// TODO Poll for messages.
-// In the meantime, use the existing replay protocol
 function poll_as_replay() {
   $.ajax("action.php",
   {type: 'POST',
@@ -83,6 +81,9 @@ g_upload_videos = <?php echo read_raceinfo_boolean('upload-videos') ? "true" : "
 g_video_name_root = "";
 // If a replay is triggered by timing out after a RACE_STARTS, then ignore any
 // subsequent REPLAY messages until the next START.
+//
+// If a replay is triggered by a REPLAY message that arrives before the timeout
+// (as most will), then we just cancel the g_replay_timeout.
 g_preempted = false;
 
 
@@ -98,6 +99,7 @@ var g_replay_options = {
 function parse_replay_options(cmdline) {
   g_replay_options.count = parseInt(cmdline.split(" ")[2]);
   g_replay_options.rate = parseFloat(cmdline.split(" ")[3]);
+  // TODO .length
 }
 
 // If non-zero, holds the timeout ID of a pending timeout that will trigger a
@@ -114,6 +116,8 @@ function handle_replay_message(cmdline) {
     parse_replay_options(cmdline);
     on_replay(root);
   } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
+    // This assumes that we'll get a queued START when the page is freshly
+    // loaded.
     g_video_name_root = cmdline.substr(6).trim();
     g_preempted = false;
   } else if (cmdline.startsWith("REPLAY")) {
@@ -122,14 +126,20 @@ function handle_replay_message(cmdline) {
     // (Must be exactly one space between fields:)
     parse_replay_options(cmdline);
     if (!g_preempted) {
+      clearTimeout(g_replay_timeout);
+      console.log('Triggering replay from REPLAY message', root);
       on_replay(root);
     }
   } else if (cmdline.startsWith("CANCEL")) {
+    clearTimeout(g_replay_timeout);
   } else if (cmdline.startsWith("RACE_STARTS")) {
+    // This message signals that the start gate has actually opened (if that can
+    // be detected).  The START message identifies what heat is queued next.
     parse_replay_options(cmdline);
     g_replay_timeout = setTimeout(
       function() {
         g_preempted = true;
+        console.log('Triggering replay from timeout after RACE_STARTS', root);
         on_replay(root);
       },
       g_replay_options.length * 1000 - g_replay_timeout_epsilon);
@@ -138,7 +148,10 @@ function handle_replay_message(cmdline) {
   }
 }
 
-$(function() { setInterval(poll_as_replay, 250); });
+$(function() {
+  setInterval(poll_as_replay, 250);
+  console.log('Replay page (re)loaded');
+});
 
 function on_stream_ready(stream) {
   $("#waiting-for-remote").addClass('hidden');
@@ -244,8 +257,6 @@ function upload_video(root, blob) {
   }
 }
 
-// TODO My working theory is that the captureStream() from an offscreen canvas
-// doesn't produce any frames.
 
 function on_replay(root) {
   console.log('* on_replay');
@@ -273,6 +284,9 @@ function on_replay(root) {
   $("#playback-background").show('slide', function() {
       let playback_start_ms = Date.now();
       let vc;
+      // When the offscreen <canvas> is first created, we construct a
+      // VideoCapture object to record its capture stream.  After the first play
+      // through, stop the VideoCapture and upload the resulting Blob.
       g_recorder.playback(playback,
                           g_replay_options.count,
                           g_replay_options.rate,
@@ -286,6 +300,8 @@ function on_replay(root) {
                             }
                           },
                           function() {
+                            // The first time through, consume the captured
+                            // video and destroy the VideoCapture object.
                             if (vc) {
                               vc.stop(function(blob) { upload_video(root, blob); });
                               vc = null;

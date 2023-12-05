@@ -58,7 +58,7 @@ function send_replay_message($cmd) {
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
     if (isset($homedir) && is_dir($homedir) && is_writable($homedir)) {
-      $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'w+');
+      $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'c+');
       try {
         if (flock($fp, LOCK_EX)) {
           if (fseek($fp, 0, SEEK_END) == 0) {
@@ -103,7 +103,7 @@ function drain_queue() {
   global $db;
   $queue = '';
   if (isset($homedir) && is_dir($homedir) && is_writable($homedir)) {
-    $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'w+');
+    $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'c+');
     try {
       if (flock($fp, LOCK_EX)) {
         $queue = stream_get_contents($fp);
