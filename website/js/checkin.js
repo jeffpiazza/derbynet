@@ -461,9 +461,16 @@ $(function() {
 });
 
 function global_keypress(event) {
-  if ($(":focus").length == 0) {
-    $(document).off("keypress");  // We want future keypresses to go to the search form
+  if (document.activeElement == document.body ||
+      document.activeElement == null) {
+    // If no other element holds focus, focus on the search box.  This is
+    // especially important with barcode scanners, as a lack of focus will
+    // ignore the scanned text.
+    //
+    // We're invoked on a keypress event; the actual input key will be read as
+    // part of handling for the keyup that follows.
     $("#find-racer-text").focus();
+    console.log('Focusing on search box');
   }
 }
 
@@ -483,7 +490,6 @@ function cancel_find_racer() {
   $("#find-racer-message").css({visibility: 'hidden'});
   // TODO $("#find-racer").addClass("hidden");
   remove_search_highlighting();
-  $(document).on("keypress", global_keypress);
 }
 
 function scroll_and_flash_row(row) {
