@@ -12,11 +12,11 @@ done
 
     
     
-sed -i -e "s#^listen *=.*#listen = /var/run/php-fpm.sock#" \
-    /etc/php81/php-fpm.d/www.conf
+sed -i -e "s#^listen *=.*#listen = /var/run/php/php-fpm.sock#" \
+    /etc/php82/php-fpm.d/www.conf
 
 sed -i \
-    -e "s#fastcgi_pass.*#fastcgi_pass /var/run/php-fpm.sock#" \
+    -e "s#fastcgi_pass.*#fastcgi_pass /var/run/php/php-fpm.sock#" \
     /etc/nginx/derbynet/location.snippet
 
 
@@ -70,7 +70,7 @@ server {
     location ~ /.*\.php(/.*)?$ {
         client_max_body_size 16M;
         include fastcgi.conf;
-        fastcgi_pass unix:/var/run/php-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php-fpm.sock;
         fastcgi_param DERBYNET_CONFIG_DIR /var/lib/derbynet;
         fastcgi_param DERBYNET_DATA_DIR /var/lib/derbynet;
         # fastcgi_read_timeout value goes here, if needed.
