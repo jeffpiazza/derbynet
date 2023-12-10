@@ -27,6 +27,10 @@ RUN apk update && \
     apk add php-pdo_odbc && \
     apk add php-pdo_mysql
 
+# This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
+# PHP 8.2.  If that changes, it's time to update.
+RUN ls /usr/sbin/php-fpm82 || exit 1
+
 ARG WWW_ROOT=/var/www/html
 
 COPY website/ $WWW_ROOT
