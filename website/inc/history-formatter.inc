@@ -333,7 +333,7 @@ class HistoryActionFormatter {
     case 'partition.*create':
       $this->_partitions->InsertWithId(array('partitionid' => $this->_action['partitionid'],
                                              'name' => $this->_action['name'],
-                                             'rankid' => $this->_rankid['rankid']));
+                                             'rankid' => $this->_action['rankid']));
       return $this->EffectOnlyRow();
     case 'partition.*structure': {
       $this->_classes->MakeEmpty();

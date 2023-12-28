@@ -272,6 +272,7 @@ Dropzone.options.uploadTarget = {
   // dropzone considers the upload successful as long as there was an HTTP response.  We need to look at the
   // message that came back and determine whether the file was actually accepted.
   success: function(file, response) {
+    console.log('Dropzone success:', file, response);  // TODO
     if (response.outcome.summary == 'failure') {
       file.status = 'error';
       file.previewElement.querySelectorAll("[data-dz-errormessage]")[0].textContent =
@@ -279,8 +280,6 @@ Dropzone.options.uploadTarget = {
       file.previewElement.classList.add("dz-error");
     } else {
       var uploaded
-      var uploaded = xml.getElementsByTagName("uploaded");
-      var thumb = xml.getElementsByTagName("thumbnail");
       if (response.hasOwnProperty('uploaded')) {
         var uploaded = response.uploaded;
         var thumb = response.thumbnail;

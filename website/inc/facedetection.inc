@@ -4,6 +4,10 @@
 // haarcascade_frontalface_alt2.xml.
 
 class FaceDetector {
+  // As fast as Haar cascades are, this implementation in PHP can run for a
+  // minute or more if not time-limited.
+  private $max_time_allowed_sec = 6;
+
   private $window_width;
   private $window_height;
   private $stages;
@@ -75,6 +79,7 @@ class FaceDetector {
   }
 
   function detect_face1(&$img) {
+    $start_time = time();
     if ($this->width != imagesx($img) || $this->height != imagesy($img)) {
       trigger_error("Image is ".imagesx($img)."x".imagesy($img).
                     ", but it's supposed to be ".$this->width."x".$this->height);
@@ -88,6 +93,10 @@ class FaceDetector {
     $initial_scale = min($this->width/$this->window_width, $this->height/$this->window_height);
     
     for ($factor = $initial_scale; $factor >= 1.0; $factor /= $this->scale_factor) {
+      if (time() - $start_time > $this->max_time_allowed_sec) {
+        error_log('Time limit forces abandoning of scale factor loop');
+        break;
+      }
       $window_width = (0.5 + $factor * $this->window_width)>>0;
       $window_height = (0.5 + $factor * $this->window_height)>>0;
       $window_area = $window_width * $window_height;
@@ -99,7 +108,15 @@ class FaceDetector {
       $horiz_limit = $this->width - $window_width;
       $vert_limit = $this->height - $window_height;
       for ($horiz = 0; $horiz < $horiz_limit; $horiz += $step) {
+        if (time() - $start_time > $this->max_time_allowed_sec) {
+          error_log('Time limit forces abandoning of horizontal loop');
+          break;
+        }
         for ($vert = 0; $vert < $vert_limit; $vert += $step) {
+          if (time() - $start_time > $this->max_time_allowed_sec) {
+            error_log('Time limit forces abandoning of vertical loop');
+            break;
+          }
           $mean = (
             $this->integral[ $horiz                 + $stride * $vert                    ] +
             $this->integral[ $horiz + $window_width + $stride * ($vert + $window_height) ] -
@@ -126,6 +143,10 @@ class FaceDetector {
                 $feature_total = 0;
                 $count_feature = count($feature);
                 for ($f = 0; $f < $count_feature; $f += 5) {
+                  if (time() - $start_time > $this->max_time_allowed_sec) {
+                    error_log('Time limit forces abandoning of feature count loop');
+                    break;
+                  }
                   $x = (($factor * $feature[$f + 0])>>0) + $horiz;
                   $y = (($factor * $feature[$f + 1])>>0) + $vert;
                   $w = ($factor * $feature[$f + 2])>>0;
