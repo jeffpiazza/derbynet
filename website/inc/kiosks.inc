@@ -87,7 +87,7 @@ function madlib_string($addr) {
                'visitor', 'earthquake', 'poison', 'voyage', 'feast', 'riddle',
                'year'];
 
-  $crc = crc32($addr);
+  $crc = abs(crc32($addr));
   return $adjs[$crc % count($adjs)]." ".$nouns[($crc >> 16) % count($nouns)];
 }
 
