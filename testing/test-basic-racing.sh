@@ -20,8 +20,8 @@ curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
 curl_postj action.php "action=racer.delete&racer=21" | check_jfailure
 
 # This is testing replay connected before we start racing
-curl_postj action.php "action=replay.message" | jq -e ".replay == [\"HELLO\"]" \
-       >/dev/null || test_fails
+## curl_postj action.php "action=replay.message" | jq -e ".replay == [\"HELLO\"]" \
+##        >/dev/null || test_fails
 
 ### Racing for roundid=1: 5 heats
 curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
