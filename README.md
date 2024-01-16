@@ -7,7 +7,7 @@
 To quickly get started on local development, the existing Docker image can be used.
 
 1. Install [Apache Ant](https://ant.apache.org/). 
-   1. You can install [install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) and run:
+   1. You can [install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) and run:
 
       ```bash
       sudo apt-get update
