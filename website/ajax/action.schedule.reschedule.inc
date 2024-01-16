@@ -776,6 +776,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     // Insert all the racers not already in the schedule.
     $racer_stmt = $db->prepare('SELECT racerid FROM Roster'
                                .' WHERE roundid = :roundid'
+                               .' AND (SELECT passedinspection FROM RegistrationInfo'
+                               .'      WHERE racerid = Roster.racerid) = 1'
                                .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
                                .'                WHERE racerid = Roster.racerid'
                                .'                AND roundid = :roundid2)');
