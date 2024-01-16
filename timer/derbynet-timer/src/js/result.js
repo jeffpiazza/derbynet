@@ -23,7 +23,7 @@ class HeatResult {
   }
 
   setLane_0based(lane0, time, place = 0) {
-    if (lane0 < this.lane_results.length) {
+    if (lane0 >= 0 && lane0 < this.lane_results.length) {
       this.lane_results[lane0] = {time: time, place: place};
       this.lanemask &= ~(1 << lane0);
       return true;

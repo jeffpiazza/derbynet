@@ -29,14 +29,14 @@ public class TimerResult {
 
   // lane is 0-based, but place remains 1-based
   private void setLaneZeroBased(int lane, String time, int place) {
-    if (lane < results.size()) {
+    if (lane >= 0 && lane < results.size()) {
       Message.LaneResult r = results.get(lane);
       if (r != null) {
         r.time = time;
         r.place = place;
       }
+      laneMask &= ~(1 << lane);
     }
-    laneMask &= ~(1 << lane);
   }
 
   public int mask() { return laneMask; }  // For debugging
