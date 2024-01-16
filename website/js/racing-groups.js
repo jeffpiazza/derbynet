@@ -197,6 +197,8 @@ function populate_racing_groups(data) {
                          .on('click', on_edit_class)));
 
     if (rule != 'by-partition') {
+      // If 'by-partition', don't show subgroups -- there's exactly one per
+      // group, with the same name.
       var subgroups = $("<ul/>")
           .appendTo(cl)
           .addClass('subgroups');
@@ -375,9 +377,11 @@ function populate_aggregates(classes, pack_aggregate_id) {
       $("li[data-classid='" + classes[i].constituents[v].classid + "']")
         .attr('data-constituent-of', classes[i].name);
     }
-    for (var v = 0; v < classes[i]['constituent-ranks'].length; ++v) {
-      $("li[data-rankid='" + classes[i]['constituent-ranks'][v].rankid + "']")
-        .attr('data-constituent-of', classes[i].name);
+    if (classes[i]['constituent-ranks']) {
+      for (var v = 0; v < classes[i]['constituent-ranks'].length; ++v) {
+        $("li[data-rankid='" + classes[i]['constituent-ranks'][v].rankid + "']")
+          .attr('data-constituent-of', classes[i].name);
+      }
     }
 
     pack_agg.removeClass('hidden');
