@@ -65,6 +65,9 @@ public class SerialPortWrapper extends EventDrivenPortWrapper
   }
 
   public String getPortName() {
+    if (port == null) {
+      return "SimulatedPort";
+    }
     return port.getPortName();
   }
 
