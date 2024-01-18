@@ -6,7 +6,7 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class RacemasterLegacy extends TimerDeviceBase {
   /*
@@ -33,7 +33,7 @@ public class RacemasterLegacy extends TimerDeviceBase {
   private static final String START_TIMING = "S";
   private static final String RESET_TIMER = "R";
 
-  public RacemasterLegacy(SerialPortWrapper portWrapper) {
+  public RacemasterLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
   }
 
@@ -84,7 +84,7 @@ public class RacemasterLegacy extends TimerDeviceBase {
     // "Race Result Report" header.
     portWrapper.writeAndDrainResponse(REPORT_RESULTS, 2, 1000);
     portWrapper.registerEarlyDetector(new TimerDeviceUtils.SplittingDetector(
-        new SerialPortWrapper.Detector() {
+        new TimerPortWrapper.Detector() {
       @Override
       public String apply(String line) throws SerialPortException {
         boolean repeatReport = false;

@@ -50,7 +50,7 @@ div.heat_time {
 }
 
 div.car {
-  height: 29vh;
+  height: 29vh; /* See columnar-now-racing.inc */
   position: relative;
 }
 div.car img {
@@ -65,7 +65,7 @@ div.car div.number {
   color: white;
   text-align: center;
   font-size: 4vh;
-  height: 5vh;
+  height: 5vh; /* See columnar-now-racing.inc */
   position: absolute;
   bottom: 0px;
   width: 100%;
@@ -98,7 +98,7 @@ div.car div.place {
   /* Becomes semi-transparent via animation after appearing */
 }
 div.racer {
-  height: 38vh;
+  height: 38vh; /* See columnar-now-racing.inc */
   position: relative;
 }
 div.racer img {
@@ -124,7 +124,7 @@ div.racer div.name {
   white-space: nowrap;
   overflow: hidden;
   font-size: 3vh;
-  height: 4vh;
+  height: 4vh; /* See columnar-now-racing.inc */
   position: absolute;
   bottom: 0px;
   width: 100%;
@@ -210,3 +210,11 @@ body { overflow: hidden; }
 }
 
 
+#reschedule_overlay p {
+  color: #cf1f25;
+  font-size: xxx-large;
+  text-align: center;
+  font-weight: bold;
+  background: white;
+  opacity: 0.75;
+}

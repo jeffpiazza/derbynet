@@ -114,6 +114,8 @@ make_index("RaceInfo", "itemkey"),
 ."  `rankid` INTEGER PRIMARY KEY, "
 ."  `rank` VARCHAR(75) NOT NULL COLLATE NOCASE, "
 ."  `classid` INTEGER NOT NULL"
+.(expected_schema_version() < 10 ? "" :
+  ", `ntrophies` INTEGER DEFAULT -1")
 .(expected_schema_version() < 2 ? "" : ",  `sortorder` INTEGER ")
 .")",
 make_index("Ranks", "classid"),
@@ -133,6 +135,7 @@ make_index("Ranks", "rank"),
 ."  `passedinspection` TINYINT(1) DEFAULT 0, "
 ."  `imagefile` VARCHAR(255), "
 .(expected_schema_version() < 2 ? "" : "  `carphoto` VARCHAR(255), ")
+.(expected_schema_version() < REGISTRATION_CHECKIN_SCHEMA ? "" : "  `checkin_time` INTEGER, ")
 ."  `note` VARCHAR(255), "
 ."  `exclude` TINYINT(1) DEFAULT 0"
 .")",
@@ -187,6 +190,8 @@ make_index("Rounds", "round"),
 @include(sql_file_path('partitions')),
 
 @include(sql_file_path('event-lane-details')),
+
+@include(sql_file_path('action-history')),
 
 array(
 "INSERT INTO RaceInfo (itemkey, itemvalue) VALUES ('schema', ".expected_schema_version().")",

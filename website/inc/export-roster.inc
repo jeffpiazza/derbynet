@@ -9,8 +9,12 @@ function export_roster(callable $out) {
   $use_groups = use_groups();
   $use_subgroups = use_subgroups();
   $name_style = read_name_style();
+  $show_racerid = isset($_GET['racerid']);
 
   $headings = array();
+  if ($show_racerid) {
+    $headings[] = "RacerID";
+  }
   if ($name_style == FULL_NAME) {
     $headings[] = "First Name";
     $headings[] = "Last Name";
@@ -37,7 +41,7 @@ function export_roster(callable $out) {
 //    By class then rank then lastname, firstname
 //    By class then rank then car number
 
-  $stmt = $db->query('SELECT firstname, lastname, carnumber, carname, '
+  $stmt = $db->query('SELECT racerid, firstname, lastname, carnumber, carname, '
                      .' passedinspection, exclude,'
                      .' Classes.class as classname,'
                      .' Ranks.rank as rankname'
@@ -51,11 +55,15 @@ function export_roster(callable $out) {
     // TODO
   }
   foreach ($stmt as $row) {
+    $line = array();
+    if ($show_racerid) {
+      $line[] = $row['racerid'];
+    }
     if ($name_style == FULL_NAME) {
-      $line = array($row['firstname'],
-                    $row['lastname']);
+      $line[] = $row['firstname'];
+      $line[] = $row['lastname'];
     } else {
-      $line = array(mangled_name($row, $name_style));
+      $line[] = mangled_name($row, $name_style);
     }
 
     $line[] = $row['carnumber'];

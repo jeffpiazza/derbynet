@@ -20,13 +20,13 @@ function json_ondeck(&$now_running) {
 
   $params = array();
   if ($use_master_sched) {
-    $where = 'round = :round';
+    $where = 'WHERE round = :round';
     $params[':round'] = $now_running['round'];
-    $ondeck['title'] = "Round $now_running[round]";
+    $order = 'masterheat';
   } else {
-    $where = 'roundid = :roundid';
-    $params[':roundid'] = $now_running['roundid'];
-    $ondeck['title'] = "$now_running[class], Round $now_running[round]";
+    // $where = 'roundid = :roundid';
+    // $params[':roundid'] = $now_running['roundid'];
+    $order = 'round, Classes.sortorder, heat';
   }
 
   $next = get_next_heat($now_running, 'next');
@@ -35,17 +35,16 @@ function json_ondeck(&$now_running) {
                             'heat' => $next['heat']);
   }
 
-  $stmt = $db->prepare('SELECT resultid, roundid, class, heat, lane,'
+  $stmt = $db->prepare('SELECT resultid, roundid, heat, lane,'
                        .' racerid, firstname, lastname, carnumber,'
                        .(schema_version() < 2 ? ' \'\' as' : '').' carphoto, '
-                       .($use_master_sched ? 'masterheat' : 'heat').' as seq,'
                        .' finishtime, finishplace, completed'
                        .' FROM RaceChart'
                        .' INNER JOIN Rounds USING (roundid)'
                        .' INNER JOIN Classes USING (classid)'
                        .' INNER JOIN RegistrationInfo USING (racerid)'
-                       .' WHERE '.$where
-                       .' ORDER BY seq, lane');
+                       .$where
+                       .' ORDER BY '.$order.', lane');
 
   $stmt->execute($params);
   $chart = array();
@@ -55,7 +54,6 @@ function json_ondeck(&$now_running) {
   foreach ($stmt as $row) {
     $chart[] = array('resultid' => $row['resultid'],
                      'roundid' => $row['roundid'],
-                     'class' => $row['class'],
                      'heat' => $row['heat'],
                      'lane' => $row['lane'],
                      'racerid' => $row['racerid'],

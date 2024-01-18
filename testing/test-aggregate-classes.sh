@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=aggregate-classes `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 
 `dirname $0`/import-csv-roster.sh  "$BASE_URL" "`dirname $0`/data/outlaw-class.csv"

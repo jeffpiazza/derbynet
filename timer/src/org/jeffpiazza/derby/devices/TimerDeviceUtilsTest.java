@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class TimerDeviceUtilsTest {
-  private static class MockDetector implements SerialPortWrapper.Detector {
+  private static class MockDetector implements TimerPortWrapper.Detector {
     @Override
     public String apply(String line) throws SerialPortException {
       if (expectations.isEmpty()) {
@@ -48,7 +48,7 @@ public class TimerDeviceUtilsTest {
   public static void main(String[] args) {
     try {
       MockDetector mock = new MockDetector();
-      SerialPortWrapper.Detector detector
+      TimerPortWrapper.Detector detector
           = new TimerDeviceUtils.SplittingDetector(
               mock);
 

@@ -13,11 +13,12 @@
 require_once('inc/schedule_rough.inc');
 require_once('inc/schedule_ordered.inc');
 require_once('inc/schedule_utils.inc');
+require_once('inc/schedule_rotation.inc');
 require_once('inc/events.inc');
 
 // Returns roster, where roster[sequence] = racerid,
 // 0 <= sequence < number of racers in roundid.
-function read_roster($roundid) {
+function read_roster($roundid, $by_car_number = false) {
   global $db;
   $roster = array();
   $stmt = $db->prepare('SELECT rosterid, Roster.racerid FROM Roster'
@@ -25,7 +26,7 @@ function read_roster($roundid) {
                        .' ON Roster.racerid = RegistrationInfo.racerid'
                        .' WHERE roundid = :roundid'
                        .' AND passedinspection = 1'
-                       .' ORDER BY rosterid');
+                       .($by_car_number ? ' ORDER BY carnumber, rosterid' : ' ORDER BY rosterid'));
   $stmt->execute(array(':roundid' => $roundid));
   foreach ($stmt as $row) {
     $roster[] = $row['racerid'];
@@ -75,7 +76,8 @@ function write_chart($roundid, &$heats) {
 // The top-level scheduling function.  Constructs a schedule, converts to a race
 // chart, and writes the race chart into the database.
 function schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace) {
-  $roster = read_roster($roundid);
+  $rotation_schedule = read_raceinfo('rotation-schedule', 0);
+  $roster = read_roster($roundid, /*by_car_number=*/$rotation_schedule);
   if (count($roster) < 2) {
     return false;
   }
@@ -86,8 +88,12 @@ function schedule_one_round($roundid, $nlanes, $n_times_per_lane, $trace) {
   while (count($roster) * $max_runs_per_car % $nlanes != 0) {
     $roster[] = null;
   }
-  $sched = make_ordered_schedule($nlanes, count($roster), $n_times_per_lane,
-                                 $max_runs_per_car, $trace);
+  if (!$rotation_schedule) {
+    $sched = make_ordered_schedule($nlanes, count($roster), $n_times_per_lane,
+                                   $max_runs_per_car, $trace);
+  } else {
+    $sched = make_rotation_schedule($nlanes, count($roster), $n_times_per_lane, $trace);
+  }
   write_chart($roundid, spread_across_unused_lanes(form_chart($sched, $roster)));
   return true;
 }

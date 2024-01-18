@@ -10,19 +10,17 @@ import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Timestamp;
-import org.jeffpiazza.derby.devices.AllDeviceTypes;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.TimerDevice;
 import org.jeffpiazza.derby.devices.TimerDeviceBase;
 import org.jeffpiazza.derby.devices.TimerDeviceUtils;
 import org.jeffpiazza.derby.devices.TimerResult;
-import org.jeffpiazza.derby.profiles.AllProfiles;
 import org.jeffpiazza.derby.serialport.DtrRemoteStart;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class TimerDeviceWithProfile extends TimerDeviceBase
     implements Event.Handler {
-  public TimerDeviceWithProfile(SerialPortWrapper portWrapper, Profile profile) {
+  public TimerDeviceWithProfile(TimerPortWrapper portWrapper, Profile profile) {
     super(portWrapper);
     setProfile(profile);
   }
@@ -172,7 +170,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     for (Profile.Query query : profile.setup_queries) {
       for (Profile.Detector detector_config : query.matchers) {
         ProfileDetector detector = new ProfileDetector(detector_config, false);
-        detector.activateFor(SerialPortWrapper.COMMAND_DRAIN_MS);
+        detector.activateFor(TimerPortWrapper.COMMAND_DRAIN_MS);
         portWrapper.registerDetector(detector);
       }
       portWrapper.write(query.command);
@@ -243,7 +241,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
     // (at least) needs to stop while race is running.  (Issue #200.)
     if (sm == null) {
-      sm = new StateMachine(profile.options.gate_state_is_knowable);
+      sm = new StateMachine(
+          profile.options.gate_state_is_knowable
+          && !Flag.no_gate_watcher.value());
     }
     sm.onEvent(event, args);
 
@@ -336,10 +336,19 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         }
         break;
       case PROFILE_UPDATED:
+        this.sm = null;  // We'll make a new one next time through.
+        // By convention, each different timer type has a Java class that derives
+        // from TimerDevicWithProfile and that exposes a static profile() method
+        // to manufacture a new instance of the Profile.
         Class<? extends TimerDevice> cl = getClass();
         try {
           Method m = cl.getMethod("profile");
           setProfile((Profile) m.invoke(cl));
+          if (this.roundid != 0) {
+            // Redo lane masking (esp. for Champ, which may need to send a new
+            // 'rg' when stopping gate watcher)
+            prepareHeat(this.roundid, this.heat, this.lanemask);
+          }
         } catch (Throwable ex) {
           Logger.getLogger(cl.getName()).log(Level.SEVERE, null, ex);
         }

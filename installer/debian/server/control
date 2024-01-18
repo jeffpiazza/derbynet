@@ -1,13 +1,13 @@
 Package: derbynet-server
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 8.0-@BUILD@
+Version: 9.0-@BUILD@
 Priority: optional
 Architecture: all
 Depends: nginx,
-        php-fpm | php5-fpm,
-        php-curl | php5-curl,
-        php-gd | php5-gd,
-        php-sqlite3 | php5-sqlite,
+        php-fpm (>= 8.0),
+        php-curl (>= 8.0),
+        php-gd (>= 8.0),
+        php-sqlite3 (>= 8.0),
         ssl-cert
 Replaces: derbynet (<= 3.0-1)
 Breaks: derbynet (<= 3.0-1)

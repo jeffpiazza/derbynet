@@ -49,12 +49,15 @@ function json_all_classes() {
     }
     if (!empty($class['rankids'])) {
       $rankids = explode(',', $class['rankids']);
+      list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
       $cl['constituent-ranks'] = array();
       foreach ($rankids as $r) {
         $rr = $ranks_by_id[$r];
         $cl['constituent-ranks'][] = array(
           'rankid' => $r,
-          'name' => $rr['name']);
+          'name' => $rr['name'],
+          'classid' => $ranks[$r]['classid'],
+          'class' => $ranks[$r]['class']);
       }
     }
     $result[] = $cl;

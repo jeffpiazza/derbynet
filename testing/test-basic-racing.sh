@@ -19,6 +19,10 @@ curl_postj action.php "action=schedule.generate&roundid=3" | check_jsuccess
 # Can't delete a racer who's in a schedule
 curl_postj action.php "action=racer.delete&racer=21" | check_jfailure
 
+# This is testing replay connected before we start racing
+## curl_postj action.php "action=replay.message" | jq -e ".replay == [\"HELLO\"]" \
+##        >/dev/null || test_fails
+
 ### Racing for roundid=1: 5 heats
 curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
 
@@ -26,7 +30,18 @@ user_login_timer
 curl_post action.php "action=timer-message&message=HELLO" | check_success
 curl_post action.php "action=timer-message&message=IDENTIFIED&nlanes=4" | check_success
 
+# TODO test replay connects after "now racing" started.
+
 run_heat 1 1 101:3.3294 121:3.4179 141:3.8182 111:2.2401
+
+curl_postj action.php "action=replay.message" | \
+    jq -e '.replay == ["CANCEL", "START Lions & Tigers_Round1_Heat01",
+                       "RACE_STARTS 4 2 0.5",
+                       "REPLAY 4 2 0.5",
+                       "CANCEL",
+                       "START Lions & Tigers_Round1_Heat02"]' \
+       >/dev/null || test_fails
+
 run_heat 1 2 111:3.7554 131:2.6205 101:2.3800 121:3.2347
 run_heat 1 3 121:2.0793 141:3.6770 111:2.9511 131:2.8799
 run_heat 1 4 131:3.7412 101:3.4053 121:3.3414 141:2.8045

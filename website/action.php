@@ -75,6 +75,11 @@ if ($is_action) {
   json_out('outcome', array('summary' => 'in-progress',
                             'code' => 'in-progress',
                             'description' => 'No outcome defined.'));
+  if (isset($db) &&
+      !($args['action'] == 'timer-message' && $args['message'] == 'HEARTBEAT') &&
+      array_search($args['action'], array('role.login', 'vote.cast')) === false) {
+    record_action($args);
+  }
 }
 
 $prefix = $is_action ? 'action' : 'query';

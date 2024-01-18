@@ -1,11 +1,6 @@
 package org.jeffpiazza.derby.timer;
 
 // TODO Thread safety for handler register/unregister.
-//
-// TODO static sendAt/sendAfterMs subsumes the current ScheduledEventQueue;
-// same poller thread picks up scheduled events as they become available.
-// When there's an entry in the queue of scheduled events, the eventPoller sleeps
-// onlly until then, or until a new scheduled event is added.
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -59,8 +54,7 @@ public enum Event {
 
   public static void sendAt(long deadline, Event event) {
     synchronized (eventsQueue) {
-      delayedEvents.
-          add(new DelayedEvent(deadline, new EventRecord(event, null)));
+      delayedEvents.add(new DelayedEvent(deadline, new EventRecord(event, null)));
       eventsQueue.notifyAll();
     }
   }

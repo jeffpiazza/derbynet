@@ -1,4 +1,10 @@
-#instructions-background {
+/* In landscape mode, show a logo "bug" in the lower right
+   instead of trying to squeeze in a banner along the top. */
+#logo-bug {
+  display: none;
+}
+
+#greetings-background {
   z-index: -200;
   position: absolute;
   right: 0px;
@@ -6,23 +12,22 @@
   top: 150px;
   bottom: 150px;
 }
-#instructions {
+#greetings {
   width: 400px;
-  /* background-color: #c0c0c0; */
   padding: 30px;
   margin-left: auto;
   margin-right: auto;
 }
-#instructions p {
+#greetings p {
   font-size: 20px;
 }
 #step1 {
   font-weight: bold;
 }  
-#instructions img {
+#greetings img {
   border: 1px solid blue;
 }
-#instructions input {
+#greetings input {
   margin-top: 50px;
 }
 
@@ -32,44 +37,69 @@
   right: 0px;
   top: 150px;
   min-height: 200px;
+  font-size: 3vh;
+  z-index: 100;
 
   background: red;
   color: white;
   text-align: center;
 }
 
-video#preview {
+#announce-hover {
   position: fixed;
   left: 0px;
-  left: auto;
-  right: auto;
-  top: 60px;
+  right: 0px;
+  top: 50%;
+  font-size: 3vh;
+  text-align: center;
+  z-index: 100;
+  background: white;
+
+  display: inline-fixed;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#camera-div {
+  /* portrait */
+  position: fixed;
+  top: 60px; /* Banner height */
+  left: 0px;
+  height: calc(75vh - 60px);  /* Leaves room for 25vh #slide-in at bottom */
+  width: 100vw;
+}
+
+#preview-container {
+  position: relative;
+}
+video#preview {
   z-index: -100;
   margin-left: auto;
   margin-right: auto;
 }
-#instructions-overlay,
-#instructions-overlay-background {
-  position: fixed;
-  top: 200px;
+#preview-overlay {
+  position: absolute;
+  top: 50%;
+  margin-top: -20px;
   left: 50%;
-  margin-left: -200px;
   width: 400px;
-  height: 40px;
+  margin-left: -200px;
+  height: 58px;
+  text-align: center;
+  background-color: white;
+  opacity: 20%;
 }
-#instructions-overlay {
-  z-index: 100;
+#preview-overlay-content {
   border: red solid 2px;
   color: red;
   padding-top: 14px;
   text-align: center;
   font-weight: bold;
-}
-#instructions-overlay-background {
-  z-index: 95;
-  height: 58px; /* instructions height, plus 14px top padding plus 4px v. border */
-  background-color: white;
-  opacity: 20%;
+  background-image: url(../img/barcode.png);
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  height: 40px;
+  line-height: 0px;
 }
 
 div#flash-overlay {
@@ -78,19 +108,20 @@ div#flash-overlay {
   top: 0;
   left: 0;
   height: 100vh;
-  width: 100vh;
+  width: 100vw;
   z-index: 100;
   background: white;
 }
 
 #device-picker-div {
-  position: fixed;
-  top: 100px;
   left: 0px;
   right: 0px;
 }
+#device-picker-div .mselect {
+  margin-top: 0px;
+}
 
-#slide-up {
+#slide-in {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -98,53 +129,107 @@ div#flash-overlay {
   height: 0px; /* initially */
   background: #3789fb;
 }
+#slide-in-inner {
+  height: 25vh;
+}
 #racer-div {
-  font-size: 24px;
+  font-size: 4vh;
   text-align: center;
   color: white;
 }
 #controls {
-  height: 74px;
+  height: 10vh;
 }
 
 #controls-inner {
   display: inline-block;
-  width: 480px;
-  width: 514px; /* Allows for border and padding in escutcheons? */
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .escutcheon {
   display: inline-block;
   vertical-align: top;
+  text-align: center;
   background: white;
-  height: 60px;
-  width: 120px;
+  height: 17vh; /* Placed from the top of #slide-in-inner */
+  width: 30vw;
   padding: 4px;
-  margin-left: 60px;
+  margin-left: 2vw;
   margin-top: 2px;
   margin-bottom: 2px;
   border-radius: 0.4em 0.4em 0.4em 0.4em;
   cursor: pointer;
   position: relative;
 }
-.escutcheon .click-blocker {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  opacity: 0;
-  z-index: 50;
-}
-.escutcheon img {
-  vertical-align: middle;
+.escutcheon#head-button {
+  margin-left: 0px;
+  margin-right: 0px;
 }
 
-.escutcheon img.thumbnail {
-  max-height: 61px;
-  max-width: 55px;
+.escutcheon#autocrop-button {
+  text-align: center;
+  width: 5vw;
+  margin-left: 0px;
+
+  position: relative;
+}
+#autocrop-holder {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-block;
+}
+.escutcheon#autocrop-button img {
+  max-width: 5vw;
+  max-height: 17vh;
+}
+#autocrop-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background: red;
+  background: linear-gradient(to top left,
+                              transparent, calc(50% - 3px),
+                              red, calc(50% - 3px),
+                              red, calc(50% + 3px),
+                              transparent, calc(50% + 3px),
+                              transparent );
+}
+.passed #autocrop-overlay {
+  background: transparent; /* Turn off red slash */
+}
+
+.escutcheon#checkin-button {
+  width: 120px;
+  font-size: 16px;
+}
+#checkin-button-text {
+  margin-top: 2vh;
+}
+.passed #checkin-button-text {
+  margin-top: 4vh;
+}
+.checked-in-status {
+  font-size: 24px;
+  font-weight: bold;
+  color: red;
+}
+.passed .checked-in-status {
+  color: green;
+}
+
+.escutcheon div.thumbnail-carrier {
+  position: absolute;
+  bottom: 0;
+  width: 30vw;
+  text-align: center;
+}
+
+.escutcheon img {
+  vertical-align: middle;
+  max-height: 20vh;
 }
 
 .escutcheon .flipswitch {
@@ -153,4 +238,145 @@ div#flash-overlay {
 
 #canvas {
   display: none;
+}
+
+div#racer-list {
+  z-index: 300;
+  background: white;
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+#racer-list li {
+  min-height: 10vh;
+  border:  1px solid blue;
+  font-size: 4vh;
+  white-space: normal;  /* Cancel the nowrap from mobile.css */
+}
+
+#switch-to-camera-button {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 10vh;
+  font-size: 6vh;
+  line-height: 1.5;
+  background: #4444ff;
+  color: white;
+  text-align: center;
+}
+
+/* TODO @media (min-aspect-ratio: 8/5) { ... } */
+/* *********************** Landscape *********************** */
+@media screen and (orientation: landscape) {
+
+.banner {
+  display: none;
+}
+
+#logo-bug {
+  display: block;
+  position: fixed;
+  bottom: 1vh;
+  right: 1vw;
+  max-height: 7vh;
+}
+
+#slide-in {
+  left: auto;
+  bottom: auto;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 0px; /* initially */
+}
+
+#slide-in-inner {
+  height: 100vh;
+  width: 20vw;
+}
+
+#camera-div {
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 80vw;
+}
+
+#racer-div {
+  font-size: 4vh;
+  text-align: center;
+  color: white;
+}
+#controls {
+  height: auto;
+}
+
+/* $("#controls-inner").css({'margin-left': ($(window).width() - $("#controls-inner").width()) / 2}); */
+
+#controls-inner {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.escutcheon {
+  display: inline-block;
+  vertical-align: top;
+  background: white;
+  height: 25vh;
+  width: 16vw;
+  
+  padding: 4px;
+  margin-left: 2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  border-radius: 0.4em 0.4em 0.4em 0.4em;
+  cursor: pointer;
+  position: relative;
+}
+
+.escutcheon#head-button {
+  margin-left: 2vw;
+  margin-bottom: 0;
+}
+
+.escutcheon#autocrop-button {
+  margin-top: 0;
+  margin-left: 2vw;
+  height: 5vh;
+  width: 16vw;
+  font-size: 3vh;
+}
+#autocrop-holder {
+  position: relative;
+  display: inline-block;
+}
+.escutcheon#autocrop-button img {
+  max-height: 5vh;
+}
+
+.escutcheon#checkin-button {
+  width: 16vw;
+  height: 10vh;  /* TODO Maybe should be based on font size, in pts, instead. */
+}
+
+.escutcheon .flipswitch {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.escutcheon div.thumbnail-carrier {
+  position: absolute;
+  bottom: 0;
+  width: 16vw;
+  text-align: center;
+}
+
+
+
+
 }

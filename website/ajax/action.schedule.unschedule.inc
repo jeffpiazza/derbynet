@@ -16,9 +16,8 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
 
   if ($roundid == $now_running['roundid']) {
     set_racing_state(0);
-    write_raceinfo('RoundID', -1);
+    set_current_heat(-1, -1);
     write_raceinfo('ClassID', -1);
-    write_raceinfo('Heat', -1);
   }
   
   json_success();

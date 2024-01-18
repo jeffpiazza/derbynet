@@ -1,12 +1,12 @@
 'use strict';
 
-var g_offscreen_video;
-var g_offscreen_canvas;
-
 function CircularFrameBuffer(stream, no_seconds) {
   // We expect a video refresh rate of 60 frames per second
   const k_refresh_fps = 60;
   let debugging = false;
+
+  let this_cfb = this;
+  let now_msg = (new Date()).toTimeString().split(" ", 1)[0];
 
   let resizing_callback = false;
   this.on_resize = function(cb) { resizing_callback = cb; }
@@ -21,7 +21,7 @@ function CircularFrameBuffer(stream, no_seconds) {
   let offscreen_canvas = document.createElement('canvas');
   offscreen_canvas.width = offscreen_video.width;
   offscreen_canvas.height = offscreen_video.height;
-  let offscreen_context = offscreen_canvas.getContext('2d');
+  let offscreen_context = offscreen_canvas.getContext('2d', {willReadFrequently: true});
 
   let frames;
   let frame_times;
@@ -55,6 +55,10 @@ function CircularFrameBuffer(stream, no_seconds) {
     // offscreen_video.currentTime appears to advance continuously, and doesn't
     // provide information about video frame changes.
     report_fps(ts, "rec ");
+    if (!recording) {
+      console.log(now_msg + " not recording in recording_callback");
+      return;
+    }
 
     // Only capture at 30fps
     if (last_recorded_frame_index < 0 || ts - frame_times[last_recorded_frame_index] >= 33) {
@@ -95,7 +99,8 @@ function CircularFrameBuffer(stream, no_seconds) {
         frame_times[frame_index] = ts;
         last_recorded_frame_index = frame_index;
       } catch(error) {
-        console.log("Caught error " + error.message);
+        console.log("CFB " + now_msg + " caught error " + error.message +
+                    " at frame_index " + frame_index);
         // For a remote stream, the width and height may not have been known
         // initially, and require fixing up here.
       }
@@ -104,11 +109,18 @@ function CircularFrameBuffer(stream, no_seconds) {
     }
 
     if (recording) {
-      requestAnimationFrame(recording_callback);
+      if (this_cfb === g_recorder) {
+        requestAnimationFrame(recording_callback);
+      } else {
+        console.log("g_recorder value has changed, so stopping " + now_msg + " recorder.");
+        this_cfb.stop_recording();
+        offscreen_context = null;
+        offscreen_canvas.remove();
+      }
     }
   }
 
-  this.start = function() {
+  this.start_recording = function() {
     frames = Array(no_seconds * k_refresh_fps);
     frame_times = Array(no_seconds * 60);
     frame_index = 0;
@@ -117,7 +129,8 @@ function CircularFrameBuffer(stream, no_seconds) {
     requestAnimationFrame(recording_callback);
   }
 
-  this.stop = function() {
+  this.stop_recording = function() {
+    console.log('stop_recording for ' + now_msg);
     recording = false;
   }
 
@@ -133,7 +146,10 @@ function CircularFrameBuffer(stream, no_seconds) {
   this.playback = function(canvas, repeat, playback_rate,
                            on_precanvas, on_playback_finished, on_done) {
     if (!frames) {
-      console.log("No frames for playback!");
+      console.log("No frames for playback! (" + now_msg + ")");
+      if (on_done) {
+        on_done();
+      }
       return;
     }
 
@@ -155,14 +171,19 @@ function CircularFrameBuffer(stream, no_seconds) {
     let draw_y = (canvas.height - draw_height) / 2;
 
     if (last_recorded_frame_index < 0) {
-      console.log("No captured frames!");
+      console.log("No captured frames! (" + now_msg + ")");
+      if (on_done) {
+        on_done();
+      }
       return;
     }
 
     // frame_times[last_recorded_frame_index] is the time of the last captured frame
-    // frame_times[last_recorded_frame_index] - no_seconds * 1000 is the time of the first frame for playback
+    // frame_times[last_recorded_frame_index] - no_seconds * 1000 is the time of the
+    // first frame for playback
     let start_goal = frame_times[last_recorded_frame_index] - no_seconds * 1000;
-    console.log("Playback: repeat=" + repeat + ", playback_rate=" + playback_rate);
+    console.log("Playback from " + now_msg + ": repeat=" + repeat +
+                ", playback_rate=" + playback_rate);
     console.log("last_recorded_frame_index = " + last_recorded_frame_index);
     console.log("Last frame time = " + frame_times[last_recorded_frame_index]);
     console.log("Start goal = " + start_goal);
@@ -229,7 +250,7 @@ function CircularFrameBuffer(stream, no_seconds) {
 
         requestAnimationFrame(playback_callback);
       } else {
-        console.log("Playback done (once)!");
+        console.log("Playback from " + now_msg + " done (once)");
 
         if (on_playback_finished) {
           try {
@@ -243,6 +264,7 @@ function CircularFrameBuffer(stream, no_seconds) {
         if (rpt < repeat) {
           start_playback();
         } else {
+          console.log("Playback from " + now_msg + " fully complete (" + repeat + " time(s))");
           if (on_done) {
             on_done();
           }

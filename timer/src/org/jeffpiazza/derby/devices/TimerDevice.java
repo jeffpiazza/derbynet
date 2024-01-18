@@ -1,8 +1,8 @@
 package org.jeffpiazza.derby.devices;
 
-import jssc.*;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public interface TimerDevice {
   // Constructor takes SerialPortWrapper, but doesn't change settings.
@@ -37,7 +37,7 @@ public interface TimerDevice {
     void malfunction(boolean detectable, String msg);
   }
 
-  SerialPortWrapper getPortWrapper();
+  TimerPortWrapper getPortWrapper();
 
   // Returns true if the device can be prompted to identify itself somehow.
   // If false, probe(), below, will always return true, but without knowing

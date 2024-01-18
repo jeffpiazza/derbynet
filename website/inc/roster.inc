@@ -14,6 +14,10 @@ function make_new_round($classid, $roundno) {
                                .'  AND classid = :classid',
                                array(':classid' => $classid,
                                      ':roundno' => $roundno));
+  record_action(array('action' => 'round.*create',
+                      'roundid' => $roundid,
+                      'classid' => $classid,
+                      'round' => $roundno));
   record_event(EVENT_ROUND_ADDED, array('roundid' => $roundid,
                                         'classid' => $classid,
                                         'other' => 'round '.$roundno));

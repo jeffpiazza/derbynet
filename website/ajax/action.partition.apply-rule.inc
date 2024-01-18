@@ -2,9 +2,11 @@
 
 // $_POST['rule']: 'one-group' or 'by-partition' (or 'custom')
 
+
 require_once('inc/partitions.inc');
 require_once('inc/newracer.inc');
 require_once('inc/events.inc');
+
 
 function form_groups_by_rule($rule) {
   global $db;
@@ -12,8 +14,10 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Roster');
     $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
+    $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
+    delete_from_raceinfo('full-field-calc');
     // find_or_create_class will create a Rounds entry, if necessary.
     $classid = find_or_create_class('All Racers');
     // Trusting that partitions have unique names
@@ -38,8 +42,10 @@ function form_groups_by_rule($rule) {
     $db->exec('DELETE FROM Roster');
     $db->exec('DELETE FROM Rounds');
     $db->exec('DELETE FROM ConstituentClasses');
+    $db->exec('DELETE FROM Awards WHERE rankid IS NOT NULL OR classid IS NOT NULL');
     $db->exec('DELETE FROM Classes');
     $db->exec('DELETE FROM Ranks');
+    delete_from_raceinfo('full-field-calc');
 
     $db->exec('INSERT INTO Classes(class, sortorder) SELECT name, sortorder FROM Partitions');
     $db->exec('UPDATE RegistrationInfo'
@@ -78,11 +84,14 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 } else {
   record_event(EVENT_GROUP_FORMATION_RULE_APPLIED,
                array('other' => group_formation_rule().' -> '.$_POST['rule']));
+
   write_group_formation_rule($_POST['rule']);
 
   form_groups_by_rule($_POST['rule']);
 
   clean_up_empty_classes_and_ranks();
+
+  record_action_partition_structure();
 
   write_raceinfo('use-subgroups', ($_POST['rule'] == 'by-partition') ? 0 : 1);
 

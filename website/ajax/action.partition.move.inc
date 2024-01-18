@@ -61,7 +61,7 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
   $stmt = $db->prepare('UPDATE Partitions SET rankid = :rankid WHERE partitionid = :partitionid');
   $stmt->execute(array(':rankid' => $rankid,
                        ':partitionid' => $div_id));
-  
+
   $sql = "UPDATE RegistrationInfo SET classid = :classid, rankid = :rankid WHERE partitionid = :div_id";
   $params = array(':classid' => $classid,
                   ':rankid' => $rankid,
@@ -76,6 +76,8 @@ function move_partition($div_id, $group_field, $group_id, $from_group_field, $fr
   $stmt->execute($params);
 
   fill_in_missing_roster_entries();
+
+  record_action_partition_structure();
 }
 
 
@@ -89,6 +91,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   clean_up_empty_classes_and_ranks();
 
   reorder_partitions();
+
+  record_action_partition_structure();
 
   json_success();
 }

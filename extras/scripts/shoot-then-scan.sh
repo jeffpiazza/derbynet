@@ -16,6 +16,9 @@ SELF="$0"
 SELF_DIR=`dirname "$SELF"`
 LIB_DIR="$SELF_DIR/lib"
 
+# Grab keyboard focus, assuming shoot-then-scan is the window title assigned by autostart file.
+command -v wmctrl >/dev/null && wmctrl -a shoot-then-scan
+
 . "$LIB_DIR"/photo-preamble.sh
 . "$LIB_DIR"/photo-functions.sh
 READ_BARCODE="$LIB_DIR"/read_barcode.py

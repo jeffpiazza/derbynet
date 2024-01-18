@@ -165,11 +165,24 @@ td.test-only img {
   font-weight: bold;
   text-align: center;
 }
-
 #timer_overlay p {
   background: white;
   opacity: 0.75;
 }
+
+#reschedule_overlay img {
+/*  background: white;
+  opacity: 0.75; */
+}
+#reschedule_overlay p {
+  color: #cf1f25;
+  font-size: xxx-large;
+  text-align: center;
+  font-weight: bold;
+  background: white;
+  opacity: 0.75;
+}
+
 
 .banner_version { display: none; }
 

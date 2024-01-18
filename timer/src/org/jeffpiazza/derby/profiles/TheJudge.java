@@ -1,14 +1,13 @@
 package org.jeffpiazza.derby.profiles;
 
-import org.jeffpiazza.derby.timer.Profile;
 import jssc.SerialPort;
-import org.jeffpiazza.derby.Flag;
-import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
+import org.jeffpiazza.derby.timer.Profile;
+import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 public class TheJudge extends TimerDeviceWithProfile {
-  public TheJudge(SerialPortWrapper portWrapper) {
+  public TheJudge(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

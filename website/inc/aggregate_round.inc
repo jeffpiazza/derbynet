@@ -54,6 +54,22 @@ function aggregate_classes() {
   return $results;
 }
 
+// $agg_classes is as computed by aggregate_classes(), with each element having
+// a classid and a constituents field.  Orders $agg_classes so that constituents
+// of an aggregate class follow that aggregate class in the array.
+function topological_sort(&$agg_classes) {
+   usort($agg_classes, function(&$a, &$b) {
+    if (in_array($a['classid'], $b['constituents'])) {
+      return 1;
+    } else if (in_array($b['classid'], $a['constituents'])) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+ return $agg_classes;
+}
+
 // Updates $agg_classes argument, which is a map of aggregate classes as
 // returned by aggregate_classes(), and adds ['constituents_tc'] to each
 // element, containing the transitive closure of the constituents relation.
@@ -149,11 +165,14 @@ function maybe_clean_up_aggregate_class_for_round($roundid) {
                        .' AND (SELECT COUNT(*) FROM Rounds'
                        .'      WHERE classid = Classes.classid) <= 1');
   $stmt->execute(array(':classid' => $classid));
+  record_action(array('action' => 'class.*delete', 'classid' => $classid));
   if ($stmt->rowCount() > 0) {
     record_event(EVENT_CLASS_DELETED, array('classid' => $classid));
     execute_once('DELETE FROM ConstituentClasses WHERE dependent = :classid',
                  array(':classid' => $classid));
   }
+
+  delete_from_raceinfo_with_value('full-field-calc', $classid);
 
   // Clean up any playlist entries for the deleted class.  When activated, a
   // playlist entry for a nonexistent class will create a new round for the

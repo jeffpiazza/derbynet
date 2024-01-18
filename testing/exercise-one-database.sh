@@ -15,7 +15,29 @@ prepare_for_setup() {
     # Delete /Library/WebServer/Documents/xsite/local/config-database.inc
     #  and /Library/WebServer/Documents/xsite/local/config-roles.inc
     # and then delete the cookies file
-    user_login_coordinator
+    #
+    #user_login_coordinator
+    # But it's OK if the login fails owing to there being no config file.
+    PWD=$(sed -n -e "s/^RaceCoordinator://p" "${PASSWORDS_FILE:-`dirname $0`/default.passwords}")
+	echo    >> $OUTPUT_CURL
+	echo login RaceCoordinator >> $OUTPUT_CURL
+	echo    >> $OUTPUT_CURL
+    SUCCESSFUL=1
+	curl --location -d "action=role.login&name=RaceCoordinator&password=$PWD" \
+        -s -b $COOKIES_CURL -c $COOKIES_CURL $BASE_URL/action.php | tee $DEBUG_CURL \
+		| tee -a $OUTPUT_CURL | \
+        jq -s -e ' length > 0 and (map(.outcome.summary == "success") | all)' >/dev/null || SUCCESSFUL=0
+    if [ ! $SUCCESSFUL ] ; then
+        tput setaf 1  # red text
+        echo Initial login unsuccessful
+    fi
+    tput setaf 0  # black text
+
+    # TODO Summarize success or failure here
+}
+
+function user_login_coordinator() {
+    user_login RaceCoordinator
 }
 
 # $1 is the name of the .js file in puppeteer subdirectory
@@ -27,7 +49,7 @@ puppeteer_test() {
 
 run_tests() {
 ############################## Basic Racing ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex0 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
 
@@ -51,11 +73,14 @@ run_tests() {
 
     `dirname $0`/test-photo-manipulations.sh "$BASE_URL"
     `dirname $0`/test-photo-assignments.sh "$BASE_URL"
-    `dirname $0`/test-photo-next.sh "$BASE_URL"
+    `dirname $0`/test-slide-next.sh "$BASE_URL"
 
     `dirname $0`/test-racer-query.sh "$BASE_URL"
 
     `dirname $0`/test-extended-scheduling.sh "$BASE_URL"
+
+    `dirname $0`/test-reschedule.sh "$BASE_URL"
+    `dirname $0`/test-rotation-schedule.sh "$BASE_URL"
 
 ############################## Standings by Rank ##############################
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
@@ -73,14 +98,14 @@ run_tests() {
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
 ############################## Racing Groups and Partitions ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex1 `dirname $0`/reset-database.sh "$BASE_URL"
     puppeteer_test checkin-empty-test.js
 
     `dirname $0`/test-partitions.sh "$BASE_URL"
     `dirname $0`/test-racing-groups.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex2 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-master-schedule.sh "$BASE_URL"
@@ -98,7 +123,7 @@ run_tests() {
     `dirname $0`/test-aggregate-nonracing.sh "$BASE_URL"
 
 ############################## Snapshot Export and Import ##############################
-    `dirname $0`/reset-database.sh "$BASE_URL"
+    RESET_SOURCE=ex3 `dirname $0`/reset-database.sh "$BASE_URL"
     `dirname $0`/import-roster.sh "$BASE_URL"
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-unused-lanes.sh "$BASE_URL"

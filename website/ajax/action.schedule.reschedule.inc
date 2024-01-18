@@ -1,572 +1,827 @@
 <?php
-// $_POST['roundid']
 
-//===============================
-//
-// The search space for injecting a new racer:
-//
-// First, pick a possibly-empty set of lanes ("skip lanes") for which new heats
-// will be added to incorporate a run of the new racer in the designated lane.
-//
-// For a given set of "skip lanes", then generate proposals for how to fill the
-// lanes for a first new heat.
-//
-// If there are more than one "skip lanes", it's presumably because the new
-// racer was added in too late to be accommodated well in existing heats.
-//
-// A total of no more than search_budget proposals will be considered, across
-// all considered skip_lanes.  * That's a bug: there's always a max_skip_lanes
-// possibility; injection shouldn't fail.
-//
-//===============================
+require_once('inc/schedule_utils.inc');
+require_once('inc/masterheat.inc');
+require_once('inc/kiosks.inc');
+require_once('inc/racing-state.inc');
+require_once('inc/rounds.inc');
+
+// Time limit for finding the "best" schedule for injection of a single racer.
+// (Usually this bounds the reschedule operation overall, but if an acceptable
+// schedule can't be found in the minimal number of heats, each additional heat
+// required resets the time limit.  It may be true that it's always possible to
+// find an acceptable schedule in the minimal number of heats, in which case the
+// disclaimer is moot.
+define("INJECTION_TIME_LIMIT", 10);  // in seconds
+
+$roundid = $_POST['roundid'];
+$racerid = $_POST['racerid'];
+$dry_run = $_POST['dry-run'];
+$trace = $_POST['trace'];
 
 
-// TODO Strongly assumes 1 run per car per lane.  Enforce this constraint if it
-// can't be removed.
+function n_runs_per_lane($roundid) {
+  global $db;
 
-// TODO intval(read_raceinfo('unused-lane-mask', 0)) -- apply when reading or
-// writing to the database; continue to use a "dense" race_chart.
-
-// TODO score of 0 for injections that create an extra heat when none is really
-// needed.  (Esp. k racers with k-1 heats.)
-
-// TODO master schedule
-
-require_once('inc/schedule_one_round.inc');
-
-define('DEBUG', true);
-define('DEBUG_SEARCH', true);
-define('DEBUG_SCORING', true);
+  // Pick a populated lane
+  $lane = read_single_value('SELECT MIN(lane) FROM RaceChart WHERE roundid = :roundid',
+                            array(':roundid' => $roundid));
+  $nracers = read_single_value('SELECT COUNT(DISTINCT racerid) FROM RaceChart'
+                               .' WHERE roundid = :roundid AND lane = :lane',
+                               array(':roundid' => $roundid,
+                                     ':lane' => $lane));
+  $nheats = read_single_value('SELECT COUNT(*) FROM RaceChart'
+                               .' WHERE roundid = :roundid AND lane = :lane',
+                               array(':roundid' => $roundid,
+                                     ':lane' => $lane));
+  return intdiv($nheats, $nracers);
+}
 
 class ScheduleAdjuster {
   private $roundid;
   private $nlanes;
-  private $nheats;
+  private $lane_mask;  // 1's mark masked lanes NOT in use
+  private $nlanes_usable;
+  private $n_runs_per_lane;
+  private $now_running;  // classid, roundid, heat, now_racing
 
-
-
-  // An array of indices into $race_chart of the heats that have been completed.
-  private $completed_heats;
-
-  // Number of heats that don't yet have results
-  private $nheats_to_run;
-
-  // Number of distinct heats with byes.
-  private $nheats_with_byes;
-
-  // An array of heats, each heat being an array of racerids.
-  // Each heat has $nlanes elements, with byes represented as nulls.
+  // $race_chart is an array of heats, each heat being an array of $nlanes
+  // elements populated with racerids.  If $race_chart[$h] is null, then the
+  // corresponding heat has already been run and cannot be rescheduled.
   private $race_chart;
+  private $nheats;
+  private $nheats_unraced;
+  private $nheats_new;
 
-  // An array of arrays mapping pairs of racers to a count of their encounters
-  // in the chart.  Indexing for both arrays is by racerid.
-  private $matchups;
+  // For heats that have already been run and might need to be renumbered due to
+  // heats being added or deleted to the race_chart.  Each entry is the heat
+  // number of the corresponding already-run heat, or null for a not-yet-run
+  // heat.  Initially, $heat_numbers[H] = H + 1 (e.g., the 0th entry is for heat
+  // 1), but that can change as the race_chart is updated.
+  private $heat_numbers;
 
-  // A goal is to keep the number of matchups between any two racers in a narrow
-  // range.
-  private $min_matchups;
-  private $max_matchups;
+  // Set true if the race_chart was updated for departed racer(s), added
+  // racer(s), or squeezed-out byes.
+  private $chart_modified = false;
+  // We can't prove that adjustment is always possible.  If we attempted a
+  // change but couldn't complete it, race_chart may be modified but shouldn't
+  // be written back to the database.
+  private $adjustment_failed = false;
+  
+  private $has_byes = false;  // Are there any byes in the existing chart?
 
-  // Consider no more than $search_budget more proposals for how to construct a
-  // new heat and swap the new racer into old heats.
-  private $search_budget;
+  // An array indexed by lane, each value being an array of heat indices with
+  // byes for that lane.
+  private $byes;
 
-  private $best_score;
-  private $best_proposal;
-  // The new heat to be added will place the new racer in the skip_lanes[0], and
-  // leave any additional skip_lanes as byes.
-  private $best_skip_lanes;
+  // Deadline (as a time() value) to give up searching for an optimal solution.
+  private $deadline;
+  private $keep_going = true;
 
+  private $best_proposal = null;  // array( 'score', 'injection_heats', 'displacement_heats' )
+  private $nproposals;
 
-  public function __construct($roundid) {
+  private $trace = null;
+  public $times = array();
+  private $time0;
+
+  public function to_json() {
+    return array('roundid' => $this->roundid,
+                 'nlanes' => $this->nlanes,
+                 'lane_mask' => $this->lane_mask,
+                 'nlanes_usable' => $this->nlanes_usable,
+                 'n_runs_per_lane' => $this->n_runs_per_lane,
+                 'race_chart' => $this->race_chart,
+                 'heat_numbers' => $this->heat_numbers,
+                 'nheats' => $this->nheats,
+                 'nheats_unraced' => $this->nheats_unraced,
+                 'nheats_new' => $this->nheats_new,
+                 'has_byes' => $this->has_byes,
+                 'best_proposal' => $this->best_proposal,
+                 'nproposals' => $this->nproposals,
+                 'trace' => $this->trace,
+                 'times' => $this->times,
+    );
+  }
+
+  public function chart_debug() {
+    return array_map(function(&$ht) {
+      if ($ht === null)
+        return $ht;
+      return implode(" ", array_map(function($r) { return ($r === null) ? "-" : $r; }, $ht));
+    },
+      $this->race_chart);
+  }
+
+  public function __construct($roundid, $trace = false) {
+    $this->time0 = time();
     $this->roundid = $roundid;
     $this->nlanes = get_lane_count();
-    $this->compute_completed_heats();
-    $this->reload_from_database();
-  }
+    $this->lane_mask = intval(read_raceinfo('unused-lane-mask', 0));
+    $this->nlanes_usable = $this->nlanes - count_one_bits($this->lane_mask);
+    $this->n_runs_per_lane = n_runs_per_lane($roundid);
+    $this->now_running = get_running_round();
+    $this->load_race_chart();
 
-  public function number_of_completed_heats() {
-    return count($this->completed_heats);
-  }
-
-  public function number_of_usable_lanes() {
-    // TODO lane mask
-    return $this->nlanes;
-  }
-
-  private function reload_from_database() {
-    $this->read_race_chart();
-    $this->compute_matchups();
-    $this->compute_matchup_range();
-  }
-
-  // Argument is in [0 .. $this->nlanes).
-  // Result is a value suitable for RaceChart.lane.
-  private function lane_number($lane_index) {
-    // TODO lane masking
-    return $lane_index + 1;
-  }
-
-  // Returns true if racerid $new_racer can be "injected" into the schedule: one
-  // new heat will be added, and opponents in each lane will be swapped in from
-  // existing heats, replaced by $new_heat in each of the existing heats.
-  public function inject($new_racer) {
-    $start = microtime(true);
-    $this->generate_injection_proposals();
-    $stop = microtime(true);
-    // echo "<injection-outcome>\n";  // TODO
-    if ($this->best_proposal !== null) {
-      // echo "<best-score>".$this->best_score."</best-score>\n";  // TODO
-      // echo "<skip-lanes>".json_encode($this->best_skip_lanes)."</skip-lanes>";  // TODO
-      // echo "<proposal>".json_encode($this->best_proposal)."</proposal>\n";  // TODO
+    $heats_raced = 0;
+    for ($h = 0; $h < count($this->heat_numbers); ++$h) {
+      if ($this->heat_numbers[$h] !== null) {
+        $this->race_chart[$h] = null;
+        ++$heats_raced;
+      }
     }
-    // echo "<timing>".number_format($stop - $start, 4)."</timing>\n";  // TODO
-    // echo "<unspent-budget>".$this->search_budget."</unspent-budget>\n";  // TODO
-    // echo "</injection-outcome>\n";  // TODO
-
-    if ($this->best_proposal === null) {
-      return false;
+    $this->nheats = count($this->race_chart);
+    $this->nheats_unraced = $this->nheats - $heats_raced;
+    if ($trace) {
+      $this->trace = array( 'trace' );
+      $this->trace[] = $this->to_json();
     }
-
-    $this->apply_proposal($this->best_proposal, $this->best_skip_lanes,
-                          $new_racer);
-    $this->reload_from_database();
-    return true;
+    $this->times['constructed'] = time() - $this->time0;
   }
 
-  private function read_race_chart() {
+  public function updated_race_chart() {
+    if (!$this->chart_modified || $this->adjustment_failed) {
+      return null;
+    }
+    return $this->race_chart;
+  }
+
+  public function renumbering_map() {
+    // In heat_numbers, for already-run heats, $h + 1 is what the heat number
+    // should be, $heat_numbers[$h] is what it currently is.  We want the
+    // inverted map, so the index is the heat number to be assigned, and the
+    // value is the current heat number.  In constructing the inverted map, we
+    // strip out any already-run heats that don't need renumbering.
+    $value = array();
+
+    for ($h = 0; $h < count($this->heat_numbers); ++$h) {
+
+      if ($this->heat_numbers[$h] === null ||
+          $this->heat_numbers[$h] == $h + 1) {
+        continue;
+      }
+      $fromheat = $this->heat_numbers[$h];
+      $toheat = $h + 1;
+      while ($toheat >= count($value)) {
+        $value[] = null;
+      }
+      $value[$toheat] = $fromheat;
+      if ($this->trace) $this->trace[] = "Renumber heat $fromheat to be heat $toheat";
+    }
+
+    if ($this->trace) $this->trace[] = array('renumbering_map', $value);
+    return $value;
+  }
+
+  private function load_race_chart() {
     global $db;
     $this->race_chart = array();
-    $stmt = $db->prepare('SELECT heat, lane, racerid FROM RaceChart'
+    $this->heat_numbers = array();
+    $stmt = $db->prepare('SELECT heat, lane, racerid,'
+                         .' (finishtime IS NOT NULL'
+                         .'      OR finishplace IS NOT NULL) AS has_result'
+                         .' FROM RaceChart'
                          .' WHERE roundid = :roundid'
                          .' ORDER BY heat, lane');
     $stmt->execute(array(':roundid' => $this->roundid));
     foreach ($stmt as $row) {
       while ($row['heat'] > count($this->race_chart)) {
         $this->race_chart[] = array_fill(0, $this->nlanes, null);
+        $this->heat_numbers[] = null;
+      }
+      if ($row['has_result']) {
+        $this->heat_numbers[$row['heat'] - 1] = $row['heat'];
       }
       $this->race_chart[$row['heat'] - 1][$row['lane'] - 1] = intval($row['racerid']);
     }
 
-    $this->nheats = count($this->race_chart);
-    $this->nheats_to_run = $this->nheats - count($this->completed_heats);
-    $this->nheats_with_byes = 0;
-    for ($heat = 0; $heat < $this->nheats; ++$heat) {
-      if (in_array(null, $this->race_chart[$heat], true) &&
-          !in_array($heat, $this->completed_heats, true)) {
-        ++$this->nheats_with_byes;
-      }
-    }
+    $this->look_for_byes();
 
-    if (DEBUG) {
-      json_out('race-chart', $this->race_chart);
-    }
+    return $completed_heat_indices;
   }
 
-  private function compute_matchups() {
-    $this->matchups = array();
-    foreach ($this->race_chart as $heat) {
-      foreach ($heat as $racer1) {
-        if (!$racer1) continue;
-        if (!isset($this->matchups[$racer1])) {
-          $this->matchups[$racer1] = array();
-        }
-        foreach ($heat as $racer2) {
-          if (!$racer2 || $racer1 == $racer2) {
-            continue;
-          }
-          $prev = 0;
-          if (isset($this->matchups[$racer1][$racer2])) {
-            $prev = $this->matchups[$racer1][$racer2];
-          }
-          $this->matchups[$racer1][$racer2] = $prev + 1;
-        }
-      }
-    }
-
-    if (DEBUG_SCORING) {
-      json_out('matchups', $this->matchups);
-    }
-  }
-
-  private function compute_matchup_range() {
-    $this->max_matchups = 0;
-    $this->min_matchups = 1000;
-    foreach ($this->matchups as $racer1 => $pairings) {
-      foreach ($pairings as $racer2 => $p) {
-        if ($p > $this->max_matchups) {
-          $this->max_matchups = $p;
-        }
-        if ($p < $this->min_matchups) {
-          $this->min_matchups = $p;
-        }
-      }
-      if ($this->min_matchups > 0) {
-        foreach ($this->matchups as $racer2 => $ignore) {
-          if ($racer1 != $racer2 && !isset($pairings[$racer2])) {
-            $this->min_matchups = 0;
-          }
-        }
-      }
-    }
-
-    if (DEBUG) {
-      json_out('matchups-summary', array('min' => $this->min_matchups,
-                                         'max' => $this->max_matchups,
-                                         'range' => $this->max_matchups - $this->min_matchups));
-    }
-  }
-
-  function compute_completed_heats() {
-    global $db;
-    $this->completed_heats = array();
-    $stmt = $db->prepare('SELECT DISTINCT heat FROM RaceChart'
-                         .' WHERE roundid = :roundid'
-                         .' AND (finishtime IS NOT NULL'
-                         .'      OR finishplace IS NOT NULL)');
-    $stmt->execute(array(':roundid' => $this->roundid));
-    foreach ($stmt as $row) {
-      $this->completed_heats[] = $row['heat'] - 1;
-    }
-  }
-
-  // $proposal is an array of $nlanes elements, each of which is
-  // either null (no swap) or a heat index.
-  function score_proposal(&$proposal, $proposed_new_heat) {
-    $score = -min($this->nheats_with_byes, $this->nlanes);
-    if (DEBUG_SCORING) json_out('initial-score', $score);
+  private function look_for_byes() {
+    $this->has_byes = false;
+    $this->byes = array_fill(0, $this->nlanes, null);
     for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-      if ($proposal[$lane] !== null) {
-        $candidate_heat_index = $proposal[$lane];
-        $candidate_heat = &$this->race_chart[$candidate_heat_index];
-        $candidate_racer = $candidate_heat[$lane];
-        if ($candidate_racer === null) {
-          $score += 1;
-          if (DEBUG_SCORING) json_out('filled-bye', "Lane $lane");
+      $this->byes[$lane] = array();
+      if (($this->lane_mask & (1 << $lane)) == 0) {  // Active lane
+        for ($h = 0; $h < $this->nheats; ++$h) {
+          if ($this->race_chart[$h] !== null && $this->race_chart[$h][$lane] === null) {
+            $this->byes[$lane][] = $h;
+            $this->has_byes = true;
+          }
+        }
+      }
+    }
+    return $this->has_byes;
+  }
+
+  
+  // An assoc of assocs to keep track of how many times each pair of racers
+  // appear in the same heat (a "matchup" between those racers).  The smaller of
+  // the two racerids is the key to the first assoc, and the larger racerid is
+  // the key to the second.  Only computes entries for pairs that appear together.
+  private function compute_matchups($replacements = false) {
+    // If provided, $replacements maps a heat index to an alternate version of
+    // that heat that should be used in place of the canonical one in
+    // $this->race_chart.
+    if ($replacements === false) {
+      $replacements = array();
+    }
+    $nheats = count($this->race_chart);
+    $matchups = array();
+    for ($h = 0; $h < $nheats; ++$h) {
+      $heat = &$this->race_chart[$h];
+      if (isset($replacements[strval($h)])) {
+        $heat = &$replacements[strval($h)];
+      }
+
+      foreach ($heat as $racer1) {
+        if ($racer1 === null) {
           continue;
         }
-        // Scan the old heat looking for matchups lost
-        for ($opponent_lane = 0; $opponent_lane < $this->nlanes; ++$opponent_lane) {
-          if ($lane != $opponent_lane) {
-            $old_opponent = $candidate_heat[$opponent_lane];
-            if ($old_opponent == null) continue;
-            // if $old_opponent also appears in $proposed_new_heat, then we're neither
-            // increasing nor decreasing the number of matchups between
-            // $candidate_racer and that opponent.
-            if (DEBUG_SCORING) {
-              //echo "<score>In lane ".$lane.": Lost matchup between ".$candidate_racer
-              //  ." and ".$old_opponent
-              //  .", decreasing matchup count from "
-              //  .$this->matchups[$candidate_racer][$old_opponent]."</score>\n";
-            }
-            if ($this->matchups[$candidate_racer][$old_opponent] ==
-                   $this->min_matchups) {
-              if (!in_array($old_opponent, $proposed_new_heat)) {
-                // We're losing a matchup with $old_opponent here, and not making
-                // it up in the new heat, so earns a negative score.
-                $score -= 10;
-                // if (DEBUG_SCORING) echo "<ding/>\n";
+        if (!isset($matchups[$racer1])) {
+          $matchups[$racer1] = array();
+        }
+        foreach ($heat as $racer2) {
+          if ($racer2 === null || intval($racer1) >= intval($racer2)) {
+            continue;
+          }
+          if (!isset($matchups[$racer1][$racer2])) {
+            $matchups[$racer1][$racer2] = 0;
+          }
+          ++$matchups[$racer1][$racer2];
+        }
+      }
+    }
+    return $matchups;
+  }
+
+  // Compute the mean and standard deviation for the population of potential
+  // matchups.  That population has size nracers * (nracers - 1), as it's the
+  // space of pairs of distinct racers.
+  private function compute_matchup_stats(&$matchups) {
+    // $matchups won't include entries for racer pairs that never meet in a single heat.
+    // Those matchup values of 0 can be ignored for the mean.
+    $nracers = count($matchups);
+    if ($nracers <= 1) return array('nracers' => $nracers);
+    $mean = 0;
+    foreach ($matchups as $racer1 => &$pairings) {
+      foreach ($pairings as $racer2 => $m) {
+        // The $matchups structure only lists $racer1 < $racer2 cases, so we
+        // double to account for $racer2 < $racer1 duals.
+        $mean += 2 * $m;
+      }
+    }
+    $mean = $mean / ($nracers * ($nracers - 1));
+    unset($pairings);
+
+    // Standard deviation:
+    // sigma^2 = sum( (mean - m)^2 ) / (nracers * (nracers - 1))
+    //         = sum( mean^2 -2*m*mean + m^2 ) / (nracers * (nracers - 1))
+    //         = mean^2 - [ sum( 2 * m * mean - m^2 ) / (nracers * (nracers - 1)) ]
+    // Here again, we can ignore the m == 0 values not explicitly represented in the matchups structure,
+    // while double-counting the non-zero m's to account for reversed racer pairs.
+
+    $sigma2 = 0;
+    foreach ($matchups as $racer1 => &$pairings) {
+      foreach ($pairings as $racer2 => $m) {
+        $sigma2 -= 2 * (2 * $m * $mean - $m * $m);
+      }
+    }
+    $sigma2 = $mean * $mean + $sigma2 / ($nracers * ($nracers - 1));
+    
+    return array('nracers' => $nracers,
+                 'mean' => $mean,
+                 'variance' => $sigma2);
+  }
+
+  private function summarize_matchups(&$matchups) {
+    $summary = array();
+    foreach ($matchups as $racer1 => &$pairings) {
+      foreach ($pairings as $racer2 => $m) {
+        $summary[] = array(intval($racer1), intval($racer2), $m);
+      }
+    }
+    return $summary;
+  }
+
+  // Remove (convert to byes) the appearance of any racer that's no longer in
+  // the round's Roster.
+  public function remove_departed() {
+    global $db;
+    $stmt = $db->prepare('SELECT DISTINCT racerid '.sql_for_departed(':roundid'));
+    $stmt->execute(array(':roundid' => $this->roundid));
+    $departed = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    foreach ($departed as $gone) {
+      $this->has_byes = true;
+      foreach ($this->race_chart as &$heat) {
+        if ($heat != null) {
+          for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+            if ($heat[$lane] == $gone) {
+              $heat[$lane] = null;
+              $this->chart_modified = true;
+              if ($this->trace) {
+                $this->trace[] = "Removed departed racer $gone from 0-based lane $lane";
+                $this->trace[] = $this->chart_debug();
               }
             }
           }
         }
-        // Scan the new heat looking for matchups added
-        for ($o = 0; $o < $lane; ++$o) {
-          $new_opponent = $proposed_new_heat[$o];
-          if ($new_opponent == null) continue;
-          if (DEBUG_SCORING) {
-            //echo "<score>In lane ".$lane.": Added matchup between "
-            //    .$candidate_racer." and ".$new_opponent
-            //    .", increasing matchup count from "
-            //    .$this->matchups[$candidate_racer][$new_opponent]
-            //    ."</score>\n";
+      }
+    }
+  }
+
+  public function squeeze_out_byes() {
+    while ($this->look_for_byes()) {
+      if ($this->trace) {
+        $this->trace[] = "Squeezing out byes: ".json_encode($this->byes);
+      }
+      for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+        if (($this->lane_mask & (1 << $lane)) == 0 &&  // Active lane
+            count($this->byes[$lane]) == 0) {
+          // There are byes in the chart, but there aren't any for $lane, so
+          // squeezing out heats by populating byes won't be possible.
+          if ($this->trace) {
+            $this->trace[] = "No byes available for lane $lane";
           }
-          if ($this->matchups[$candidate_racer][$new_opponent] == $this->max_matchups) {
-            if (!in_array($new_opponent, $candidate_heat)) {
-              // We're adding another matchup with $new_opponent when we've already
-              // had as many as we should, and we're not eliminating one of those
-              // matchups from the old heat.
-              $score -= 10;
-              // if (DEBUG_SCORING) echo "<ding/>\n";
+          return;
+        }
+      }
+      if (!$this->squeeze_out_one_heat_of_byes()) {
+        // Couldn't do it, don't keep trying.  squeeze_out_one_heat_of_byes
+        // won't have changed the race_chart if unsuccessful.
+        if ($this->trace) $this->trace[] = "squeeze_out_byes giving up.";
+        return;
+      }
+    }
+  }
+
+  private function squeeze_out_one_heat_of_byes() {
+    for ($h = 0; $h < $this->nheats; ++$h) {
+      if ($this->race_chart[$h] == null) {
+        // Already raced
+        continue;
+      }
+
+      // An array of heat indices.  Each racer in lane L of heat $h will fill a
+      // bye in heat $relos[L].
+      $relos = array_fill(0, $this->nlanes, null);
+      $h_plausible = true;
+      for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+        if (($this->lane_mask & (1 << $lane)) != 0) {  // Masked-out lane
+          if ($this->trace) $this->trace[] = "Lane ".($lane + 1)." is masked out";
+          $relos[$lane] = null;
+        } else {
+          $candidate = $this->race_chart[$h][$lane];
+          $relos[$lane] = null;
+          foreach ($this->byes[$lane] as $bh) {  // Try each heat with a bye for $lane
+            // - The racer currently in race_chart[$h][$lane] can't appear in
+            //   race_chart[$bh].
+            // - TODO Scoring for matchups?
+            if (in_array($candidate, $this->race_chart[$bh])) {
+              if ($this->trace)
+                $this->trace[] = "Considering dissolving heat $h: "
+                               ."Can't put racer $candidate in lane "
+                               .($lane + 1)." of heat $bh: ".json_encode($this->race_chart[$bh]);
+              continue;
             }
+            $relos[$lane] = $bh;
+
+            // TODO There are other options, we're just seizing the first one.
+            break;
+          }
+          if (!$relos[$lane]) {
+            $h_plausible = false;
+            break;
           }
         }
       }
-    }
-    return $score;
-  }
 
-  private function generate_injection_proposals() {
-    $this->best_score = -10000;
-    $this->search_budget = 10000;
-    $proposal = array_fill(0, $this->nlanes, null);
-    $proposed_new_heat = array_fill(0, $this->nlanes, null);
-
-    $max_heats_to_add = max(1, $this->nlanes - $this->nheats_to_run);
-    for ($nskip = 0; $nskip <= $max_heats_to_add; ++$nskip) {
-      // $skip_lanes is an array of lane indices to leave blank in the proposal
-      // -- we expect to add a heat with the new racer in the $skip_lane[0]'th
-      // lane.  We want as few skip-lane entries as possible; each represents a
-      // tacked-on heat with the new racer racing alone.
-      $skip_lanes = array_fill(0, $nskip, null);
-      $this->generate_lanes_to_skip_for_injection_proposals(/* skip_i */ 0, $skip_lanes,
-                                                            $proposal, $proposed_new_heat);
-    }
-  }
-
-  // Recursively fills out the $skip_lanes array with distinct lane indices,
-  // then starts generate_injection_proposals_recur with the result.
-  //
-  // $skip_i is an index into $skip_lanes
-  private function generate_lanes_to_skip_for_injection_proposals(
-        $skip_i, &$skip_lanes, &$proposal, &$proposed_new_heat) {
-    if ($skip_i >= count($skip_lanes)) {
-      $this->generate_injection_proposals_recur(/* lane */ 0, $skip_lanes,
-                                                $proposal, $proposed_new_heat);
-    } else {
-      // Pick a lane to fill the skip_i'th element of skip_lanes
-      for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-        if ($this->search_budget <= 0) break;
-        if (in_array($lane, $skip_lanes, true)) continue;
-        $skip_lanes[$skip_i] = $lane;
-        $this->generate_lanes_to_skip_for_injection_proposals(
-          $skip_i + 1, $skip_lanes, $proposal, $proposed_new_heat);
+      if ($h_plausible) {
+        // We like $h for distribution across the $relo heats.
+        if ($this->trace) {
+          $this->trace[] = "Squeezing out heat $h: ".implode(" ", $this->race_chart[$h]);
+        }
+        for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+          if ($relos[$lane] != null) {
+            $this->race_chart[$relos[$lane]][$lane] = $this->race_chart[$h][$lane];
+          }
+        }
+        array_splice($this->race_chart, $h, 1);
+        array_splice($this->heat_numbers, $h, 1);
+        $this->chart_modified = true;
+        --$this->nheats;
+        --$this->nheats_unraced;
+        if ($this->roundid == $this->now_running['roundid']) {
+          // Turn off "now racing" if we're changing the currently-running heat.
+          set_racing_state(false);
+        }
+        return true;
       }
-      $skip_lanes[$skip_i] = null;  // Clean up for next time
+    }
+    // Couldn't find a viable $h heat
+    return false;
+  }
+
+  // An array of heat indicies.  For each lane L, $this->injection_heats[L]
+  // tells the heat where the new racer might be injected.
+  private $injection_heats;
+  // If the race chart already has a racer in the proposed injection slot for
+  // lane L, the that racer gets "displaced" to the same lane in one of the
+  // newly added heats.  While there's usually only one added heat, in some
+  // cases there may be more, so it's necessary to keep track of which of the
+  // new heats is proposed for the displaced racer.
+  private $displacement_heats;
+
+  // Inject one racer with n_runs_per_lane into the scheduled round.
+  public function inject_new_racer($new_racer_id) {
+    for ($run = 0; $run < $this->n_runs_per_lane; ++$run) {
+      if ($this->trace) {
+        $this->trace[] = "Injecting for run $run";
+      }
+
+      $this->add_minimal_new_heats();
+      // After adding the minimal number of new heats that might accommodate the
+      // new racer, this outer loop reluctantly adds additional heats as needed.
+      // Worst case, we need to add a new heat for each each usable lane, in
+      // order to race the new racer alone in each heat.
+      for ($extra = 0; $extra < $this->nlanes_usable; ++$extra) {
+        $this->times["run-$run-extra-$extra-start"] = time() - $this->time0;
+        $this->best_proposal = null;
+        $this->nproposals = 0;
+        $this->inject_new_racer_once($new_racer_id);
+        if ($this->best_proposal !== null || !$this->keep_going) {
+          if (!$this->keep_going) {
+            $this->times["run-$run-timed-out"] = true;
+          }
+          $this->times["run-$run-injected"] = time() - $this->time0;
+          // If we have a solution, or we failed because we ran out of time,
+          // then we're done.
+          break;
+        }
+
+        // Try again with an extra heat added
+        if ($this->trace) {
+          $this->trace[] = "* Trying again after $extra extra heat(s)";
+        }
+        $this->race_chart[] = array_fill(0, $this->nlanes, null);
+        ++$this->nheats;
+        ++$this->nheats_new;
+      }
+
+      if ($this->best_proposal !== null) {
+        $this->race_chart
+          = $this->make_new_injection_race_chart($this->best_proposal['injection_heats'],
+                                                 $this->best_proposal['displacement_heats'],
+                                                 $new_racer_id);
+        $this->chart_modified = true;
+        $this->times["run-$run-racechart"] = time() - $this->time0;
+      } else {
+        // We've never seen a case where a racer couldn't be incorporated, but
+        // we don't have a proof that it always works.  We set this flag to
+        // indicate that the race_chart array may be in some indeterminate state
+        // after adding extra, perhaps unpopulated, heats.
+        $this->adjustment_failed = true;
+        if ($this->trace) $this->trace[] = "Adjustment failed.";
+      }
     }
   }
-  
-  // Generates proposals for injecting a new racer into the schedule.
-  //
-  // $skip_lanes is an array of lane indices to leave blank in the proposal --
-  // we expect to add a heat with the new racer in the $skip_lane[0]'th lane.
-  private function generate_injection_proposals_recur(
-        $lane, $skip_lanes, &$proposal, &$proposed_new_heat) {
-    if ($this->best_score >= 0) return;  // Short-circuit on optimal choice
-    if ($this->search_budget <= 0) {
-      // echo "<over-budget/>\n";
+
+  // Calculates the smallest number of heats that might accommodate a new racer,
+  // and adds that many empty heats to race_chart.
+  private function add_minimal_new_heats() {
+    if ($this->has_byes) {
+      $this->nheats_new = max(0, $this->nlanes_usable - $this->nheats_unraced);
+    } else {
+      $this->nheats_new = max(1, $this->nlanes_usable - $this->nheats_unraced);
+    }
+    if ($this->trace) {
+      $this->trace[] = "Minimum $this->nheats_new new heats";
+    }
+
+    for ($h = 0; $h < $this->nheats_new; ++$h) {
+      $this->race_chart[] = array_fill(0, $this->nlanes, null);
+      ++$this->nheats;
+    }
+  }
+  // Writes injection_heats and displacement_heats, and then
+  // inject_new_racer_at_lane recurses through all the lanes that need to be
+  // populated.
+  private function inject_new_racer_once($new_racer_id) {
+    $this->deadline = time() + intdiv(INJECTION_TIME_LIMIT, $this->n_runs_per_lane);
+    $this->keep_going = true;
+    $this->best_proposal = null;
+
+    $this->injection_heats = array_fill(0, $this->nlanes, null);
+    $this->displacement_heats = array_fill(0, $this->nlanes, null);
+    $this->inject_new_racer_at_lane($new_racer_id, /*$new_racer_lane*/0);
+  }
+  private function inject_new_racer_at_lane($new_racer_id, $new_racer_lane) {
+    if ($this->trace) {
+      $this->trace[] = "inject_new_racer_at_lane $new_racer_lane: "
+                     .implode(" ", array_filter($this->injection_heats));
+    }
+    if (time() > $this->deadline) {
+      $this->keep_going = false;
       return;
     }
-
-    if ($lane >= $this->nlanes) {
-      --$this->search_budget;
-      // if ($this->search_budget <= 0) echo "<budget-expired/>\n";
-      if (DEBUG_SEARCH) {
-        // echo "<proposal>\n";
-        // echo "<heats>".json_encode($proposal)."</heats>\n";
+    if ($new_racer_lane >= $this->nlanes) {
+      if ($this->trace) {
+        $this->trace[] = "Proposal! ".implode(" ", array_filter($this->injection_heats));
       }
-      $score = $this->score_proposal($proposal, $proposed_new_heat);
-      if (DEBUG_SEARCH) {
-        // echo "<score>".$score."</score>\n";
+      $this->consider_proposal($new_racer_id);
+      if (!$this->keep_going) {
+        return;
       }
-      if ($score > $this->best_score) {
-        $this->best_score = $score;
-        $this->best_skip_lanes = $skip_lanes;
-        $this->best_proposal = $proposal;
-        if (DEBUG_SEARCH) {
-          // echo "<best-score>".$score." for ".json_encode($proposal)
-          //     ." with skip_lanes ".json_encode($skip_lanes)."</best-score>\n";
-        }
-      }
-      if (DEBUG_SEARCH) {
-        // echo "</proposal>\n";
-      }
-    } else if (in_array($lane, $skip_lanes, true)) {
-      $this->generate_injection_proposals_recur($lane + 1, $skip_lanes,
-                                                $proposal, $proposed_new_heat);
     } else {
-      for ($heat = 0; $heat < $this->nheats; ++$heat) {
-        if ($this->best_score >= 0 || $this->search_budget <= 0) return;
-        if (!in_array($heat, $this->completed_heats, true) &&
-            !in_array($heat, $proposal, true)) {
-          $racer = $this->race_chart[$heat][$lane];
-          // We have to make sure we don't have the same car showing up twice in
-          // the new heat.  There isn't supposed to be a new heat if
-          // count($skip_lanes) == 0.
-          if ($racer === null ||
-              (count($skip_lanes) > 0 && !in_array($racer, $proposed_new_heat))) {
-            $proposal[$lane] = $heat;
-            $proposed_new_heat[$lane] = $racer;
-            $this->generate_injection_proposals_recur($lane + 1, $skip_lanes,
-                                                      $proposal, $proposed_new_heat);
-            $proposal[$lane] = null;
-            $proposed_new_heat[$lane] = null;
-          }
+      if (($this->lane_mask & (1 << $new_racer_lane)) != 0) {  // Masked-out lane
+        $this->injection_heats[$new_racer_lane] = null;
+        $this->displacement_heats[$new_racer_lane] = null;
+        if ($this->trace) {
+          $this->trace[] = "decline masked lane $new_racer_lane";
         }
-      }
-    }
-  }
-
-  // For each lane mentioned in $skip_lanes, a new heat will be added with new
-  // racer running in the specific lane.
-  //
-  // For lanes not mentioned in $skip_lanes, $proposal[$lane] gives a heat
-  // index, and the new racer gets swapped in that existing heat in that lane.
-  // The racer that previously occupied that spot gets moved to the first added
-  // heat.
-  //
-  private function apply_proposal(&$proposal, &$skip_lanes, $new_racer) {
-    global $db;
-    $update_stmt = $db->prepare('UPDATE RaceChart SET racerid = :racerid'
-                                .' WHERE roundid = :roundid'
-                                .' AND heat = :heat'
-                                .' AND lane = :lane');
-
-    $insert_stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid)'
-                                .' VALUES(:roundid, :heat, :lane, :racerid)');
-
-    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
-      if (!in_array($lane, $skip_lanes, true)) {
-        // Replace existing racers in the proposal with the new racer
-        $update_stmt->execute(array(':racerid' => $new_racer,
-                                    ':roundid' => $this->roundid,
-                                    ':heat' => $proposal[$lane] + 1,
-                                    ':lane' => $this->lane_number($lane)));
-
-        if ($proposal[$lane] !== null) {
-          if ($this->race_chart[$proposal[$lane]][$lane] === null) {
-            // Replace byes in the proposal with the new racer, by inserting RaceChart entries
-            $insert_stmt->execute(array(':racerid' => $new_racer,
-                                        ':roundid' => $this->roundid,
-                                        ':heat' => $proposal[$lane] + 1,
-                                        ':lane' => $this->lane_number($lane)));
-
-          } else {
-            // Otherwise move the old racer to the (first) new heat.
-            $insert_stmt->execute(array(':racerid' => $this->race_chart[$proposal[$lane]][$lane],
-                                        ':roundid' => $this->roundid,
-                                        ':heat' => $this->nheats + 1,
-                                        ':lane' => $this->lane_number($lane)));
-          }
-        }
-      }
-    }
-
-    // Add the new racer to any new heats.  The number of new heats = size of $skip_lanes
-    for ($skip_i = 0; $skip_i < count($skip_lanes); ++$skip_i) {
-      $lane = $skip_lanes[$skip_i];
-      $insert_stmt->execute(array(':racerid' => $new_racer,
-                           ':roundid' => $this->roundid,
-                           ':heat' => $this->nheats + $skip_i + 1,
-                           ':lane' => $this->lane_number($lane)));
-    }
-  }
-}
-
-function n_runs_per_lane($roundid) {
-  global $db;
-
-  $nracers = read_single_value('SELECT COUNT(DISTINCT racerid) FROM RaceChart'
-                               .' WHERE roundid = :roundid',
-                               array(':roundid' => $roundid));
-  if ($nracers == 0) {
-    return 0;
-  }
-  $nheats = read_single_value('SELECT COUNT(DISTINCT heat) FROM RaceChart'
-                              .' WHERE roundid = :roundid',
-                              array(':roundid' => $roundid));
-  $n_runs_per_lane = $nheats / $nracers;
-  if (!is_int($n_runs_per_lane)) {
-    return 0;
-  }
-  return $n_runs_per_lane;
-}
-
-function deleted_racers($roundid) {
-  global $db;
-  $result = array();
-  $stmt = $db->prepare('SELECT DISTINCT RaceChart.racerid FROM RaceChart'
-                       .' INNER JOIN RegistrationInfo'
-                       .' ON RaceChart.racerid = RegistrationInfo.racerid'
-                       .' WHERE roundid = :roundid'
-                       .' AND passedinspection = 0');
-  $stmt->execute(array(':roundid' => $roundid));
-  foreach ($stmt as $row) {
-    $result[] = $row['racerid'];
-  }
-  return $result;
-}
-
-function added_racers($roundid) {
-  global $db;
-  $result = array();
-  $stmt = $db->prepare('SELECT ri.racerid FROM RegistrationInfo ri'
-                       .' WHERE classid = '
-                       .'    (SELECT classid FROM Rounds'
-                       .'      WHERE roundid = :roundid)'
-                       .'  AND passedinspection = 1'
-                       .'  AND NOT EXISTS(SELECT 1 FROM RaceChart'
-                       .'    WHERE roundid = :roundid2'
-                       .'      AND racerid = ri.racerid)');
-  $stmt->execute(array(':roundid' => $roundid,
-                       ':roundid2' => $roundid));
-  foreach ($stmt as $row) {
-    $result[] = $row['racerid'];
-  }
-  return $result;
-}
-
-if (have_permission(CONTROL_RACE_PERMISSION)) {
-  $roundid = $_POST['roundid'];
-
-  $deleted = deleted_racers($roundid);
-  if (count($deleted) > 0) json_out('deleted-racers', $deleted);
-  $added = added_racers($roundid);
-  if (count($added) > 0) json_out('added-racers', $added);
-
-  $ok = true;
-
-  if (count($deleted) == 0 && count($added) == 0) {
-    json_failure('nothingtodo', "Nothing to do");
-    $ok = false;
-  }
-
-  $n_runs_per_lane = n_runs_per_lane($roundid);
-  if ($n_runs_per_lane == 0) {
-    json_failure('unrecognizable', "Schedule not recognizable");
-    $ok = false;
-  }
-
-  $adjuster = new ScheduleAdjuster($roundid);
-  
-  if ($adjuster->number_of_completed_heats() == 0) {
-    json_out('regenerating', true);
-    execute_once('DELETE FROM RaceChart WHERE roundid = :roundid',
-                 array(':roundid' => $roundid));
-
-	if (schedule_one_round($roundid, $adjuster->number_of_usable_lanes(),
-                           $n_runs_per_lane, /* trace */ false)) {
-      json_success();
-    } else {
-      json_failure('too-few-racers', 
-                   "There need to be at least two racers checked in to generate a schedule.");
-    }
-
-    $ok = false;
-  }
-  
-  if ($ok && count($deleted) > 0) {
-    json_failure('deleted', "Not yet implemented: deleted racers");
-    $ok = false;
-  }
-
-  if ($ok) {
-    foreach ($added as $new_racer) {
-      // TODO for ($run = 0; $run < $n_runs_per_lane; ++$run) ?
-      if ($adjuster->inject($new_racer)) {
-        json_out('successful-injection', true);
+        $this->inject_new_racer_at_lane($new_racer_id, 1 + $new_racer_lane);
       } else {
-        json_failure('no-injection', "Unsuccessful racer injection");
-        $ok = false;
+        for ($heat = 0; $heat < $this->nheats; ++$heat) {
+          if (!$this->keep_going) {
+            return;
+          }
+          $this->inject_new_racer_at_lane_in_heat($new_racer_id, $new_racer_lane, $heat);
+        }
+      }
+    }
+  }
+  private function inject_new_racer_at_lane_in_heat($new_racer_id, $new_racer_lane, $heat) {
+    if (time() > $this->deadline) {
+      $this->keep_going = false;
+      return;
+    }
+    // - Can't propose an already-completed heat.
+    // - Can't plug the new racer into the same heat twice (from a previous run)
+    // - Can't choose the same heat twice in the current proposal (which would put
+    //   the new racer in two lanes at once)
+    //
+    // When searching $this->injection_heats, we really only want to search the
+    // populated part, i.e., from 0 to $heat - 1.  That's why we clean up
+    // $this->injection_heats.
+    if ($this->race_chart[$heat] === null ||
+        in_array($new_racer_id, $this->race_chart[$heat], true) ||
+        in_array($heat, $this->injection_heats, true)) {
+      if ($this->trace) {
+        if ($this->race_chart[$heat] === null) {
+          // - Can't propose an already-completed heat.
+          $reason = "heat finished";
+        } else if (in_array($new_racer_id, $this->race_chart[$heat], true)) {
+          // - Can't plug the new racer into the same heat twice (from a previous run)
+          $reason = "new racer already present";
+        } else {
+          // - Can't choose the same heat twice in the current proposal (which would put
+          //   the new racer in two lanes at once)
+          $reason = "new racer already injected";
+        }
+        $this->trace[] = "Reject heat $heat for lane $new_racer_lane because $reason: "
+                       .implode(" ", array_filter($this->injection_heats));
+      }
+      // We can't use this heat in the proposal, so just move on to the next heat
+    } else {
+      $displaced = $this->race_chart[$heat][$new_racer_lane];
+      $this->injection_heats[$new_racer_lane] = $heat;
+      if ($displaced === null) {
+        $this->inject_new_racer_at_lane($new_racer_id, 1 + $new_racer_lane);
+      } else {
+        for ($dheat = $this->nheats - $this->nheats_new; $dheat < $this->nheats; ++$dheat) {
+          if (time() > $this->deadline) {
+            $this->keep_going = false;
+          }
+          if (!$this->keep_going) {
+            return;
+          }
+          if ($this->race_chart[$dheat] !== null &&
+              !in_array($displaced, $this->race_chart[$dheat], true)) {
+            if ($this->trace) {
+              $this->trace[] = "Displace racer $displaced to heat $dheat for lane $new_racer_lane: "
+                             .implode(" ", array_filter($this->injection_heats));
+            }
+
+            $this->displacement_heats[$new_racer_lane] = $dheat;
+            $this->race_chart[$dheat][$new_racer_lane] = $displaced;
+
+            $this->inject_new_racer_at_lane($new_racer_id, 1 + $new_racer_lane);
+
+            $this->race_chart[$dheat][$new_racer_lane] = null;
+            $this->displacement_heats[$new_racer_lane] = null;
+          }
+          else if ($this->trace) {
+              $this->trace[] = "Can't displace racer $displaced to heat $dheat for lane $new_racer_lane: "
+                             .implode(" ", array_filter($this->injection_heats));
+          }
+        }
+      }
+      $this->injection_heats[$new_racer_lane] = null;
+    }
+  }
+
+  private function consider_proposal($new_racer_id) {
+    $s0 = time();
+    // $score is variance of matchups, always >= 0; we want the lowest we can get.
+    $score = $this->score_proposal($new_racer_id)['stats']['variance'];
+    if (time() - $s0 > 1) {
+      $this->times["scoring"] = time() - $s0;
+    }
+    if ($this->trace) {
+      $this->trace[] = array('proposal-score' => $score);
+    }
+    if ($this->best_proposal === null || $this->best_proposal['score'] > $score) {
+      $this->best_proposal = array('score' => $score,
+                                   'injection_heats' => array_slice($this->injection_heats, 0),
+                                   'displacement_heats' => array_slice($this->displacement_heats, 0));
+      if ($this->trace) {
+        $this->trace[] = 'selected';
+      }
+      // TODO There's probably minimum possible variance other than 0 for a
+      // chart, which would allow an earlier exit.
+      if ($score == 0) {  // No need to keep looking for better
+        $this->keep_going = false;
+      }
+    }
+    ++$this->nproposals;
+    if (time() > $this->deadline) {
+      $this->keep_going = false;
+    }
+  }
+
+  private function make_new_injection_race_chart($injection_heats, $displacement_heats,
+                                                 $new_racer_id) {
+    $chart = array();
+    foreach ($this->race_chart as $heat) {
+      $chart[] = $heat;
+    }
+    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+      if ($injection_heats[$lane] === null) {
+        continue;
+      }
+      if ($displacement_heats[$lane] !== null) {
+        $chart[$displacement_heats[$lane]][$lane] = $chart[$injection_heats[$lane]][$lane];
+      }
+      $chart[$injection_heats[$lane]][$lane] = $new_racer_id;
+    }
+    return $chart;
+  }
+
+  // Injects the new racer into race_chart, and constructs a new heat of the
+  // displaced racers.
+  private function make_replacement_heats($new_racer_id) {
+    $replacements = array();
+    // $this->displacement_heats have already been incorporated into the race
+    // chart, so we only need to worry about the injection heats.
+    for ($lane = 0; $lane < $this->nlanes; ++$lane) {
+      $inj = $this->injection_heats[$lane];
+      if ($inj === null) {
+        continue;
+      }
+      $heat = $this->race_chart[$inj];
+      $heat[$lane] = $new_racer_id;
+      $replacements[strval($inj)] = $heat;
+    }
+    return $replacements;
+  }
+  
+  private function score_proposal($new_racer_id) {
+    $replacements = $this->make_replacement_heats($new_racer_id);
+    $matchups = $this->compute_matchups($replacements);
+    $stats = $this->compute_matchup_stats($matchups);
+    return array('stats' => $stats, // nracers, mean, variance
+                 // 'replacements' => $replacements,
+                 // 'matchups' => $this->summarize_matchups($matchups),
+    );
+  }
+}
+
+// We may have squeezed out some byes, which may have changed the heat number(s)
+// of some already-run heats.  We need an renumbering plan for the already-raced heats.
+function update_race_chart($roundid, &$race_chart, &$renumbering_map) {
+  global $db;
+  // Tear down the unraced heats before re-inserting
+  $stmt = $db->prepare('DELETE FROM RaceChart'
+                       .' WHERE roundid = :roundid'
+                       .'  AND finishtime IS NULL'
+                       .'  AND finishplace IS NULL');
+  $stmt->execute(array(':roundid' => $roundid));
+
+  // Some already-run heats may require renumbering.
+  //
+  $stmt = $db->prepare('UPDATE RaceChart SET heat = :toheat'
+                       .' WHERE roundid = :roundid AND heat = :fromheat');
+  // $renumbering_map is (1-based) indexed by what the heat number should be,
+  // and values are what the current (1-based) heat number is.
+  $more_renumbering = true;
+  while ($more_renumbering) {
+    $more_renumbering = false;
+    for ($h = 1; $h < count($renumbering_map); ++$h) {
+      if ($renumbering_map[$h] === null) {
+        continue;
+      } else if ($renumbering_map[$h] < count($renumbering_map) &&
+                 $renumbering_map[$renumbering_map[$h]] !== null) {
+        // We can't renumber this heat yet, because there's still a heat using
+        // that number before it gets renumbered itself.  Since we know that
+        // there can't be any renumbering cycles, eventually this number will
+        // become available.
+        $more_renumbering = true;
+      } else {
+        $stmt->execute(array(':roundid' => $roundid,
+                             ':fromheat' => $renumbering_map[$h],
+                             ':toheat' => $h));
+        $renumbering_map[$h] = null;
       }
     }
   }
 
-  if ($ok) {
-    json_success();
+  $classid = read_single_value('SELECT classid FROM Rounds WHERE roundid = :roundid',
+                               array(':roundid' => $roundid));
+  $stmt = $db->prepare('INSERT INTO RaceChart(roundid, heat, lane, racerid, classid)'
+                       .' VALUES(:roundid, :heat, :lane, :racerid, :classid)');
+  for ($h = 0; $h < count($race_chart); ++$h) {
+    if ($race_chart[$h] !== null) {
+      $heat = &$race_chart[$h];
+      for ($lane = 0; $lane < count($heat); ++$lane) {
+        if ($heat[$lane] !== null) {
+          $stmt->execute(array(':roundid' => $roundid,
+                               ':heat' => $h + 1,
+                               ':lane' => $lane + 1,
+                               ':racerid' => $heat[$lane],
+                               ':classid' => $classid));
+        }
+      }
+    }
   }
-} else {
-  json_not_authorized();
 }
 
-?>
+// =========================================================
+if (!have_permission(CONTROL_RACE_PERMISSION)) {
+  json_not_authorized();
+} else {
+  $t0 = time();
+
+  $adj = new ScheduleAdjuster($roundid, $trace);
+
+  $adj->remove_departed();
+
+  $t1 = time();
+
+  if ($racerid) {
+    $adj->inject_new_racer($racerid);
+  } else {
+    // Insert all the racers not already in the schedule.
+    $racer_stmt = $db->prepare('SELECT racerid FROM Roster'
+                               .' WHERE roundid = :roundid'
+                               .' AND (SELECT passedinspection FROM RegistrationInfo'
+                               .'      WHERE racerid = Roster.racerid) = 1'
+                               .' AND NOT EXISTS(SELECT 1 FROM RaceChart'
+                               .'                WHERE racerid = Roster.racerid'
+                               .'                AND roundid = :roundid2)');
+    $racer_stmt->execute(array(':roundid' => $roundid,
+                               ':roundid2' => $roundid));
+    foreach ($racer_stmt as $racer_row) {
+      $adj->inject_new_racer($racer_row['racerid']);
+    }
+  }
+
+  $t2 = time();
+
+  $adj->squeeze_out_byes();
+
+  if ($trace) {
+    json_out('adjuster', $adj->to_json());
+  }
+
+  // May be false if there are no changes, or a rescheduling somehow failed.
+  $new_chart = $adj->updated_race_chart();
+
+  if ($new_chart !== null) {
+    $renumbering_map = $adj->renumbering_map();
+    $ok = true;
+    json_out('chart', $adj->chart_debug());
+
+    $t3 = $t2;
+    if (!$dry_run) {
+      update_race_chart($roundid, $new_chart, $renumbering_map);
+      $t3 = time();
+      assign_master_heats();
+    }
+    $t4 = time();
+    json_out("timing", array('load' => $t1 - $t0,
+                             'inject' => $t2 - $t1,
+                             'update' => $t3 - $t2,
+                             'master-heat' => $t4 - $t3,
+                             'internal' => $adj->times));
+    if ($ok) {
+      json_success();
+      mark_all_kiosks_for_reload();
+      require('ajax/query.poll.coordinator.inc');
+    }
+  } else {
+    json_failure('nochart', 'Unable to build new schedule');
+  }
+}

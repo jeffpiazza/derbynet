@@ -3,6 +3,7 @@
 // $_POST['classid'] -- the classid of the class to delete.
 //
 // Deletes all the ranks within the class, as well as all race results and scheduled rounds for the class.
+require_once('inc/class_add_or_delete.inc');
 require_once('inc/json-classes.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/events.inc');

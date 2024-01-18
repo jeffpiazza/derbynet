@@ -43,8 +43,12 @@ td.in_prev {
   background-image: url(../img/chevron-up-white.svg);
 }
 
+td {
+    font-size: 32px; /* = xx-large */
+    padding: 0.5vw;
+}
 td .racer {
-  font-size: small;
+    font-weight: bold;
 }
 
 img.racer-photo {
@@ -95,19 +99,13 @@ th.nrows4 img {
 .ondeck_photo {
     display: none;
 }
-.ondeck_photo img {
-  /* RENDER_ONDECK */
-  max-height: 100px;
-  max-width: 200px;
-}
 
 .curheat.populated .ondeck_photo,
 .nextheat.populated .ondeck_photo,
 .exposed.populated .ondeck_photo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    height: 100px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .heat_row {

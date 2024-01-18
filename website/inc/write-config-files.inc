@@ -1,13 +1,13 @@
 <?php
 
-function local_file_name($filename) {
+function data_folder_file_path($filename) {
   $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   return $configdir.DIRECTORY_SEPARATOR.$filename;
 }
 
 function write_config_file($filename, $content) {
   global $g_errstr;
-  $where = local_file_name($filename);
+  $where = data_folder_file_path($filename);
   if (@file_put_contents($where, $content, FILE_USE_INCLUDE_PATH) === false) {
     json_failure('cant_write_config', "Can't write config file $where: $g_errstr");
     return false;

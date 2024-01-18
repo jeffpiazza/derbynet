@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # This script uses uses a bar code scanner and a tethered camera to automate
 # photo capture for your pinewood derby event.  See
@@ -16,6 +16,10 @@
 # session.gc_maxlifetime, to be sure that session cookies won't get reclaimed
 # before we're done.
 #
+#
+# For turnkey operation:
+#  mkdir ~/.config/autostart && cp /usr/share/derbynet/autostart/photostand.desktop ~/.config/autostart
+#####################################################################################
 
 # Establish default values; photo-preamble will override from user config files.
 #  Looks in /dev/input/by-id for any of the scanner devs, or just any device at all.
@@ -31,6 +35,9 @@ SELF="$0"
 [ -L "$SELF" ] && SELF=`readlink -f "$SELF"`
 SELF_DIR=`dirname "$SELF"`
 LIB_DIR="$SELF_DIR/lib"
+
+# Grab keyboard focus, assuming photostand is the window title assigned by autostart file.
+command -v wmctrl >/dev/null && wmctrl -a photostand
 
 . "$LIB_DIR"/photo-preamble.sh
 . "$LIB_DIR"/photo-functions.sh
@@ -58,7 +65,8 @@ while true ; do
         sleep 5s
         continue
     fi
-    BARCODE=`$READ_BARCODE "$DEV"`
+    // BARCODE=`$READ_BARCODE "$DEV"`
+    read BARCODE
     echo Scanned $BARCODE
     CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
     if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
@@ -81,6 +89,12 @@ while true ; do
             fswebcam $FSWEBCAM_ARGS "$PHOTO_DIR/Car$CAR_NO.jpg"
             # fswebcam always returns 0, whether successful or not
             CAPTURE_OK=1
+        elif [ "$PHOTO_CAPTURE" = "raspistill" ] ; then
+            raspistill -o "$PHOTO_DIR/Car$CAR_NO.jpg" \
+                && CAPTURE_OK=1
+        elif [ "$PHOTO_CAPTURE" = "libcamera" ] ; then
+            libcamera-still -o "$PHOTO_DIR/Car$CAR_NO.jpg" \
+                && CAPTURE_OK=1
         else
             gphoto2 --filename "$PHOTO_DIR/Car$CAR_NO.jpg"  --force-overwrite \
                     --capture-image-and-download \

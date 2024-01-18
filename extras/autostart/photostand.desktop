@@ -3,5 +3,7 @@ Type=Application
 Version=1.0
 Name=Photo Stand
 Encoding=UTF-8
-Exec=lxterminal -e "/usr/share/derbynet/scripts/photostand.sh"
+# Multiple keys in the same group may not have the same name:
+#  https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s03.html:
+Exec=lxterminal -t photostand -e "/usr/share/derbynet/scripts/photostand.sh"
 X-GNOME-Autostart-enabled=true

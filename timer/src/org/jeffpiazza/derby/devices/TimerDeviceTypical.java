@@ -3,8 +3,8 @@ package org.jeffpiazza.derby.devices;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 import org.jeffpiazza.derby.Timestamp;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // Superclass for implementing a new timer device based on a RacingStateMachine.
 //
@@ -26,7 +26,7 @@ public abstract class TimerDeviceTypical
 
   protected String timerIdentifier;
 
-  protected TimerDeviceTypical(SerialPortWrapper portWrapper) {
+  protected TimerDeviceTypical(TimerPortWrapper portWrapper) {
     super(portWrapper);
     this.rsm = new RacingStateMachine(this);
   }

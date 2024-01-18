@@ -21,7 +21,7 @@ function poll_max_carnumbers() {
 }
 function next_carnumber(partitionid) {
   // NOTE: 100 * partitionid expression also in car-numbers poll query
-  return 1 + (g_max_carnumbers?.[partitionid] || (100 * partitionid));
+  return 1 + (g_max_carnumbers[partitionid] || (100 * partitionid));
 }
 $(function() {
   setInterval(poll_max_carnumbers, 10000);
@@ -461,9 +461,16 @@ $(function() {
 });
 
 function global_keypress(event) {
-  if ($(":focus").length == 0) {
-    $(document).off("keypress");  // We want future keypresses to go to the search form
+  if (document.activeElement == document.body ||
+      document.activeElement == null) {
+    // If no other element holds focus, focus on the search box.  This is
+    // especially important with barcode scanners, as a lack of focus will
+    // ignore the scanned text.
+    //
+    // We're invoked on a keypress event; the actual input key will be read as
+    // part of handling for the keyup that follows.
     $("#find-racer-text").focus();
+    console.log('Focusing on search box');
   }
 }
 
@@ -483,7 +490,6 @@ function cancel_find_racer() {
   $("#find-racer-message").css({visibility: 'hidden'});
   // TODO $("#find-racer").addClass("hidden");
   remove_search_highlighting();
-  $(document).on("keypress", global_keypress);
 }
 
 function scroll_and_flash_row(row) {
@@ -721,6 +727,7 @@ function make_table_row(racer, xbs) {
               .append($('<label/>')
                       .attr('for', 'xbs-' + racer.racerid)
                       .text(xbs + '?'))
+              .append('<br/>')
               .append($('<input type="checkbox" class="flipswitch"/>')
                       .attr('name', 'xbs-' + racer.racerid)
                       .prop('checked', racer.xbs)

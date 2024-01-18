@@ -1,6 +1,6 @@
 <?php
 
-$settings = array();
+$settings = array('db-connection' => $db_connection_string);
 
 if (isset($_GET['key'])) {
   $stmt = $db->prepare('SELECT itemvalue FROM RaceInfo WHERE itemkey = :key');

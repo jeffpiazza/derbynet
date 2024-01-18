@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # This shared script provides definitions for several behaviors shared among the
 # various photo scripts.
@@ -15,17 +15,28 @@ killall_gvfs_volume_monitor() {
     # try to kill it.  We don't want to commit resources to running this process
     # indefinitely, though.
     while [ `date +%s` \< $DEADLINE ] ; do
-        sudo systemctl --user stop gvfs-daemon
+        # gvfs-daemon is a user daemon; in order to kill it, we need to run
+        # systemctl as the affected user, not root, so no sudo here.
+        systemctl --user stop gvfs-daemon
         # There are actually a bunch of these gvfs-xxx-volume-monitor daemons, so this is likely not enough.  Stopping the gvfs-daemon user
         sudo killall gvfs-gphoto2-volume-monitor > /dev/null 2>&1
         sleep 4s
     done &
 }
 
+check_for_barcode_quit() {
+    read -t 0.5 BARCODE
+    if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
+        announce terminating
+        sudo shutdown -h now
+    fi
+}
+
 # Test that we have a non-loopback network interface available
 check_for_network() {
     ON_NETWORK=0
     while [ $ON_NETWORK -eq 0 ]; do
+        check_for_barcode_quit
         ip -o address list | grep -v ' lo ' > /dev/null && ON_NETWORK=1
         if [ $ON_NETWORK -eq 0 ]; then
             echo Not on any network
@@ -53,6 +64,7 @@ do_login() {
     LOGIN_OK=0
     TMPFILE=`mktemp`
     while [ $LOGIN_OK -eq 0 ]; do
+        check_for_barcode_quit
         echo Logging in to $DERBYNET_SERVER
         announce sending
         curl --location \

@@ -212,11 +212,12 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
 }
 
 function handle_reschedule_button(roundid) {
-    // TODO: On success... 
     $.ajax(g_action_url,
            {type: 'POST',
             data: {action: 'schedule.reschedule',
-                   roundid: roundid}});
+                   roundid: roundid},
+            success: function(json) { process_coordinator_poll_json(json); }
+           });
 }
 
 function handle_race_button(roundid) {

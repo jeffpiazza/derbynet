@@ -63,8 +63,6 @@ function logmessage(txt) {
   }
 }
 
-// TODO Poll for messages.
-// In the meantime, use the existing replay protocol
 function poll_as_replay() {
   $.ajax("action.php",
   {type: 'POST',
@@ -83,6 +81,9 @@ g_upload_videos = <?php echo read_raceinfo_boolean('upload-videos') ? "true" : "
 g_video_name_root = "";
 // If a replay is triggered by timing out after a RACE_STARTS, then ignore any
 // subsequent REPLAY messages until the next START.
+//
+// If a replay is triggered by a REPLAY message that arrives before the timeout
+// (as most will), then we just cancel the g_replay_timeout.
 g_preempted = false;
 
 
@@ -98,6 +99,7 @@ var g_replay_options = {
 function parse_replay_options(cmdline) {
   g_replay_options.count = parseInt(cmdline.split(" ")[2]);
   g_replay_options.rate = parseFloat(cmdline.split(" ")[3]);
+  // TODO .length
 }
 
 // If non-zero, holds the timeout ID of a pending timeout that will trigger a
@@ -107,11 +109,15 @@ var g_replay_timeout = 0;
 var g_replay_timeout_epsilon = 0;
 
 function handle_replay_message(cmdline) {
+  console.log('* Replay message:', cmdline);
+  var root = g_video_name_root;
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
     parse_replay_options(cmdline);
-    on_replay();
+    on_replay(root);
   } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
+    // This assumes that we'll get a queued START when the page is freshly
+    // loaded.
     g_video_name_root = cmdline.substr(6).trim();
     g_preempted = false;
   } else if (cmdline.startsWith("REPLAY")) {
@@ -120,15 +126,21 @@ function handle_replay_message(cmdline) {
     // (Must be exactly one space between fields:)
     parse_replay_options(cmdline);
     if (!g_preempted) {
-      on_replay();
+      clearTimeout(g_replay_timeout);
+      console.log('Triggering replay from REPLAY message', root);
+      on_replay(root);
     }
   } else if (cmdline.startsWith("CANCEL")) {
+    clearTimeout(g_replay_timeout);
   } else if (cmdline.startsWith("RACE_STARTS")) {
+    // This message signals that the start gate has actually opened (if that can
+    // be detected).  The START message identifies what heat is queued next.
     parse_replay_options(cmdline);
     g_replay_timeout = setTimeout(
       function() {
         g_preempted = true;
-        on_replay();
+        console.log('Triggering replay from timeout after RACE_STARTS', root);
+        on_replay(root);
       },
       g_replay_options.length * 1000 - g_replay_timeout_epsilon);
   } else {
@@ -136,12 +148,15 @@ function handle_replay_message(cmdline) {
   }
 }
 
-$(function() { setInterval(poll_as_replay, 250); });
+$(function() {
+  setInterval(poll_as_replay, 250);
+  console.log('Replay page (re)loaded');
+});
 
 function on_stream_ready(stream) {
   $("#waiting-for-remote").addClass('hidden');
   g_recorder = new CircularFrameBuffer(stream, g_replay_options.length);
-  g_recorder.start();
+  g_recorder.start_recording();
   document.getElementById("preview").srcObject = stream;
 }
 
@@ -225,7 +240,7 @@ function announce_to_interior(msg) {
 
 function upload_video(root, blob) {
   if (blob) {
-    console.log("Uploading video");
+    console.log("Uploading video " + root + ".mkv");
     let form_data = new FormData();
     form_data.append('video', blob, root + ".mkv");
     form_data.append('action', 'video.upload');
@@ -242,15 +257,16 @@ function upload_video(root, blob) {
   }
 }
 
-// TODO My working theory is that the captureStream() from an offscreen canvas
-// doesn't produce any frames.
 
-function on_replay() {
+function on_replay(root) {
+  console.log('* on_replay');
+  if (root != g_video_name_root) {
+    console.log('** root=', root, ', g_video_name_root=', g_video_name_root);
+  }
   // Capture these global variables before starting the asynchronous operation,
   // because they're reasonably likely to be clobbered by another queued message
   // from the server.
   var upload = g_upload_videos;
-  var root = g_video_name_root;
   // If this is a replay triggered after RACE_START, make sure we don't start
   // another replay for the same heat.
 
@@ -260,7 +276,7 @@ function on_replay() {
   g_replay_timeout = 0;
 
   announce_to_interior('replay-started');
-  g_recorder.stop();
+  g_recorder.stop_recording();
 
   let playback = document.querySelector("#playback");
   playback.width = $(window).width();
@@ -268,6 +284,9 @@ function on_replay() {
   $("#playback-background").show('slide', function() {
       let playback_start_ms = Date.now();
       let vc;
+      // When the offscreen <canvas> is first created, we construct a
+      // VideoCapture object to record its capture stream.  After the first play
+      // through, stop the VideoCapture and upload the resulting Blob.
       g_recorder.playback(playback,
                           g_replay_options.count,
                           g_replay_options.rate,
@@ -281,6 +300,8 @@ function on_replay() {
                             }
                           },
                           function() {
+                            // The first time through, consume the captured
+                            // video and destroy the VideoCapture object.
                             if (vc) {
                               vc.stop(function(blob) { upload_video(root, blob); });
                               vc = null;
@@ -289,7 +310,7 @@ function on_replay() {
                           function() {
                             $("#playback-background").hide('slide');
                             announce_to_interior('replay-ended');
-                            g_recorder.start();
+                            g_recorder.start_recording();
                           });
     });
 }

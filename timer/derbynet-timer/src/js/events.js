@@ -20,19 +20,33 @@ class TimerEvent {
     LANE_RESULT, lane (1-based), time (string), place (1-based or 0)
     // (LANE_RESULT is triggered with three strings and processed before promulgating.)
     //
-    // Eventually, overdue results give way to a GIVING_UP event,
+    // Eventually, overdue results give way to a OVERDUE event,
     // which is roughly treated like another PREPARE_HEAT_RECEIVED.
-    GIVING_UP,  // Giving up on overdue results
+    OVERDUE,  // Giving up on overdue results
     LANE_COUNT, // Some timers report how many lanes
     START_RACE,  // Remote start requested
     LOST_CONNECTION,
-    GATE_WATCHER_NOT_SUPPORTED
+    GATE_WATCHER_CHANGED
   */
 
   static handlers = [];
 
   // handler is an object with onEvent(event, args)
   static register(handler) {
+    this.handlers.push(handler);
+  }
+  // Most of the objects registering for events should be the only one of their
+  // kind.  Before registering, search for other handlers with the same
+  // contructor type and unregister them.
+  static register_unique(handler) {
+    for (var i = 0; i < this.handlers.length; ++i) {
+      if (this.handlers[i].constructor.name == handler.constructor.name) {
+        console.warn('Registering new ' + handler.constructor.name +
+                     ' handler, but there\'s already an existing one registered.');
+        this.handlers.splice(i, 1);
+        --i;
+      }
+    }
     this.handlers.push(handler);
   }
   static unregister(handler) {

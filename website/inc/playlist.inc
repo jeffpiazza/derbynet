@@ -12,8 +12,20 @@ function create_playlist_table() {
 
 function first_playlist_entry() {
   try {
-    return read_single_row('SELECT * FROM Playlist'
-                           .' WHERE seq = (SELECT MIN(seq) FROM Playlist)',
+    return read_single_row('SELECT roundid, Playlist.*'
+                           .' FROM Playlist LEFT OUTER JOIN Rounds'
+                           .'   USING (classid, round)'
+                           .' WHERE ('
+                           .'   roundid IS NULL'
+                           .'   OR'
+                           .'   NOT EXISTS(SELECT 1 FROM RaceChart'
+                           .'              WHERE roundid = Rounds.roundid)'
+                           .'   OR'
+                           .'   EXISTS(SELECT 1 FROM RaceChart'
+                           .'          WHERE roundid = Rounds.roundid'
+                           .'            AND finishtime IS NULL AND finishplace IS NULL)'
+                           .'       )'
+                           .' ORDER BY seq',
                            array(), PDO::FETCH_ASSOC);
   } catch (PDOException $p) {
     if (is_no_such_table_exception($p)) {
@@ -89,7 +101,7 @@ function activate_playlist_entry(&$playlist_entry) {
     } else {
       $finalists = calculate_roster_follow_on_round($playlist_entry['classid'],
                                                     $playlist_entry['bucketed'],
-                                                    $plaaylist_entry['bucket_limit']);
+                                                    $playlist_entry['bucket_limit']);
     }
     json_out('finalists', $finalists);
     write_roster_entries($roundid, $playlist_entry['classid'], $finalists);
@@ -138,7 +150,6 @@ function perform_playlist_after_round($roundid) {
         && round_is_completed($new_roundid)) {
       return perform_playlist_after_round($new_roundid);
     }
-
     activate_playlist_entry($after);
   }
   if ($entry['sceneid_at_finish'] > 0) {

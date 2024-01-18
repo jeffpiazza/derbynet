@@ -19,13 +19,14 @@ function find_round(classid, roundno) {
 function build_after_action_select(sel, all_scenes) {
   sel = $(sel);
   sel.empty()
-      .append($("<option>Stop</option>").attr('value', 0))
-      .append($("<option>Start Next Round</option>").attr('value', -1));
+    .append($("<option>Stop</option>").attr('value', 0))
+    .append($("<option>Start Next Round</option>").attr('value', -1));
   $.each(all_scenes, function(i, v) {
     sel.append($("<option/>")
                .attr('value', v.sceneid)
                .text(v.name + " Scene"));
   });
+  mobile_select_refresh(sel);
 }
 
 // Set entry.sceneid_at_finish, entry.continue_racing from
@@ -342,6 +343,10 @@ function append_playlist_entry_li(entry, all_scenes) {
               .toggleClass('finished', round_entry != null &&
                            round_entry.heats_scheduled > 0 &&
                            round_entry.heats_run == round_entry.heats_scheduled)
+              .toggleClass('partial', round_entry != null &&
+                           round_entry.heats_scheduled > 0 &&
+                           round_entry.heats_run > 0 &&
+                           round_entry.heats_run < round_entry.heats_scheduled)
               .toggleClass('current',
                            g_current_round.classid == entry.classid &&
                            g_current_round.round == entry.round)
@@ -446,6 +451,13 @@ function build_rounds(queue, classes) {
               .toggleClass('finished',
                            round_entry != null && round_entry.heats_run > 0 &&
                            round_entry.heats_run >= round_entry.heats_scheduled)
+              .toggleClass('partial', round_entry != null &&
+                           round_entry.heats_scheduled > 0 &&
+                           round_entry.heats_run > 0 &&
+                           round_entry.heats_run < round_entry.heats_scheduled)
+              .toggleClass('current', round_entry != null &&
+                           g_current_round.classid == round_entry.classid &&
+                           g_current_round.round == round_entry.round)
               .on('click', on_add_round_to_queue)
           );
         }

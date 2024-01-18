@@ -21,6 +21,36 @@
   width: 200px;
 }
 
+div.adjustment-needed {
+  background: orange;
+}
+
+div.adjustment-needed div.late-arrival-prompt {
+  color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 0px;
+  padding-top: 5px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+div.adjustment-needed div.late-arrival-prompt p, 
+div.adjustment-needed div.late-arrival-prompt span {
+  font-size: 18px;
+}
+
+div.adjustment-needed div.late-arrival-prompt ul {
+  list-style-position: inside;
+  padding-left: 0px;
+}
+
+div.adjustment-needed input.late-arrival-button {
+  background: orange;
+  border: solid 3px black;
+}
+
 .heat-lineup {
   display: inline-block;
   width: 730px;
@@ -98,7 +128,6 @@
 #timer-testing-herald {
   width: 100%;
   padding-top: 20px;
-  padding-bottom: 20px;
   text-align: center;
   background-color: #ff0000;
   color: white;

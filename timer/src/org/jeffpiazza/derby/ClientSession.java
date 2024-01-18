@@ -323,14 +323,20 @@ public class ClientSession {
     throw new HttpException(connection);
   }
 
-  protected JSONObject parseJsonResponse(String s) throws IOException {
-    return new JSONObject(s);
-  }
+//  protected JSONObject parseJsonResponse(String s) throws IOException {
+//    return new JSONObject(s);
+//  }
 
   protected JSONObject parseJsonResponse(final InputStream inputStream)
       throws IOException {
     // TODO inputStream.mark(10000);
-    return new JSONObject(new JSONTokener(new InputStreamReader(inputStream)));
+    try {
+     return new JSONObject(new JSONTokener(new InputStreamReader(inputStream)));
+    } catch (JSONException jse) {
+      // inputStream may contain HTML instead of JSON
+      // org.json.JSONException: A JSONObject text must begin with '{' at 1 [character 2 line 1]
+      return null;
+    }
   }
 
   protected Element parseResponse(String s) throws IOException {

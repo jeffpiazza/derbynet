@@ -162,6 +162,7 @@ var g_url = <?php echo json_encode($urls[0],
           echo '<label for="config-class-'.$row['classid'].'">'
               .htmlspecialchars($row['class'], ENT_QUOTES, 'UTF-8')
               .'</label>'."\n";
+          echo "<br/>\n";
         }
     ?>
     <input type="submit" value="Configure Kiosk"/>

@@ -1,6 +1,15 @@
 // Requires dashboard-ajax.js
 // Requires modal.js
 
+Dropzone.options.prefsDrop = {
+  paramName: 'prefs',
+  acceptedFiles: 'text/*,.conf,.pref',
+  success: function(file, response) {
+    this.removeFile(file);
+    // console.log('success', response);
+    report_success_json(response);
+  },
+};
 
 // details = {
 //            locked: true/false

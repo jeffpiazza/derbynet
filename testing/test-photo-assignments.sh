@@ -42,7 +42,7 @@ curl_postj action.php "action=photo.assign&racer=27&photo=Cub-0087.jpg" | check_
 curl_postj action.php "action=photo.assign&racer=28&photo=Cub-2961.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&racer=29&photo=Cub-6155.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&racer=30&photo=Cub-7348.jpg" | check_jsuccess
-# See test-photo-next.sh:
+# See test-slide-next.sh:
 # curl_postj action.php "action=photo.assign&racer=31&photo=Cub-9634.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&racer=32&photo=Cub-1478.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&racer=33&photo=Cub-0764.jpg" | check_jsuccess
@@ -131,7 +131,7 @@ curl_postj action.php "action=photo.assign&repo=car&racer=29&photo=Car-1858.jpg"
 curl_postj action.php "action=photo.assign&repo=car&racer=30&photo=Car-1859.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&repo=car&racer=31&photo=Car-1860.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&repo=car&racer=32&photo=Car-1861.jpg" | check_jsuccess
-# See test-photo-next.sh
+# See test-slide-next.sh
 # curl_postj action.php "action=photo.assign&repo=car&racer=33&photo=Car-1862.jpg" | check_jsuccess
 # curl_postj action.php "action=photo.assign&repo=car&racer=34&photo=Car-1863.jpg" | check_jsuccess
 curl_postj action.php "action=photo.assign&repo=car&racer=35&photo=Car-1864.jpg" | check_jsuccess

@@ -5,7 +5,7 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // This device class supports older FastTrack devices, i.e., P-series, that
 // don't accept (i.e., are deaf to) commands from the host.
@@ -31,7 +31,7 @@ import org.jeffpiazza.derby.serialport.SerialPortWrapper;
 // able to see the results in hyperterminal.
 // Unpopulated/overdue lanes report 0.0 instead of 9.9999
 public class OlderFastTrackLegacy extends TimerDeviceBase {
-  public OlderFastTrackLegacy(SerialPortWrapper portWrapper) {
+  public OlderFastTrackLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper);
   }
 
@@ -63,7 +63,7 @@ public class OlderFastTrackLegacy extends TimerDeviceBase {
   }
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
         if (m != null) {

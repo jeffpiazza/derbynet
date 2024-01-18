@@ -7,6 +7,7 @@ require_once('inc/events.inc');
 // $current is null or from get_current_round, {roundid, heat}
 function record_timer_finish($action, $results, $current) {
   global $db;
+  return;
 
   $finishid = 1 + read_single_value('SELECT COALESCE(MAX(finishid), 0) FROM EventLaneDetails');
   
@@ -53,6 +54,7 @@ function find_last_finishid_for_heat($roundid, $heat) {
 }
 
 function record_event_for_discarded_heat($roundid, $heat) {
+  return;
   list($action, $finishid) = find_last_finishid_for_heat($roundid, $heat);
   if ($action == EVENT_HEAT_RESULT_FROM_TIMER ||
       $action == EVENT_HEAT_MANUALLY_ENTERED ||
@@ -68,6 +70,7 @@ function record_event_for_discarded_heat($roundid, $heat) {
 }
 
 function record_event_for_reinstated_heat($roundid, $heat) {
+  return;
   list($action, $finishid) = find_last_finishid_for_heat($roundid, $heat);
   if ($action == EVENT_HEAT_RESULT_DISCARDED) {
     record_event_sql('INSERT INTO Events(tstamp, action, roundid, heat, finishid)'

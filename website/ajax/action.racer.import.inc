@@ -86,7 +86,8 @@ if ($ok) {
   if (isset($_POST['partition'])) {
     $options['partition'] = trim(@$_POST['partition']);
   }
-  insert_new_racer($options);
+  $racerid = insert_new_racer($options);
+  json_out('racerid', $racerid);
 
   json_success();
 }

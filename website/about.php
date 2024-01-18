@@ -64,17 +64,18 @@ window.onload = function() {
   position: absolute;
   top: 100px;
   right: 50px;
-  height: 100px;
   width: 250px;
-  padding-top: 30px;
   text-align: center;
   background-color: #408040;
+}
+.capture-link p {
+    margin-top: 46px;
+    margin-bottom: 46px;
 }
 .capture-link a {
   color: white;
 }
 </style>
-
 </head>
 <body>
 <?php make_banner('About DerbyNet'); ?>
@@ -105,6 +106,7 @@ if (count($urls) == 0 || empty($urls[0])) {
    contact me at <a href="mailto:bugs@derbynet.org">bugs@derbynet.org</a>.</p>
 
 <p>Your browser's User Agent string is<br/><span id="useragent"></span>.</p>
+<p>Your browser supports javascript version <span id="jsver">unspecified</span>.</p>
 
 <h4>DerbyNet Revision</h4>
 <?php 
@@ -169,15 +171,19 @@ if (isset($db)) {
     echo '<p>Schema version '.$schema_version.' (expecting version '.expected_schema_version().')</p>'."\n";
 
     if (have_permission(SET_UP_PERMISSION)) {
-      echo "<p class='capture-link'>Download Database Snapshot:<br/>"
+      echo "<div class='capture-link'>"
+           ."<p class=''>Download Database Snapshot:<br/>"
            ."<a download='derbynet-".date('Ymd-His').".xml'"
            ." href='action.php?query=snapshot.get'>Complete</a>"
            ."<br/>or<br/>"
            ."<a download='derbynet-".date('Ymd-His').".xml'"
            ." href='action.php?query=snapshot.get&amp;clean'>Cleaned</a>"
-           ."</p>\n";
+           ."</p>"
+           ."<p style='border-top: 1px solid white; padding: 26px; margin-bottom: 0px;'>"
+           ."Download<br/><a download='derbynet.pref'"
+           ." href='preferences.php'>Preferences</a>"
+           ."</p></div>\n";
     }
-
   } catch (PDOException $p) {
     echo '<p>Can\'t determine schema version (expecting version '.expected_schema_version().')</p>'."\n";
   }
@@ -241,4 +247,35 @@ echo substr($buf, $start, $stop - $start);
 ?>
 </div>
 </body>
+
+<script type="text/javascript">
+  document.getElementById("jsver").textContent = "1.0";
+</script>
+<script language="Javascript1.1">
+  document.getElementById("jsver").textContent = "1.1";
+</script>
+<script language="Javascript1.2">
+  document.getElementById("jsver").textContent = "1.2";
+</script>
+<script language="Javascript1.3">
+  document.getElementById("jsver").textContent = "1.3";
+</script>
+<script language="Javascript1.4">
+  document.getElementById("jsver").textContent = "1.4";
+</script>
+<script language="Javascript1.5">
+  document.getElementById("jsver").textContent = "1.5";
+</script>
+<script language="Javascript1.6">
+  document.getElementById("jsver").textContent = "1.6";
+</script>
+<script language="Javascript1.7">
+  document.getElementById("jsver").textContent = "1.7";
+</script>
+<script language="Javascript1.8">
+  document.getElementById("jsver").textContent = "1.8";
+</script>
+<script language="Javascript1.9">
+  document.getElementById("jsver").textContent = "1.9";
+</script>
 </html>

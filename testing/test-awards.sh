@@ -18,7 +18,7 @@ user_login_coordinator
 
 curl_postj action.php "action=award.import" | check_jfailure
 curl_postj action.php "action=award.import&awardname=Test%20Award" | check_jfailure
-curl_postj action.php "action=award.import&awardname=Test%20Award&awardtype=Design" | check_jfailure
+# curl_postj action.php "action=award.import&awardname=Test%20Award&awardtype=Design" | check_jfailure
 curl_postj action.php "action=award.import&awardname=Test%20Award&awardtype=Design%20Trophy" | check_jsuccess
 curl_postj action.php "action=award.import&awardname=Test%20Den%20Award&classname=Hyenas&awardtype=Design%20Trophy" | check_jfailure
 curl_postj action.php "action=award.import&awardname=Test%20Den%20Award&classname=White's%20Wolves&awardtype=Design%20Trophy" | check_jsuccess

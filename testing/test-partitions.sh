@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=partitions1 `dirname $0`/reset-database.sh "$BASE_URL"
 curl_postj action.php "action=racer.import&firstname=Kristie&lastname=Kyzer" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Shana&lastname=Sester" | check_jsuccess
 curl_postj action.php "action=racer.import&firstname=Glendora&lastname=Giusti" | check_jsuccess
@@ -16,7 +16,7 @@ curl_postj action.php "action=racer.import&firstname=Mirna&lastname=Manier" | ch
 curl_getj "action.php?query=poll&values=partitions" | \
     jq -e '.partitions | length == 1 and .[0].name == "Default"' >/dev/null || test_fails
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=partitions2 `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-csv-roster.sh "$BASE_URL" "`dirname $0`/data/divided-roster.csv"
 
 curl_getj "action.php?query=poll&values=partitions" | \

@@ -199,7 +199,7 @@ function process_polled_data(data) {
 }
 
 // pages: array of {brief:, path:}
-// kiosks: array of {name:, address:, last_contact:, page:, parameters:}
+// kiosks: array of {name:, address:, madlib: last_contact:, page:, parameters:}
 function generate_kiosk_control_group(pages, kiosks) {
   for (var kiosk_page in g_kiosk_page_handlers) {
     var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
@@ -232,21 +232,23 @@ function update_kiosk_names(kiosks) {
 
 // Generates a block of controls for a single kiosk.
 // index is just a sequential counter used for making unique control names.
-// kiosk describes the kiosk's state: {name:, address:, last_contact:, age:, page:, parameters:}
+// kiosk describes the kiosk's state: {name:, address:, madlib:, last_contact:, age:, page:, parameters:}
 // pages is an array of {path:, brief:} objects, as produced by parse_kiosk_pages.
 function generate_kiosk_control(index, kiosk, pages) {
   var kiosk_control = $("<div class=\"block_buttons control_group kiosk_control\"/>");
 
   var kiosk_ident = $("<div class='kiosk-ident'/>");
-  kiosk_ident.append("<p>Kiosk <span class=\"kiosk_control_name\"></span>"
+  kiosk_ident.append("<p><span class=\"kiosk_control_name\"></span>"
                      + " <span class=\"kiosk_control_address\"></span>"
                      + "</p>");
   kiosk_ident.find(".kiosk_control_name").text(kiosk.name);
-  kiosk_ident.find(".kiosk_control_address").text(kiosk.address);
-  kiosk_ident.find(".kiosk_control_address").toggleClass("de-emphasize", kiosk.name.length > 0);
+  kiosk_ident.find(".kiosk_control_address")
+    .text(kiosk.madlib).toggleClass("de-emphasize", kiosk.name.length > 0);
   kiosk_ident.append('<input type="button"'
                      + ' onclick="show_kiosk_naming_modal(\''
-                     + (kiosk.address ? kiosk.address.toString().replace(/"/g, '&quot;').replace(/'/, "\\'") : '')
+                     + (kiosk.address
+                        ? kiosk.address.toString().replace(/"/g, '&quot;').replace(/'/, "\\'")
+                        : '')
                      + '\', \'' + kiosk.name.replace(/"/g, '&quot;').replace(/'/, "\\'")
                      + '\')"'
                      + ' value="Assign Name"/>');
@@ -503,6 +505,9 @@ function populate_classids(parameters) {
   } else {
     $("#config_classes_modal input[type='checkbox']").prop("checked", true);
   }
+  $("#config_classes_modal input[type='checkbox']").each(function() {
+    $(this).parent().toggleClass('checked', $(this).is(":checked"));
+  });
 }
 
 // Extract classids from user's choices in the UI
@@ -510,7 +515,7 @@ function compute_classids() {
   var any_unchecked = false;
   var classids = [];
   $("#config_classes_modal input[type='checkbox']").each(function() {
-    if ($(this).prop("checked")) {
+    if ($(this).is(":checked")) {
       classids.push(parseInt($(this).data("classid")));
     } else {
       any_unchecked = true;

@@ -26,6 +26,7 @@ function on_partition_label_change() {
   $(".partition-label-lc").text(part_label_lc);
   $(".group-label-lc").text(part_label_lc + " (group)");
   $(".subgroup-label-lc").text( part_label_lc + " (subgroup)");
+  $(".supergroup-label").text($("#supergroup-label").val());
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'settings.write',
@@ -55,6 +56,72 @@ function on_use_subgroups_change(event, synthetic) {
          });
 }
 $(function() { $("#use-subgroups").on('change', on_use_subgroups_change); });
+
+function on_pack_agg_change() {
+  $.ajax('action.php',
+         {type: 'POST',
+          data: {action: 'award.calc-rule',
+                 'full-field-calc': $("#pack_agg_div input[type=radio]:checked").val()},
+          success: function() {}
+         });
+}
+// Initial value set when the rest of the radio buttons are populated, in
+// populate_aggregates.
+$(function() {
+  $("#pack-ok").on('change', on_pack_agg_change);
+  $("#pack-no").on('change', on_pack_agg_change);
+});
+
+function on_n_pack_trophies_change(write_setting = true) {
+  var ntrophies = $("#n-pack").val();
+  if (write_setting) {
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'settings.write',
+                   'n-pack-trophies': ntrophies},
+            success: function(data) {
+              if (data.outcome.summary != 'success') {
+                console.log(data);
+              }
+              poll_for_structure();
+            }
+           });
+  }
+  if (ntrophies > 0 && $("#pack-no:checked").length > 0) {
+    $("input[name=pack-agg]").val( [0] );
+    on_pack_agg_change();
+  }
+  $("#pack-no").attr('disabled', ntrophies > 0);
+  //$("label[for=pack-no]")
+  $("#dimmable-for-pack-no").css('opacity', ntrophies == 0 ? 1 : 0.5);
+  $("#why-not-pack-no").toggleClass('hidden', ntrophies == 0);
+}
+$(function() {
+  $("#n-pack").on('change', on_n_pack_trophies_change);
+  on_n_pack_trophies_change(/*write_setting*/false);
+});
+
+function post_settings_change(input) {
+  var values =  {action: 'settings.write'};
+  values[input.attr('name')] = input.val();
+  $.ajax('action.php',
+         {type: 'POST',
+          data: values,
+          success: function(data) {
+            if (data.outcome.summary == 'failure') {
+              console.log(data);
+              alert("Action failed: " + data.outcome.description);
+            }
+          },
+          error: function(jqXHR, ajaxSettings, thrownError) {
+            alert('Ajax error: ' + thrownError);
+          }
+         });
+}
+$(function() {
+  $("#n-den").on('change', function() { post_settings_change($("#n-den")); });
+  $("#n-rank").on('change', function() { post_settings_change($("#n-rank")); });
+});
 
 function poll_for_structure() {
   $.ajax('action.php',
@@ -89,7 +156,7 @@ function process_polling_data(data) {
 
   populate_racing_groups(data);
   populate_aggregate_modal(data);
-  populate_aggregates(data.classes);
+  populate_aggregates(data.classes, data['full-field-calc']);
   populate_labels(data.labels);
 }
 
@@ -130,6 +197,8 @@ function populate_racing_groups(data) {
                          .on('click', on_edit_class)));
 
     if (rule != 'by-partition') {
+      // If 'by-partition', don't show subgroups -- there's exactly one per
+      // group, with the same name.
       var subgroups = $("<ul/>")
           .appendTo(cl)
           .addClass('subgroups');
@@ -160,29 +229,39 @@ function populate_racing_groups(data) {
   make_groups_sortable();
 }
 
+function make_class_order_ajax() {
+  var data = {action: 'class.order'};
+  $("ul#all-groups > li").each(function(i) {
+    data['classid_' + (i + 1)] = $(this).attr('data-classid');
+  });
+  $("ul#aggregate-groups > li").each(function(i) {
+    data['classid_' + (i + 1)] = $(this).attr('data-classid');
+  });
+  console.log(data);
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: data,
+          success: function(data) {
+            if (data.outcome.summary == 'success') {
+              poll_for_structure();
+            }
+          }
+         });
+}
+
 function make_groups_sortable() {
   $("ul#all-groups").sortable({
     items: "> li:not(#new-group)",
     stop: function(event, ui) {
       event.stopPropagation();
+      make_class_order_ajax();
+    }
+  });
 
-      var data = {action: 'class.order'};
-      $("ul#all-groups > li").each(function(i) {
-        data['classid_' + (i + 1)] = $(this).attr('data-classid');
-      });
-      $("ul#aggregate-groups > li").each(function(i) {
-        data['classid_' + (i + 1)] = $(this).attr('data-classid');
-      });
-      console.log(data);
-      $.ajax(g_action_url,
-             {type: 'POST',
-              data: data,
-              success: function(data) {
-                if (data.outcome.summary == 'success') {
-                  poll_for_structure();
-                }
-              }
-             });
+  $("ul#aggregate-groups").sortable({
+    stop: function(event, ui) {
+      event.stopPropagation();
+      make_class_order_ajax();
     }
   });
 
@@ -237,9 +316,18 @@ function make_groups_sortable() {
   });
 }
 
-function populate_aggregates(classes) {
+function populate_aggregates(classes, pack_aggregate_id) {
   var agg_groups = $("ul#aggregate-groups");
   agg_groups.empty();
+
+  var pack_agg = $("#pack_agg_div");
+
+  // Initially hide the selector if there are any pack-level awards.  The
+  // presence of any aggregate classes will (also) force the selector show.
+  if (false && $("#n-pack").val() > 0) {
+    pack_agg.addClass('hidden');
+  }
+  $(".pack-agg-option").remove();
 
   for (var i = 0; i < classes.length; ++i) {
     if (!(classes[i].hasOwnProperty('constituents') && classes[i].constituents.length > 0)) {
@@ -252,7 +340,7 @@ function populate_aggregates(classes) {
         .attr('data-count', classes[i].count)
         .attr('data-nrounds', classes[i].nrounds)
         .attr('data-ntrophies', classes[i].ntrophies)
-    // data-constituent-of
+    // data-constituent-of populated below
         .append($("<p/>")
                 .attr('data-classid', classes[i].classid)
                 .addClass('class-name')
@@ -286,10 +374,33 @@ function populate_aggregates(classes) {
 
     for (var v = 0; v < classes[i].constituents.length; ++v) {
       // If a given class is a constituent of multiple aggregates, the last one wins
-      $("li[data-classid='" + classes[i].constituents[v] + "']")
+      $("li[data-classid='" + classes[i].constituents[v].classid + "']")
         .attr('data-constituent-of', classes[i].name);
     }
+    if (classes[i]['constituent-ranks']) {
+      for (var v = 0; v < classes[i]['constituent-ranks'].length; ++v) {
+        $("li[data-rankid='" + classes[i]['constituent-ranks'][v].rankid + "']")
+          .attr('data-constituent-of', classes[i].name);
+      }
+    }
+
+    pack_agg.removeClass('hidden');
+    $("<div/>").addClass('pack-agg-option')
+      .appendTo(pack_agg)
+      .append($("<input type=\"radio\" name=\"pack-agg\"/>")
+              .addClass('not-mobile')
+              .attr('id', 'pack-' + classes[i].classid)
+              .attr('value', classes[i].classid)
+              .on('change', on_pack_agg_change))
+      .append(" ")
+      .append($("<label/>")
+              .attr('for', 'pack-' + classes[i].classid)
+              .append('Use standings from ')
+              .append($("<span/>").addClass('group-name').text(classes[i].name))
+              .append(' group'));
   }
+
+  $("input[name=pack-agg]").val( [pack_aggregate_id] );
 }
 
 function populate_labels(labels) {

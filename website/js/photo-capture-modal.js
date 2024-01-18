@@ -301,6 +301,12 @@ function send_canvas_photo(canvas, racerid, repo, photo_base_name) {
   }
   var blob = new Blob([ab], {type: 'image/jpeg'});
 
+  if (blob.size == 0) {
+    $("#ajax-failure").text("Photo capture failure").removeClass('hidden');
+    setTimeout(function() { $("#ajax-failure").addClass('hidden'); }, 10000);
+    return;
+  }
+
   // stuff into a form, so servers can easily receive it as a standard file upload
   var form_data = new FormData();
   form_data.append('action', 'photo.upload');

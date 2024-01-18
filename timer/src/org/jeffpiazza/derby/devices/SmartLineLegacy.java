@@ -1,10 +1,11 @@
 package org.jeffpiazza.derby.devices;
 
 import java.util.regex.Matcher;
-import jssc.*;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class SmartLineLegacy extends TimerDeviceCommon {
   private int numberOfLanes;  // Detected at probe time
@@ -33,7 +34,7 @@ public class SmartLineLegacy extends TimerDeviceCommon {
   private static final String READ_START_SWITCH = "rs\r";
   private static final String READ_VERSION = "v\r";
 
-  public SmartLineLegacy(SerialPortWrapper portWrapper) {
+  public SmartLineLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper, new GateWatcher(portWrapper) {
         @Override
         protected boolean interrogateGateIsClosed()
@@ -121,7 +122,7 @@ public class SmartLineLegacy extends TimerDeviceCommon {
   }
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         Matcher m = TimerDeviceUtils.matchedCommonRaceResults(line);
         if (m != null) {

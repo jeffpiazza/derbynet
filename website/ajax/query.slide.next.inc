@@ -11,7 +11,20 @@ function url_for_cropped(&$row, $column_name, &$repository) {
 
 
 $done = false;
+
+// The three "modes" for the slide show are 'title', 'slide', and 'racer'.
+// 'title' isn't really a mode that the client would ask for, but it's a useful
+// way to represent a request for the title slide.  'slide' mode explicitly
+// assumes the client wants slides other than the title slide, and 'racer' mode
+// is looking for racer photos.
+//
+// A 'title' mode query would always produce a title slide.  A 'slide' mode
+// request tries to give the next slide alphabetically after the 'file'
+// argument; if there isn't one, then we advance to 'racer' mode.  'racer' mode
+// tries to return information about the next racer in racerid order; if there
+// isn't one, then we cycle back around to 'title' mode and give a title slide.
 $mode = 'title';
+
 if (isset($_GET['mode'])) {
   $mode = $_GET['mode'];
 }
@@ -30,35 +43,17 @@ if (isset($_GET['classids'])) {
 if ($mode == 'slide') {
   $f = $_GET['file'];
 
-  // TODO realpath
-  $results = array();
-
-  // Title slide could come from the local override directory or the selected
-  // stock directory.  Other slides can only come from local override directory.
-  // Look up the title slide only to exclude it as a base name.
-  $title = basename(slide_file_path('title'));
-  if (isset($homedir)) {
-    $dir = $homedir.DIRECTORY_SEPARATOR.'slides' /* TODO .DIRECTORY_SEPARATOR */;
-    if (is_dir($dir) && is_readable($dir)) {
-      if ($dh = opendir($dir)) {
-        while (($file = readdir($dh)) !== false) {
-          if ($file > $f && $file != "." && $file != ".." && $file != $title) {
-            $results[] = $file;
-          }
-        }
-      }
-      closedir($dh);
-      if (count($results) > 0) {
-        sort($results);
-        json_out('photo', array('photo' => 'slide.php/'.pathinfo($results[0])['filename'],
-                                'next' => array('mode' => 'slide',
-                                                'file' => $results[0])));
-        $done = true;
-      }
-    }
+  $results = next_slides($f);
+  if (count($results) > 0) {
+    json_out('debug-results', $results);
+    json_out('photo', array('photo' => 'slide.php/'.$results[0],
+                            'next' => array('mode' => 'slide',
+                                            'file' => $results[0])));
+    $done = true;
   }
 
   $mode = 'racer';
+  $racerid = 0;
 }
 
 if (!$done && $mode == 'racer') {

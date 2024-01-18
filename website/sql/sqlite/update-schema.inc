@@ -109,6 +109,16 @@ if (schema_version() < 9) {
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '9')";
 }
 
+if (schema_version() < 10) {
+  $updates = array_merge($updates,
+                         @include(sql_file_path('action-history')));
+  $updates[] = "ALTER TABLE Ranks ADD COLUMN ntrophies INTEGER DEFAULT -1";
+  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN checkin_time INTEGER";
+
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '10')";
+}
+
 // For each new schema version, copy the DELETE and INSERT for schema version
 
 return $updates;

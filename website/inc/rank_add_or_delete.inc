@@ -33,6 +33,10 @@ function find_or_create_rank($rankname, $classid) {
                            .' WHERE rankid = :rankid');
       $stmt->execute(array(':sortorder' => $sortorder,
                            ':rankid' => $rankid));
+      record_action(array('action' => 'rank.*create',
+                          'rank' => $rankname,
+                          'rankid' => $rankid,
+                          'classid' => $classid));
     }
   }
 
@@ -47,6 +51,8 @@ function delete_rank($rankid) {
   record_event(EVENT_RANK_DELETED, array('classid' => -1,
                                          'rankid' => $rankid,
                                          'other' => $rankname));
+  record_action(array('action' => 'rank.*delete', 'rankid' => $rankid));
+
   $stmt = $db->prepare('DELETE FROM Ranks WHERE rankid = :rankid');
   $stmt->execute(array(':rankid' => $rankid));
 

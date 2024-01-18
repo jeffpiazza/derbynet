@@ -88,7 +88,18 @@ function insert_new_racer($values) {
                        ':lastname' => trim($values['lastname']),
                        ':partitionid' => $values['partitionid']));
   $rs = $stmt->fetch(PDO::FETCH_NUM);
-  return $rs[0];
+  $racerid = $rs[0];
+
+  record_action(array('action' => 'racer.*create',
+                      'racerid' => $racerid,
+                      'firstname' => trim($values['firstname']),
+                      'lastname' => trim($values['lastname']),
+                      'carnumber' => trim($values['carnumber']),
+                      'carname' => trim($values['carname']),
+                      'partitionid' => $values['partitionid'],
+                      'rankid' => $values['rankid'],
+                      'classid' => $values['classid']));
+  return $racerid;
 }
 
 // This just enrolls everyone into Round 1 for their Class.

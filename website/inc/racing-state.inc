@@ -89,4 +89,17 @@ function set_racing_state($state) {
   return true;
 }
 
+function cancel_running_round() {
+  set_racing_state(0);
+  set_current_heat(-1, -1);
+  write_raceinfo('ClassID', -1);
+}
+
+function maybe_cancel_running_round($roundid) {
+  $now_running = get_running_round();
+  if ($roundid == $now_running['roundid']) {
+    cancel_running_round();
+  }
+}
+
 ?>

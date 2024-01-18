@@ -1,12 +1,17 @@
 <?php
 
-return array(
-
 // For now, and very possibly forever, we recognize only one ballot, so we don't
 // bother with a Ballots table, and ballotid is always fixed at 1.
 //
-// A Ballots entry has a collection of associated BallotAwards entry to define
+// A Ballots entry has a collection of associated BallotAwards entries to define
 // what awards are available for that ballot.
+//
+// RaceInfo table may have entries for:
+//
+// ballot_password (the password for users to access the vote.php page; blank for no password)
+// balloting  ('open' or 'closed')
+
+return array(
 
 "DROP TABLE IF EXISTS `BallotAwards`",
 

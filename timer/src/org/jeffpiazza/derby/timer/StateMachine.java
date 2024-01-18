@@ -22,9 +22,10 @@ public class StateMachine implements Event.Handler {
   // the start gate's state.  For some timers, though, we never know whether the
   // gate is opened or closed, and so have to modify our behavior accordingly.
   private boolean gate_state_is_knowable;
-  // If the gate state is not knowable, then GATE_OPENED and GATE_CLOSED events
-  // are not expected, and the state machine effectively alternates between IDLE
-  // and MARK states.  GIVING_UP event doesn't happen, either, because it
+  // If the gate state is not knowable, the state machine effectively manufactures
+  // its own (assumed) GATE_CLOSED to advance from MARK to SET state after
+  // seeing a PREPARE_HEAT_RECEIVED.  No GATE_OPEN event occurs, so the RUNNING
+  // state is never entered.  GIVING_UP event doesn't happen, either, because it
   // can arise only from a RESULTS_OVERDUE state.
 
   public StateMachine(boolean gate_state_is_knowable) {
@@ -84,11 +85,6 @@ public class StateMachine implements Event.Handler {
   }
 
   public synchronized void onEvent(Event e, String[] args) {
-    if (!gate_state_is_knowable) {
-      if (e == Event.GATE_CLOSED || e == Event.GATE_OPEN) {
-        unexpected(e);
-      }
-    }
     State initialState = currentState;
     switch (currentState) {
       case IDLE:
@@ -96,6 +92,13 @@ public class StateMachine implements Event.Handler {
           case PREPARE_HEAT_RECEIVED:
             currentState = State.MARK;
             gate_is_believed_closed = false;
+            // Issue 270: If !gate_state_is_knowable, advance to State.SET after
+            // a short wait.  This fixes the issue of FastTrack timers that don't
+            // support the RG (read gate) command not knowing when to stop sending
+            // LR (laser reset) commands.
+            if (!gate_state_is_knowable) {
+              Event.sendAfterMs(500, Event.GATE_CLOSED);
+            }
             break;
           case ABORT_HEAT_RECEIVED:
           case RACE_FINISHED:
@@ -151,6 +154,11 @@ public class StateMachine implements Event.Handler {
             currentState = State.RUNNING;
             break;
           case RACE_FINISHED:
+            if (!gate_state_is_knowable) {
+              currentState = State.IDLE;
+              break;
+            }
+            // else intentional fall-through
           case GIVING_UP:
             currentState = unexpected(e, State.IDLE);
             break;

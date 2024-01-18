@@ -1,0 +1,99 @@
+<?php @session_start();
+$track_length = read_raceinfo('track-length', 40);
+?><!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+function track_length() { return <?php echo $track_length; ?> }
+
+async function animate_car() {
+  $("#car-img")
+    .css({left: '45vw', 'max-width': '10vw'})
+    .animate({left: '5vw', 'max-width': '90vw'}, 2000)
+    .promise()
+    .then(() => { $("#car-img").animate({left: '100vw'}, 800) })
+    .then(() => { setTimeout(animate_car, 10000); });
+}
+
+function update_time_and_distance(time) {
+  $("#time").text(time.toFixed(1));
+  $("#speed").text(
+    (track_length() / time * 3600 * 25 / 5280).toFixed(1));
+}
+
+function delay(t, v) {
+  return new Promise(resolve => setTimeout(resolve, t, v));
+}
+
+async function sequence_times(times) {
+  while (true) {
+    for (t in times) {
+      update_time_and_distance(times[t]);
+      await delay(2000);
+    }
+  }
+}
+
+$(function() { animate_car(); sequence_times([4.0, 3.5, 3.2, 3.1, 3.0]); });
+</script>
+<title>Scale Miles Per Hour</title>
+<?php require('inc/kiosk-poller.inc'); ?>
+<?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<style>
+#text {
+background: rgba(255, 255, 255, .2);
+}
+#text p {
+  font-size: 4vw;
+  text-align: center;
+  line-height: 1.0;
+}
+span.calc {
+  font-size: 5vw;
+  font-weight: bold;
+  color: red;
+}
+#car-img {
+  margin-left: auto;
+  margin-right: auto;
+  position: absolute;
+  bottom: 45vh;
+  z-index: -10;
+
+  left: 5vw;
+  max-width: 90vw;
+
+  left: 45vw;
+  max-width: 10vw;
+}
+</style>
+</head>
+<body>
+<?php
+require_once('inc/banner.inc');
+make_banner('Scale Miles Per Hour', /* back_button */ false);
+?>
+
+<img id="car-img" src="img/car-4000.png"/>
+<div id="text">
+  <p>If a 7-inch pinewood derby car</p>
+  <p>were scaled up 25x (to ~14.5 feet)</p>
+<p>then the <?php echo $track_length; ?>-foot track</p>
+<p>would be the equivalent of
+   <span class="calc"><?php echo sprintf("%4.1f", (13 * 12 / 7) * $track_length); ?></span>
+    feet long.</p>
+<p>Traversing that distance in
+    <span id="time" class="calc">3.0</span> seconds</p>
+<p>would be an average speed of
+    <span id="speed" class="calc"><?php
+       echo sprintf("%4.1f", $track_length / 3.0 * 3600 * 25 / 5280); ?></span>
+    MPH.</p>
+</div>
+
+
+<?php require('inc/ajax-failure.inc'); ?>
+</body>
+</html>

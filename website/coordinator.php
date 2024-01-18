@@ -76,11 +76,11 @@ var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
   </div>
 
   <div id="supplemental-control-group" class="control_group block_buttons new_round_control hidden">
+      <div id="now-racing-group-buttons"></div>
       <div id="add-new-rounds-button" class="hidden">
           <input type="button" value="Add New Rounds"
                  onclick="show_choose_new_round_modal()"/>
       </div>
-      <div id="now-racing-group-buttons"></div>
   </div>
 
   <div class="control_group timer_control_group">

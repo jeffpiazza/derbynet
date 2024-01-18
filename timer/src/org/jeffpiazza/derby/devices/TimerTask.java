@@ -3,19 +3,18 @@ package org.jeffpiazza.derby.devices;
 import java.awt.Color;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import org.jeffpiazza.derby.HttpTask;
-import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.AllSerialPorts;
 import org.jeffpiazza.derby.Connector;
-import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.RecordingSerialPortWrapper;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.HttpTask;
+import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.gui.TimerGui;
 import org.jeffpiazza.derby.serialport.PlaybackSerialPortWrapper;
+import org.jeffpiazza.derby.serialport.RecordingSerialPortWrapper;
+import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   private TimerGui timerGui;
@@ -92,7 +91,9 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     while (true) {
       try {
         connector.setTimerTask(this);
-        device = identifyTimerDevice();
+        if (device == null) {
+          device = identifyTimerDevice();
+        }
         // Let the connector know we've (possibly) identified the device
         connector.setTimerTask(this);
         runDevicePollingLoop();
@@ -199,63 +200,10 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
         if (userIntervened()) {
           break;
         }
-        SerialPort port = portName.isEmpty() ? null : new SerialPort(portName);
-        SerialPortWrapper portWrapper;
-        if (timerGui != null) {
-          timerGui.setSerialPort(portName);
-        }
-        try {
-          if (port != null) {
-            System.out.println(port.getPortName());
-            if (!open(port)) {
-              if (timerGui != null) {
-                timerGui.markSerialPortWontOpen();
-              }
-              port = null;  // So we don't try to close it later
-              continue;
-            }
-          }
-          switch (port_record_playback) {
-            case PORT_NORMAL:
-            default:
-              portWrapper = new SerialPortWrapper(port);
-              break;
-            case PORT_RECORDING:
-              portWrapper = new RecordingSerialPortWrapper(port);
-              break;
-            case PORT_PLAYBACK:
-              portWrapper = new PlaybackSerialPortWrapper();
-              break;
-          }
-
-          for (Class<? extends TimerDevice> timerClass
-               : timerClasses.candidates()) {
-            if (userIntervened()) {
-              break;
-            }
-            if (timerGui != null) {
-              timerGui.setTimerClass(timerClass);
-            }
-            TimerDevice device
-                = makeTimerDeviceInstance(timerClass, portWrapper);
-            device = maybeProbeOneDevice(device);
-            if (device != null) {
-              confirmDevice();
-              // 'finally' clause will close port, if it's set; since we
-              // actually found a timer, we want to leave the port open.
-              port = null;
-              return device;
-            }
-          }
-          // If falling out of the loop here, then we're no longer interested
-          // in this wrapper, so the wrapper's no longer interested in events
-          // from the port
-          if (port != null) {
-            port.removeEventListener();
-          }
-        } finally {
-          close(port);
-        }
+         TimerDevice device = tryOnePortName(portName);
+         if (device != null) {
+           return device;
+         }
       }
 
       long deadline = System.currentTimeMillis() + 10000;
@@ -274,13 +222,77 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     }
   }
 
+  private TimerDevice tryOnePortName(String portName) throws SerialPortException {
+    SerialPort port = portName.isEmpty() ? null : new SerialPort(portName);
+    if (timerGui != null) {
+      timerGui.setSerialPort(portName);
+    }
+    try {
+      if (port != null) {
+        System.out.println(port.getPortName());
+        if (!open(port)) {
+          if (timerGui != null) {
+            timerGui.markSerialPortWontOpen();
+          }
+          port = null;  // So we don't try to close it in the finally clause
+          return null;
+        }
+      }
+      TimerPortWrapper portWrapper;
+      switch (port_record_playback) {
+        case PORT_NORMAL:
+        default:
+          portWrapper = new SerialPortWrapper(port);
+          break;
+        case PORT_RECORDING:
+          portWrapper = new RecordingSerialPortWrapper(port);
+          break;
+        case PORT_PLAYBACK:
+          portWrapper = new PlaybackSerialPortWrapper();
+          break;
+      }
+
+      TimerDevice device = tryOnePortWrapper(portWrapper);
+      if (device != null) {
+        // 'finally' clause will close port, if it's set; since we
+        // actually found a timer, we want to leave the port open.
+        port = null;
+        return device;
+      } else {
+        portWrapper.abandon();
+      }
+    } finally {
+      close(port);
+    }
+    return null;
+  }
+
+  public TimerDevice tryOnePortWrapper(TimerPortWrapper portWrapper)
+      throws SerialPortException {
+    for (Class<? extends TimerDevice> timerClass
+         : timerClasses.candidates()) {
+      if (userIntervened()) {
+        break;
+      }
+      if (timerGui != null) {
+        timerGui.setTimerClass(timerClass);
+      }
+      TimerDevice device = maybeProbeOneDevice(
+          makeTimerDeviceInstance(timerClass, portWrapper));
+      if (device != null) {
+        return device;
+      }
+    }
+    return null;
+  }
+
   private TimerDevice maybeProbeOneDevice(TimerDevice device)
       throws SerialPortException {
     if (device == null) {
       return null;
     }
     Class<? extends TimerDevice> timerClass = device.getClass();
-    SerialPortWrapper portWrapper = device.getPortWrapper();
+    TimerPortWrapper portWrapper = device.getPortWrapper();
     System.out.print("    " + timerClass.getSimpleName());
     if (!device.canBeIdentified()) {
       if (timerClass != timerClasses.chosen()) {
@@ -344,10 +356,10 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
   }
 
   private TimerDevice makeTimerDeviceInstance(
-      Class<? extends TimerDevice> deviceClass, SerialPortWrapper portWrapper) {
+      Class<? extends TimerDevice> deviceClass, TimerPortWrapper portWrapper) {
     try {
       Constructor<? extends TimerDevice> constructor
-          = deviceClass.getConstructor(SerialPortWrapper.class);
+          = deviceClass.getConstructor(TimerPortWrapper.class);
       return constructor.newInstance(portWrapper);
     } catch (Throwable ex) {
       LogWriter.stacktrace(ex);
@@ -373,6 +385,10 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     if (device != null && timerGui != null) {
       timerGui.confirmDevice(device.hasEverSpoken());
     }
+  }
+
+  public synchronized void injectDevice(TimerDevice device) {
+    this.device = device;
   }
 
   public synchronized TimerDevice device() {

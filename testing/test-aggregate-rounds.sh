@@ -6,7 +6,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=aggregate-rounds `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 
 # Turn on subgroups and split "Lions & Tigers" into 3 subgroups: "Lions"(1), "Tigers"(6), and "Cougars"(7)

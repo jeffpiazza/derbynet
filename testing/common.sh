@@ -231,6 +231,26 @@ function expect_eq {
     fi
 }
 
+
+# For generating data:
+# select roundid, heat,
+# carnumber || ':' || (1 + abs(random()) % 3) || '.' ||
+#     (abs(random()) % 10) || (abs(random()) % 10) || (abs(random()) % 10) as L1,
+# (select carnumber from RaceChart join RegistrationInfo using (racerid)
+#     where lane = 2 and roundid = lane1.roundid and heat = Lane1.heat)
+#  || ':' || (1 + abs(random()) % 3) || '.' ||
+#     (abs(random()) % 10) || (abs(random()) % 10) || (abs(random()) % 10) as L2,
+# (select carnumber from RaceChart join RegistrationInfo using (racerid)
+#     where lane = 3 and roundid = lane1.roundid and heat = Lane1.heat)
+#  || ':' || (1 + abs(random()) % 3) || '.' ||
+#     (abs(random()) % 10) || (abs(random()) % 10) || (abs(random()) % 10) as L3,
+# (select carnumber from RaceChart join RegistrationInfo using (racerid)
+#     where lane = 4 and roundid = lane1.roundid and heat = Lane1.heat)
+#  || ':' || (1 + abs(random()) % 3) || '.' ||
+#     (abs(random()) % 10) || (abs(random()) % 10) || (abs(random()) % 10) as L4
+# from RaceChart lane1 join RegistrationInfo using (racerid)
+# where finishtime is null and lane = 1 and roundid = 2 order by heat;
+
 # Confirm what roundid/heat is current and simulate timer interaction for running one heat
 # Usage: run_heat <roundid> <heat> <lane1> <lane2> <lane3> <lane4> ?<skip-check_heat_ready>
 #  where <laneN> is either just a time, a carnumber plus a time, e.g.,

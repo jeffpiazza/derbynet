@@ -123,6 +123,12 @@ function delete_from_raceinfo($key) {
   $stmt = $db->prepare('DELETE FROM RaceInfo WHERE itemkey = :key');
   $stmt->execute(array(':key' => $key));
 }
+function delete_from_raceinfo_with_value($key, $val) {
+  global $db;
+  $stmt = $db->prepare('DELETE FROM RaceInfo WHERE itemkey = :key AND itemvalue = :value');
+  $stmt->execute(array(':key' => $key,
+                       ':value' => $val));
+}  
 
 function use_groups() {
   return read_single_value('SELECT COUNT(*) FROM Classes') > 1;
@@ -243,6 +249,25 @@ function get_running_round() {
   }
 
   return $config;
+}
+
+function record_action($args) {
+  global $db;
+  try {
+    $logstmt = $db->prepare('INSERT INTO ActionHistory(received, request) VALUES('.dbnow_expr().', :args)');
+    $logstmt->execute(array(':args' => json_encode($args, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)));
+  } catch (PDOException $p) {
+  }
+}
+
+function set_current_heat($roundid, $heat) {
+  global $db;
+  write_raceinfo('RoundID', $roundid);
+  write_raceinfo('Heat', $heat);
+
+  record_action(array('action' => 'heat.*advance',
+                      'roundid' => $roundid,
+                      'heat' => $heat));
 }
 
 // If not working with a timer device, or if DerbyNet is just running as a

@@ -208,7 +208,7 @@ $(function() {
             data: {query: 'settings.list',
                    key: 'balloting'},
             success: function(data) {
-              var v = data.settings?.balloting || 'closed'
+              var v = (data.hasOwnProperty('settings') ? data.settings.balloting : false) || 'closed'
               if (balloting_open_or_closed == '') {
                 balloting_open_or_closed = v;
               } else if (balloting_open_or_closed != v) {

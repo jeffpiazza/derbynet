@@ -11,9 +11,21 @@
 var pending_ajax_requests = 0;
 
 function ajax_add_request() {
+  var first = (pending_ajax_requests == 0);
   pending_ajax_requests += 1;
   $('#ajax_num_requests').html(pending_ajax_requests);
-  $('#ajax_working').removeClass('hidden');
+  if (first) {
+    // To avoid the #ajax_working bug flickering on and off for ordinary
+    // requests that don't hang, delay exposing for a half-second.
+    setTimeout(function() {
+      if (pending_ajax_requests > 0) {
+        $('#ajax_working').removeClass('hidden');
+      }
+    }, 500);
+  } else {
+    // Just to be sure
+    $('#ajax_working').removeClass('hidden');
+  }
 }
 
 function ajax_remove_request() {

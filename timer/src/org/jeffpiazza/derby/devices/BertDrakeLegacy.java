@@ -1,12 +1,12 @@
 package org.jeffpiazza.derby.devices;
 
-import jssc.*;
-import org.jeffpiazza.derby.Message;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // This class supports PICmicro-based DIY timer designed by Bert Drake,
 // described at http://drakedev.com/pinewood/.  The "Race Timer Software
@@ -16,7 +16,7 @@ public class BertDrakeLegacy extends TimerDeviceCommon {
   private TimerResult result = null;
   private int nresults = 0;
 
-  public BertDrakeLegacy(SerialPortWrapper portWrapper) {
+  public BertDrakeLegacy(TimerPortWrapper portWrapper) {
     super(portWrapper, null);
     gateWatcher = new GateWatcher(portWrapper) {
       // Interrogates the starting gate's state.  CAUTION: polling while a
@@ -90,7 +90,7 @@ public class BertDrakeLegacy extends TimerDeviceCommon {
       "^\\s*(\\d)\\s+(\\d\\.\\d+)(\\s.*|)");
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       @Override
       public String apply(String line) throws SerialPortException {
         if (line.equals("B")) {

@@ -89,5 +89,9 @@ var g_linger_ms = <?php echo $linger_ms; ?>;
  <img src="img/timer-red.png"/>
  <p>Check timer.</p>
 </div>
+<div id="reschedule_overlay" class="overlay_foreground">
+ <img src="img/warning-icon.png"/>
+ <p>Schedule adjustment needed.</p>
+</div>
 </body>
 </html>

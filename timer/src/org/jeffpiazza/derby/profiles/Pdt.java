@@ -1,14 +1,14 @@
 package org.jeffpiazza.derby.profiles;
 
-import org.jeffpiazza.derby.timer.Profile;
 import jssc.SerialPort;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
+import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // TODO remote start "S"
 public class Pdt extends TimerDeviceWithProfile {
-  public Pdt(SerialPortWrapper portWrapper) {
+  public Pdt(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

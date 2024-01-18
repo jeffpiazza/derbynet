@@ -1,12 +1,12 @@
 package org.jeffpiazza.derby.devices;
 
-import jssc.*;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
 // TODO: "R" responds with "Ready", which maybe means this timer CAN be identified.
 // More importantly, "V" responds with "Derby Magic v3.00" or some such.
@@ -16,7 +16,7 @@ public class DerbyMagicLegacy extends TimerDeviceCommon {
   private TimerResult result = null;
   private long timeOfFirstResult = 0;
 
-  public DerbyMagicLegacy(SerialPortWrapper portWrapper) {
+  public DerbyMagicLegacy(TimerPortWrapper portWrapper) {
     // No GateWatcher, because there's no way to poll this timer
     super(portWrapper, null, /* gate is knowable */ false);
 
@@ -93,7 +93,7 @@ public class DerbyMagicLegacy extends TimerDeviceCommon {
       "([1-8])=(\\d\\.\\d+)([!-/:-@]) *");
 
   protected void setUp() {
-    portWrapper.registerDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerDetector(new TimerPortWrapper.Detector() {
       public String apply(String line) throws SerialPortException {
         if (line.equals(TIMER_HAS_STARTED)) {
           LogWriter.serial("Detected gate opening");
@@ -104,7 +104,7 @@ public class DerbyMagicLegacy extends TimerDeviceCommon {
         return line;
       }
     });
-    portWrapper.registerEarlyDetector(new SerialPortWrapper.Detector() {
+    portWrapper.registerEarlyDetector(new TimerPortWrapper.Detector() {
       @Override
       public String apply(String line) throws SerialPortException {
         Matcher m = singleLanePattern.matcher(line);

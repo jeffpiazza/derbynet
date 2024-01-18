@@ -27,6 +27,9 @@ function create_class($classname, $with_first_round = true) {
                          .' WHERE classid = :classid');
     $stmt->execute(array(':classid' => $classid,
                          ':sortorder' => $sortorder));
+    record_action(array('action' => 'class.*create',
+                        'class' => $classname,
+                        'classid' => $classid));
   }
 
   // Creating a class usually requires creating a corresponding 1st racing round
@@ -45,6 +48,10 @@ function create_class($classname, $with_first_round = true) {
                                  .' WHERE round = 1'
                                  .'  AND classid = :classid',
                                  array(':classid' => $classid));
+    record_action(array('action' => 'round.*create',
+                        'roundid' => $roundid,
+                        'classid' => $classid,
+                        'round' => 1));
     record_event(EVENT_ROUND_ADDED, array('roundid' => $roundid,
                                           'classid' => $classid,
                                           'other' => 'round 1'));
@@ -135,6 +142,8 @@ function delete_class($classid) {
   if ($stmt->rowCount() > 0) {
     record_event(EVENT_CLASS_DELETED, array('classid' => $classid, 'other' => $classname));
   }
+  record_action(array('action' => 'class.*delete', 'classid' => $classid));
+  delete_from_raceinfo_with_value('full-field-calc', $classid);
 }
 
 ?>

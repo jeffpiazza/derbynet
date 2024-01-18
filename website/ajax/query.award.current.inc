@@ -48,6 +48,7 @@ if (count($keys) >= 2) {
     add_speed_awards($awards);
 
     // json_out('speed-awards', $awards);
+    // json_out('keys', $keys);  // speed-1-6
 
     if (count($keys) == 4) {
       $rankid = $keys[3];
@@ -56,9 +57,18 @@ if (count($keys) >= 2) {
       $awardname = nth_fastest($place, $rankname);
     } else if (count($keys) == 3) {
       $classid = $keys[2];
-      $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
-                                     array(':classid' => $classid));
-      $awardname = nth_fastest($place, $classname);
+      $pack_aggregate_id = read_raceinfo('full-field-calc', 0);
+      if ($classid != $pack_aggregate_id) {
+        $classname = read_single_value('SELECT class FROM Classes WHERE classid = :classid',
+                                       array(':classid' => $classid));
+        $awardname = nth_fastest($place, $classname);
+      } else {
+        // We're presenting this group award as the supergroup award.  We want
+        // the key to differ from the group award key to ensure that any award
+        // kiosks update.
+        $key = "speed-$place";
+        $awardname = nth_fastest_in_pack($place);
+      }
     } else {
       $awardname = nth_fastest_in_pack($place);
     }

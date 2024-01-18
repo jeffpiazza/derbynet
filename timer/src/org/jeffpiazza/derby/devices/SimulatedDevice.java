@@ -1,13 +1,12 @@
 package org.jeffpiazza.derby.devices;
 
 import java.text.DecimalFormat;
-import jssc.SerialPortException;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
-
 import java.util.Random;
+import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
 import org.jeffpiazza.derby.Message;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 
 // For testing the web server and the derby-timer framework, simulate
@@ -17,7 +16,7 @@ public class SimulatedDevice extends TimerDeviceBase implements Event.Handler {
 
   private Random random;
 
-  public SimulatedDevice(SerialPortWrapper portWrapper) {
+  public SimulatedDevice(TimerPortWrapper portWrapper) {
     super(portWrapper);
     this.random = new Random();
   }

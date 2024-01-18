@@ -48,10 +48,7 @@ class Prober {
     }
     this.probe_cycle_underway = true;
     g_logger.probing_started();
-    if (g_timer_proxy && g_timer_proxy.port_wrapper) {
-      await g_timer_proxy.port_wrapper.close();
-    }
-    g_timer_proxy = null;
+    TimerProxy.destroy();
     $("#connected").text("Probe started");
     try {
       if (g_ports.length == 0) {
@@ -65,7 +62,7 @@ class Prober {
       }
 
       while (!g_timer_proxy && !this.give_up) {
-        g_timer_proxy = await g_prober.probe();
+        await g_prober.probe();
       }
       if (g_timer_proxy) {
         Flag.apply_all();
@@ -146,6 +143,7 @@ class Prober {
           var opened_ok = true;
           await pw.open(prof.params)
             .catch((e) => {
+              console.error('portwrapper open failed:', e);
               g_logger.internal_msg('Caught exception trying to open port ' + porti);
               g_logger.stacktrace(e);
               Gui.probe_port_trouble(porti);
@@ -178,7 +176,7 @@ class Prober {
             var pw0 = pw;
             pw = null;
 
-            return new TimerProxy(pw0, prof);
+            return TimerProxy.create(pw0, prof);
           }
         } finally {
           if (pw) {

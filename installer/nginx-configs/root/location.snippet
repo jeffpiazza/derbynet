@@ -1,8 +1,0 @@
-  location ~ /.*\.php(/.*)?$ {
-    client_max_body_size 16M;
-    include snippets/fastcgi-php.conf;
-    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
-    fastcgi_param DERBYNET_CONFIG_DIR /var/lib/derbynet;
-    fastcgi_param DERBYNET_DATA_DIR /var/lib/derbynet;
-    # fastcgi_read_timeout value goes here, if needed.
-  }

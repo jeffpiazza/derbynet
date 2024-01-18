@@ -62,6 +62,8 @@ var Lineup = {
       Overlay.show('#timer_overlay');
     } else if (!current["now_racing"] && this.ok_to_change()) {
       Overlay.show('#paused_overlay');
+    } else if (data["current-reschedule"]) {
+      Overlay.show('#reschedule_overlay');
     } else {
       Overlay.clear();
     }
@@ -311,7 +313,8 @@ var Poller = {
       $.ajax('action.php',
              {type: 'GET',
               data: {query: 'poll',
-                     values: 'current-heat,heat-results,precision,racers,timer-trouble',
+                     values: 'current-heat,heat-results,precision,racers,' +
+                             'timer-trouble,current-reschedule',
                      roundid: roundid,
                      heat: heat,
                      'row-height': row_height},

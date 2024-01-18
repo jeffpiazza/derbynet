@@ -4,7 +4,7 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=racing-groups `dirname $0`/reset-database.sh "$BASE_URL"
 
 # Empty database behavior
 curl_getj "action.php?query=poll&values=race-structure" | \
@@ -162,7 +162,7 @@ curl_postj action.php "action=partition.delete&partitionid=$CUS_PART_X" | check_
 [[ $(partitionid_of "Cus-Part-ModX") = null ]] || test_fails
 [[ $(rankid_of "Cus-Part-ModX") = null ]] || test_fails
 [[ $(classid_of "Cus-Part-ModX") = null ]] || test_fails
-[[ "$CUS_PART_X_RANK" = $(rankid_of "Cus-Part-X") ]] || test_fails
+[[ $(rankid_of "Cus-Part-X") = null ]] || test_fails
 [[ "$CUS_PART_X_CLASS" = $(classid_of "Cus-Part-X") ]] || test_fails
 
 # Add, rename, delete rank

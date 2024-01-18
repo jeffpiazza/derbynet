@@ -11,20 +11,19 @@ define('RENDER_CROPPED', 'cropped');
 // ... based on ORIGINAL not CROPPED
 define('RENDER_WORKING', 'work');
 
-// jQuery Mobile limits images in a listview to be no more than 80 pixels
-define('RENDER_LISTVIEW', '80x80');
+// These smaller sizes represent thumbnail images for different purposes.
+// Rather than re-render to pixel-specific sizes, it's much more sensible to
+// agree on one modest size for all of these, and then use css
+// max-height/max-width where needed.
 
-// For assigning photos to racers, in photo-thumbs.php
-define('RENDER_THUMBNAIL', '150x150');
-
-// For the "on deck" display.  TODO This should be dynamically sized based on window/column size!
-define('RENDER_ONDECK', '200x100');
-
-// For display on checkin page: 60h, arbitrary width
-define('RENDER_CHECKIN', '0x60');
-
-// For display on award judging page
-define('RENDER_JUDGING', '100x100');
+// jQuery Mobile limits images in a listview to be no more than 80 pixels,
+// but this can be managed with css.
+define('RENDER_LISTVIEW', '200x200');  // formerly '80x80'
+define('RENDER_THUMBNAIL', '200x200');  // formerly '150x150'
+define('RENDER_CHECKIN', '200x200');  // formerly '0x60'
+define('RENDER_JUDGING', '200x200');  // formerly '100x100'
+define('RENDER_ONDECK', '400x400');  // formerly 200x100
+define('RENDER_RACER_RESULTS', '200x200');  // formerly 68h
 
 function photo_directory() {
   // For Windows:
@@ -287,7 +286,7 @@ class PhotoRender {
       return $this->render_url(basename($imagefile));
     } else {
       // A racer URL
-      return 'photo.php/'.$this->repository->name().'/racer/'.$racerid.'/'.time();
+      return 'photo.php/'.$this->repository->name().'/racer/'.$racerid.'/unrec-'.time();
     }
   }
 
@@ -312,7 +311,7 @@ class PhotoRender {
     if (!file_exists($target_file_path)) {
       $source = $this->find_source_render($image_name);
       if (!$source) {
-        return NULL;
+        return null;
       }
       $source_file_path = $source->file_path($image_name);
       if (substr($source_file_path, -4) == '.svg') {
@@ -321,9 +320,9 @@ class PhotoRender {
       if ($this->max_height() == 0 && $this->max_width() == 0) {
         return $source_file_path;
       } else {
-        list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
+        list($source_width, $source_height, $image_type) = @getimagesize($source_file_path);
         if ($source_height == 0) {
-          return FALSE;
+          return false;
         }
         $im = open_image($source_file_path, $image_type);
 
@@ -379,7 +378,7 @@ function open_image($filepath, $image_type) {
     return imagecreatefrompng($filepath);
   }
 
-  return FALSE;
+  return false;
 }
 
 function write_image($image, $filepath, $image_type) {
@@ -391,7 +390,7 @@ function write_image($image, $filepath, $image_type) {
   case IMAGETYPE_PNG:
     return imagepng($image, $filepath, 0);
   }
-  return FALSE;
+  return false;
 }
 
 function pseudo_mime_content_type($filename) {

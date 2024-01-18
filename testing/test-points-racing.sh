@@ -7,7 +7,7 @@ source `dirname $0`/common.sh
 
 user_login_coordinator
 
-`dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=points-racing `dirname $0`/reset-database.sh "$BASE_URL"
 `dirname $0`/import-roster.sh "$BASE_URL"
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
@@ -33,15 +33,15 @@ run_heat -place 1 2   111:1 131:4 101:2 121:3
 
 # Report times for this heat, let timer-message compute places
 # First we have a tie for last place in the heat, as for a couple of DNFs;
-# neither racer gets any points for the heat
+# both racers get 1 point each (tie for 3rd place)
 run_heat 1 3 121:9.9999 141:3.2 111:3.1 131:9.9999
 
 user_login_coordinator
 # Check the points for each racer in the heat: # heats, total points
-curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>5</td>"
+curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
 curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
 curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
-curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
+curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>3</td>"
 curl_postj action.php "action=heat.rerun&heat=last" | check_jsuccess
 user_login_timer
 
@@ -50,8 +50,8 @@ run_heat 1 3  121:3.3 141:3.1 111:3.1 131:3.4
 
 user_login_coordinator
 curl_text "standings.php" | grep 121 | expect_one "<td>3</td><td>6</td>"
-curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>4</td>"
-curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>11</td>"
+curl_text "standings.php" | grep 141 | expect_one "<td>2</td><td>5</td>"
+curl_text "standings.php" | grep 111 | expect_one "<td>3</td><td>12</td>"
 curl_text "standings.php" | grep 131 | expect_one "<td>2</td><td>2</td>"
 curl_postj action.php "action=heat.rerun&heat=last" | check_jsuccess
 user_login_timer

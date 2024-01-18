@@ -12,6 +12,14 @@ $use_master_sched = use_master_sched();
 $high_water_rounds = high_water_rounds();
 
 $signatures = schedule_signature();
+
+$limit_to_roundid = false;
+if (isset($as_kiosk)) {
+  $params = kiosk_parameters();
+  if (isset($params['roundid'])) {
+    $limit_to_roundid = $params['roundid'];
+  }
+}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +27,11 @@ $signatures = schedule_signature();
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript">
+
 var g_as_kiosk = <?php echo isset($as_kiosk) ? "true" : "false"; ?>;
+
+var g_limited_to_roundid = <?php echo $limit_to_roundid ? "true" : "false"; ?>;
+
 </script>
 <?php
 if (isset($as_kiosk)) {
@@ -39,15 +51,6 @@ if (isset($as_kiosk)) {
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
 <link rel="stylesheet" type="text/css" href="css/racer-results.css"/>
-<style>
-.scroll-bounding-rect {
-      overflow: hidden;
-}
-
-td span.time {
-  font-size: 24px /* 3vh */;
-}
-</style>
 </head>
 <body>
 <?php
@@ -56,7 +59,9 @@ make_banner('Results By Racer', isset($as_kiosk) ? '' : 'index.php');
 $nlanes = get_lane_count_from_results();
 
 $now_running = get_running_round();
-running_round_header($now_running, /* Use RoundID */ TRUE);
+if (!$limit_to_roundid) {
+    running_round_header($now_running, /* Use RoundID */ true);
+}
 
 $show_racer_photos = read_raceinfo_boolean('show-racer-photos-rr');
 $show_car_photos = read_raceinfo_boolean('show-car-photos-rr');
@@ -75,8 +80,8 @@ $sql = 'SELECT RegistrationInfo.racerid,'
                          'Rounds', 'Rounds.roundid = Roster.roundid',
                          'Classes', 'Rounds.classid = Classes.classid')
     .' WHERE Rounds.roundid = RaceChart.roundid'
-    .(isset($_GET['racerid'])
-          ? ' AND RaceChart.racerid = '.$_GET['racerid'] : '')
+    .($limit_to_roundid !== false ? " AND Rounds.roundid = $limit_to_roundid" : '')
+    .(isset($_GET['racerid']) ? " AND RaceChart.racerid = $_GET[racerid]" : '')
     .' ORDER BY '
     .(schema_version() >= 2 ? 'Classes.sortorder, ' : '')
     .'class, round, lastname, firstname, carnumber, resultid, lane';
@@ -169,10 +174,12 @@ foreach ($rounds as $round) {
       $racer_label = '';
       // 68h images completely fill one row's height
       if ($rs['imagefile'] && $show_racer_photos) {
-        $racer_label .= '<img src="'.headshots()->url_for_racer($rs, '68h').'" class="racer-photo"/>';
+        $head_url = headshots()->url_for_racer($rs, RENDER_RACER_RESULTS);
+        $racer_label .= "<img src=\"$head_url\" class=\"racer-photo\"/>";
       }
       if (isset($rs['carphoto']) && $rs['carphoto'] && $show_car_photos) {
-        $racer_label .= '<img src="'.car_photo_repository()->url_for_racer($rs, '68h').'" class="racer-photo"/>';
+        $car_url = car_photo_repository()->url_for_racer($rs, RENDER_RACER_RESULTS);
+        $racer_label .= "<img src=\"$car_url\" class=\"racer-photo\"/>";
       }
       $racer_label .= '<div class="racer_label"><span class="racer">'
         .htmlspecialchars(mangled_name($rs, $name_style), ENT_QUOTES, 'UTF-8').'</span>'

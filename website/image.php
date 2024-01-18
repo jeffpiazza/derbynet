@@ -1,19 +1,19 @@
 <?php
 session_start();
 
-// Serve image files out of the Images directory, according to the current images-dir setting.
+// E.g., .../image.php/emblem
+// The path_info ("/emblem") provides the image stem name, without any extension.
 
 require_once('inc/data.inc');
 require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 
-// path_info (URL) should be:
-// image.php/filename
 
 $exploded = explode('/', path_info());
 if (count($exploded) == 2) {
   $file_path = image_file_path($exploded[1]);
 } else {
+  // Don't want this to be a vector for traversing around the server file system
   exit(1);
 }
 

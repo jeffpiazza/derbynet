@@ -31,7 +31,7 @@ class CarTagsDocument extends PrintableRacerDocument {
 
     $this->pdf->SetFillColor(0,0,0);
     // Small barcode along the top, sometimes more reliable to scan
-    $this->pdf->HorizontalBarcode($left + 0.875, 0.40, 1.0, 0.25, $racer['barcode']);
+    // $this->pdf->HorizontalBarcode($left + 0.875, 0.40, 1.0, 0.25, $racer['barcode']);
     // Large barcode
     $this->pdf->VerticalBarcode($left + 1.75, 0.75, 0.5, 4, $racer['barcode']);
 
@@ -43,15 +43,14 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetFont('Times', '', 15);
     $this->pdf->RotatedCenteredText($left + 1.4, 2.75,  is_null($racer['note']) ? "" : $racer['note']);
 
-    // Generic image set doesn't have rank images
-    if ($this->get_option('century_emblem') && is_dir(image_file_path("centuries"))) {
+    if ($this->get_option('century_emblem')) {
       // 2-inch rank image
       $this->pdf->SetXY($left, 5.5);
       $this->pdf->SetFont('Arial', '', 16);
       $this->pdf->SetFillColor(200, 200, 255);
       $img_path = $this->path_to_century_emblem($racer);
       // $this->pdf->Rect($left, 5.5, 2.75, 2.00);
-      if ($img_path) {
+      if ($img_path && is_readable($img_path)) {
         list($width, $height) = @getimagesize($img_path);
         if ($height != 0) {
           if ($width < $height) {

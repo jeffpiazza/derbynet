@@ -1,13 +1,13 @@
 package org.jeffpiazza.derby.profiles;
 
-import org.jeffpiazza.derby.timer.Profile;
 import jssc.SerialPort;
-import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
+import org.jeffpiazza.derby.timer.Profile;
+import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 public class ChampSRM extends TimerDeviceWithProfile {
-  public ChampSRM(SerialPortWrapper portWrapper) {
+  public ChampSRM(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

@@ -83,6 +83,17 @@ function on_clear_awards() {
   $("#kiosk-summary").addClass('hidden');
 }
 
+function on_pack_agg_change() {
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'award.calc-rule',
+                 'full-field-calc': $("#pack_agg_div input[type=radio]:checked").val()},
+          success: function() {
+            location.reload(true);
+          }
+         });
+}
+
 function initialize_award_controls() {
   $.ajax(g_action_url,
          {type: 'GET',

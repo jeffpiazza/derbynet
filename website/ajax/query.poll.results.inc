@@ -15,7 +15,7 @@ $with_details = isset($_GET['details']);  // Set for testing
 json_out('schedule-signature', schedule_signature());
 
 $use_points = read_raceinfo_boolean('use-points');
-$time_format = get_finishtime_formatting_string();
+$time_format = 'x'.get_finishtime_formatting_string();
 
 $results = array();
 $stmt = $db->prepare('SELECT'

@@ -34,8 +34,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
 
     send_replay_CANCEL();
 
-    write_raceinfo('RoundID', $roundid);
-    write_raceinfo('Heat', $heat);
+    set_current_heat($roundid, $heat);
   
     $current = get_running_round();
 

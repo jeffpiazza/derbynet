@@ -1,14 +1,14 @@
 package org.jeffpiazza.derby.profiles;
 
 import jssc.SerialPort;
-import org.jeffpiazza.derby.serialport.SerialPortWrapper;
+import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // This class supports the "Derby Timer" device, http://derbytimer.com
 public class DerbyTimer extends TimerDeviceWithProfile {
-  public DerbyTimer(SerialPortWrapper portWrapper) {
+  public DerbyTimer(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
 

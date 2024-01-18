@@ -27,6 +27,10 @@ RUN apk update && \
     apk add php-pdo_odbc && \
     apk add php-pdo_mysql
 
+# This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
+# PHP 8.2.  If that changes, it's time to update.
+RUN ls /usr/sbin/php-fpm82 || exit 1
+
 ARG WWW_ROOT=/var/www/html
 
 COPY website/ $WWW_ROOT
@@ -34,6 +38,8 @@ COPY website/ $WWW_ROOT
 RUN rm -rf $WWW_ROOT/local/* $WWW_ROOT/index*.html && \
     ( test -d $WWW_ROOT/local || mkdir -m 777 $WWW_ROOT/local ) && \
     mkdir -m 777 /var/lib/derbynet && \
+    mkdir -m 777 /var/lib/derbynet/imagery && \
+    mkdir -m 777 /var/lib/derbynet/slides && \
     mkdir /var/run/php
 
 # The set-timeout.sh script may be needed to prevent timeouts under automated testing.
@@ -52,4 +58,4 @@ VOLUME /var/lib/derbynet
 EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm81 && chmod 777 /var/run/php-fpm.sock && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm82 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
