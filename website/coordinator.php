@@ -29,6 +29,22 @@ $warn_no_timer = warn_no_timer();
 <script type="text/javascript">
 var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
 </script>
+<style>
+
+input[type=number].lane-time {
+  -moz-appearance: textfield;
+  width: 105px;
+}
+
+input.lane-time::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input.lane-time::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+</style>
 </head>
 <body>
 <?php make_banner('Race Dashboard'); ?>

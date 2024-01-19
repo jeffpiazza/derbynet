@@ -122,7 +122,7 @@ function on_manual_results_button_click(should_trigger_replay) {
         racer_table.append("<tr><td>" + racer.lane + "</td>"
                            + "<td>" + racer.name + "</td>"
                            + "<td>" + racer.carnumber + "</td>"
-                           + "<td><input type='text' size='8'"
+                           + "<td><input class='lane-time' type='number' step='0.00001'"
                                + " name='lane" + racer.lane + "'" 
                                + " value='" + racer.finishtime + "'/>"
                            + "</td>"
