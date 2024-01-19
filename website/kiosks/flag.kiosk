@@ -13,13 +13,24 @@ html {
   background-color: rgb(230, 230, 230);
 }
 
+#flagdiv {
+  position: fixed;
+  top: 64px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+#top-margin {
+  height: 5%;
+}
 #flag {
-  margin-top: 50px;
-  display: block;
-  width: 90%;
+  display: block; 
+  max-height: 90%;
+  max-width: 90%;
   margin-left: auto;
   margin-right: auto;
-  border: 8px solid #efc100;
+  height: auto;
+  width: auto;
 }
 </style>
 </head>
@@ -29,7 +40,10 @@ require_once('inc/banner.inc');
 make_banner('', /* back_button */ false);
 ?>
 
-<img id="flag" src="image.php/flag"/>
+<div id="flagdiv">
+       <div id="top-margin">&nbsp;</div>
+  <img id="flag" src="image.php/flag"/>
+</div>
 
 <?php require('inc/ajax-failure.inc'); ?>
 </body>
