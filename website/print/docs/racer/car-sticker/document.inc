@@ -11,6 +11,8 @@ class CarSticker extends PrintableRacerDocument {
                                               'desc' => 'Avery 5195'),
                                         array('value' => 'avery-5167',
                                               'desc' => 'Avery 5167'),
+                                        array('value' => 'avery-5408',
+                                              'desc' => 'Avery 5408'),
                                         array('value' => 'pup',
                                               'desc' => 'Garage Sale Pup 1/2-inch round'))),
                  'skip' => array('type' => 'int',
@@ -37,7 +39,11 @@ class CarSticker extends PrintableRacerDocument {
 
     $this->set_parameters($this->get_option('sheet'));
 
-    $this->initialize_pdf('P', 'in', 'Letter');
+    if ($this->get_option('sheet') == 'avery-5408'){
+      $this->initialize_pdf('P', 'in', array(4, 6));
+    }else{
+     $this->initialize_pdf('P', 'in', 'Letter');
+    }
     $this->initialize_layout($this->params['doc_width'], $this->params['doc_height']);
     $this->AdjustLayout();
   }
@@ -78,6 +84,17 @@ class CarSticker extends PrintableRacerDocument {
         'category_y' => 0.44,
         'category_font_size' => 9
         );
+    } else if ($sheet == 'avery-5408') {
+      $this->params = array(
+        'doc_width' => 0.750,
+        'doc_height' => 0.750,
+        'carno_y' => 0.45,
+        'carno_font_size' => 16,
+        );
+      // These options are rendered moot:
+      $this->show_name = false;
+      $this->show_class = false;
+      $this->show_rank = false;
     } else if ($sheet == 'pup') {
       $this->params = array(
         'doc_width' => 0.5,
@@ -98,6 +115,10 @@ class CarSticker extends PrintableRacerDocument {
       $this->layout->SetRawLayoutParameters(/* top_margin*/0.45, /*left_margin*/0.48,
                                             /* hgap */0.14, /* vgap */0.1,
                                             /* n_per_row */12, /* n_per_page */204);
+    } elseif ($this->get_option('sheet') == 'avery-5408'){
+       $this->layout->SetRawLayoutParameters(/* top_margin*/0.6, /*left_margin*/0.3,
+                                            /* hgap */0.13, /* vgap */0.06,
+                                            /* n_per_row */4, /* n_per_page */24);
     } else {
       $this->layout->SetHorizontalGap($this->params['x_gap']);
       $this->layout->SetTopMargin($this->params['top_margin']);
@@ -105,7 +126,7 @@ class CarSticker extends PrintableRacerDocument {
   }
   
   protected function DrawOutline($left, $top) {
-    if ($this->get_option('sheet') == 'pup') {
+    if ($this->get_option('sheet') == 'pup' || $this->get_option('sheet') == 'avery-5408') {
       $r = $this->params['doc_height'] / 2;  // = $this->params['doc_width'] / 2
       $this->pdf->Circle($left + $r, $top + $r, $r);
     } else {
