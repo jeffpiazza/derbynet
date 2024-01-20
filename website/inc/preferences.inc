@@ -303,7 +303,8 @@ function dump_preferences() {
   if (group_formation_rule() == 'custom') {
     $result .= "\n## Groups\n";
     $prev = '';
-    foreach ($db->query('SELECT class, rank, ntrophies FROM Ranks JOIN Classes USING (classid)'
+    foreach ($db->query('SELECT class, rank, Classes.ntrophies'
+                        .' FROM Ranks JOIN Classes USING (classid)'
                         .' ORDER BY classid, rankid') as $row) {
       if ($row['class'] <> $prev) {
         if ($prev) {
