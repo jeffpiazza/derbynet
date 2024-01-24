@@ -325,6 +325,9 @@ class PhotoRender {
           return false;
         }
         $im = open_image($source_file_path, $image_type);
+        if ($im === false) {  // Unsupported picture type
+          return false;
+        }
 
         $aspect = $source_width / $source_height;
 
@@ -367,6 +370,32 @@ class PhotoRender {
   private $max_width;
   private $antecedent;
 }
+
+
+// Supported:
+// IMAGETYPE_GIF
+// IMAGETYPE_JPEG
+// IMAGETYPE_PNG
+
+// Not supported:
+// IMAGETYPE_WEBP
+// IMAGETYPE_JPEG2000
+// IMAGETYPE_SWF
+// IMAGETYPE_PSD
+// IMAGETYPE_BMP
+// IMAGETYPE_WBMP
+// IMAGETYPE_XBM
+// IMAGETYPE_TIFF_II
+// IMAGETYPE_TIFF_MM
+// IMAGETYPE_IFF
+// IMAGETYPE_JB2
+// IMAGETYPE_JPC
+// IMAGETYPE_JP2
+// IMAGETYPE_JPX
+// IMAGETYPE_SWC
+// IMAGETYPE_ICO
+// IMAGETYPE_AVIF
+
 
 function open_image($filepath, $image_type) {
   switch ($image_type) {

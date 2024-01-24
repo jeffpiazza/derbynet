@@ -24,7 +24,7 @@ function json_heat_results($roundid, $heat) {
   $heat_results = array();
   foreach ($stmt as $row) {
     $finishtime = $row['finishtime'];
-    $speed = $finishtime == 0 ? "--" : sprintf("%4.1f", $track_length / $finishtime * $fps_to_scale_mph);
+    $speed = (!is_numeric($finishtime) || $finishtime == 0) ? "--" : sprintf("%4.1f", $track_length / $finishtime * $fps_to_scale_mph);
     $heat_results[] = array(
       'lane' => $row['lane'],
       'time' => sprintf($time_format, $finishtime),
