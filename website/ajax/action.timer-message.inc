@@ -9,6 +9,7 @@ require_once('inc/remote-start.inc');
 require_once('inc/events.inc');
 require_once('inc/timer-flags.inc');
 require_once('inc/event-lane-details.inc');
+require_once('inc/timer-logging.inc');
 
 // Timer-controller-to-web-service messages:
 //
@@ -71,19 +72,7 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
     $timer_state->to_state(TIMER_SEARCHING);
     // Upon getting a new timer connection, choose a new name for server-side
     // timer log file (which we may well never create).
-    $logs_dir = read_raceinfo('logs-directory', '');
-    if ($logs_dir !== '' && !is_dir($logs_dir)) {
-      write_raceinfo('logs-directory', '');
-      $logs_dir = '';
-    }
-    if ($logs_dir === '') {
-      $logs_dir = sys_get_temp_dir();
-    }
-    if (!substr($logs_dir, -1) !== DIRECTORY_SEPARATOR) {
-      $logs_dir = $logs_dir . DIRECTORY_SEPARATOR;
-    }
-    write_raceinfo("timer-log",
-                   $logs_dir . "timer-" . date('Ymd-Hi-s') . ".log");
+    set_timer_log_file();
     if (isset($_POST['interface'])) {
       write_raceinfo('timer-interface',
                      isset($_POST['build'])
