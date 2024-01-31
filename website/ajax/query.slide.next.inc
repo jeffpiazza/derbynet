@@ -60,6 +60,7 @@ if (!$done && $mode == 'racer') {
   $row = read_single_row('SELECT racerid, lastname, firstname, carnumber, carname, classid,'
                          .' imagefile, carphoto FROM RegistrationInfo'
                          .' WHERE racerid > :racerid'
+                         .'  AND passedinspection'
                          .'  AND ((imagefile IS NOT NULL AND imagefile <> \'\') OR'
                          .'       (carphoto IS NOT NULL AND carphoto <> \'\'))'
                          .($classids
