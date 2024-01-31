@@ -35,8 +35,8 @@ function preferred_urls($use_https = false) {
     $addrs = gethostbynamel(gethostname());
     $urls = array();
 
-    // accomodate hosted on proxy servers (eg. nginx)
-    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    // accommodate hosted on proxy servers (eg. nginx)
+    if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
       $addrs = array($_SERVER['HTTP_HOST']);
     }
 
