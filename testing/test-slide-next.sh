@@ -6,6 +6,9 @@ source `dirname $0`/common.sh
 
 # TODO Need a GPRM-schema test
 
+curl_postj action.php "action=database.purge&purge=schedules" | check_jsuccess
+curl_postj action.php "action=racer.bulk&who=all&what=checkin&value=1" | check_jsuccess
+
 curl_getj "action.php?query=slide.next" | \
     jq '    (.photo.photo | test("slide.php/title"))' | \
     expect_eq true
