@@ -172,9 +172,10 @@ function add_speed_awards(&$awards) {
                     $standings->award_ladder_class($pack_aggregate_id), $awards);
   }
 
+  $aggregate_classes = aggregate_classes();
   // $ordinal_class is a 1-based index of classes.
   $ordinal_class = 0;
-  foreach (topological_sort(aggregate_classes()) as $agg_class) {
+  foreach (topological_sort($aggregate_classes) as $agg_class) {
     ++$ordinal_class;
     $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
     if ($agg_class['classid'] != $pack_aggregate_id) {

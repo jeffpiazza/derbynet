@@ -367,6 +367,13 @@ function handle_new_round_make_aggregate() {
   $("#aggregate-by-div").toggleClass('hidden', !g_use_subgroups);
   if (!g_use_subgroups) {
     $('#aggregate-by-checkbox').prop('checked', false);
+  } else if (g_completed_rounds.length == 1 &&
+             g_completed_rounds[0].subgroups.length > 1) {
+    console.log('single round completed');
+    // Single round completed
+    $('#aggregate-by-checkbox').prop('checked', true);
+    flipswitch_refresh($('#aggregate-by-checkbox'));
+    on_aggregate_by_change();
   }
 
   update_bucketed_checkbox(/* for_group */ true);
@@ -466,10 +473,16 @@ function handle_start_playlist() {
 }
 
 function populate_new_round_modals() {
-  // Each round in completed_rounds is the highest round for its class and all its heats have been run.
+  // Each round in completed_rounds is the highest round for its class and all
+  // its heats have been run.
   var completed_rounds = g_completed_rounds.slice(0);  // Copy the array
 
-  var add_aggregate = completed_rounds.length > 1;
+  var add_aggregate = completed_rounds.length > 1 ||
+      // A subgroup-based aggregate round could run after a single round involving
+      // multiple subgroups.
+      (g_use_subgroups && completed_rounds.length == 1 &&
+       completed_rounds[0].subgroups.length > 1);
+
   var modal = $("#choose_new_round_modal");
   modal.empty();
   var constituent_rounds_div = $("#constituent-rounds").empty();
@@ -530,17 +543,21 @@ function populate_new_round_modals() {
   if (add_aggregate) {
     modal.append('<h3>Add Aggregate Round</h3>');
     for (var i = 0; i < g_ready_aggregate_classes.length; ++i) {
-      var agg = g_ready_aggregate_classes[i];
-      var button = $('<input type="button"/>');
-      button.attr('value', agg['class']);
-      button.attr('data-classid', agg.classid);
-      button.attr('data-by-subgroup', agg['by-subgroup']);
-      button.on('click', function(event) {
-        handle_new_round_aggregate_class(
-          $(this).attr('data-classid'),
-          $(this).attr('data-by-subgroup'));
-      });
-      modal.append(button);
+      // If there's only one round completed, then only by-subgroup aggregates
+      // could possibly be next.
+      if (completed_rounds.length > 1 || g_ready_aggregate_classes[i]['by-subgroup']) {
+        var agg = g_ready_aggregate_classes[i];
+        var button = $('<input type="button"/>');
+        button.attr('value', agg['class']);
+        button.attr('data-classid', agg.classid);
+        button.attr('data-by-subgroup', agg['by-subgroup']);
+        button.on('click', function(event) {
+          handle_new_round_aggregate_class(
+            $(this).attr('data-classid'),
+            $(this).attr('data-by-subgroup'));
+        });
+        modal.append(button);
+      }
 
       // Aggregate rounds ready for scheduling can also be incorporated as
       // non-racing constituents for a new aggregate round.
