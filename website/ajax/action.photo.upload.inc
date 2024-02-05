@@ -98,11 +98,27 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
           $source_file_path = $photo_dir.DIRECTORY_SEPARATOR.$target_name;
           list($source_width, $source_height, $image_type) = getimagesize($source_file_path);
 
-          require_once('inc/facedetection.inc');
-          $detector = new FaceDetector();
-
           $original = open_image($source_file_path, $image_type);
-          $face = $detector->detect_face($original);
+
+          if (is_file('/usr/bin/facedetect')) {
+            $output = false;
+            $coords = @exec('timeout 5s '
+                            .'nice /usr/bin/facedetect --best '
+                            .'\''.$source_file_path.'\'', $output);
+            if ($coords !== false) {
+              $coords = explode(' ', $coords);
+              if (count($coords) == 4) {
+                $face = array('x' => $coords[0],
+                              'y' => $coords[1],
+                              'width' => $coords[2],
+                              'height' => $coords[3]);
+              }
+            }
+          } else {
+            require_once('inc/facedetection.inc');
+            $detector = new FaceDetector();
+            $face = $detector->detect_face($original);
+          }
 
           if ($face) {
             $x = round($face['x']);
