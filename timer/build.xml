@@ -32,6 +32,7 @@
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}" destdir="${build}" includeantruntime="false"
            source="1.8" target="1.8">
+      <!--compilerarg value="-Xlint:unchecked"/-->
         <classpath>
             <pathelement path="${src}"/>
             <pathelement location="${lib}/jssc.jar"/>

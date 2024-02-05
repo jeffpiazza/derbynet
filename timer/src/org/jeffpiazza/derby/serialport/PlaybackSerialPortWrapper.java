@@ -12,15 +12,16 @@ import org.jeffpiazza.derby.LogWriter;
 // the serial port.
 public class PlaybackSerialPortWrapper extends EventDrivenPortWrapper {
   private static String[] program;
-  private HashMap<String, Integer> commands_responses = new HashMap();
+  private HashMap<String, Integer> commands_responses =
+      new HashMap<String, Integer>();
   private int program_counter = 0;
-  private ArrayDeque<String> messages = new ArrayDeque();
+  private ArrayDeque<String> messages = new ArrayDeque<String>();
   private long pausedUntil = -1L;
 
   public static void setFilename(String filename) {
     try {
       BufferedReader reader = new BufferedReader(new FileReader(filename));
-      ArrayList lines = new ArrayList();
+      ArrayList<String> lines = new ArrayList<String>();
       try {
         String line;
         while ((line = reader.readLine()) != null) {
@@ -82,7 +83,7 @@ public class PlaybackSerialPortWrapper extends EventDrivenPortWrapper {
     System.out.println("At " + pc + " interpret: " + line.trim());
     if ((line.length() > 0) && (line.charAt(0) == '#')) {
       if (line.startsWith("#on ")) {
-        commands_responses.put(line.substring(4), new Integer(pc + 1));
+        commands_responses.put(line.substring(4), Integer.valueOf(pc + 1));
         while (!program[(++pc)].equals("#end")) {
         }
         return plus1(pc);

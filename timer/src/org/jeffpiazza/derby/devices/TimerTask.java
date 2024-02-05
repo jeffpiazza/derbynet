@@ -348,7 +348,7 @@ public class TimerTask implements Runnable, HttpTask.TimerHealthCallback {
     try {
       return port.openPort();
     } catch (SerialPortException spe) {
-      LogWriter.serial("openPort fails for " + spe.getPortName() + ": "
+      LogWriter.serial("openPort fails for " + port.getPortName() + ": "
           + spe.getExceptionType());
       System.err.println(spe.getExceptionType());
       return false;
