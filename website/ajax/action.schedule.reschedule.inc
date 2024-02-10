@@ -784,6 +784,8 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     $racer_stmt->execute(array(':roundid' => $roundid,
                                ':roundid2' => $roundid));
     foreach ($racer_stmt as $racer_row) {
+      record_action(array('action' => 'schedule.*reschedule',
+                          'racerid' => $racer_row['racerid']));
       $adj->inject_new_racer($racer_row['racerid']);
     }
   }

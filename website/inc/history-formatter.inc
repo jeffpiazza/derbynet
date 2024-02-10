@@ -267,6 +267,18 @@ class HistoryActionFormatter {
     return $lc ? strtolower($label) : $label;
   }
 
+  private function FormatLaneResults($msg) {
+    foreach ($this->_action as $key => $val) {
+      if (str_starts_with($key, 'lane')) {
+        $msg .= ' '.$key.': '.$val.'s';
+        $any_times = true;
+      } else if (!$any_times && str_starts_with($key, 'place')) {
+        $msg .= ' lane'.substr($key, 5).": #$val";
+      }
+    }
+    return $msg;
+  }
+
   public function Process() {
     global $debug_history_entries;
     switch ($this->_action['action']) {
@@ -309,6 +321,14 @@ class HistoryActionFormatter {
     case 'database.execute':
       if ($this->_action['script'] == 'update-schema') {
         return 'Update Database Schema';
+      }
+      break;
+    case 'database.purge':
+      switch ($this->_action['purge']) {
+      case 'awards': return 'Deleted All Awards';
+      case 'racers': return 'Deleted All Racers';
+      case 'results': return 'Deleted All Race Results';
+      case 'schedules': return 'Deleted All Racing Schedules';
       }
       break;
     case 'heat.*advance':
@@ -555,6 +575,8 @@ class HistoryActionFormatter {
       return 'Re-order subgroups';
     case 'replay.message':  return "";
     case 'replay.test':  return "";
+    case 'result.write':
+      return $this->FormatLaneResults("Manually-entered results:");
     case 'round.*create':
       $this->_rounds->InsertWithId(array('roundid' => $this->_action['roundid'],
                                          'classid' => $this->_action['classid'],
@@ -563,11 +585,15 @@ class HistoryActionFormatter {
     case 'scene.apply':  return "";
     case 'schedule.generate':
       return "Generate schedule for ".$this->RoundString($this->_action['roundid']);
+    case 'schedule.*reschedule':
+      return $this->EffectOnlyRow();
     case 'schedule.reschedule':
       if (@$this->_action['dry-run']) {
         return "";
       }
-      break;
+      return "Adjust schedule for ".$this->RoundString($this->_action['roundid']);
+    case 'schedule.unschedule':
+      return "Unschedule round ".$this->RoundString($this->_action['roundid']);
     case 'settings.write':
       $msg = 'Write setting(s):';
       foreach ($this->_action as $key => $val) {
@@ -586,23 +612,12 @@ class HistoryActionFormatter {
       case 'IDENTIFIED': return 'Timer is identified';
       case 'FLAGS': return '';
       case 'STARTED': return 'Heat started';
-      case 'FINISHED': $msg = "Heat finished:";
-        // TODO
-        $any_times = false;
-        foreach ($this->_action as $key => $val) {
-          if (str_starts_with($key, 'lane')) {
-            $msg .= ' '.$key.': '.$val.'s';
-            $any_times = true;
-          } else if (!$any_times && str_starts_with($key, 'place')) {
-            $msg .= ' lane'.substr($key, 5).": #$val";
-          }
-        }
-        return $msg;
+      case 'FINISHED': return $this->FormatLaneResults("Heat finished:");
       }
     }
 
     if ($debug_history_entries) {
-      return "<div style='background: #ffaaaa; font-weight: bold;'>Unimplemented: ".$this->_action_string."</div>";
+      return "<div style='background: #ffaaaa; font-weight: bold;'>Unformatted: ".$this->_action_string."</div>";
     }
     return "";
   }
