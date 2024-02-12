@@ -58,7 +58,7 @@ function export_results(callable $out) {
       array_push($values, $row['carnumber'], $row['carname'],
                  (float) $row['finishtime']);
       // Scale MPH
-      array_push($values, $row['finishtime'] == 0 ? "--"
+      array_push($values, (!is_numeric($row['finishtime']) || $row['finishtime'] == 0) ? "--"
                  : (float) sprintf("%4.1f", $track_length / $row['finishtime'] * $fps_to_scale_mph));
       array_push($values, $row['finishplace'], $row['completed']);
                  
