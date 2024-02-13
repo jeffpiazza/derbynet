@@ -143,6 +143,7 @@ async function on_new_port_click() {
   await request_new_port();
   update_ports_list();
   TimerProxy.destroy();  // In case there was a connection already established
+  g_logger.internal_msg('"New Port" button clicked');
   g_prober.probe_until_found();
 }
 
@@ -190,6 +191,7 @@ $(function() {
         break;
       case 'LOST_CONNECTION':
         console.log('Handling LOST_CONNECTION event.');
+        g_logger.internal_msg('Handling LOST_CONNECTION event.');
         $("#probe-button").prop('disabled', false);
         setTimeout(async function() {
           // TODO This conditional teardown call doesn't seem to happen.
@@ -212,6 +214,7 @@ $(function() {
 
 // The "Scan" button
 async function on_scan_click() {
+  g_logger.internal_msg('SCAN button clicked.');
   g_prober.probe_until_found();
 }
 

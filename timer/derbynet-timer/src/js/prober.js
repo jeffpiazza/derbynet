@@ -143,11 +143,17 @@ class Prober {
           var opened_ok = true;
           await pw.open(prof.params)
             .catch((e) => {
-              console.error('portwrapper open failed:', e);
-              g_logger.internal_msg('Caught exception trying to open port ' + porti);
-              g_logger.stacktrace(e);
-              Gui.probe_port_trouble(porti);
-              opened_ok = false;
+              if (e.name == 'InvalidStateError') {
+                g_logger.internal_msg('Serial port #' + porti + ' ' + label + ' was already open.');
+                pw.port_is_open = true;
+              } else {
+                console.error('portwrapper open failed:', e);
+                g_logger.internal_msg('Caught exception trying to open port ' + porti + ' ' + label);
+                g_logger.stacktrace(e);
+                g_logger.internal_msg('name: ' + e.name + ', code: ' + e.code + ', message: ' + e.message);
+                Gui.probe_port_trouble(porti);
+                opened_ok = false;
+              }
             });
           if (!opened_ok) {
             // Remove the bad port.

@@ -39,6 +39,8 @@ class PortWrapper {
   reader;
   writer;
 
+  port_is_open;
+
   leftover;
   lines;
   last_char_received;
