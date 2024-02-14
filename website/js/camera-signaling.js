@@ -26,17 +26,17 @@ function ice_candidate_key(candidate) {
 }
 
 // A ViewClient represents a remote client that wants to receive the camera stream.
-function ViewClient(recipient) {
+function ViewClient(recipient, poller) {
   let pc = new RTCPeerConnection({'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]});
 
   // Local ICE candidate
   pc.onicecandidate = function(event) {
     if (event.candidate) {
       camera_sent(recipient, ice_candidate_key(event.candidate));
-      send_message(recipient,
-                   {type: 'ice-candidate',
-                    from: 'replay-camera',
-                    candidate: event.candidate});
+      poller.send_message({recipient: recipient,
+                           type: 'ice-candidate',
+                           from: 'replay-camera',
+                           candidate: event.candidate.toJSON()});
     }
   };
 
@@ -66,7 +66,7 @@ function ViewClient(recipient) {
     } else if (msg.type == 'ice-candidate') {
       this.on_ice_candidate(msg);
     } else {
-      console.error('Unrecognized message ' + msg);
+      console.error('Unrecognized message for camera:', msg);
       console.trace();
     }
   };
@@ -82,6 +82,7 @@ function ViewClient(recipient) {
 
   let ideal = {width: 0, height: 0};
   this.on_solicitation = function(msg) {
+    console.log('on_solicitation');
     if (msg.hasOwnProperty('ideal')) {
       ideal = msg.ideal;
     }
@@ -90,16 +91,17 @@ function ViewClient(recipient) {
   this.ideal = function() { return ideal; }
   
   this.convey_offer = function() {
+    console.log('Conveying offer to ' + recipient);
     pc.createOffer()
       .then(function(offer) {
           return pc.setLocalDescription(offer);
       })
       .then(function() {
         camera_sent(recipient, 'offer');
-        send_message(recipient,
-                     {type: 'offer',
-                      from: 'replay-camera',
-                      sdp: pc.localDescription});
+        poller.send_message({recipient: recipient,
+                             type: 'offer',
+                             from: 'replay-camera',
+                             sdp: pc.localDescription.toJSON()});
       });
   };
 }
@@ -112,26 +114,22 @@ function ViewClientManager(on_add_client_callback) {
   let initializer_cb = function(vc) { };
   
   let poller = new MessagePoller(
-    200 /* ms. */, 'replay-camera',
+    'replay-camera',
     function(msg) {
-      console.log('MessagePoller message ' + msg.type + ' from ' + msg.from);  // TODO
       if (dispatcher.hasOwnProperty(msg.from)) {
-        console.log('  Dispatching to existing ViewClient ' + msg.from);  // TODO
         dispatcher[msg.from].on_message(msg);
       } else if (msg.type != 'solicitation') {
         console.log('Received non-solicitation message from unknown sender: ' + msg);
         return;
       } else {
         logmessage("Solicitation received from " + msg.from);
-        let client = new ViewClient(msg.from);
+        let client = new ViewClient(msg.from, poller);
         initializer_cb(client);
         dispatcher[msg.from] = client;
         client.on_solicitation(msg);
         on_add_client_callback();
       }
     });
-
-  this.set_polling_pace = function(ms) { poller.set_polling_pace(ms); };
 
   this.each_client = function(cb) {
     for (var k in dispatcher) {
@@ -145,10 +143,8 @@ function ViewClientManager(on_add_client_callback) {
 
   this.setstream = function(stream) {
     this.each_client(function (vc) {
-      console.log("setstream called directly.");  // TODO
       vc.setstream(stream); });
     this.setinitializer(function(vc) {
-      console.log("Initializer calls setstream");  // TODO
       vc.setstream(stream);
     });
   };

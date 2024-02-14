@@ -16,6 +16,8 @@ require_once('inc/banner.inc');
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
+g_websocket_url = <?php if (isset($websocket_url)) echo json_encode($websocket_url); else echo '""'; ?>;
+
 function logmessage(txt) {
   $("<p></p>").text(txt).appendTo($("#log"));
   let msgs = $("#log p");

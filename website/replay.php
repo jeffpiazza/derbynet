@@ -55,6 +55,8 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
+g_websocket_url = <?php if (isset($websocket_url)) echo json_encode($websocket_url); else echo '""'; ?>;
+
 function logmessage(txt) {
   $("<p></p>").text(txt).appendTo($("#log"));
   let msgs = $("#log p");
@@ -187,6 +189,10 @@ function on_device_selection(selectq) {
   }
 
   if (device_id == 'remote') {
+    if (g_remote_poller) {
+      g_remote_poller.close();
+      g_remote_poller = null;
+    }
     $("#waiting-for-remote").removeClass('hidden');
     let id = make_viewer_id();
     console.log("Viewer id is " + id);
@@ -196,6 +202,10 @@ function on_device_selection(selectq) {
        height: $(window).height()},
       on_remote_stream_ready);
   } else {
+    if (g_remote_poller) {
+      g_remote_poller.close();
+      g_remote_poller = null;
+    }
     $("#recording-stream-info").addClass('hidden');
     navigator.mediaDevices.getUserMedia(
       { video: {
