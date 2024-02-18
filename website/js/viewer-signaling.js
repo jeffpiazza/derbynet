@@ -81,8 +81,10 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
         pc.addIceCandidate(candidate);
       } else if (msg.type == 'solicitation') {
         // Broadcast solicitation, intended for camera
+      } else if (msg.type == 'subscription') {
+        console.log('Subscription acknowledged');
       } else {
-        console.error('Unrecognized message ' + msg);
+        console.error('Unrecognized message ', msg);
       }
     });
 

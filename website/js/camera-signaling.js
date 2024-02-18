@@ -65,6 +65,8 @@ function ViewClient(recipient, poller) {
       this.on_answer(msg);
     } else if (msg.type == 'ice-candidate') {
       this.on_ice_candidate(msg);
+    } else if (msg.type == 'subscription') {
+      console.log('Subscription acknowledged');
     } else {
       console.error('Unrecognized message for camera:', msg);
       console.trace();
@@ -119,7 +121,7 @@ function ViewClientManager(on_add_client_callback) {
       if (dispatcher.hasOwnProperty(msg.from)) {
         dispatcher[msg.from].on_message(msg);
       } else if (msg.type != 'solicitation') {
-        console.log('Received non-solicitation message from unknown sender: ' + msg);
+        console.log('Received non-solicitation message from unknown sender: ', msg);
         return;
       } else {
         logmessage("Solicitation received from " + msg.from);

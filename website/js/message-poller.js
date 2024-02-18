@@ -1,26 +1,62 @@
 'use strict';
 
 function MessagePoller(recipient, on_message) {
+  let poller = this;
   if (g_websocket_url != undefined && g_websocket_url != '') {
-    const we = new WebSocket(g_websocket_url);
+    var ws = new WebSocket(g_websocket_url);
+    var closing = false;
 
-    ws.addEventListener("message", (event) => {
-      try {
-        var msg = JSON.parse(event.data);
-        on_message(msg);
-      } catch (e) {
-        console.log('  Unable to parse json message:f, event.data');
+    var init = function() {
+      ws.onmessage = (event) => {
+        try {
+          var msg = JSON.parse(event.data);
+          if (msg.type != 'subscription') {
+            on_message(msg);
+          }
+        } catch (e) {
+          console.log('  Unable to parse json message:f, event.data');
+        }
+      };
+
+      ws.onopen = (event) => {
+        console.log('Websocket opened');
+        poller.send_message({"subscriber": recipient});
+      };
+
+      // If the connection can't be established, this gets called but with almost
+      // no information in the error.
+      ws.onerror = (event) => { console.error('Websocket error', event); };
+      ws.onclose = (event) => {
+        console.log('Websocket close event', event, ws.readyState);
+        if (!closing) {
+          // Try to reconnect, but allow a 10s cooling-off delay.
+          setTimeout(function() {
+            console.log('Attempting to re-establish websocket connection');
+            ws = new WebSocket(g_websocket_url);
+            init();
+          }, 10000);
+        }
+      };
+    };
+    init();
+
+    this.send_message = function(message_json) {
+      if (ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify(message_json));
+        } catch (e) {
+          console.log('send_message error', e, e.code, e.name, e.message);  // TODO
+        }
       }
-    });
-
-    ws.addEventListener("open", (event) => {
-      ws.send(JSON.stringify({"subscriber": recipient}));
-    });
-
-    this.close = function() { if (ws) { ws.close(); ws = null; } };
+    };
+    this.close = function() {
+      closing = true;
+      if (ws) {
+        ws.close();
+        ws = null;
+      }
+    };
   } else {
-    let poller = this;
-    
     this.send_message = function(message_json) {
       $.ajax("action.php",
              {type: 'POST',

@@ -1,5 +1,6 @@
 <?php @session_start();
 require_once('inc/banner.inc');
+require_once('inc/data.inc');  // For $websocket_url
 ?><!DOCTYPE html>
 <html>
 <head>
