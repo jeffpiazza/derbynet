@@ -100,8 +100,8 @@ function enumerate_non_title_slides($dir, $current_slide) {
   if (is_dir($dir) && is_readable($dir)) {
     $files = scandir($dir);  // Sorted by default
     foreach ($files as $file) {
-      if ($file > $current_slide && !str_starts_with($file, '.') &&
-          !str_starts_with($file, 'title.')) {
+      if ($file > $current_slide && $file[0] != '.' &&
+          substr($file, 0, 6) != 'title.') {
         $results[] = $file;
       }
     }
