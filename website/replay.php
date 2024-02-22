@@ -55,7 +55,9 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
-g_websocket_url = <?php if (isset($websocket_url)) echo json_encode($websocket_url); else echo '""'; ?>;
+g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?>;
+g_ws_trigger_port = <?php echo json_encode(read_raceinfo('_ws_trigger_port', '')); ?>;
+var g_trigger_websocket;
 
 function logmessage(txt) {
   $("<p></p>").text(txt).appendTo($("#log"));
@@ -65,7 +67,7 @@ function logmessage(txt) {
   }
 }
 
-function poll_as_replay() {
+function poll_once_for_replay() {
   $.ajax("action.php",
   {type: 'POST',
     data: {action: 'replay.message',
@@ -77,6 +79,19 @@ function poll_as_replay() {
       }
     }
   });
+}
+
+function listen_for_replay_messages() {
+  if (g_ws_trigger_port != "") {
+    g_trigger_websocket = new MessagePoller(make_id_string('replay-'),
+                                            function(msg) { handle_replay_message(msg.cmd); });
+    // Even though we're using the websocket for triggering, poll every 5s (as
+    // opposed to several times per second). so we get credit for being
+    // connected.
+    setInterval(poll_once_for_replay, 5000);
+  } else {
+    setInterval(poll_once_for_replay, 250);
+  }
 }
 
 g_upload_videos = <?php echo read_raceinfo_boolean('upload-videos') ? "true" : "false"; ?>;
@@ -151,7 +166,7 @@ function handle_replay_message(cmdline) {
 }
 
 $(function() {
-  setInterval(poll_as_replay, 250);
+  listen_for_replay_messages();
   console.log('Replay page (re)loaded');
 });
 
@@ -194,7 +209,7 @@ function on_device_selection(selectq) {
       g_remote_poller = null;
     }
     $("#waiting-for-remote").removeClass('hidden');
-    let id = make_viewer_id();
+    let id = make_id_string("viewer-");
     console.log("Viewer id is " + id);
     g_remote_poller = new RemoteCamera(
       id,

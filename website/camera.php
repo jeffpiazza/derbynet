@@ -1,6 +1,6 @@
 <?php @session_start();
 require_once('inc/banner.inc');
-require_once('inc/data.inc');  // For $websocket_url
+require_once('inc/data.inc');
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +17,7 @@ require_once('inc/data.inc');  // For $websocket_url
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript">
 
-g_websocket_url = <?php if (isset($websocket_url)) echo json_encode($websocket_url); else echo '""'; ?>;
+g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?>;
 
 function logmessage(txt) {
   $("<p></p>").text(txt).appendTo($("#log"));

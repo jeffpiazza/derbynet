@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
-// Signaling/message handling for the replay-camera.
+// Signaling/message handling for the replay camera.
 //
 // Usage:
 //
@@ -35,7 +35,7 @@ function ViewClient(recipient, poller) {
       camera_sent(recipient, ice_candidate_key(event.candidate));
       poller.send_message({recipient: recipient,
                            type: 'ice-candidate',
-                           from: 'replay-camera',
+                           from: 'camera-replay',
                            candidate: event.candidate.toJSON()});
     }
   };
@@ -102,7 +102,7 @@ function ViewClient(recipient, poller) {
         camera_sent(recipient, 'offer');
         poller.send_message({recipient: recipient,
                              type: 'offer',
-                             from: 'replay-camera',
+                             from: 'camera-replay',
                              sdp: pc.localDescription.toJSON()});
       });
   };
@@ -116,7 +116,7 @@ function ViewClientManager(on_add_client_callback) {
   let initializer_cb = function(vc) { };
   
   let poller = new MessagePoller(
-    'replay-camera',
+    'camera-replay',
     function(msg) {
       if (dispatcher.hasOwnProperty(msg.from)) {
         dispatcher[msg.from].on_message(msg);

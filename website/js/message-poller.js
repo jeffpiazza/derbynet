@@ -1,5 +1,16 @@
 'use strict';
 
+
+function make_id_string(stem) {
+  var alphabet = "abcdefghjklmnpqrstuvwz0123456789";
+
+  var id = stem;
+  for (var k = 0; k < 12; ++k) {
+    id += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return id;
+}
+
 function MessagePoller(recipient, on_message) {
   let poller = this;
   if (g_websocket_url != undefined && g_websocket_url != '') {
