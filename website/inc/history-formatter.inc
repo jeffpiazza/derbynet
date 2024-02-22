@@ -268,6 +268,7 @@ class HistoryActionFormatter {
   }
 
   private function FormatLaneResults($msg) {
+    $any_times = false;
     foreach ($this->_action as $key => $val) {
       if (str_starts_with($key, 'lane')) {
         $msg .= ' '.$key.': '.$val.'s';
