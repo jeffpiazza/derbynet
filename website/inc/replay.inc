@@ -59,7 +59,7 @@ function send_replay_message($cmd) {
   if ($replay['state'] == REPLAY_CONNECTED) {
     $websocket_port = read_raceinfo('_ws_trigger_port');
     if ($websocket_port) {
-      $msg = json_encode(array('url' => read_raceinfo('websocket_url'),
+      $msg = json_encode(array('url' => read_raceinfo('_websocket_url'),
                                'prefix' => 'replay-',
                                'type' => 'replay-cmd',
                                'cmd' => $cmd));

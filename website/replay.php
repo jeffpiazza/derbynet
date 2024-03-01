@@ -57,6 +57,8 @@ if (isset($_REQUEST['address'])) {
 
 g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?>;
 g_ws_trigger_port = <?php echo json_encode(read_raceinfo('_ws_trigger_port', '')); ?>;
+// If using websockets to listen for replay messages, this variable will hold
+// the websocket object.
 var g_trigger_websocket;
 
 function logmessage(txt) {
@@ -67,18 +69,29 @@ function logmessage(txt) {
   }
 }
 
+// Avoid starting another poll request if another one is still in flight.
+g_poll_in_flight = false;
+
 function poll_once_for_replay() {
+  if (g_poll_in_flight) {
+    return;
+  }
+  g_poll_in_flight = true;
   $.ajax("action.php",
-  {type: 'POST',
-    data: {action: 'replay.message',
-           status: 0,
-           'finished-replay': 0},
-    success: function(data) {
-      for (let i = 0; i < data.replay.length; ++i) {
-        handle_replay_message(data.replay[i]);
-      }
-    }
-  });
+         {type: 'POST',
+          data: {action: 'replay.message',
+                 status: 0,
+                 'finished-replay': 0},
+          success: function(data) {
+            for (let i = 0; i < data.replay.length; ++i) {
+              handle_replay_message(data.replay[i]);
+            }
+          },
+          complete: function() {
+            // Called after success (or error)
+            g_poll_in_flight = false;
+          },
+         });
 }
 
 function listen_for_replay_messages() {
