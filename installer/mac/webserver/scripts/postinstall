@@ -6,8 +6,14 @@
 ./update-apache-config.sh
 ./maybe-rewrite-index-html.sh
 
-# Make Apache run after (every) restart
-launchctl enable system/org.apache.httpd
-
+# We don't want the built-in Apache server interfering
+if [ `sw_vers --productVersion` \> 12 ] ; then
+    # MacOS 12 and up no longer includes PHP, so turn off native Apache to avoid
+    # interfering with MAMP or Docker.
+    launchctl disable system/org.apache.httpd
+else
+    # Make Apache run after (every) restart
+    launchctl enable system/org.apache.httpd
+fi
 
 open http://localhost/derbynet
