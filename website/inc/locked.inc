@@ -32,7 +32,15 @@ function preferred_urls($use_https = false) {
   $scheme = $use_https ? 'https' : $_SERVER['REQUEST_SCHEME'];
   if ($urls === false) {
     // gethostname() may be something like "instance-1", possibly with a non-routable IP.
-    $addrs = gethostbynamel(gethostname());
+    $hostname = gethostname();
+    if ($hostname !== false) {
+      $addrs = gethostbynamel($hostname);
+      if ($addrs === false) {
+        $addrs = array();
+      }
+    } else {
+      $addrs = array();
+    }
     $urls = array();
 
     // IIS apparently doesn't set REQUEST_URI.
