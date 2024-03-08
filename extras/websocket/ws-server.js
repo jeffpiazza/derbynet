@@ -17,9 +17,8 @@ function forward_msg(url, ws, json, msg_string) {
   by_url[url].forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN &&
         client != ws &&
-        ((json.prefix != undefined && client.subscriber.startsWith(json.prefix)) ||
-         client.subscriber == json.recipient ||
-         json.recipient == undefined)) {
+        (json.prefix == undefined || client.subscriber.startsWith(json.prefix)) &&
+        (json.recipient == undefined || json.recipient == client.subscriber)) {
       console.log('  forwarding to ' + client.subscriber);
       client.send(msg_string);
     }
@@ -38,7 +37,7 @@ wss.on('connection', function connection(ws, req) {
     try {
       var msg_string = message.toString();
       var json = JSON.parse(msg_string);
-      console.log((new Date()).toTimeString(), req.url, "from:" + ws.subscriber, json);
+      console.log((new Date()).toUTCString(), req.url, "from:" + ws.subscriber, json);
       if (json.subscriber != undefined) {
         console.log('   subscription message from ' + json.subscriber);
         ws.subscriber = json.subscriber;
@@ -54,7 +53,7 @@ wss.on('connection', function connection(ws, req) {
   });
 
   ws.on('close', function(reason, description) {
-    console.log((new Date()).toTimeString(), req.url, "CLOSING SOCKET:" + ws.subscriber,
+    console.log((new Date()).toUTCString(), req.url, "CLOSING SOCKET:" + ws.subscriber,
                 reason, description.toString());
     by_url[req.url] = by_url[req.url].filter(function(el, idx, ar) {
 	  return ws != el;
@@ -125,7 +124,7 @@ const tcp_server = net.createServer((socket) => {
           try {
             var msg_string = buf.toString('utf8', i + 1, i + 1 + len);
             var json = JSON.parse(msg_string);
-            console.log((new Date()).toTimeString(), "trigger:", json);
+            console.log((new Date()).toUTCString(), "trigger:", json);
             forward_msg((new URL(json.url)).pathname, null, json, msg_string);
           } catch(e) {
             console.log('Exception parsing JSON', e);

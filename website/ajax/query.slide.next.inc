@@ -46,7 +46,7 @@ if ($mode == 'slide') {
   $results = next_slides($f);
   if (count($results) > 0) {
     json_out('debug-results', $results);
-    json_out('photo', array('photo' => 'slide.php/'.$results[0],
+    json_out('photo', array('photo' => 'slide.php/'.rawurlencode($results[0]),
                             'next' => array('mode' => 'slide',
                                             'file' => $results[0])));
     $done = true;

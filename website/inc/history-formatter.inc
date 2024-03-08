@@ -68,10 +68,10 @@ class SimulatedSqliteTable {
     if ($id > 0) {
       $v = &$this->Get($id);
     }
-    if (!$v) {
+    if (!@$v) {
       EmitErrorRow($this->_idcol." not found: $id");
     }
-    return $v;
+    return @$v;
   }
 
   public function &Find($col, $val) {
