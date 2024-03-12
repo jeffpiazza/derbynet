@@ -672,7 +672,9 @@ class StandingsOracle {
             $scoring_roundid = null;
           }
         } while (!is_null($scoring_roundid) && isset($this->unfinished_rounds[$scoring_roundid]));
-
+        if (is_null($scoring_roundid)) {
+          continue;
+        }
         $this->class_keys[$classid] = stkey_round($scoring_roundid);
 
         if ($this->use_groups) {
