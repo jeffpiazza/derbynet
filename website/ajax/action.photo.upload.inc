@@ -100,11 +100,10 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
 
           $original = open_image($source_file_path, $image_type);
 
-          if (is_file('/usr/bin/facedetect')) {
+          if (isset($_SERVER['DERBYNET_FACEDETECT']) && is_executable($_SERVER['DERBYNET_FACEDETECT'])) {
             $output = false;
-            $coords = @exec('timeout 5s '
-                            .'nice /usr/bin/facedetect --best '
-                            .'\''.$source_file_path.'\'', $output);
+            $coords = @exec($_SERVER['DERBYNET_FACEDETECT'].' \''.$source_file_path.'\'', $output);
+
             if ($coords !== false) {
               $coords = explode(' ', $coords);
               if (count($coords) == 4) {
