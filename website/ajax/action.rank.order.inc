@@ -13,6 +13,25 @@ if (have_permission(SET_UP_PERMISSION)) {
                            ':rankid' => $val));
     }
   }
+  // If the $_POST doesn't account for all the ranks in the class, then this
+  // could end up assigning the same sortorder more than once.  This cleanup
+  // makes sure that doesn't happen.  In most cases, the foreach shouldn't find
+  // anything to clean up.
+  do {
+    $did_cleanup = false;
+    foreach ($db->query('SELECT classid, MAX(rankid) AS rankid FROM Ranks'
+                        .' GROUP BY classid, sortorder'
+                        .' HAVING COUNT(*) > 1'
+                        .' LIMIT 1')
+             as $row) {
+      $db->execute_once('UPDATE Ranks SET sortorder = sortorder + 1'
+                        .' WHERE classid = :classid AND rankid >= :rankid',
+                        array(':classid' => $row['classid'],
+                              ':rankid' => $row['rankid']));
+      $did_cleanup = true;
+    }
+  } while ($did_cleanup);
+
   reorder_partitions();
   json_success();
 } else {

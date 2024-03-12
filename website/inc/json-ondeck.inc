@@ -26,7 +26,9 @@ function json_ondeck(&$now_running) {
   } else {
     // $where = 'roundid = :roundid';
     // $params[':roundid'] = $now_running['roundid'];
-    $order = 'round, Classes.sortorder, heat';
+    // If Classes.sortorder gets corrupted so that two classes get the same value,
+    // including classid should ensure rounds are kept together at least.
+    $order = 'round, Classes.sortorder, Classes.classid, heat';
   }
 
   $next = get_next_heat($now_running, 'next');

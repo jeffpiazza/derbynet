@@ -20,6 +20,18 @@ if ($ok) {
                            ':partitionid' => $val));
     }
   }
+  do {
+    $did_cleanup = false;
+    foreach ($db->query('SELECT MAX(partitionid) FROM Partitions'
+                        .' GROUP BY sortorder'
+                        .' HAVING COUNT(*) > 1'
+                        .' LIMIT 1')
+             as $partitionid) {
+      $db->execute_once('UPDATE Partitions SET sortorder = sortorder + 1 WHERE partitionid >= :partitionid',
+                        array(':partitionid' => $partitionid));
+      $did_cleanup = true;
+    }
+  } while ($did_cleanup);
 
   switch (group_formation_rule()) {
   case 'by-partition':
