@@ -26,6 +26,9 @@ public class TheJudge extends TimerDeviceWithProfile {
                Event.LANE_RESULT, 1, 2)
         .match("Race Over.*", Event.RACE_FINISHED)
         .heat_prep("om0", "om", '1')
+        // Since gate state is not knowable, gate_watcher doesn't run, so this
+        // shouldn't make any difference.  It's not even clear the timer supports
+        // this command.
         .gate_watcher("rs" /* READ_START_SWITCH */)
         .on(Event.OVERDUE, "*")
         .end_of_line("\r");

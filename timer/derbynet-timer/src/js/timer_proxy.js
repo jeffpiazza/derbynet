@@ -256,7 +256,8 @@ class TimerProxy {
       // If polling resumes after no timer contact in a while, the port wrapper
       // will incorrectly decide the connection is closed.
       this.port_wrapper.noticeContact();
-      this.sm.gate_state_is_knowable = !Flag.no_gate_watcher.value;
+      this.sm.gate_state_is_knowable =
+        this.profile.options.gate_state_is_knowable && !Flag.no_gate_watcher.value;
       if (this.roundid != 0) {
         // This repeats part of maskLanes, specifically the 'rg' needed for
         // Champ timer whenever we stop polling.
