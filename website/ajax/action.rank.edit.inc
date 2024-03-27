@@ -13,12 +13,11 @@ if (have_permission(SET_UP_PERMISSION)) {
     $stmt = $db->prepare('UPDATE Ranks SET rank = :name WHERE rankid = :rankid');
     $stmt->execute(array(':rankid' => $_POST['rankid'],
                          ':name' => $name));
-    $rule = group_formation_rule();
-    if ($rule != 'custom') {
-      $stmt = $db->prepare('UPDATE Partitions SET name = :name WHERE rankid = :rankid');
-      $stmt->execute(array(':rankid' => $_POST['rankid'],
-                           ':name' => $name));
-    }
+
+    $stmt = $db->prepare('UPDATE Partitions SET name = :name WHERE rankid = :rankid');
+    $stmt->execute(array(':rankid' => $_POST['rankid'],
+                         ':name' => $name));
+
     json_out('classes', json_all_classes());
     json_success();
   } else {

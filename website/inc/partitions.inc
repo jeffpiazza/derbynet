@@ -79,12 +79,13 @@ function find_or_create_partition($name) {
     case 'one-group':
       // one-group: Find or create a rank
       $rankid = find_or_create_rank($name,
-                                    read_single_value('SELECT MIN(classid) FROM Classes'));
+                                    read_single_value('SELECT MIN(classid) FROM Classes'),
+                                    /*with_partition=*/false);
       break;
     default:
       // by-partition or custom: Find or create a class
       $classid = find_or_create_class($name);
-      $rankid = find_or_create_rank($name, $classid);
+      $rankid = find_or_create_rank($name, $classid, /*with_partition=*/false);
     }
     read_single_value('INSERT INTO Partitions(name, rankid, sortorder)'
                       .' VALUES(:name, :rankid,'

@@ -1,10 +1,11 @@
 <?php
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
 require_once('inc/events.inc');
 
-function find_or_create_rank($rankname, $classid) {
+function find_or_create_rank($rankname, $classid, $with_partition = true) {
   global $db;
   $rankname = substr(trim($rankname), 0, RANK_COLUMN_WIDTH);
   $rankid = read_single_value('SELECT rankid FROM Ranks'
@@ -19,6 +20,30 @@ function find_or_create_rank($rankname, $classid) {
                                 .' WHERE rank = :rankname AND classid = :classid',
                                 array(':rankname' => $rankname,
                                       ':classid' => $classid));
+    // Partition names are required to be unique, but rank names are unique only
+    // within a class.  So it could happen that the natural partition name is
+    // already taken, and associated with a different rank.
+
+    // If find_or_create_partition ends up creating a partition, the recursive call
+    // to find_or_create_rank should find the same $rankid.
+    if ($with_partition) {
+      $partid = find_or_create_partition($rankname);
+      if (read_single_value('SELECT rankid FROM Partitions WHERE partitionid = :partitionid',
+                            array(':partitionid' => $partid)) != $rankid) {
+        $cl = read_single_value('SELECT class FROM Classes where classid ='
+                                .' (SELECT classid FROM Ranks WHERE rankid = :rankid)',
+                                array(':rankid' => $rankid));
+        $suffix_n = 0;
+        $suffix = '';
+        while (read_single_value('SELECT COUNT(*) FROM Partitions WHERE name = :pname',
+                                 array(':pname' => $cl.'-'.$rankname.$suffix)) > 0) {
+          $suffix_n = 1 + $suffix_n;
+          $suffix = '-'.$suffix_n;
+        }
+        create_partition_in_existing_rank($cl.'-'.$rankname.$suffix, $rankid);
+      }
+    }
+
     if (schema_version() >= 2) {
       record_event(EVENT_RANK_ADDED, array('classid' => $classid,
                                            'rankid' => $rankid,

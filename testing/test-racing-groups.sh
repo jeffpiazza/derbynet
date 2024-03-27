@@ -153,9 +153,9 @@ CUS_PART_X_CLASS=$(classid_of "Cus-Part-X")
 curl_postj action.php "action=partition.edit&partitionid=$CUS_PART_X&name=Cus-Part-ModX" | \
     check_jsuccess
 [[ "$CUS_PART_X" = $(partitionid_of "Cus-Part-ModX") ]] || test_fails
-[[ $(rankid_of "Cus-Part-ModX") = null ]] || test_fails
+[[ "$CUS_PART_X_RANK" = $(rankid_of "Cus-Part-ModX") ]] || test_fails
 [[ $(classid_of "Cus-Part-ModX") = null ]] || test_fails
-[[ "$CUS_PART_X_RANK" = $(rankid_of "Cus-Part-X") ]] || test_fails
+[[ $(rankid_of "Cus-Part-X") = null ]] || test_fails
 [[ "$CUS_PART_X_CLASS" = $(classid_of "Cus-Part-X") ]] || test_fails
 
 curl_postj action.php "action=partition.delete&partitionid=$CUS_PART_X" | check_jsuccess
@@ -188,14 +188,12 @@ curl_postj action.php "action=rank.delete&rankid=$CUS_RANK_Y" | check_jsuccess
 
 # Add, rename, delete class
 curl_postj action.php "action=class.add&name=Cus-Class-Z" | check_jsuccess
-[[ $(partitionid_of "Cus-Class-Z") = null ]] || test_fails
 CUS_RANK_Z=$(rankid_of "Cus-Class-Z")
 [[ "$CUS_RANK_Z" = null ]] && test_fails
 CUS_CLASS_Z=$(classid_of "Cus-Class-Z")
 [[ "$CUS_CLASS_Z" = null ]] && test_fails
 
 curl_postj action.php "action=class.edit&classid=$CUS_CLASS_Z&name=Cus-Class-ModZ" | check_jsuccess
-[[ $(partitionid_of "Cus-Class-Z") = null ]] || test_fails
 [[ $(partitionid_of "Cus-Class-ModZ") = null ]] || test_fails
 [[ "$CUS_RANK_Z" = $(rankid_of "Cus-Class-Z") ]] || test_fails rank $CUS_RANK_Z
 [[ "$CUS_CLASS_Z" = $(classid_of "Cus-Class-ModZ") ]] || test_fails

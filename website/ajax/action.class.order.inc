@@ -21,7 +21,10 @@ if (have_permission(SET_UP_PERMISSION)) {
   do {
     $did_cleanup = false;
     foreach ($db->query('SELECT MAX(classid) FROM Classes'
-                        .' GROUP BY sortorder HAVING COUNT(*) > 1 LIMIT 1') as $classid) {
+                        .' GROUP BY sortorder'
+                        .' HAVING COUNT(*) > 1'
+                        .' LIMIT 1')
+             as $classid) {
       $db->execute_once('UPDATE Classes SET sortorder = sortorder + 1 WHERE classid >= :classid',
                         array(':classid' => $classid));
       $did_cleanup = true;

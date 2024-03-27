@@ -39,8 +39,7 @@ if ($ok) {
                array(':name' => $name,
                      ':partitionid' => $partitionid));
 
-  switch (group_formation_rule()) {
-  case 'by-partition':
+  if (group_formation_rule() == 'by-partition') {
     execute_once('UPDATE Classes SET class = :name'
                  .' WHERE classid = (SELECT classid'
                  .'                  FROM '.inner_join('Partitions', 'Ranks',
@@ -48,20 +47,13 @@ if ($ok) {
                  .'                  WHERE partitionid = :partitionid)',
                  array(':name' => $name,
                        ':partitionid' => $partitionid));
-    execute_once('UPDATE Ranks SET rank = :name'
-                 .' WHERE rankid = (SELECT rankid FROM Partitions'
-                 .'                 WHERE partitionid = :partitionid)',
-                 array(':name' => $name,
-                       ':partitionid' => $partitionid));
-    break;
-  case 'one-group':
-    execute_once('UPDATE Ranks SET rank = :name'
-                 .' WHERE rankid = (SELECT rankid FROM Partitions'
-                 .'                 WHERE partitionid = :partitionid)',
-                 array(':name' => $name,
-                       ':partitionid' => $partitionid));
-    break;
   }
+
+  execute_once('UPDATE Ranks SET rank = :name'
+                 .' WHERE rankid = (SELECT rankid FROM Partitions'
+                 .'                 WHERE partitionid = :partitionid)',
+                 array(':name' => $name,
+                       ':partitionid' => $partitionid));
 
   json_success();
 }
