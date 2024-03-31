@@ -35,7 +35,7 @@ $xbs = read_raceinfo_boolean('use-xbs');
 $xbs_award_name = xbs_award();
 
 $order = '';
-if (isset($_GET['order']) && in_array($_GET['order'], ['name', 'class', 'car', 'partition'])
+if (isset($_GET['order']) && in_array($_GET['order'], ['name', 'class', 'car', 'partition']))
   $order = $_GET['order'];
 if (!$order)
     $order = 'name';
