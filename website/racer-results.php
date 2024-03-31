@@ -46,7 +46,10 @@ if (isset($as_kiosk)) {
 <?php if (isset($as_kiosk))
     echo '<script type="text/javascript" src="js/results-by-racer-scrolling.js"></script>'."\n";
 ?>
-<title>Results By Racer <?php if (isset($_GET['racerid'])) echo ' for '.$_GET['racerid']; ?></title>
+<title>Results By Racer <?php
+    if (isset($_GET['racerid']) && is_numeric($_GET['racerid'])) {
+      echo ' for '.$_GET['racerid'];
+    } ?></title>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>

@@ -29,7 +29,7 @@ function path_info() {
     return 'photo.php'.$_SERVER['ORIG_PATH_INFO'];
   } else {
     // Debugging only:
-    var_export($_SERVER);
+    // var_export($_SERVER);
     exit(0);
   }
 }

@@ -10,7 +10,7 @@ function create_kiosk_table() {
 
 // Compute a string that acts as the "address" for the kiosk that invoked the
 // current page.
-function address_for_current_kiosk() {
+function address_for_current_kiosk($for_display = false) {
   // The Kiosks table in the database has a field for the address, and another
   // for the name.  Both are displayed to the race coordinator.  The address is
   // what identifies the kiosk; the name is just a convenience for the user.
@@ -18,9 +18,9 @@ function address_for_current_kiosk() {
   // The kiosk browser can include an 'id' or 'address' parameter which allows
   // an arbitrary string to be used as the address identifier.
   $addr = "";
-  if (isset($_GET['id'])) {
+  if (isset($_GET['id']) && !$for_display) {
     $addr = $_GET['id'];
-  } else if (isset($_GET['address'])) {
+  } else if (isset($_GET['address']) && !$for_display) {
     $addr = $_GET['address'];
   } else if (isset($_SESSION['address'])) {
     $addr = $_SESSION['address'];

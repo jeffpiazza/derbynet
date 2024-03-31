@@ -98,9 +98,9 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       }
     } else {
       $sql = $base_sql;
-      if (isset($_GET['where'])) {
-        $sql = $sql.' WHERE '.$_GET['where'];
-      }
+      // if (isset($_GET['where'])) {
+      //   $sql = $sql.' WHERE '.$_GET['where'];
+      // }
       $sql = $sql.' ORDER BY lastname, firstname, carnumber';
 
       foreach ($db->query($sql) as $racer) {

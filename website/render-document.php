@@ -56,8 +56,8 @@ if (!$have_args && isset($_SERVER['ORIG_PATH_INFO'])) {
 }
 
 if (!$have_args) {
-  echo "Debugging \$_SERVER:\n";
-  var_export($_SERVER);
+  // echo "Debugging \$_SERVER:\n";
+  // var_export($_SERVER);
   exit(0);
 }
 

@@ -31,8 +31,8 @@ if (!is_subclass_of(document_class(), 'PrintableAwardDocument')) {
   $sql = $base_sql;
   if (($_GET['ids'])) {
     $sql = $sql.' WHERE awardid IN ('.$_GET['ids'].',0)';
-  } else if (isset($_GET['where'])) {
-    $sql = $sql.' WHERE '.$_GET['where'];
+  // } else if (isset($_GET['where'])) {
+  // $sql = $sql.' WHERE '.$_GET['where'];
   }
 
   foreach ($db->query($sql) as $award) {

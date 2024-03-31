@@ -50,7 +50,7 @@ $parsed = parse_photo_url($path_info = path_info());
 if (!$parsed) {  // Malformed URL
   http_response_code(404);
   echo "Malformed URL\n";
-  var_dump($path_info);
+  // var_dump($path_info);
   exit(1);
 }
 
@@ -62,7 +62,7 @@ if ($parsed['url_type'] == 'info') {
   if (!$repo) {  // No such repository
     http_response_code(404);
     echo "No such repository\n";
-    var_dump($parsed);
+    // var_dump($parsed);
     exit(1);
   }
 
@@ -71,7 +71,7 @@ if ($parsed['url_type'] == 'info') {
     if (!$render) {  // No such render
       http_response_code(404);
       echo "No such render\n";
-      var_dump($parsed);
+      // var_dump($parsed);
       exit(1);
     }
   }
@@ -95,7 +95,7 @@ if ($parsed['url_type'] == 'info') {
 if (!$file_path) {  // No such racer/no such photo
   http_response_code(404);
   echo "No file path\n";
-  var_dump($parsed);
+  // var_dump($parsed);
   exit(1);
 }
 

@@ -24,7 +24,7 @@ $(function () {
 require_once('inc/banner.inc');
 make_banner('DerbyNet Kiosk', /* back_button */ false);
 
-$addr = address_for_current_kiosk();
+$addr = address_for_current_kiosk(/*for_display=*/true);
 ?>
  <p class="kiosk_title"><?php echo madlib_string($addr); ?></p>
  <p id="kiosk_name" class="kiosk_title"></p>

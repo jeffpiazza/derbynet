@@ -15,8 +15,8 @@ $other_repo =  $repo == 'car' ? 'head' : 'car';
 
 
 $order = '';
-if (isset($_GET['order']))
-  $order = $_GET['order'];  // Values are: name, class, car
+if (isset($_GET['order']) && in_array($_GET['order'], ['name', 'class', 'car']))
+  $order = $_GET['order'];
 if (!$order)
     $order = 'name';
 
@@ -90,7 +90,7 @@ function photo_crop_expression($basename) {
 <script type="text/javascript" src="js/dropzone.min.js"></script>
 <script type="text/javascript">
 var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
-<?php if (isset($_GET['racerid'])) { ?>
+<?php if (isset($_GET['racerid']) && is_numeric($_GET['racerid'])) { ?>
   $(function() { scroll_to_racerid(<?php echo $_GET['racerid']; ?>); });
 <?php } ?>
 </script>
@@ -134,7 +134,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
     <?php
         echo "<a class='button_link' id='refresh-button' onclick='window.location.reload();'>Refresh</a>";
         $url = "photo-thumbs.php?repo=$other_repo&amp;order=$order";
-        if (isset($_GET['racerid'])) {
+        if (isset($_GET['racerid']) && is_numeric($_GET['racerid'])) {
           $url .= "&amp;racerid=$_GET[racerid]";
         }
         if (isset($_GET['back'])) {
