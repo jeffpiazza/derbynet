@@ -51,7 +51,8 @@ public class AllDeviceTypes {
         DerbyMagic9600Legacy.class,
         DerbyMagic19200Legacy.class,
         BertDrakeLegacy.class,
-        RacemasterLegacy.class
+        RacemasterLegacy.class,
+        SuperTimerIILegacy.class
       };
   public static final Class<? extends TimerDevice>[] allTimerDeviceClasses() {
     if (Flag.legacy_implementations.value()) {
