@@ -352,7 +352,7 @@ function on_submit_new_round_follow_on(roundid) {
          {type: 'POST',
           data: {action: 'roster.new',
                  roundid: roundid,
-                 top: $("#new-round-top").val(),
+                 top: Number($("#new-round-top").val()),
                  bucketed: $("#bucketed-checkbox").prop('checked') ? 1 : 0},
           success: function(data) {
             process_coordinator_poll_json(data); }

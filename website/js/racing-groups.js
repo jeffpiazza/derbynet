@@ -73,7 +73,7 @@ $(function() {
 });
 
 function on_n_pack_trophies_change(write_setting = true) {
-  var ntrophies = $("#n-pack").val();
+  var ntrophies = Number($("#n-pack").val());
   if (write_setting) {
     $.ajax('action.php',
            {type: 'POST',

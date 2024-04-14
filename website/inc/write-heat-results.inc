@@ -95,14 +95,14 @@ function write_heat_results($results) {
                            'finishplace' => $row['finishplace']);
       // If $_POST doesn't include a new value for finishtime, then leave
       // the old one (if there was one).
-      if (isset($results[$lane - 1]['time'])) {
+      if (isset($results[$lane - 1]['time']) && !empty($results[$lane - 1]['time'])) {
         $result = $results[$lane - 1]['time'];
         if ($result == '') $result = 0.0;
         $all_times[count($all_times) - 1]['finishtime'] = $result;
       } else {
         $all_times_posted = false;
       }
-      if (isset($results[$lane - 1]['place'])) {
+      if (isset($results[$lane - 1]['place']) && !empty($results[$lane - 1]['place'])) {
         $all_times[count($all_times) - 1]['finishplace'] = $results[$lane - 1]['place'];
       } else {
         $all_places_posted = false;

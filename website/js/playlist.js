@@ -225,7 +225,7 @@ function show_create_roster_dialog(classid, roundno) {
     add_round_to_queue(classid, roundno,
                        {after_action: $("#after-action-sel").val(),
                         runs_per_lane: $("#schedule-reps").val(),
-                        top: $("#new-roster-top").val(),
+                        top: Number($("#new-roster-top").val()),
                         bucketed:
                           roundno == 1 ? $("#bucketed_groups").is(':checked')
                           : g_use_subgroups ? $("#bucketed_subgroups").is(':checked')

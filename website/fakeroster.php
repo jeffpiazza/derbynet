@@ -22,8 +22,8 @@ function make_the_fake_racers() {
   $.ajax("action.php",
          {type: 'POST',
           data: {action: 'racer.fake',
-                 ngroups: $("#ngroups").val(),
-                 racers_per_group: $("#racers_per_group").val(),
+                 ngroups: Number($("#ngroups").val()),
+                 racers_per_group: Number($("#racers_per_group").val()),
                  check_in: $("#check_in_all").is(':checked') ? 1 : 0},
           success: function(data) {
              console.log('success');

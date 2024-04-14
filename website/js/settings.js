@@ -140,6 +140,10 @@ var PostSettingChange;
       } else {
         delete values[name];
       }
+    } else if (input.attr('type') == 'number') {
+      // It's possible to get an empty value from a number control, but that
+      // causes problems in the database.
+      values[name] = Number(input.val());
     } else {
       values[name] = input.val();
     }

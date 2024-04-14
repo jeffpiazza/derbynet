@@ -47,7 +47,7 @@ function on_edit_class(event) {
             data: {action: 'class.edit',
                    classid: list_item.attr('data-classid'),
                    name: $("#edit_class_name").val(),
-                   ntrophies: $("#edit_class_ntrophies").val()},
+                   ntrophies: Number($("#edit_class_ntrophies").val())},
             success: function () {
               poll_for_structure();
             }});
