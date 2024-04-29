@@ -139,7 +139,9 @@ function set_preferences($content) {
         json_failure('subgroup-within-subgroup', "At line $lineno, SUBGROUP $val within another subgroup");
         return;
       }
-      $curr_subgroup = find_or_create_rank($val, $curr_group);
+      // There's a risk here of creating a rank without a partition, which
+      // we'd consider malformed.
+      $curr_subgroup = find_or_create_rank($val, $curr_group, /*with_partition=*/false);
       array_push($stack, array($line_tag, $val));
       continue;
     }
@@ -164,11 +166,12 @@ function set_preferences($content) {
       if (!is_null($curr_subgroup)) {
         create_partition_in_existing_rank($val, $curr_subgroup);
       } else if (!is_null($curr_group)) {
-        $rankid = find_or_create_rank($val, $curr_group);
+        $rankid = find_or_create_rank($val, $curr_group, /*with_partition=*/false);
         create_partition_in_existing_rank($val, $rankid);
       } else {
-        // TODO Behavior depends on group formation rule
-        find_or_create_partition(trim($val));
+        json_failure('naked-segment',
+                     "At line $lineno , creating SEGMENT $val outside any enclosing GROUP");
+        return;
       }
       continue;
     }
