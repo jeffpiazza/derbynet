@@ -28,7 +28,10 @@ if (!have_permission(SET_UP_PERMISSION)) {
                                        'car-photo-directory',
                                        'video-directory',
                                        'logs-directory',
-                                       'lane_count'])) {
+                                       'lane_count',
+
+                                       '_websocket_url',
+                                       '_ws_trigger_port'])) {
           $saved_raceinfo[$row['itemkey']] = $row['itemvalue'];
         }
       }
