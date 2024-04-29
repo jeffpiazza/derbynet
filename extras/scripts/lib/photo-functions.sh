@@ -120,6 +120,21 @@ find_barcode_scanner() {
 # Input from the environment:
 #    BARCODE_SCANNER_DEVS
 check_scanner() {
+    # A barcode reader cabled to a pi will be seen like a local keyboard.  If
+    # we're running the script over ssh, the script won't see scanned inputs.
+    xhost >/dev/null 2>&1 || \
+        (echo ; echo ; echo "NOT RUNNING UNDER X" ; \
+         echo "LOCALLY-ATTACHED SCANNERS MAY NOT WORK" ; echo ; echo)
+
+    ## This tries to confirm that there's a barcode scanner directly attached.
+    ## The test is pretty sketchy, relying on the user having configured the
+    ## identifier for their particular scanner(s) in the BARCODE_SCANNER_DEVS
+    ## environment variable.  Since NOT having the scanner connected is
+    ## something the user will easily detect for themselves the first time they
+    ## attempt to use it, keepting this test seems not very worthwhile.
+
+    return
+    
     while [ -z "`find_barcode_scanner`" ] ; do
         echo Scanner not connected
         announce no-scanner
@@ -144,6 +159,7 @@ check_camera() {
         done
         echo Activating camera
         chdkptp -c -e"rec"
+        [ -x /usr/bin/flite ] && flite -t "Lights, camera, action"
     fi
 }
 
