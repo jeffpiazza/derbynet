@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once('inc/data.inc');
+session_write_close();
 
 // Usage e.g. /derbynet/print.php/racer/CarTagsDocument
 

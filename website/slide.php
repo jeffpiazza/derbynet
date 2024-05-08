@@ -4,6 +4,7 @@ session_start();
 // Serve image files out of the Images directory, according to the current images-dir setting.
 
 require_once('inc/data.inc');
+session_write_close();
 require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 

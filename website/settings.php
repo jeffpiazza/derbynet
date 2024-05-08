@@ -1,7 +1,8 @@
 <?php session_start();
 require_once('inc/data.inc');
-require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+session_write_close();
+require_once('inc/banner.inc');
 require_once('inc/partitions.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/locked.inc');

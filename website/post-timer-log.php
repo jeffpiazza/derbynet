@@ -2,6 +2,7 @@
 <?php
 
 require_once('inc/data.inc');
+session_write_close();
 require_once('inc/timer-logging.inc');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

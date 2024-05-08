@@ -1,8 +1,9 @@
 <?php @session_start(); ?>
 <?php
 require_once('inc/data.inc');
-require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+session_write_close();
+require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/events.inc');
 require_once('inc/lane-bias.inc');

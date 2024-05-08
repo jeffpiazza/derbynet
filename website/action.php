@@ -64,6 +64,13 @@ if ($in_json) {
 
 if (substr($inc, -7) != '.nodata') {
   require_once('inc/data.inc');
+  // We can close the session for writing except for these three that might
+  // perform some write to $_SESSION.
+  if (strstr($inc, 'ballot.get') === false &&
+      strstr($inc, 'session.write') === false &&
+      strstr($inc, 'role.login') === false) {
+    session_write_close();
+  }
 }
 
 if ($is_action) {

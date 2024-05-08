@@ -1,8 +1,10 @@
-<?php @session_start();
+<?php
+@session_start();
 // NOTE: Loading inc/data.inc will cause a redirect to the set-up page if there's
 // an issue with the database.  We want to avoid that, since an important use of the
 // about page is to capture diagnostic information when troubleshooting...
 require_once('inc/authorize.inc');
+session_write_close();
 // Note that schema_version doesn't load data.inc
 require_once('inc/schema_version.inc');
 require_once('inc/banner.inc');

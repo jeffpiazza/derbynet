@@ -3,6 +3,7 @@ session_start();
 
 require_once('inc/photo-config.inc');
 require_once('inc/path-info.inc');
+session_write_close();
 
 // URL for a file in one of the repositories is:
 //  photo.php/<repository>/file/<render>/<file-basename>/<cachebreaker>, e.g.

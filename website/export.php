@@ -4,6 +4,7 @@ require_once('inc/banner.inc');
 
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+session_write_close();
 require_once('inc/name-mangler.inc');
 require_once('inc/awards.inc');
 require_once('inc/export-all.inc');

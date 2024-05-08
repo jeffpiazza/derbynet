@@ -3,10 +3,11 @@
 // $_GET['back'] if "Back" button should go to another page, otherwise coordinator.php.
 
 require_once('inc/data.inc');
+require_once('inc/authorize.inc');
+session_write_close();
 require_once('inc/partitions.inc');
 require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
-require_once('inc/authorize.inc');
 require_once('inc/kiosks.inc');
 require_once('inc/scenes.inc');
 require_once('inc/classes.inc');

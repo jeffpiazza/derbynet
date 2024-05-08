@@ -45,6 +45,8 @@ if (isset($db) && $db) {
   require_once('inc/schema_version.inc');
 }
 
+session_write_close();
+
 
 // If there's an existing database config, then $db_connection_string should
 // contain the connection string (having been set in data.inc).  We parse the

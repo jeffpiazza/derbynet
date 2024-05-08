@@ -1,5 +1,6 @@
 <?php @session_start();
 require_once('inc/data.inc');
+session_write_close();
 require_once('inc/banner.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/name-mangler.inc');

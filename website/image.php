@@ -5,6 +5,7 @@ session_start();
 // The path_info ("/emblem") provides the image stem name, without any extension.
 
 require_once('inc/data.inc');
+session_write_close();
 require_once('inc/path-info.inc');
 require_once('inc/photo-config.inc');
 

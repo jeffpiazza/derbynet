@@ -1,10 +1,12 @@
 <?php @session_start();
 // Controls the "current award" kiosk display
 require_once('inc/data.inc');
+require_once('inc/authorize.inc');
+session_write_close();
+
 require_once('inc/partitions.inc');
 require_once('inc/classes.inc');
 require_once('inc/banner.inc');
-require_once('inc/authorize.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/standings.inc');
 require_once('inc/ordinals.inc');

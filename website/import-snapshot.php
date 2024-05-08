@@ -1,7 +1,10 @@
 <?php @session_start();
 
-require_once('inc/banner.inc');
+require_once('inc/data.inc');
 require_once('inc/authorize.inc');
+session_write_close();
+require_once('inc/banner.inc');
+
 require_permission(SET_UP_PERMISSION);
 
 ?><!DOCTYPE html>

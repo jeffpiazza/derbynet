@@ -4,9 +4,10 @@
 // selection, prompt for a password and log the user in.
 
 require_once('inc/data.inc');
+require_once('inc/authorize.inc');
+session_write_close();
 require_once('inc/banner.inc');
 require_once('inc/permissions.inc');
-require_once('inc/authorize.inc');
 require_once('inc/locked.inc');
 ?><!DOCTYPE html>
 <html>

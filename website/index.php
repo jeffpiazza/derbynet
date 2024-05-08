@@ -22,6 +22,7 @@ try {
   header('Location: setup.php');
   exit();
 }
+session_write_close();
 
 $show_voting_button =
   $schema_version >= BALLOTING_SCHEMA &&

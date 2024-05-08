@@ -5,6 +5,7 @@
 // interference from action.php.
 
 require_once('inc/preferences.inc');
+session_write_close();
 
 header('Content-Type: text/plain');
 // header('Content-Disposition: attachment; '.$this->_httpencode('filename',$name,$isUTF8));

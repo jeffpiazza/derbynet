@@ -7,6 +7,7 @@ $_SESSION['permissions'] |=
     REVERT_CHECK_IN_PERMISSION |
     PHOTO_UPLOAD_PERMISSION
 ;
+session_write_close();
 ?><!DOCTYPE html>
 <html>
 <head>

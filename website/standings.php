@@ -14,8 +14,9 @@ session_start();
 // round(s).  Note that the roster.new action performs SQL queries directly,
 // without using result_summary(), but performs a similar query.
 require_once('inc/data.inc');
-require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+session_write_close();
+require_once('inc/banner.inc');
 require_once('inc/schema_version.inc');
 require_permission(VIEW_RACE_RESULTS_PERMISSION);
 require_once('inc/standings.inc');
