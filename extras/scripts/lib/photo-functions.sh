@@ -24,6 +24,24 @@ killall_gvfs_volume_monitor() {
     done &
 }
 
+rotate_logs() {
+    for LOG in uploads.log checkins.log ; do
+        if [[ -s ${LOG} ]] ; then
+            CDATE=$(date -d "1970-01-01 UTC + $(stat --format=%W ${LOG}) seconds" +"%Y-%m-%d-%H%M")
+            mv ${LOG} ${LOG}.${CDATE}
+        elif [[ -e ${LOG} ]] ; then
+            rm ${LOG}
+        fi
+        # Purge year-old logs
+        YEAR_AGO=$(date -d "-1 year" +"%Y-%m-%d-%H%M")
+        for OLD in ${LOG}.* ; do
+            if [[ -e ${OLD} && ${OLD} < ${LOG}.${YEAR_AGO} ]] ; then
+                rm ${OLD}
+            fi
+        done
+    done
+}
+
 check_for_barcode_quit() {
     read -t 0.5 BARCODE
     if [ "$BARCODE" = "QUITQUITQUIT" ] ; then
@@ -91,6 +109,14 @@ do_login() {
 # This should follow the do_login if we want the login's ADJUST_CLOCK behavior
 # to affect the choice of photo directory.
 define_photo_directory() {
+    # Clean up old photo directories
+    EXPIRATION_DATE=$(date -d "-2 weeks" +%Y-%m-%d)
+    for D in photos-* ; do
+        if [[ -d "${D}" && "${D}" < photos-${EXPIRATION_DATE} ]] ; then
+	    rm -rf "${D}"
+	fi
+    done
+
     CUR_DIR="`pwd`"
     test -z "$PHOTO_DIR" && PHOTO_DIR="$CUR_DIR/photos-`date '+%Y-%m-%d'`"
     test ! -d "$PHOTO_DIR" && mkdir "$PHOTO_DIR"

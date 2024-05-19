@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # This script is a "shoot then scan" photo capture station.  gphoto2
 # continuously captures photos from a tethered camera.  Whenever the barcode
@@ -21,10 +21,8 @@ command -v wmctrl >/dev/null && wmctrl -a shoot-then-scan
 
 . "$LIB_DIR"/photo-preamble.sh
 . "$LIB_DIR"/photo-functions.sh
-READ_BARCODE="$LIB_DIR"/read_barcode.py
 
-rm uploads.log > /dev/null 2>&1
-rm checkins.log > /dev/null 2>&1
+rotate_logs
 
 killall_gvfs_volume_monitor
 
@@ -39,6 +37,8 @@ trap cleanup 2 3 6
 
 # Depends on $PHOTO_DIR being defined when executed.
 loop_to_capture_tethered() {
+    EVER_FOUND_CAMERA=0
+
     HOOK_SCRIPT="`mktemp`"
     cat <<EOF >"$HOOK_SCRIPT"
 #! /bin/sh
@@ -54,6 +54,14 @@ if [ "\$ACTION" = "download" ] ; then
     >&2 echo Link formed
     test -f /etc/derbynet.conf  && . /etc/derbynet.conf
     announce capture-ok &
+elif [ "\$ACTION" = "start" ] ; then
+    if [ $EVER_FOUND_CAMERA -eq 0 ] ; then
+       >&2 echo Ready for my close-up
+       test -x /usr/bin/flite && flite -t "Ready for my close-up"
+       EVER_FOUND_CAMERA=1
+    else
+       >&2 echo hook script action start
+    fi
 else
     >&2 echo hook script action "\$ACTION"
 fi
@@ -72,7 +80,7 @@ EOF
         if [ $GPHOTO2_OK -eq 0 ] ; then
             announce no-camera
             sleep 5s
-        fi
+	fi
         sleep 1s
     done
 }
@@ -96,7 +104,7 @@ while true ; do
         sleep 5s
         continue
     fi
-    BARCODE=`$READ_BARCODE "$DEV"`
+    read BARCODE
     echo Scanned $BARCODE
     CAR_NO=`echo $BARCODE | grep -e "^PWD" | sed -e "s/^PWD//"`
 
@@ -105,9 +113,16 @@ while true ; do
         sudo shutdown -h now
     elif [ "$BARCODE" = "PWDspeedtest" ] ; then
         upload_speed_test
+    elif [ "$BARCODE" = "PWDcrop-OFF" ] ; then
+        AUTOCROP=0
+    elif [ "$BARCODE" = "PWDcrop-ON" ] ; then
+        AUTOCROP=1
     elif [ ! -L last-photo.jpg -o ! -e "`readlink last-photo.jpg`" ] ; then
         # We'd like something more specific
         announce upload-failed
+    # TODO Pack 1, 2024: Possibly this loop exited, or an upload_photo call hung, and
+    # we kept capturing photos but became unable to upload them.  Workaround in either case
+    # would be to reboot the station.
     elif [ "$CAR_NO" ] ; then
         # When the photo was captured, it had whatever name the camera assigned
         # it.  Now that we have a barcode value, we can rename the photo to
