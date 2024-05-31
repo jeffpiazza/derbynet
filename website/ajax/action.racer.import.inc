@@ -35,11 +35,11 @@ if (have_permission(SET_UP_PERMISSION)) {
   // then lastname separated by a space, or lastname then firstname separated by
   // comma and optional space.
   if (isset($_POST['first-last'])) {
-    $comma = strpos($_POST['first-last'], ',');
+    $first_last = trim($_POST['first-last']);
+    $comma = strpos($first_last, ',');
     if ($comma === false) {
       // firstname then lastname, space-separated.  Use the last space after
       // trimming as the dividing point.
-      $first_last = trim($_POST['first-last']);
       $space = strrpos($first_last, ' ');
       if ($space === false) {
         $_POST['firstname'] = '';
@@ -52,8 +52,8 @@ if (have_permission(SET_UP_PERMISSION)) {
     } else {
       // Comma signals lastname then firstname
       // These will get trimmed later
-      $_POST['firstname'] = substr($_POST['first-last'], $comma + 1);
-      $_POST['lastname'] = substr($_POST['first-last'], 0, $comma);
+      $_POST['firstname'] = substr($first_last, $comma + 1);
+      $_POST['lastname'] = substr($first_last, 0, $comma);
     }
   }
 
