@@ -13,6 +13,7 @@ $(function () {
     report_window_size();
     setInterval(report_window_size, 500);
 });
+
 </script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
@@ -24,13 +25,13 @@ $(function () {
 require_once('inc/banner.inc');
 make_banner('DerbyNet Kiosk', /* back_button */ false);
 
-$addr = address_for_current_kiosk(/*for_display=*/true);
+// $g_kiosk_address is assigned in kiosk.php
 ?>
- <p class="kiosk_title"><?php echo madlib_string($addr); ?></p>
+ <p class="kiosk_title"><?php echo madlib_string($g_kiosk_address); ?></p>
  <p id="kiosk_name" class="kiosk_title"></p>
  <div class="full_page_center">
    <p id="screensize"></p>
-   <p><?php echo $addr; ?></p>
+   <p><?php echo $g_kiosk_address; ?></p>
    <div class="logo-frame">
      <img class="big-logo" src="img/derbynet-300.png"/>
    </div>

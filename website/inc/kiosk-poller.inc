@@ -10,13 +10,11 @@
 <?php
 
 if (!isset($_GET['page'])) {
-  // We don't poll for new assignments if the kiosk.php URL included a page=
-  // parameter (for testing)
-  $addr = address_for_current_kiosk();
-  $kpage = kiosk_page($addr);
+  // $g_kiosk_address is assigned in kiosk.php
+  $kpage = kiosk_page($g_kiosk_address);
 ?>
   
-$(function() { KioskPoller.start(<?php echo json_encode($addr); ?>,
+$(function() { KioskPoller.start(<?php echo json_encode($g_kiosk_address); ?>,
                                  <?php echo json_encode($kpage['page']); ?>); });
 
 <?php

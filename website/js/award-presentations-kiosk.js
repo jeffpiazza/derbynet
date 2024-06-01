@@ -30,6 +30,11 @@ var AwardPoller = {
            {type: 'GET',
             data: {query: 'award.current'},
             success: function(data) {
+              if (data.hasOwnProperty('kiosk-setting') &&
+                  data.['kiosk-setting'].reload) {
+                console.log("Forcing a reload because it was explicitly requested.");
+                location.reload(true);
+              }
               AwardPoller.queue_next_query();
               AwardPoller.process_current_award(data);
             },
