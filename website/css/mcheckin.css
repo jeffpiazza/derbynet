@@ -121,6 +121,23 @@ div#flash-overlay {
   margin-top: 0px;
 }
 
+/* show_slide_in from bottom animates #slide-in height to #slide-in-inner height.
+   show_slide_in from side animates #slide-in width to #slide-in-inner width.
+
+   slide-in
+     slide-in-inner
+       racer-div
+       controls
+         controls-inner
+           head-button .escutcheon
+             div.thumbnail-carrier
+               img.thumnail
+           autocrop-button
+             autocrop-holder
+               autocrop-overlay
+           checkin-button
+           car-button .escutcheon
+ */
 #slide-in {
   position: fixed;
   bottom: 0;
@@ -129,16 +146,19 @@ div#flash-overlay {
   height: 0px; /* initially */
   background: #3789fb;
 }
+
 #slide-in-inner {
   height: 25vh;
 }
 #racer-div {
   font-size: 4vh;
+  height: 5vh;
+  overflow-y: hidden;
   text-align: center;
   color: white;
 }
 #controls {
-  height: 10vh;
+  height: 20vh;
 }
 
 #controls-inner {
