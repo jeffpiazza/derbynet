@@ -236,6 +236,7 @@ function confirm_purge(purge) {
 
   show_secondary_modal("#purge_confirmation_modal", function(event) {
     close_secondary_modal("#purge_confirmation_modal");
+    close_modal("#purge_modal");
     $.ajax('action.php',
            {type: 'POST',
             data: {action: 'database.purge',

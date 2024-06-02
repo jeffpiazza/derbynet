@@ -31,7 +31,10 @@ function do_show_modal(modal_selector, focus, submit_handler, background_selecto
   if (typeof submit_handler != 'undefined' && submit_handler) {
     var form = modal_div.find("form");
     form.off("submit");
-    form.on("submit", submit_handler);
+    form.on("submit", function(event) {
+      event.preventDefault();
+      submit_handler(event);
+    });
   }
 
   g_modal_dialogs.push(modal_selector);
