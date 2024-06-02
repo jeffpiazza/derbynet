@@ -29,7 +29,7 @@ RUN apk update && \
 
 # This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
 # PHP 8.2.  If that changes, it's time to update.
-RUN ls /usr/sbin/php-fpm82 || exit 1
+RUN ls /usr/sbin/php-fpm83 || exit 1
 
 ARG WWW_ROOT=/var/www/html
 
@@ -58,4 +58,4 @@ VOLUME /var/lib/derbynet
 EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm82 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm83 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]

@@ -13,7 +13,7 @@ done
     
     
 sed -i -e "s#^listen *=.*#listen = /var/run/php/php-fpm.sock#" \
-    /etc/php82/php-fpm.d/www.conf
+    /etc/php83/php-fpm.d/www.conf
 
 sed -i \
     -e "s#fastcgi_pass.*#fastcgi_pass /var/run/php/php-fpm.sock#" \
