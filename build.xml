@@ -27,7 +27,10 @@
     <os family="windows"/>
   </condition>
 
-  <target name="clean"
+  <!-- For access to soffice_available property -->
+  <import file="${docs-dir}/build.xml"/>
+
+  <target name="clean" depends="docs-clean"
           description="Remove generated artifacts for a clean build environment">
     <delete quiet="true">
         <fileset dir="website">
@@ -47,7 +50,7 @@
         </fileset>
     </delete>
     <ant dir="${timer-dir}" target="clean"/>
-    <ant dir="${docs-dir}"  target="clean"/>
+    <!-- docs-dir gets cleaned up by docs-clean target -->
   </target>
   
   <target name="dist" depends="dist.oneclick, dist.mac, dist.debian"
@@ -266,7 +269,10 @@
     <ant dir="installer/debian" target="dist"/>
   </target>
 
-  <target name="docs-dist" description="Generate documentation PDFs">
+  <target name="docs-clean" if="soffice_available">
+    <ant dir="${docs-dir}"  target="clean"/>
+  </target>
+  <target name="docs-dist" description="Generate documentation PDFs" if="soffice_available">
       <ant dir="${docs-dir}"/>
   </target>
 

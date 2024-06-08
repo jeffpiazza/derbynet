@@ -18,6 +18,8 @@
      <os family="windows"/>
    </condition>
 
+   <available property="soffice_available" file="${soffice}"/>
+
    <target name="dist" depends="installation, after-installation, operation,
                                 advanced-topics, quickref">
    </target>
