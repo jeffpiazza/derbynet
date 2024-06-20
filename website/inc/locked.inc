@@ -43,6 +43,11 @@ function preferred_urls($use_https = false) {
     }
     $urls = array();
 
+    // accommodate hosted on proxy servers (eg. nginx)
+    if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+      $addrs = array($_SERVER['HTTP_HOST']);
+    }
+
     // IIS apparently doesn't set REQUEST_URI.
     if (isset($_SERVER['REQUEST_URI'])) {
       $uri = dirname($_SERVER['REQUEST_URI']);
