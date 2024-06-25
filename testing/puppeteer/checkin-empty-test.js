@@ -78,9 +78,9 @@ puppeteer.launch({devtools: debugging}).then(async browser => {
   await page.waitForNavigation();
   // One racer now present
   assert.equal(1, await page.$$eval("#main_tbody tr", trs => { return trs.length; }));
-  // Car number "1" (not 101)
-  assert.equal(1, await page.$$eval("#main_tbody tr td.sort-car-number",
-                                    cno => { return $(cno).text(); }));
+  // Car number "101"
+  assert.equal(101, await page.$$eval("#main_tbody tr td.sort-car-number",
+                                      cno => { return $(cno).text(); }));
   assert.equal("Default", await page.$$eval("#main_tbody tr #div-1",
                                             part => { return $(part).text(); }));
 

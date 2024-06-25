@@ -27,24 +27,8 @@ function json_common_1($key, &$now_running) {
     json_out('best-times', $stmt->fetchAll(PDO::FETCH_ASSOC));
     break;
   case 'car-numbers':
-    require_once('inc/schema_version.inc');
-    if (schema_version() < PARTITION_SCHEMA) {
-      $car_numbers = $db->query(
-        'SELECT classid AS partitionid,'
-        .' MAX(carnumber) AS max_carnumber'
-        .' FROM RegistrationInfo'
-        .' GROUP BY classid')->fetchAll(PDO::FETCH_ASSOC);
-    } else {
-      // NOTE: 100 * partitionid also appears in checkin.js
-      $car_numbers = $db->query(
-        'SELECT partitionid,'
-        .' (SELECT COALESCE(MAX(carnumber), 100 * Partitions.partitionid)'
-        .'  FROM RegistrationInfo'
-        .'  WHERE Partitions.partitionid = RegistrationInfo.partitionid)'
-        .' AS max_carnumber'
-        .' FROM Partitions')->fetchAll(PDO::FETCH_ASSOC);
-    }
-    json_out('car-numbers', $car_numbers);
+    require_once('inc/car-numbering.inc');
+    json_out('car-numbers', next_car_numbers());
     break;
   case 'classes':
     require_once('inc/json-classes.inc');

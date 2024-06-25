@@ -1,11 +1,12 @@
 <?php
+require_once('inc/car-numbering.inc');
+require_once('inc/class_add_or_delete.inc');
+require_once('inc/events.inc');
+require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 require_once(sql_file_path('column-widths'));
-require_once('inc/class_add_or_delete.inc');
 require_once('inc/rank_add_or_delete.inc');
-require_once('inc/partitions.inc');
-require_once('inc/events.inc');
 
 define('UNSPECIFIED_CLASS', '* Not specified');
 define('UNSPECIFIED_RANK', '* Not specified');
@@ -38,13 +39,7 @@ function insert_new_racer($values) {
   }
   
   if (!isset($values['carnumber']) || $values['carnumber'] == '') {
-    $max_carnumber = read_single_value('SELECT MAX(carnumber) FROM RegistrationInfo'
-                                       .' WHERE partitionid = :partitionid',
-                                       array(':partitionid' => $values['partitionid']));
-    if (!$max_carnumber) {
-      $max_carnumber = ($values['partitionid'] - 1) * 100;
-    }
-    $values['carnumber'] = $max_carnumber + 1;
+    $values['carnumber'] = next_car_number_for_partition($values['partitionid']);
   }
 
   if (read_single_value('SELECT COUNT(*) FROM RegistrationInfo'

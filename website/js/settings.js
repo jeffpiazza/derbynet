@@ -43,6 +43,27 @@ function on_max_runs_change() {
   PostSettingChange($("#max-runs-per-car"));
 }
 
+function on_car_numbering_change(event) {
+  var target = $(event.currentTarget);
+
+  var by_segment = $("#number-by-segment").is(':checked') ? '100' : '0';
+  if (target.attr('name') == 'number-by-segment') {
+    // While handling the on-change event, :checked appears not to have been
+    // updated yet, so reads opposite what it should.
+    by_segment = target.is(':checked') ? '0' : '100';
+  }
+
+  var number_from = $("input[name='number-from']:checked").val();
+  if (target.attr('name') == 'number-from') {
+    number_from = target.val();
+  }
+
+  $("#car-numbering").val(by_segment + '+' + number_from);
+
+  PostSettingChange($("#car-numbering"));
+  return false;
+}
+
 function render_directory_status_icon(photo_dir_selector) {
   $.ajax('action.php',
          {type: 'GET',
@@ -86,6 +107,9 @@ function browse_for_photo_directory(photo_dir_selector) {
 
 function on_supergroup_label_change() {
   $("span.supergroup-label").text($("#supergroup-label").val().toLowerCase());
+}
+function on_partition_label_change() {
+  $("span.partition-label").text($("#partition-label").val().toLowerCase());
 }
 
 // PostSettingChange(input) responds to a change in an <input> element by
@@ -145,6 +169,7 @@ var PostSettingChange;
       // causes problems in the database.
       values[name] = Number(input.val());
     } else {
+      // For a radio input, the change event comes from the newly-selected value
       values[name] = input.val();
     }
 
@@ -161,6 +186,9 @@ $(function() {
   $("#now-racing-linger-sec").on("keyup mouseup", on_linger_time_change);
 
   $("#supergroup-label").on("keyup mouseup", on_supergroup_label_change);
+  $("#partition-label").on("keyup mouseup", on_partition_label_change);
+
+  $("#number-from-101, #number-from-1, #number-by-segment").on("keyup mouseup", on_car_numbering_change);
 
   $('#settings_form input, #settings_form select').on('change', function(e) {
     PostSettingChange($(this));

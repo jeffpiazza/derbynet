@@ -86,6 +86,7 @@ define('PREF_STRING_SETTINGS', array(
   // 'images-dir' => 'images-dir',
   'ballot_password' => 'ballot_password',
   'group-formation-rule' => 'group-formation-rule',
+  'car-numbering' => 'car-numbering',
 ));
 
 // Calls json_success or json_failure as appropriate

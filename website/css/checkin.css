@@ -185,6 +185,10 @@ input.white-button {
   margin-left: 75px;
 }
 
+#bulk_details_modal input[type='submit'] {
+  margin-top: 30px;
+}
+
 tr.exclude td.checkin-status {
   background-image: url('../img/no-trophy.png');
   background-repeat: no-repeat;

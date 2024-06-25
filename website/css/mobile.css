@@ -681,3 +681,9 @@ div.mtext input[type='number']:focus {
   -moz-box-shadow: 0 0 12px #3388cc;
   box-shadow: 0 0 12px #3388cc;
 }
+
+div.mtext input[type='text'][disabled],
+div.mtext input[type='number'][disabled]{
+    background-color: rgb(221,221,221);
+    pointer-events: none;
+}

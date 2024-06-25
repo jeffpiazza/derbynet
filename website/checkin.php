@@ -327,7 +327,7 @@ mobile_select_refresh($("#bulk_who"));
   <input type="button" value="Bulk Check-In Undo"
     onclick="bulk_check_in(false);"/>
   <br/>
-  <input type="button" value="Bulk Numbering"
+  <input type="button" value="Bulk Renumbering"
     onclick="bulk_numbering();"/>
   <input type="button" value="Bulk Eligibility"
     onclick="bulk_eligibility();"/>
@@ -347,13 +347,20 @@ mobile_select_refresh($("#bulk_who"));
       </select>
 
       <div id="numbering_controls" class="hidable">
-        <label for="bulk_numbering_start">Starting from:</label>
-        <input type="number" id="bulk_numbering_start" name="bulk_numbering_start"
-               value="101"/>
-
-        <label for="renumber">Renumber cars that already have numbers?</label>
-          <input type="checkbox" class="flipswitch renumber-flip" name="renumber" id="renumber"
-                 data-on-text="Yes" data-off-text="No"    />
+        <label for="number_auto">Numbering:</label>
+        <input id="number_auto" name="number_auto"
+               type="checkbox" class="flipswitch eligible-flip"
+               checked="checked"
+               data-wrapper-class="trophy-eligible-flipswitch"
+               data-off-text="Custom"
+               data-on-text="Standard"/>
+        <div id="numbering_start_div" style="display: none">
+          <label for="bulk_numbering_start">Custom numbering from:</label>
+          <input type="number" id="bulk_numbering_start" name="bulk_numbering_start"
+                                                            disabled="disabled"
+                 value="101"/>
+        </div>
+&nbsp;
       </div>
 
       <div id="elibility_controls" class="hidable">

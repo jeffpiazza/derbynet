@@ -77,30 +77,40 @@ run_tests() {
 
     `dirname $0`/test-racer-query.sh "$BASE_URL"
 
+    # Resets database
+    `dirname $0`/test-car-numbers.sh "$BASE_URL"
+    # Resets database
     `dirname $0`/test-extended-scheduling.sh "$BASE_URL"
 
+    # Resets database
     `dirname $0`/test-reschedule.sh "$BASE_URL"
+    # Resets database
     `dirname $0`/test-rotation-schedule.sh "$BASE_URL"
 
 ############################## Standings by Rank ##############################
+    # Resets database
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
 ############################## Points Racing ##############################
+    # Resets database
     `dirname $0`/test-points-racing.sh "$BASE_URL"
 
 ############################## Rounds Playlist ##############################
+    # Resets database
     `dirname $0`/test-playlist.sh "$BASE_URL"
 
 ############################## One-Run-Per-Car Racing ##############################
     `dirname $0`/test-model-a-club.sh "$BASE_URL"
 
+    # Resets database
     `dirname $0`/test-messaging.sh "$BASE_URL"
 
 ############################## Racing Groups and Partitions ##############################
     RESET_SOURCE=ex1 `dirname $0`/reset-database.sh "$BASE_URL"
     puppeteer_test checkin-empty-test.js
 
+    # Resets database
     `dirname $0`/test-partitions.sh "$BASE_URL"
     `dirname $0`/test-racing-groups.sh "$BASE_URL"
 
@@ -118,8 +128,11 @@ run_tests() {
     `dirname $0`/test-photo-upload.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 
+    # Resets database
     `dirname $0`/test-aggregate-rounds.sh "$BASE_URL"
+    # Resets database
     `dirname $0`/test-aggregate-classes.sh "$BASE_URL"
+    # Resets database
     `dirname $0`/test-aggregate-nonracing.sh "$BASE_URL"
 
 ############################## Snapshot Export and Import ##############################
@@ -128,12 +141,14 @@ run_tests() {
     `dirname $0`/test-den-changes.sh "$BASE_URL"
     `dirname $0`/test-unused-lanes.sh "$BASE_URL"
 
+    # Resets database
     `dirname $0`/test-balloting.sh "$BASE_URL"
 
     SNAPSHOT=$(mktemp /tmp/derby-snapshot.xml.XXXXX)
     echo Taking snapshot in $SNAPSHOT
     curl_get "action.php?query=snapshot.get" > $SNAPSHOT
 
+    # Resets database
     `dirname $0`/test-import-results.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
 

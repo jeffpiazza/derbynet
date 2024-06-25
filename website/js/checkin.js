@@ -2,7 +2,7 @@
 // Requires modal.js
 
 // Maps partitionid to highest existing carnumber for that partitionid
-g_max_carnumbers = [];
+g_next_carnumbers = [];
 function poll_max_carnumbers() {
   $.ajax(g_action_url,
          {type: 'GET',
@@ -10,18 +10,21 @@ function poll_max_carnumbers() {
                  values: 'car-numbers'},
           success: function (data) {
             if (data.hasOwnProperty('car-numbers')) {
-              var carnos = data['car-numbers'];
-              for (var i = 0; i < carnos.length; ++i) {
-                g_max_carnumbers[parseInt(carnos[i].partitionid)] =
-                  carnos[i].max_carnumber;
-              }
+              read_next_carnumbers(data['car-numbers']);
             }
           }
          });
 }
+
+// carnos is an array of {partitionid, next_carnumber}
+function read_next_carnumbers(carnos) {
+  for (var i = 0; i < carnos.length; ++i) {
+    g_next_carnumbers[parseInt(carnos[i].partitionid)] =
+      carnos[i].next_carnumber;
+  }
+}
 function next_carnumber(partitionid) {
-  // NOTE: 100 * partitionid expression also in car-numbers poll query
-  return 1 + (g_max_carnumbers[partitionid] || (100 * partitionid));
+  return g_next_carnumbers[partitionid] || 999;
 }
 $(function() {
   setInterval(poll_max_carnumbers, 10000);
@@ -231,6 +234,9 @@ function handle_edit_racer() {
             if (data.hasOwnProperty('warnings')) {
               window.alert("WARNING: " + data.warnings[0]);
             }
+            if (data.hasOwnProperty('car-numbers')) {
+              read_next_carnumbers(data['car-numbers']);
+            }
             if (data.hasOwnProperty('new-row')) {
               var row = addrow0(data['new-row']);
               flipswitch(row.find('input[type="checkbox"].flipswitch'));
@@ -306,9 +312,23 @@ function bulk_check_in(value) {
   });
 }
 
+
+function on_bulk_numbering_change() {
+  $("#bulk_numbering_start").prop('disabled', $("#number_auto").is(':checked'));
+  if (!$("#number_auto").is(':checked')) {
+    $("#numbering_start_div").slideDown(500);
+    $("#bulk_numbering_start").focus();
+  } else {
+    $("#numbering_start_div").slideUp(500);
+  }
+}
+$(function() {
+  $("#number_auto").on('change', on_bulk_numbering_change);
+});
+
 function bulk_numbering() {
   close_modal_leave_background("#bulk_modal");
-  $("#bulk_details_title").text("Bulk Numbering");
+  $("#bulk_details_title").text("Bulk Renumbering");
   $("#who_label").text("Assign car numbers to");
   $("#bulk_details div.hidable").addClass("hidden");
   $("#numbering_controls").removeClass("hidden");
@@ -320,8 +340,9 @@ function bulk_numbering() {
             data: {action: 'racer.bulk',
                    what: 'number',
                    who: bulk_who_value(),
+                   auto: $("#number_auto").is(':checked') ? 1 : 0,
                    start: $("#bulk_numbering_start").val(),
-                   renumber: $("#renumber").is(':checked') ? 1 : 0},
+                   renumber: 1 /* $("#renumber").is(':checked') ? 1 : 0 */},
            });
     
     return false;
