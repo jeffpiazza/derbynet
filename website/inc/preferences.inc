@@ -1,5 +1,6 @@
 <?php
 
+require_once('inc/form_groups_by_rule.inc');
 require_once('inc/partitions.inc');
 require_once('inc/class_add_or_delete.inc');
 require_once('inc/rank_add_or_delete.inc');
@@ -17,6 +18,7 @@ require_once('inc/rank_add_or_delete.inc');
 // Within a group, SUBGROUPs, SEGMENTs, AWARDs, or NTROPHIES may appear within
 // a group.
 //
+///// Not currently used
 // SUBGROUP = (subgroup name) starts a context that extends to the next
 // ENDSUBGROUP.  Subgroups must appear only within a group.  SEGMENTs, AWARDs,
 // or NTROPHIES may appear within a subgroup.
@@ -108,6 +110,12 @@ function set_preferences($content) {
     // unset($val);
     @list($line_tag, $val) = explode('=', $line, 2);
     $line_tag = trim($line_tag);
+    unset($arg);
+    $sp = strpos($line_tag, ' ');
+    if ($sp !== false) {
+      $arg = trim(substr($line_tag, $sp + 1));
+      $line_tag = substr($line_tag, 0, $sp);
+    }
     if (isset($val)) $val = trim($val);
 
     if ($line_tag == 'GROUP' && isset($val)) {
@@ -131,32 +139,35 @@ function set_preferences($content) {
       }
       continue;
     }
-    if ($line_tag == 'SUBGROUP' && isset($val)) {
-      if (is_null($curr_group)) {
-        json_failure('subgroup-needs-a-group', "At line $lineno, SUBGROUP $val without an enclosing GROUP");
-        return;
-      }
-      if (!is_null($curr_subgroup)) {
-        json_failure('subgroup-within-subgroup', "At line $lineno, SUBGROUP $val within another subgroup");
-        return;
-      }
-      // There's a risk here of creating a rank without a partition, which
-      // we'd consider malformed.
-      $curr_subgroup = find_or_create_rank($val, $curr_group, /*with_partition=*/false);
-      array_push($stack, array($line_tag, $val));
-      continue;
-    }
-    if ($line_tag == 'ENDSUBGROUP') {
-      if (is_null($curr_subgroup)) {
-        json_failure('endsubgroup-no-subgroup', "At line $lineno, ENDSUBGROUP without SUBGROUP");
-        return;
-      }
-      $curr_subgroup = null;
-      if ($stack[0][0] == 'SUBGROUP') {
-        array_pop($stack);
-      }
-      continue;
-    }
+    // SUBGROUP and ENDSUBGROUP aren't used (indistinguishable from partition)
+    // if ($line_tag == 'SUBGROUP' && isset($val)) {
+    //   if (is_null($curr_group)) {
+    //     json_failure('subgroup-needs-a-group',
+    //                  "At line $lineno, SUBGROUP $val without an enclosing GROUP");
+    //     return;
+    //   }
+    //   if (!is_null($curr_subgroup)) {
+    //     json_failure('subgroup-within-subgroup',
+    //                  "At line $lineno, SUBGROUP $val within another subgroup");
+    //     return;
+    //   }
+    //   // There's a risk here of creating a rank without a partition, which
+    //   // we'd consider malformed.
+    //   $curr_subgroup = find_or_create_rank($val, $curr_group, /*with_partition=*/false);
+    //   array_push($stack, array($line_tag, $val));
+    //   continue;
+    // }
+    // if ($line_tag == 'ENDSUBGROUP') {
+    //   if (is_null($curr_subgroup)) {
+    //     json_failure('endsubgroup-no-subgroup', "At line $lineno, ENDSUBGROUP without SUBGROUP");
+    //     return;
+    //   }
+    //   $curr_subgroup = null;
+    //   if ($stack[0][0] == 'SUBGROUP') {
+    //     array_pop($stack);
+    //   }
+    //   continue;
+    // }
     if ($line_tag == 'SEGMENT' && isset($val)) {
       $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE name = :val',
                                        array(':val' => $val));
@@ -170,9 +181,14 @@ function set_preferences($content) {
         $rankid = find_or_create_rank($val, $curr_group, /*with_partition=*/false);
         create_partition_in_existing_rank($val, $rankid);
       } else {
-        json_failure('naked-segment',
-                     "At line $lineno , creating SEGMENT $val outside any enclosing GROUP");
-        return;
+        // This will create a new class and rank corresponding to the new partition.
+        // (We already checked that there isn't an existing partition with this name.)
+        find_or_create_partition($val);
+      }
+      if (isset($arg)) { // sortorder value
+        read_single_value('UPDATE Partitions SET sortorder = :arg WHERE name = :val',
+                          array(':val' => $val,
+                                ':arg' => $arg));
       }
       continue;
     }
@@ -295,6 +311,18 @@ function set_preferences($content) {
     json_failure('prefs-syntax', "Preferences file syntax, line $lineno: $line ($val)");
     return;
   }
+
+  // This confirms that Partitions have sortorder values of [1..n] (important for
+  // car number assignments based on partition sortorder).
+  if (read_single_value('SELECT MIN(sortorder) = 1 AND COUNT(*) = 1'
+                        .' FROM Partitions p'
+                        .' WHERE 1 <> (SELECT COUNT(*)'
+                        .'             FROM Partitions q'
+                        .'             WHERE q.sortorder = p.sortorder - 1)') <> 0) {
+    json_failure('Partition sortorder fails.');
+    return;
+  }
+
   json_success();
 }
 
@@ -302,14 +330,20 @@ function set_preferences($content) {
 function dump_preferences() {
   global $db;
   $result = "# Preferences written ".date("Y-m-d")."\n\n";
+  $group_rule = group_formation_rule();
+  if ($group_rule != 'by-partition') {
+    $result .= "group-formation-rule = $group_rule\n";
+  }
 
-  # TODO Custom award counts for classes, even for non-custom groups
-  if (group_formation_rule() == 'custom') {
+  // TODO Custom award counts for classes, even for non-custom groups
+  if ($group_rule == 'custom') {
     $result .= "\n## Groups\n";
     $prev = '';
-    foreach ($db->query('SELECT class, rank, Classes.ntrophies'
+    foreach ($db->query('SELECT class, rank, Classes.ntrophies,'
+                        .'      Partitions.sortorder AS sortorder'
                         .' FROM Ranks JOIN Classes USING (classid)'
-                        .' ORDER BY classid, rankid') as $row) {
+                        .'            JOIN Partitions USING (rankid)'
+                        .' ORDER BY Classes.sortorder, Ranks.sortorder') as $row) {
       if ($row['class'] <> $prev) {
         if ($prev) {
           $result .= "ENDGROUP\n";
@@ -323,7 +357,7 @@ function dump_preferences() {
       // $result .= "  SUBGROUP = $row[rank]\n";
       // $result .= "  ENDSUBGROUP\n";
       // Relying on 1-1 correspondence between ranks and partitions
-      $result .= "  SEGMENT = $row[rank]\n";
+      $result .= "  SEGMENT $row[sortorder] = $row[rank]\n";
     }
     if ($prev) {
       $result .= "ENDGROUP\n";
@@ -352,6 +386,10 @@ function dump_preferences() {
                'show-car-photos-rr' => '1',
                'upload-videos' => '1')[$info['itemkey']] == $info['itemvalue']) {
       // $result .= "# Default: $info[itemkey] = $info[itemvalue]\n";
+      continue;
+    }
+    // Group formation rule is handled explicitly
+    if ($info['itemkey'] == 'group-formation-rule') {
       continue;
     }
     $tag = array_search($info['itemkey'], PREF_BOOL_SETTINGS);

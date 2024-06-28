@@ -16,7 +16,7 @@ function labels() {
     $div_label = read_raceinfo('partition-label', 'Den');
     $labels = array(
       'supergroup' => array($supergroup, plural($supergroup)),
-      'partition'   => array($div_label,  plural($div_label)));
+      'partition'  => array($div_label,  plural($div_label)));
 
     switch (group_formation_rule()) {
     case 'by-partition':
