@@ -107,8 +107,19 @@ var Lineup = {
       var nheats = current['number-of-heats'];
       if (nheats) {
         var round_class_name = current['class'];
-        $('.banner_title').text((round_class_name ? round_class_name + ', ' : '')
-                                + 'Heat ' + this.heat + ' of ' + nheats);
+        if (current['use_master_sched']) {
+          var title = 'Heat ' + current['masterheat'];
+          if (round_class_name) {
+            title += ': ' + round_class_name;
+            if (current['round'] && current['round'] > 1) {
+              title += ', round ' + current['round'];
+            }
+          }
+          $('.banner_title').text(title);
+        } else {
+          $('.banner_title').text((round_class_name ? round_class_name + ', ' : '')
+                                  + 'Heat ' + this.heat + ' of ' + nheats);
+        }
       }
 
       var racers = data.racers;

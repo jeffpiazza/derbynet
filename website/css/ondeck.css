@@ -42,9 +42,14 @@ td.in_prev {
 .d0 td.in_prev {
   background-image: url(../img/chevron-up-white.svg);
 }
-
+th {
+    font-size: 1.5vw;
+}
+th.masterheat {
+    font-size: 3vw;
+}
 td {
-    font-size: 32px; /* = xx-large */
+    font-size: 2vw;
     padding: 0.5vw;
 }
 td .racer {

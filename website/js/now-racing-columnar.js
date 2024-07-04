@@ -260,10 +260,22 @@ function process_polling_result(data) {
     if (heat_key != now_showing && g_result_animator.ok_to_change()) {
       // && $(':animated').length == 0 ?
       var title = '';
-      if (current_heat['number-of-heats'] > 0 && current_heat.heat) {
-        title = "Heat " + current_heat.heat + " of " + current_heat['number-of-heats'];
-        if (current_heat.hasOwnProperty('class') && current_heat['class']) {
-          title = current_heat['class'] + ', ' + title;
+      if (current_heat['use_master_sched']) {
+        if (current_heat['max_masterheat'] > 0 && current_heat['masterheat']) {
+          title = "Heat " + current_heat['masterheat'];
+          if (current_heat.hasOwnProperty('class') && current_heat['class']) {
+            title += ": " + current_heat['class'];
+            if (current_heat['round'] && current_heat['round'] > 1) {
+              title += ", Round " + current_heat['round'];
+            }
+          }
+        }
+      } else {
+        if (current_heat['number-of-heats'] > 0 && current_heat.heat) {
+          title = "Heat " + current_heat.heat + " of " + current_heat['number-of-heats'];
+          if (current_heat.hasOwnProperty('class') && current_heat['class']) {
+            title = current_heat['class'] + ', ' + title;
+          }
         }
       }
       $("div.banner_title").text(title);

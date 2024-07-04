@@ -40,7 +40,7 @@ function json_ondeck(&$now_running) {
   $stmt = $db->prepare('SELECT resultid, roundid, heat, lane,'
                        .' racerid, firstname, lastname, carnumber,'
                        .(schema_version() < 2 ? ' \'\' as' : '').' carphoto, '
-                       .' finishtime, finishplace, completed'
+                       .' finishtime, finishplace, completed, masterheat'
                        .' FROM RaceChart'
                        .' INNER JOIN Rounds USING (roundid)'
                        .' INNER JOIN Classes USING (classid)'
@@ -61,6 +61,7 @@ function json_ondeck(&$now_running) {
                      'racerid' => $row['racerid'],
                      'name' => mangled_name($row, $name_style),
                      'carnumber' => $row['carnumber'],
+                     'masterheat' => $row['masterheat'],
                      'result' => (empty($row['completed'])
                                   ? ''
                                   : ($use_points

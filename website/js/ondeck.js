@@ -23,8 +23,15 @@ function repopulate_schedule(json) {
   var nlanes = g_nlanes;
   var interleaved = json['current-heat']['use_master_sched'];
 
-  var th_width_vw = interleaved ? 10 : 4;
-  var td_width_vw = (100 - th_width_vw - 5 /* border */) / (nlanes || 1);
+  var th0_width_vw, th_width_vw;
+  if (interleaved) {
+    th0_width_vw = 5;
+    th_width_vw = 10;
+  } else {
+    th0_width_vw = 0;
+    th_width_vw = 4;
+  }
+  var td_width_vw = (100 - (th0_width_vw + th_width_vw) - 5 /* border */) / (nlanes || 1);
   // CSS specifies td padding 0.5vw, so max width for each car photo is td_width_vw - 1 (vw).
   g_img_max_width_px = window.innerWidth * ((td_width_vw - 1) / 100);
   // Don't let any super-tall, thin image screw things up completely; limit to
@@ -54,6 +61,9 @@ function repopulate_schedule(json) {
     // The first row sets the column widths, at least on some browsers, so we
     // need an invisible sizing row before the divider
     var sizer = $("<tr style='height: 0; border: none;'/>").appendTo('table#schedule');
+    if (interleaved) {
+      sizer.append($('<th/>').css({'width': th0_width_vw + 'vw', 'height': 0}));
+    }
     sizer.append($('<th/>').css({'width': th_width_vw + 'vw', 'height': 0}));
     for (var lane = 0; lane < nlanes; ++lane) {
       sizer.append($('<td/>').css({'width': td_width_vw + 'vw',
@@ -100,6 +110,9 @@ function repopulate_schedule(json) {
       var row_label = "Heat " + cell['heat'];
       if (interleaved) {
         row_label = rounds_map[cell['roundid']]['name'] + ', ' + row_label;
+        $("<th class='masterheat'/>").text(cell['masterheat'])
+          .css({'width': th0_width_vw + 'vw'})
+          .appendTo(row);
       }
       $("<th/>").text(row_label)
         .css({'width': th_width_vw + 'vw'})
