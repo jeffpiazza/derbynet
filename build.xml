@@ -27,8 +27,10 @@
     <os family="windows"/>
   </condition>
 
-  <!-- For access to soffice_available property -->
-  <import file="${docs-dir}/build.xml"/>
+  <!-- Duplicated in docs/build.xml -->
+  <property name="soffice"
+	        location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
+  <available property="soffice_available" file="${soffice}"/>
 
   <target name="clean" depends="docs-clean"
           description="Remove generated artifacts for a clean build environment">
