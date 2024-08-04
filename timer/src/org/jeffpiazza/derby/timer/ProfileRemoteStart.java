@@ -1,6 +1,8 @@
 package org.jeffpiazza.derby.timer;
 
 import jssc.SerialPortException;
+import org.jeffpiazza.derby.Flag;
+import org.jeffpiazza.derby.RuntimeCondition;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 
@@ -16,12 +18,16 @@ public class ProfileRemoteStart implements RemoteStartInterface {
 
   @Override
   public boolean hasRemoteStart() {
-    return remote_start != null && remote_start.has_remote_start;
+    return remote_start != null &&
+        RuntimeCondition.evaluate(remote_start.has_remote_start);
   }
 
   @Override
   public void remoteStart() throws SerialPortException {
     portWrapper.write(remote_start.command);
     portWrapper.drainForMs();
+    if (Flag.remote_start_starts_heat.value()) {
+      Event.send(Event.RACE_STARTED);
+    }
   }
 }

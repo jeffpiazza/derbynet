@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.Flag;
 import org.jeffpiazza.derby.LogWriter;
+import org.jeffpiazza.derby.RuntimeCondition;
 import org.jeffpiazza.derby.Timestamp;
 import org.jeffpiazza.derby.devices.RemoteStartInterface;
 import org.jeffpiazza.derby.devices.TimerDevice;
@@ -241,9 +242,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
     // (at least) needs to stop while race is running.  (Issue #200.)
     if (sm == null) {
-      sm = new StateMachine(
-          profile.options.gate_state_is_knowable
-          && !Flag.no_gate_watcher.value());
+      sm = new StateMachine(profile.options.gate_state_is_knowable);
     }
     sm.onEvent(event, args);
 
@@ -375,12 +374,14 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
     }
 
     {
-      Profile.CommandSequence seq = profile.poll.get(sm.state());
-      if (seq != null) {
-        sendCommandSequence(seq);
+      Profile.StatePoller poller = profile.poll.get(sm.state());
+      if (poller != null && RuntimeCondition.evaluate(poller.condition)) {
+        sendCommandSequence(poller.commands);
       }
     }
 
+    // StateMachine.gate_state_is_knowable() checks the value of the
+    // no_gate_watcher flag, so no need to explicitly test here.
     if (profile.gate_watcher != null && sm.gate_state_is_knowable()
         && sm.state() != StateMachine.State.RUNNING) {
       // Required in MARK in order to energize the gate switch and detect

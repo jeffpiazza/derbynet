@@ -56,7 +56,6 @@ package org.jeffpiazza.derby.timer;
 //   start gate release.  The has_remote_start property, if present, indicates
 //   whether this specific timer supports remote start.  The commands property
 //   gives the actual command sequence to open the start gate.
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -146,30 +145,30 @@ public class Profile {
   }
 
   public static class RemoteStart {
-    public boolean has_remote_start;
+    public String has_remote_start;
     public String command;
 
-    public RemoteStart(boolean has_remote_start, String command) {
+    public RemoteStart(String has_remote_start, String command) {
       this.has_remote_start = has_remote_start;
       this.command = command;
     }
 
     public JSONObject toJSON() {
       return new JSONObject()
-          .put("has_remote_start", has_remote_start)
+          .put("has_remote_start", has_remote_start)  // Name of a RuntimeCondition
           .put("command", command);
     }
   }
 
   public RemoteStart remote_start;
 
-  public Profile remote_start(boolean has_remote_start, String command) {
+  public Profile remote_start(String has_remote_start, String command) {
     remote_start = new RemoteStart(has_remote_start, command);
     return this;
   }
 
   public Profile remote_start(String command) {
-    return remote_start(true, command);
+    return remote_start(null, command);
   }
 
   public static class CommandSequence {
@@ -283,7 +282,7 @@ public class Profile {
   public Profile match(String pattern_string, Detector[] internal_detectors,
                        Event event, int... arg_indexes) {
     matchers.add(new Detector(pattern_string, internal_detectors, event,
-                               arg_indexes));
+                              arg_indexes));
     return this;
   }
 
@@ -378,16 +377,34 @@ public class Profile {
     return on(event, new CommandSequence(cmd));
   }
 
-  public Map<StateMachine.State, CommandSequence> poll
-      = new TreeMap<StateMachine.State, CommandSequence>();
+  public static class StatePoller {
+    public String condition;
+    public CommandSequence commands;
 
-  public Profile during(StateMachine.State state, CommandSequence commands) {
-    poll.put(state, commands);
-    return this;
+    public StatePoller(String condition, CommandSequence commands) {
+      this.condition = condition;
+      this.commands = commands;
+    }
+    public JSONObject toJSON() {
+      return new JSONObject()
+          .put("condition", condition)
+          .put("commands", commands.toJSON())
+          ;
+    }
   }
 
-  public Profile during(StateMachine.State state, String... cmd) {
-    return during(state, new CommandSequence(cmd));
+  public Map<StateMachine.State, StatePoller> poll
+      = new TreeMap<StateMachine.State, StatePoller>();
+
+  public Profile during(StateMachine.State state, StatePoller poller) {
+    poll.put(state, poller);
+    return this;
+  }
+  public Profile during(StateMachine.State state, String condition, CommandSequence commands) {
+    return during(state, new StatePoller(condition, commands));
+  }
+  public Profile during(StateMachine.State state, String condition, String... commands) {
+    return during(state, condition, new CommandSequence(commands));
   }
 
   protected static JSONArray queriesToJSON(List<Query> queries) {
@@ -416,9 +433,9 @@ public class Profile {
   }
 
   protected static JSONObject pollersToJSON(
-      Map<StateMachine.State, CommandSequence> pollers) {
+      Map<StateMachine.State, StatePoller> pollers) {
     JSONObject obj = new JSONObject();
-    for (Entry<StateMachine.State, CommandSequence> entry : pollers.entrySet()) {
+    for (Entry<StateMachine.State, StatePoller> entry : pollers.entrySet()) {
       obj.put(entry.getKey().toString(), entry.getValue().toJSON());
     }
     return obj;
@@ -437,8 +454,8 @@ public class Profile {
         .putOpt("setup_queries", setup_queries.size() == 0 ? null
                                  : queriesToJSON(setup_queries))
         .put("matchers", detectorsToJSON(matchers))
-        .put("gate_watcher", gate_watcher == null ? null : gate_watcher.toJSON())
-        .put("heat_prep", heat_prep == null ? null : heat_prep.toJSON())
+        .put("gate_watcher", gate_watcher == null ? null : gate_watcher.toJSON()).
+        put("heat_prep", heat_prep == null ? null : heat_prep.toJSON())
         .putOpt("on", on.size() == 0 ? null : handlersToJSON(on))
         .putOpt("poll", poll.size() == 0 ? null : pollersToJSON(poll));
   }

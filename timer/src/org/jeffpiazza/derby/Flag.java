@@ -63,6 +63,10 @@ public abstract class Flag<T> {
                           "How long after race over before timer will be reset,"
                           + " default 10s.  (For SmartLine, DerbyMagic, NewBold,"
                           + " and BertDrake.)");
+  public static final Flag<Boolean> remote_start_starts_heat
+      = BooleanFlag.settable("remote-start-starts-heat",
+                             "Triggering a remote start gets counted as the start"
+                             + " of the heat for DNFs");
 
   public static final Flag<Long> newline_expected_ms
       = LongFlag.settable("newline-expected-ms", 200,
@@ -103,12 +107,7 @@ public abstract class Flag<T> {
 
   public static final Flag<Boolean> no_gate_watcher
       = BooleanFlag.settable("no-gate-watcher",
-                             "Disable interrogation of timer's gate state.").
-          on_apply(new OnApply() {
-            public void apply(Flag f) {
-              Event.send(Event.PROFILE_UPDATED);
-            }
-          });
+                             "Disable interrogation of timer's gate state.");
 
   public static final Flag<String> obs_uri
       = StringFlag.settable("obs-uri", null,
@@ -146,12 +145,7 @@ public abstract class Flag<T> {
                              "FastTrack: Don't attempt reading features");
   public static final Flag<Boolean> fasttrack_automatic_gate_release
       = BooleanFlag.settable("fasttrack-automatic-gate-release",
-                             "FastTrack light tree and automatic gate release installed").
-          on_apply(new OnApply() {
-            public void apply(Flag f) {
-              Event.send(Event.PROFILE_UPDATED);
-            }
-          });
+                             "FastTrack light tree and automatic gate release installed");
   public static final Flag<Boolean> dtr_gate_release
       = BooleanFlag.settable("dtr-gate-release",
                              "EXPERIMENTAL Offer remote start via DTR signal"

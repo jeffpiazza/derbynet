@@ -73,14 +73,16 @@ class TimerProxy {
       var poll_start = Date.now();
       var state = this.sm.state;
 
-      var commands = this.profile?.poll?.[state];
-      if (commands) {
-        var prev = g_logger.scope;
-        g_logger.scope = "profile.poll";
-        try {
-          await this.port_wrapper.writeCommandSequence(commands);
-        } finally {
-          g_logger.scope = prev;
+      var poller = this.profile?.poll?.[state];
+      if (poller) {
+        if (!poller.condition || RuntimeCondition[poller.condition]()) {
+          var prev = g_logger.scope;
+          g_logger.scope = "profile.poll";
+          try {
+            await this.port_wrapper.writeCommandSequence(poller.commands);
+          } finally {
+            g_logger.scope = prev;
+          }
         }
       }
 
@@ -160,7 +162,7 @@ class TimerProxy {
       }
     }
 
-    this.sm = new StateMachine(this.profile.options.gate_state_is_knowable && !Flag.no_gate_watcher.value);
+    this.sm = new StateMachine(this.profile.options.gate_state_is_knowable);
 
     // Start the polling loop:
     this._queue_next_poll(Date.now());
@@ -251,18 +253,6 @@ class TimerProxy {
     case 'LOST_CONNECTION':
       console.log('TimerProxy sees lost connection', this);
       TimerEvent.unregister(this);  // TODO
-      break;
-    case 'GATE_WATCHER_CHANGED':
-      // If polling resumes after no timer contact in a while, the port wrapper
-      // will incorrectly decide the connection is closed.
-      this.port_wrapper.noticeContact();
-      this.sm.gate_state_is_knowable =
-        this.profile.options.gate_state_is_knowable && !Flag.no_gate_watcher.value;
-      if (this.roundid != 0) {
-        // This repeats part of maskLanes, specifically the 'rg' needed for
-        // Champ timer whenever we stop polling.
-        await this.resetForHeatPrep();
-      }
       break;
     }
   }

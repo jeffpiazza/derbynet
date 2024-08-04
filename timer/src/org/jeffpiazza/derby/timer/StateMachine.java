@@ -96,7 +96,7 @@ public class StateMachine implements Event.Handler {
             // a short wait.  This fixes the issue of FastTrack timers that don't
             // support the RG (read gate) command not knowing when to stop sending
             // LR (laser reset) commands.
-            if (!gate_state_is_knowable) {
+            if (!gate_state_is_knowable()) {
               Event.sendAfterMs(500, Event.GATE_CLOSED);
             }
             break;
@@ -124,7 +124,7 @@ public class StateMachine implements Event.Handler {
             currentState = unexpected(e, State.MARK);
             break;
           case RACE_FINISHED:
-            if (!gate_state_is_knowable) {
+            if (!gate_state_is_knowable()) {
               currentState = State.IDLE;
               break;
             }
@@ -154,7 +154,7 @@ public class StateMachine implements Event.Handler {
             currentState = State.RUNNING;
             break;
           case RACE_FINISHED:
-            if (!gate_state_is_knowable) {
+            if (!gate_state_is_knowable()) {
               currentState = State.IDLE;
               break;
             }
@@ -202,7 +202,10 @@ public class StateMachine implements Event.Handler {
     return next;
   }
 
-  public boolean gate_state_is_knowable() { return gate_state_is_knowable; }
+  public boolean gate_state_is_knowable() {
+    return gate_state_is_knowable && !Flag.no_gate_watcher.value();
+  }
+
   public void setGateStateNotKnowable() {
     gate_state_is_knowable = false;
   }

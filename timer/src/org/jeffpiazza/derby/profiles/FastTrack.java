@@ -38,7 +38,7 @@ public class FastTrack extends TimerDeviceWithProfile {
   }
 
   public static Profile profile() {
-    Profile profile = Profile.forTimer("FastTrack K- or Q-series", "FastTrack-K")
+    return Profile.forTimer("FastTrack K- or Q-series", "FastTrack-K")
         .params(SerialPort.BAUDRATE_9600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
@@ -56,28 +56,32 @@ public class FastTrack extends TimerDeviceWithProfile {
         // RE: Reset eliminator mode
         // N1: "new" format
         // N2: enhanced format
-        // RF: return features
         .setup(Flag.skip_enhanced_format.value()
-               ? new String[]{"RE", "N1", "RF"}
-               // Q1 timer also supports an "N3" mode, which allows timers longer
+               ? new String[]{"RE", "N1"}
+               // Q1 timer also supports an "N3" mode, which allows times longer
                // than 10 seconds.
-               : new String[]{"RE", "N1", "N2", "RF"})
+               : new String[]{"RE", "N1", "N2"})
+        // RF: return features
+        //   8th bit Sequence of Finish K3 only
+        //   7th bit Countdown Clock
+        //   6th bit Laser Reset from computer
+        //   5th bit Force End the race and send results
+        //   4th bit Eliminator mode
+        //   3rd bit Reverse Lanes
+        //   2nd bit Mask Lanes
+        //   1st bit Serial race data option
+        .setup("RF", new Profile.Detector(
+               "^[01][01][01]0[01] *[01][01][01]1$",
+               Event.FASTTRACK_NO_LASER_RESET, 1))
         .match(" *([A-Z])=(\\d+\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .heat_prep("MG", "M", 'A')
         .gate_watcher("RG" /* Read start switch condition */,
-                      new Profile.Detector("RG0", Event.GATE_OPEN),
-                      new Profile.Detector("RG1", Event.GATE_CLOSED),
+                      new Profile.Detector("^RG0|0$", Event.GATE_OPEN),
+                      new Profile.Detector("^RG1|1$", Event.GATE_CLOSED),
                       // An "X" after RG means option disabled
                       new Profile.Detector("^X$",
-                          Event.GATE_WATCHER_NOT_SUPPORTED))
-        .remote_start(false, "LG");
-
-    if (Flag.fasttrack_automatic_gate_release.value()) {
-      profile.remote_start.has_remote_start = true;
-    } else {
-      profile.during(StateMachine.State.MARK, "LR");
-    }
-
-    return profile;
+                                           Event.GATE_WATCHER_NOT_SUPPORTED))
+        .remote_start("fasttrack_has_automatic_gate_release", "LG")
+        .during(StateMachine.State.MARK, "fasttrack_poll_mark", "LR");
   }
 }

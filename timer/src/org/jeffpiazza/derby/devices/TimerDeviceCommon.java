@@ -278,6 +278,7 @@ public abstract class TimerDeviceCommon
                                     RacingStateMachine.State newState)
       throws SerialPortException;
 
+  // FastTrackLegacy is the only caller for this
   protected void setGateStateNotKnowable() {
     rsm.setGateStateNotKnowable();
     gateWatcher = null;

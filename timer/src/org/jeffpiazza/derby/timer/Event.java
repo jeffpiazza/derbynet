@@ -24,7 +24,10 @@ public enum Event {
   GATE_WATCHER_NOT_SUPPORTED,
   // Some flag changes can affect timer profiles; existing TimerDeviceWithProfile
   // instances should reload the profile.
-  PROFILE_UPDATED
+  PROFILE_UPDATED,
+  // Some FastTrack timers may not support "LR" laser reset command, which we
+  // try to send during MARK
+  FASTTRACK_NO_LASER_RESET
   ;
 
   public static interface Handler {

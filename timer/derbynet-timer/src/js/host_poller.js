@@ -13,10 +13,21 @@ class HostPoller {
   // This URL is shared with role_finder.
   static url = 'action.php';
 
+  // Set true between the start of an ajax call to the host and its completion.
+  message_in_flight = false;
+  // The Date.now() value at which the next heartbeat message should go if no
+  // other message gets sent sooner.  If more than HEARTBEAT_PACE ms passes
+  // after next_message_time with no heartbeat sent, we report being "overdue",
+  // which means the timer events aren't running at full pace.
   next_message_time = 0;
+
   identified = false;
   confirmed = true;
 
+  // If the host detects timer messages coming from two different sources, it
+  // sends a <competing/> element in the xml response.  We'll show a
+  // #competing-modal dialog box in that event, and set this flag to suppress
+  // sending more messages.
   competing = false;
 
   remote_start = false;
@@ -34,7 +45,7 @@ class HostPoller {
   }
 
   async heartbeat() {
-    if (Date.now() >= this.next_message_time) {
+    if (!this.message_in_flight && Date.now() >= this.next_message_time) {
       if (!this.identified) {
         this.sendMessage({action: 'timer-message',
                           message: 'HEARTBEAT',
@@ -108,26 +119,36 @@ class HostPoller {
       // arbitrary delays in responding to timeouts.
       msg['overdue'] = now - this.next_message_time;
     }
-    this.next_message_time = now + HEARTBEAT_PACE;
-    g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
     if (msg?.message != 'HEARTBEAT') {
       console.log('sendMessage', msg);
     }
     if (this.competing) {
+      this.next_message_time = now + HEARTBEAT_PACE;
+      g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
       console.log('Squelching message to host');
     } else {
+      this.message_in_flight = true;
       $.ajax(HostPoller.url,
              {type: 'POST',
               data: msg,
+              // decodeResponse also clears message_in_flight and sets
+              // next_message_time
               success: this.decodeResponse.bind(this),
               error: function() {
                 console.error('sendMessage fails');
+                this.message_in_flight = false;
+                this.next_message_time = now + HEARTBEAT_PACE;
+                g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
               }
              });
     }
   }
 
   decodeResponse(response) {
+    this.message_in_flight = false;
+    this.next_message_time = Date.now() + HEARTBEAT_PACE;
+    g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);
+
     response = response.documentElement;
     var nodes;
     if ((nodes = response.getElementsByTagName("remote-log")).length > 0) {

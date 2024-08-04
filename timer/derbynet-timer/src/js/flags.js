@@ -22,6 +22,10 @@ class Flag {
     "delay-reset-after-race", 10,
     "How long after race over before timer will be reset, default 10s.");
 
+  static remote_start_starts_heat = new Flag(
+    "remote-start-starts-heat", false,
+    "Triggering a remote start gets counted as the start of the heat for DNFs");
+
   static newline_expected_ms = new Flag(
     "newline-expected-ms", 200,
     "After this many milliseconds, assume an unterminated line"
@@ -38,37 +42,14 @@ class Flag {
 
   static no_gate_watcher = new Flag(
     "no-gate-watcher", false,
-    "Disable interrogation of timer's gate state.")
-    .on_apply(function(v) {
-      console.log('no-gate-watcher flag changed to', v, Flag.no_gate_watcher.value);
-      // In Java, changing this flag sends a PROFILE_UPDATED event.
-      TimerEvent.send('GATE_WATCHER_CHANGED');
-    });
+    "Disable interrogation of timer's gate state.");
 
   static reset_after_start = new Flag(
     "reset-after-start", 11,
     "Reset timer <nsec> seconds after heat start, default 11.  Set 0 for never.");
 
   static fasttrack_automatic_gate_release = new Flag(
-    "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed")
-    .on_apply(function(v) {
-      var profiles = all_profiles();
-      for (var i = 0; i < profiles.length; ++i) {
-        if (profiles[i].key == "FastTrack-K") {
-          if (v) {
-            profiles[i].remote_start.has_remote_start = true;
-            profiles[i].poll = {};
-          } else {
-            profiles[i].remote_start.has_remote_start = false;
-            profiles[i].poll = {"MARK": {"commands": ["LR"]}};
-          }
-          break;
-        }
-      }
-      if (g_timer_proxy && g_host_poller) {
-        g_host_poller.offer_remote_start(g_timer_proxy.has_remote_start());
-      }
-    });
+    "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed");
 
   static dtr_gate_release = new Flag(
     "dtr-gate-release", false, "EXPERIMENTAL Offer remote start via DTR signal (SCI device or similar)")
