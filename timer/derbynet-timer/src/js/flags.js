@@ -95,7 +95,7 @@ class Flag {
 
   assign(v) {  // v is a string
     if (this.type == 'bool') {
-      this.value = (v == 'true');
+      this.value = (v == true || v == 'true');
     } else if (this.type == 'int') {
       this.value = parseInt(v);
     } else {

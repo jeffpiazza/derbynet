@@ -176,6 +176,99 @@ async function update_ports_list() {
   }
 }
 
+function handle_timer_settings_button() {
+  $.ajax('action.php',
+         {type: 'GET',
+          data: {query: 'timer.settings'},
+          success: function(data) {
+            open_timer_settings_modal(data);
+          }});
+}
+
+function open_timer_settings_modal(data) {
+  var flags = Flag._all_flags;
+  $("#timer-settings-table").empty();
+  for (var i = 0; i < flags.length; ++i) {
+    var f = flags[i];
+    $("#timer-settings-table").append(
+      $("<tr/>").append($("<td class='settings-flag'/>").text(f.name)));
+    $("#timer-settings-table").append(
+      $("<tr/>").append($("<td class='settings-desc'/>").text(f.description)));
+    var td = $("<td class='settings-value'/>");
+    make_flag_control(f, td);
+    $("#timer-settings-table").append($("<tr/>").append(td));
+  }
+
+  flipswitch($("#timer-settings-modal").find("input[type='checkbox']"));
+  mobile_select_refresh($("#timer-settings-modal select"));
+
+  show_modal("#timer-settings-modal")
+}
+
+// Copied from timer-test.js
+function make_flag_control(f, td) {
+  var t = f.type;
+  if (t == 'bool') {
+    td.append($('<input type="checkbox" class="flipswitch"'
+                + ((f.value && (f.value != 'false')) ? ' checked="checked"' : '')
+                + '/>')
+              .attr('data-flag', f.name)
+              .on('change', on_flag_change_bool));
+  } else if (t == 'string' || t == 'int' || t == 'long') {
+    // Rather than send each character-by-character change, ask the user to
+    // click a button to send the change or cancel it.
+    td.append($("<input type='text'/>")
+              .attr('data-flag', f.name)
+              .attr('value', f.value)
+              .attr('original', f.value)
+              .on('input change', on_flag_input_text)
+              .css('width', '160px'));  // TODO
+    td.append($("<div class='controls hidden'></div>")
+              .append($("<img src='img/small-check.png'/>").on('click', on_flag_check))
+              .append("&nbsp;")
+              .append($("<img src='img/small-cross.png'/>").on('click', on_flag_cross)));
+  } else {
+    td.text(f.getAttribute('value'));
+  }
+  return td;
+}
+function on_flag_change_bool(evt) {
+  var flag = Flag.find($(evt.target).attr('data-flag'));
+  if (flag) {
+    flag.assign($(evt.target).is(':checked'));
+    Flag.sendFlagsMessage(g_host_poller);
+  } else {
+    console.log('on_flag_change_bool: flag not found for ', evt.target);
+  }
+}
+
+// Expose check and cross controls for user.
+function on_flag_input_text(evt) {
+  var target = $(evt.target);
+  target.closest('td').find('div.controls')
+    .toggleClass('hidden', target.val() == target.attr('original'));
+}
+// Commit a changed text/int/long flag
+function on_flag_check(evt) {
+  var target = $(evt.target);
+  var input = target.closest('td').find('input[type="text"]');
+  var flag = Flag.find(input.attr('data-flag'));
+  if (flag) {
+    flag.assign(input.val());
+    input.attr('original', input.val());
+    on_flag_input_text({target: input});  // Hide the check/cross controls
+    Flag.sendFlagsMessage(g_host_poller);
+  } else {
+    console.log('on_flag_check: flag not found for ', input);
+  }
+}
+function on_flag_cross(evt) {
+  var target = $(evt.target);
+  var input = target.closest('td').find('input[type="text"]');
+  input.val(input.attr('original'));
+  on_flag_input_text({target: input});  // Hide the check/cross controls
+}
+
 $(function() {
   var isOpen = false;
   TimerEvent.register({

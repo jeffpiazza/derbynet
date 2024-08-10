@@ -20,6 +20,7 @@ function create_timer_settings_table() {
   run_sql_script('timer-settings');
 }
 
+// Refresh the TimerSettings table with flag values reported from the timer.
 function decode_timer_flags($params) {
   global $db;
   try {
@@ -57,6 +58,10 @@ function decode_timer_flags($params) {
   }
 }
 
+// This gets called as part of the response to each timer-message.  Any pending
+// flag values get sent to the timer, and the pending value cleared.  Then we'll
+// ask the timer to send a full slate of flags back to the server, in order to
+// refresh the TimerSettings table.
 function send_timer_assignments() {
   global $db;
   try {
@@ -92,6 +97,9 @@ function send_timer_assignments() {
       execute_once('UPDATE TimerSettings SET pending = NULL');
       execute_once('DELETE FROM TimerSettings WHERE kind = :kind',
                    array(':kind' => 'pending-device'));
+      // After sending any changes, ask the timer to send back a FLAGS message
+      // to report the full set of flag values, to be recorded in
+      // decode_timer_flags.
       echo "  <query/>\n";
     }
   } catch (PDOException $pdo) {

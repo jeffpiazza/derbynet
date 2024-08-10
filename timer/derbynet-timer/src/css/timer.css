@@ -142,8 +142,54 @@
   text-align: center;
 }
 
-#probe-buttons-div {
+#timer-settings-modal {
+  width: 400px;
+  height: 500px;
 
+  padding-top: 50px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+#timer-settings-modal h3 {
+    text-align: center;
+}
+
+#timer-settings-details {
+    height: 350px;
+    overflow-y: scroll;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: solid #c0c0c0 3px;
+    margin-bottom: 30px;
+}
+td.settings-flag {
+    border-bottom: none;
+    font-weight: bold;
+    padding: 5px;
+}
+td.settings-desc {
+    border-top: none;
+    border-bottom: none;
+    padding: 5px;
+}
+td.settings-value {
+    border-top: none;
+}
+
+#probe-buttons-div {
+}
+#probe-button {
+    display: inline;
+    width: 210px;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+#timer-settings-button {
+    display: inline;
+    /* width: 50px; */
+    vertical-align: middle;
+    position: relative;
+    bottom: 3px;
 }
 
 #connection-status-div {

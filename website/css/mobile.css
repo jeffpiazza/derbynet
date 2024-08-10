@@ -145,6 +145,7 @@ div.mselect-inner {
   color: #333;
   text-shadow: 0 1px 0 #f3f3f3;
 }
+/* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option#styling_with_css */
 div.mselect-inner:hover {
   background-color: #ededed;
 }

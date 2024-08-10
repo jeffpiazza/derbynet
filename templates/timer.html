@@ -140,6 +140,8 @@ if (!g_standalone) {
 
   --><div id="probe-buttons-div" class="block_buttons serial">
       <input id="probe-button" type="button" value="Scan" onclick="on_scan_click()"/>
+      <img id="timer-settings-button" src="img/gear_icon.png"
+             onclick="handle_timer_settings_button()">
     </div>
 
   <div id="status-container">
@@ -163,6 +165,16 @@ if (!g_standalone) {
   <p>Please click to start scanning serial ports:</p>
   <input id="gesture-button" type="button" class="mini"
       value="Start Scanning" onclick="on_gesture_click()"/>
+</div>
+
+<div id="timer-settings-modal" class="modal_dialog hidden block_buttons">
+  <h3>Timer Settings</h3>
+  <div id="timer-settings-details">
+    <table id="timer-settings-table">
+    </table>
+  </div>
+  <input id="gesture-button" type="button" class="mini"
+      value="Close" onclick='close_modal("#timer-settings-modal");'/>
 </div>
 
 <div id="no-serial-api-modal" class="modal_dialog hidden block_buttons">
