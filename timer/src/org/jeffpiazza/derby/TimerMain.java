@@ -33,6 +33,7 @@ public class TimerMain {
   }
 
   public static void main(String[] args) {
+    RuntimeCondition.Initialize();
     String[] customArgs = Customizer.getCustomArgs();
     if (customArgs != null) {
       int consumed = Flag.parseCommandLineFlags(customArgs, 0);

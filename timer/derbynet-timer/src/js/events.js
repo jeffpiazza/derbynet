@@ -25,7 +25,8 @@ class TimerEvent {
     OVERDUE,  // Giving up on overdue results
     LANE_COUNT, // Some timers report how many lanes
     START_RACE,  // Remote start requested
-    LOST_CONNECTION
+    LOST_CONNECTION,
+    FASTTRACK_NO_LASER_RESET
   */
 
   static handlers = [];

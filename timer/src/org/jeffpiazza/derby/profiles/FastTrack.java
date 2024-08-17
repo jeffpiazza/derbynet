@@ -71,8 +71,8 @@ public class FastTrack extends TimerDeviceWithProfile {
         //   2nd bit Mask Lanes
         //   1st bit Serial race data option
         .setup("RF", new Profile.Detector(
-               "^[01][01][01]0[01] *[01][01][01]1$",
-               Event.FASTTRACK_NO_LASER_RESET, 1))
+               "^[01][01]0[01] *[01][01][01]1$",
+               Event.FASTTRACK_NO_LASER_RESET))
         .match(" *([A-Z])=(\\d+\\.\\d+)([^ ]?)", Event.LANE_RESULT, 1, 2)
         .heat_prep("MG", "M", 'A')
         .gate_watcher("RG" /* Read start switch condition */,
