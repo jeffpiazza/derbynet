@@ -29,6 +29,12 @@ if (isset($_GET['mode'])) {
   $mode = $_GET['mode'];
 }
 
+$subdir = '';
+if (isset($_GET['subdir']) && is_acceptable_subdir($_GET['subdir'])) {
+  $subdir = $_GET['subdir'];
+  json_out('subdir', $subdir);
+}
+
 $racerid = 0;
 if (isset($_GET['racerid'])) {
   $racerid = $_GET['racerid'];
@@ -43,10 +49,15 @@ if (isset($_GET['classids'])) {
 if ($mode == 'slide') {
   $f = $_GET['file'];
 
-  $results = next_slides($f);
+  $results = next_slides($f, $subdir);
   if (count($results) > 0) {
     json_out('debug-results', $results);
-    json_out('photo', array('photo' => 'slide.php/'.rawurlencode($results[0]),
+    // next_slides returns filenames only, not paths relative to the slides
+    // directory.
+    if (!empty($subdir)) {
+      $subdir = $subdir.DIRECTORY_SEPARATOR;
+    }
+    json_out('photo', array('photo' => 'slide.php/'.$subdir.rawurlencode($results[0]),
                             'next' => array('mode' => 'slide',
                                             'file' => $results[0])));
     $done = true;

@@ -59,13 +59,13 @@ function mainphoto_onload(img) {
     if (response.hasOwnProperty('name')) {
       var subtitle = $("<p class='subtitle'/>").text(response['name']).appendTo(next);
       if (response.hasOwnProperty('carnumber')) {
-          subtitle.prepend(': ')
-              .prepend($("<span class='carno'/>").text(response['carnumber']));
+        subtitle.prepend(': ')
+                .prepend($("<span class='carno'/>").text(response['carnumber']));
       }
       if (response.hasOwnProperty('carname')) {
         subtitle.append("<br/>")
-              .append($("<i/>").text(response['carname']));
-      }            
+                .append($("<i/>").text(response['carname']));
+      }
     }
 
     if (response.hasOwnProperty('inset')) {
@@ -77,8 +77,11 @@ function mainphoto_onload(img) {
     }
   }
 
-  function photo_poll() {
+  function slide_poll() {
     next_query.query = 'slide.next';
+    if (kiosk_parameters.subdir) {
+      next_query.subdir = kiosk_parameters.subdir;
+    }
     var classids = kiosk_parameters.classids;
     if (classids && classids.length > 0) {
       next_query.classids = classids.join(',');
@@ -116,6 +119,6 @@ function mainphoto_onload(img) {
                   'next': {'mode': 'slide',
                            'file': ''}});
 
-    setInterval(photo_poll, 10000);
+    setInterval(slide_poll, 10000);
   });
 }());

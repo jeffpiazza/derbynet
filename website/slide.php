@@ -14,10 +14,17 @@ require_once('inc/photo-config.inc');
 // slide.php/my-great-slide.png
 
 $exploded = explode('/', path_info());
+
+if (count($exploded) == 3 && is_acceptable_subdir($exploded[2])) {
+  $exploded[1] = $exploded[1].DIRECTORY_SEPARATOR.$exploded[2];
+  array_pop($exploded);
+}
+
 if (count($exploded) != 2) {
   // Not for probing around the file system
   exit(1);
 }
+
 $glob = $exploded[1];
 if ($glob == 'title') {
   $glob = 'title.*';

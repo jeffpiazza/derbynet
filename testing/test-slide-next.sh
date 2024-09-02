@@ -4,13 +4,32 @@ BASE_URL=$1
 set -e -E -o pipefail
 source `dirname $0`/common.sh
 
-# TODO Need a GPRM-schema test
 
 curl_postj action.php "action=database.purge&purge=schedules" | check_jsuccess
 curl_postj action.php "action=racer.bulk&who=all&what=checkin&value=1" | check_jsuccess
 
+curl_postj action.php "action=test.setup&slide=slide1.png" | check_jsuccess
+curl_postj action.php "action=test.setup&slide=slide2.png" | check_jsuccess
+curl_postj action.php "action=test.setup&subdir=alt&slide=alt1.png" | check_jsuccess
+curl_postj action.php "action=test.setup&subdir=alt&slide=alt2.png" | check_jsuccess
+
 curl_getj "action.php?query=slide.next" | \
     jq '    (.photo.photo | test("slide.php/title"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&mode=slide" | \
+    jq '    (.photo.photo | test("slide.php/slide1"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&mode=slide&file=slide1.png" | \
+    jq '    (.photo.photo | test("slide.php/slide2"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&mode=slide&file=slide2.png" | \
+    jq '    (.photo.photo | test("photo.php/car/file/cropped/Car-1637.jpg/.*"))
+        and (.photo.inset | test("photo.php/head/file/cropped/head-A.jpg/.*"))
+        and (.photo.next.mode == "racer")
+        and (.photo.next.racerid == 1)' | \
     expect_eq true
 
 curl_getj "action.php?query=slide.next&mode=racer&racerid=0" | \
@@ -91,6 +110,26 @@ curl_getj "action.php?query=slide.next&mode=racer&racerid=82" |
     expect_eq true
 
 curl_getj "action.php?query=slide.next&mode=slide&file=zzz" |
+    jq '    (.photo.photo | test("photo.php/car/file/cropped/Car-1637.jpg/.*"))
+        and (.photo.inset | test("photo.php/head/file/cropped/head-A.jpg/.*"))
+        and (.photo.next.mode == "racer")
+        and (.photo.next.racerid == 1)' | \
+    expect_eq true
+
+# Alt slideshow
+curl_getj "action.php?query=slide.next&subdir=alt" | \
+    jq '    (.photo.photo | test("slide.php/title"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&subdir=alt&mode=slide" | \
+    jq '    (.photo.photo | test("slide.php/alt/alt1.png"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&subdir=alt&mode=slide&file=alt1.png" | \
+    jq '    (.photo.photo | test("slide.php/alt/alt2.png"))' | \
+    expect_eq true
+
+curl_getj "action.php?query=slide.next&subdir=alt&mode=slide&file=alt2.png" | \
     jq '    (.photo.photo | test("photo.php/car/file/cropped/Car-1637.jpg/.*"))
         and (.photo.inset | test("photo.php/head/file/cropped/head-A.jpg/.*"))
         and (.photo.next.mode == "racer")

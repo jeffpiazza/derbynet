@@ -66,6 +66,18 @@ function image_file_path($stemname) {
   return false;
 }
 
+
+// To prevent probing around the server filesystem, limit what a slides
+// subdirectory can look like.
+function is_acceptable_subdir($subdir) {
+  return $subdir != '.' &&
+         $subdir != '..' &&
+         strlen($subdir) == strspn($subdir,
+                                   'abcdefghijklmnopqrstuvwxyz'
+                                   .'0123456789!@#$%-_.'
+                                   .'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+}
+
 // $slide_glob may or may not include '*' wildcards
 function slide_file_glob($slide_glob) {
   $g = glob($slide_glob);
@@ -75,6 +87,11 @@ function slide_file_glob($slide_glob) {
   return false;
 }
 
+// This is the function used by slide.php to convert a file name or glob into a
+// full path.
+// Searches in:
+// - The slides directory in $homedir, for per-instance slides
+// - The slides directory
 function slide_file_path($slide_glob) {
   global $homedir;
   // $homedir points to the data for the particular instance
@@ -100,7 +117,9 @@ function enumerate_non_title_slides($dir, $current_slide) {
   if (is_dir($dir) && is_readable($dir)) {
     $files = scandir($dir);  // Sorted by default
     foreach ($files as $file) {
-      if ($file > $current_slide && $file[0] != '.' &&
+      if ($file > $current_slide &&
+          !is_dir($dir.DIRECTORY_SEPARATOR.$file) &&
+          $file[0] != '.' &&
           substr($file, 0, 6) != 'title.') {
         $results[] = $file;
       }
@@ -109,20 +128,65 @@ function enumerate_non_title_slides($dir, $current_slide) {
   return $results;
 }
 
-// Returns full file names (not stems) that follow (alphabetically) the passed-in file name, $f.
-// Returns are returned without paths, after looking through all available slide directories.
-function next_slides($f) {
+// Returns terminal file names (not stems) that follow (alphabetically) the
+// passed-in file name, $f.  File names are returned without paths, after
+// looking through all available slide directories.
+//
+// If $subdir is passed, then /$subdir is appended to the slides directory in the search.
+// (Title slides are handled specially, and will be sought in the slides
+// subdirectory of the current Images directory, if not found elsewhere.)
+//
+// Slides are sought in:
+//  - The slides directory directly under $homedir ($homedir is set in config-database.inc
+//      as part of the per-instance configuration).
+//  - The slides directory adjacent to the config file location (applicable to
+//  - all instances on the server)
+function next_slides($f, $subdir = '') {
   global $homedir;
+  if (empty($subdir)) {
+    $slides_dir = 'slides';
+  } else {
+    $slides_dir = 'slides'.DIRECTORY_SEPARATOR.$subdir;
+  }
+
   $result = array_merge(
     // Instance-specific directory
     (!isset($homedir) ? array() :
-     enumerate_non_title_slides($homedir.DIRECTORY_SEPARATOR.'slides', $f)),
+     enumerate_non_title_slides($homedir.DIRECTORY_SEPARATOR.$slides_dir, $f)),
     // Global data directory
-    enumerate_non_title_slides(data_folder_file_path('slides'), $f)
+    enumerate_non_title_slides(data_folder_file_path($slides_dir), $f)
     // Image sets provide ONLY a title slide, so no need to look there.
   );
   sort($result);
   return $result;
 }
 
+function enumerate_subdirectories($dir) {
+  $results = array();
+  if (is_dir($dir) && is_readable($dir)) {
+    $files = scandir($dir);  // Sorted by default
+    foreach ($files as $file) {
+      if (is_dir($dir.DIRECTORY_SEPARATOR.$file) &&
+          $file[0] != '.') {
+        $results[] = $file;
+      }
+    }
+  }
+  return $results;
+}
+
+
+// Returns a list of slides subdirectories, representing alternative slideshow slides.
+function find_alternate_slides_directories() {
+  global $homedir;
+  $result = array_merge(
+    // Instance-specific directory
+    (!isset($homedir) ? array() :
+     enumerate_subdirectories($homedir.DIRECTORY_SEPARATOR.'slides')),
+    // Global data directory
+    enumerate_subdirectories(data_folder_file_path('slides'))
+  );
+  sort($result);
+  return $result;
+}
 ?>

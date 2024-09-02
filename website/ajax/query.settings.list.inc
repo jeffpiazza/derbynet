@@ -12,8 +12,7 @@ if (isset($_GET['key'])) {
   $stmt = $db->prepare('SELECT itemkey, itemvalue FROM RaceInfo');
   $stmt->execute(array());
   foreach ($stmt as $row) {
-    $settings[] = array('key' => $row['itemkey'],
-                        'value' => $row['itemvalue']);
+    $settings[$row['itemkey']] = $row['itemvalue'];
   }
 }
 

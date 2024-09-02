@@ -134,3 +134,14 @@ p.parameters {
   color: #333 /*{a-bup-color}*/;
   text-shadow: 0 /*{a-bup-shadow-x}*/ 1px /*{a-bup-shadow-y}*/ 0 /*{a-bup-shadow-radius}*/ #f3f3f3 /*{a-bup-shadow-color}*/;
 }
+
+#slideshow_subdir_div {
+  margin-top: 20px;
+}
+#slideshow_div {
+  margin-bottom: 20px;
+}
+
+#classids_div {
+  margin-bottom: 20px;
+}
