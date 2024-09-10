@@ -4,6 +4,7 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 session_write_close();
 require_once('inc/banner.inc');
+require_once('inc/path-info.inc');
 require_once('inc/scenes.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/standings.inc');
@@ -138,12 +139,29 @@ var g_url = <?php echo json_encode($urls[0],
   </form>
 </div>
 
+<!-- Used for configuring both slideshow and please-check-in -->
 <div id='config_classes_modal' class="modal_dialog hidden block_buttons">
   <form>
-    <div id="title_div">
-      <label for="title_text">Title text:</label>
-      <input type="text" id="title_text"/>
+    <div id="slideshow_div">
+      <div>
+        <label for="title_text">Title text:</label>
+        <input type="text" id="title_text"/>
+      </div>
+      <div id="slideshow_subdir_div">
+         <?php
+             $subdirs = find_alternate_slides_directories();
+             if (count($subdirs) > 0) {
+               echo "<select id='slideshow_subdir'>\n";
+               echo "<option value=''>(Default slideshow)</option>\n";
+               foreach ($subdirs as $sub) {
+                 echo "<option>".htmlspecialchars($sub, ENT_QUOTES, 'UTF-8')."</option>\n";
+               }
+               echo "</select>\n";
+             }
+         ?>
+      </div>
     </div>
+    <div id="classids_div">
     <?php
         $stmt = $db->prepare('SELECT classid, class'
                              .' FROM Classes'
@@ -166,6 +184,7 @@ var g_url = <?php echo json_encode($urls[0],
           echo "<br/>\n";
         }
     ?>
+    </div>
     <input type="submit" value="Configure Kiosk"/>
     <input type="button" value="Cancel"
       onclick='close_modal("#config_classes_modal");'/>
