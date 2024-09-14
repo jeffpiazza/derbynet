@@ -113,6 +113,8 @@ run_tests() {
     # Resets database
     `dirname $0`/test-partitions.sh "$BASE_URL"
     `dirname $0`/test-racing-groups.sh "$BASE_URL"
+    # Resets database
+    `dirname $0`/test-preferences.sh "$BASE_URL"
 
 ############################## Master Schedule ##############################
     RESET_SOURCE=ex2 `dirname $0`/reset-database.sh "$BASE_URL"

@@ -318,8 +318,8 @@ function set_preferences($content) {
                         .' FROM Partitions p'
                         .' WHERE 1 <> (SELECT COUNT(*)'
                         .'             FROM Partitions q'
-                        .'             WHERE q.sortorder = p.sortorder - 1)') <> 0) {
-    json_failure('Partition sortorder fails.');
+                        .'             WHERE q.sortorder = p.sortorder - 1)') <> 1) {
+    json_failure('partition-suborder', 'Partition sortorder fails.');
     return;
   }
 
