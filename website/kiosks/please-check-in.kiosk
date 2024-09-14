@@ -9,16 +9,50 @@
 <?php require('inc/kiosk-poller.inc'); ?>
 <!-- script type="text/javascript" src="js/please-check-in.js"></script -->
 <script type="text/javascript">
- // Instead of dynamically tracking check-ins, we just reload the page every 30
- // seconds to update the list of missing racers.
-$(function () { setInterval(function() { location.reload(true); }, 30000); });
+//<![CDATA[
+$(function () {
+  // Instead of dynamically tracking check-ins, we just reload the page every 30
+  // seconds to update the list of missing racers.
+  setInterval(function() { location.reload(true); }, 30000);
+
+  var visible_height = $(window).height() - $('.banner').height() - $('.kiosk_heading').height();
+  if ($('.wanted_container').height() < visible_height) {
+    // k columns (k = 1, 2, or 3) would take 4/k * container height, so we want smallest k that
+    // 4/k * container_height < visible_height, or
+    // 4 * container_height / visible_height < k
+    var k = Math.ceil(4 * $('.wanted_container').height() / visible_height);
+    if (k < 4) {
+      // The original layout has 4 columns with 4vw column-gap, leaving 22vw per
+      // column.  If we're reducing the number of columns, we can afford to make
+      // them a bit wider, 29vw for 2 or 3 columns, 32vw for a single column.
+      var vw = Math.max(32, k * 29);
+      $('.wanted_container').css({'column-count': k,
+                                  'width': vw + 'vw',
+                                  'margin-left': ((100 - vw) / 2) + 'vw'});
+    }
+  }
+  if ($('.wanted_container').height() < visible_height) {
+    var font = parseInt($('.wanted_container').css('font-size'), 10);
+    var adjusted = Math.floor(Math.min(2, visible_height / $('.wanted_container').height()) * font);
+    // Adjusted accounts for the increased font height, but not for increased
+    // width, which leads to more word wrapping.
+    $('.wanted_container').css('font-size', adjusted);
+    while ($('.wanted_container').height() > visible_height) {
+      --adjusted;
+      $('.wanted_container').css('font-size', adjusted);
+    }
+  }
+  console.log('After adjustment: wanted_container height', $('.wanted_container').height(),
+              'visible_height', visible_height);
+});
+//]]>
 </script>
 <style>
 body { overflow: hidden; }
 .wanted_container {
   position: absolute;
   top: 128px;
-  column-count:4;
+  column-count: 4;
   column-width:22vw;
   column-gap: 4vw;
   }
@@ -46,6 +80,18 @@ body { overflow: hidden; }
 require_once('inc/data.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/banner.inc');
+  // When there are racers yet to check in, the generated page structure looks like:
+  //
+  // <div class='kiosk_heading'>not yet checked in:</div>
+  //
+  // <div class='wanted_container'>             column-count=4, width=22vw, gap=4vw
+  //   <div class='kiosk_wanted'>               - repeated for each group
+  //     <p class='class_heading'> Tigers </p>
+  //     <ul class='wanted_list'>     margin-top: 0px; margin-bottom: 16px;
+  //       <li>...  font-size 1.5em
+  //     </ul>
+  //   </div>
+  // </div>
 $params = kiosk_parameters();
 $sql = 'SELECT class, Classes.classid, lastname, firstname'
 	.' FROM RegistrationInfo'
@@ -73,7 +119,7 @@ foreach ($stmt as $rs) {
 	  echo '<div class="kiosk_heading">The following participants have NOT yet checked in:</div>';
 	  echo '<div class="wanted_container">'."\n";
     }
-    echo '<div class="kiosk_wanted">'."\n";
+    echo '<div class="wanted_group">'."\n";
     echo '<p class="class_heading">'.htmlspecialchars($classname, ENT_QUOTES, 'UTF-8').'</p>'."\n";
     $prev_classid = $classid;
     echo '<ul class="wanted_list">'."\n";
