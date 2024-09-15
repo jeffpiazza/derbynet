@@ -50,7 +50,7 @@ div.heat_time {
 }
 
 div.car {
-  height: 29vh; /* See columnar-now-racing.inc */
+  height: 29vh; /* See columnar-now-racing.inc, and div.car img clause, below. */
   position: relative;
 }
 div.car img {
@@ -58,6 +58,7 @@ div.car img {
   margin-left: auto;
   margin-right: auto;
   object-fit: scale-down;
+  max-height: 29vh; /* From div.car, above. */
 }
 /* This is the field for the car number (only) */
 div.car div.number {
@@ -98,13 +99,14 @@ div.car div.place {
   /* Becomes semi-transparent via animation after appearing */
 }
 div.racer {
-  height: 38vh; /* See columnar-now-racing.inc */
+  height: 38vh; /* See columnar-now-racing.inc, and div.racer img clause, below */
   position: relative;
 }
 div.racer img {
   margin-left: auto;
   margin-right: auto;
   object-fit: scale-down;
+  max-height: 30vh;  /* From div.racer, above */
 }
 div.racer div.note {
   display: none;  /* becomes display: block if there's text. */
