@@ -288,11 +288,16 @@ function update_timer_details(details) {
 
 $(function() {
   var heat_showing = -1;
-  setInterval(function() {
+  var poll_interval = setInterval(function() {
     $.ajax('action.php',
            {type: 'GET',
             data: {query: 'poll.timer.test'},
             success: function(data) {
+              if (data["cease"]) {
+                clearInterval(poll_interval);
+                window.location.href = '../index.php';
+                return;
+              }
               var tstate = data["timer-state"];
               var current = data["current-heat"];
               var details = data["timer-details"];

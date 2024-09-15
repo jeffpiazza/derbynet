@@ -376,6 +376,7 @@ $(function() {
   var running = false;
   var current_heat;
   var next_heat;
+  var interval;
 
   function poll_for_chart() {
     if (!running) {
@@ -386,6 +387,11 @@ $(function() {
                      values: 'ondeck,rounds,current-heat,current-reschedule'},
               success: function(json) {
                 if (g_resized) {
+                  if (data["cease"]) {
+                    clearInterval(interval);
+                    window.location.href = '../index.php';
+                    return;
+                  }
                   g_resized = false;
                   repopulate_schedule(json);
                   current_heat = json['current-heat'];
@@ -401,7 +407,7 @@ $(function() {
              });
     }
   }
-  setInterval(poll_for_chart, 1000);
+  interval = setInterval(poll_for_chart, 1000);
   poll_for_chart();
 });
 

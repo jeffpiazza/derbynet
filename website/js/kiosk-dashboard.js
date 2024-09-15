@@ -14,6 +14,10 @@ function poll_kiosk_all() {
          {type: 'GET',
           data: {query: 'poll.kiosk.all'},
           success: function(data) {
+            if (data["cease"]) {
+              window.location.href = '../index.php';
+              return;  // Without setting the next timeout
+            }
             setTimeout(poll_kiosk_all, 2000);
             process_polled_data(data);
           },

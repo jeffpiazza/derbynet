@@ -1,11 +1,16 @@
 
 
 $(function() {
-  setInterval(function() {
+  var intv = setInterval(function() {
     $.ajax("action.php",
            {type: 'GET',
             data: {query: 'poll.results'},
             success: function(data) {
+              if (data["cease"]) {
+                clearInterval(intv);
+                window.location.href = '../index.php';
+                return;
+              }
               process_newresults(data);
             }
            });

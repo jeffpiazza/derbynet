@@ -3,12 +3,18 @@
 
 // Maps partitionid to highest existing carnumber for that partitionid
 g_next_carnumbers = [];
+g_poll_max_interval = 0;
 function poll_max_carnumbers() {
   $.ajax(g_action_url,
          {type: 'GET',
           data: {query: 'poll',
                  values: 'car-numbers'},
           success: function (data) {
+            if (data["cease"]) {
+              clearInterval(g_poll_max_interval);
+              window.location.href = '../index.php';
+              return;
+            }
             if (data.hasOwnProperty('car-numbers')) {
               read_next_carnumbers(data['car-numbers']);
             }
@@ -27,7 +33,7 @@ function next_carnumber(partitionid) {
   return g_next_carnumbers[partitionid] || 999;
 }
 $(function() {
-  setInterval(poll_max_carnumbers, 10000);
+  g_poll_max_interval = setInterval(poll_max_carnumbers, 10000);
   poll_max_carnumbers();
 
   $("#edit_partition").on('change', function(event) {

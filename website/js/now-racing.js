@@ -275,87 +275,34 @@ var FlyerAnimation = {
   }
 };
 
-var Poller = {
-  // Timestamp when the last polling request was sent; used by watchdog to
-  // detect a failure to queue a new request.
-  time_of_last_request: 0,
+var g_row_height;
+$(function() {
+  Poller.build_request = function(roundid, heat) {
+    // TODO It shouldn't be necessary to send row-height to the server;
+    // instead just construct a racer photo URL from the returned racerid.
+    g_row_height = 0;
+    var photo_cells = $('td.photo');
+    var border = parseInt(photo_cells.css('border-bottom-width'));
 
-  // Records the identifier of the timeout that will send the next polling
-  // request, or 0 if no request is queued.
-  id_of_timeout: 0,
-
-  // If we're being shown within a replay iframe, suspend polling while a replay
-  // is showing and we're not visible; resume when we have the display again.
-  suspended: false,
-
-  // Queues the next poll request when processing of the current request has
-  // completed, including animations, if any.  Because animations are handled
-  // asynchronously, with completion callbacks, we can't just start the next
-  // request when process_now_racing_element returns.
-  queue_next_request: function(roundid, heat) {
-    if (this.id_of_timeout != 0) {
-      console.log("Trying to queue a polling request when there's already one pending; ignored.");
-    } else {
-      Poller.id_of_timeout = setTimeout(function() {
-        Poller.id_of_timeout = 0;
-        Poller.poll_for_update(roundid, heat);
-      }, 500);  // 0.5 sec
+    if (photo_cells.length > 0) {
+      // Position of the first td.photo may get adjusted
+      g_row_height =
+        Math.floor(($(window).height() - photo_cells.position().top) / photo_cells.length) - border;
     }
-  },
 
-  poll_for_update: function(roundid, heat) {
-    if (typeof(simulated_poll_for_update) == "function") {
-      simulated_poll_for_update();
-    } else if (this.suspended) {
-      Poller.queue_next_request(roundid, heat);
-    } else {
-      // TODO It shouldn't be necessary to send row-height to the server;
-      // instead just construct a racer photo URL from the returned racerid.
-      var row_height = 0;
-      var photo_cells = $('td.photo');
-      var border = parseInt(photo_cells.css('border-bottom-width'));
-
-      if (photo_cells.length > 0) {
-        // Position of the first td.photo may get adjusted
-        row_height = Math.floor(($(window).height() - photo_cells.position().top) / photo_cells.length) - border;
-      }
-
-      this.time_of_last_request = Date.now();
-      $.ajax('action.php',
-             {type: 'GET',
-              data: {query: 'poll',
-                     values: 'current-heat,heat-results,precision,racers,' +
-                             'timer-trouble,current-reschedule',
-                     roundid: roundid,
-                     heat: heat,
-                     'row-height': row_height},
-              success: function(data) {
-                process_polling_result(data, row_height);
-              },
-              error: function() {
-                Poller.queue_next_request(roundid, heat);
-              }
-             });
-    }
-  },
-
-  // Correct operation depends on queuing a new request when we're done
-  // processing the last one, including any animations (could take a few
-  // seconds).  As a safeguard against a bug that perhaps prevents queuing the
-  // next request, the watchdog periodically tests whether one seems overdue,
-  // and may queue a new request if so.
-  watchdog: function() {
-    if (this.id_of_timeout != 0 && this.time_of_last_request + 15000 < Date.now()) {
-      console.error("Watchdog notices no requests lately, and none queued!");
-      this.queue_next_request();
-    }
-  }
-};
+    return {query: 'poll',
+            values: 'current-heat,heat-results,precision,racers,' +
+            'timer-trouble,current-reschedule',
+            roundid: roundid,
+            heat: heat,
+            'row-height': g_row_height };
+  };
+});
 
 // Walks through each of the heat-result {lane= time= place= speed=} elements,
 // in order, building a mapping from the reported place to the matching lane.
 //
-function process_polling_result(data, row_height) {
+function process_polling_result(data) {
   var precision = data.hasOwnProperty('precision') ? data.precision : 3;
   var heat_results = data["heat-results"];
   if (heat_results && heat_results.length > 0) {
@@ -386,13 +333,13 @@ function process_polling_result(data, row_height) {
         // Need to continue to poll for repeat-animation, just not
         // accept new participants for 10 seconds.
         Lineup.start_display_linger();
-        Lineup.process_new_lineup(data, row_height);
+        Lineup.process_new_lineup(data, g_row_height);
       });
     } else {
-      Lineup.process_new_lineup(data, row_height);
+      Lineup.process_new_lineup(data, g_row_height);
     }
   } else {
-    Lineup.process_new_lineup(data, row_height);
+    Lineup.process_new_lineup(data, g_row_height);
   }
 }
 

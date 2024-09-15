@@ -701,6 +701,8 @@ function process_coordinator_poll_json(json) {
                                                $("#now-racing-group-buttons").is(":empty"));
 }
 
+var g_polling_interval;
+
 function coordinator_poll() {
   if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
     $.ajax(g_action_url,
@@ -709,6 +711,11 @@ function coordinator_poll() {
                    roundid: g_current_heat.roundid,
                    heat: g_current_heat.heat},
             success: function(json) {
+              if (json["cease"]) {
+                clearInterval(g_polling_interval);
+                window.location.href = '../index.php';
+                return;
+              }
               if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
                 process_coordinator_poll_json(json);
               }
@@ -721,6 +728,6 @@ function coordinator_poll() {
 
 
 $(function() {
-  setInterval(coordinator_poll, 2000);
+  g_polling_interval = setInterval(coordinator_poll, 2000);
   coordinator_poll();
 });

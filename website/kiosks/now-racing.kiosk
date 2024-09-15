@@ -16,6 +16,7 @@ require_once('inc/banner.inc');
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript" src="js/now-racing-overlay.js"></script>
+<script type="text/javascript" src="js/now-racing-poller.js"></script>
 <script type="text/javascript" src="js/now-racing.js"></script>
 <script type="text/javascript" src="js/now-racing-adjust-fonts.js"></script>
 <?php if (@$simulated_polling_url) { ?>

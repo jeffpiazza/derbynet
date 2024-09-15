@@ -13,12 +13,17 @@ var KioskPoller = (function(KioskPoller) {
   };
 
   KioskPoller.start = function(address, kiosk_page) {
-    setInterval(function() {
+    var interval = setInterval(function() {
       $.ajax('action.php',
              {type: 'GET',
               data: {query: 'poll.kiosk',
                      address: address},
               success: function(data) {
+                if (data["cease"]) {
+                  clearInterval(interval);
+                  window.location.href = '../index.php';
+                  return;
+                }
                 var setting = data['kiosk-setting'];
                 cancel_ajax_failure();
                 $("#kiosk_name").text(setting.name);

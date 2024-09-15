@@ -20,6 +20,7 @@ $nlanes = get_lane_count();
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <?php require('inc/kiosk-poller.inc'); ?>
 <script type="text/javascript" src="js/now-racing-overlay.js"></script>
+<script type="text/javascript" src="js/now-racing-poller.js"></script>
 <script type="text/javascript" src="js/now-racing-columnar.js"></script>
 <script type="text/javascript">
 var g_number_of_lanes = <?php echo $nlanes; ?>;
