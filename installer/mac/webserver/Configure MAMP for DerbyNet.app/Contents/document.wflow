@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>520</string>
+	<string>523</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -84,10 +84,8 @@
 				</array>
 				<key>Class Name</key>
 				<string>AMAskForConfirmationAction</string>
-				<key>IgnoresInput</key>
-				<true/>
 				<key>InputUUID</key>
-				<string>B23B40AA-9336-4ACC-B417-664198F7361C</string>
+				<string>9199108E-A051-4931-AD83-94100308AC55</string>
 				<key>Keywords</key>
 				<array>
 					<string>Message</string>
@@ -97,9 +95,9 @@
 					<string>Show</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>F9F6A61C-265B-4967-BFD5-29FB89BB4E65</string>
+				<string>EFC68AD8-2FBF-47D8-9AA3-2466DE2CCEDB</string>
 				<key>UUID</key>
-				<string>D274C014-1D4B-4757-9006-A58D750ED6C8</string>
+				<string>8112ABB8-43C7-4EBB-9D3E-A4A15F6CB061</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -172,6 +170,8 @@
 						<string>4</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
@@ -236,6 +236,8 @@ APACHE_CONF_DIR=/Applications/MAMP/conf/apache
 HTTPD_CONF=$APACHE_CONF_DIR/httpd.conf
 HTTPD_SSL_CONF=$APACHE_CONF_DIR/extra/httpd-ssl.conf
 
+# Foo
+
 sed -i \
     -e "s!^ *Listen *8888!Listen 80!" \
     $HTTPD_CONF
@@ -263,6 +265,16 @@ sed -i \
     -e "/^DocumentRoot/ a\\
 SetEnv DERBYNET_CONFIG_DIR /Library/WebServer/Documents/derbynet/local\\
 " $HTTPD_CONF
+
+grep -s DERBYNET_CONFIG_DIR $HTTPD_CONF || \
+sed -i \
+  -e 's!# *\(LoadModule *socache_shmcb_module .*\)!\1!'" \
+  $HTTPD_CONF
+
+grep -s DERBYNET_CONFIG_DIR $HTTPD_CONF || \
+sed -i \
+  -e 's!# *\(LoadModule *slotmem_shm_module .*\)!\1!'" \
+  $HTTPD_CONF
 
 
 ######### SSL 
@@ -292,7 +304,8 @@ sed -i \
 # It may left over from some earlier versions of MAMP.
 sed -i \
     -e "s!^SSLMutex!#SSLMutex!" \
-   $HTTPD_SSL_CONF</string>
+   $HTTPD_SSL_CONF
+</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -316,10 +329,8 @@ sed -i \
 				</array>
 				<key>Class Name</key>
 				<string>RunShellScriptAction</string>
-				<key>IgnoresInput</key>
-				<true/>
 				<key>InputUUID</key>
-				<string>9B7E85F1-D9B3-47CE-BF47-A881115F0484</string>
+				<string>6BD01A5A-0DA5-4972-8EFB-661172478E1D</string>
 				<key>Keywords</key>
 				<array>
 					<string>Shell</string>
@@ -329,9 +340,9 @@ sed -i \
 					<string>Unix</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>48C6850F-BF94-4E50-8094-D337D58B698B</string>
+				<string>22127BE3-278E-48C3-9E5D-77E4DE61D501</string>
 				<key>UUID</key>
-				<string>9DE540BE-535D-4331-A713-BED04B9670F1</string>
+				<string>607471A2-4D35-49F7-82D3-67ABEFFF3658</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -404,10 +415,12 @@ sed -i \
 						<string>4</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>431.000000:893.000000</string>
+				<string>431.000000:866.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -473,16 +486,16 @@ sed -i \
 				<key>Class Name</key>
 				<string>AMLaunchApplicationAction</string>
 				<key>InputUUID</key>
-				<string>0C1ACE11-4448-425B-ACF2-FAD14386E18A</string>
+				<string>AFFF37CF-F71E-4200-87C0-8B9B45E50DDD</string>
 				<key>Keywords</key>
 				<array>
 					<string>File</string>
 					<string>Open</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>A26E9ADE-663F-4EAF-939B-5C519E88AC18</string>
+				<string>47355B04-737A-4C05-B6A6-BFCF762C99EC</string>
 				<key>UUID</key>
-				<string>45688468-6041-4721-B628-394AC326E4FD</string>
+				<string>8AC51432-19B5-4169-9757-124F86B5812D</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Finder</string>
@@ -503,10 +516,12 @@ sed -i \
 						<string>0</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>431.000000:993.000000</string>
+				<string>431.000000:966.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Launch Application.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -516,19 +531,19 @@ sed -i \
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>19FD1D41-39B9-4EEA-BDB3-9170BB409FCB</key>
+		<key>10060B32-49FE-440C-B5B8-58BC914C48A1</key>
 		<dict>
 			<key>from</key>
-			<string>D274C014-1D4B-4757-9006-A58D750ED6C8 - D274C014-1D4B-4757-9006-A58D750ED6C8</string>
+			<string>607471A2-4D35-49F7-82D3-67ABEFFF3658 - 607471A2-4D35-49F7-82D3-67ABEFFF3658</string>
 			<key>to</key>
-			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
+			<string>8AC51432-19B5-4169-9757-124F86B5812D - 8AC51432-19B5-4169-9757-124F86B5812D</string>
 		</dict>
-		<key>C9E87984-CCEB-460A-AE34-B7A9E55C3BFD</key>
+		<key>91E61877-D47E-47A7-9D07-C39C54D46FE6</key>
 		<dict>
 			<key>from</key>
-			<string>9DE540BE-535D-4331-A713-BED04B9670F1 - 9DE540BE-535D-4331-A713-BED04B9670F1</string>
+			<string>8112ABB8-43C7-4EBB-9D3E-A4A15F6CB061 - 8112ABB8-43C7-4EBB-9D3E-A4A15F6CB061</string>
 			<key>to</key>
-			<string>45688468-6041-4721-B628-394AC326E4FD - 45688468-6041-4721-B628-394AC326E4FD</string>
+			<string>607471A2-4D35-49F7-82D3-67ABEFFF3658 - 607471A2-4D35-49F7-82D3-67ABEFFF3658</string>
 		</dict>
 	</dict>
 	<key>workflowMetaData</key>
