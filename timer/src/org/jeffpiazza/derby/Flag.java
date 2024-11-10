@@ -146,6 +146,9 @@ public abstract class Flag<T> {
   public static final Flag<Boolean> fasttrack_automatic_gate_release
       = BooleanFlag.settable("fasttrack-automatic-gate-release",
                              "FastTrack light tree and automatic gate release installed");
+  public static final Flag<Boolean> fasttrack_disable_laser_reset
+      = BooleanFlag.settable("fasttrack-disable-laser-reset",
+                             "FastTrack disable laser reset (LR) command");
   public static final Flag<Boolean> dtr_gate_release
       = BooleanFlag.settable("dtr-gate-release",
                              "EXPERIMENTAL Offer remote start via DTR signal"

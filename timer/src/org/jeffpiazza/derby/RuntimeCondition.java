@@ -55,6 +55,7 @@ public class RuntimeCondition {
     // sending the laser-reset commands.
     return !Flag.fasttrack_automatic_gate_release.value()
         && !Flag.no_gate_watcher.value()
+        && !Flag.fasttrack_disable_laser_reset.value()
         && fasttrack_supports_laser_reset_;
   }
   public static boolean fasttrack_has_automatic_gate_release() {

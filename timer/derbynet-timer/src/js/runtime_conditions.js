@@ -6,6 +6,7 @@ class RuntimeCondition {
   static fasttrack_poll_mark() {
     return !Flag.fasttrack_automatic_gate_release.value &&
       !Flag.no_gate_watcher.value &&
+      !Flag.fasttrack_disable_laser_reset.value &&
       RuntimeCondition.fasttrack_supports_laser_reset_;
   }
 

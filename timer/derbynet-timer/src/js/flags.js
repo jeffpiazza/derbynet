@@ -51,6 +51,9 @@ class Flag {
   static fasttrack_automatic_gate_release = new Flag(
     "fasttrack-automatic-gate-release", false, "FastTrack light tree and automatic gate release installed");
 
+  static fasttrack_disable_laser_reset = new Flag(
+    "fasttrack-disable-laser-reset", false, "FastTrack disable laser reset (LR) command");
+
   static dtr_gate_release = new Flag(
     "dtr-gate-release", false, "EXPERIMENTAL Offer remote start via DTR signal (SCI device or similar)")
     .on_apply(function(v) {
