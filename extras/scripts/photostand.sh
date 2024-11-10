@@ -73,6 +73,10 @@ while true ; do
         sudo shutdown -h now
     elif [ "$BARCODE" = "PWDspeedtest" ] ; then
         upload_speed_test
+    elif [ "$BARCODE" = "PWDcheckin-ON" ] ; then
+      export PHOTO_CHECKIN=1
+    elif [ "$BARCODE" = "PWDcheckin-OFF" ] ; then
+      export PHOTO_CHECKIN=0
     elif [ "$CAR_NO" ] ; then
 
         maybe_check_in_racer
