@@ -323,9 +323,11 @@ function on_bulk_numbering_change() {
   $("#bulk_numbering_start").prop('disabled', $("#number_auto").is(':checked'));
   if (!$("#number_auto").is(':checked')) {
     $("#numbering_start_div").slideDown(500);
+    $("#bulk_numbering_explanation").slideUp(500);
     $("#bulk_numbering_start").focus();
   } else {
     $("#numbering_start_div").slideUp(500);
+    $("#bulk_numbering_explanation").slideDown(500);
   }
 }
 $(function() {
@@ -348,7 +350,7 @@ function bulk_numbering() {
                    who: bulk_who_value(),
                    auto: $("#number_auto").is(':checked') ? 1 : 0,
                    start: $("#bulk_numbering_start").val(),
-                   renumber: 1 /* $("#renumber").is(':checked') ? 1 : 0 */},
+                  }
            });
     
     return false;

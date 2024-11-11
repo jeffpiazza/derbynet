@@ -97,18 +97,6 @@ if ($ok) {
     $update_sql = $db->prepare('UPDATE RegistrationInfo'
                                .' SET carnumber = :carnumber'
                                .' WHERE racerid = :racerid');
-    if (isset($_POST['renumber']) && $_POST['renumber']) {
-      // If renumbering, then no restriction
-    } else {
-      if (strlen($where) == 0) {
-        $where = 'WHERE ';
-      } else {
-        $where .= ' AND ';
-      }
-      // Even though carnumber is an INTEGER, it can apparently sometimes take the value of
-      // empty string, which is different from zero or null
-      $where .= '(carnumber IS NULL OR carnumber = \'\' OR carnumber = 0)';
-    }
   } else if ($_POST['what'] == 'checkin') {
     $value = isset($_POST['value']) ? $_POST['value'] : 1;
     $update_fn = 'update_checkin';

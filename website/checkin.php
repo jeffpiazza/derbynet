@@ -4,6 +4,7 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 session_write_close();
 require_once('inc/banner.inc');
+require_once('inc/car-numbering.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/classes.inc');
@@ -354,13 +355,26 @@ mobile_select_refresh($("#bulk_who"));
                data-wrapper-class="trophy-eligible-flipswitch"
                data-off-text="Custom"
                data-on-text="Standard"/>
+        <?php
+            list($car_numbering_mult, $car_numbering_smallest) = read_car_numbering_values();
+        ?>
         <div id="numbering_start_div" style="display: none">
           <label for="bulk_numbering_start">Custom numbering from:</label>
           <input type="number" id="bulk_numbering_start" name="bulk_numbering_start"
                                                             disabled="disabled"
-                 value="101"/>
+                 value="<?php echo $car_numbering_smallest; ?>"/>
         </div>
-&nbsp;
+        <div id="bulk_numbering_explanation">
+           <p>Car numbers start at <?php echo $car_numbering_smallest; ?><?php
+              if ($car_numbering_mult != 0) { ?><br/>
+                  and the hundreds place increments for each <?php echo partition_label_lc(); ?>.
+              <?php }
+              else {
+                echo ".";
+              } ?>
+           </p>
+       </div>
+
       </div>
 
       <div id="elibility_controls" class="hidable">

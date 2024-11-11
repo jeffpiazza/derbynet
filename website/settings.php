@@ -206,9 +206,9 @@ list($car_numbering_mult, $car_numbering_smallest) = read_car_numbering_values()
           <input type="checkbox" id="number-by-segment" name="number-by-segment"
                  class="do-not-post not-mobile"
                  <?php echo $car_numbering_mult == 0 ? '' : ' checked="checked"'; ?>/>
-          <label for="number-by-segment">have
-                  <span class="partition-label"><?php echo partition_label_lc(); ?></span>
-                  number in the hundreds place</label>.
+          <label for="number-by-segment">the hundreds place increments for each
+                  <span class="partition-label"><?php echo partition_label_lc(); ?></span>.
+          </label>
       </p>
     </div>
   </div>

@@ -188,7 +188,10 @@ $(function() {
   $("#supergroup-label").on("keyup mouseup", on_supergroup_label_change);
   $("#partition-label").on("keyup mouseup", on_partition_label_change);
 
-  $("#number-from-101, #number-from-1, #number-by-segment").on("keyup mouseup", on_car_numbering_change);
+  $("#number-from-101, label[for='number-from-101'], " +
+    "#number-from-1, label[for='number-from-1'], " +
+    "#number-by-segment, label[for='number-by-segment']")
+    .on("keyup mouseup", on_car_numbering_change);
 
   $('#settings_form input, #settings_form select').on('change', function(e) {
     PostSettingChange($(this));
