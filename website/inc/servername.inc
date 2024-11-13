@@ -37,7 +37,10 @@ function server_name() {
 
 function request_path() {
   $path = '';
-  if (isset($_SERVER['REQUEST_URI'])) {
+  if (isset($_SERVER['DOCUMENT_URI']) && !empty($_SERVER['DOCUMENT_URI'])) {
+    // DOCUMENT_URI will leave off any query parameters
+    $path = $_SERVER['DOCUMENT_URI'];
+  } else if (isset($_SERVER['REQUEST_URI'])) {
     $path = $_SERVER['REQUEST_URI'];
   } else if (isset($_SERVER['PHP_SELF'])) {
     $path = $_SERVER['PHP_SELF'];

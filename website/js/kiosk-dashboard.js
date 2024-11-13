@@ -1,7 +1,7 @@
 var g_unclaimed_scene_kiosk_names;
 
 function on_new_kiosk_window_button() {
-  window.open("kiosk.php?id=%25" + Date.now().toString(32), "_blank");
+  window.open("kiosk.php?address=localhost+" + (100000 + Math.floor(Math.random() * 100000)), "_blank");
 }
 $(function() { $("#new_kiosk_window_button").on('click', on_new_kiosk_window_button); });
 
