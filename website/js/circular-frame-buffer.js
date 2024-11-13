@@ -1,6 +1,7 @@
 'use strict';
 
-function CircularFrameBuffer(stream, no_seconds) {
+function CircularFrameBuffer(stream, length_ms) {
+  console.log('CFB: length_ms = ', length_ms);
   // We expect a video refresh rate of 60 frames per second
   const k_refresh_fps = 60;
   let debugging = false;
@@ -10,13 +11,20 @@ function CircularFrameBuffer(stream, no_seconds) {
 
   let resizing_callback = false;
   this.on_resize = function(cb) { resizing_callback = cb; }
+
+  // Takes effect for the next recording, not the current one
+  this.set_recording_length = function(number_of_milliseconds) {
+    length_ms = number_of_milliseconds; }
   
   let offscreen_video = document.createElement('video');
   // For a remote stream, the width and height may initially not be set, and
   // will require fixing up in the catch clause in recording_playback.
   let stream_settings = stream.getVideoTracks()[0].getSettings();
+  console.log('CircularFrameBuffer: stream reports w,h', stream_settings.width, stream_settings.height);
   offscreen_video.width = stream_settings.width;
   offscreen_video.height = stream_settings.height;
+  // Without this, iOS produces NotAllowedError at the call to .play()
+  offscreen_video.playsInline = true;
 
   let offscreen_canvas = document.createElement('canvas');
   offscreen_canvas.width = offscreen_video.width;
@@ -34,7 +42,10 @@ function CircularFrameBuffer(stream, no_seconds) {
   let recording = false;
 
   offscreen_video.srcObject = stream;
-  offscreen_video.play();
+
+  offscreen_video.play().then(
+    function () { console.log('Video play() started'); },
+    function(reason) { console.log('Video element play() rejected:', reason); });
 
   let fps_div = $("#fps");
   let last_ts = 0;
@@ -49,6 +60,8 @@ function CircularFrameBuffer(stream, no_seconds) {
     }
   }
 
+  // This is the callback function passed to window.requestAnimationFrame on a
+  // repaint.
   function recording_callback(ts) {
     // ts is a double giving time in milliseconds
     //
@@ -60,8 +73,10 @@ function CircularFrameBuffer(stream, no_seconds) {
       return;
     }
 
-    // Only capture at 30fps
+    // Only capture at 30fps (33.3ms per frame)
     if (last_recorded_frame_index < 0 || ts - frame_times[last_recorded_frame_index] >= 33) {
+      // Using the offscreen <video> element as an HTMLVideoSource, capture an
+      // image of the current frame into the offscreen <canvas> element.
       offscreen_context.drawImage(offscreen_video, 0, 0);
 
       if (debugging) {
@@ -92,12 +107,22 @@ function CircularFrameBuffer(stream, no_seconds) {
           }
         }
 
-        frames[frame_index] =
-          offscreen_context.getImageData(0, 0,
-                                         offscreen_canvas.width,
-                                         offscreen_canvas.height);
-        frame_times[frame_index] = ts;
-        last_recorded_frame_index = frame_index;
+        if (offscreen_canvas.width <= 0 || offscreen_canvas.height <= 0) {
+          console.log('Skipping frame ' + frame_index + ' because offscreen canvas is ' +
+                      offscreen_canvas.width + 'x' + offscreen_canvas.height);
+        } else {
+          // With this statement removed completely, iOS Safari stops complaining.
+          // With just the getImageData call, also no complaint but a red "low
+          // fps" marker.
+          //
+          // Capture an ImageData object from the <canvas>
+          frames[frame_index] =
+            offscreen_context.getImageData(0, 0,
+                                           offscreen_canvas.width,
+                                           offscreen_canvas.height);
+          frame_times[frame_index] = ts;
+          last_recorded_frame_index = frame_index;
+        }
       } catch(error) {
         console.log("CFB " + now_msg + " caught error " + error.message +
                     " at frame_index " + frame_index);
@@ -105,6 +130,7 @@ function CircularFrameBuffer(stream, no_seconds) {
         // initially, and require fixing up here.
       }
 
+      // frame_index may wrap around to 0
       frame_index = (frame_index + 1) % frames.length;
     }
 
@@ -116,13 +142,14 @@ function CircularFrameBuffer(stream, no_seconds) {
         this_cfb.stop_recording();
         offscreen_context = null;
         offscreen_canvas.remove();
+        // TODO offscreen_video.remove() ?
       }
     }
   }
 
   this.start_recording = function() {
-    frames = Array(no_seconds * k_refresh_fps);
-    frame_times = Array(no_seconds * 60);
+    frames = Array(Math.ceil(length_ms / 1000 * k_refresh_fps));
+    frame_times = Array(Math.ceil(length_ms / 1000 * 60));
     frame_index = 0;
     last_recorded_frame_index = -1;
     recording = true;
@@ -139,9 +166,11 @@ function CircularFrameBuffer(stream, no_seconds) {
 
   // canvas -- a DOM <canvas> element
   // repeat -- number of times to play back the video
-  // playback_rate -- multiplier for playback (0.5 = half speed slow-motion)
-  // on_precanvas -- callback invoked on the offscreen <canvas> element rendering each frame
-  // on_playback_finished -- callback invoked when a playback finishes (may be called repeat times)
+  // playback_rate -- percentage multiplier for playback (50 = half speed slow-motion)
+  // on_precanvas -- callback invoked (once) on the offscreen <canvas> element that
+  //    will be used to render each frame
+  // on_playback_finished -- callback invoked when a playback finishes
+  //    (may be called repeat times)
   // on_done -- callback to be invoked when playback completes.
   this.playback = function(canvas, repeat, playback_rate,
                            on_precanvas, on_playback_finished, on_done) {
@@ -179,9 +208,9 @@ function CircularFrameBuffer(stream, no_seconds) {
     }
 
     // frame_times[last_recorded_frame_index] is the time of the last captured frame
-    // frame_times[last_recorded_frame_index] - no_seconds * 1000 is the time of the
+    // frame_times[last_recorded_frame_index] - length_ms is the time of the
     // first frame for playback
-    let start_goal = frame_times[last_recorded_frame_index] - no_seconds * 1000;
+    let start_goal = frame_times[last_recorded_frame_index] - Math.round(length_ms);
     console.log("Playback from " + now_msg + ": repeat=" + repeat +
                 ", playback_rate=" + playback_rate);
     console.log("last_recorded_frame_index = " + last_recorded_frame_index);
@@ -215,10 +244,12 @@ function CircularFrameBuffer(stream, no_seconds) {
       requestAnimationFrame(playback_callback);
     }
 
+    // Callback to window.requestAnimationFrame that will draw the next frame
+    // being played back.
     function playback_callback(ts) {
       report_fps(ts, "play ");
 
-      let goal_frame_time = start_goal + (ts - playback_start_time) * playback_rate;
+      let goal_frame_time = start_goal + (ts - playback_start_time) * playback_rate / 100;
       let found = false;
       for (let tries = 0; tries < frames.length; ++tries) {
         if (frame_times[pindex] >= goal_frame_time) {

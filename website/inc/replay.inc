@@ -147,9 +147,9 @@ function drain_queue() {
 
 function send_replay_TEST() {
   // test <skipback_seconds> <repeat> <rate>
-  $skipback = read_raceinfo('replay-skipback', '4');
+  $skipback = read_raceinfo('replay-skipback', '4000');
   $num_showings = read_raceinfo('replay-num-showings', '2');
-  $rate = read_raceinfo('replay-rate', '0.5');
+  $rate = read_raceinfo('replay-rate', '50');
   send_replay_message("TEST ".$skipback." ".$num_showings." ".$rate);
 }
 
@@ -162,9 +162,9 @@ function send_replay_START(&$current) {
 
 // "REPLAY skipback showings rate  -- stop recording if recording; playback\r\n"
 function send_replay_REPLAY() {
-  $skipback = read_raceinfo('replay-skipback', '4');
+  $skipback = read_raceinfo('replay-skipback', '4000');
   $num_showings = read_raceinfo('replay-num-showings', '2');
-  $rate = read_raceinfo('replay-rate', '0.5');
+  $rate = read_raceinfo('replay-rate', '50');
   send_replay_message("REPLAY ".$skipback." ".$num_showings." ".$rate);
 }
 
@@ -175,9 +175,9 @@ function send_replay_CANCEL() {
 
 // RACE_STARTS skipback showings rate -- induce a replay in replay-skipback less epsilon
 function send_replay_RACE_STARTS() {
-  $skipback = read_raceinfo('replay-skipback', '4');
+  $skipback = read_raceinfo('replay-skipback', '4000');
   $num_showings = read_raceinfo('replay-num-showings', '2');
-  $rate = read_raceinfo('replay-rate', '0.5');
+  $rate = read_raceinfo('replay-rate', '50');
   send_replay_message("RACE_STARTS $skipback $num_showings $rate");
 }
 

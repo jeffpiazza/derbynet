@@ -22,7 +22,7 @@ $(document).ajaxSuccess(function(event, xhr, options, data) {
       return;
     }
   }
-  var fail = data.documentElement.getElementsByTagName("failure");
+  var fail = data.documentElement && data.documentElement.getElementsByTagName("failure");
   if (fail && fail.length > 0) {
     console.log(data);
     alert("Action failed: " + fail[0].textContent);

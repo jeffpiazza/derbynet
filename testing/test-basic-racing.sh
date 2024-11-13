@@ -36,8 +36,8 @@ run_heat 1 1 101:3.3294 121:3.4179 141:3.8182 111:2.2401
 
 curl_postj action.php "action=replay.message" | \
     jq -e '.replay == ["CANCEL", "START Lions & Tigers_Round1_Heat01",
-                       "RACE_STARTS 4 2 0.5",
-                       "REPLAY 4 2 0.5",
+                       "RACE_STARTS 4000 2 50",
+                       "REPLAY 4000 2 50",
                        "CANCEL",
                        "START Lions & Tigers_Round1_Heat02"]' \
        >/dev/null || test_fails

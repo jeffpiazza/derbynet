@@ -9,6 +9,7 @@ require_once('inc/partitions.inc');
 require_permission(SET_UP_PERMISSION);  // TODO: What's the correct permission?
 
 $warn_no_timer = warn_no_timer();
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +29,19 @@ $warn_no_timer = warn_no_timer();
 <script type="text/javascript" src="js/coordinator-poll.js"></script>
 <script type="text/javascript" src="js/timer-alive.js"></script>
 <script type="text/javascript">
-var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
+    var g_use_subgroups = <?php echo use_subgroups() ? "true" : "false"; ?>;
+
+    $(function() {
+      $("#replay-skipback option[value='<?php
+         echo read_raceinfo('replay-skipback', '3000'); ?>']").attr('selected', 'selected');
+      mobile_select_refresh('#replay-skipback');
+      $("#replay-num-showings option[value='<?php
+         echo read_raceinfo('replay-num-showings', '2'); ?>']").attr('selected', 'selected');
+      mobile_select_refresh('#replay-num-showings');
+      $("#replay-rate option[value='<?php
+         echo read_raceinfo('replay-rate', '50'); ?>']").attr('selected', 'selected');
+      mobile_select_refresh('#replay-rate');
+    });
 </script>
 <style>
 
@@ -195,40 +208,37 @@ input.lane-time::-webkit-outer-spin-button {
 <div id='replay_settings_modal' class="modal_dialog hidden block_buttons">
   <form>
     <input type="hidden" name="action" value="settings.write"/>
-<?php /*
     <label for="replay-skipback">Duration of replay, in seconds:</label>
-    <!-- Could be any decimal value... -->
-    <!-- TODO MacReplay only accepts integral skipback values presently -->
-    <!-- TODO When displaying this modal, should read the current settings and populate controls accordingly. -->
+    <!-- Value in milliseconds, must match as a string -->
     <select id="replay-skipback" name="replay-skipback">
-        <option value="2">2.0</option>
-        <!-- <option>2.5</option> -->
-        <option value="3">3.0</option>
-        <!-- <option>3.5</option> -->
-        <option selected="selected" value="4">4.0</option>
-        <!-- <option>4.5</option> -->
-        <option value="5">5.0</option>
-        <!-- <option>5.5</option> -->
-        <option value="6">6.0</option>
-        <!-- <option>6.5</option> -->
+        <!-- <option value="2000">2.0</option> -->
+        <option value="2500">2.5</option>
+        <option value="3000">3.0</option>
+        <option value="3500">3.5</option>
+        <option value="4000">4.0</option>
+        <option value="4500">4.5</option>
+        <option value="5000">5.0</option>
+        <!-- <option value="5500">5.5</option> -->
+        <option value="6000">6.0</option>
+        <!-- <option value="6500">6.5</option> -->
     </select>
-*/ ?>
+
     <label for="replay-num-showings">Number of times to show replay:</label>
     <!-- Could be any positive integer -->
     <select id="replay-num-showings" name="replay-num-showings">
-        <option>1</option>
-        <option selected="selected">2</option>
-        <option>3</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
     </select>
 
     <label for="replay_rate">Replay playback speed:</label>
-    <!-- Could be any decimal value -->
+    <!-- Expressed as a percentage -->
     <select id="replay-rate" name="replay-rate">
-        <option value="0.10">0.1x</option>
-        <option value="0.25">0.25x</option>
-        <option value="0.50">0.5x</option>
-        <option selected="selected" value="0.75">0.75x</option>
-        <option value="1.00">1x</option>
+        <option value="10">0.1x</option>
+        <option value="25">0.25x</option>
+        <option value="50">0.5x</option>
+        <option value="75">0.75x</option>
+        <option value="100">1x</option>
     </select>
     <input type="submit" value="Submit"/>
     <input type="button" value="Cancel"

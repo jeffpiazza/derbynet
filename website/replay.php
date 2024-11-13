@@ -57,7 +57,6 @@ if (isset($_REQUEST['address'])) {
 <script type="text/javascript">
 
 g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?>;
-g_ws_trigger_port = <?php echo json_encode(read_raceinfo('_ws_trigger_port', '')); ?>;
 // If using websockets to listen for replay messages, this variable will hold
 // the websocket object.
 var g_trigger_websocket;
@@ -96,11 +95,11 @@ function poll_once_for_replay() {
 }
 
 function listen_for_replay_messages() {
-  if (g_ws_trigger_port != "") {
+  if (g_websocket_url != "") {
     g_trigger_websocket = new MessagePoller(make_id_string('replay-'),
                                             function(msg) { handle_replay_message(msg.cmd); });
     // Even though we're using the websocket for triggering, poll every 5s (as
-    // opposed to several times per second). so we get credit for being
+    // opposed to several times per second), so we get credit for being
     // connected.
     setInterval(poll_once_for_replay, 5000);
   } else {
@@ -123,14 +122,17 @@ var g_recorder;
 
 var g_replay_options = {
   count: 2,
-  rate: 0.5,
-  length: 4
+  rate: 50,  // expressed as a percentage
+  length: 4000  // ms
 };
 
 function parse_replay_options(cmdline) {
+  g_replay_options.length = parseInt(cmdline.split(" ")[1]);
+  if (g_recorder) {
+    g_recorder.set_recording_length(g_replay_options.length);
+  }
   g_replay_options.count = parseInt(cmdline.split(" ")[2]);
-  g_replay_options.rate = parseFloat(cmdline.split(" ")[3]);
-  // TODO .length
+  g_replay_options.rate = parseInt(cmdline.split(" ")[3]);
 }
 
 // If non-zero, holds the timeout ID of a pending timeout that will trigger a
@@ -153,7 +155,6 @@ function handle_replay_message(cmdline) {
     g_preempted = false;
   } else if (cmdline.startsWith("REPLAY")) {
     // REPLAY skipback showings rate
-    //  skipback and rate are ignored, but showings we can honor
     // (Must be exactly one space between fields:)
     parse_replay_options(cmdline);
     if (!g_preempted) {
@@ -173,7 +174,7 @@ function handle_replay_message(cmdline) {
         console.log('Triggering replay from timeout after RACE_STARTS', root);
         on_replay(root);
       },
-      g_replay_options.length * 1000 - g_replay_timeout_epsilon);
+      g_replay_options.length - g_replay_timeout_epsilon);
   } else {
     console.log("Unrecognized replay message: " + cmdline);
   }
