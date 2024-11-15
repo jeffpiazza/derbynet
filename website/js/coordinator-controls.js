@@ -211,13 +211,23 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
            });
 }
 
-function handle_reschedule_button(roundid) {
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'schedule.reschedule',
-                   roundid: roundid},
-            success: function(json) { process_coordinator_poll_json(json); }
-           });
+function handle_reschedule_button(button, roundid) {
+  g_poll_pending = true;  // Stop polling while we're adjusting
+  $(button).prop('disabled', true)
+    .parent().find('.adjustment-in-progress-message').removeClass('hidden');
+  $.ajax(g_action_url,
+         {type: 'POST',
+          data: {action: 'schedule.reschedule',
+                 roundid: roundid},
+          success: function(json) {
+            $(button).prop('disabled', false);
+            process_coordinator_poll_json(json);
+          },
+          complete: function(jqxhr, text_status) {
+            // Resume polling, whatever the outcome.
+            g_poll_pending = false;
+          },
+         });
 }
 
 function handle_race_button(roundid) {

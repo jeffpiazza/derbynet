@@ -22,10 +22,11 @@
 }
 
 div.adjustment-needed {
-  background: orange;
+  background: #ffa500;
 }
 
-div.adjustment-needed div.late-arrival-prompt {
+div.adjustment-needed div.late-arrival-prompt,
+div.adjustment-needed div.adjustment-in-progress-message {
   color: white;
   padding: 10px;
   margin-bottom: 10px;
@@ -34,6 +35,10 @@ div.adjustment-needed div.late-arrival-prompt {
   text-align: center;
   font-size: 18px;
   line-height: 1.1;
+}
+div.adjustment-needed div.adjustment-in-progress-message {
+  text-weight: bold;
+  font-size: 20px;  
 }
 
 div.adjustment-needed div.late-arrival-prompt p, 
@@ -47,8 +52,11 @@ div.adjustment-needed div.late-arrival-prompt ul {
 }
 
 div.adjustment-needed input.late-arrival-button {
-  background: orange;
+  background: #ffa500;
   border: solid 3px black;
+}
+div.adjustment-needed input.late-arrival-button[disabled] {
+  background: #808000;
 }
 
 .heat-lineup {

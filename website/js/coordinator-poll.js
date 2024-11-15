@@ -356,14 +356,15 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
                        "<a href='settings.php'>Settings</a> page.</p>");
       }
     }
-    if (round.adjustments && round.adjustments.length > 0) {
+    if (round.adjustments && round.adjustments.length > 0 && round.heats_run > 0) {
       buttons
         .append($('<div class="late-arrival-prompt"></div>')
                 .append('<p>The race schedule needs to be adjusted because:</p>')
                 .append(reason_for_schedule_change(round)))
         .append('<input type="button" class="late-arrival-button"'
-                + ' onclick="handle_reschedule_button(' + round.roundid + ')"'
+                + ' onclick="handle_reschedule_button(this, ' + round.roundid + ')"'
                 + ' value="Adjust Schedule"/>')
+        .append('<div class="adjustment-in-progress-message hidden">Schedule adjustment in progress</div>')
         .parent().addClass('adjustment-needed');
     }
 
@@ -702,25 +703,33 @@ function process_coordinator_poll_json(json) {
 }
 
 var g_polling_interval;
+var g_poll_pending = false;
 
 function coordinator_poll() {
   if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
-    $.ajax(g_action_url,
-           {type: 'GET',
-            data: {query: 'poll.coordinator',
-                   roundid: g_current_heat.roundid,
-                   heat: g_current_heat.heat},
-            success: function(json) {
-              if (json["cease"]) {
-                clearInterval(g_polling_interval);
-                window.location.href = '../index.php';
-                return;
-              }
-              if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
-                process_coordinator_poll_json(json);
-              }
-            },
-           });
+    if (!g_poll_pending) {
+      g_poll_pending = true;
+      $.ajax(g_action_url,
+             {type: 'GET',
+              data: {query: 'poll.coordinator',
+                     roundid: g_current_heat.roundid,
+                     heat: g_current_heat.heat},
+              success: function(json) {
+                if (json["cease"]) {
+                  clearInterval(g_polling_interval);
+                  window.location.href = '../index.php';
+                  return;
+                }
+                if (typeof(phantom_testing) == 'undefined' || !phantom_testing) {
+                  process_coordinator_poll_json(json);
+                }
+              },
+              complete: function(jqxhr, text_status) {
+                // Resume polling, whatever the outcome otherwise.
+                g_poll_pending = false;
+              },
+             });
+    }
   } else {
     console.log("NOT polling");
   }
