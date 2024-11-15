@@ -52,9 +52,8 @@ jq -e ".chart | .[1] == \"80 5 35 25\" and
                 .[3] == \"35 80 15 5\" and
                 .[4] == \"15 25 5 80\"" testing/debug.curl > /dev/null || test_fails
 
-# Oops, latecomer 80 really belongs in a different group
-## curl_postj action.php "action=racer.pass&racer=80&value=0" | check_jsuccess
-curl_postj action.php "action=racer.edit&racer=80&partitionid=4" | check_jsuccess
+# Oops, it wasn't actually latecomer 80
+curl_postj action.php "action=racer.pass&racer=80&value=0" | check_jsuccess
 curl_postj action.php "action=schedule.reschedule&roundid=5&trace=1" | check_jsuccess
 # So now there are byes in the schedule
 jq -e ".chart | .[1] == \"- 5 35 25\" and
@@ -62,8 +61,8 @@ jq -e ".chart | .[1] == \"- 5 35 25\" and
                 .[3] == \"35 - 15 5\" and
                 .[4] == \"15 25 5 -\"" testing/debug.curl > /dev/null || test_fails
 
-# Oh, latecomer 80 really DOES belong in this group
-curl_postj action.php "action=racer.edit&racer=80&partitionid=5" | check_jsuccess
+# Oh, latecomer 80 really HAS arrived
+curl_postj action.php "action=racer.pass&racer=80&value=1" | check_jsuccess
 curl_postj action.php "action=schedule.reschedule&roundid=5&trace=1" | check_jsuccess
 
 # So put them back in the schedule

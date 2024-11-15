@@ -1,9 +1,26 @@
+html, body { /* Don't scroll the page, just the table. */
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
 
-tr.d0 td {
+#main-checkin-table-div {
+  overflow-y: auto;
+}
+        
+#main-checkin-table-div thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  /* Some mobile controls use small non-zero z-index */
+  z-index: 4;
+}
+
+#main-checkin-table tr.d0 td {
   background-color: #fcf6cf;
 }
 
-tr.highlight td {
+#main-checkin-table tr.highlight td {
   background-color: #ff8080;
 }
 

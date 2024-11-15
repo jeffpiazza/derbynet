@@ -21,8 +21,7 @@ function pass_racer($racerid, $value) {
 // Protect against changes to a racer who already has schedule data.
   if ($ok_to_change) {
     if (0 + read_single_value('SELECT COUNT(*) FROM RaceChart'
-                              .' WHERE roundid IN (SELECT DISTINCT roundid FROM RaceChart'
-                              .'                   WHERE racerid = :racerid)'
+                              .' WHERE racerid = :racerid'
                               .' AND (finishtime IS NOT NULL OR finishplace IS NOT NULL)',
                               array(':racerid' => $racerid), 0)) {
       $ok_to_change = false;

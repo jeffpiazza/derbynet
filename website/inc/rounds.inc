@@ -62,8 +62,11 @@ function sql_for_departed($roundid_expr) {
     .'         AND (finishtime IS NULL'
     .'          AND finishplace IS NULL)'
     .'         AND NOT EXISTS(SELECT 1 FROM Roster'
-    .'            WHERE racerid = RaceChart.racerid'
-    .'            AND roundid = RaceChart.roundid)';
+    .'                                 JOIN RegistrationInfo'
+    .'                                 USING (racerid)'
+    .'                        WHERE passedinspection <> 0'
+    .'                          AND racerid = RaceChart.racerid'
+    .'                          AND roundid = RaceChart.roundid)';
 }
 
 // Each entry has:

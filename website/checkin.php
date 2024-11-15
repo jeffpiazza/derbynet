@@ -74,6 +74,13 @@ var g_action_on_barcode = "<?php
 
 var g_preferred_urls = <?php echo json_encode(preferred_urls(/*use_https=*/true),
                                               JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+
+function set_checkin_table_height() {
+  $("#main-checkin-table-div").height(
+      $(window).height() - $(".banner").height() - $("#top-buttons").height());
+}
+$(function() { set_checkin_table_height(); });
+$(window).on('resize', set_checkin_table_height);
 </script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
@@ -90,7 +97,7 @@ var g_preferred_urls = <?php echo json_encode(preferred_urls(/*use_https=*/true)
 make_banner('Racer Check-In');
 ?>
 
-<div class="block_buttons">
+<div id="top-buttons" class="block_buttons">
   <img id="barcode-button" src="img/barcode.png"
       onclick="handle_barcode_button_click()"/>
   <input id="mobile-button" type="button" value="Mobile"
@@ -107,7 +114,8 @@ make_banner('Racer Check-In');
 <?php } ?>
 </div>
 
-<table id="main_checkin_table" class="main_table">
+<div id="main-checkin-table-div">
+<table id="main-checkin-table" class="main_table">
 <thead>
   <tr>
     <th/>
@@ -130,11 +138,6 @@ make_banner('Racer Check-In');
 
 </tbody>
 </table>
-<div class="block_buttons">
-<?php if (have_permission(REGISTER_NEW_RACER_PERMISSION)) { ?>
-      <input type="button" value="New Racer"
-        onclick='show_new_racer_form();'/>
-<?php } ?>
 </div>
 
 <?php

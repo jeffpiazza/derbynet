@@ -522,7 +522,8 @@ function cancel_find_racer() {
 }
 
 function scroll_and_flash_row(row) {
-  $("html, body").animate({scrollTop: row.offset().top - $(window).height() / 2}, 250);
+  scroll_to_row(row);
+
   row.addClass('highlight');
   setTimeout(function() {
     row.removeClass('highlight');
@@ -593,7 +594,7 @@ function find_racer() {
   if (search_string.length == 0) {
     cancel_find_racer();
   } else {
-    var domain = $("#main_checkin_table tbody tr")
+    var domain = $("#main-checkin-table tbody tr")
         .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
     var find_count = domain.filter(function() {
       // this = <td> element for firstname, lastname, or car number
@@ -615,8 +616,7 @@ function find_racer() {
       $("#find-racer-index").data("index", 1).text(1);
       $("#find-racer-count").text(find_count);
       $("#find-racer-message").css({visibility: 'visible'});
-      // Scroll the first selection to the middle of the window
-      $("html, body").animate({scrollTop: $("span.found-racer").offset().top - $(window).height() / 2}, 250);
+      scroll_to_nth_found_racer(1);
     } else {
       console.log("No match!");
       $("#find-racer").addClass("notfound");
@@ -627,9 +627,23 @@ function find_racer() {
   }
 }
 
+function scroll_to_row(row) {  // row is a jquery for one tr element
+  var div = $("#main-checkin-table-div");
+  var th_height = $("#main-checkin-table th").eq(0).closest('tr').height();
+  // delta is the number of pixels from the top of the table to the middle of the row
+  var delta = row.offset().top + row.height() / 2 - $("#main-checkin-table").offset().top;
+
+  // pixels from the top of the div that vertically centers the tr, excluding the th row
+  var goal = (div.height() - th_height) / 2 + th_height;
+
+  // scrollTop + goal = delta, so scrollTop = delta - goal
+
+  var padding = 10;  // 10 pixels vertical padding on tbody
+  $("#main-checkin-table-div").animate({scrollTop: delta - goal + padding});
+}
+
 function scroll_to_nth_found_racer(n) {
-  var found = $("span.found-racer").eq(n - 1);
-  $("html, body").animate({scrollTop: found.offset().top - $(window).height() / 2}, 250);
+  scroll_to_row($("span.found-racer").eq(n - 1).closest('tr'));
 }
 
 // inc = 1 for next found racer, -1 for previous
@@ -727,28 +741,26 @@ function make_table_row(racer, xbs) {
                     .text(racer.note)));
 
   var checkin = $('<td class="checkin-status"/>').appendTo(tr);
+  checkin.append('<br/>');
+  checkin.append($('<input type="checkbox" class="flipswitch"/>')
+                 .attr('id', 'passed-' + racer.racerid)
+                 .attr('name', 'passed-' + racer.racerid)
+                 .prop('checked', racer.passed)
+                 .attr('data-on-text', 'Yes')
+                 .attr('data-off-text', 'No')
+                 // prop onchange doesn't seem to allow a string, but attr does
+                 .attr('onchange', 'handlechange_passed(this, ' +
+                       JSON.stringify(racer.firstname + ' ' + racer.lastname) +
+                       ')'));
   if (racer.scheduled) {
     if (racer.passed) {
-      checkin.text('Racing');
+      checkin.append(' Racing!');
     } else {
-      checkin.text('Scheduled but not passed');
+      checkin.append(' Scheduled but not passed');
     }
-  } else {
-    checkin.append($('<label/>')
-                   .attr('for', 'passed-' + racer.racerid)
-                   .text('Checked In?'));
-    checkin.append('<br/>');
-    checkin.append($('<input type="checkbox" class="flipswitch"/>')
-                   .attr('id', 'passed-' + racer.racerid)
-                   .attr('name', 'passed-' + racer.racerid)
-                   .prop('checked', racer.passed)
-                   // prop onchange doesn't seem to allow a string, but attr does
-                   .attr('onchange', 'handlechange_passed(this, ' +
-                         JSON.stringify(racer.firstname + ' ' + racer.lastname) +
-                         ')'));
-    if (racer.denscheduled) {
-      checkin.append(' Late!');
-    }
+  } else if (racer.denscheduled) {
+    // denscheduled means their racing group has a schedule
+    checkin.append(' Late!');
   }
 
   if (xbs) {
