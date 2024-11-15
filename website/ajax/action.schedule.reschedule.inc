@@ -16,7 +16,7 @@ define("INJECTION_TIME_LIMIT", 10);  // in seconds
 
 // The overall request has to complete in this time, no matter how many racers
 // we attempt to inject.
-define("OVERALL_TIME_LIMIT", 5 * 60);
+define("OVERALL_TIME_LIMIT", 1 * 60);
 
 $roundid = $_POST['roundid'];
 $racerid = $_POST['racerid'];
@@ -137,8 +137,7 @@ class ScheduleAdjuster {
     $this->nheats = count($this->race_chart);
     $this->nheats_unraced = $this->nheats - $heats_raced;
     if ($trace) {
-      $this->trace = array( 'trace' );
-      $this->trace[] = $this->to_json();
+      $this->trace = array( 'trace', $this->to_json() );
     }
     $this->times['constructed'] = time() - $this->time0;
   }
@@ -335,6 +334,7 @@ class ScheduleAdjuster {
         }
       }
     }
+    $this->look_for_byes();
   }
 
   public function squeeze_out_byes() {
@@ -443,7 +443,7 @@ class ScheduleAdjuster {
   public function inject_new_racer($new_racer_id) {
     for ($run = 0; $run < $this->n_runs_per_lane; ++$run) {
       if ($this->trace) {
-        $this->trace[] = "Injecting for run $run";
+        $this->trace[] = "Injecting for run $run of ".$this->n_runs_per_lane;
       }
 
       $this->add_minimal_new_heats();
@@ -496,11 +496,7 @@ class ScheduleAdjuster {
   // Calculates the smallest number of heats that might accommodate a new racer,
   // and adds that many empty heats to race_chart.
   private function add_minimal_new_heats() {
-    if ($this->has_byes) {
-      $this->nheats_new = max(0, $this->nlanes_usable - $this->nheats_unraced);
-    } else {
-      $this->nheats_new = max(1, $this->nlanes_usable - $this->nheats_unraced);
-    }
+    $this->nheats_new = max($this->has_byes ? 0 : 1, $this->nlanes_usable - $this->nheats_unraced);
     if ($this->trace) {
       $this->trace[] = "Minimum $this->nheats_new new heats";
     }
@@ -777,6 +773,9 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
   try {
     $t0 = time();
 
+    // For simulating slow responses:
+    // sleep(20);  // seconds
+    
     $adj = new ScheduleAdjuster($roundid, $trace);
 
     $adj->remove_departed();
@@ -786,7 +785,7 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
     if ($racerid) {
       $adj->inject_new_racer($racerid);
     } else {
-      // Insert all the racers not already in the schedule.
+      // Insert all the racers for this round not already in the schedule.
       $racer_stmt = $db->prepare('SELECT racerid FROM Roster'
                                  .' WHERE roundid = :roundid'
                                  .' AND (SELECT passedinspection FROM RegistrationInfo'

@@ -1,5 +1,7 @@
 #! /bin/bash
 
+
+
 BASE_URL=$1
 
 STRESS4LANES=${2:-5}
@@ -14,6 +16,65 @@ RESET_SOURCE=reschedule "`dirname $0`/reset-database.sh" "$BASE_URL"
 "`dirname $0`/import-roster.sh" "$BASE_URL"
 
 
+## TODO -
+##
+## Run one heat of four, with four racers on four lanes.
+## Add a late entrant and adjust schedule: five heats.
+## Edit the late racer to be in a different group.  Adjust the schedule: five heats with byes.
+## Edit the late racer to be back in the group.  Adjust the schedule: seems to be a bug with the last heat.
+##
+## Add a test for this.
+
+# 4 lanes, all in use
+curl_postj action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | check_jsuccess
+
+# Racer ids for roundid 5 are 5, 10, 15, 20, 25, ..., 80
+# Car numbers are 405, 410, ..., 480
+
+# Check in 4 racers (5, 15, 25, 35)
+curl_postj action.php "action=racer.pass&racer=5&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=15&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=25&value=1" | check_jsuccess
+curl_postj action.php "action=racer.pass&racer=35&value=1" | check_jsuccess
+
+curl_postj action.php "action=schedule.generate&roundid=5" | check_jsuccess
+curl_postj action.php "action=heat.select&roundid=5&now_racing=1" | check_jsuccess
+run_heat 5  1  405:4.050 435:4.350 425:4.250 415:4.150
+# 111 101 131 121
+# 121 111 101 131
+# 131 121 111 101
+
+# Add latecomer 80 (car 480)
+curl_postj action.php "action=racer.pass&racer=80&value=1" | check_jsuccess
+curl_postj action.php "action=schedule.reschedule&roundid=5&trace=1" | check_jsuccess
+jq -e ".chart | .[1] == \"80 5 35 25\" and
+                .[2] == \"25 15 80 35\" and
+                .[3] == \"35 80 15 5\" and
+                .[4] == \"15 25 5 80\"" testing/debug.curl > /dev/null || test_fails
+
+# Oops, latecomer 80 really belongs in a different group
+## curl_postj action.php "action=racer.pass&racer=80&value=0" | check_jsuccess
+curl_postj action.php "action=racer.edit&racer=80&partitionid=4" | check_jsuccess
+curl_postj action.php "action=schedule.reschedule&roundid=5&trace=1" | check_jsuccess
+# So now there are byes in the schedule
+jq -e ".chart | .[1] == \"- 5 35 25\" and
+                .[2] == \"25 15 - 35\" and
+                .[3] == \"35 - 15 5\" and
+                .[4] == \"15 25 5 -\"" testing/debug.curl > /dev/null || test_fails
+
+# Oh, latecomer 80 really DOES belong in this group
+curl_postj action.php "action=racer.edit&racer=80&partitionid=5" | check_jsuccess
+curl_postj action.php "action=schedule.reschedule&roundid=5&trace=1" | check_jsuccess
+
+# So put them back in the schedule
+jq -e ".chart | .[1] == \"80 5 35 25\" and
+                .[2] == \"25 15 80 35\" and
+                .[3] == \"35 80 15 5\" and
+                .[4] == \"15 25 5 80\"" testing/debug.curl > /dev/null || test_fails
+
+RESET_SOURCE=reschedule-2 "`dirname $0`/reset-database.sh" "$BASE_URL"
+"`dirname $0`/import-roster.sh" "$BASE_URL"
+
 # 4 lanes, 1 masked, 3 in use.
 curl_postj action.php "action=settings.write&unused-lane-mask=2&n-lanes=4" | check_jsuccess
 
@@ -22,7 +83,7 @@ curl_postj action.php "action=settings.write&unused-lane-mask=2&n-lanes=4" | che
 
 # Racer ids for roundid 1 are 1, 6, 11, 16, 21, 26, ..., 81
 
-# Checkin 2 racers for Lions & Tigers (roundid 1)
+# Check in 2 racers for Lions & Tigers (roundid 1)
 curl_postj action.php "action=racer.pass&racer=1&value=1" | check_jsuccess
 # curl_postj action.php "action=racer.pass&racer=6&value=1" | check_jsuccess
 curl_postj action.php "action=racer.pass&racer=11&value=1" | check_jsuccess
