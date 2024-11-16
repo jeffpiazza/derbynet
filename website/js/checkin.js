@@ -248,16 +248,19 @@ function handle_edit_racer() {
               flipswitch(row.find('input[type="checkbox"].flipswitch'));
               setTimeout(function() { scroll_and_flash_row(row); }, 100);
             } else {
+              console.log('Changing partition to ' + new_div_name);
+              $("#div-" + racerid)
+                .attr('data-partitionid', new_div_id)
+                .attr('data-div-sortorder', data['partition-sortorder'])
+                .text(new_div_name);
+              $("#lastname-" + racerid)
+                .attr("data-exclude", exclude ? 1 : 0)
+                .text(new_lastname)
+                .parents('tr').toggleClass('exclude', exclude == 1);
               $("#firstname-" + racerid).text(new_firstname);
-              var ln = $("#lastname-" + racerid);
-              ln.text(new_lastname);
-              ln.attr("data-exclude", exclude ? 1 : 0);
-              ln.parents('tr').toggleClass('exclude', exclude == 1);
-              $("#car-number-" + racerid).text(new_carno);
+              $("#car-number-" + racerid).attr('data-car-number', new_carno).text(new_carno);
               $("#car-name-" + racerid).text(new_carname);
               $("#note-from-" + racerid).text(new_note_from);
-              console.log('Changing partition to ' + new_div_name);
-              $("#div-" + racerid).attr('data-partitionid', new_div_id).text(new_div_name);
             }
 
             sort_checkin_table();
@@ -398,11 +401,6 @@ function sorting_key(row) {
   if (g_order == 'partition') {
     // partition sortorder, lastname, firstname
     return [parseInt(row.querySelector('[data-div-sortorder]').getAttribute('data-div-sortorder')),
-            row.getElementsByClassName('sort-lastname')[0].innerHTML,
-            row.getElementsByClassName('sort-firstname')[0].innerHTML]
-  } else if (g_order == 'class') {
-    // rankseq, lastname, firstname
-    return [parseInt(row.querySelector('[data-rankseq]').getAttribute('data-rankseq')),
             row.getElementsByClassName('sort-lastname')[0].innerHTML,
             row.getElementsByClassName('sort-firstname')[0].innerHTML]
   } else if (g_order == 'car') {

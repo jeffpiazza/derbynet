@@ -18,6 +18,10 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
 
   if ($ok && isset($_POST['partitionid'])) {
     $partition_id = $_POST['partitionid'];
+    json_out('partition-sortorder',
+             read_single_value('SELECT sortorder FROM Partitions'
+                               .' WHERE partitionid = :partitionid',
+                               array(':partitionid' => $partition_id)));
     $row = read_single_row('SELECT classid, rankid FROM Ranks'
                            .' WHERE rankid = (SELECT rankid FROM Partitions'
                            .'                 WHERE partitionid = :partitionid)',
