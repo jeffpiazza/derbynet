@@ -1,6 +1,6 @@
 Package: derbynet-timer
 Maintainer: Jeff Piazza <jeff@jeffpiazza.org>
-Version: 9.0-@BUILD@
+Version: 10.0-@BUILD@
 Priority: optional
 Architecture: all
 Depends: jarwrapper, default-jre | java9-runtime
