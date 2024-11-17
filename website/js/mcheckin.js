@@ -1,3 +1,6 @@
+// Barcode scanner imposes a pretty high CPU load, so can be turned off
+// while debugging other issues.
+var g_decode_barcodes = true;
 
 var g_trouble_timeout = 0;
 function report_trouble(msg) {
@@ -80,11 +83,11 @@ function show_racer_list() {
   // The device-picker shows through #racer-list if it's not hidden, for reasons
   // I don't understand.
   $("#camera-div").addClass('hidden');
-  $("#racer-list").show('slide', {direction: 'right'});
+  $("#racer-list").show('slide', {direction: 'left'});
 }
 function hide_racer_list(afterfn = false) {
   $("#camera-div").removeClass('hidden');
-  $("#racer-list").hide('slide', {direction: 'right'}, afterfn);
+  $("#racer-list").hide('slide', {direction: 'left'}, afterfn);
 }
 
 var codeReader = new ZXingBrowser.BrowserMultiFormatOneDReader();
@@ -145,17 +148,19 @@ async function on_device_selection(selectq) {
                           });
       }
 
-      codeReader.decodeFromStream(stream, 'preview',
-                                  function(result, error, control) {
-                                    if (result) {
-                                      console.log("Recognized barcode:", result);
-                                      on_recognized_barcode(result);
-                                    } else if (error && error.getKind() != "NotFoundException") {
-                                      report_trouble("ZXing error: " + error.getKind() + "\n\n" +
-                                                     error.toString());
-                                      console.log('error', error.getKind(), error);
-                                    }
-                                  });
+      if (g_decode_barcodes) {
+        codeReader.decodeFromStream(stream, 'preview',
+                                    function(result, error, control) {
+                                      if (result) {
+                                        console.log("Recognized barcode:", result);
+                                        on_recognized_barcode(result);
+                                      } else if (error && error.getKind() != "NotFoundException") {
+                                        report_trouble("ZXing error: " + error.getKind() + "\n\n" +
+                                                       error.toString());
+                                        console.log('error', error.getKind(), error);
+                                      }
+                                    });
+      }
     });
 }
 

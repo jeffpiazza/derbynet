@@ -60,8 +60,7 @@
   margin-right: auto;
 }
 
-#camera-div {
-  /* portrait */
+#camera-div { /* portrait */
   position: fixed;
   top: 60px; /* Banner height */
   left: 0px;
@@ -116,6 +115,7 @@ div#flash-overlay {
 #device-picker-div {
   left: 0px;
   right: 0px;
+  font-size: 30px;
 }
 #device-picker-div .mselect {
   margin-top: 0px;
@@ -138,7 +138,7 @@ div#flash-overlay {
            checkin-button
            car-button .escutcheon
  */
-#slide-in {
+#slide-in {  /* portrait */
   position: fixed;
   bottom: 0;
   left: 0;
@@ -150,14 +150,14 @@ div#flash-overlay {
 #slide-in-inner {
   height: 25vh;
 }
-#racer-div {
+#racer-div {  /* portrait */
   font-size: 4vh;
   height: 5vh;
   overflow-y: hidden;
   text-align: center;
   color: white;
 }
-#controls {
+#controls {  /* portrait */
   height: 20vh;
 }
 
@@ -165,7 +165,7 @@ div#flash-overlay {
   display: inline-block;
 }
 
-.escutcheon {
+.escutcheon {  /* portrait */
   display: inline-block;
   vertical-align: top;
   text-align: center;
@@ -202,7 +202,7 @@ div#flash-overlay {
   max-width: 5vw;
   max-height: 17vh;
 }
-#autocrop-overlay {
+#autocrop-overlay {  /* portrait */
   position: absolute;
   top: 0px;
   left: 0px;
@@ -228,9 +228,6 @@ div#flash-overlay {
 #checkin-button-text {
   margin-top: 2vh;
 }
-.passed #checkin-button-text {
-  margin-top: 4vh;
-}
 .checked-in-status {
   font-size: 24px;
   font-weight: bold;
@@ -240,16 +237,17 @@ div#flash-overlay {
   color: green;
 }
 
-.escutcheon div.thumbnail-carrier {
+.escutcheon div.thumbnail-carrier {  /* portrait */
   position: absolute;
   bottom: 0;
   width: 30vw;
   text-align: center;
 }
 
-.escutcheon img {
+.escutcheon img { /* portrait */
   vertical-align: middle;
-  max-height: 20vh;
+  max-height: 15vh;
+  margin-bottom: 1vh;
 }
 
 .escutcheon .flipswitch {
@@ -304,7 +302,7 @@ div#racer-list {
   max-height: 7vh;
 }
 
-#slide-in {
+#slide-in { /* landscape */
   left: auto;
   bottom: auto;
   right: 0;
@@ -318,14 +316,14 @@ div#racer-list {
   width: 20vw;
 }
 
-#camera-div {
+#camera-div { /* landscape */
   top: 0px;
   left: 0px;
   height: 100vh;
   width: 80vw;
 }
 
-#racer-div {
+#racer-div { /* landscape */
   font-size: 4vh;
   text-align: center;
   color: white;
@@ -342,20 +340,18 @@ div#racer-list {
   margin-right: auto;
 }
 
-.escutcheon {
-  display: inline-block;
-  vertical-align: top;
-  background: white;
+.escutcheon { /* landscape */
   height: 25vh;
   width: 16vw;
   
-  padding: 4px;
   margin-left: 2vw;
   margin-top: 2vh;
   margin-bottom: 2vh;
-  border-radius: 0.4em 0.4em 0.4em 0.4em;
-  cursor: pointer;
-  position: relative;
+}
+
+.escutcheon img { /* landscape */
+  max-height: 20vh;
+  margin-bottom: 2.5vh;
 }
 
 .escutcheon#head-button {
@@ -363,7 +359,7 @@ div#racer-list {
   margin-bottom: 0;
 }
 
-.escutcheon#autocrop-button {
+.escutcheon#autocrop-button { /* landscape */
   margin-top: 0;
   margin-left: 2vw;
   height: 5vh;
@@ -380,7 +376,7 @@ div#racer-list {
 
 .escutcheon#checkin-button {
   width: 16vw;
-  height: 10vh;  /* TODO Maybe should be based on font size, in pts, instead. */
+  height: 10vh;
 }
 
 .escutcheon .flipswitch {
@@ -390,10 +386,7 @@ div#racer-list {
 
 
 .escutcheon div.thumbnail-carrier {
-  position: absolute;
-  bottom: 0;
   width: 16vw;
-  text-align: center;
 }
 
 
