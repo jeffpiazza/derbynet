@@ -46,8 +46,10 @@ abstract class PrintableRacerDocument {
   // classid
   // rank
   // rankid
-  // imagefile
-  // carphoto
+  // imagefile_fullrez
+  // imagefile  // smaller rez if available
+  // carphoto_fullrez
+  // carphoto  // smaller rez if available
   // barcode
   abstract function DrawOneAt($left, $top, &$racer);
 

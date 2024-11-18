@@ -12,6 +12,22 @@ require_once('fpdf/ext/combined.php');
 // $_GET['ids']
 // $_GET['where']
 
+function derez_photos(&$racer) {
+  $racer['imagefile_fullrez'] = $racer['imagefile'];
+  // If there's a 400x400 version of the image, use that, but otherwise use
+  // the full (cropped) photo, don't try to create a lower-rez one.
+  $imgfile = headshots()->lookup_or_any('400x400')->file_path(basename($racer['imagefile']));
+  if (is_file($imgfile)) {
+    $racer['imagefile'] = $imgfile;
+  }
+
+  $racer['carphoto_fullrez'] = $racer['carphoto'];
+  $imgfile = car_photo_repository()->lookup_or_any('400x400')->file_path(basename($racer['carphoto']));
+  if (is_file($imgfile)) {
+    $racer['carphoto'] = $imgfile;
+  }
+}
+
 if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
   echo "<p>Not ".document_class()."</p>\n";
   /*
@@ -44,7 +60,8 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
                          'RegistrationInfo.rankid = Ranks.rankid');
 
   // Specifying by car numbers means we're making generic printables, not
-  // customized to individual racers.
+  // customized to individual racers.  (This feature isn't accessible by any
+  // current code path.)
   if (isset($_GET['car_nos'])) {
     $sql = $base_sql.' WHERE carnumber = :carnumber';
 
@@ -60,6 +77,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       if ($row) {
         convert_strings($row);
         clean_fake_photos($row);
+        derez_photos($row);
         foreach ($row as $key => $val) {
           $racer[$key] = $val;
         }
@@ -84,6 +102,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       global $doc;
       convert_strings($racer);
       clean_fake_photos($racer);
+      derez_photos($racer);
       $racer['barcode'] = 'PWDid'.sprintf('%03d', $racer['racerid']);
       $doc->DrawOne($racer);
     }
