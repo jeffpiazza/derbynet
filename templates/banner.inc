@@ -7,7 +7,8 @@ function make_banner($banner_title, $back_button = 'index.php') {
 
   echo "<div class=\"banner_title\">".htmlspecialchars($banner_title, ENT_QUOTES, 'UTF-8')."</div>\n";
 
-  if ($back_button && in_array($back_button, ['index.php', 'setup.php'])) {
+  if ($back_button && in_array($back_button, ['index.php', 'setup.php', 'checkin.php',
+                                              'kiosk-dashboard.php', 'coordinator.php'])) {
     echo "<div class=\"back_button\" onclick=\"window.location='".$back_button."'; return false;\">\n";
     echo "<img src=\"img/back-button.png\"/>\n";
     echo "</div>\n";
