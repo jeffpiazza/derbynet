@@ -387,7 +387,7 @@ $(function() {
                      values: 'ondeck,rounds,current-heat,current-reschedule'},
               success: function(json) {
                 if (g_resized) {
-                  if (data["cease"]) {
+                  if (json["cease"]) {
                     clearInterval(interval);
                     window.location.href = '../index.php';
                     return;
