@@ -132,9 +132,13 @@ json_out('finalists', $finalists);
 
 write_roster_entries($new_roundid, $classid, $finalists);
 
-json_out('new-round', array('roundid' => $new_roundid));
-json_success();
+if (count($finalists) == 0) {
+  json_failure('no_racers', 'No eligible racers found.');
+} else {
+  json_out('new-round', array('roundid' => $new_roundid));
+  json_success();
 
-require('ajax/query.poll.coordinator.inc');
+  require('ajax/query.poll.coordinator.inc');
+}
 
 ?>
