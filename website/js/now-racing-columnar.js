@@ -84,7 +84,7 @@ class ResultAnimator {
 
     setTimeout(function(anim) {
       anim.animation_running = false;
-    }, 10000, this);
+    }, g_linger_ms, this);
   }
 }
 

@@ -303,24 +303,36 @@ function on_replay(root) {
   if (root != g_video_name_root) {
     console.log('** root=', root, ', g_video_name_root=', g_video_name_root);
   }
-  // Capture these global variables before starting the asynchronous operation,
-  // because they're reasonably likely to be clobbered by another queued message
+  // Capture this global variable before starting the asynchronous operation,
+  // because it's reasonably likely to be clobbered by another queued message
   // from the server.
   var upload = g_upload_videos;
+
   // If this is a replay triggered after RACE_START, make sure we don't start
   // another replay for the same heat.
-
   if (g_replay_timeout > 0) {
     clearTimeout(g_replay_timeout);
   }
   g_replay_timeout = 0;
 
-  announce_to_interior('replay-started');
   g_recorder.stop_recording();
 
+  var delay = $("#delay")[0].valueAsNumber * 1000;
+  if (delay > 0) {
+    setTimeout(function() { start_playback(root, upload); }, delay);
+  } else {
+    console.log('Direct playback');
+    start_playback(root, upload);
+  }
+}
+
+function start_playback(root, upload) {
   let playback = document.querySelector("#playback");
   playback.width = $(window).width();
   playback.height = $(window).height();
+
+  announce_to_interior('replay-started');
+
   $("#playback-background").show('slide', function() {
       let playback_start_ms = Date.now();
       let vc;
@@ -425,21 +437,32 @@ $(window).on('resize', function(event) { on_setup(); });
     </div>
   </div>
 
-  <div id="device-picker-div">
-    <select id="device-picker"><option>Please wait</option></select>
+    <div id="device-picker-div">
+      <select id="device-picker"><option>Please wait</option></select>
+    </div>
+    <p id="recording-stream-info" class="hidden">
+      Recording at <span id="recording-stream-size"></span>
+    </p>
+
+  <div id="replay-setup-controls" style="margin-left: 25%; margin-right: 25%;">
+
+    <p>
+    <input type="checkbox" id="go-fullscreen" checked="checked"/>
+    <label for="go-fullscreen">Change to fullscreen?</label>
+    </p>
+
+    <label for="inner_url">URL:</label>
+    <input type="text" name="inner_url" id="inner_url" size="50"
+           value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
+
+    <p style="font-size: 1em; margin-left: 10%;">Delay playback by:
+    <input type="number" name="delay" id="delay" min="0" step="0.1" value="0.0" size="8"
+           style="font-size: 1em; width: 5em; "/>
+    (s) after heat ends
+    </p>
+
+    <input type="button" value="Proceed" onclick="on_proceed();"/>
   </div>
-  <p id="recording-stream-info" class="hidden">
-    Recording at <span id="recording-stream-size"></span>
-  </p>
-
-  <input type="checkbox" id="go-fullscreen" checked="checked"/>
-  <label for="go-fullscreen">Change to fullscreen?</label>
-  <br/>
-
-  <label for="inner_url">URL:</label>
-  <input type="text" name="inner_url" id="inner_url" size="100"
-         value="<?php echo htmlspecialchars($kiosk_url, ENT_QUOTES, 'UTF-8'); ?>"/>
-  <input type="button" value="Proceed" onclick="on_proceed();"/>
 </div>
 
 </body>
