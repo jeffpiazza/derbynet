@@ -15,6 +15,7 @@
 */
 
 require_once('inc/export-schema.inc');
+require_once('inc/photo-config.inc');
 require_once('inc/sql-script.inc');
 
 start_response();
@@ -28,6 +29,107 @@ function remove_bookends($xml, $start, $stop) {
     return substr($xml, $start_pos, $stop_pos - $start_pos);
   } else {
     return $xml;
+  }
+}
+
+function restore_one_table($table_entry) {
+  global $db;
+  global $schema;
+  $tablename = $table_entry["table"];
+  $schema_columns = $schema[$tablename];  // An array of column names, id column first
+  $id_column_name = $schema_columns[0];
+  $try_again = true;
+  for ($attempts = 0; $try_again && $attempts < 10; ++$attempts) {
+    $try_again = false;
+    echo '<table name="'.$tablename.'"'
+                        .' rows-before="'.read_single_value('SELECT COUNT(*) FROM '.$tablename).'"'
+                        .' idcolumn="'.$id_column_name.'"'
+                        .'>'."\n";
+    $row_count = 0;
+    $fetch_stmt = $db->prepare('SELECT * FROM '.$tablename.' WHERE '.$id_column_name.' = :id');
+    foreach ($table_entry["rows"] as $json_row) {
+      ++$row_count;
+      $fetch_stmt->execute(array(':id' => $json_row[$id_column_name]));
+      $row = $fetch_stmt->fetch(PDO::FETCH_ASSOC);
+      $fetch_stmt->closeCursor();
+
+      if ($row) {
+        $usql = 'UPDATE '.$tablename;
+        $uparams = array();
+        $first = true;
+        foreach ($json_row as $c => $v) {
+          $usql .= ($first ? ' SET ' : ', ').$c.' = :'.$c;
+          $uparams[':'.$c] = $v;
+          $first = false;
+        }
+        $usql .= ' WHERE '.$id_column_name.' = :id';
+        $uparams[':id'] = $json_row[$id_column_name];
+        $stmt = $db->prepare($usql);
+        try {
+          if (!$stmt->execute($uparams)) {
+            echo "<failure code='update'>Can't update ".$tablename
+                                                       ." for id=".$json_row[$id_column_name]."</failure>\n";
+          }
+        } catch (Exception $e) {
+          echo "  <exception>".$e->getMessage()."</exception>\n";
+          $try_again = true;
+        }
+      } else {
+        $write_sql = 'INSERT INTO '.$tablename;
+        $first = true;
+        $write_values = '';
+        $write_params = array();
+        foreach ($json_row as $column_name => $value) {
+          $write_sql .= ($first ? '(' : ', ').$column_name;
+          $write_values .= ($first ? '' : ', ').':'.$column_name;
+          $write_params[':'.$column_name] = $value;
+          $first = false;
+        }
+        $write_sql .= ') VALUES ('.$write_values.')';
+        $stmt = $db->prepare($write_sql);
+        try {
+          if (!$stmt->execute($write_params)) {
+            echo "<failure code='insert'>Can't insert ".$tablename." id=".$json_row[$id_column_name]
+                                                       ."</failure>\n";
+          }
+        } catch (Exception $e) {
+          echo "  <exception>".$e->getMessage()."</exception>\n";
+          $try_again = true;
+        }
+      }
+    }
+    echo '  <table-summary rows-received="'.$row_count.'"/>'."\n";
+    echo "</table>\n";
+  }
+}
+
+// { basename, displayed, and optionally original }
+function restore_one_photo($racerid, &$repo, &$photo_json) {
+  global $db;
+  $basename = $photo_json['basename'];
+  if (isset($photo_json['original'])) {
+    file_put_contents($repo->lookup(RENDER_ORIGINAL)->directory().DIRECTORY_SEPARATOR.$basename,
+                      hex2bin($photo_json['original']));
+    $cropped = $repo->lookup(RENDER_CROPPED)->directory();
+  } else {
+    $cropped = $repo->lookup(RENDER_ORIGINAL)->directory();
+  }
+
+  $cropped = $cropped.DIRECTORY_SEPARATOR.$basename;
+  file_put_contents($cropped, hex2bin($photo_json['displayed']));
+  $stmt = $db->prepare('UPDATE RegistrationInfo SET '.$repo->column_name().' = :cropped'
+                       .' WHERE racerid = :racerid');
+  $stmt->execute(array(':cropped' => $cropped,
+                       ':racerid' => $racerid));
+}
+
+// { racerid, imagefile, carphoto }
+function restore_photos(&$table_entry) {
+  if (isset($table_entry["imagefile"])) {
+    restore_one_photo($table_entry['racerid'], headshots(), $table_entry["imagefile"]);
+  }
+  if (isset($table_entry["carphoto"])) {
+    restore_one_photo($table_entry['racerid'], car_photo_repository(), $table_entry["carphoto"]);
   }
 }
 
@@ -52,81 +154,31 @@ if (have_permission(SET_UP_PERMISSION)) {
     echo substr($xml, $pos, $rpos - $pos);
     echo "</data>\n";
   } else {
+    $saved_raceinfo = save_selected_race_info_values(RACE_INFO_KEYS_FOR_SNAPSHOT);
 
     run_sql_script('schema');
     
     foreach ($json as $table_entry) {
-      $tablename = $table_entry["table"];
-      $schema_columns = $schema[$tablename];  // An array of column names, id column first
-      $id_column_name = $schema_columns[0];
-      $try_again = true;
-      for ($attempts = 0; $try_again && $attempts < 10; ++$attempts) {
-        $try_again = false;
-        echo '<table name="'.$tablename.'"'
-            .' rows-before="'.read_single_value('SELECT COUNT(*) FROM '.$tablename).'"'
-            .' idcolumn="'.$id_column_name.'"'
-            .'>'."\n";
-        $row_count = 0;
-        $fetch_stmt = $db->prepare('SELECT * FROM '.$tablename.' WHERE '.$id_column_name.' = :id');
-        foreach ($table_entry["rows"] as $json_row) {
-          ++$row_count;
-          $fetch_stmt->execute(array(':id' => $json_row[$id_column_name]));
-          $row = $fetch_stmt->fetch(PDO::FETCH_ASSOC);
-          $fetch_stmt->closeCursor();
+      if (isset($table_entry["table"])) {
+        restore_one_table($table_entry);
+      }
+    }
 
-          if ($row) {
-            $usql = 'UPDATE '.$tablename;
-            $uparams = array();
-            $first = true;
-            foreach ($json_row as $c => $v) {
-              $usql .= ($first ? ' SET ' : ', ').$c.' = :'.$c;
-              $uparams[':'.$c] = $v;
-              $first = false;
-            }
-            $usql .= ' WHERE '.$id_column_name.' = :id';
-            $uparams[':id'] = $json_row[$id_column_name];
-            $stmt = $db->prepare($usql);
-            try {
-              if (!$stmt->execute($uparams)) {
-                echo "<failure code='update'>Can't update ".$tablename
-                ." for id=".$json_row[$id_column_name]."</failure>\n";
-              }
-            } catch (Exception $e) {
-              echo "  <exception>".$e->getMessage()."</exception>\n";
-              $try_again = true;
-            }
-          } else {
-            $write_sql = 'INSERT INTO '.$tablename;
-            $first = true;
-            $write_values = '';
-            $write_params = array();
-            foreach ($json_row as $column_name => $value) {
-              $write_sql .= ($first ? '(' : ', ').$column_name;
-              $write_values .= ($first ? '' : ', ').':'.$column_name;
-              $write_params[':'.$column_name] = $value;
-              $first = false;
-            }
-            $write_sql .= ') VALUES ('.$write_values.')';
-            $stmt = $db->prepare($write_sql);
-            try {
-              if (!$stmt->execute($write_params)) {
-                echo "<failure code='insert'>Can't insert ".$tablename." id=".$json_row[$id_column_name]
-                ."</failure>\n";
-              }
-            } catch (Exception $e) {
-              echo "  <exception>".$e->getMessage()."</exception>\n";
-              $try_again = true;
-            }
-          }
-        }
-        echo '  <table-summary rows-received="'.$row_count.'"/>'."\n";
-        echo "</table>\n";
+    // Restore the photo directories before restoring any photos in the snapshot.
+    restore_saved_race_info_values($saved_raceinfo);
+
+    foreach ($json as $table_entry) {
+      if (isset($table_entry["racerid"])) {
+        restore_photos($table_entry);
       }
     }
 
     // For the deletions, go through tables in reverse order, to be sure to
     // remove foreign keys before corresponding primary keys.
     foreach (array_reverse($json) as $table_entry) {
+      if (!isset($table_entry["table"])) {
+        continue;
+      }
       $tablename = $table_entry["table"];
       $schema_columns = $schema[$tablename];  // An array of column names, id column first
       $id_column_name = $schema_columns[0];

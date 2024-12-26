@@ -17,24 +17,12 @@ if (!have_permission(SET_UP_PERMISSION)) {
   } catch (PDOException $p) {
   }
 
-  $saved_raceinfo = array();
   if ($_POST['script'] == 'schema') {
     // Special handling of the "schema" script (reinitializing the database):
     // preserve values for photo-directory and car-photo-directory, if these
     // exist.
     try {
-      foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $row) {
-        if (in_array($row['itemkey'], ['photo-directory',
-                                       'car-photo-directory',
-                                       'video-directory',
-                                       'logs-directory',
-                                       'lane_count',
-
-                                       '_websocket_url',
-                                       '_ws_trigger_port'])) {
-          $saved_raceinfo[$row['itemkey']] = $row['itemvalue'];
-        }
-      }
+      $saved_raceinfo = save_selected_race_info_values(RACE_INFO_KEYS_FOR_SCHEMA_SCRIPT);
       remove_fake_images($photo_dir);
       remove_fake_images($car_photo_dir);
     } catch (PDOException $p) {
@@ -48,9 +36,7 @@ if (!have_permission(SET_UP_PERMISSION)) {
   json_out('executed', $executed);
 
   if (!empty($saved_raceinfo)) {
-    foreach ($saved_raceinfo as $key => $value) {
-      write_raceinfo($key, $value);
-    }
+    restore_saved_race_info_values($saved_raceinfo);
   }
 
   if ($_POST['script'] == 'update-schema') {

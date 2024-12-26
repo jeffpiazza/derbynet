@@ -54,4 +54,39 @@ function run_sql_script($scriptname) {
   return array($ok, $executed);
 }
 
+function save_selected_race_info_values($keys) {
+  global $db;
+  $saved_raceinfo = array();
+  foreach ($db->query('SELECT itemkey, itemvalue FROM RaceInfo') as $row) {
+    if (in_array($row['itemkey'], $keys)) {
+      $saved_raceinfo[$row['itemkey']] = $row['itemvalue'];
+    }
+  }
+  return $saved_raceinfo;
+}
+
+function restore_saved_race_info_values(&$saved_raceinfo) {
+  foreach ($saved_raceinfo as $key => $value) {
+    write_raceinfo($key, $value);
+  }
+}
+
+define('RACE_INFO_KEYS_FOR_SCHEMA_SCRIPT',
+       ['photo-directory',
+        'car-photo-directory',
+        'video-directory',
+        'logs-directory',
+        'lane_count',
+
+        '_websocket_url',
+        '_ws_trigger_port']);
+
+define('RACE_INFO_KEYS_FOR_SNAPSHOT',
+       ['photo-directory',
+        'car-photo-directory',
+        'video-directory',
+        'logs-directory',
+
+        '_websocket_url',
+        '_ws_trigger_port']);
 ?>
