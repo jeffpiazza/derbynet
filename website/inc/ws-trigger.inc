@@ -9,7 +9,7 @@
 function maybe_send_ws_trigger($raw_msg) {
   $websocket_port = read_raceinfo('_ws_trigger_port');
   if ($websocket_port) {
-    $msg = json_encode($msg_array);
+    $msg = json_encode($raw_msg);
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
     if ($socket !== false) {
       // _ws_trigger_port values is (port) : (ipaddr)
