@@ -24,6 +24,7 @@ define('REPLAY_REPORTED_PLAYING', 2);
 
 
 require_once('inc/data.inc');
+require_once('inc/ws-trigger.inc');
 
 define('REPLAY_TIMEOUT_LIMIT', 10);
 
@@ -57,25 +58,11 @@ function send_replay_message($cmd) {
   global $db;
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
-    $websocket_port = read_raceinfo('_ws_trigger_port');
-    if ($websocket_port) {
-      $msg = json_encode(array('url' => read_raceinfo('_websocket_url'),
-                               'prefix' => 'replay-',
-                               'type' => 'replay-cmd',
-                               'cmd' => $cmd));
-      $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-      if ($socket !== false) {
-        // _ws_trigger_port values is (port) : (ipaddr)
-        $websocket_port = explode(':', $websocket_port, 2);
-        $result = socket_connect($socket, $websocket_port[1], $websocket_port[0]);
-        if ($result !== false) $result = socket_write($socket, '@'.strval(strlen($msg))."\n".$msg);
-        if ($result === false) {
-          trigger_error("Socket error: ".socket_strerror(socket_last_error($socket)), E_USER_ERROR);
-        }
-        socket_close($socket);
-      } else {
-        trigger_error("Unable to create socket: ".socket_strerror(socket_last_error()), E_USER_ERROR);
-      }
+    if (maybe_send_ws_trigger(array('url' => read_raceinfo('_websocket_url'),
+                                    'prefix' => 'replay-',
+                                    'type' => 'replay-cmd',
+                                    'cmd' => $cmd))) {
+      // Prefer the websocket if it's available
     } else if (isset($homedir) && is_dir($homedir) && is_writable($homedir)) {
       $fp = fopen($homedir.DIRECTORY_SEPARATOR.'replay_queue', 'c+');
       try {

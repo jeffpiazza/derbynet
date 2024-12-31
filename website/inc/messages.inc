@@ -3,8 +3,25 @@
 require_once('inc/schema_version.inc');
 require_once('inc/sql-script.inc');
 
-// Simple message passing for webrtc signaling purposes.  Clients poll the
-// server for messages.
+// Simplistic message passing for webrtc signaling.  Clients poll the server for
+// messages (ajax/action.message.send.inc and ajax/action.message.retrieve.inc).
+//
+// Each message is stored as a json string.  The 'recipient' field, if there is
+// one, is recognized specially by the message.send action.  message.retrieve
+// takes a 'recipient' argument and only messages addressed to that recipient
+// are returned.
+//
+// 'camera-replay' is the identifier for the (presumed one and only) remote
+// camera.  Each replay kiosk adopts a name with the 'viewer-' prefix for webrtc
+// interactions with the remote camera, if it uses one.
+//
+// In practice, each webrtc message has a 'type' field ('solicitation', 'offer',
+// 'ice-candidate', and 'answer') and a 'from' field.
+//
+// If websocket support is available, the javascript MessagePoller will prefer
+// to pass messages via a websocket server and skip using this database- and
+// polling-based mechanism.
+
 
 function create_message_queue_table() {
   run_sql_script('message-queue-table');

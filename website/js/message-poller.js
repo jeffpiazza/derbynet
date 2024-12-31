@@ -1,5 +1,17 @@
 'use strict';
 
+// A MessagePoller continuously polls the server for messages addressed to this
+// recipient, and allows sending messages to other recipients.
+//
+// If g_websocket_url is a viable url, a WebSocket is used instead of continuous
+// polling.  Messages are expressed as json strings and read or written to the
+// websocket.  If using WebSockets, the MessagePoller sends an initial
+// subscriber identification message, just {subscriber: recipient}.
+//
+// MessagePoller is used for webrtc communication between a viewer (replay
+// kiosk) and a remote camera, when using a remote camera.  If websocket support
+// is available, replay.php also creates an additional MessagePoller to receive
+// replay commands, rather than poll (4x per second) for replay.message.
 
 function make_id_string(stem) {
   var alphabet = "abcdefghjklmnpqrstuvwz0123456789";
@@ -21,9 +33,7 @@ function MessagePoller(recipient, on_message) {
       ws.onmessage = (event) => {
         try {
           var msg = JSON.parse(event.data);
-          if (msg.type != 'subscription') {
-            on_message(msg);
-          }
+          on_message(msg);
         } catch (e) {
           console.log('  Unable to parse json message:f, event.data');
         }

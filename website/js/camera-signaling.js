@@ -65,8 +65,6 @@ function ViewClient(recipient, poller) {
       this.on_answer(msg);
     } else if (msg.type == 'ice-candidate') {
       this.on_ice_candidate(msg);
-    } else if (msg.type == 'subscription') {
-      console.log('Subscription acknowledged');
     } else {
       console.error('Unrecognized message for camera:', msg);
       console.trace();
