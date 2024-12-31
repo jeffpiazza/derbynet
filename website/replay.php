@@ -97,7 +97,8 @@ function poll_once_for_replay() {
 function listen_for_replay_messages() {
   if (g_websocket_url != "") {
     g_trigger_websocket = new MessagePoller(make_id_string('replay-'),
-                                            function(msg) { handle_replay_message(msg.cmd); });
+                                            function(msg) { handle_replay_message(msg.cmd); },
+                                            ['replay-commands']);
     // Even though we're using the websocket for triggering, poll every 5s (as
     // opposed to several times per second), so we get credit for being
     // connected.

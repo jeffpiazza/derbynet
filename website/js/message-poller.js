@@ -23,7 +23,7 @@ function make_id_string(stem) {
   return id;
 }
 
-function MessagePoller(recipient, on_message) {
+function MessagePoller(recipient, on_message, topics = []) {
   let poller = this;
   if (g_websocket_url != undefined && g_websocket_url != '') {
     var ws = new WebSocket(g_websocket_url);
@@ -41,7 +41,7 @@ function MessagePoller(recipient, on_message) {
 
       ws.onopen = (event) => {
         console.log('Websocket opened');
-        poller.send_message({"subscriber": recipient});
+        poller.send_message({"subscriber": recipient, "topics": topics});
       };
 
       // If the connection can't be established, this gets called but with almost

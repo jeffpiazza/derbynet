@@ -59,7 +59,7 @@ function send_replay_message($cmd) {
   $replay = get_replay();
   if ($replay['state'] == REPLAY_CONNECTED) {
     if (maybe_send_ws_trigger(array('url' => read_raceinfo('_websocket_url'),
-                                    'prefix' => 'replay-',
+                                    'topic' => 'replay-commands',
                                     'type' => 'replay-cmd',
                                     'cmd' => $cmd))) {
       // Prefer the websocket if it's available
