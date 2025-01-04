@@ -193,12 +193,18 @@ function handle_sortorder_awards_change() {
 */
 }
 
+var g_poll_interval;
+
 function poll() {
   $.ajax("action.php",
          {type: 'GET',
           data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
+            if (data.hasOwnProperty('cease')) {
+              clearInterval(g_poll_interval);
+              window.location.href = '../index.php';
+            }
             process_racer_list(data);
           },
          });
@@ -253,7 +259,7 @@ function reveal_doc_specific_options() {
 
 $(function() {
   poll();
-  setInterval(function() { poll(); }, 10000);
+  g_poll_interval = setInterval(function() { poll(); }, 10000);
   reveal_doc_specific_options();
   $("input[type=radio][name='doc-class']").change(function() { reveal_doc_specific_options(); });
 });
