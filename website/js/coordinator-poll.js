@@ -340,7 +340,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
       }
       buttons.append('<input type="button"'
                      + ' onclick="handle_unschedule_button(' + round.roundid
-                     + ', \'' + round['class'].replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                     + ', \'' + String(round['class']).replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
                      + round.round + ')"'
                      + ' value="Unschedule"/>');
     }
@@ -372,7 +372,7 @@ function inject_into_scheduling_control_group(round, current, timer_state) {
         (round.round > 1 || round.aggregate)) {
       buttons.append('<input type="button"'
                      + ' onclick="handle_delete_round_button(' + round.roundid
-                     + ', \'' + round['class'].replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
+                     + ', \'' + String(round['class']).replace(/"/g, '&quot;').replace(/'/, "\\'") + '\', '
                      + round.round + ')"'
                      + ' value="Delete Round"/>');
     }
