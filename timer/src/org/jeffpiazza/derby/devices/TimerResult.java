@@ -39,6 +39,34 @@ public class TimerResult {
     }
   }
 
+  public int getMaxLanes() {
+    return results.size();
+  }
+
+  public boolean isLaneValid(int lane) {
+    if (lane > 0 && lane < results.size())
+    {
+      Message.LaneResult r = results.get(lane);
+      if (r != null)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public String getLaneTime(int lane) {
+    if (lane > 0 && lane < results.size())
+    {
+      Message.LaneResult r = results.get(lane);
+      if (r != null)
+      {
+        return r.time;
+      }
+    }
+    return null;
+  }
+
   public int mask() { return laneMask; }  // For debugging
 
   public boolean isFilled() {

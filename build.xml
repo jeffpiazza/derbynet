@@ -28,8 +28,8 @@
   </condition>
 
   <!-- Duplicated in docs/build.xml -->
-  <property name="soffice"
-	        location="/Applications/LibreOffice.app/Contents/MacOS/soffice"/>
+    <property name="soffice"
+              location="C:\Program Files\LibreOffice\program\soffice.exe"/>
   <available property="soffice_available" file="${soffice}"/>
 
   <target name="clean" depends="docs-clean"

@@ -26,6 +26,9 @@ class TimerProxy {
   // If not zero, a deadline for expecting heat results
   overdue_time;
 
+  // Stores the last partial lane result
+  lastLaneResultPartial = null;
+
   static async create(port_wrapper, profile) {
     this.destroy();
     g_timer_proxy = new TimerProxy(port_wrapper, profile);
@@ -223,12 +226,46 @@ class TimerProxy {
       }
       break;
     case 'RACE_FINISHED':
+      if (this.lastLaneResultPartial != null)
+      {
+        // Force a wait since we know there is a pending command.
+        await this.port_wrapper.drain(100);
+        console.log("retriggering finish command");
+        // If we have a pending result, refire the event so we can finish getting the last result.
+        TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
+        break;
+      }
+      await this.port_wrapper.drain(100);
       this.lastFinishTime = Date.now();
       this.roundid = 0;
       this.heat = 0;
       this.result = null;
       this.overdue_time = 0;
       break;
+    case 'NO_MORE_RESULTS': {
+      if (this.result != null)
+      {
+        // Wait a bit for any pending results to finish before we fill in the rest.
+        var count = 0;
+        while (this.lastLaneResultPartial != null)
+        {
+          await new Promise(r => setTimeout(r, 100));
+          count++;
+          if (count > 5) { break; }
+        }
+        var maxLanes = this.result.getMaxLanes();
+        console.log("No more. Lanes:" + this.result.getMaxLanes());
+        for (var i=0; i<maxLanes; ++i)
+        {
+          if (this.result.isLaneValid(i) && this.result.getLaneTime(i) == 0)
+          {
+            console.log("Marking lane " + (i+1) + " as DNF.");
+            TimerEvent.send("LANE_RESULT", [(i+1).toString(), "0"]);
+          }
+        }
+      }
+      break;
+    }
     case 'LANE_RESULT': {
       if (this.result != null) {
         var was_filled = this.result.isFilled();
@@ -239,6 +276,29 @@ class TimerProxy {
           TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
         }
       }
+      break;
+    }
+    case 'PARTIAL_LANE_RESULT_LANE_NUM': {
+      this.lastLaneResultPartial = args[0];
+      break;
+    }
+    case 'PARTIAL_LANE_RESULT_TIME': {
+      if (!this.lastLaneResultPartial)
+      {
+        break;
+      }
+      var laneTime = args[0];
+      if (this.profile.options.decimal_insertion_location && this.profile.options.decimal_insertion_location != 0)
+      {
+        var location = this.profile.options.decimal_insertion_location;
+        if (location < 0)
+        {
+          location = location + laneTime.length;
+        }
+        laneTime = laneTime.substring(0, location) + '.' + laneTime.substring(location);
+      }
+      TimerEvent.send('LANE_RESULT', [this.lastLaneResultPartial, laneTime])
+      this.lastLaneResultPartial = null;
       break;
     }
     case 'LANE_COUNT':
@@ -279,6 +339,31 @@ class TimerProxy {
       }
       await this.resetForHeatPrep();
       this.port_wrapper.drain();
+      // Masking for tracks with one mask command for masking all lanes at once.
+      if (this.profile.heat_prep.hasOwnProperty('is_single_mask') 
+          && this.profile.heat_prep.is_single_mask)
+      {
+        var command = "";
+        if (this.profile.heat_prep.hasOwnProperty('mask_prefix') 
+            && this.profile.heat_prep.mask_prefix != null)
+        {
+          command += this.profile.heat_prep.mask_prefix;
+        }
+        var maskOffset = 0;
+        if (this.profile.heat_prep.hasOwnProperty('single_mask_offset'))
+        {
+          maskOffset = this.profile.heat_prep.single_mask_offset;
+        }
+        command += String.fromCharCode(lanemask + maskOffset);
+        if (this.profile.heat_prep.hasOwnProperty('mask_suffix') 
+            && this.profile.heat_prep.mask_suffix != null)
+        {
+          command += this.profile.heat_prep.mask_suffix;
+        }
+        console.log("Masking all lanes with command:" + command);
+        await this.port_wrapper.drain();
+        await this.port_wrapper.write(command);
+      }
     }
   }
 

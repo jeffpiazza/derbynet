@@ -91,12 +91,15 @@ public class Profile {
     // Some timers only report heat finished, but not whether the start gate
     // is open or closed.
     public boolean gate_state_is_knowable = true;
+    // Some timers return the time as an integer such as 314159 > 3.14159 (-5 or 1)
+    public int decimal_insertion_location = 0;
 
     public JSONObject toJSON() {
       return new JSONObject()
           .put("eol", eol)
           .put("max_lanes", max_lanes)
-          .put("gate_state_is_knowable", gate_state_is_knowable);
+          .put("gate_state_is_knowable", gate_state_is_knowable)
+          .put("decimal_insertion_location", decimal_insertion_location);
     }
   }
   public Options options = new Options();
@@ -108,6 +111,11 @@ public class Profile {
 
   public Profile max_lanes(int max_lanes) {
     options.max_lanes = max_lanes;
+    return this;
+  }
+
+  public Profile decimal_insertion_location(int decimal_insertion_location) {
+    options.decimal_insertion_location = decimal_insertion_location;
     return this;
   }
 
@@ -330,13 +338,25 @@ public class Profile {
     public String mask;
     public char lane;
     public String reset;
+    // Single mask command for all lanes at once.
+    // This will combine <mask_prefix><lane bits (as int) + single_mask_offset><mask_suffix>
+    public boolean is_single_mask;
+    public int single_mask_offset = 0;
+    public String mask_prefix;
+    public String mask_suffix;
 
     public HeatPreparation(String unmask_command, String mask_command,
-                           char first_lane, String reset_command) {
+                           char first_lane, String reset_command, 
+                           String mask_prefix, String mask_suffix, 
+                           boolean is_single_mask, int single_mask_offset) {
       this.unmask = unmask_command;
       this.mask = mask_command;
       this.lane = first_lane;
       this.reset = reset_command;
+      this.mask_prefix = mask_prefix;
+      this.mask_suffix = mask_suffix;
+      this.is_single_mask = is_single_mask;
+      this.single_mask_offset = single_mask_offset;
     }
 
     public JSONObject toJSON() {
@@ -344,7 +364,11 @@ public class Profile {
           .putOpt("unmask", unmask)
           .putOpt("mask", mask)
           .putOpt("lane", mask == null ? null : lane)
-          .putOpt("reset", reset);
+          .putOpt("reset", reset)
+          .putOpt("mask_prefix", mask_prefix)
+          .putOpt("mask_suffix", mask_suffix)
+          .putOpt("is_single_mask", is_single_mask)
+          .putOpt("single_mask_offset", single_mask_offset);
     }
   }
   public HeatPreparation heat_prep;
@@ -352,7 +376,7 @@ public class Profile {
   public Profile heat_prep(String unmask_command, String mask_command,
                            char first_lane, String reset_command) {
     heat_prep = new HeatPreparation(unmask_command, mask_command, first_lane,
-                                    reset_command);
+                                    reset_command, null, null, false, 0);
     return this;
   }
 
@@ -363,6 +387,11 @@ public class Profile {
 
   public Profile heat_prep(String reset_command) {
     return heat_prep(null, null, (char) 0, reset_command);
+  }
+
+  public Profile single_mask_heat_prep(String unmask_command, String reset_command, String mask_prefix, String mask_suffix, int mask_offset) {
+    heat_prep = new HeatPreparation(unmask_command, null, (char)0, reset_command, mask_prefix, mask_suffix, true, mask_offset);
+    return this;
   }
 
   public Map<Event, CommandSequence> on

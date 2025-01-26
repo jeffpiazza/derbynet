@@ -16,6 +16,7 @@ import org.jeffpiazza.derby.profiles.JitRacemaster;
 import org.jeffpiazza.derby.profiles.NewBold;
 import org.jeffpiazza.derby.profiles.Pdt;
 import org.jeffpiazza.derby.profiles.TheJudge;
+import org.jeffpiazza.derby.profiles.SuperTimerII;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
@@ -35,7 +36,8 @@ public class AllDeviceTypes {
         DerbyMagic.class,
         DerbyMagic9600.class,
         BertDrake.class,
-        JitRacemaster.class
+        JitRacemaster.class,
+        SuperTimerII.class
       };
   @SuppressWarnings(value = "unchecked")
   private static final Class<? extends TimerDevice>[] legacyDeviceClasses

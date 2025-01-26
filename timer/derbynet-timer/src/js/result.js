@@ -31,6 +31,34 @@ class HeatResult {
     return false;
   }
 
+  getMaxLanes() {
+    return this.lane_results.length;
+  }
+
+  isLaneValid(lane) {
+    if (lane >= 0 && lane < this.lane_results.length)
+    {
+      var r = this.lane_results[lane];
+      if (r != null)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getLaneTime(lane) {
+    if (lane > 0 && lane < this.lane_results.length)
+    {
+      var r = this.lane_results[lane];
+      if (r != null)
+      {
+        return r.time;
+      }
+    }
+    return null;
+  }
+
   isFilled() {
     return this.lanemask == 0;
   }

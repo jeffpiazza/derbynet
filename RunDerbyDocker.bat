@@ -1,0 +1,2 @@
+docker run --detach -p 80:80 -p 443:443 --volume=C:\DerbyNet\data:/var/lib/derbynet --mount type=bind,src=%~dp0/website,target=/var/www/html,readonly jeffpiazza/derbynet_server
+@REM docker run --detach -p 80:80 -p 443:443 --volume=C:\DerbyNet\data:/var/lib/derbynet --mount type=bind,src=C:/repos/derbynet/website,target=/var/www/html,readonly jeffpiazza/derbynet_server
