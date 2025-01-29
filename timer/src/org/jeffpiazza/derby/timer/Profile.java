@@ -93,13 +93,16 @@ public class Profile {
     public boolean gate_state_is_knowable = true;
     // Some timers return the time as an integer such as 314159 > 3.14159 (-5 or 1)
     public int decimal_insertion_location = 0;
+    // Some timers control their own timeout.
+    public boolean timer_controls_timeout = false;
 
     public JSONObject toJSON() {
       return new JSONObject()
           .put("eol", eol)
           .put("max_lanes", max_lanes)
           .put("gate_state_is_knowable", gate_state_is_knowable)
-          .put("decimal_insertion_location", decimal_insertion_location);
+          .put("decimal_insertion_location", decimal_insertion_location)
+          .put("timer_controls_timeout", timer_controls_timeout);
     }
   }
   public Options options = new Options();
@@ -116,6 +119,11 @@ public class Profile {
 
   public Profile decimal_insertion_location(int decimal_insertion_location) {
     options.decimal_insertion_location = decimal_insertion_location;
+    return this;
+  }
+  
+  public Profile timer_controls_timeout(boolean timer_controls_timeout) {
+    options.timer_controls_timeout = timer_controls_timeout;
     return this;
   }
 
@@ -344,6 +352,8 @@ public class Profile {
     public int single_mask_offset = 0;
     public String mask_prefix;
     public String mask_suffix;
+    // Command to set the timeout on the track if supported (Track controls timeout)
+    public String set_timeout_command = null;
 
     public HeatPreparation(String unmask_command, String mask_command,
                            char first_lane, String reset_command, 
@@ -369,6 +379,7 @@ public class Profile {
           .putOpt("mask_suffix", mask_suffix)
           .putOpt("is_single_mask", is_single_mask)
           .putOpt("single_mask_offset", single_mask_offset);
+          .putOpt("set_timeout_command", set_timeout_command);
     }
   }
   public HeatPreparation heat_prep;
@@ -391,6 +402,11 @@ public class Profile {
 
   public Profile single_mask_heat_prep(String unmask_command, String reset_command, String mask_prefix, String mask_suffix, int mask_offset) {
     heat_prep = new HeatPreparation(unmask_command, null, (char)0, reset_command, mask_prefix, mask_suffix, true, mask_offset);
+    return this;
+  }
+
+  public Profile set_heat_timeout_duration_command(String command) {
+    heat_prep.set_timeout_command = command;
     return this;
   }
 

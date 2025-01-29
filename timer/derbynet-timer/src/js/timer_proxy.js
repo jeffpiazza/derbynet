@@ -207,7 +207,7 @@ class TimerProxy {
       break;
     }
     case 'MASK_LANES':
-      this.maskLanes(args[0], args[1]);
+      this.maskLanes(args[0], args[1], Flag.delay_reset_after_race.value);
       break;
     case 'ABORT_HEAT_RECEIVED':
       this.lastFinishTime = 0;
@@ -219,7 +219,7 @@ class TimerProxy {
       }
       break;
     case 'RACE_STARTED':
-      if (Flag.reset_after_start.value == 0) {
+      if (Flag.reset_after_start.value == 0 || this.profile.options.timer_controls_timeout) {
         this.overdue_time = 0;
       } else {
         this.overdue_time = Date.now() + Flag.reset_after_start.value * 1000;
@@ -280,6 +280,7 @@ class TimerProxy {
         // Send just a single RACE_FINISHED event, even if we get some extra
         // results for masked-out lanes, etc.
         if (valid && this.result.isFilled() && !was_filled) {
+          console.log("Result set filled. Finishing race.");
           TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
         }
       }
@@ -324,7 +325,7 @@ class TimerProxy {
     }
   }
 
-  async maskLanes(lanemask, lanes) {
+  async maskLanes(lanemask, lanes, timeout) {
     this.result = new HeatResult(lanemask);
     if (this.profile.hasOwnProperty('heat_prep')) {
       if (this.profile.heat_prep.hasOwnProperty('unmask')) {
@@ -368,6 +369,13 @@ class TimerProxy {
           command += this.profile.heat_prep.mask_suffix;
         }
         console.log("Masking all lanes with command:" + command);
+        await this.port_wrapper.drain();
+        await this.port_wrapper.write(command);
+      }
+      if (this.profile.heat_prep.hasOwnProperty('set_timeout_command')
+          && this.profile.heat_prep.set_timeout_command != null
+          && this.profile.options.timer_controls_timeout) {
+        var command = this.profile.heat_prep.set_timeout_command.replace("<time>", timeout);
         await this.port_wrapper.drain();
         await this.port_wrapper.write(command);
       }

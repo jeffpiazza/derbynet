@@ -49,6 +49,7 @@ public class SuperTimerII extends TimerDeviceWithProfile {
         .max_lanes(6)
         .gate_state_is_knowable(false)
         .decimal_insertion_location(-4)
+        .timer_controls_timeout(true)
         .end_of_line("\r")
         .prober("UUUUc\r", "UUUUt")
         .params(SerialPort.BAUDRATE_9600,
@@ -76,6 +77,13 @@ public class SuperTimerII extends TimerDeviceWithProfile {
         // 3_5A\r	Lanes 1-5 enabled    Binary: 011111
         // 3|5A\r	Lanes 3, 4, 5, 6     Binary: 111100
         .single_mask_heat_prep(null, null, "3", "5A\r", 64)
+        
+        // TODO: Implement this with the math for the time.
+        // Can't figure out how to handle this with the math that has to happen as well
+        // I'll leave this for future problems. The SuperTimer should default to 10s,
+        // but it is stored in internal memory it seems, so I cannot verify this.
+        // Command should be: 2<Math:64 + 4*<time_seconds>>\r
+        // .set_heat_timeout_duration_command("2<time>\r")
         ;
   }
 }
