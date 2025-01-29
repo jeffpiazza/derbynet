@@ -8,6 +8,7 @@
 //  pw.open({baud: 9600});
 //  TimerProxy.create(pw, all_profiles()[1]);
 
+const DNF_TIME = "9.9999";
 
 class TimerProxy {
   port_wrapper;
@@ -263,7 +264,7 @@ class TimerProxy {
         if (this.result.isLaneValid(i) && this.result.getLaneTime(i) == 0)
           {
             console.log("Marking lane " + (i+1) + " as DNF.");
-            TimerEvent.send("LANE_RESULT", [(i+1).toString(), "9.999"]);
+            TimerEvent.send("LANE_RESULT", [(i+1).toString(), DNF_TIME]);
           }
         }
       } else {

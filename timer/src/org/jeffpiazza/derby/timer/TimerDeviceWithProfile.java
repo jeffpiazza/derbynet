@@ -1,6 +1,7 @@
 package org.jeffpiazza.derby.timer;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,10 +72,14 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   // back to zero.
   private long overdueTime = 0;
 
+  protected static final String DNF_TIME = "9.9999";
   protected static final int PRE_PROBE_SETTLE_TIME_MS = 2000;
   protected static final int PROBER_RESPONSE_TIME_MS = 500;
   protected static final int POLL_RESPONSE_DEADLINE_MS = 100;
   protected static final int GIVE_UP_AFTER_OVERDUE_MS = 1000;
+  
+  // Variable for storing partial results lane number
+  private static String partialTimerEventString = null;
 
   public void abortHeat() throws SerialPortException {
     Event.send(Event.ABORT_HEAT_RECEIVED);
@@ -208,29 +213,35 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   {
     if (profile.options.decimal_insertion_location == 0)
     {
+      LogWriter.info("No decimal to insert.");
       return time;
     }
     // Skip adding a decimal if there is one...
-    Pattern p = Pattern.compile(".");
+    Pattern p = Pattern.compile("\\.");
     Matcher m = p.matcher(time);
     if (m.find())
     {
+      LogWriter.info("Found a decimal already");
       return time;
     }
     int decimalPosition = profile.options.decimal_insertion_location;
     StringBuilder sb = new StringBuilder(time);
+    int insertSpot = decimalPosition;
     if (decimalPosition > 0)
     {
       sb.insert(decimalPosition, '.');
     }
     else
     {
+      insertSpot = time.length() - Math.abs(decimalPosition);
       sb.insert(time.length() - Math.abs(decimalPosition), '.');
     }
+
+    LogWriter.info("Inserting decimal at: " + String.valueOf(insertSpot));
     return sb.toString();
   }
 
-  protected void maskLanes(int lanemask) {
+  protected void maskLanes(int lanemask, int timeout) {
     suspendPolling();
     try {
       if (profile.heat_prep != null) {
@@ -260,12 +271,23 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
           {
             command += profile.heat_prep.mask_prefix;
           }
-          command += (char) lanemask+profile.heat_prep.single_mask_offset;
+          command += (char) (lanemask+profile.heat_prep.single_mask_offset);
           if (profile.heat_prep.mask_suffix != null)
           {
             command += profile.heat_prep.mask_suffix;
           }
+          portWrapper.drainForMs();
+          portWrapper.write(command);
         }
+
+        if (profile.heat_prep.set_timeout_command != null 
+            && profile.options.timer_controls_timeout)
+        {
+          String command = profile.heat_prep.set_timeout_command.replace("<time>", String.valueOf(timeout));
+          portWrapper.drainForMs();
+          portWrapper.write(command);
+        }
+
         portWrapper.drainForMs();
       }
       result = new TimerResult(lanemask);
@@ -301,13 +323,12 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         LogWriter.stacktrace(ex);
       }
     }
-    String partialTimerEventString = null;
     switch (event) {
       case PREPARE_HEAT_RECEIVED:
         // prepareHeat was called when the server sent its message; then
         // prepareHeat set a delayed event to apply the lane mask and reset the
         // timer
-        maskLanes(lanemask);
+        maskLanes(lanemask, Flag.reset_after_start.value());
         overdueTime = 0;  // Insurance, not necessary
         break;
       case ABORT_HEAT_RECEIVED:
@@ -315,7 +336,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         roundid = heat = 0;
         break;
       case RACE_STARTED:
-        if (Flag.reset_after_start.value() == 0) {
+        if (Flag.reset_after_start.value() == 0 || profile.options.timer_controls_timeout) {
           overdueTime = 0;
         } else {
           overdueTime = System.currentTimeMillis()
@@ -341,7 +362,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         result = null;
         overdueTime = 0;
         break;
+      // This event is only for timers that don't provide a result for all lanes
+      // in the case of a DNF. This will wait for 250ms for partial lane event tracks
+      // events to finish or any other events to wrap up.
       case NO_MORE_RESULTS: {
+        portWrapper.drainForMs(250);
         if (result != null)
         {
           int maxLanes = result.getMaxLanes();
@@ -349,7 +374,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
           {
             if (result.isLaneValid(i) && result.getLaneTime(i) == null)
             {
-              String[] subArgs={String.valueOf(i), "99.999"};
+              String[] subArgs={String.valueOf(i), DNF_TIME};
               Event.send(Event.LANE_RESULT, subArgs);
             }
           }
@@ -378,30 +403,31 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       }
       case PARTIAL_LANE_RESULT_LANE_NUM: {
+        LogWriter.info("Partial Lane:" + Arrays.toString(args));
         if (partialTimerEventString == null)
         {
-          partialTimerEventString = args[1];
+          partialTimerEventString = args[0];
         }
         break;
       }
       case PARTIAL_LANE_RESULT_TIME: {
+        LogWriter.info("Partial Time:" + Arrays.toString(args));
         // Out of order. No lane number to be joined.
         if (partialTimerEventString == null)
         {
           break;
         }
 
-        String className = this.getClass().getSimpleName();
-        String time = TimerDeviceUtils.zeroesToNines(fixTime(args[1]));
+        String time = TimerDeviceUtils.zeroesToNines(fixTime(args[0]));
         char lane_char = partialTimerEventString.charAt(0);
         int lane = ('1' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
-        // result.setLane(lane, time);
         partialTimerEventString = null;
-        this.profile.match("PARTIAL([1-9])=((\\d\\.\\d+))",
-               Event.LANE_RESULT, 1, 2);
-        String[] arg2={"PARTIAL"+String.valueOf(lane) + time};
+
+        // Set the lane as a result.
+        String[] arg2={String.valueOf(lane), time};
+        LogWriter.info("Joined time. Submitting:" + Arrays.toString(arg2));
         Event.send(Event.LANE_RESULT, arg2);
         break;
       }
