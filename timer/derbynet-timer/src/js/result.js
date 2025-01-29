@@ -21,9 +21,16 @@ class HeatResult {
   setLane(lane, time, place = 0) {
     return this.setLane_0based(lane - 1, time, place = 0);
   }
-
   setLane_0based(lane0, time, place = 0) {
     if (lane0 >= 0 && lane0 < this.lane_results.length) {
+      // Prevent setting the lane twice, but only if the 
+      // current lane result != 0 (DNF)
+      if ( !(this.lanemask & (1 << lane0)) 
+          && this.lane_results[lane0] != null
+          && this.lane_results[lane0] != 0) {
+        console.log ("Prevented setting lane twice.");
+        return false;
+      }
       this.lane_results[lane0] = {time: time, place: place};
       this.lanemask &= ~(1 << lane0);
       return true;
@@ -48,7 +55,7 @@ class HeatResult {
   }
 
   getLaneTime(lane) {
-    if (lane > 0 && lane < this.lane_results.length)
+    if (lane >= 0 && lane < this.lane_results.length)
     {
       var r = this.lane_results[lane];
       if (r != null)

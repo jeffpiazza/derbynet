@@ -27,7 +27,7 @@ class TimerProxy {
   overdue_time;
 
   // Stores the last partial lane result
-  lastLaneResultPartial = null;
+  static lastLaneResultPartial = null;
 
   static async create(port_wrapper, profile) {
     this.destroy();
@@ -226,10 +226,9 @@ class TimerProxy {
       }
       break;
     case 'RACE_FINISHED':
-      if (this.lastLaneResultPartial != null)
-      {
+      if (this.lastLaneResultPartial != null) {
         // Force a wait since we know there is a pending command.
-        await this.port_wrapper.drain(100);
+        await this.port_wrapper.drain(250);
         console.log("retriggering finish command");
         // If we have a pending result, refire the event so we can finish getting the last result.
         TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
@@ -242,27 +241,35 @@ class TimerProxy {
       this.result = null;
       this.overdue_time = 0;
       break;
+    // This event is only for timers that don't provide a result for all lanes
+    // in the case of a DNF. This will wait for 250ms for partial lane event tracks
+    // events to finish or any other events to wrap up.
     case 'NO_MORE_RESULTS': {
-      if (this.result != null)
+      // Wait a bit for any pending results to finish before we fill in the rest as dnf.
+      await new Promise(r => setTimeout(r, 250));
+      // Now make sure if there is a pending result on another thread, wait for it
+      var count = 0;
+      while (this.lastLaneResultPartial != null)
       {
-        // Wait a bit for any pending results to finish before we fill in the rest.
-        var count = 0;
-        while (this.lastLaneResultPartial != null)
-        {
-          await new Promise(r => setTimeout(r, 100));
-          count++;
-          if (count > 5) { break; }
-        }
+        await new Promise(r => setTimeout(r, 250));
+        count++;
+        if (count > 5) { break; }
+      }
+      if (this.result != null) {
         var maxLanes = this.result.getMaxLanes();
-        console.log("No more. Lanes:" + this.result.getMaxLanes());
+        console.log("No more results. Total lanes:" + this.result.getMaxLanes());
         for (var i=0; i<maxLanes; ++i)
         {
-          if (this.result.isLaneValid(i) && this.result.getLaneTime(i) == 0)
+        if (this.result.isLaneValid(i) && this.result.getLaneTime(i) == 0)
           {
             console.log("Marking lane " + (i+1) + " as DNF.");
-            TimerEvent.send("LANE_RESULT", [(i+1).toString(), "0"]);
+            TimerEvent.send("LANE_RESULT", [(i+1).toString(), "9.999"]);
           }
         }
+      } else {
+        // This occurs when another thread/event times out and we cannot finish the race.
+        // Tied to: reset-after-start parameter
+        console.log("Cannot finish out. Result is NULL");
       }
       break;
     }

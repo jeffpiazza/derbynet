@@ -10,31 +10,39 @@ public class SuperTimerII extends TimerDeviceWithProfile {
   public SuperTimerII(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
   }
+  // ----------------------------------------------
   // Unimplemented handling/commands
   // ----------------------------------------------
   // Pause heat: 3@7A\r
 
   // Track timeout handling
-  // 00\r (0x30 0x30 0x0d) is request track info/timeout. Char 2 of the return is the timeout
-  //    \/--- Timeout char
-  // 4a 7c 7f 42 43 41 45  J|BCAE // 15s timeout
-  // 4a 70 7f 42 43 41 45  JpBCAE // 12s timeout
+  // Timeout -- GET
+  //     This command requests the timeout info from the track. It would be nice to update the
+  //     value in the web UI to show that.
+  //     00\r (0x30 0x30 0x0d) is request track info/timeout. Char 2 of the return is the timeout
+  //        \/--- Timeout char
+  //     4a 7c 7f 42 43 41 45  J|BCAE // 15s timeout
+  //     4a 70 7f 42 43 41 45  JpBCAE // 12s timeout
 
-  // Set timeout command = 32 <@/0x40 + (4*num sec)> 0d
-  // Example command and responses:
-  // cmd (hex) (ascii) Timeout
-  // 32 a4 0d    2¤.    25
-  // 32 a0 0d    2 .    24
-  // 32 3f 0d    2?.    21-23 // Not sure why these repeat
-  // 32 90 0d    2.    20
-  // 32 3f 0d    2?.    16-19 // Not sure why these repeat
-  // 32 7c 0d    2|.    15
-  // 32 78 0d    2x.    14
-  // 32 74 0d    2t.    13
-  // 32 70 0d    2p.    12
-  // 32 6c 0d    2l.    11
-  // 32 68 0d    2h.    10
-  // 32 40 0d    2@.    NO Timeout
+  // Timeout -- SET
+  //     Set timeout command 
+  //         HEX = 32 <@/0x40 + (4*num sec)> 0d
+  //         DEC = 2 <64 + 4 * num sec> \r
+  //     Example command and responses:
+  //     cmd (hex) (ascii) Timeout
+  //     32 a4 0d    2¤.    25
+  //     32 a0 0d    2 .    24
+  //     32 3f 0d    2?.    21-23 // Not sure why these repeat
+  //     32 90 0d    2.    20
+  //     32 3f 0d    2?.    16-19 // Not sure why these repeat
+  //     32 7c 0d    2|.    15
+  //     32 78 0d    2x.    14
+  //     32 74 0d    2t.    13
+  //     32 70 0d    2p.    12
+  //     32 6c 0d    2l.    11
+  //     32 68 0d    2h.    10
+  //     32 40 0d    2@.    NO Timeout
+  // ----------------------------------------------
 
   public static Profile profile() {
     return Profile.forTimer("Super Timer II", "Super Timer II")
