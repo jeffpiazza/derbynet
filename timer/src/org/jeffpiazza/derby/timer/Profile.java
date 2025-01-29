@@ -378,7 +378,7 @@ public class Profile {
           .putOpt("mask_prefix", mask_prefix)
           .putOpt("mask_suffix", mask_suffix)
           .putOpt("is_single_mask", is_single_mask)
-          .putOpt("single_mask_offset", single_mask_offset);
+          .putOpt("single_mask_offset", single_mask_offset)
           .putOpt("set_timeout_command", set_timeout_command);
     }
   }
