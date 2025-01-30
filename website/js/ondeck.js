@@ -129,9 +129,13 @@ function repopulate_schedule(json) {
       td.addClass('in_prev');
     }
     racerids[cell['lane']] = cell['racerid'];
+    var time = cell['result'].substring(1);
+    if (time > 9.9) {
+      time = "DNF";
+    }
     td.append($('<div/>').addClass('car').text(cell['carnumber']))
       .append($('<div/>').addClass('racer').text(cell['name']))
-      .append($('<div/>').addClass('time').text(cell['result'].substring(1))
+      .append($('<div/>').addClass('time').text(time)
               .css('display', cell['result'] ? 'block' : 'none'));
 
     var photo_div = $("<div/>").addClass('ondeck_photo').appendTo(td);

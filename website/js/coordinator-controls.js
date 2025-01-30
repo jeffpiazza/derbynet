@@ -122,7 +122,7 @@ function on_manual_results_button_click(should_trigger_replay) {
         racer_table.append("<tr><td>" + racer.lane + "</td>"
                            + "<td>" + racer.name + "</td>"
                            + "<td>" + racer.carnumber + "</td>"
-                           + "<td><input class='lane-time' type='number' step='0.00001'"
+                           + "<td><input class='lane-time' type='number' step='0.000001'"
                                + " name='lane" + racer.lane + "'" 
                                + " value='" + racer.finishtime + "'/>"
                            + "</td>"
@@ -130,6 +130,22 @@ function on_manual_results_button_click(should_trigger_replay) {
         if (racer.finishtime) {
             any_results = true;
         }
+    }
+
+    // Add a note to tell the user how to log a DNF
+    if ($("#note-for-table").length === 0) {
+        $(racer_table).after(
+          $("<div>")
+            .addClass("note")
+            .css({
+              "text-align": "right",
+              "padding": "5px 10px",
+              "background-color": "#f0f0f0",
+              "border-radius": "4px"
+            })
+            .attr('id', 'note-for-table')
+            .text("Note: Enter 9.999 for a DNF.")
+      );
     }
 
     if (any_results) {
