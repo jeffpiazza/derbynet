@@ -405,6 +405,14 @@ public class Profile {
     return this;
   }
 
+  // Basic command that will replace the string <time> with the timeout
+  // value. It can do the most basic of math, allowing '+'.
+  // It will replace <time> with the timeout, then convert
+  // any number to an int and add them together.
+  // Example:
+  // To get the command: 2 64 + 4*<time> the input would be 
+  //                     2(math:64+<time>+<time>+<time>+<time>)
+  // Resulting in:       2h if time = 10
   public Profile set_heat_timeout_duration_command(String command) {
     heat_prep.set_timeout_command = command;
     return this;

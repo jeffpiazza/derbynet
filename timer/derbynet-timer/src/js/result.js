@@ -1,6 +1,6 @@
 'use strict';
 
-const DNF_TIME = "9.9999";
+var DNF_TIME = "9.9999";
 
 class HeatResult {
   lanemask;

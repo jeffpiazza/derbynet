@@ -31,7 +31,7 @@ public class TimerResult {
   private void setLaneZeroBased(int lane, String time, int place) {
     if (lane >= 0 && lane < results.size()) {
       Message.LaneResult r = results.get(lane);
-      if (r != null && ((laneMask & (1 << lane)) != 0)) {
+      if (r != null) {
         r.time = time;
         r.place = place;
       }
@@ -47,24 +47,21 @@ public class TimerResult {
     if (lane >= 0 && lane < results.size())
     {
       Message.LaneResult r = results.get(lane);
-      if (r != null)
-      {
-        return true;
-      }
+      return r != null;
     }
     return false;
   }
 
-  public String getLaneTime(int lane) {
+  public boolean isLaneFlagged(int lane) {
     if (lane >= 0 && lane < results.size())
     {
       Message.LaneResult r = results.get(lane);
       if (r != null)
       {
-        return r.time;
+        return (laneMask & (1 << lane)) == 0;
       }
     }
-    return null;
+    return false;
   }
 
   public int mask() { return laneMask; }  // For debugging

@@ -8,7 +8,39 @@
 //  pw.open({baud: 9600});
 //  TimerProxy.create(pw, all_profiles()[1]);
 
-const DNF_TIME = "9.9999";
+var DNF_TIME = "9.9999";
+function recalculateTimeoutCommand(command, timeout) {
+  command = command.replaceAll("<time>", timeout);
+  // Check for some math to do
+  var mathRegex = /(.*)\(math:(.*)\)(.*)/;
+  var cmdParts = command.match(mathRegex);
+  if (cmdParts) {
+    console.log("Found math in command: " + cmdParts[2]);
+    var rebuild = cmdParts[2];
+    var regex = /(\d+)\+(\d+)/;
+    var found;
+    while (found = rebuild.match(regex))
+    {
+      var a = parseInt(found[1]);
+      var b = parseInt(found[2]);
+      if (!a || !b) {
+        rebuild = null;
+        break;
+      }
+      rebuild = rebuild.replace(regex, a + b);
+      console.log("--> " + rebuild);
+    }
+    if (rebuild!= null) {
+      command = cmdParts[1] + String.fromCharCode(rebuild) + cmdParts[3]
+      console.log("Rebuilt command: " + command);
+    } else {
+      console.log("Rebuild was null. Could not handle timeout command.");
+      command = null;
+    }
+  }
+  return command;
+}
+
 
 class TimerProxy {
   port_wrapper;
@@ -208,7 +240,7 @@ class TimerProxy {
       break;
     }
     case 'MASK_LANES':
-      this.maskLanes(args[0], args[1], Flag.delay_reset_after_race.value);
+      this.maskLanes(args[0], args[1], Flag.reset_after_start.value);
       break;
     case 'ABORT_HEAT_RECEIVED':
       this.lastFinishTime = 0;
@@ -376,9 +408,12 @@ class TimerProxy {
       if (this.profile.heat_prep.hasOwnProperty('set_timeout_command')
           && this.profile.heat_prep.set_timeout_command != null
           && this.profile.options.timer_controls_timeout) {
-        var command = this.profile.heat_prep.set_timeout_command.replace("<time>", timeout);
-        await this.port_wrapper.drain();
-        await this.port_wrapper.write(command);
+        var command = recalculateTimeoutCommand(this.profile.heat_prep.set_timeout_command, timeout);
+        if (command != null) {
+          console.log("Timeout command: " + command);
+          await this.port_wrapper.drain();
+          await this.port_wrapper.write(command);
+        }
       }
     }
   }

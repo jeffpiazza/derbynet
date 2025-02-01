@@ -6,6 +6,39 @@ import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
+/* SuperTimer II Overview
+
+The SuperTimer doesn't report a gate state or race started condition.
+The SuperTimer race operates as follows:
+- Send Masking command (no response from track)
+- With Masking command, send the timeout if needed (How long track waits
+  before reporting results after the gate opens)
+- Run the race on the track by triggering the safety (track start), then the
+  start button at the track end.
+- The track will timeout after the timeout seconds (I believe default is 10s)
+- Once timed out or all lanes have a time, the results are sent to the timer.
+  The results are returned in finish order, reporting only lanes that finished.
+  Example result for 4 lanes with a DNF:
+      +20:28:05.495S		<-- #1
+      +20:28:05.532S		<-- 19491
+      +20:28:05.572S		<-- #3
+      +20:28:05.609S		<-- 20376
+      +20:28:05.536S		<-- #2
+      +20:28:05.572S		<-- 27563
+      +20:28:05.656S		<-- !
+    These times represent Lane 1: 1.9491s, Lane 2: 2.7563s,
+    Lane 3: 2.0376s, Lane 4: DNF
+
+  To handle this, times are submitted in parts, PARTIAL_LANE_RESULT_LANE_NUM,
+  then PARTIAL_LANE_RESULT_TIME (time gets the decimal inserted), then
+  NO_MORE_RESULTS is submitted on the "!" to tell the timer software that any 
+  un-reported lanes are to be marked as a DNF.
+  The NO_MORE_RESULTS will fill in all times Aas DNF, triggering the 
+  RACE_FINISHED event internally and posting the times.
+*/
+
+
+
 public class SuperTimerII extends TimerDeviceWithProfile {
   public SuperTimerII(TimerPortWrapper portWrapper) {
     super(portWrapper, profile());
@@ -82,8 +115,8 @@ public class SuperTimerII extends TimerDeviceWithProfile {
         // Can't figure out how to handle this with the math that has to happen as well
         // I'll leave this for future problems. The SuperTimer should default to 10s,
         // but it is stored in internal memory it seems, so I cannot verify this.
-        // Command should be: 2<Math:64 + 4*<time_seconds>>\r
-        // .set_heat_timeout_duration_command("2<time>\r")
+        // Command should be: 2(math:64 + 4*<time>>\r
+        .set_heat_timeout_duration_command("2(math:64+<time>+<time>+<time>+<time>)")
         ;
   }
 }

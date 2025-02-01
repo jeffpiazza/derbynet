@@ -236,9 +236,46 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
       insertSpot = time.length() - Math.abs(decimalPosition);
       sb.insert(time.length() - Math.abs(decimalPosition), '.');
     }
-
-    LogWriter.info("Inserting decimal at: " + String.valueOf(insertSpot));
     return sb.toString();
+  }
+
+  protected String calculateTimeoutCommand(String inCommand, int timeout) {
+    // Replace timeout placeholder
+    String command = inCommand.replace("<time>", String.valueOf(timeout));
+    
+    // Check for math expressions
+    Pattern mathPattern = Pattern.compile("(.*)\\(math:(.*)\\)(.*)");
+    Matcher cmdMatcher = mathPattern.matcher(command);
+    
+    if (cmdMatcher.find()) {
+        System.out.println("Found math in command: " + command);
+        String rebuild = cmdMatcher.group(2);
+        Pattern regex = Pattern.compile("(\\d+)\\+(\\d+)");
+        Matcher matcher;
+        while ((matcher = regex.matcher(rebuild)).find()) {
+            int added = 0;
+            try {
+                int a = Integer.parseInt(matcher.group(1));
+                int b = Integer.parseInt(matcher.group(2));
+                added = a + b;
+            } catch (NumberFormatException e) {
+                rebuild = null;
+                break;
+            }
+            
+            rebuild = rebuild.replaceFirst("(\\d+)\\+(\\d+)", String.valueOf(added));
+        }
+        
+        if (rebuild != null) {
+            command = cmdMatcher.group(1) + (char)Integer.parseInt(rebuild) + cmdMatcher.group(3);
+            System.out.println("Rebuilt command: " + command);
+        } else {
+            System.out.println("Rebuild was null. Could not handle timeout command.");
+            command = null;
+        }
+    }
+    
+    return command;
   }
 
   protected void maskLanes(int lanemask, int timeout) {
@@ -283,9 +320,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         if (profile.heat_prep.set_timeout_command != null 
             && profile.options.timer_controls_timeout)
         {
-          String command = profile.heat_prep.set_timeout_command.replace("<time>", String.valueOf(timeout));
-          portWrapper.drainForMs();
-          portWrapper.write(command);
+          String command = calculateTimeoutCommand(profile.heat_prep.set_timeout_command, timeout);
+          if (command != null) {
+            portWrapper.drainForMs();
+            portWrapper.write(command);
+          }
         }
 
         portWrapper.drainForMs();
@@ -372,9 +411,10 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
           int maxLanes = result.getMaxLanes();
           for (int i=0; i<maxLanes; ++i)
           {
-            if (result.isLaneValid(i) && result.getLaneTime(i) == null)
+            if (result.isLaneValid(i) && !result.isLaneFlagged(i))
             {
-              String[] subArgs={String.valueOf(i), DNF_TIME};
+              String[] subArgs={String.valueOf(i+1), DNF_TIME};
+              LogWriter.info("Marking lane " + (i+1) + " as DNF(" + DNF_TIME + ")");
               Event.send(Event.LANE_RESULT, subArgs);
             }
           }
@@ -387,6 +427,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         String time = TimerDeviceUtils.zeroesToNines(args[1]);
+        LogWriter.info("Lane result " + lane + ":" + time);
         if (result != null) {
           boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
