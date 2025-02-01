@@ -57,26 +57,6 @@ public class SuperTimerII extends TimerDeviceWithProfile {
   //     4a 7c 7f 42 43 41 45  J|BCAE // 15s timeout
   //     4a 70 7f 42 43 41 45  JpBCAE // 12s timeout
 
-  // Timeout -- SET
-  //     Set timeout command 
-  //         HEX = 32 <@/0x40 + (4*num sec)> 0d
-  //         DEC = 2 <64 + 4 * num sec> \r
-  //     Example command and responses:
-  //     cmd (hex) (ascii) Timeout
-  //     32 a4 0d    2¤.    25
-  //     32 a0 0d    2 .    24
-  //     32 3f 0d    2?.    21-23 // Not sure why these repeat
-  //     32 90 0d    2.    20
-  //     32 3f 0d    2?.    16-19 // Not sure why these repeat
-  //     32 7c 0d    2|.    15
-  //     32 78 0d    2x.    14
-  //     32 74 0d    2t.    13
-  //     32 70 0d    2p.    12
-  //     32 6c 0d    2l.    11
-  //     32 68 0d    2h.    10
-  //     32 40 0d    2@.    NO Timeout
-  // ----------------------------------------------
-
   public static Profile profile() {
     return Profile.forTimer("Super Timer II", "Super Timer II")
         .max_lanes(6)
@@ -111,10 +91,27 @@ public class SuperTimerII extends TimerDeviceWithProfile {
         // 3|5A\r	Lanes 3, 4, 5, 6     Binary: 111100
         .single_mask_heat_prep(null, null, "3", "5A\r", 64)
         
-        // TODO: Implement this with the math for the time.
-        // Can't figure out how to handle this with the math that has to happen as well
-        // I'll leave this for future problems. The SuperTimer should default to 10s,
-        // but it is stored in internal memory it seems, so I cannot verify this.
+
+        // Timeout -- SET
+        //     Set timeout command 
+        //         HEX = 32 <@/0x40 + (4*num sec)> 0d
+        //         DEC = 2 <64 + 4 * num sec> \r
+        //     Example command and responses:
+        //     cmd (hex) (ascii) Timeout
+        //     32 a4 0d    2¤.    25
+        //     32 a0 0d    2 .    24
+        //     32 3f 0d    2?.    21-23 // Not sure why these repeat
+        //     32 90 0d    2.    20
+        //     32 3f 0d    2?.    16-19 // Not sure why these repeat
+        //     32 7c 0d    2|.    15
+        //     32 78 0d    2x.    14
+        //     32 74 0d    2t.    13
+        //     32 70 0d    2p.    12
+        //     32 6c 0d    2l.    11
+        //     32 68 0d    2h.    10
+        //     32 40 0d    2@.    NO Timeout
+        // ----------------------------------------------
+
         // Command should be: 2(math:64 + 4*<time>>\r
         .set_heat_timeout_duration_command("2(math:64+<time>+<time>+<time>+<time>)")
         ;
