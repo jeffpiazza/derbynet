@@ -224,7 +224,7 @@ class HistoryActionFormatter {
     if (isset($racer['rankid'])) {
       $r = $this->_ranks->GetOrError($racer['rankid']);
       if ($r) {
-        $s .= ', '.$r['rank'];
+        $s .= ', '.@$r['rank'];
       }
     } else if (isset($racer['classid'])) {
       $c = $this->_classes->GetOrError($racer['classid']);
@@ -242,9 +242,9 @@ class HistoryActionFormatter {
     if (!$round) {
       return "Roundid <b>$roundid</b>";
     }
-    $c = $this->_classes->GetOrError($round['classid']);
+    $c = $this->_classes->GetOrError(@$round['classid']);
     if (!$c) {
-      $c = array('class' => "<b>No class $round[classid]</b>");
+      $c = array('class' => "<b>No class ".@$round['classid']."</b>");
     }
     $rno = $round['round'] == 1 ? "" : ", round $round[round]";
     return "$c[class]$rno";
@@ -392,7 +392,7 @@ class HistoryActionFormatter {
       }
 
       foreach ($this->_racers->_entries as $racer) {
-        $partid = $racer['partitionid'];
+        $partid = @$racer['partitionid'];
         $p = $this->_partitions->Get($partid);
         $racer['rankid'] = $p['rankid'];
         // $rank = $this->_ranks->Get($p['rankid']);
@@ -566,10 +566,10 @@ class HistoryActionFormatter {
     case 'rank.move': {  // {"action":"rank.move","rankid":"4","classid":"4"}
       $rank = $this->_ranks->GetOrError($this->_action['rankid']);
       if ($this->_action['classid'] < 0) {
-        return "Move ".$this->PartitionLabel(true)." $rank[rank] into its own racing group";
+        return "Move ".$this->PartitionLabel(true)." ".@$rank['rank']." into its own racing group";
       } else {
         $c = $this->_classes->GetOrError($this->_action['classid']);
-        return "Move ".$this->PartitionLabel(true)." $rank[rank] into racing group $c[class]";
+        return "Move ".$this->PartitionLabel(true)." ".@$rank['rank']." into racing group ".@$c['class'];
       }
     }
     case 'rank.order':

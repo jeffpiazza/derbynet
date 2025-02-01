@@ -96,25 +96,6 @@ public class TimerDeviceUtils {
     return results;
   }
 
-  public static Message.LaneResult[] parseCommonRaceResult(String line,
-                                                           int nlanes) {
-    Matcher m = finishPattern.matcher(line);
-    if (m.matches()) {
-      Message.LaneResult[] results = new Message.LaneResult[nlanes];
-      m = singleLanePattern.matcher(line);
-      for (int i = 0; i < line.length() && m.find(i); i = m.end() + 1) {
-        int index = m.group(1).charAt(0) - 'A';
-        results[index] = new Message.LaneResult(m.group(2));
-        if (m.group(3).length() > 0) {
-          results[index].place = m.group(3).charAt(0) - '!' + 1;
-        }
-      }
-
-      return results;
-    }
-    return null;
-  }
-
   public static String zeroesToNines(String time) {
     Matcher m = zeroesPattern.matcher(time);
     if (m.find()) {
