@@ -14,30 +14,28 @@ function read_car_numbering_values() {
 function next_car_numbers() {
   global $db;
   if (schema_version() >= PARTITION_SCHEMA) {
-    list($mult, $smallest) = read_car_numbering_values();
+    list($mult, $smallest) = read_car_numbering_values();    
+    $mult = intval($mult);
+    $smallest = intval($smallest);
 
-    $stmt = $db->prepare('SELECT part.partitionid,'
-                         .' (CASE NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
-                         .'                  WHERE conflict.carnumber = lbound)'
-                         .'  WHEN 1 THEN lbound'
-                         .'  ELSE 1 + MIN(carnumber) END'
-                         .' ) AS next_carnumber'
-                         .' FROM (SELECT partitionid,'
-                         .'              CAST(:mult0 AS INTEGER) AS mult,'
-                         .'              :smallest  + (sortorder - 1) * :mult  AS lbound,'
-                         .'              :smallest2 + (sortorder    ) * :mult2 AS ubound'
-                         .'              FROM Partitions'
-                         .') AS part'
-                         .' LEFT JOIN (SELECT carnumber FROM RegistrationInfo) AS reg'
-                         .'  ON  carnumber >= lbound'
-                         .'  AND (mult = 0 OR carnumber <  ubound)'
-                         .'  AND NOT EXISTS(SELECT 1 FROM RegistrationInfo conflict'
-                         .'                  WHERE conflict.carnumber = 1 + reg.carnumber)');
-    $stmt->execute(array(':mult0' => intval($mult),
-                         ':mult' => intval($mult),
-                         ':smallest' => intval($smallest),
-                         ':mult2' => intval($mult),
-                         ':smallest2' => intval($smallest)));
+    $stmt = $db->prepare(
+      'SELECT partitionid,'
+      .'      COALESCE(1 + (SELECT MIN(carnumber) FROM RegistrationInfo AS reg'
+      .'                    WHERE carnumber >= (:sm1 + (sortorder - 1) * :m1) - 1'
+      .'                      AND (:m2 = 0 OR carnumber <  (:sm2 + sortorder * :m3))'
+      .'                      AND NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
+      .'                                     WHERE conflict.carnumber = 1 + reg.carnumber)),'
+      .'               :sm3 + (sortorder - 1) * :m4)'
+      .'       AS next_carnumber'
+      .' FROM Partitions'
+      .' ORDER BY sortorder');
+    $stmt->execute(array(':sm1' => $smallest,
+                         ':sm2' => $smallest,
+                         ':sm3' => $smallest,
+                         ':m1' => $mult,
+                         ':m2' => $mult,
+                         ':m3' => $mult,
+                         ':m4' => $mult));
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else {
     return $db->query(

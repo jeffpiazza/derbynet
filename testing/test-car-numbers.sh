@@ -6,6 +6,22 @@ source `dirname $0`/common.sh
 
 # user_login_coordinator
 
+RESET_SOURCE=car-numbers-0 `dirname $0`/reset-database.sh "$BASE_URL"
+
+curl_postj action.php "action=class.add&name=First%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 1 and .[0].partitionid == 1 and .[0].next_carnumber == 101' \
+    > /dev/null || test_fails
+
+curl_postj action.php "action=class.add&name=Second%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 2
+           and .[0].partitionid == 1 and .[0].next_carnumber == 101
+           and .[1].partitionid == 2 and .[1].next_carnumber == 201' \
+    > /dev/null || test_fails
+
 RESET_SOURCE=car-numbers `dirname $0`/reset-database.sh "$BASE_URL"
 
 
