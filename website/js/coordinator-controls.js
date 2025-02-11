@@ -132,6 +132,22 @@ function on_manual_results_button_click(should_trigger_replay) {
         }
     }
 
+    // Add a note to tell the user how to log a DNF
+    if ($("#note-for-table").length === 0) {
+        $(racer_table).after(
+          $("<div>")
+            .addClass("note")
+            .css({
+              "text-align": "right",
+              "padding": "5px 10px",
+              "background-color": "#f0f0f0",
+              "border-radius": "4px"
+            })
+            .attr('id', 'note-for-table')
+            .text("Note: Enter 9.999 for a DNF.")
+      );
+    }
+
     if (any_results) {
       $("#discard-results").removeClass("hidden");
     } else {
