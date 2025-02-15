@@ -17,6 +17,9 @@ public enum Event {
   RACE_STARTED,
   RACE_FINISHED, // An OVERDUE event signals that expected results have not yet arrived
   LANE_RESULT, // Just one
+  NO_MORE_RESULTS, // Fill in any results that were not populated from the timer (Only for timers that skip reporting)
+  PARTIAL_LANE_RESULT_LANE_NUM, // First of 2 events to make a lane result
+  PARTIAL_LANE_RESULT_TIME, // Last of 2 events to make a lane result, combines first and fires a LANE_RESULT
   OVERDUE, // Eventually, overdue results give way to a GIVING_UP event,
   // which is roughly treated like another PREPARE_HEAT_RECEIVED.
   GIVING_UP,

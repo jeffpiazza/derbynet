@@ -9,7 +9,7 @@
    <!-- Set soffice for Windows if that's where we are, otherwise use
 	standard (Mac) value -->
    <condition property="soffice"
-	      value="\Program Files (x86)\LibreOffice 5\program\soffice.exe">
+	      value="C:\Program Files\LibreOffice\program\soffice.exe">
      <os family="windows"/>
    </condition>
    <property name="soffice"
@@ -35,6 +35,7 @@
        <sequential>
            <local name="pdf.uptodate"/>
 
+            <!-- This check doesn't work on Windows. It always returns true-->
            <uptodate property="pdf.uptodate" srcfile="@{file}">
                <mapper type="regexp" from="^(.*)/(.*)\.fodt$" to="\1/dist/\2.pdf"/>
            </uptodate>
