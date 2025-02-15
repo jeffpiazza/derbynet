@@ -17,25 +17,32 @@ function next_car_numbers() {
     list($mult, $smallest) = read_car_numbering_values();    
     $mult = intval($mult);
     $smallest = intval($smallest);
-
+    if ($mult == 0) {
+      $stmt = $db->prepare(
+        'SELECT partitionid,'
+        .'      COALESCE(1 + (SELECT MIN(carnumber) FROM RegistrationInfo AS reg'
+        .'                    WHERE carnumber >= smallest'
+        .'                      AND NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
+        .'                                     WHERE conflict.carnumber = 1 + reg.carnumber)),'
+        .'               smallest)'
+        .'     AS next_carnumber'
+      .' FROM Partitions, (SELECT :smallest AS smallest, :mult AS mult) AS k'
+      .' ORDER BY sortorder');
+    } else {
     $stmt = $db->prepare(
       'SELECT partitionid,'
       .'      COALESCE(1 + (SELECT MIN(carnumber) FROM RegistrationInfo AS reg'
-      .'                    WHERE carnumber >= (:sm1 + (sortorder - 1) * :m1) - 1'
-      .'                      AND (:m2 = 0 OR carnumber <  (:sm2 + sortorder * :m3))'
+      .'                    WHERE carnumber >= (smallest + (sortorder - 1) * mult) - 1'
+      .'                      AND carnumber < (smallest + sortorder * mult)'
       .'                      AND NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
       .'                                     WHERE conflict.carnumber = 1 + reg.carnumber)),'
-      .'               :sm3 + (sortorder - 1) * :m4)'
-      .'       AS next_carnumber'
-      .' FROM Partitions'
+      .'               smallest + (sortorder - 1) * mult)'
+      .'     AS next_carnumber'
+      .' FROM Partitions, (SELECT :smallest AS smallest, :mult AS mult) AS k'
       .' ORDER BY sortorder');
-    $stmt->execute(array(':sm1' => $smallest,
-                         ':sm2' => $smallest,
-                         ':sm3' => $smallest,
-                         ':m1' => $mult,
-                         ':m2' => $mult,
-                         ':m3' => $mult,
-                         ':m4' => $mult));
+    }
+    $stmt->execute(array(':smallest' => $smallest,
+                         ':mult' => $mult));
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else {
     return $db->query(
