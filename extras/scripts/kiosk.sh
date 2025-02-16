@@ -85,6 +85,9 @@ EOF
     curl --insecure --connect-timeout 6 --location --silent \
          "$DERBYNET_SERVER/index.php" > /dev/null && \
         CONTACT_OK=1
+
+# Prevent Xmessage flood when $DERBYNET_SERVER can not be reached. Especially helpful during initial setup.
+sleep 10s
 done
 
 # While loop allows recovery from browser crashes
