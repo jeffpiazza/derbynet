@@ -313,9 +313,10 @@ function process_polling_result(data) {
       var place = hr.place;
       place_to_lane[parseInt(place)] = lane;
 
+      var isDnf = hr.time > 9.9;
       $('[data-lane="' + lane + '"] .time')
         .css({opacity: 100})
-        .text(Number.parseFloat(hr.time).toFixed(precision));
+        .text(isDnf ? "DNF" : Number.parseFloat(hr.time).toFixed(precision));
       if (FlyerAnimation.ok_to_animate) {
         $('[data-lane="' + lane + '"] .place').css({opacity: 0});
       }
@@ -323,7 +324,7 @@ function process_polling_result(data) {
       if (hr.speed != '') {
         $('[data-lane="' + lane + '"] .speed')
           .css({opacity: 100})
-          .text(hr.speed);
+          .text(isDnf ? "--" : hr.speed);
       }
     }
 

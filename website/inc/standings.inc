@@ -587,7 +587,7 @@ class StandingsOracle {
       } else {
         echo "<td>".sprintf($time_format, $row['avg'])."</td>";
         echo "<td>".sprintf($time_format, $row['best'])."</td>";
-        echo "<td>".sprintf($time_format, $row['worst'])."</td>";
+        echo "<td>".sprintf($time_format, $row['worst']).(floatval($row['worst']) > 9.9 ? "(DNF)" : "")."</td>";
       }
       echo "</tr>\n";
     }

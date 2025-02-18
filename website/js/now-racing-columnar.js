@@ -61,7 +61,8 @@ class ResultAnimator {
       let lane = heat_results[i].lane;
       let racer_entry_div = $("div.lane").eq(lane_to_column(lane)).find("div.racer-entry:first");
       let time_div = racer_entry_div.find("div.heat_time");
-      time_div.text(Number.parseFloat(heat_results[i].time).toFixed(precision))
+      var isDnf = heat_results[i].time > 9.9;
+      time_div.text(isDnf ? "DNF" : Number.parseFloat(heat_results[i].time).toFixed(precision))
         .css({'background-color': 'red'});
       let time_animation = new Promise(function(result) {
         time_div.animate({'backgroundColor': '#c0c0c0'},
