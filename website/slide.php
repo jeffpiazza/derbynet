@@ -13,7 +13,7 @@ require_once('inc/photo-config.inc');
 //   or
 // slide.php/my-great-slide.png
 
-$exploded = explode('/', path_info());
+$exploded = explode('/', urldecode(path_info()));
 
 if (count($exploded) == 3 && is_acceptable_subdir($exploded[2])) {
   $exploded[1] = $exploded[1].DIRECTORY_SEPARATOR.$exploded[2];
