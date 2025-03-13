@@ -82,7 +82,7 @@ class TimerEvent {
     case 'LANE_RESULT': {
       var lane_char = args[0].charCodeAt(0);
       // ASCII 48 is '0', 57 is '9', 65 is 'A', 97 is 'a'
-      var lane = (49 <= lane_char && lane_char <= 57) ?
+      var lane = (48 <= lane_char && lane_char <= 57) ?
           lane_char - 49 + 1 :
           lane_char - 65 + 1;
       var place = 0;

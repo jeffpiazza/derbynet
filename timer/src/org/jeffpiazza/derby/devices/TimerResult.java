@@ -24,7 +24,17 @@ public class TimerResult {
 
   // lane and place are 1-based; place=0 for no place value
   public void setLane(int lane, String time, int place) {
-    setLaneZeroBased(lane - 1, time, place);
+    if (lane == 0) {
+      // NewBold (at least) sends a lane 0 result of 0.000 for DNFs.
+      // We assume that means there won't be further valid times that follow.
+      // We need to clear one bit in the laneMask, doesn't matter which one, so
+      // that the caller will generate a RACE_FINISHED event when all the
+      // "results" are in.  We pick the lowest set bit and clear it.
+      int lowestBit = laneMask & -laneMask;
+      laneMask &= ~lowestBit;
+    } else {
+      setLaneZeroBased(lane - 1, time, place);
+    }
   }
 
   // lane is 0-based, but place remains 1-based

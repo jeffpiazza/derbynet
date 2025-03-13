@@ -291,7 +291,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
       case LANE_RESULT: {
         char lane_char = args[0].charAt(0);
-        int lane = ('1' <= lane_char && lane_char <= '9')
+        int lane = ('0' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         String time = TimerDeviceUtils.zeroesToNines(args[1]);

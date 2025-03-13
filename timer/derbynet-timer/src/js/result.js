@@ -19,7 +19,16 @@ class HeatResult {
 
   // Lane is 1-based
   setLane(lane, time, place = 0) {
-    return this.setLane_0based(lane - 1, time, place = 0);
+    if (lane == 0) {
+      // NewBold (at least) sends a lane 0 result of 0.000 for DNFs.
+      // We assume that means there won't be further valid times that follow.
+      // We need to clear one bit in the laneMask, doesn't matter which one, so
+      // that the caller will generate a RACE_FINISHED event when all the
+      // "results" are in.  This clears the lowest set bit in the mask:
+      this.lanemask &= ~(this.lanemask & -this.lanemask);
+    } else {
+      return this.setLane_0based(lane - 1, time, place = 0);
+    }
   }
 
   setLane_0based(lane0, time, place = 0) {
