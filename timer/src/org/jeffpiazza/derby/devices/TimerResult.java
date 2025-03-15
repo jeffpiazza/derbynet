@@ -29,9 +29,8 @@ public class TimerResult {
       // We assume that means there won't be further valid times that follow.
       // We need to clear one bit in the laneMask, doesn't matter which one, so
       // that the caller will generate a RACE_FINISHED event when all the
-      // "results" are in.  We pick the lowest set bit and clear it.
-      int lowestBit = laneMask & -laneMask;
-      laneMask &= ~lowestBit;
+      // "results" are in.  This clears the lowest set bit in the mask:
+      laneMask &= ~(laneMask & -laneMask);
     } else {
       setLaneZeroBased(lane - 1, time, place);
     }

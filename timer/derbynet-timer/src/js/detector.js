@@ -48,6 +48,9 @@ class Detector {
         }
       }
       if (this.matcher.hasOwnProperty('event')) {
+        if (this.matcher.event == 'RACE_FINISHED' && args.length == 0 && g_timer_proxy) {
+          args = g_timer_proxy.argsForRaceFinished();
+        }
         TimerEvent.send(this.matcher.event, args);
       }
       return line.substr(0, m.index) + line.substr(m.index + m[0].length);
