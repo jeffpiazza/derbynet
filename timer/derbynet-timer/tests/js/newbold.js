@@ -27,3 +27,16 @@ function newBoldDnf() {
   // remote-start: "NO"
   g_host_poller.onEvent('RACE_FINISHED', [100, 1, result]);
 }
+
+
+function all_lanes() {
+  var proxy = new TimerProxy({}, {});
+  proxy.result = new HeatResult(29);
+  TimerEvent.register_unique(proxy);
+  TimerEvent.send('LANE_RESULT', ['3', '1.111']);
+  TimerEvent.send('LANE_RESULT', ['1', '3.333']);
+  TimerEvent.send('LANE_RESULT', ['5', '5.555']);
+  TimerEvent.send('LANE_RESULT', ['4', '4.444']);
+  // TODO Should trigger a RACE_FINISHED event that causes a FINISHED message to
+  // be sent to the server.
+}

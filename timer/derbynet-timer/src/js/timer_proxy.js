@@ -172,7 +172,7 @@ class TimerProxy {
     this.port_wrapper.close();
   }
 
-  async argsForRaceFinished() {
+  argsForRaceFinished() {
     return [this.roundid, this.heat, this.result];
   }
 
