@@ -46,7 +46,7 @@ function preferred_urls($use_https = false) {
     // IIS apparently doesn't set REQUEST_URI.
     if (isset($_SERVER['REQUEST_URI'])) {
       $uri = dirname($_SERVER['REQUEST_URI']);
-      if ($uri == "/") {
+      if ($uri == "/" || $uri == "\\") {
         $uri = "";
       }
     } else {
