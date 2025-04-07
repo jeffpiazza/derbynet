@@ -111,6 +111,7 @@ public class StateMachine implements Event.Handler {
         switch (e) {
           case GATE_CLOSED:
             if (gateEventMarksAChange(true)) {
+              Event.send(Event.GET_SET);
               currentState = State.SET;
             }
             break;

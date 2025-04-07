@@ -4,6 +4,7 @@ import jssc.SerialPort;
 import org.jeffpiazza.derby.serialport.TimerPortWrapper;
 import org.jeffpiazza.derby.timer.Event;
 import org.jeffpiazza.derby.timer.Profile;
+import org.jeffpiazza.derby.timer.StateMachine;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
 // TODO remote start "S"
@@ -28,7 +29,9 @@ public class Pdt extends TimerDeviceWithProfile {
         .match("^B$", Event.RACE_STARTED)
         // .match("^K$"  )  // ready for next race?
         .match("(\\d) - (\\d+\\.\\d+)", Event.LANE_RESULT, 1, 2)
-        .heat_prep("U", "M", '1')
+        .heat_prep("U", "M", '1', "R")
+        // The Reset command needs to be sent after the gate is closed.
+        .on(Event.GET_SET, "R")
         .on(Event.OVERDUE, "F");
   }
 

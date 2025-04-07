@@ -11,9 +11,14 @@ import org.jeffpiazza.derby.LogWriter;
 // going to abandon the state machine and everything else altogether.
 public enum Event {
   PREPARE_HEAT_RECEIVED,
-  ABORT_HEAT_RECEIVED, // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
+  ABORT_HEAT_RECEIVED,
+  // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
   GATE_OPEN,
   GATE_CLOSED,
+  // PREPARE_HEAT_RECEIVED marks the transition from IDLE to (on your) MARK.
+  // GET_SET marks the transition from MARK to SET
+  GET_SET,
+
   RACE_STARTED,
   // RACE_FINISHED gets signaled either when all the expected lane results have
   // been reported, or (for some timers) when the timer says it's done.

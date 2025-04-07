@@ -15,6 +15,10 @@ class TimerEvent {
     // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
     GATE_OPEN,
     GATE_CLOSED,
+    // PREPARE_HEAT_RECEIVED marks the transition from IDLE to (on your) MARK.
+    // GET_SET marks the transition from MARK to SET
+    GET_SET,
+
     RACE_STARTED,
     RACE_FINISHED, args are roundid, heat, HeatResult
     LANE_RESULT, lane (1-based), time (string), place (1-based or 0)
