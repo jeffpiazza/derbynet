@@ -472,10 +472,10 @@ function generate_current_heat_racers(new_racers, current, nlanes) {
 
     var result = "";
     if (r) {
-      result = current.use_points ? r.finishplace : r.finishtime;
+      result = current.use_points ? r.finishplace : r.finishtime > 9.9 ? "DNF" : r.finishtime;
     }
     if (holding && hr) {
-      result = current.use_points ? hr.place : hr.time;
+      result = current.use_points ? hr.place : hr.time > 9.9 ? "DNF" : hr.time;
     }
     racers_table.append('<tr><td>' + lane + '</td>'
                         + '<td>' + (r ? r.carnumber : '') + '</td>'
