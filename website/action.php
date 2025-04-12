@@ -84,7 +84,7 @@ if ($is_action) {
                             'description' => 'No outcome defined.'));
   if (isset($db) &&
       !($args['action'] == 'timer-message' && $args['message'] == 'HEARTBEAT') &&
-      array_search($args['action'], array('role.login', 'vote.cast')) === false) {
+      array_search($args['action'], array('role.login', 'vote.cast', 'replay-message')) === false) {
     record_action($args);
   }
 }
