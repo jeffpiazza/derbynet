@@ -225,14 +225,16 @@ function confirm_purge(purge) {
   if (purge == 'results') {
     text = $("#purge_results_para").text();
   } else if (purge == 'schedules') {
-    text = $("#purge_schedules_para").text();
+    text = $("#purge_schedules_para").text() + " including<br/>" +
+      $("#purge_results_para").text();
   } else if (purge == 'racers') {
-    text = $("#purge_racers_para").text();
+    text = $("#purge_racers_para").text() + " including<br/>" +
+      $("#purge_results_para").text();
   } else if (purge == 'awards') {
     text = $("#purge_awards_para").text();
   }
   
-  $("#purge_operation").text(text);
+  $("#purge_operation").html(text);
 
   show_secondary_modal("#purge_confirmation_modal", function(event) {
     close_secondary_modal("#purge_confirmation_modal");

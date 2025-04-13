@@ -96,6 +96,7 @@ function poll_once_for_replay() {
 
 function listen_for_replay_messages() {
   if (g_websocket_url != "") {
+    // g_trigger_websocket is the websocket on which we listen for replay messages
     g_trigger_websocket = new MessagePoller(make_id_string('replay-'),
                                             function(msg) { handle_replay_message(msg.cmd); },
                                             ['replay-commands']);
