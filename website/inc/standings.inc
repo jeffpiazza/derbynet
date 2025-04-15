@@ -17,7 +17,7 @@ if (read_raceinfo('drop-slowest') && read_raceinfo('scoring', -1) == -1) {
 // ROUND standings: For a given roundid, it's straightforward to calculate
 // standings within the round, provided all the heats have been run.  If not all
 // heats have been run, compare each racer's scoring-expression if it's
-// well-defined, otherwise treat as 9.999.
+// well-defined, otherwise treat as 9.9999.
 //
 // (For organic racing classes, the "class standings" presented to the user are
 // simply the ROUND standings of the highest-numbered round for the class.  For
