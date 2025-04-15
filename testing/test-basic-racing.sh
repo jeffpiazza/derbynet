@@ -11,6 +11,8 @@ curl_postj action.php "action=settings.write&unused-lane-mask=0&n-lanes=4" | che
 ### Check in every other racer...
 `dirname $0`/test-basic-checkins.sh "$BASE_URL"
 
+curl_postj action.php "action=class.edit&classid=2&name=White's%20Wolves&ntrophies=4" | check_jsuccess
+
 ### Schedule first round for 3 of the classes
 curl_postj action.php "action=schedule.generate&roundid=1" | check_jsuccess
 curl_postj action.php "action=schedule.generate&roundid=2" | check_jsuccess
@@ -81,7 +83,7 @@ user_login_timer
 run_heat 2 3  227:2.4901 247:2.0838 217:3.6469 237:2.1003
 run_heat 2 4  237:3.9403 207:3.4869 227:3.5717 247:3.5386
 run_heat 2 5  247:3.0439 217:3.4090 237:3.3881 207:2.9110  x
- 
+
 user_login_coordinator
 ### Un-checkin a few roundid=3 and re-generate schedule
 curl_postj action.php "action=racer.pass&racer=13&value=0" | check_jsuccess
@@ -158,6 +160,18 @@ run_heat 5 1  415:3.9962 445:3.9847 435:2.1091 425:3.2685
 run_heat 5 2  425:2.4600 415:3.6349 445:2.3152 435:2.6711
 run_heat 5 3  435:3.8841 425:2.8243 415:2.7381 445:3.9018
 run_heat 5 4  445:2.7886 435:3.5121 425:3.8979 415:2.0171  x
+
+# We changed class 2 (White's Wolves) to have 4 trophies, not the default 3
+curl_getj "action.php?query=award.list" | \
+    jq -e '.["speed-awards"] | map(select(.classid == 2)) | length == 4' > /dev/null || test_fails
+curl_getj "action.php?query=award.list" | \
+    jq -e '.["speed-awards"] | map(select(.classid == 1)) | length == 3' > /dev/null || test_fails
+curl_getj "action.php?query=award.list" | \
+    jq -e '.["speed-awards"] | map(select(.classid == 3)) | length == 3' > /dev/null || test_fails
+curl_getj "action.php?query=award.list" | \
+    jq -e '.["speed-awards"] | map(select(.classid == 4)) | length == 3' > /dev/null || test_fails
+curl_getj "action.php?query=award.list" | \
+    jq -e '.["speed-awards"] | map(select(.classid == 5)) | length == 3' > /dev/null || test_fails
 
 user_login_coordinator
 

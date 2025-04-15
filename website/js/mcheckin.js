@@ -214,7 +214,7 @@ function dismiss_greetings() {
   show_camera();
 }
 
-var g_autocrop = true;
+var g_autocrop = false;
 function on_autocrop_button_click() {
   g_autocrop = ! g_autocrop;
   $("#autocrop-button").toggleClass('passed', g_autocrop);

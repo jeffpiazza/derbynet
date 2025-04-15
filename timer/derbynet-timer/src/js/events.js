@@ -15,6 +15,10 @@ class TimerEvent {
     // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
     GATE_OPEN,
     GATE_CLOSED,
+    // PREPARE_HEAT_RECEIVED marks the transition from IDLE to (on your) MARK.
+    // GET_SET marks the transition from MARK to SET
+    GET_SET,
+
     RACE_STARTED,
     RACE_FINISHED, args are roundid, heat, HeatResult
     LANE_RESULT, lane (1-based), time (string), place (1-based or 0)
@@ -62,6 +66,9 @@ class TimerEvent {
       g_logger.debug_msg('send ' + event);
     }
 
+    // When clock worker receives this message, it will post an event message
+    // back to this thread, which results (via onmessage method defined in
+    // main.js) in a call to our trigger() method.
     g_clock_worker.postMessage([null, 0, 'EVENT', event, args]);
   }
 
@@ -82,7 +89,7 @@ class TimerEvent {
     case 'LANE_RESULT': {
       var lane_char = args[0].charCodeAt(0);
       // ASCII 48 is '0', 57 is '9', 65 is 'A', 97 is 'a'
-      var lane = (49 <= lane_char && lane_char <= 57) ?
+      var lane = (48 <= lane_char && lane_char <= 57) ?
           lane_char - 49 + 1 :
           lane_char - 65 + 1;
       var place = 0;

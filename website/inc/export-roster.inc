@@ -21,6 +21,7 @@ function export_roster(callable $out) {
   } else {
     $headings[] = "Name";
   }
+  $headings[] = "From";  // "Note"
   $headings[] = "Car Number";
   $headings[] = "Car Name";
   if ($use_groups) {
@@ -41,7 +42,7 @@ function export_roster(callable $out) {
 //    By class then rank then lastname, firstname
 //    By class then rank then car number
 
-  $stmt = $db->query('SELECT racerid, firstname, lastname, carnumber, carname, '
+  $stmt = $db->query('SELECT racerid, firstname, lastname, note, carnumber, carname, '
                      .' passedinspection, exclude,'
                      .' Classes.class as classname,'
                      .' Ranks.rank as rankname'
@@ -66,6 +67,7 @@ function export_roster(callable $out) {
       $line[] = mangled_name($row, $name_style);
     }
 
+    $line[] = $row['note'];
     $line[] = $row['carnumber'];
     $line[] = $row['carname'];
 

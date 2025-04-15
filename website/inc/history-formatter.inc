@@ -17,16 +17,16 @@ class SimulatedSqliteTable {
     $this->_idcol = $idcol;
   }
 
-  public function &Insert($v) {
+  public function Insert($v) {
     if (isset($v[$this->_idcol])) {
       EmitErrorRow("Inappropriate Insert ".json_encode($v));
     }
     $index = 1 + count($this->_entries);
     $v[$this->_idcol] = $index;
-    $this->_entries[] = &$v;
+    $this->_entries[] = $v;
     return $v;
   }
-  public function &InsertWithId($v) {
+  public function InsertWithId($v) {
     if (!isset($v[$this->_idcol])) {
       EmitErrorRow("Inappropriate InsertWithId ".json_encode($v));
     }
@@ -44,29 +44,29 @@ class SimulatedSqliteTable {
       while (1 + count($this->_entries) < $index) {
         $this->_entries[] = null;
       }
-      $this->_entries[] = &$v;
+      $this->_entries[] = $v;
       if (false && !array_is_list($this->_entries)) {
         echo "<tr><td colspan='3' style='background: #ffff99;'>InsertWithId after appending:<br/>"
           .$this->DumpEntries()
           ."</td></tr>";  // TODO
       }
     } else {
-      $this->_entries[$index - 1] = &$v;
+      $this->_entries[$index - 1] = $v;
     }
     return $v;
   }
 
-  public function &Get($id) {
+  public function Get($id) {
     if ($id > 0 && $id <= count($this->_entries)) {
       return $this->_entries[$id - 1];
     }
     $empty = null;
     return $empty;
   }
-  public function &GetOrError($id) {
+  public function GetOrError($id) {
     $id = intval($id);
     if ($id > 0) {
-      $v = &$this->Get($id);
+      $v = $this->Get($id);
     }
     if (!@$v) {
       EmitErrorRow($this->_idcol." not found: $id");
@@ -74,7 +74,7 @@ class SimulatedSqliteTable {
     return @$v;
   }
 
-  public function &Find($col, $val) {
+  public function Find($col, $val) {
     $count = count($this->_entries);
     for ($i = 0; $i < $count; ++$i) {
       if ($this->_entries[$i] &&
@@ -86,7 +86,7 @@ class SimulatedSqliteTable {
     return $empty;
   }
 
-  public function &Find2($col1, $val1, $col2, $val2) {
+  public function Find2($col1, $val1, $col2, $val2) {
     $count = count($this->_entries);
     for ($i = 0; $i < $count; ++$i) {
       if ($this->_entries[$i] &&
@@ -99,7 +99,7 @@ class SimulatedSqliteTable {
     return $empty;
   }
 
-  public function &FindOrInsert($col, $val) {
+  public function FindOrInsert($col, $val) {
     $f = $this->Find($col, $val);
     if ($f) {
       return $f;
@@ -107,7 +107,7 @@ class SimulatedSqliteTable {
     return $this->Insert(array($col => $val));
   }
 
-  public function &FindOrInsert2($col1, $val1, $col2, $val2) {
+  public function FindOrInsert2($col1, $val1, $col2, $val2) {
     $f = $this->Find2($col1, $val1, $col2, $val2);
     if ($f) {
       return $f;
@@ -224,7 +224,7 @@ class HistoryActionFormatter {
     if (isset($racer['rankid'])) {
       $r = $this->_ranks->GetOrError($racer['rankid']);
       if ($r) {
-        $s .= ', '.$r['rank'];
+        $s .= ', '.@$r['rank'];
       }
     } else if (isset($racer['classid'])) {
       $c = $this->_classes->GetOrError($racer['classid']);
@@ -242,9 +242,9 @@ class HistoryActionFormatter {
     if (!$round) {
       return "Roundid <b>$roundid</b>";
     }
-    $c = $this->_classes->GetOrError($round['classid']);
+    $c = $this->_classes->GetOrError(@$round['classid']);
     if (!$c) {
-      $c = array('class' => "<b>No class $round[classid]</b>");
+      $c = array('class' => "<b>No class ".@$round['classid']."</b>");
     }
     $rno = $round['round'] == 1 ? "" : ", round $round[round]";
     return "$c[class]$rno";
@@ -307,12 +307,12 @@ class HistoryActionFormatter {
       return "Delete class $c[class]";
     }
     case 'class.edit': {
-      $c = &$this->_classes->Get($this->_action['classid']);
+      $c = $this->_classes->Get($this->_action['classid']);
       if (isset($this->_action['name'])) {
         $c['class'] = $this->_action['name'];
       }
       if (false) {
-        $c = &$this->_classes->GetOrError($this->_action['classid']);
+        $c = $this->_classes->GetOrError($this->_action['classid']);
         return "Edit class $c[class]";
       }
       return $this->EffectOnlyRow();
@@ -361,21 +361,21 @@ class HistoryActionFormatter {
       $this->_ranks->MakeEmpty();
       $this->_rounds->MakeEmpty();
       foreach ($this->_action['partitions'] as $part) {
-        $partition = &$this->_partitions->Get($part['partitionid']);
+        $partition = $this->_partitions->Get($part['partitionid']);
         if (!$partition) {
           EmitErrorRow("Partition structure failure #0: ".json_encode($part));
         }
         $partition['rankid'] = $part['rankid'];
-        $rank = &$this->_ranks->Get($part['rankid']);
+        $rank = $this->_ranks->Get($part['rankid']);
         if (!$rank) {
-          $rank = &$this->_ranks->InsertWithId(array('rankid' => $part['rankid']));
+          $rank = $this->_ranks->InsertWithId(array('rankid' => $part['rankid']));
           // echo "<br/><b>Partition structure failure #1 (rankid)</b><br/>";
         }
         $rank['rank'] = $partition['name'];
         $rank['classid'] = $part['classid'];
-        $c = &$this->_classes->Get($part['classid']);
+        $c = $this->_classes->Get($part['classid']);
         if (!$c) {
-          $c = &$this->_classes->InsertWithId(array('classid' => $part['classid']));
+          $c = $this->_classes->InsertWithId(array('classid' => $part['classid']));
           // echo "<br/><b>Partition structure failure #2 (classid)</b><br/>";
         }
         if (isset($this->_action['class'])) {
@@ -383,16 +383,16 @@ class HistoryActionFormatter {
         } else {
           $c['class'] = $partition['name'];
         }
-        $round = &$this->_rounds->Get($part['roundid']);
+        $round = $this->_rounds->Get($part['roundid']);
         if (!$round) {
-          $round = &$this->_rounds->InsertWithId(array('roundid' => $part['roundid'], 'round' => 1));
+          $round = $this->_rounds->InsertWithId(array('roundid' => $part['roundid'], 'round' => 1));
           // echo "<br/><b>Partition structure failure #3 (roundid)</b><br/>";
         }
         $round['classid'] = $part['classid'];
       }
 
-      foreach ($this->_racers->_entries as &$racer) {
-        $partid = $racer['partitionid'];
+      foreach ($this->_racers->_entries as $racer) {
+        $partid = @$racer['partitionid'];
         $p = $this->_partitions->Get($partid);
         $racer['rankid'] = $p['rankid'];
         // $rank = $this->_ranks->Get($p['rankid']);
@@ -420,7 +420,7 @@ class HistoryActionFormatter {
       return /* TODO */"[DID IT] Delete partition $p[name]";
     }
     case 'partition.edit': {
-      $p = &$this->_partitions->Get($this->_action['partitionid']);
+      $p = $this->_partitions->Get($this->_action['partitionid']);
       if (isset($this->_action['name'])) {
         $old = $p['name'];
         $p['name'] = $this->_action['name'];
@@ -458,7 +458,7 @@ class HistoryActionFormatter {
       return $this->EffectOnlyRow();
     case 'racer.*renumber': {
       foreach ($this->_action['results'] as $racerid => $carno) {
-        $racer = &$this->_racers->GetOrError($racerid);
+        $racer = $this->_racers->GetOrError($racerid);
         $racer['carnumber'] = intval($carno);
       }
     }
@@ -481,7 +481,7 @@ class HistoryActionFormatter {
     case 'racer.delete':
       return "Delete racer ".$this->RacerString($this->_racers->Get($this->_action['racer']));
     case 'racer.edit': {
-      $racer = &$this->_racers->Get($this->_action['racer']);
+      $racer = $this->_racers->Get($this->_action['racer']);
       foreach ($this->_action as $key => $value) {
         if ($key != 'action' && $key != 'racerid') {
           if ($key == 'carno') {
@@ -493,7 +493,7 @@ class HistoryActionFormatter {
       }
       if (false) {
         $racerid_col = isset($this->_action['racerid']) ? 'racerid' : 'racer';
-        $racer = &$this->_racers->GetOrError($this->_action[$racerid_col]);
+        $racer = $this->_racers->GetOrError($this->_action[$racerid_col]);
         return "Edit racer ".$this->RacerString($racer).": ".$this->_action_string;  // TODO
       }
       return $this->EffectOnlyRow();
@@ -566,10 +566,10 @@ class HistoryActionFormatter {
     case 'rank.move': {  // {"action":"rank.move","rankid":"4","classid":"4"}
       $rank = $this->_ranks->GetOrError($this->_action['rankid']);
       if ($this->_action['classid'] < 0) {
-        return "Move ".$this->PartitionLabel(true)." $rank[rank] into its own racing group";
+        return "Move ".$this->PartitionLabel(true)." ".@$rank['rank']." into its own racing group";
       } else {
         $c = $this->_classes->GetOrError($this->_action['classid']);
-        return "Move ".$this->PartitionLabel(true)." $rank[rank] into racing group $c[class]";
+        return "Move ".$this->PartitionLabel(true)." ".@$rank['rank']." into racing group ".@$c['class'];
       }
     }
     case 'rank.order':

@@ -201,7 +201,11 @@ function add_speed_awards(&$awards) {
       $bias_for_den = $bias_for_pack + $ordinal_class * $reserved_per_den;
       $rank_within_den = 0;
       if (!$one_trophy_per) $no_trophies_for = array();
-      add_speed_group($n_den_trophies, $bias_for_den, $classid, null, $rank['class'],
+      $n_this_den = $n_den_trophies;
+      if ($classes[$classid]['ntrophies'] >= 0) {
+        $n_this_den = $classes[$classid]['ntrophies'];
+      }
+      add_speed_group($n_this_den, $bias_for_den, $classid, null, $rank['class'],
                       $no_trophies_for,
                       $standings->award_ladder_class($classid), $awards);
     }

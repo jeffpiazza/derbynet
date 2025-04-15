@@ -11,7 +11,7 @@ class RemoteStart {
   }
 
   has_remote_start() {
-    return !this.profile_remote_start ||
+    return !this.profile_remote_start.has_remote_start ||
       RuntimeCondition[this.profile_remote_start.has_remote_start]();
   }
 

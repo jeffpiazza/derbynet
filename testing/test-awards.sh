@@ -14,6 +14,8 @@ else
     THIRD_TEST="Herb Halfacre"
 fi
 
+# This test depends on the set-up and simulated racing from other tests.
+
 user_login_coordinator
 
 curl_postj action.php "action=award.import" | check_jfailure

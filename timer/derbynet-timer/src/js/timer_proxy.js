@@ -208,6 +208,10 @@ class TimerProxy {
     this.port_wrapper.close();
   }
 
+  argsForRaceFinished() {
+    return [this.roundid, this.heat, this.result];
+  }
+
   async onEvent(event, args) {
     // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
     // (at least) needs to stop while race is running.  (Issue #200.)
@@ -312,9 +316,13 @@ class TimerProxy {
         var valid = this.result.setLane(/*lane*/args[0], /*time*/args[1], /*place*/args[2]);
         // Send just a single RACE_FINISHED event, even if we get some extra
         // results for masked-out lanes, etc.
+        //
+        // Testing for results being present and valid should happen within
+        // the recipient of the RACE_FINISHED event(s), allowing RACE_FINISHED
+        // to be idempotent.  But since we convey this.result with the event,
+        // maybe not.
         if (valid && this.result.isFilled() && !was_filled) {
-          console.log("Result set filled. Finishing race.");
-          TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
+          TimerEvent.send('RACE_FINISHED', this.argsForRaceFinished());
         }
       }
       break;

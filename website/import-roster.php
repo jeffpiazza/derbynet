@@ -94,7 +94,7 @@ function all_partitions() {
                                                           'required' => false),
                                        'note_from' => array('name' => 'From',
                                                             'required' => false),
-                                       'exclude' => array('name' => 'Exclude?',
+                                       'exclude' => array('name' => 'Ineligible for Award?',
                                                           'required' => false)),
                                      array(
                                        'first-last' => array('name' => 'First & Last Name',

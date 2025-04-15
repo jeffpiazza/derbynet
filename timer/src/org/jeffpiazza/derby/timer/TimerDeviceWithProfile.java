@@ -30,7 +30,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   private void setProfile(Profile profile) {
     this.profile = profile;
 
-    portWrapper.setEndOfLine(profile.options.eol);
+    if (profile.options.eol != null) {  // May be null for testing
+      portWrapper.setEndOfLine(profile.options.eol);
+    }
 
     if (Flag.dtr_gate_release.value()) {
       remote_start = new DtrRemoteStart(portWrapper);
@@ -422,8 +424,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       }
       case LANE_RESULT: {
+        // Lane (char), time, optional place
         char lane_char = args[0].charAt(0);
-        int lane = ('1' <= lane_char && lane_char <= '9')
+        int lane = ('0' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         String time = TimerDeviceUtils.zeroesToNines(args[1]);
