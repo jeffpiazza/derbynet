@@ -12,13 +12,14 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Assumes message-poller.js
 
-// camera_sent and camera_received assume a logmessage() function defined elsewhere
+// logsent, logrcvd from message-poller.js
 function camera_sent(viewer, key) {
-  logmessage("=> " + viewer + ": " + key);
+  logsent(viewer + ": " + key);
 }
 function camera_received(viewer, key) {
-  logmessage("<= " + viewer + ": " + key);
+  logrcvd(viewer + ": " + key);
 }
+
 function ice_candidate_key(candidate) {
   return "ice " + 
     candidate.protocol + " " + candidate.ip + ":" + candidate.port +
@@ -42,17 +43,20 @@ function ViewClient(recipient, poller) {
 
   let self = this;
   pc.onnegotiationneeded = function(event) {
-    console.log('onnegotiationneeded fires');
-    self.convey_offer();
+    logstream("onnegotiation");
+    pc.setLocalDescription()
+      .then(function() {
+        camera_sent(recipient, 'offer');
+        poller.send_message({recipient: recipient,
+                             type: 'offer',
+                             from: 'camera-replay',
+                             sdp: pc.localDescription.toJSON()});
+      });
   };
 
   this.connection = pc;
   
   this.setstream = function(stream) {
-    let senders = pc.getSenders();
-    for (var k = 0; k < senders.length; ++k) {
-      pc.removeTrack(senders[k]);
-    }
     stream.getTracks().forEach(function(track) {
       console.log('  adding track');
       pc.addTrack(track, stream);
@@ -66,6 +70,7 @@ function ViewClient(recipient, poller) {
     } else if (msg.type == 'ice-candidate') {
       this.on_ice_candidate(msg);
     } else {
+      logrcvd("UNRECOGNIZED " + JSON.stringify(msg));
       console.error('Unrecognized message for camera:', msg);
       console.trace();
     }
@@ -82,7 +87,7 @@ function ViewClient(recipient, poller) {
 
   let ideal = {width: 0, height: 0};
   this.on_solicitation = function(msg) {
-    console.log('on_solicitation');
+    logrcvd('solicitation');
     if (msg.hasOwnProperty('ideal')) {
       ideal = msg.ideal;
     }
@@ -112,7 +117,7 @@ function ViewClientManager(on_add_client_callback) {
   let dispatcher = {};  // viewer-name => ViewClient
 
   let initializer_cb = function(vc) { };
-  
+
   let poller = new MessagePoller(
     'camera-replay',
     function(msg) {
@@ -122,7 +127,7 @@ function ViewClientManager(on_add_client_callback) {
         console.log('Received non-solicitation message from unknown sender: ', msg);
         return;
       } else {
-        logmessage("Solicitation received from " + msg.from);
+        logrcvd("Solicitation received from " + msg.from);
         let client = new ViewClient(msg.from, poller);
         initializer_cb(client);
         dispatcher[msg.from] = client;

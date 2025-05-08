@@ -1,5 +1,26 @@
 'use strict';
 
+function logmsg(cl, txt) {
+  $("<p></p>").addClass(cl).text(txt).appendTo($("#log"));
+  let msgs = $("#log p");
+  if (msgs.length > 20) {
+    msgs.slice(0, -20).remove();
+  }
+}
+
+function logsent(txt) {
+  console.log("=> " + txt);
+  logmsg('sent', txt);
+}
+function logrcvd(txt) {
+  console.log("<= " + txt);
+  logmsg('rcvd', txt);
+}
+function logstream(txt) {
+  console.log("** " + txt);
+  logmsg('stream', txt);
+}
+
 // A MessagePoller continuously polls the server for messages addressed to this
 // recipient, and allows sending messages to other recipients.
 //
@@ -28,6 +49,7 @@ function MessagePoller(recipient, on_message, topics = []) {
   if (g_websocket_url != undefined && g_websocket_url != '') {
     var ws = new WebSocket(g_websocket_url);
     var closing = false;
+    var messages_pending_open = [];
 
     var init = function() {
       ws.onmessage = (event) => {
@@ -42,6 +64,12 @@ function MessagePoller(recipient, on_message, topics = []) {
       ws.onopen = (event) => {
         console.log('Websocket opened');
         poller.send_message({"subscriber": recipient, "topics": topics});
+        if (messages_pending_open.length > 0) {
+          logstream('websocket opened, sending queued messages');
+          while (messages_pending_open.length > 0) {
+            wc.send(messages_pending_open.shift());
+          }
+        }
       };
 
       // If the connection can't be established, this gets called but with almost
@@ -62,12 +90,18 @@ function MessagePoller(recipient, on_message, topics = []) {
     init();
 
     this.send_message = function(message_json) {
-      if (ws.readyState === WebSocket.OPEN) {
-        try {
+      try {
+        if (ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify(message_json));
-        } catch (e) {
-          console.log('send_message error', e, e.code, e.name, e.message);  // TODO
+        } else if (ws.readyState === WebSocket.CONNECTING) {
+          logstream('(awaiting websocket open)');
+          messages_pending_open.push(JSON.stringify(message_json));
+        } else {
+          logstream('send_message: websocket readyState is ' +
+                    ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'][ws.readyState]);
         }
+      } catch (e) {
+        console.log('send_message error', e, e.code, e.name, e.message);
       }
     };
     this.close = function() {
@@ -99,7 +133,7 @@ function MessagePoller(recipient, on_message, topics = []) {
              });
     };
 
-    let interval = setInterval(function() { poller.retrieve_messages(); }, 500 /* ms. */);
+    let interval = setInterval(function() { poller.retrieve_messages(); }, 1000 /* ms. */);
 
     this.close = function() { if (interval) clearInterval(interval); interval = null; };
  }

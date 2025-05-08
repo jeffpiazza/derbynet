@@ -102,6 +102,9 @@ function CircularFrameBuffer(stream, length_ms) {
             offscreen_video.height = offscreen_canvas.height = settings.height;
             did_resize = true;
           }
+          if (did_resize) {
+            logstream("Stream resized to " + settings.width + 'x' + settings.height);
+          }
           if (did_resize && resizing_callback) {
             resizing_callback(offscreen_video.width, offscreen_video.height);
           }

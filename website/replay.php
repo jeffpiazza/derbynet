@@ -21,19 +21,6 @@ if ($last === false) {
   $last = -1;
 }
 
-// TODO Layout of camera page:
-//    Allow turning off camera preview
-//    https link
-//
-// TODO Camera selection for the camera page doesn't work for iphone, at least, or Safari Mac
-//
-// TODO What resolution is transmitted if camera doesn't ask for its window
-// size?  Should viewer send its ideal size to remote camera?
-//
-
-// TODO: See https://www.w3.org/TR/image-capture/#example4 for handling manual
-// focus for cameras that support it.
-
 // Don't force http !
 $kiosk_url = '//'.substr($url, 0, $last + 1).'kiosk.php';
 if (isset($_REQUEST['address'])) {
@@ -60,14 +47,6 @@ g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?
 // If using websockets to listen for replay messages, this variable will hold
 // the websocket object.
 var g_trigger_websocket;
-
-function logmessage(txt) {
-  $("<p></p>").text(txt).appendTo($("#log"));
-  let msgs = $("#log p");
-  if (msgs.length > 20) {
-    msgs.slice(0, -20).remove();
-  }
-}
 
 // Avoid starting another poll request if another one is still in flight.
 g_poll_in_flight = false;
@@ -400,8 +379,12 @@ $(window).on('resize', function(event) { on_setup(); });
 </script>
 </head>
 <body>
-  <div id="fps"
-    style="position: fixed; bottom: 0; right: 0; width: 80px; height: 20px; z-index: 1000; text-align: right;"></div>
+  <div id="fps"></div>
+
+  <div id="debug" <?php if (!isset($_GET['debug'])) echo 'class="hidden"'; ?> >
+    <div id="log">
+    </div>
+  </div>
 
 <iframe id="interior" class="hidden full-window">
 </iframe>
@@ -418,9 +401,6 @@ $(window).on('resize', function(event) { on_setup(); });
 
 <div id="replay-setup" class="full-window block_buttons">
   <?php make_banner('Replay'); ?>
-<!-- Uncomment for debugging 
-  <div id="log"></div>
--->
   <div id="recorder-warning" class="hidden">
     <h2>This browser does not support MediaRecorder.</h2>
     <p>Replay is still possible, but you can't upload videos.</p>

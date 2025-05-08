@@ -7,14 +7,22 @@
   bottom: 0;
   z-index: 100;
   background-color: white;
-  opactity: 50%;
   padding-left: 15px;
   line-height: 1.0;
 }
 #log p {
-  font-size: 12px;
+  font-size: 26px;
   margin-top: 0px;
   margin-bottom: 0px;
+}
+#log p.sent {
+  text-align: left;
+}
+#log p.rcvd {
+  text-align: right;
+}
+#log p.stream {
+  text-align: center;
 }
 
 #device-picker-div {
