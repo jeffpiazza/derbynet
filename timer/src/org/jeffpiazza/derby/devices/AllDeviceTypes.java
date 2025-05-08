@@ -37,26 +37,7 @@ public class AllDeviceTypes {
         BertDrake.class,
         JitRacemaster.class
       };
-  @SuppressWarnings(value = "unchecked")
-  private static final Class<? extends TimerDevice>[] legacyDeviceClasses
-      = (Class<? extends TimerDevice>[]) new Class[]{
-        SmartLineLegacy.class,
-        FastTrackLegacy.class,
-        OlderFastTrackLegacy.class,
-        TheJudgeLegacy.class,
-        NewBoldLegacy.class,
-        DerbyTimerLegacy.class,
-        MiscJunkLegacy.class,
-        DerbyMagicLegacy.class,
-        DerbyMagic9600Legacy.class,
-        DerbyMagic19200Legacy.class,
-        BertDrakeLegacy.class,
-        RacemasterLegacy.class
-      };
   public static final Class<? extends TimerDevice>[] allTimerDeviceClasses() {
-    if (Flag.legacy_implementations.value()) {
-      return legacyDeviceClasses;
-    }
     return allDeviceClasses;
   }
 
