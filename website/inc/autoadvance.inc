@@ -45,7 +45,7 @@ function get_next_heat(&$current, $requested) {
                            .' WHERE masterheat = 1');
       $stmt->execute(array());
     }
-    
+
     $rs = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($rs !== false) {
       $result = array('roundid' => $rs['roundid'],
@@ -56,10 +56,10 @@ function get_next_heat(&$current, $requested) {
       return false;
     }
   } else {
-    // Normal scheduling (not master scheduling)
+    // Normal scheduling (not master scheduling), including timer tests
     if ($requested == 'first') {
       $heat = 1;
-    } else if ($requested == 'next') {
+    } else if ($requested == 'next' || $requested == 'next-up') {
       $heat = $current['heat'] + 1;
     } else if ($requested == 'prev') {
       $heat = $current['heat'] - 1;

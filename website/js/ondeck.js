@@ -222,6 +222,9 @@ function animate_next_heat() {
   // important to be able to run the on-deck page on old tablets or what have
   // you.
   function phase1() {
+    if (curheat.length == 0) {
+      return;
+    }
     // For each cell in the the just-completed heat, shrink the car photo to
     // zero height, open room for the recorded heat time, and shrink the borders
     // to 1px.  While that's happening, slide a "Just Finished" message across
@@ -333,7 +336,8 @@ function update_schedule(json, current_heat, next_heat) {
       json['current-heat']['heat'] == current_heat['heat'] &&
       json['ondeck']['chart'].length == $("table#schedule td.chart").length) {
     // No change, do nothing
-  } else if (json['current-heat']['roundid'] == next_heat['roundid'] &&
+  } else if (next_heat &&
+             json['current-heat']['roundid'] == next_heat['roundid'] &&
              json['current-heat']['heat'] == next_heat['heat']) {
     // Populate the results for the just-completed heat.
     var cur_roundid = current_heat['roundid'];
@@ -386,23 +390,30 @@ $(function() {
               data: {query: 'poll',
                      values: 'ondeck,rounds,current-heat,current-reschedule'},
               success: function(json) {
-                if (g_resized) {
-                  if (json["cease"]) {
-                    clearInterval(interval);
-                    window.location.href = '../index.php';
-                    return;
+                try {
+                  if (g_resized) {
+                    if (json["cease"]) {
+                      clearInterval(interval);
+                      window.location.href = '../index.php';
+                      return;
+                    }
+                    g_resized = false;
+                    repopulate_schedule(json);
+                    current_heat = json['current-heat'];
+                    next_heat = json['ondeck']['next'];
+                    scroll_to_current_heat();
+                  } else {
+                    update_schedule(json, current_heat, next_heat);
                   }
-                  g_resized = false;
-                  repopulate_schedule(json);
                   current_heat = json['current-heat'];
                   next_heat = json['ondeck']['next'];
-                  scroll_to_current_heat();
-                } else {
-                  update_schedule(json, current_heat, next_heat);
+                } finally {
+                  running = false;
                 }
-                current_heat = json['current-heat'];
-                next_heat = json['ondeck']['next'];
-                running = false;
+              },
+              error: function(jqxhr, ajaxSettings, thrownError) {
+                running = false;  // Keep trying
+                console.log('error from poll_for_chart:', jqxhr, ajaxSettings, thrownError);
               }
              });
     }
