@@ -47,6 +47,21 @@ $schedules_exist = read_single_value('SELECT COUNT(*) FROM RaceChart'
    font-weight: bold;
    background-color: red;
 }
+
+a.small-button {
+  display: inline-block;
+  /* background: black;
+     color: white; */
+  color: black;
+  height: 15px;
+  padding: 5px;
+  border: 1px black solid;
+  border-radius: 0.4em;
+  text-decoration: none;
+  line-height: 1.0;
+  font-size: 16px;
+  float: right;
+}
 </style>
 <?php } ?>
 <script type="text/javascript" src="js/jquery.js"></script>
@@ -136,6 +151,10 @@ list($car_numbering_mult, $car_numbering_smallest) = read_car_numbering_values()
         <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
                type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
         <label for="reverse-lanes">Number lanes in reverse</label>
+        <a href="#" class="small-button"
+             onclick="on_set_lane_colors(); return false;">Set Lane Colors</a>
+        <input type="hidden" id="lane-colors" name="lane-colors"
+           value="<?php echo read_raceinfo('lane-colors', ''); ?>"/>
       </p>
       <p>
         <input id="track-length" name="track-length" type="number" min="0" max="999"
@@ -363,6 +382,14 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
     </div>
   </div>
 </form>
+</div>
+
+<div id="lane_colors_modal" class="modal_dialog hidden block_buttons">
+  <p>Some tracks mark lanes by color rather than number.</p>
+  <input id='lane-colors' name='lane-colors' type='hidden'
+         />
+  <form id="lane_colors_modal_form">
+  </form>
 </div>
 
 <?php require('inc/chooser.inc'); ?>

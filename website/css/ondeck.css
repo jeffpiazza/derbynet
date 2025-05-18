@@ -31,17 +31,21 @@ tr {
   width: 4vh;
 }
 
+/* td.in_prev tries to mark cars that also appear in previous heat; it's not
+   well understood.  The css for lane colors conflicts with (unintentionally
+   overrides) some of the background properties used here. */
 td.in_prev {
   background-size: contain;
   background-repeat: no-repeat;
   background-position-x: 50%;
 }
 .d1 td.in_prev {
-  background-image: url(../img/chevron-up-tan.svg);
+  /* background-image: url(../img/chevron-up-tan.svg); */
 }
 .d0 td.in_prev {
-  background-image: url(../img/chevron-up-white.svg);
+  /* background-image: url(../img/chevron-up-white.svg); */
 }
+
 th {
     font-size: 1.5vw;
 }

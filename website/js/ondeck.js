@@ -124,7 +124,8 @@ function repopulate_schedule(json) {
 
     var td = $("<td class='chart'/>").appendTo(row).css({'width': td_width_vw + 'vw'});
     td.addClass('lane_' + cell['lane'])
-      .addClass('resultid_' + cell['resultid']);
+      .addClass('resultid_' + cell['resultid'])
+      .addClass(g_lane_colors[cell['lane'] - 1] + '_column_color');
     if (prev_racerids.indexOf(cell['racerid']) >= 0) {
       td.addClass('in_prev');
     }

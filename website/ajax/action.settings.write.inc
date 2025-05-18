@@ -49,6 +49,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     'do-use-subgroups' => array('setting' => 'use-subgroups', 'type' => 'checkbox'),
     'finish-formatting' => array('setting' => 'finish-formatting'),
     'images-dir' => array('setting' => 'images-dir'),
+    'lane-colors' => array('setting' => 'lane-colors'),
     'log-dir' => array('setting' => 'logs-directory'),
     'max-runs-per-car' => array('setting' => 'max-runs-per-car', 'type' => 'int'),
     'n-den-trophies' => array('setting' => 'n-den-trophies', 'type' => 'int'),

@@ -5,6 +5,11 @@ require_once('inc/json-current-racers.inc');
 require_once('inc/name-mangler.inc');
 
 $nlanes = get_lane_count();
+$colors_info = read_raceinfo('lane-colors', '');
+$lane_colors = empty($colors_info) ? [] : explode(',', $colors_info);
+while (count($lane_colors) < $nlanes) {  // Including the case of no colors assigned
+  $lane_colors[] = 'none';
+}
 $linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
 
 ?><!DOCTYPE html>
@@ -13,6 +18,7 @@ $linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <title>Derby Racing Main Board</title>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/lane-colors.css"/>
 <link rel="stylesheet" type="text/css" href="css/now-racing-columnar.css"/>
 <script type="text/javascript">
 <?php echo $lane_to_column_fn; ?>
@@ -58,9 +64,8 @@ $now_running = get_running_round();
 
 for ($lane = 1; $lane <= $nlanes; ++$lane) {
 ?>
-
-    <div class="lane">
-      <div class="lane_number">X</div>
+  <div class="lane">
+      <div class="lane_number <?php echo $lane_colors[$lane - 1]; ?>_solid_color">X</div>
       <div class="rollable">
 <?php  // Don't be fooled -- this is just the initial, empty racer-entry for each lane.
        // Real content is created by javascript code dynamically. ?> 

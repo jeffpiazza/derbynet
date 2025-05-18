@@ -1,5 +1,33 @@
 'use strict';
 
+function on_set_lane_colors() {
+  show_modal("#lane_colors_modal", $("lane1_select"), function() {
+    console.log('closed lane colors modal');
+    close_modal("#lane_colors_modal");
+  });
+}
+
+function on_lane_color_change() {
+  var nlanes = $("#n-lanes").val();
+  var val = '';
+  var any_color = false;
+  $("#lane_colors_modal select").each(function() {
+    var color = $(this).val();
+    any_color |= (color != 'none');
+    val += ',' + color;
+  });
+  if (!any_color) {
+    val = '';
+  } else {
+    val = val.substring(1);
+  }
+  if (val != $("#lane-colors").val()) {
+    $("#lane-colors").val(val);
+    PostSettingChange($("#lane-colors"));
+  }
+  return false;
+}
+
 function on_lane_count_change() {
   $("#lanes-in-use").empty();
   var nlanes = $("#n-lanes").val();
@@ -16,6 +44,30 @@ function on_lane_count_change() {
   $("#unused-lane-mask").val(mask & ~(-1 << nlanes));
   
   $("#lanes-in-use img").on('click', on_lane_click);
+
+  // Also update the number of lane color pickers
+  var lane_colors = $("#lane-colors").val().split(',');
+  $("#lane_colors_modal_form").empty();
+  for (var i = 0; i < nlanes; ++i) {
+    $("#lane_colors_modal_form")
+      .append("<br/>")
+      .append("<label for='lane" + (i + 1) + "_select'>Color for Lane " + (i + 1) + "</label>");
+    var sel = $("<select id='lane" + (i + 1) + "_select' class='mselect'></select>")
+        .appendTo($("#lane_colors_modal_form"));
+    ['none', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'yellow'].forEach(
+      function(color) {
+        $("<option value='" + color + "'>" + color + "</option>").appendTo(sel);
+      });
+    if (i < lane_colors.length) {
+      console.log('Selecting ' + lane_colors[i] + ' for lane ' + (i + 1));
+      sel.val(lane_colors[i]);
+    }
+
+    sel.on('change', on_lane_color_change);
+    mobile_select(sel);
+    mobile_select_refresh(sel);
+  }
+  $("#lane_colors_modal_form").append("<input type='submit' value='Close'/>");
 }
 
 function on_lane_click(event) {
