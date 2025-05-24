@@ -204,7 +204,21 @@ foreach ($awards as &$row) {
 <div class="block_buttons">
     <input type="button" value="Clear" onclick="on_clear_awards()"/>
 </div>
+<?php
+    if (false) {
+      echo "<div>\n";
+      echo "<pre>\n";
 
+      //echo json_encode($awards, JSON_PRETTY_PRINT);
+      $oracle = new StandingsOracle();
+      echo json_encode($oracle->debug_summary(), JSON_PRETTY_PRINT);
+
+      // echo json_encode($oracle->award_ladder_subgroup($r), JSON_PRETTY_PRINT);
+
+      echo "</pre>\n";
+      echo "</div>\n";
+    }
+?>
 </div>
 
 </div>
