@@ -222,6 +222,7 @@ function populate_racing_groups(data) {
             .addClass('subgroup')
             .attr('data-rankid', data.classes[i].subgroups[j].rankid)
             .attr('data-count', data.classes[i].subgroups[j].count)
+            .attr('data-ntrophies', data.classes[i].subgroups[j].ntrophies)
             .append(subg_p);
       }
     }

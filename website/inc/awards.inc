@@ -151,11 +151,15 @@ function add_speed_awards(&$awards) {
   foreach ($classes as $classid => $cl) {
     $max_den_trophies = max($max_den_trophies, $cl['ntrophies']);
   }
+  $max_rank_trophies = $n_rank_trophies;
+  foreach ($ranks as $rankid => $r) {
+    $max_rank_trophies = max($max_rank_trophies, $r['ntrophies']);
+  }
 
   $max_ranks_per_den = read_single_value(
     'SELECT COUNT(*) FROM Ranks GROUP BY classid ORDER BY COUNT(*) desc');
 
-  $reserved_per_rank = $n_rank_trophies;
+  $reserved_per_rank = $max_rank_trophies;
   $reserved_per_den = $max_den_trophies + $reserved_per_rank * $max_ranks_per_den;
   $reserved_overall = $n_pack_trophies + $reserved_per_den * count($classes);
 
@@ -213,12 +217,65 @@ function add_speed_awards(&$awards) {
     ++$rank_within_den;
     $bias_for_rank = $bias_for_den + $n_den_trophies + $rank_within_den * $reserved_per_rank;
     if (!$one_trophy_per) $no_trophies_for = array();
-    add_speed_group($n_rank_trophies, $bias_for_rank, $classid, $r, $rank['rank'],
+    $n_this_rank = $n_rank_trophies;
+    if ($rank['ntrophies'] >= 0) {
+      $n_this_rank = $rank['ntrophies'];
+    }
+    add_speed_group($n_this_rank, $bias_for_rank, $classid, $r, $rank['rank'],
                     $no_trophies_for,
                     $standings->award_ladder_subgroup($r), $awards);
   }
 
   return $reserved_overall;
+}
+
+function compare_awards_by_sort($lhs, $rhs) {
+  if ($lhs['sort'] != $rhs['sort']) {
+    return $lhs['sort'] < $rhs['sort'] ? -1 : 1;
+  }
+  if ($lhs['lastname'] != $rhs['lastname']) {
+    return $lhs['lastname'] < $rhs['lastname'] ? -1 : 1;
+  }
+  if ($lhs['firstname'] != $rhs['firstname']) {
+    return $lhs['firstname'] < $rhs['firstname'] ? -1 : 1;
+  }
+  return 0;
+}
+
+// Returns: $awards, $supergroup_awards $awards_per_class, $awards_per_rank
+function compute_awards_for_presentation() {
+  $awards = array();
+  $bias_overall = add_speed_awards($awards);
+  $awards = array_merge($awards,
+                        all_awards(/* include_ad_hoc */ true,
+                                   $bias_overall));
+
+  $awards_per_class = array();
+  $awards_per_rank = array();
+  $supergroup_awards = 0;
+  foreach ($awards as $aw) {
+    if (isset($aw['rankid'])) {
+      $r = @$awards_per_rank[$aw['rankid']];
+      if (!isset($r)) {
+        $r = 0;
+      }
+      $awards_per_rank[$aw['rankid']] = $r + 1;
+    }
+    if (isset($aw['classid'])) {
+      $c = @$awards_per_class[$aw['classid']];
+      if (!isset($c)) {
+        $c = 0;
+      }
+      $awards_per_class[$aw['classid']] = $c + 1;
+    } else {
+      ++$supergroup_awards;
+    }
+  }
+
+  // This shouldn't actually do anything:
+  usort($awards, 'compare_awards_by_sort');
+
+  return array($awards, $supergroup_awards, $awards_per_class, $awards_per_rank);
 }
 
 // For each award, add eligible-classids and eligible-rankids fields.

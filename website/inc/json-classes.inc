@@ -4,7 +4,7 @@ require_once('inc/schema_version.inc');
 require_once('inc/classes.inc');
 
 // [ {classid, count, nrounds, ntrophies, name, aggregate-by-subgroup
-//    subgroups: [{rankid, name, count}...],
+//    subgroups: [{rankid, name, count, ntrophies}...],
 //    constituents: [classid, classid, ...] }, ... ]
 
 function json_all_classes() {
@@ -36,6 +36,7 @@ function json_all_classes() {
       $cl['subgroups'][] = array(
         'rankid' => $rank['rankid'],
         'count' => $rank['count'],
+        'ntrophies' => $rank['ntrophies'],
         'name' => $rank['name']);
     }
     if (!empty($class['constituents'])) {

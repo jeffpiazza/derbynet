@@ -195,23 +195,23 @@ $(function() {
     <h3><span class="group-label"><?php echo group_label(); ?></span> Name</h3>
     <input id="edit_class_name" name="name" type="text"/>
 
-   <div class="ntrophies">
-    <label for='edit_class_ntrophies'>Number of speed&nbsp;trophies:</label>
-    <select id='edit_class_ntrophies' name='ntrophies'>
-      <option value="-1">Default</option>
-      <option>0</option>
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-      <option>6</option>
-      <option>7</option>
-      <option>8</option>
-      <option>9</option>
-      <option>10</option>
-    </select>
-</div>
+    <div class="ntrophies">
+      <label for='edit_class_ntrophies'>Number of speed&nbsp;trophies:</label>
+      <select id='edit_class_ntrophies' name='ntrophies'>
+        <option value="-1">Default</option>
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+      </select>
+    </div>
 
     <div id="completed_rounds_extension">
       <p><span id="completed_rounds_count"></span> completed round(s) exist for this class.</p>
@@ -247,6 +247,24 @@ $(function() {
   <form>
     <input id="edit_rank_name" name="name" type="text"/>
 
+    <div class="ntrophies">
+      <label for='edit_rank_ntrophies'>Number of speed&nbsp;trophies:</label>
+      <select id='edit_rank_ntrophies' name='ntrophies'>
+        <option value="-1">Default</option>
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+      </select>
+    </div>
+                                               
     <input type="submit"/>
     <input type="button" value="Cancel"
            onclick="close_edit_one_rank_modal();"/>
