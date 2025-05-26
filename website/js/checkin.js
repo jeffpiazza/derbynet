@@ -542,21 +542,44 @@ function scroll_and_flash_row(row) {
 
 // Returns true if processed as a barcode scan
 function maybe_barcode(raw_search) {
-  if (raw_search.startsWith('PWDid') && raw_search.length == 8) {
+  if (raw_search.startsWith('PWD') && raw_search.endsWith('.')) {
     remove_search_highlighting();
-    var row = $("tr[data-racerid=" + parseInt(raw_search.substr(5)) + "]");
-  } else if (raw_search.startsWith('PWD') && raw_search.length == 6) {
-    remove_search_highlighting();
-    var cell = $("td[data-car-number=" + parseInt(raw_search.substr(3)) + "]");
-    var row = cell.closest('tr');
+
+    $.ajax(g_action_url,
+           {type: 'GET',
+            data: {query: 'racer.list',
+                   barcode: raw_search},
+            success: function (data) {
+              console.log('racer.list returns', data);  // TODO
+              if (data.hasOwnProperty('racers')) {
+                var racers = data.racers;
+                if (racers.length == 1 && racers[0].hasOwnProperty('racerid')) {
+                  console.log('racer.list finds racerid ' + racers[0].racerid);
+                  if (data.hasOwnProperty('car-numbers')) {
+                    read_next_carnumbers(data['car-numbers']);
+                  }
+                  if (data.hasOwnProperty('new-row')) {
+                    console.log('new-row property', data['new-row']);
+                    var row = addrow0(data['new-row']);
+                    console.log('added row', row);
+                    flipswitch(row.find('input[type="checkbox"].flipswitch'));
+                    setTimeout(function() { apply_barcode_action(racers[0].racerid); }, 100);
+                  } else {
+                    apply_barcode_action(racers[0].racerid);
+                  }
+                }
+              }
+            }
+           });
+    return true;
   } else {
     return false;
   }
+}
 
-  if (row.length != 1) {
-    return false;
-  }
-  
+function apply_barcode_action(racerid) {
+  var row = $("tr[data-racerid=" + racerid + "]");
+
   scroll_and_flash_row(row);
 
   var racerid = row.attr('data-racerid');
@@ -576,8 +599,6 @@ function maybe_barcode(raw_search) {
       show_photo_modal(racerid, repo);
     }, 750);
   }
-
-  return true;
 }
 
 // In response to each onchange event for the #find-racer-text control, hide the
@@ -626,6 +647,7 @@ function find_racer() {
 }
 
 function scroll_to_row(row) {  // row is a jquery for one tr element
+  console.log('scroll_to_row', row);
   var div = $("#main-checkin-table-div");
   var th_height = $("#main-checkin-table th").eq(0).closest('tr').height();
   // delta is the number of pixels from the top of the table to the middle of the row

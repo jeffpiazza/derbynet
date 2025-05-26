@@ -17,9 +17,9 @@
 // $_POST['autocrop']: if present, and if facedetection code is available, try
 // to identify the face and crop the photo to a head shot.
 
-require_once('inc/photo-config.inc');
 require_once('inc/barcode.inc');
 require_once('inc/events.inc');
+require_once('inc/photo-config.inc');
 
 function widen_and_clip(&$v, &$width, $scale, $max) {
   $original_width = $width;
@@ -172,7 +172,7 @@ if (!have_permission(PHOTO_UPLOAD_PERMISSION)) {
         } else if ($_POST['barcode'] == 'PWDuploadonly') {
           // Upload photo without associating with a racer
         } else {
-          $racerid = barcode_to_racerid($_POST['barcode']);
+          list($racerid, $created) = barcode_to_racerid($_POST['barcode']);
           if (!$racerid) {
             json_failure('barcode', "Barcode ".$_POST['barcode']." not recognized.");
             $success = false;

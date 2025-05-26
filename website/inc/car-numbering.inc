@@ -10,7 +10,7 @@ function read_car_numbering_values() {
   return explode('+', read_raceinfo('car-numbering', '100+101'));
 }
 
-// Returns an assoc of partitionid => next carnumber for that partition
+// Returns an array of {partitionid, next_carnumber} for each partition
 function next_car_numbers() {
   global $db;
   if (schema_version() >= PARTITION_SCHEMA) {

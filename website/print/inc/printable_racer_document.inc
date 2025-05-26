@@ -32,7 +32,7 @@ abstract class PrintableRacerDocument {
     $opts = $this->get_available_options();
     return $opts[$option]['default'];
   }
-
+  
   abstract function StartDocument();
 
   // $racer argument contains these keys:

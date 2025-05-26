@@ -1,5 +1,6 @@
 <?php
 
+require_once('inc/barcode.inc');
 require_once('inc/events.inc');
 require_once('inc/schema_version.inc');
 
@@ -7,7 +8,7 @@ $value = isset($_POST['value']) ? $_POST['value'] : 1;
 $racerid = @$_POST['racer'];
 if (isset($_POST['barcode'])) {
   require_once('inc/barcode.inc');
-  $racerid = barcode_to_racerid($_POST['barcode']);
+  list($racerid, $created) = barcode_to_racerid($_POST['barcode']);
 }
 
 function pass_racer($racerid, $value) {

@@ -35,9 +35,13 @@ div#page-controls {
   margin-right: 10px; 
 }
 
+#walkins-count {
+  width: 3em;
+}
+
 div#subjects-context {
   float: left;
-  width: 420px;
+  /* width: 420px; */
   height: 100%;
 }
 div#subjects-scroll {

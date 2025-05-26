@@ -1,4 +1,5 @@
 <?php
+require_once('inc/car-numbering.inc');
 require_once('inc/data.inc');
 require_once('inc/partitions.inc');
 require_once('inc/schema_version.inc');
@@ -8,6 +9,7 @@ require_once('fpdf/ext/combined.php');
 
 // $_GET['options']
 // $_GET['car_nos']
+// $_GET['walkins'] ("p" suffix for per-partition)
 //
 // $_GET['ids']
 // $_GET['where']
@@ -25,6 +27,18 @@ function derez_photos(&$racer) {
   $imgfile = car_photo_repository()->lookup_or_any('400x400')->file_path(basename($racer['carphoto']));
   if (is_file($imgfile)) {
     $racer['carphoto'] = $imgfile;
+  }
+}
+
+function emit_walkins($next, $howmany) {
+  global $doc;
+  for ($car_no = $next; $car_no < $next + $howmany; ++$car_no) {
+    $racer = array('racerid' => 0, 'carnumber' => $car_no,
+                   'lastname' => '', 'firstname' => '',
+                   'carname' => '', 'classid' => 0, 'class' => '', 'rankid' => 0, 'rank' => '',
+                   'imagefile' => '', 'carphoto' => '',
+                   'note' => '', 'barcode' => sprintf('PWDwi%03d.', $car_no));
+    $doc->DrawOne($racer);
   }
 }
 
@@ -70,7 +84,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       $racer = array('racerid' => 0, 'carnumber' => $car_no, 'lastname' => '', 'firstname' => '',
                      'carname' => '', 'classid' => 0, 'class' => '', 'rankid' => 0, 'rank' => '',
                      'imagefile' => '', 'carphoto' => '',
-                     'barcode' => 'PWD'.sprintf('%03d', $car_no));
+                     'barcode' => sprintf('PWD%03d.', $car_no));
       $rs = $db->prepare($sql);
       $rs->execute(array(':carnumber' => $car_no));
       $row = $rs->fetch(PDO::FETCH_ASSOC);
@@ -103,17 +117,19 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       convert_strings($racer);
       clean_fake_photos($racer);
       derez_photos($racer);
-      $racer['barcode'] = 'PWDid'.sprintf('%03d', $racer['racerid']);
+      $racer['barcode'] = sprintf('PWDid%03d.', $racer['racerid']);
       $doc->DrawOne($racer);
     }
 
     if (isset($_GET['ids'])) {
-      $sql = $base_sql.' WHERE racerid = :racerid';
-      $stmt = $db->prepare($sql);
-      foreach (explode(',', $_GET['ids']) as $racerid) {
-        $stmt->execute(array(':racerid' => $racerid));
-        $racer = $stmt->fetch(PDO::FETCH_ASSOC);
-        draw_one_racer($racer);
+      if (!empty($_GET['ids'])) {
+        $sql = $base_sql.' WHERE racerid = :racerid';
+        $stmt = $db->prepare($sql);
+        foreach (explode(',', $_GET['ids']) as $racerid) {
+          $stmt->execute(array(':racerid' => $racerid));
+          $racer = $stmt->fetch(PDO::FETCH_ASSOC);
+          draw_one_racer($racer);
+        }
       }
     } else {
       $sql = $base_sql;
@@ -125,6 +141,31 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       foreach ($db->query($sql) as $racer) {
         draw_one_racer($racer);
       }
+    }
+  }
+
+  if (isset($_GET['walkins'])) {
+    $walkins = $_GET['walkins'];
+    if (str_ends_with($walkins, 'p')) {  // "per partition"
+      // if $mult is zero, then next_car_numbers will just repeat the same car
+      // numbers for each partition.
+      $prev = 0;
+      $walkins = intval(substr($walkins, 0, -1));
+      foreach (next_car_numbers() as $partition) {
+        $next = max($prev + $walkins, $partition['next_carnumber']);
+        emit_walkins($next, $walkins);
+        $prev = $next;
+      }
+    } else {
+      list($mult, $smallest) = read_car_numbering_values();
+      $max_carno = read_single_value('SELECT COALESCE(MAX(carnumber), 0) FROM RegistrationInfo');
+      if ($mult == 0) {
+        $next = 1 + $max_carno;
+      } else {
+        // Assumes that the effect of $smallest is already reflected in MAX(carnumber)
+        $next = 1 + $mult * (1 + intdiv($max_carno, $mult));
+      }
+      emit_walkins($next, intval($walkins));
     }
   }
 
