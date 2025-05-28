@@ -1,5 +1,7 @@
 'use strict';
 
+var DNF_TIME = "9.9999";
+
 class HeatResult {
   lanemask;
   lane_results;  // {time:, place:}
@@ -30,14 +32,50 @@ class HeatResult {
       return this.setLane_0based(lane - 1, time, place = 0);
     }
   }
-
   setLane_0based(lane0, time, place = 0) {
     if (lane0 >= 0 && lane0 < this.lane_results.length) {
+      // Prevent setting the lane twice, but only if the 
+      // current lane result is a DNF or a 0 (meaning a delayed valid result)
+      if ( !(this.lanemask & (1 << lane0)) 
+          && this.lane_results[lane0] != null
+          && (this.lane_results[lane0] == DNF_TIME
+              || this.lane_results[lane0] == "0.0") ) {
+        console.log ("Prevented setting lane twice.");
+        return false;
+      }
       this.lane_results[lane0] = {time: time, place: place};
       this.lanemask &= ~(1 << lane0);
       return true;
     }
     return false;
+  }
+
+  getMaxLanes() {
+    return this.lane_results.length;
+  }
+
+  isLaneValid(lane) {
+    if (lane >= 0 && lane < this.lane_results.length)
+    {
+      var r = this.lane_results[lane];
+      if (r != null)
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getLaneTime(lane) {
+    if (lane >= 0 && lane < this.lane_results.length)
+    {
+      var r = this.lane_results[lane];
+      if (r != null)
+      {
+        return r.time;
+      }
+    }
+    return null;
   }
 
   isFilled() {

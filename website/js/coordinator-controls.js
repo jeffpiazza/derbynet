@@ -123,8 +123,8 @@ function on_manual_results_button_click(should_trigger_replay) {
                            + "<td>" + racer.name + "</td>"
                            + "<td>" + racer.carnumber + "</td>"
                            + "<td><input class='lane-time' type='number' step='0.00001'"
-                               + " name='lane" + racer.lane + "'" 
-                               + " value='" + racer.finishtime + "'/>"
+                           + " name='lane" + racer.lane + "'" 
+                           + " value='" + racer.finishtime + "'/>"
                            + "</td>"
                            + "</tr>");
         if (racer.finishtime) {
