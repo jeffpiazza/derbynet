@@ -113,6 +113,29 @@ public class TimerDeviceUtils {
     return results;
   }
 
+  // scale = 1 for most timers, 1000 for timer that reports milliseconds instead of seconds
+  public static String scaledTime(String time, int scale) {
+    if (scale == 1) {
+      return time;
+    }
+
+    try {
+      return String.format("%.4d", Double.parseDouble(time) / scale);
+    } catch (NumberFormatException e) {
+      return time;
+    }
+  }
+
+  public static String embeddedFieldCommand(long command, int offset, int nbytes, int arg) {
+    command = command + (arg << offset);
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < nbytes; ++i) {
+      result.append((char)(command & 0xFF));
+      command = command >>> 8;
+    }
+    return result.reverse().toString();
+  }
+
   // If place is not reported by the timer, pass -1 as place.
   public static void addOneLaneResult(int lane, String time, int place,
                                       ArrayList<Message.LaneResult> results) {

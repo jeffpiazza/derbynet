@@ -78,6 +78,8 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   protected static final int POLL_RESPONSE_DEADLINE_MS = 100;
   protected static final int GIVE_UP_AFTER_OVERDUE_MS = 1000;
 
+  private String partialResultLane = null;
+
   public void abortHeat() throws SerialPortException {
     Event.send(Event.ABORT_HEAT_RECEIVED);
   }
@@ -220,6 +222,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
                   + (char) (profile.heat_prep.lane + lane));
             }
           }
+        } else if (profile.heat_prep.embedded_mask_command != null) {
+          Profile.EmbeddedFieldCommand cmd = profile.heat_prep.embedded_mask_command;
+          portWrapper.drainForMs();
+          portWrapper.write(TimerDeviceUtils.embeddedFieldCommand(
+                               cmd.command, cmd.offset, cmd.nbytes, lanemask));
         }
         if (profile.heat_prep.reset != null) {
           portWrapper.drainForMs();
@@ -298,6 +305,8 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         String time = TimerDeviceUtils.zeroesToNines(args[1]);
+        time = TimerDeviceUtils.scaledTime(time, profile.options.timer_scale_factor);
+
         if (result != null) {
           boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
@@ -311,6 +320,15 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
             Event.send(Event.RACE_FINISHED);
           }
         }
+        break;
+      }
+      case PARTIAL_LANE_RESULT_LANE_NUM: {
+        partialResultLane = args[0];
+        break;
+      }
+      case PARTIAL_LANE_RESULT_TIME: {
+        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, args[0]});
+        partialResultLane = null;
         break;
       }
       case LANE_COUNT:

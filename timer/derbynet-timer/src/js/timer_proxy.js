@@ -9,6 +9,17 @@
 //  TimerProxy.create(pw, all_profiles()[1]);
 
 
+function embeddedFieldCommand(command, offset, nbytes, arg) {
+  command = command + (arg << offset);
+  var bytes = new Array(nbytes);
+  // Assemble the bytes in reverse order, then convert to a string of chars
+  for (var i = 0; i < nbytes; ++i) {
+    bytes[nbytes - i - 1] = command & 0xFF;
+    command = command >>> 8;
+  }
+  return String.fromCharCode.apply(null, bytes);
+}
+
 class TimerProxy {
   port_wrapper;
   profile;
@@ -25,6 +36,10 @@ class TimerProxy {
   detected_lane_count = 0;
   // If not zero, a deadline for expecting heat results
   overdue_time;
+
+  // Populated on PARTIAL_LANE_RESULT_LANE_NUM, then combined with following
+  // PARTIAL_LANE_RESULT_TIME.
+  partialResultLane = null;
 
   static async create(port_wrapper, profile) {
     this.destroy();
@@ -250,6 +265,15 @@ class TimerProxy {
       }
       break;
     }
+    case 'PARTIAL_LANE_RESULT_LANE_NUM': {
+      this.partialResultLane = args[0];
+      break;
+    }
+    case 'PARTIAL_LANE_RESULT_TIME': {
+      TimerEvent.send('LANE_RESULT', [this.partialResultLane, args[0]]);
+      this.partialResultLane = null;
+      break;
+    }
     case 'LANE_COUNT':
       this.detected_lane_count = args[0];
       break;
@@ -285,6 +309,10 @@ class TimerProxy {
                 String.fromCharCode(this.profile.heat_prep.lane.charCodeAt(0) + lane));
           }
         }
+      } else if (this.profile.heat_prep.hasOwnProperty('embedded_mask_command')) {
+        var cmd = this.profile.heat_prep.embedded_mask_command;
+        await this.port_wrapper.drain();
+        await this.port_wrapper.write(embeddedFieldCommand(cmd.command, cmd.offset, cmd.nbytes, lanemask));
       }
       await this.resetForHeatPrep();
       this.port_wrapper.drain();

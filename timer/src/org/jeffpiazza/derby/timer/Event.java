@@ -26,6 +26,8 @@ public enum Event {
   // more RACE_FINISHED events triggered for the same race.
   RACE_FINISHED,
   LANE_RESULT, // Just one
+  PARTIAL_LANE_RESULT_LANE_NUM, // First of 2 events to make a lane result
+  PARTIAL_LANE_RESULT_TIME, // Last of 2 events to make a lane result, combines first and fires a LANE_RESULT
   // An OVERDUE event signals that expected results have not yet arrived
   OVERDUE,
   // Eventually, overdue results give way to a GIVING_UP event,
