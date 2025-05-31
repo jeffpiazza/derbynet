@@ -24,7 +24,9 @@ function barcode_to_racerid($barcode) {
       list($mult, $smallest) = read_car_numbering_values();
       if ($mult > 0) {
         $century = intdiv($carno - $smallest, $mult) + 1;
-        $partitionid = read_single_value('SELECT partitionid FROM Partitions WHERE sortorder = :century',
+        $partitionid = read_single_value('SELECT partitionid FROM Partitions'
+                                         .' WHERE sortorder = (SELECT MAX(sortorder) FROM Partitions'
+                                         .'                           WHERE sortorder <= :century)',
                                          array(':century' => $century));
       } else {
         $partition = read_single_value('SELECT COALESCE(MAX(partitionid), 1) FROM Partitions');
