@@ -490,12 +490,13 @@ $(function() {
 function global_keypress(event) {
   if (document.activeElement == document.body ||
       document.activeElement == null) {
-    // If no other element holds focus, focus on the search box.  This is
-    // especially important with barcode scanners, as a lack of focus will
+    // If no other element holds focus, show and focus on the search box.  This
+    // is especially important with barcode scanners, as a lack of focus will
     // ignore the scanned text.
     //
     // We're invoked on a keypress event; the actual input key will be read as
     // part of handling for the keyup that follows.
+    $("#find-racer").removeClass('hidden');
     $("#find-racer-text").focus();
     console.log('Focusing on search box');
   }
@@ -515,8 +516,11 @@ function cancel_find_racer() {
   $("#find-racer-index").data("index", 1).text(1);
   $("#find-racer-count").text(0);
   $("#find-racer-message").css({visibility: 'hidden'});
-  // TODO $("#find-racer").addClass("hidden");
   remove_search_highlighting();
+  // We show the find-racer box without sliding (for speed), so let's not bother
+  // sliding to hide.
+  // $("#find-racer").slideUp(function() { $("#find-racer").addClass('hidden'); });
+  $("#find-racer").addClass('hidden');
 }
 
 function scroll_and_flash_row(row) {
@@ -544,6 +548,7 @@ function scroll_and_flash_row(row) {
 function maybe_barcode(raw_search) {
   if (raw_search.startsWith('PWD') && raw_search.endsWith('.')) {
     remove_search_highlighting();
+    $("#find-racer").addClass('hidden');
 
     $.ajax(g_action_url,
            {type: 'GET',

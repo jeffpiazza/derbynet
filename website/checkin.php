@@ -426,7 +426,7 @@ mobile_select_refresh($("#bulk_who"));
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>
-<div id="find-racer">
+<div id="find-racer" class="hidden">
   <div id="find-racer-form">
     Find Racer:
     <input type="text" id="find-racer-text" name="narrowing-text" class="not-mobile"/>
