@@ -95,6 +95,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
   $(function() { scroll_to_racerid(<?php echo $_GET['racerid']; ?>); });
 <?php } ?>
 </script>
+<script type="text/javascript" src="js/find-racer.js"></script>
 <script type="text/javascript" src="js/photo-thumbs.js"></script>
 </head>
 <body>
@@ -199,11 +200,11 @@ foreach ($stmt as $rs) {
       .' onclick="'.photo_crop_expression($image_filename).'"'
       .' src="'.$photo_repository->lookup(RENDER_LISTVIEW)->render_url($image_filename).'"/>';
   }
-  echo htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8');
+  echo "<span class='racer-name'>".htmlspecialchars($rs['firstname'].' '.$rs['lastname'], ENT_QUOTES, 'UTF-8')."</span>";
   if ($use_groups) {
-    echo '<p><strong>'.$rs['carnumber'].':</strong> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
+    echo '<p><span class="car-number">'.$rs['carnumber'].':</span> '.htmlspecialchars($rs['class'], ENT_QUOTES, 'UTF-8').'</p>';
   } else {
-    echo '<p><strong>'.$rs['carnumber'].'</strong></p>';
+    echo '<p><span class="car-number">'.$rs['carnumber'].'</span></p>';
   }
   echo '</li>'."\n";
 }
@@ -275,6 +276,19 @@ if (empty($allfiles)) {
     <input type="button" value="Cancel"
       onclick='close_secondary_modal("#delete_confirmation_modal");'/>
   </form>
+</div>
+
+<div id="find-racer" class="hidden">
+  <div id="find-racer-form">
+    Find Racer:
+    <input type="text" id="find-racer-text" name="narrowing-text" class="not-mobile"/>
+    <span id="find-racer-message"
+        ><span id="find-racer-index" data-index="1">1</span>
+        of
+        <span id="find-racer-count">0</span>
+    </span>
+    <img onclick="cancel_find_racer()" src="img/cancel-20.png"/>
+  </div>
 </div>
 
 </body>

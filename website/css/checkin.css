@@ -235,6 +235,7 @@ img.checkin-photo {
   margin-top: 50px;
 }
 
+/* -------------------------- */
 #find-racer {
     position: fixed;
     bottom: 0px;
@@ -266,18 +267,17 @@ img.checkin-photo {
   font-family: sans-serif;
 }
 
-
 .notfound #find-racer-text {
   background-color: #fc828c;
-}
-
-.found-racer {
-    background-color: #80ff80;
 }
 
 #find-racer-message {
   width: 10em;
   visibility: hidden;  /* but still takes up space */
+}
+
+.found-racer {
+    background-color: #80ff80;
 }
 
 p.warning,

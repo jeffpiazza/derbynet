@@ -317,3 +317,83 @@ Dropzone.options.uploadTarget = {
       });
   }
 };
+
+
+//////////////////// For find-racer box:
+
+function search_for_racers(search_string) {
+  remove_search_highlighting();
+
+  var domain = $("span.racer-name, span.car-number");
+  var find_count = domain.filter(function() {
+    // this = <span> element for name or car number
+    return $(this).text().toLowerCase().indexOf(search_string) != -1;
+  }).length;
+
+  if (find_count != 0) {
+    domain.contents().each(function() {
+      if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
+        // $.text() ignores any <span> elements within and just presents the
+        // text alone.
+        var where = $(this).text().toLowerCase().indexOf(search_string);
+        if (where != -1) {
+          var match = this.splitText(where);
+          match.splitText(search_string.length);
+          $(match).wrap('<span class="found-racer"></span>');
+        }
+      }
+    });
+    scroll_to_nth_found_racer(1);
+  }
+
+  
+  return find_count;
+}
+
+// Returns true if processed as a barcode scan
+function maybe_barcode(raw_search) {
+  if (raw_search.startsWith('PWD') && raw_search.endsWith('.')) {
+    $.ajax(g_action_url,
+           {type: 'GET',
+            data: {query: 'racer.list',
+                   barcode: raw_search},
+            success: function (data) {
+              if (data.hasOwnProperty('racers')) {
+                var racers = data.racers;
+                if (racers.length == 1 && racers[0].hasOwnProperty('racerid')) {
+                  console.log('racer.list finds racerid ' + racers[0].racerid);
+                  if (data.hasOwnProperty('new-row')) {
+                    // console.log('new-row property', data['new-row']);
+                    // console.log('New row racerid', racers[0].racerid);
+                    // console.log('location.href', window.location.href);
+                    // Reload the page, with the new racerid
+                    var params = new URLSearchParams(window.location.search);
+                    params.set('racerid', racers[0].racerid);
+                    window.location.search = params.toString();
+                  } else {
+                    scroll_to_racerid(racers[0].racerid);
+                  }
+                }
+              }
+            }
+           });
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function remove_search_highlighting() {
+  $("span.found-racer").each(function() {
+    var p = $(this).parent();
+    $(this).contents().unwrap();
+    p.get()[0].normalize();
+  });
+}
+function scroll_to_nth_found_racer(index) {
+  var nth = $("span.found-racer").eq(index - 1).closest('li');
+  if (nth.length > 0) {
+    console.log('scroll_to_racerid to ', nth.attr('data-racer-id'));
+    scroll_to_racerid(nth.attr('data-racer-id'));
+  }
+}

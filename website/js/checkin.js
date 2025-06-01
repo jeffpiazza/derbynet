@@ -487,21 +487,6 @@ $(function() {
   $("#mobile-checkin-form").on('submit', on_mobile_checkin_submit);
 });
 
-function global_keypress(event) {
-  if (document.activeElement == document.body ||
-      document.activeElement == null) {
-    // If no other element holds focus, show and focus on the search box.  This
-    // is especially important with barcode scanners, as a lack of focus will
-    // ignore the scanned text.
-    //
-    // We're invoked on a keypress event; the actual input key will be read as
-    // part of handling for the keyup that follows.
-    $("#find-racer").removeClass('hidden');
-    $("#find-racer-text").focus();
-    console.log('Focusing on search box');
-  }
-}
-
 function remove_search_highlighting() {
   $("span.found-racer").each(function() {
     var p = $(this).parent();
@@ -510,19 +495,7 @@ function remove_search_highlighting() {
   });
 }
 
-function cancel_find_racer() {
-  $("#find-racer-text").val("");
-  $("#find-racer").removeClass("notfound");
-  $("#find-racer-index").data("index", 1).text(1);
-  $("#find-racer-count").text(0);
-  $("#find-racer-message").css({visibility: 'hidden'});
-  remove_search_highlighting();
-  // We show the find-racer box without sliding (for speed), so let's not bother
-  // sliding to hide.
-  // $("#find-racer").slideUp(function() { $("#find-racer").addClass('hidden'); });
-  $("#find-racer").addClass('hidden');
-}
-
+// Called when a new row gets added by "New Racer", or for any barcode action.
 function scroll_and_flash_row(row) {
   scroll_to_row(row);
 
@@ -537,19 +510,11 @@ function scroll_and_flash_row(row) {
   setTimeout(function() {
     row.removeClass('highlight');
   }, 750);
-
-  $("#find-racer-index").data("index", 1).text(1);
-  $("#find-racer-count").text(0);
-  $("#find-racer-message").css({visibility: 'hidden'});
-  $("#find-racer").removeClass("notfound");
 }
 
 // Returns true if processed as a barcode scan
 function maybe_barcode(raw_search) {
   if (raw_search.startsWith('PWD') && raw_search.endsWith('.')) {
-    remove_search_highlighting();
-    $("#find-racer").addClass('hidden');
-
     $.ajax(g_action_url,
            {type: 'GET',
             data: {query: 'racer.list',
@@ -606,49 +571,34 @@ function apply_barcode_action(racerid) {
   }
 }
 
-// In response to each onchange event for the #find-racer-text control, hide the
-// table rows that don't contain the value string.
-function find_racer() {
-  var raw_search = $("#find-racer-text").val();
-  if (maybe_barcode(raw_search)) {
-    return;
+// Returns the number of found instances.  If > 0, scrolls to the first one.
+function search_for_racers(search_string) {
+  // domain is a jquery for all the td's that we're interested in searching
+  // (firstname, lastname, car number)
+  var domain = $("#main-checkin-table tbody tr")
+      .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
+  var find_count = domain.filter(function() {
+    // this = <td> element for firstname, lastname, or car number
+    return $(this).text().toLowerCase().indexOf(search_string) != -1;
+  }).length;
+
+  if (find_count != 0) {
+    domain.contents().each(function() {
+      if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
+        // $.text() ignores any <span> elements within and just presents the
+        // text alone.
+        var where = $(this).text().toLowerCase().indexOf(search_string);
+        if (where != -1) {
+          var match = this.splitText(where);
+          match.splitText(search_string.length);
+          $(match).wrap('<span class="found-racer"></span>');
+        }
+      }
+    });
+    scroll_to_nth_found_racer(1);
   }
 
-  var search_string = raw_search.toLowerCase();
-  if (search_string.length == 0) {
-    cancel_find_racer();
-  } else {
-    var domain = $("#main-checkin-table tbody tr")
-        .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
-    var find_count = domain.filter(function() {
-      // this = <td> element for firstname, lastname, or car number
-      return $(this).text().toLowerCase().indexOf(search_string) != -1;
-    }).length;
-    if (find_count != 0) {
-      $("#find-racer").removeClass("notfound");
-      remove_search_highlighting();
-      domain.contents().each(function() {
-        if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
-          var where = $(this).text().toLowerCase().indexOf(search_string);
-          if (where != -1) {
-            var match = this.splitText(where);
-            match.splitText(search_string.length);
-            $(match).wrap('<span class="found-racer"></span>');
-          }
-        }
-      });
-      $("#find-racer-index").data("index", 1).text(1);
-      $("#find-racer-count").text(find_count);
-      $("#find-racer-message").css({visibility: 'visible'});
-      scroll_to_nth_found_racer(1);
-    } else {
-      console.log("No match!");
-      $("#find-racer").addClass("notfound");
-      $("#find-racer-index").data("index", 1).text(1);
-      $("#find-racer-count").text(0);
-      $("#find-racer-message").css({visibility: 'hidden'});
-    }
-  }
+  return find_count;
 }
 
 function scroll_to_row(row) {  // row is a jquery for one tr element
@@ -671,50 +621,7 @@ function scroll_to_nth_found_racer(n) {
   scroll_to_row($("span.found-racer").eq(n - 1).closest('tr'));
 }
 
-// inc = 1 for next found racer, -1 for previous
-function next_or_previous_found_racer(inc) {
-  var count = $("#find-racer-index").data("index");
-  if (inc > 0 && count < $("span.found-racer").length) {
-    ++count;
-  } else if (inc < 0 && count > 1) {
-    --count;
-  } else {
-    return;
-  }
-
-  $("#find-racer-index").data("index", count).text(count);
-  scroll_to_nth_found_racer(count);
-}
-
-function intercept_arrow_key(event) {
-  switch (event.which) {
-  case 38:  // up
-    next_or_previous_found_racer(-1);
-    event.preventDefault();
-    break;
-  case 40: // down
-    next_or_previous_found_racer(+1);
-    event.preventDefault();
-    break;
-  case 9:  // tab or shift-tab
-    next_or_previous_found_racer(event.shiftKey ? -1 : +1);
-    event.preventDefault();
-    break;
-  case 27:  // esc
-    cancel_find_racer();
-    event.preventDefault();
-    break;
-  }
-}
-
 $(function() {
-  $(document).on("keypress", global_keypress);
-  $("#find-racer-text").on("input", find_racer)
-    .on("keydown", intercept_arrow_key);
-  // jquery mobile would add a distracting "blue glow" around the input form
-  // after the text input receives focus.  Ugh.
-  $("#find-racer-text").off('focus');
-
   $("thead a[data-order]").on('click', handle_sorting_event);
 });
 
