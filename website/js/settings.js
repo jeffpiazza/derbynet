@@ -1,6 +1,6 @@
 'use strict';
 
-function on_set_lane_colors() {
+function on_set_lane_colors_click() {
   show_modal("#lane_colors_modal", $("lane1_select"), function() {
     console.log('closed lane colors modal');
     close_modal("#lane_colors_modal");
@@ -90,11 +90,6 @@ function on_linger_time_change() {
   return false;
 }
 
-function on_max_runs_change() {
-  $("#max-runs-per-car").val(document.getElementById('max-runs').checked ? 1 : 0);
-  PostSettingChange($("#max-runs-per-car"));
-}
-
 function on_car_numbering_change(event) {
   var target = $(event.currentTarget);
 
@@ -163,6 +158,34 @@ function on_supergroup_label_change() {
 function on_partition_label_change() {
   $("span.partition-label").text($("#partition-label").val().toLowerCase());
 }
+
+
+function on_scheduling_method_click() {
+  show_modal('#scheduling_method_modal', function() {
+    close_modal("#scheduling_method_modal");
+  });
+}
+
+function on_schedule_method_change(event) {
+  var input = $(this);
+  if (input.is('label')) {
+    input = $('#' + input.attr('for'));
+  }
+  var val = input.val();
+
+  var max_runs = (val == 'abbreviated') ? 1 : 0;
+  if ($("#max-runs-per-car").val() != max_runs) {
+    $("#max-runs-per-car").val(max_runs);
+    PostSettingChange($("#max-runs-per-car"));
+  }
+
+  var rotation = (val == 'rotation') ? 1 : 0;
+  if ($("#rotation-schedule").val() != rotation) {
+    $("#rotation-schedule").val(rotation);
+    PostSettingChange($("#rotation-schedule"));
+  }
+}
+
 
 // PostSettingChange(input) responds to a change in an <input> element by
 // sending an ajax POST request with the input element's current value.  Handles
@@ -261,5 +284,10 @@ $(function() {
   $("#photo-dir").on("change", function() { render_directory_status_icon("#photo-dir"); });
   $("#car-photo-dir").on("change", function() { render_directory_status_icon("#car-photo-dir"); });
   $("#video-dir").on("change", function() { render_directory_status_icon("#video-dir"); });
+
+  $("#schedule-method-normal, label[for='schedule-method-normal'], " +
+    "#schedule-method-abbreviated, label[for='schedule-method-abbreviated'], " +
+    "#schedule-method-rotation, label[for='schedule-method-rotation']")
+    .on("keyup mouseup", on_schedule_method_change);
 
 });
