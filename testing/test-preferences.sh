@@ -98,21 +98,25 @@ diff <(curl_getj "action.php?query=poll&values=classes,partitions,rounds") - <<E
                 {
                     "rankid": 1,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Lion"
                 },
                 {
                     "rankid": 2,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Lion Pro-Stock"
                 },
                 {
                     "rankid": 3,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Tiger"
                 },
                 {
                     "rankid": 4,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Tiger Pro-Stock"
                 }
             ]
@@ -127,21 +131,25 @@ diff <(curl_getj "action.php?query=poll&values=classes,partitions,rounds") - <<E
                 {
                     "rankid": 5,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Webelos"
                 },
                 {
                     "rankid": 6,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Webelos Pro-Stock"
                 },
                 {
                     "rankid": 7,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Arrow of Light"
                 },
                 {
                     "rankid": 8,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Arrow of Light Pro-Stock"
                 }
             ]
@@ -156,21 +164,25 @@ diff <(curl_getj "action.php?query=poll&values=classes,partitions,rounds") - <<E
                 {
                     "rankid": 9,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Bear"
                 },
                 {
                     "rankid": 10,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Bear Pro-Stock"
                 },
                 {
                     "rankid": 11,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Wolf"
                 },
                 {
                     "rankid": 12,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "Wolf Pro-Stock"
                 }
             ]
