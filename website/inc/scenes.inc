@@ -1,5 +1,8 @@
 <?php
 
+// For parse_kiosk_params
+require_once('inc/kiosks.inc');
+
 function create_scene_tables() {
   run_sql_script('scene-tables.inc');
 }
@@ -8,7 +11,9 @@ function create_scene_tables() {
 //   { "sceneid": "4",
 //     "name": "Awards",
 //     "kiosks": [{ "kiosk_name": "Main",
-//                  "page": "kiosks\/award-presentations.kiosk" }]
+//                  "page": "kiosks\/award-presentations.kiosk"
+//                  "parameters": '{}'  // A json string
+//                }]
 //   }
 function all_scenes() {
   global $db;
@@ -31,8 +36,10 @@ function all_scenes() {
       }
 
       if ($row['kiosk_name']) {
+        parse_kiosk_params($row);
         $scene['kiosks'][] = array('kiosk_name' => $row['kiosk_name'],
-                                   'page' => $row['page']);
+                                   'page' => $row['page'],
+                                   'parameters' => $row['parameters']);
       }
     }
     if (isset($scene['sceneid'])) {
@@ -51,7 +58,8 @@ function all_scenes() {
   }
 }
 
-// Returns a sorted array of kiosk names used for scenes
+// Returns a sorted array of kiosk names ('Main', 'Aux1', etc.) that appear in
+// any scene definition.
 function all_scene_kiosk_names() {
   global $db;
   try {

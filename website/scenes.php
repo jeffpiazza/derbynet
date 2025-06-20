@@ -21,6 +21,7 @@ require_permission(SET_UP_PERMISSION);
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type='text/javascript' src="js/modal.js"></script>
+<script type="text/javascript" src="js/kiosk-parameters.js"></script>
 <script type='text/javascript' src="js/scenes.js"></script>
 <script type='text/javascript'>
 ///////////////////////////////////
@@ -31,7 +32,9 @@ require_permission(SET_UP_PERMISSION);
 //   { "sceneid": "4",
 //     "name": "Awards",
 //     "kiosks": [{ "kiosk_name": "Main",
-//                  "page": "kiosks\/award-presentations.kiosk" }]
+//                  "page": "kiosks\/award-presentations.kiosk",
+//                  "parameters": "{}"
+//                }]
 //   }
 //
 // g_current_scene is the name of the scene currently being shown on this page.
@@ -68,6 +71,8 @@ var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
   <input type="button" id="delete_scene_button" class="delete_button" value="Delete Scene"
          onclick='on_delete_scene()'/>
 </div>
+
+<?php require('inc/kiosk-parameters.inc'); ?>
 
 <div id="new_scene_modal" class="modal_dialog hidden block_buttons">
   <form>
