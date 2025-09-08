@@ -96,12 +96,6 @@ function process_polled_data(data) {
 // pages: array of {brief:, path:}
 // kiosks: array of {name:, address:, madlib: last_contact:, page:, parameters:}
 function generate_kiosk_control_group(pages, kiosks) {
-  for (var kiosk_page in g_kiosk_page_handlers) {
-    var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
-    if ('init_for_rebuild' in kiosk_page_handler) {
-      kiosk_page_handler.init_for_rebuild();
-    }
-  }
   $("#kiosk_control_group").empty();
   if (kiosks.length == 0) {
     $("#kiosk_control_group").append("<h3>No kiosks are presently registered.</h3>");
@@ -178,9 +172,6 @@ function generate_kiosk_control(index, kiosk, pages) {
 
   var kiosk_config_handler = g_kiosk_page_handlers[kiosk.page.replace("\\", "/")];
   if (kiosk_config_handler) {
-    if ('init_found' in kiosk_config_handler) {
-      kiosk_config_handler.init_found();
-    }
     if ('decorate' in kiosk_config_handler) {
       kiosk_config_handler.decorate(kiosk_select, kiosk.parameters,
                                     function(params) {
@@ -278,70 +269,6 @@ function handle_name_kiosk(address, name) {
             process_polled_data(data);
           },
          });
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Controls for the standings display
-//////////////////////////////////////////////////////////////////////////
-function process_standings_reveal_result(data) {
-  if (data.hasOwnProperty('exposed')) {
-    var current_exposed = data.exposed;
-    if (current_exposed === '') {
-      $("#current_exposed").text('all');
-      $("#current_unexposed").text('nothing');
-    } else {
-      var count = $("#standings-catalog option:selected").attr('data-count');
-      if (current_exposed > count) {
-        current_exposed = count;
-      }
-      $("#current_exposed").text('lowest ' + current_exposed);
-      $("#current_unexposed").text('highest ' + (count - current_exposed));
-    }
-    $(".standings-control .reveal h3").removeClass('hidden');
-  }
-}
-
-$(function () {
-  // TODO Disable buttons if there's no current roundid selection.
-  $("select#standings-catalog").on("change", function(event) {
-    // The initial prompt, if present, is shown as a disabled option which
-    // we can now remove.
-    $(this).find("option:disabled").remove();
-    var selection = $(this).find("option:selected");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {
-              action: 'standings.reveal',
-              'catalog-entry': selection.attr('data-catalog-entry')
-            },
-            success: function(data) {
-              process_standings_reveal_result(data);
-            }});
-  });
-});
-
-function handle_reveal1() {
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {
-            action: 'standings.reveal',
-            expose: '+1'
-            },
-          success: function(data) {
-            process_standings_reveal_result(data);
-          }});
-}
-
-function handle_reveal_all() {
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {
-            action: 'standings.reveal',
-            expose: 'all'
-            },
-          success: function(data) {
-            process_standings_reveal_result(data);
-          }});
 }
 
 //////////////////////////////////////////////////////////////////////////

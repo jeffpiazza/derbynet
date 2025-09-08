@@ -6,9 +6,10 @@ require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 session_write_close();
 require_once('inc/banner.inc');
-require_once('inc/schema_version.inc');
 require_once('inc/kiosks.inc');
 require_once('inc/scenes.inc');
+require_once('inc/schema_version.inc');
+require_once('inc/standings.inc');
 
 require_permission(SET_UP_PERMISSION);
 ?><!DOCTYPE html>
@@ -50,6 +51,12 @@ var g_all_scene_kiosk_names = <?php echo json_encode(all_scene_kiosk_names(),
 var g_current_scene = <?php echo json_encode(read_raceinfo('current_scene', ''),
                                              JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
+                                         JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+
+<?php
+    $oracle = new StandingsOracle();
+?>
+var g_standings_choices = <?php echo json_encode($oracle->standings_choices_for_scenes(),
                                          JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
 </script>
 </head>

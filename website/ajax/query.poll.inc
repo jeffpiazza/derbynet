@@ -10,7 +10,6 @@ function json_common_1($key, &$now_running) {
   switch ($key) {
   case 'awards': /*'awards' (query.ballot.results : vote_tabulations)
                    'awards' (via json_out_awards: award.winner) */ break;
-  case 'catalog-entry': /* standings.reveal */ break;
   case 'best-times':
     // If racing by place, there will be lots of #1's, and the "top 15" won't be
     // particularly meaningful

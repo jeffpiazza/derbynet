@@ -5,7 +5,7 @@
 function setup_kiosk_divs(all_scene_kiosk_names, all_kiosk_pages) {
   $("#previews").empty();
   for (var i = 0; i < all_scene_kiosk_names.length; ++i) {
-    var sel = $("<select/>").append($("<option>(Unspecified)</option>").attr('value', -1));
+    var sel = $("<select class='kdiv-select'/>").append($("<option>(Unspecified)</option>").attr('value', -1));
     for (var j = 0; j < all_kiosk_pages.length; ++j) {
       sel.append($("<option/>")
                  .attr('value', j)
@@ -78,10 +78,12 @@ function on_scene_change() {
       var handler = g_kiosk_page_handlers[scene.kiosks[j].page];
       if (handler.hasOwnProperty('decorate')) {
         var page_name = scene.kiosks[j].page;
+        (function(kdiv) {
         handler.decorate(deco_div, JSON.parse(scene.kiosks[j].parameters),
                          function(params) {
                            set_scene_kiosk_params(kdiv, page_name, params);
                          });
+        })(kdiv);
       }
     }
 
@@ -92,7 +94,7 @@ function on_scene_change() {
     // We need the change event in order to update the displayed choice for the select,
     // but the 'synthetic' flag will tell on_page_change not to do any redrawing; we'll
     // do that ourselves, here.
-    kdiv.find("select")
+    kdiv.find("select.kdiv-select")
       .val(page)  // Value of the select is the index into g_all_pages
       .trigger('change', /*synthetic*/true);
 
@@ -103,8 +105,8 @@ function on_scene_change() {
     var kdiv = $("div.kiosk").filter(function(index, element) {
       return element.getAttribute('data-kiosk') == unspecified[i];
     });
-    kdiv.find("select").val("-1").trigger('change', /*synthetic*/true);
-    update_kiosk_iframe(kdiv, scene.kiosks[j].page, scene.kiosks[j].parameters)
+    kdiv.find("select.kdiv-select").val("-1").trigger('change', /*synthetic*/true);
+    update_kiosk_iframe(kdiv, false, false);
   }
 }
 function valid_new_scene_name() {

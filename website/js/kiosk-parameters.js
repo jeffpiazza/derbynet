@@ -14,14 +14,7 @@
 // has a definition and there's no need for all the 'in' testing at the call
 // sites.
 //
-// A kiosk page handler potentially defines:
-//
-// // A function invoked with each new poll
-// init_for_rebuild = function() {}
-//
-// // Invoked if any kiosk is displaying this page
-// init_found = function() {}
-//
+// A kiosk page handler defines a decorate method:
 // // Adds any controls desired for custom configuration
 // //    kiosk_div is the <div> to which the page handler should add any desired
 // //        configuration controls (e.g., a Configure button that activates a
@@ -154,17 +147,51 @@ g_kiosk_page_handlers['kiosks/slideshow.kiosk'] = {
 //////////////////////////////////////////////////////////////////////////
 // standings
 //////////////////////////////////////////////////////////////////////////
+function handle_standings_change(ev) {
+  var val = Number.parseInt($(ev.target).val());  // NaN on failure
+  if (Number.isInteger(val) && val >= 0 && val < g_standings_choices.length) {
+    ev.data.callback(g_standings_choices[val].value);
+  }
+}
+
+function is_current_standings_choice(choice, parameters) {
+  if (parameters.hasOwnProperty('key')) {
+    return choice.value.key == parameters.key;
+  } else if (parameters.hasOwnProperty('classid')) {
+    return choice.value.classid == parameters.classid;
+  } else if (parameters.hasOwnProperty('rankid')) {
+    return choice.valud.rankid == parameters.rankid;
+  } else {
+    return false;
+  }
+}
+
 g_kiosk_page_handlers['kiosks/standings.kiosk'] = {
-    // The kiosk dashboard includes a div.standings-control that's used for
-    // choosing a single roundid to display standings for.  The div is hidden
-    // when the dashboard loads, or reloads(?), but exposed if one of the active
-    // kiosks.
-    init_for_rebuild: function() {
-      $(".standings-control").addClass("hidden");
-    },
-    init_found: function() {
-      $(".standings-control").removeClass("hidden");
-    },
+  decorate: function(kiosk_div, parameters, callback) {
+    var select_id = "standings-select-" + Math.floor(Math.random() * 1000);
+    kiosk_div.append("<label for='" + select_id+ "' style='float: left;'>Show standings for:</label>");
+    var select = $("<select id='" + select_id + "'/>")
+        .on("change",
+            /* data: */{parameters: parameters, callback: callback},
+            /* handler */ handle_standings_change);
+    var div = $("<div style='width: 400px; margin-left: auto; margin-right: auto;'/>");
+    div.appendTo(kiosk_div)
+    select.appendTo(div);
+    var value = -1;
+    // parameters = {catalog_entry: {name:, key:, presentation: } }
+    for (var i = 0; i < g_standings_choices.length; ++i) {
+      var entry = g_standings_choices[i];  // 
+      var opt = $("<option/>").attr('value', i).text(entry.name);
+      if (is_current_standings_choice(entry, parameters)) {
+        value = i;
+      }
+      select.append(opt);
+    }
+    if (value >= 0) {
+      select.val(value);
+    }
+    mobile_select(select);
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////

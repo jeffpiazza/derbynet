@@ -24,9 +24,6 @@ function standings_select_on_change(selection, supergroup_label) {
 // key identifies which rows to show
 // presentation identifies which columns (and which divs within cells)
 function select_standings(key, presentation) {
-  console.log('Key = ' + key);
-  console.log('Presentation = ' + presentation);
-
   $("td.col0 div, .col-group,.col-ingroup, .col-subgroup,.col-insubgroup, .col-insuper, .col-inround").addClass('hidden');
 
   var col_selectors = '';

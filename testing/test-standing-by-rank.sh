@@ -139,22 +139,6 @@ curl_text "export.php" | sed -n -e '/START_JSON/,/END_JSON/ p' | tail -2 | head 
 # Thanh came in 4th by time, but with Harold ineligible, he becomes 3rd, and Sterling is 4th
 curl_text "standings.php" | grep '<tr' | grep "data-rankid=.2." | grep "col-insubgroup.>4<" | expect_one "Sterling Spalla"
 
-curl_getj "action.php?query=standings.reveal" | expect_count catalog-entry 0
-# javascript: encodeURIComponent(JSON.stringify({kind: 'supergroup', key: 'supergroup', name: 'Pack'}))
-curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22supergroup%22%2C%22key%22%3A%22supergroup%22%2C%22name%22%3A%22Pack%22%7D" | \
-    jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
-    jq '.kind == "supergroup" and .key == "supergroup" and .name == "Pack"' | \
-    expect_eq true
-
-curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22class%22%2C%22key%22%3A%22c1%22%2C%22name%22%3A%22All Racers%22%7D" | \
-    jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
-    jq '.kind == "class" and .key == "c1" and .name == "All Racers"' | \
-    expect_eq true
-curl_postj action.php "action=standings.reveal&catalog-entry=%7B%22kind%22%3A%22rank%22%2C%22key%22%3A%22r2%22%2C%22name%22%3A%22Tigers%22%7D" | \
-    jq -r 'if .outcome.summary == "success" then .["catalog-entry"] else . end' | \
-    jq '.kind == "rank" and .key == "r2" and .name == "Tigers"' | \
-    expect_eq true
-
 # Rank-specific awards:
 
 curl_postj action.php "action=award.import&awardname=Most%20Lionic&awardtype=Design%20General&subgroup=Lions" | check_jsuccess

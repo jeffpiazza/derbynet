@@ -23,16 +23,22 @@ body { overflow: hidden; }
 </style>
 <script type="text/javascript" src="js/standings.js"></script>
 <script type="text/javascript" src="js/standings-kiosk.js"></script>
+<script type="text/javascript">
+  <?php
+    $oracle = new StandingsOracle();
+    list($class_keys, $rank_keys) = $oracle->class_and_rank_keys();
+  ?>
+
+var g_class_keys = <?php echo json_encode($class_keys); ?>;
+var g_rank_keys = <?php echo json_encode($rank_keys); ?>;
+var g_standings_catalog = <?php echo json_encode($oracle->standings_catalog()); ?>;
+
+</script>
 </head>
 <body>
 <?php make_banner('Standings', /* back_button */ false); ?>
 <table class="main_table">
-<?php
-
-$standings = new StandingsOracle();
-$standings->write_standings_table();
-
-?>
+<?php    $oracle->write_standings_table();  ?>
 </table>
 <?php require('inc/ajax-failure.inc'); ?>
 </body>
