@@ -65,6 +65,10 @@ img.ui-draggable-dragging {
   font-style: italic;
 }
 
+span.car-number {
+  font-weight: bold;
+}
+
 .photothumbs {
  position: absolute;
  top: 0;
@@ -184,4 +188,51 @@ img.ui-draggable-dragging {
 #upload_target,
 #upload_target * {
   box-sizing: border-box;
+}
+
+/* -------------------------- */
+#find-racer {
+    position: fixed;
+    bottom: 0px;
+    width: 27em;
+    height: 40px;
+    right: 1em;
+    font-size: large;
+    color: white;
+	background-color: #023882;
+    padding: 5px;
+    /* z-index 2 to prevent being covered over by .thumblist */
+    z-index: 2;
+}
+
+#find-racer-form {
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-top: 3px;
+  outline-color: transparent;
+  outline-style: none;
+}
+
+#find-racer img {
+    float: right;
+    margin-top: 8px;
+}
+
+#find-racer-text {
+  background-color: #ffffff;
+  font-size: 18px;
+  font-family: sans-serif;
+}
+
+.notfound #find-racer-text {
+  background-color: #fc828c;
+}
+
+#find-racer-message {
+  width: 10em;
+  visibility: hidden;  /* but still takes up space */
+}
+
+.found-racer {
+    background-color: #80ff80;
 }

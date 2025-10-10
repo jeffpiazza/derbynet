@@ -91,6 +91,8 @@ run_tests() {
     # Resets database
     `dirname $0`/test-standing-by-rank.sh "$BASE_URL"
     `dirname $0`/test-each-role.sh "$BASE_URL"
+    # Resets database
+    `dirname $0`/test-subgroup-ntrophies.sh "$BASE_URL"
 
 ############################## Points Racing ##############################
     # Resets database

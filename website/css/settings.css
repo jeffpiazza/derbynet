@@ -66,3 +66,36 @@ p.photo_dir_status_message {
     color: red;
     font-size: 20px;
 }
+
+a.small-button {
+  display: inline-block;
+  background: black;
+  color: white;
+  font-size: 16px;
+  height: 15px;
+  padding: 5px;
+  border-radius: 0.4em;
+  text-decoration: none;
+  line-height: 1.0;
+}
+
+input.small-button,
+.block_buttons input.small-button {
+  background: black;
+  color: white;
+  font-size: 16px;
+  height: 28px;
+  padding: 5px;
+  border-radius: 0.4em;
+  text-decoration: none;
+  line-height: 1.0;
+}
+
+.schedule_method_note,
+.block_buttons p.schedule_method_note {
+  margin-top: 0px;
+  margin-left: 60px;
+  font-size: 18px;
+  font-style: italic;
+}
+    

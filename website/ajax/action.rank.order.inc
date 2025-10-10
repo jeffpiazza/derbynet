@@ -24,10 +24,10 @@ if (have_permission(SET_UP_PERMISSION)) {
                         .' HAVING COUNT(*) > 1'
                         .' LIMIT 1')
              as $row) {
-      $db->execute_once('UPDATE Ranks SET sortorder = sortorder + 1'
-                        .' WHERE classid = :classid AND rankid >= :rankid',
-                        array(':classid' => $row['classid'],
-                              ':rankid' => $row['rankid']));
+      execute_once('UPDATE Ranks SET sortorder = sortorder + 1'
+                   .' WHERE classid = :classid AND rankid >= :rankid',
+                   array(':classid' => $row['classid'],
+                         ':rankid' => $row['rankid']));
       $did_cleanup = true;
     }
   } while ($did_cleanup);

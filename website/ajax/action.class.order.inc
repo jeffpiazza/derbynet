@@ -25,8 +25,8 @@ if (have_permission(SET_UP_PERMISSION)) {
                         .' HAVING COUNT(*) > 1'
                         .' LIMIT 1')
              as $classid) {
-      $db->execute_once('UPDATE Classes SET sortorder = sortorder + 1 WHERE classid >= :classid',
-                        array(':classid' => $classid));
+      execute_once('UPDATE Classes SET sortorder = sortorder + 1 WHERE classid >= :classid',
+                   array(':classid' => $classid));
       $did_cleanup = true;
     }
   } while ($did_cleanup);

@@ -75,15 +75,34 @@ h3#reject {
   text-align: center;
 }
 
-/* If present: */
-#log {
-  position: absolute;
-  width: 400px;
-  left: 0;
-  line-height: 1.0;
+#fps {
+  position: fixed;
+  z-index: 1000;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 20px;
+  text-align: right;
 }
-#log p {
-  font-size: 12px;
-  margin-top: 0px;
-  margin-bottom: 0px;
+
+#debug {
+  position: fixed;
+  z-index: 2000;
+  top: 200px;
+  right: 0;
+  background-color: white;
+  border: 1px solid black;
+  font-size: 15px;
+  line-height: 0px;
+  width: 350px;
+}
+
+#log p.sent {
+  text-align: left;
+}
+#log p.rcvd {
+  text-align: right;
+}
+#log p.stream {
+  text-align: center;
 }

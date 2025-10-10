@@ -20,14 +20,6 @@ session_write_close();
 
 g_websocket_url = <?php echo json_encode(read_raceinfo('_websocket_url', '')); ?>;
 
-function logmessage(txt) {
-  $("<p></p>").text(txt).appendTo($("#log"));
-  let msgs = $("#log p");
-  if (msgs.length > 20) {
-    msgs.slice(0, -20).remove();
-  }
-}
-
 function on_add_client() {
   // Adding a new client may give new information about the ideal width and
   // height for the video stream.
@@ -62,7 +54,7 @@ function on_device_selection(selectq) {
 
       let tracks = stream.getVideoTracks();
       if (tracks.length > 0) {
-        logmessage("Video stream width is " + tracks[0].getSettings().width);
+        logstream("Video stream width is " + tracks[0].getSettings().width);
       }
     });
 }
@@ -93,7 +85,7 @@ function toggle_preview() {
 <body>
 <?php make_banner('Replay Camera'); ?>
 
-<div id="log"></div>
+<div id="log" <?php if (!isset($_GET['debug'])) echo 'class="hidden"'; ?> ></div>
 
 <div class="block_buttons">
   <video id="preview" autoplay="true" muted="true" playsinline="true"></video>

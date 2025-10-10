@@ -626,7 +626,24 @@ class StandingsOracle {
       return stkey_round_subgroup($roundid, $rankid);
     }
   }
-  
+
+  // Returns two maps, one is classid to key, the second is rankid to key
+  function class_and_rank_keys() {
+    $classmap = array();  // classid to key
+    foreach ($this->classseq as $classid) {
+      $classmap[$classid] = $this->class_key($classid);
+    }
+    $rankmap = array();
+    foreach ($this->rankseq as $rankid) {
+      $rankmap[$rankid] = $this->rank_key($rankid);
+    }
+    return array($classmap, $rankmap);
+  }
+
+  // Returns a list of catalog entries, each of which is
+  // {name:, key:, presentation:}, with presentation being one of the strings in
+  // the table below ('ff', etc.).
+  //
   // Presentation determines:
   // (1) What to show in the first column
   // (2) Which other columns to show:
@@ -737,6 +754,41 @@ class StandingsOracle {
     return $catalog;
   }
 
+  // For use by the scenes editor, where there likely aren't any completed rounds.
+  function standings_choices_for_scenes() {
+    $choices = array();
+
+    if ($this->has_full_field_standings()) {
+      $choices[] = array('name' => supergroup_label(),
+                         'value' => array('key' => stkey_full_field()));
+    }
+
+    $rankseq_index = 0;
+    foreach ($this->classseq as $classid) {
+      $cl = $this->class_details[$classid];
+      $details = $this->class_details[$classid];  // TODO
+
+      if ($this->use_groups) {
+        $choices[] = array('name' => $cl['class'],
+                           'value' => array('classid' => $classid));
+      }
+
+      if ($this->use_subgroups) {
+        for (; $rankseq_index < count($this->rankseq); ++$rankseq_index) {
+          $rank = $this->ranks[$this->rankseq[$rankseq_index]];
+          if ($rank['classid'] != $classid) {
+            break;
+          }
+
+          $choices[] = array('name' => $cl['class'].' / '.$rank['rank'],
+                             'value' => array('rankid' => $rank['rankid']));
+        }
+      }
+    }
+
+    return $choices;
+  }
+
   function debug_summary() {
     return array('class_details' => $this->class_details,
                  'unfinished_rounds' => $this->unfinished_rounds,
@@ -809,4 +861,5 @@ class StandingsTracker {
     return $place;
   }
 }
+
 ?>

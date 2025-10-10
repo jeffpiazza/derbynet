@@ -39,12 +39,7 @@ var KioskPoller = (function(KioskPoller) {
                   location.reload(true);
                   return;
                 }
-                var params_string = '{}';
-                if (setting.params.length !== 0) {
-                  console.log("setting.params=" + setting.params)
-                  params_string = setting.params;
-                }
-                KioskPoller.param_callback(JSON.parse(params_string));
+                KioskPoller.param_callback(JSON.parse(setting.parameters));
               }
              });
     }, 5000);

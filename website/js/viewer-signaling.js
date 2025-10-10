@@ -1,16 +1,7 @@
 'use strict';
 
-
-function viewer_sent(key) {
-  logmessage("=> " + key);
-}
-function viewer_received(key) {
-  logmessage("<= " + key);
-}
 function ice_candidate_key(candidate) {
-  return "ice " + 
-    candidate.protocol + " " + candidate.address + ":" + candidate.port +
-    " (" + candidate.type + ")";
+  return "ice-candidate";
 }
 
 // viewer_id is string identifying this viewer.
@@ -18,29 +9,36 @@ function ice_candidate_key(candidate) {
 // stream_cb gets called when a new stream is added.
 function RemoteCamera(viewer_id, ideal, stream_cb) {
   let pc = null;
+  pc = new RTCPeerConnection({'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]});
 
   let poller = new MessagePoller(
     viewer_id,
     function(msg) {
       if (msg.type == 'offer') {
+        logrcvd('offer');
         if (!pc) {
           pc = new RTCPeerConnection({'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]});
         }
+        pc.onnegotiationneeded = function(event) {
+          logstream('NEGOTIATION NEEDED');
+        };
         pc.onicecandidate = function(event) {
           if (event.candidate) {
-            viewer_sent(ice_candidate_key(event.candidate));
+            logsent(ice_candidate_key(event.candidate));
             poller.send_message({recipient: 'camera-replay',
                                  type: 'ice-candidate',
                                  from: viewer_id,
                                  candidate: event.candidate.toJSON()});
           }
         };
-        // TODO onaddstream is obsolete; ontrack should be used instead.
-        // The track event is specified to include an optional streams member,
-        // but its only optional.
-        pc.onaddstream = function(event) {
-          stream_cb(event.stream);
-        };
+        pc.ontrack = function(event) {
+          let wh = event.track.getSettings();
+          logstream('ontrack with ' + wh.width + 'x' + wh.height +
+                        ' (' + event.streams.length + ' streams)');
+          let s = new MediaStream();
+          s.addTrack(event.track);
+          stream_cb(s);
+        }
 
         var desc = new RTCSessionDescription(msg.sdp);
         pc.setRemoteDescription(desc)
@@ -51,7 +49,7 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
             return pc.setLocalDescription(answer);
           })
           .then(function() {
-            viewer_sent('answer');
+            logsent('answer');
             poller.send_message({recipient: 'camera-replay',
                                  type: 'answer',
                                  from: viewer_id,
@@ -60,9 +58,10 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
       } else if (msg.type == 'ice-candidate') {
         if (!pc) {
           pc = new RTCPeerConnection(null);
+          logstream('UNEXPECTED ICE CANDIDATE');
         }
         let candidate = new RTCIceCandidate(msg.candidate);
-        viewer_received(ice_candidate_key(candidate));
+        logrcvd(ice_candidate_key(candidate));
         if (msg.from != 'camera-replay') {
           console.log('ICE candidate from unknown sender ' + msg.from + '');
           return;
@@ -75,22 +74,34 @@ function RemoteCamera(viewer_id, ideal, stream_cb) {
       }
     });
 
+  let pcstate = '';
   let nag = setInterval(function() {
     if (pc) {
+      if (pc.connectionState != pcstate) {
+        logstream("State " + pc.connectionState);
+        pcstate = pc.connectionState;
+      }
       if (pc.connectionState == 'disconnected') {
+        pc.close();
         pc = null;
       }
     }
-    if (!pc) {
-      viewer_sent('solicitation (nag)');
-      poller.send_message({recipient: 'camera-replay', type: 'solicitation', from: viewer_id, ideal: ideal});
-    }
-  }, 10000);
 
-  viewer_sent('solicitation');
+    if (pc == null || pc.connectionState != 'connected') {
+      logsent("solicitation (nag) " + (pc == null ? 'disconnected' : pc.connectionState) + ' '
+              + ideal.width + 'x' + ideal.height);
+      poller.send_message({recipient: 'camera-replay', type: 'solicitation',
+                           from: viewer_id, ideal: ideal});
+    }
+  }, 5000);
+
+  // This may fail to send anything if the MessagePoller is using a WebSocket and the WebSocket
+  // hasn't finished opening.  ws.onopen is the usual solution
+  logsent('solicitation ' + ideal.width + 'x' + ideal.height);
   poller.send_message({recipient: 'camera-replay', type: 'solicitation', from: viewer_id, ideal: ideal});
 
   this.close = function() {
+    logstream('------------ closed -----------------');
     if (poller) {
       poller.close();
     }

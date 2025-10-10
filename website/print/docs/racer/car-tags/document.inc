@@ -16,7 +16,7 @@ class CarTagsDocument extends PrintableRacerDocument {
                                        'desc' => 'Include emblems based on car number',
                                        'default' => true));
   }
-  
+
   function StartDocument() {
     $this->initialize_pdf('L', 'in', 'Letter');
     $this->initialize_layout(2.75, 8.5);
@@ -31,7 +31,7 @@ class CarTagsDocument extends PrintableRacerDocument {
 
     $this->pdf->SetFillColor(0,0,0);
     // Small barcode along the top, sometimes more reliable to scan
-    // $this->pdf->HorizontalBarcode($left + 0.875, 0.40, 1.0, 0.25, $racer['barcode']);
+    $this->pdf->HorizontalBarcode($left + 0.625, 0.40, 1.5, 0.25, $racer['barcode']);
     // Large barcode
     $this->pdf->VerticalBarcode($left + 1.75, 0.75, 0.5, 4, $racer['barcode']);
 

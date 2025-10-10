@@ -89,32 +89,72 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
 
 
 <div id="document-controls">
+  <div class='mradiogroup'>
+    <?php
+    $radio_count = 0;
+    $last_type = '';
+    foreach ($doc_classes as $c => $details) {
+      ++$radio_count;
+
+      if ($radio_count > 0 && $details['type'] != $last_type) {
+        echo "<div class='radio-spacer'>&nbsp;</div>\n";
+      }
+      $last_type = $details['type'];
+
+      echo "<label for='doc-class-".$c."'>";
+      echo "<b>".$details['name']."</b>";
+      echo "</label>\n";
+
+      echo "<input type='radio' name='doc-class' id='doc-class-".$c."'";
+      if ($radio_count == 1) {
+        echo " checked='checked'";
+      }
+      echo " value='".$c."'/>";
+    }
+    ?>
+  </div> <!-- mradiogroup -->
+</div>
+
+<div id="page-controls">
+  <div class="block_buttons">
+
+   <div id="sortorder-racers-div">
+     <p id="sortorder-paragraph">
+       <label for="sortorder-racers">Choose sort order:</label>
+
+       <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
+         <option value="checkin">Check-In Order</option>
+          <option value="name">Last Name</option>
+          <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
+      <?php
+      if (use_subgroups()) {
+        echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
+      } ?>
+          <option value="car" selected="selected">Car Number</option>
+        </select>
+      </p>
+    </div>
+
+    <div id="sortorder-awards-div">
+    </div>
+
+    <div id="sortorder-summary-div">
+    </div>
+
+    <input type="button" value="Select All" onclick="select_all(true)"/>
+    <input type="button" value="Deselect All" onclick="select_all(false)"/>
+</div>
+
+<div id="walkins-div" class="hidden">
+  Add
+  <input id="walkins-count" type="number" class="not-mobile" value="0"/>
+  extras
+  <input id='walkins-by-partition' type='checkbox' class='flipswitch' checked='checked'
+     data-on-text="Per <?php echo group_label();?>"
+     data-off-text="Overall"/>
+</div>
+
 <?php
-
-$radio_count = 0;
-$last_type = '';
-echo "<div class='mradiogroup'>\n";
-foreach ($doc_classes as $c => $details) {
-  ++$radio_count;
-  $options = $details['options'];
-
-  if ($radio_count > 0 && $details['type'] != $last_type) {
-    echo "<div class='radio-spacer'>&nbsp;</div>\n";
-  }
-  $last_type = $details['type'];
-
-  echo "<label for='doc-class-".$c."'>";
-  echo "<b>".$details['name']."</b>";
-  echo "</label>\n";
-
-  echo "<input type='radio' name='doc-class' id='doc-class-".$c."'";
-  if ($radio_count == 1) {
-    echo " checked='checked'";
-  }
-  echo " value='".$c."'/>";
-}
-echo "</div>\n";  // controlgroup
-
 // Options for each document type are in a div[data-docname='...'], and so can
 // be switched on and off depending on which document type is chosen.
 $doc_index = 0;  // To distinguish radio options, if needed
@@ -156,38 +196,6 @@ foreach ($doc_classes as $c => $details) {
   echo "</div>\n";
 }
 ?>
-</div>
-
-
-<div id="page-controls">
-<div class="block_buttons">
-
-   <div id="sortorder-racers-div">
-     <p id="sortorder-paragraph">
-       <label for="sortorder-racers">Choose sort order:</label>
-
-       <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
-         <option value="checkin">Check-In Order</option>
-          <option value="name">Last Name</option>
-          <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
-      <?php
-      if (use_subgroups()) {
-        echo "<option value='rank'>".htmlspecialchars(subgroup_label(), ENT_QUOTES, 'UTF-8')."</option>";
-      } ?>
-          <option value="car" selected="selected">Car Number</option>
-        </select>
-      </p>
-    </div>
-
-    <div id="sortorder-awards-div">
-    </div>
-
-    <div id="sortorder-summary-div">
-    </div>
-
-    <input type="button" value="Select All" onclick="select_all(true)"/>
-    <input type="button" value="Deselect All" onclick="select_all(false)"/>
-</div>
 </div>
 
 

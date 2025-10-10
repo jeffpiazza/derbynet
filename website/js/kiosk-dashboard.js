@@ -31,117 +31,6 @@ $(function() { poll_kiosk_all(); });
 
 
 //////////////////////////////////////////////////////////////////////////
-// Parameter handling for specific pages
-//////////////////////////////////////////////////////////////////////////
-
-// Things like modal dialogs are defined in kiosk-dashboard.php, and each kiosk
-// page requiring parameter handling registers a page handler here.  Ideally
-// we'd prefer that each kiosk page be able to supply its own arbitrary
-// configuration UI, but this implementation isn't nearly that modular.
-//
-// TODO Find a better way to express this in javascript, so that each function
-// has a definition and there's no need for all the 'in' testing at the call
-// sites.
-//
-// A kiosk page handler potentially defines:
-//
-// // A function invoked with each new poll
-// init_for_rebuild = function() {}
-//
-// // Invoked if any kiosk is displaying this page
-// init_found = function() {}
-//
-// // Adds any controls desired for custom configuration
-// //    kiosk describes the kiosk: {name:, address:, last_contact:, page:, parameters:}
-// //    kiosk_select is the <div> to which the page handler should add any desired
-// //        configuration controls (e.g., a Configure button that activates a
-// //        modal dialog).
-// decorate = function(kiosk, kiosk_select) {}
-
-var g_kiosk_page_handlers = {
-  'kiosks/standings.kiosk': {
-    init_for_rebuild: function() {
-      $(".standings-control").addClass("hidden");
-    },
-    init_found: function() {
-      $(".standings-control").removeClass("hidden");
-    },
-  },
-  'kiosks/please-check-in.kiosk': {
-    // Parameters: {classids: [ classid, ... ] }
-    decorate: function(kiosk, kiosk_select) {
-      decorate_please_check_in(kiosk, kiosk_select);
-    }
-  },
-  'kiosks/slideshow.kiosk': {
-    // Parameters: {title: (string), subdir: (string), classids: [ classid, ... ] }
-    decorate: function(kiosk, kiosk_select) {
-      decorate_slideshow(kiosk, kiosk_select);
-    }
-  },
-  'kiosks/award-presentations.kiosk': {
-    // Parameters: { confetti: (bool) }
-    decorate: function(kiosk, kiosk_select) {
-      var k_id = 'k-' + kiosk.address.replace(/[:+]/g, '_');
-      if (!kiosk.parameters.hasOwnProperty('confetti')) {
-        kiosk.parameters.confetti = true;
-      }
-      $("<input type='checkbox' class='flipswitch'/>")
-        .attr('id', k_id)
-        .prop('checked',  kiosk.parameters.confetti)
-        .on("change", /*selector*/null, /*data*/kiosk,
-            /*handler*/function (event) {
-              var checked = $(event.target).is(':checked');
-              var kiosk = event.data;  // {name:, address:, page:, parameters: }
-              post_new_params(kiosk, {confetti: checked});
-            })
-        .appendTo(kiosk_select);
-      $('<label for="' + k_id + '">Confetti</label>').appendTo(kiosk_select);
-    }
-  },
-  'kiosks/qrcode.kiosk': {
-    // Parameters: { title: (string) content: (url) }
-    decorate: function(kiosk, kiosk_select) {
-      $('<input type="button" value="Configure"/>')
-        .on("click", /* selector */null, /* data: */kiosk,
-            /* handler */ show_config_qrcode_modal)
-        .appendTo(kiosk_select);
-    }
-  },
-};
-
-function decorate_please_check_in(kiosk, kiosk_select) {
-  $('<input type="button" value="Configure"/>')
-    .on("click", /* selector */null, /* data: */kiosk,
-        /* handler */ show_config_please_check_in)
-    .appendTo(kiosk_select);
-  add_classids_description(kiosk.parameters, kiosk_select);
-}
-
-// If there are any classids specified in the parameter, attach a <p> element to
-// kiosk_select to describe the current setting.
-function add_classids_description(parameters, kiosk_select) {
-  if (parameters.classids && parameters.classids.length > 0) {
-    var s = '';
-    var classids = parameters.classids;
-    for (var i = 0; i < classids.length; ++i) {
-      s += ', ' + $("label[for='config-class-" + classids[i] + "']").text();
-    }
-    $('<p class="parameters"/>').text(s.substring(2)).appendTo(kiosk_select);
-  }
-}
-
-// Configuration function for parameters of {title:, classids: [...]}
-function decorate_slideshow(kiosk, kiosk_select) {
-  $('<input type="button" value="Configure"/>')
-    .on("click", /* selector */null, /* data: */kiosk,
-        /* handler */ show_config_slideshow_modal)
-    .appendTo(kiosk_select);
-
-  add_classids_description(kiosk.parameters, kiosk_select);
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Construct dynamic elements for kiosk dashboard
 //////////////////////////////////////////////////////////////////////////
 // The polling rate for the page is relatively fast, and each time
@@ -207,12 +96,6 @@ function process_polled_data(data) {
 // pages: array of {brief:, path:}
 // kiosks: array of {name:, address:, madlib: last_contact:, page:, parameters:}
 function generate_kiosk_control_group(pages, kiosks) {
-  for (var kiosk_page in g_kiosk_page_handlers) {
-    var kiosk_page_handler = g_kiosk_page_handlers[kiosk_page];
-    if ('init_for_rebuild' in kiosk_page_handler) {
-      kiosk_page_handler.init_for_rebuild();
-    }
-  }
   $("#kiosk_control_group").empty();
   if (kiosks.length == 0) {
     $("#kiosk_control_group").append("<h3>No kiosks are presently registered.</h3>");
@@ -289,12 +172,11 @@ function generate_kiosk_control(index, kiosk, pages) {
 
   var kiosk_config_handler = g_kiosk_page_handlers[kiosk.page.replace("\\", "/")];
   if (kiosk_config_handler) {
-    if ('init_found' in kiosk_config_handler) {
-      kiosk_config_handler.init_found();
-    }
     if ('decorate' in kiosk_config_handler) {
-      // TODO This doesn't update if just the parameter changes
-      kiosk_config_handler.decorate(kiosk, kiosk_select);
+      kiosk_config_handler.decorate(kiosk_select, kiosk.parameters,
+                                    function(params) {
+                                      post_new_params(kiosk, params);
+                                    });
     }
   }
 
@@ -390,156 +272,8 @@ function handle_name_kiosk(address, name) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Controls for the standings display
-//////////////////////////////////////////////////////////////////////////
-function process_standings_reveal_result(data) {
-  if (data.hasOwnProperty('exposed')) {
-    var current_exposed = data.exposed;
-    if (current_exposed === '') {
-      $("#current_exposed").text('all');
-      $("#current_unexposed").text('nothing');
-    } else {
-      var count = $("#standings-catalog option:selected").attr('data-count');
-      if (current_exposed > count) {
-        current_exposed = count;
-      }
-      $("#current_exposed").text('lowest ' + current_exposed);
-      $("#current_unexposed").text('highest ' + (count - current_exposed));
-    }
-    $(".standings-control .reveal h3").removeClass('hidden');
-  }
-}
-
-$(function () {
-  // TODO Disable buttons if there's no current roundid selection.
-  $("select#standings-catalog").on("change", function(event) {
-    // The initial prompt, if present, is shown as a disabled option which
-    // we can now remove.
-    $(this).find("option:disabled").remove();
-    var selection = $(this).find("option:selected");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {
-              action: 'standings.reveal',
-              'catalog-entry': selection.attr('data-catalog-entry')
-            },
-            success: function(data) {
-              process_standings_reveal_result(data);
-            }});
-  });
-});
-
-function handle_reveal1() {
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {
-            action: 'standings.reveal',
-            expose: '+1'
-            },
-          success: function(data) {
-            process_standings_reveal_result(data);
-          }});
-}
-
-function handle_reveal_all() {
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {
-            action: 'standings.reveal',
-            expose: 'all'
-            },
-          success: function(data) {
-            process_standings_reveal_result(data);
-          }});
-}
-
-//////////////////////////////////////////////////////////////////////////
 // Controls for the kiosk parameter for classes (please_check_in display)
 //////////////////////////////////////////////////////////////////////////
-
-// Uses #config_classes_modal with slideshow-specific stuff turned off
-function show_config_please_check_in(event) {
-  var kiosk = event.data;  // {name:, address:, page:, parameters: }
-  $("#slideshow_div").addClass('hidden');
-  populate_classids(kiosk.parameters);
-  show_modal("#config_classes_modal", function(event) {
-    close_modal("#config_classes_modal");
-    post_new_params(kiosk, {classids: compute_classids()});
-    return false;
-  });
-}
-
-function show_config_qrcode_modal(event) {
-  var kiosk = event.data;  // { title, content }
-  $("#qrcode-content").val(g_url + "/vote.php");
-  if (kiosk.parameters) {
-    if (kiosk.parameters.title) {
-      $("#qrcode-title").val(kiosk.parameters.title);
-    }
-    if (kiosk.parameters.content) {
-      $("#qrcode-content").val(kiosk.parameters.content);
-    }
-  }
-  show_modal("#config_qrcode_modal", function(event) {
-    close_modal("#config_qrcode_modal");
-    post_new_params(kiosk, {title: $("#qrcode-title").val(),
-                            content: $("#qrcode-content").val()});
-    return false;
-  });
-}
-
-// Uses #config_classes_modal with extra #slideshow_div turned on.
-function show_config_slideshow_modal(event) {
-  var kiosk = event.data;  // {name:, address:, page:, parameters: }
-  $("#slideshow_div").removeClass('hidden');
-  $("#title_text").val(kiosk.parameters.title);
-  $("#slideshow_subdir").val(kiosk.parameters.subdir || '');
-  mobile_select_refresh($("#slideshow_subdir"))
-  populate_classids(kiosk.parameters);
-  show_modal("#config_classes_modal", function(event) {
-    close_modal("#config_classes_modal");
-    post_new_params(kiosk, {title: $("#title_text").val(),
-                            subdir: $("#slideshow_subdir").length ? $("#slideshow_subdir").val() : '',
-                            classids: compute_classids()});
-    return false;
-  });
-}
-
-// Update the UI controls to show the current set of classids
-function populate_classids(parameters) {
-  if (parameters.classids && parameters.classids.length > 0) {
-    $("#config_classes_modal input[type='checkbox']").prop("checked", false);
-    var classids = parameters.classids;
-    for (var i = 0; i < classids.length; ++i) {
-      $("#config-class-" + classids[i])
-        .prop("checked", true);
-    }
-  } else {
-    $("#config_classes_modal input[type='checkbox']").prop("checked", true);
-  }
-  $("#config_classes_modal input[type='checkbox']").each(function() {
-    $(this).parent().toggleClass('checked', $(this).is(":checked"));
-  });
-  flipswitch_refresh($("#config_classes_modal input[type='checkbox']"));
-}
-
-// Extract classids from user's choices in the UI
-function compute_classids() {
-  var any_unchecked = false;
-  var classids = [];
-  $("#config_classes_modal input[type='checkbox']").each(function() {
-    if ($(this).is(":checked")) {
-      classids.push(parseInt($(this).data("classid")));
-    } else {
-      any_unchecked = true;
-    }
-  });
-
-  if (!any_unchecked) {
-    classids = [];
-  }
-  return classids;
-}
 
 function post_new_params(kiosk, new_params) {
   $.ajax(g_action_url,

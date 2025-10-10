@@ -16,10 +16,7 @@ function make_rotation_schedule($nlanes, $ncars, $n_times_per_lane, $trace) {
       $heat = array();
       // if $ncars < $nlanes, we need byes in the heat, not repeating the same car
       for ($lane = 0; $lane < $nlanes; ++$lane) {
-        // The more "natural" expression, $pole + $lane mod $nheats, has the
-        // cars shift left from heat to heat.  Using $nheats-$pole instead
-        // shifts them right from heat to heat.
-        $heat[] = ($nheats - $pole + $lane) % $nheats;
+        $heat[] = ($pole + $lane) % $nheats;
       }
       $heats[] = $heat;
     }

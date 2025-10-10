@@ -30,7 +30,7 @@ function kiosk_parameters() {
 // To support testing, user can pass 'page' as a query parameter to name the
 // kiosk page they want to see.
 if (isset($_GET['page'])) {
-  $g_kiosk_address = 'page-param';
+  $g_kiosk_address = 'page-param';  // i.e., this kiosk won't register with the server
   // Confirm the requested page falls under the kiosks directory
   // (Thank you, https://chocapikk.com !)
   $self = dirname(realpath($_SERVER['SCRIPT_FILENAME']));
@@ -46,11 +46,13 @@ if (isset($_GET['page'])) {
       break;
     }
   }
+
+  $g_kiosk_parameters_string = isset($_GET['parameters']) ? $_GET['parameters'] : '{}';
   require($page);
 } else {
   $g_kiosk_address = address_for_current_kiosk();
   $kpage = kiosk_page($g_kiosk_address);
-  $g_kiosk_parameters_string = $kpage['params'];
+  $g_kiosk_parameters_string = $kpage['parameters'];
   require($kpage['page']);
 }
 ?>

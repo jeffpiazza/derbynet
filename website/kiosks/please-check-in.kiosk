@@ -42,8 +42,8 @@ $(function () {
       $('.wanted_container').css('font-size', adjusted);
     }
   }
-  console.log('After adjustment: wanted_container height', $('.wanted_container').height(),
-              'visible_height', visible_height);
+  // console.log('After adjustment: wanted_container height', $('.wanted_container').height(),
+  //             'visible_height', visible_height);
 });
 //]]>
 </script>

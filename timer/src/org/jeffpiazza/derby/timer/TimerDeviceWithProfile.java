@@ -29,7 +29,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   private void setProfile(Profile profile) {
     this.profile = profile;
 
-    portWrapper.setEndOfLine(profile.options.eol);
+    if (profile.options.eol != null) {  // May be null for testing
+      portWrapper.setEndOfLine(profile.options.eol);
+    }
 
     if (Flag.dtr_gate_release.value()) {
       remote_start = new DtrRemoteStart(portWrapper);
@@ -75,6 +77,8 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
   protected static final int PROBER_RESPONSE_TIME_MS = 500;
   protected static final int POLL_RESPONSE_DEADLINE_MS = 100;
   protected static final int GIVE_UP_AFTER_OVERDUE_MS = 1000;
+
+  private String partialResultLane = null;
 
   public void abortHeat() throws SerialPortException {
     Event.send(Event.ABORT_HEAT_RECEIVED);
@@ -218,6 +222,11 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
                   + (char) (profile.heat_prep.lane + lane));
             }
           }
+        } else if (profile.heat_prep.embedded_mask_command != null) {
+          Profile.EmbeddedFieldCommand cmd = profile.heat_prep.embedded_mask_command;
+          portWrapper.drainForMs();
+          portWrapper.write(TimerDeviceUtils.embeddedFieldCommand(
+                               cmd.command, cmd.offset, cmd.nbytes, lanemask));
         }
         if (profile.heat_prep.reset != null) {
           portWrapper.drainForMs();
@@ -290,11 +299,14 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
 
       case LANE_RESULT: {
+        // Lane (char), time, optional place
         char lane_char = args[0].charAt(0);
-        int lane = ('1' <= lane_char && lane_char <= '9')
+        int lane = ('0' <= lane_char && lane_char <= '9')
                    ? lane_char - '1' + 1
                    : lane_char - 'A' + 1;
         String time = TimerDeviceUtils.zeroesToNines(args[1]);
+        time = TimerDeviceUtils.scaledTime(time, profile.options.timer_scale_factor);
+
         if (result != null) {
           boolean wasFilled = result.isFilled();
           if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
@@ -308,6 +320,15 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
             Event.send(Event.RACE_FINISHED);
           }
         }
+        break;
+      }
+      case PARTIAL_LANE_RESULT_LANE_NUM: {
+        partialResultLane = args[0];
+        break;
+      }
+      case PARTIAL_LANE_RESULT_TIME: {
+        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, args[0]});
+        partialResultLane = null;
         break;
       }
       case LANE_COUNT:

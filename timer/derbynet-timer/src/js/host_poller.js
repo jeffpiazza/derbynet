@@ -83,21 +83,28 @@ class HostPoller {
       this.sendMessage({action: 'timer-message',
                         message: 'STARTED'});
       break;
-    case 'RACE_FINISHED': {  // roundid, heat, results
-      var msg = {action: 'timer-message',
-                 message: 'FINISHED'};
-      var results = args[2].lane_results;
-      for (var i = 0; i < results.length; ++i) {
-        if (results[i]) {
-          msg['lane' + (i + 1)] = results[i].time;
-          if (results[i]?.place && !Flag.ignore_place.value) {
-            msg['place' + (i + 1)] = results[i].place;
+    case 'RACE_FINISHED': {
+      // Args are roundid, heat, results
+      if (args != null && args.length > 2) {
+        var msg = {action: 'timer-message',
+                   message: 'FINISHED'};
+        var results = args[2].lane_results;
+        for (var i = 0; i < results.length; ++i) {
+          if (results[i]) {  // Active lane (not masked out)
+            if (results[i].time == 0) {
+              // A few timers provide no result for DNF lanes
+              results[i].time = '9.9999';
+            }
+            msg['lane' + (i + 1)] = results[i].time;
+            if (results[i]?.place && !Flag.ignore_place.value) {
+              msg['place' + (i + 1)] = results[i].place;
+            }
           }
         }
-      }
 
-      g_logger.internal_msg('RACE_FINISHED: ' + JSON.stringify(msg));
-      this.sendMessage(msg);
+        g_logger.internal_msg('RACE_FINISHED: ' + JSON.stringify(msg));
+        this.sendMessage(msg);
+      }
       break;
     }
     case 'LOST_CONNECTION':

@@ -96,25 +96,6 @@ public class TimerDeviceUtils {
     return results;
   }
 
-  public static Message.LaneResult[] parseCommonRaceResult(String line,
-                                                           int nlanes) {
-    Matcher m = finishPattern.matcher(line);
-    if (m.matches()) {
-      Message.LaneResult[] results = new Message.LaneResult[nlanes];
-      m = singleLanePattern.matcher(line);
-      for (int i = 0; i < line.length() && m.find(i); i = m.end() + 1) {
-        int index = m.group(1).charAt(0) - 'A';
-        results[index] = new Message.LaneResult(m.group(2));
-        if (m.group(3).length() > 0) {
-          results[index].place = m.group(3).charAt(0) - '!' + 1;
-        }
-      }
-
-      return results;
-    }
-    return null;
-  }
-
   public static String zeroesToNines(String time) {
     Matcher m = zeroesPattern.matcher(time);
     if (m.find()) {
@@ -130,6 +111,29 @@ public class TimerDeviceUtils {
       }
     }
     return results;
+  }
+
+  // scale = 1 for most timers, 1000 for timer that reports milliseconds instead of seconds
+  public static String scaledTime(String time, int scale) {
+    if (scale == 1) {
+      return time;
+    }
+
+    try {
+      return String.format("%.4d", Double.parseDouble(time) / scale);
+    } catch (NumberFormatException e) {
+      return time;
+    }
+  }
+
+  public static String embeddedFieldCommand(long command, int offset, int nbytes, int arg) {
+    command = command + (arg << offset);
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < nbytes; ++i) {
+      result.append((char)(command & 0xFF));
+      command = command >>> 8;
+    }
+    return result.reverse().toString();
   }
 
   // If place is not reported by the timer, pass -1 as place.

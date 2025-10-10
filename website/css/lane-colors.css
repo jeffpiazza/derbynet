@@ -1,0 +1,205 @@
+
+.blue_solid_color {
+  background-color: #0000cc;
+}
+
+.green_solid_color {
+  background-color: #00c000;
+}
+
+.orange_solid_color {
+  background-color: #ff8c00;
+}
+
+.pink_solid_color {
+  background-color:#fbc6cf;
+}
+
+.purple_solid_color {
+    background-color: #800080;
+}
+
+.red_solid_color {
+    background-color: #f00000;
+}
+
+.yellow_solid_color {
+    background-color: #f8f800;
+}
+
+
+.blue_column_color {
+    background: linear-gradient(to right, #0000cc 0, #0000cc 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #0000cc 95%, #0000cc);
+}
+.d0 .blue_column_color {
+    background: linear-gradient(to right, #0000cc 0, #0000cc 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #0000cc 95%, #0000cc);
+}
+
+.green_column_color {
+    background: linear-gradient(to right, #00c000 0, #00c000 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #00c000 95%, #00c000);
+}
+.d0 .green_column_color {
+    background: linear-gradient(to right, #00c000 0, #00c000 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #00c000 95%, #00c000);
+}
+
+.orange_column_color {
+    background: linear-gradient(to right, #ff8c00 0, #ff8c00 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #ff8c00 95%, #ff8c00);
+}
+.d0 .orange_column_color {
+    background: linear-gradient(to right, #ff8c00 0, #ff8c00 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #ff8c00 95%, #ff8c00);
+}
+
+.pink_column_color {
+    background: linear-gradient(to right, #fbc6cf 0, #fbc6cf 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #fbc6cf 95%, #fbc6cf);
+}
+.d0 .pink_column_color {
+    background: linear-gradient(to right, #fbc6cf 0, #fbc6cf 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #fbc6cf 95%, #fbc6cf);
+}
+
+.purple_column_color {
+    background: linear-gradient(to right, #800080 0, #800080 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #800080 95%, #800080);
+}
+.d0 .purple_column_color {
+    background: linear-gradient(to right, #800080 0, #800080 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #800080 95%, #800080);
+}
+
+.red_column_color {
+    background: linear-gradient(to right, #f00000 0, #f00000 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #f00000 95%, #f00000);
+}
+.d0 .red_column_color {
+    background: linear-gradient(to right, #f00000 0, #f00000 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #f00000 95%, #f00000);
+}
+
+.yellow_column_color {
+    background: linear-gradient(to right, #f8f800 0, #f8f800 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #f8f800 95%, #f8f800);
+}
+.d0 .yellow_column_color {
+    background: linear-gradient(to right, #f8f800 0, #f8f800 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #f8f800 95%, #f8f800);
+}
+
+
+td.blue_row_color {
+    background: linear-gradient(to bottom, #0000cc 0, #0000cc 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #0000cc 95%, #0000cc);
+}
+tr.d0 td.blue_row_color {
+    background: linear-gradient(to bottom, #0000cc 0, #0000cc 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #0000cc 95%, #0000cc);
+}
+
+td.green_row_color {
+    background: linear-gradient(to bottom, #00c000 0, #00c000 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #00c000 95%, #00c000);
+}
+tr.d0 td.green_row_color {
+    background: linear-gradient(to bottom, #00c000 0, #00c000 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #00c000 95%, #00c000);
+}
+
+td.orange_row_color {
+    background: linear-gradient(to bottom, #ff8c00 0, #ff8c00 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #ff8c00 95%, #ff8c00);
+}
+tr.d0 td.orange_row_color {
+    background: linear-gradient(to bottom, #ff8c00 0, #ff8c00 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #ff8c00 95%, #ff8c00);
+}
+
+td.pink_row_color {
+    background: linear-gradient(to bottom, #fbc6cf 0, #fbc6cf 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #fbc6cf 95%, #fbc6cf);
+}
+tr.d0 td.pink_row_color {
+    background: linear-gradient(to bottom, #fbc6cf 0, #fbc6cf 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #fbc6cf 95%, #fbc6cf);
+}
+
+td.purple_row_color {
+    background: linear-gradient(to bottom, #800080 0, #800080 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #800080 95%, #800080);
+}
+tr.d0 td.purple_row_color {
+    background: linear-gradient(to bottom, #800080 0, #800080 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #800080 95%, #800080);
+}
+
+td.red_row_color {
+    background: linear-gradient(to bottom, #f00000 0, #f00000 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #f00000 95%, #f00000);
+}
+tr.d0 td.red_row_color {
+    background: linear-gradient(to bottom, #f00000 0, #f00000 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #f00000 95%, #f00000);
+}
+
+td.yellow_row_color {
+    background: linear-gradient(to bottom, #f8f800 0, #f8f800 5%,
+                                #ffffff 6%, #ffffff 94%,
+                                #f8f800 95%, #f8f800);
+}
+tr.d0 td.yellow_row_color {
+    background: linear-gradient(to bottom, #f8f800 0, #f8f800 5%,
+                                #fcf6cf 6%, #fcf6cf 94%,
+                                #f8f800 95%, #f8f800);
+}
+
+/* If needed, this is a technique for having a color frame all the way around
+ * the td.  Top and bottom are frame thickness is determined by height
+ * difference between the content box and padding box, which is typically
+ * thicker than padding top and bottom values.  Left and right padding values
+ * are useful to set, though.
+
+ * vertical-align is "middle" by default, which centers the content box
+ * vertically within the td.
+
+ * The linear "gradients" are just solid-color images.  When multiple images
+ * appear in a background, the first image appears on top (here: yellow over
+ * red).  Multiple values for background-clip match the multiple values for
+ * background.
+
+td.red_box, tr.d0 td.red_box {
+  background:
+    linear-gradient(to bottom, rgba(240, 255, 40, 1) 0%, rgba(240, 255, 40, 1) 100%),
+    linear-gradient(to bottom, rgba(240, 40, 40, 1)  0%, rgba(240, 40, 40, 1)  100%);
+  background-clip: content-box, padding-box;
+}

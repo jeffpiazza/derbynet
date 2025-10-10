@@ -1,5 +1,10 @@
 <?php @session_start();
 $nlanes = get_lane_count();
+$colors_info = read_raceinfo('lane-colors', '');
+$lane_colors = empty($colors_info) ? [] : explode(',', $colors_info);
+while (count($lane_colors) < $nlanes) {  // Including the case of no colors assigned
+  $lane_colors[] = 'none';
+}
 $use_points = read_raceinfo_boolean('use-points');
 $linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
 require_once('inc/banner.inc');
@@ -11,6 +16,7 @@ require_once('inc/banner.inc');
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/global.css"/>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/lane-colors.css"/>
 <link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
@@ -56,17 +62,18 @@ var g_linger_ms = <?php echo $linger_ms; ?>;
 
 <?php
   for ($i = 1; $i <= $nlanes; ++$i) {
-      echo '<tr data-lane="'.$i.'">'
-          .'<td class="lane">'.$i.'</td>'
-          .'<td class="carnumber no-test"></td>'
-          .'<td class="photo no-test"></td>'
-          .'<td class="name no-test"></td>';
-      if (!$use_points) {
-        echo '<td class="time"></td>'
-            .'<td class="speed no-test"></td>';
-      }
-      echo '<td class="place"><span class="sp"/></td>'
-          .'</tr>'."\n";
+    $color = $lane_colors[$i - 1];
+    echo "<tr data-lane='$i'>"
+      ."<td class='lane ${color}_row_color'>$i</td>"
+      ."<td class='carnumber no-test ${color}_row_color'></td>"
+      ."<td class='photo no-test ${color}_row_color'></td>"
+      ."<td class='name no-test ${color}_row_color'></td>";
+    if (!$use_points) {
+      echo "<td class='time ${color}_row_color'></td>"
+        ."<td class='speed no-test ${color}_row_color'></td>";
+    }
+    echo "<td class='place ${color}_row_color'><span class='sp'/></td>"
+      ."</tr>\n";
   }
 ?>
 

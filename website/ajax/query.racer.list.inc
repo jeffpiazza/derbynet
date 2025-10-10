@@ -7,9 +7,11 @@
 // $_GET['barcode']: If provided, restricts result to one racer
 
 require_once('inc/barcode.inc');
-require_once('inc/schema_version.inc');
+require_once('inc/car-numbering.inc');
+require_once('inc/checkin-table.inc');
 require_once('inc/events.inc');
 require_once('inc/photo-config.inc');
+require_once('inc/schema_version.inc');
 
 $order = '';
 if (isset($_GET['order']))
@@ -32,7 +34,12 @@ if (@$_GET['racerid']) {
 }
 if (@$_GET['barcode']) {
   $where = ' WHERE racerid = :racerid';
-  $params[':racerid'] = barcode_to_racerid($_GET['barcode']);
+  list($racerid, $created) = barcode_to_racerid($_GET['barcode']);
+  $params[':racerid'] = $racerid;
+  if ($created) {
+    json_out('new-row', json_table_row_for_id($racerid));
+    json_out('car-numbers', next_car_numbers());
+  }
 }
 
 function order_by($order) {

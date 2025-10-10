@@ -64,7 +64,7 @@ run_heat 6 14  9962:3.819 9907:3.065 9922:3.761 9917:3.551 x
 # P   Sam Bass(86)
 # P   Cherokee Bill(84)
 # Sib Apache Kid(95)
-# P   Fred Waiite(88)
+# P   Fred Waite(88)
 # P   Hoodoo Brown(85)
 # Sib Billy Kid(96)
 # P   John Wesley Hardin(93)
@@ -107,7 +107,7 @@ test "`xmllint --xpath "//div[@class='st-q9']/ancestor::tr/td[3]" $TMP_STANDINGS
 test "`xmllint --xpath "//option[@value='st-q10']/text()" $TMP_STANDINGS`" = "Firsts and Families" || test_fails Firsts-and-Families option
 
 test "`xmllint --xpath "//div[@class='st-q10']/ancestor::tr/td[3]" $TMP_STANDINGS | tr -d "\n"`" \
-     = "<td>Belle Starr</td><td>Pearl Hart</td><td>Sundance Kid</td><td>Sam Bass</td><td>Cherokee Bill</td><td>Apache Kid</td><td>Fred Waiite</td><td>Hoodoo Brown</td><td>Billy Kid</td><td>John Wesley Hardin</td><td>Edgardo Easterwood</td><td>Adolfo \"Dolf\" Asher</td><td>Felton Fouche</td><td>Carroll Cybulski</td><td>Ben Bittinger</td><td>Danial Depaolo</td><td>Levi Lahr</td><td>Kelvin Kinman</td><td>Owen O'Leary</td><td>Michal Melendrez</td><td>Toby Teed</td><td>Raymon Ruffner</td><td>Jesse Jara</td><td>Herb Halfacre</td><td>Rodrigo Rencher</td><td>Willard Wile</td><td>Derick Dreier</td>" || test_fails Firsts-and-Families class rankings
+     = "<td>Belle Starr</td><td>Pearl Hart</td><td>Sundance Kid</td><td>Sam Bass</td><td>Cherokee Bill</td><td>Apache Kid</td><td>Fred Waite</td><td>Hoodoo Brown</td><td>Billy Kid</td><td>John Wesley Hardin</td><td>Edgardo Easterwood</td><td>Adolfo \"Dolf\" Asher</td><td>Felton Fouche</td><td>Carroll Cybulski</td><td>Ben Bittinger</td><td>Danial Depaolo</td><td>Levi Lahr</td><td>Kelvin Kinman</td><td>Owen O'Leary</td><td>Michal Melendrez</td><td>Toby Teed</td><td>Raymon Ruffner</td><td>Jesse Jara</td><td>Herb Halfacre</td><td>Rodrigo Rencher</td><td>Willard Wile</td><td>Derick Dreier</td>" || test_fails Firsts-and-Families class rankings
 
 # Test generating a round from an aggregate class by subgroup
 RANK_FINAL=`mktemp`

@@ -1,10 +1,11 @@
 <?php
 
-require_once('inc/schedule_utils.inc');
-require_once('inc/masterheat.inc');
+require_once('inc/autoadvance.inc');
 require_once('inc/kiosks.inc');
+require_once('inc/masterheat.inc');
 require_once('inc/racing-state.inc');
 require_once('inc/rounds.inc');
+require_once('inc/schedule_utils.inc');
 
 // Time limit for finding the "best" schedule for injection of a single racer.
 // (Usually this bounds the reschedule operation overall, but if an acceptable
@@ -825,6 +826,15 @@ if (!have_permission(CONTROL_RACE_PERMISSION)) {
         update_race_chart($roundid, $new_chart, $renumbering_map);
         $t3 = time();
         assign_master_heats();
+        if (use_master_sched()) {
+          if ($roundid == $now_running['roundid']) {
+            set_racing_state(0);
+            set_current_heat(-1, -1);
+            write_raceinfo('ClassID', -1);
+          }
+          $current = get_running_round();
+          advance_heat($current, 'next-up', /* report failure */ false);
+        }
       }
       $t4 = time();
       json_out("timing", array('load' => $t1 - $t0,

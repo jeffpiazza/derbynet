@@ -92,11 +92,16 @@ public class Profile {
     // is open or closed.
     public boolean gate_state_is_knowable = true;
 
+    // Most timers report time in seconds, but SuperTimer (at least) reports an
+    // integral number of milliseconds (scale factor = 1000)
+    public int timer_scale_factor = 1;
+
     public JSONObject toJSON() {
       return new JSONObject()
           .put("eol", eol)
           .put("max_lanes", max_lanes)
-          .put("gate_state_is_knowable", gate_state_is_knowable);
+          .put("gate_state_is_knowable", gate_state_is_knowable)
+          .put("timer_scale_factor", timer_scale_factor);
     }
   }
   public Options options = new Options();
@@ -108,6 +113,11 @@ public class Profile {
 
   public Profile max_lanes(int max_lanes) {
     options.max_lanes = max_lanes;
+    return this;
+  }
+
+  public Profile timer_scale_factor(int timer_scale_factor) {
+    options.timer_scale_factor = timer_scale_factor;
     return this;
   }
 
@@ -181,6 +191,30 @@ public class Profile {
     public JSONObject toJSON() {
       return new JSONObject()
           .put("commands", new JSONArray(commands));
+    }
+  }
+
+  // For SuperTimer (at least), represents a command to the timer that
+  // includes an embedded field or argument.  The command is expressed
+  // as an int, and the argument will be shifted (by offset) and then OR'd
+  // into the command.  The result gets converted to a sequence of bytes to
+  // be sent to the timer.
+  public static class EmbeddedFieldCommand {
+    public long command;
+    public int offset;
+    public int nbytes;
+
+    public EmbeddedFieldCommand(long command, int offset, int nbytes) {
+      this.command = command;
+      this.offset = offset;
+      this.nbytes = nbytes;
+    }
+
+    public JSONObject toJSON() {
+      return new JSONObject()
+          .put("command", command)
+          .put("offset", offset)
+          .put("nbytes", nbytes);
     }
   }
 
@@ -331,6 +365,8 @@ public class Profile {
     public char lane;
     public String reset;
 
+    public EmbeddedFieldCommand embedded_mask_command;
+
     public HeatPreparation(String unmask_command, String mask_command,
                            char first_lane, String reset_command) {
       this.unmask = unmask_command;
@@ -339,12 +375,17 @@ public class Profile {
       this.reset = reset_command;
     }
 
+    public HeatPreparation(EmbeddedFieldCommand embedded_mask_command) {
+      this.embedded_mask_command = embedded_mask_command;
+    }
+
     public JSONObject toJSON() {
       return new JSONObject()
           .putOpt("unmask", unmask)
           .putOpt("mask", mask)
           .putOpt("lane", mask == null ? null : lane)
-          .putOpt("reset", reset);
+          .putOpt("reset", reset)
+          .putOpt("embedded_mask_command", embedded_mask_command == null ? null : embedded_mask_command.toJSON());
     }
   }
   public HeatPreparation heat_prep;
@@ -363,6 +404,11 @@ public class Profile {
 
   public Profile heat_prep(String reset_command) {
     return heat_prep(null, null, (char) 0, reset_command);
+  }
+
+  public Profile embedded_mask_command(long command, int offset, int nbytes) {
+    heat_prep = new HeatPreparation(new EmbeddedFieldCommand(command, offset, nbytes));
+    return this;
   }
 
   public Map<Event, CommandSequence> on
@@ -454,8 +500,8 @@ public class Profile {
         .putOpt("setup_queries", setup_queries.size() == 0 ? null
                                  : queriesToJSON(setup_queries))
         .put("matchers", detectorsToJSON(matchers))
-        .put("gate_watcher", gate_watcher == null ? null : gate_watcher.toJSON()).
-        put("heat_prep", heat_prep == null ? null : heat_prep.toJSON())
+        .putOpt("gate_watcher", gate_watcher == null ? null : gate_watcher.toJSON())
+        .putOpt("heat_prep", heat_prep == null ? null : heat_prep.toJSON())
         .putOpt("on", on.size() == 0 ? null : handlersToJSON(on))
         .putOpt("poll", poll.size() == 0 ? null : pollersToJSON(poll));
   }

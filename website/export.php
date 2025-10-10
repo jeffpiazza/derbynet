@@ -47,6 +47,11 @@ function write_workbook(extension) {
   XLSX.writeFile(workbook, 'derbynet-<?php echo date('Y-m-d'); ?>.' + extension);
 }
 
+function write_sheet_csv(sheet) {
+  XLSX.writeFile(workbook, 'derbynet-' + sheet + '-<?php echo date('Y-m-d'); ?>.csv',
+                 {type: 'csv', sheet: sheet});
+}
+
 </script>
 <script type="text/javascript">
 function workbook_json() {
@@ -62,9 +67,14 @@ function workbook_json() {
 <body>
 <?php make_banner('Export Results'); ?>
 <div class="block_buttons" style="margin-top: 20px;">
-<input type="button" value="As .xlsx" onclick="write_workbook('xlsx');"/>
-<input type="button" value="As .ods" onclick="write_workbook('ods');"/>
-<input type="button" value="As .xls" onclick="write_workbook('xls');"/>
+<input type="button" value="Everything As .xlsx" onclick="write_workbook('xlsx');"/>
+<input type="button" value="Everything As .ods" onclick="write_workbook('ods');"/>
+<input type="button" value="Everything As .xls" onclick="write_workbook('xls');"/>
+                                                       <div>&nbsp;</div>
+<input type="button" value="Roster As .csv" onclick="write_sheet_csv('Roster');"/>
+<input type="button" value="Results As .csv" onclick="write_sheet_csv('Results');"/>
+<input type="button" value="Standings As .csv" onclick="write_sheet_csv('Standings');"/>
+<input type="button" value="Awards As .csv" onclick="write_sheet_csv('Awards');"/>
 </div>
 </body>
 </html>

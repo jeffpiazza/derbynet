@@ -10,34 +10,39 @@ function read_car_numbering_values() {
   return explode('+', read_raceinfo('car-numbering', '100+101'));
 }
 
-// Returns an assoc of partitionid => next carnumber for that partition
+// Returns an array of {partitionid, next_carnumber} for each partition
 function next_car_numbers() {
   global $db;
   if (schema_version() >= PARTITION_SCHEMA) {
-    list($mult, $smallest) = read_car_numbering_values();
-
-    $stmt = $db->prepare('SELECT part.partitionid,'
-                         .' (CASE NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
-                         .'                  WHERE conflict.carnumber = lbound)'
-                         .'  WHEN 1 THEN lbound'
-                         .'  ELSE 1 + MIN(carnumber) END'
-                         .' ) AS next_carnumber'
-                         .' FROM (SELECT partitionid,'
-                         .'              CAST(:mult0 AS INTEGER) AS mult,'
-                         .'              :smallest  + (sortorder - 1) * :mult  AS lbound,'
-                         .'              :smallest2 + (sortorder    ) * :mult2 AS ubound'
-                         .'              FROM Partitions'
-                         .') AS part'
-                         .' LEFT JOIN (SELECT carnumber FROM RegistrationInfo) AS reg'
-                         .'  ON  carnumber >= lbound'
-                         .'  AND (mult = 0 OR carnumber <  ubound)'
-                         .'  AND NOT EXISTS(SELECT 1 FROM RegistrationInfo conflict'
-                         .'                  WHERE conflict.carnumber = 1 + reg.carnumber)');
-    $stmt->execute(array(':mult0' => intval($mult),
-                         ':mult' => intval($mult),
-                         ':smallest' => intval($smallest),
-                         ':mult2' => intval($mult),
-                         ':smallest2' => intval($smallest)));
+    list($mult, $smallest) = read_car_numbering_values();    
+    $mult = intval($mult);
+    $smallest = intval($smallest);
+    if ($mult == 0) {
+      $stmt = $db->prepare(
+        'SELECT partitionid,'
+        .'      COALESCE(1 + (SELECT MIN(carnumber) FROM RegistrationInfo AS reg'
+        .'                    WHERE carnumber >= smallest'
+        .'                      AND NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
+        .'                                     WHERE conflict.carnumber = 1 + reg.carnumber)),'
+        .'               smallest)'
+        .'     AS next_carnumber'
+      .' FROM Partitions, (SELECT :smallest AS smallest, :mult AS mult) AS k'
+      .' ORDER BY sortorder');
+    } else {
+    $stmt = $db->prepare(
+      'SELECT partitionid,'
+      .'      COALESCE(1 + (SELECT MIN(carnumber) FROM RegistrationInfo AS reg'
+      .'                    WHERE carnumber >= (smallest + (sortorder - 1) * mult) - 1'
+      .'                      AND carnumber < (smallest + sortorder * mult)'
+      .'                      AND NOT EXISTS(SELECT 1 FROM RegistrationInfo AS conflict'
+      .'                                     WHERE conflict.carnumber = 1 + reg.carnumber)),'
+      .'               smallest + (sortorder - 1) * mult)'
+      .'     AS next_carnumber'
+      .' FROM Partitions, (SELECT :smallest AS smallest, :mult AS mult) AS k'
+      .' ORDER BY sortorder');
+    }
+    $stmt->execute(array(':smallest' => $smallest,
+                         ':mult' => $mult));
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   } else {
     return $db->query(

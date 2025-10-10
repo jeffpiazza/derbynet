@@ -134,8 +134,8 @@ var Lineup = {
         $('[data-lane] .carnumber').text('');
         $('[data-lane] .photo').empty();
         $('[data-lane] .name').text('');
-        $('[data-lane] .time').css({opacity: 0}).text(zero);
-        $('[data-lane] .speed').css({opacity: 0}).text('200.0');
+        $('[data-lane] .time').css({color: 'rgba(0,0,0,0)'}).text(zero);
+        $('[data-lane] .speed').css({color: 'rgba(0,0,0,0)'}).text('200.0');
         $('[data-lane] .place span').text('');
         $('[data-lane] .photo img').remove();
         for (var i = 0; i < racers.length; ++i) {
@@ -236,7 +236,7 @@ var FlyerAnimation = {
   // object -- it passes around all the state it needs.
   animate_flyers: function(place, place_to_lane, completed) {
     if (place >= place_to_lane.length) {
-      $('.place').css({opacity: 100});
+      $('.place').css({color: 'black'});
       $('.flying').animate({opacity: 0}, 1000);
       completed();
     } else {
@@ -314,16 +314,14 @@ function process_polling_result(data) {
       place_to_lane[parseInt(place)] = lane;
 
       $('[data-lane="' + lane + '"] .time')
-        .css({opacity: 100})
+        .css({color: 'black'})
         .text(Number.parseFloat(hr.time).toFixed(precision));
       if (FlyerAnimation.ok_to_animate) {
-        $('[data-lane="' + lane + '"] .place').css({opacity: 0});
+        $('[data-lane="' + lane + '"] .place').css({color: 'rgba(0,0,0,0)'});
       }
       $('[data-lane="' + lane + '"] .place span').text(place);
       if (hr.speed != '') {
-        $('[data-lane="' + lane + '"] .speed')
-          .css({opacity: 100})
-          .text(hr.speed);
+        $('[data-lane="' + lane + '"] .speed').text(hr.speed).css({color: 'black'});
       }
     }
 

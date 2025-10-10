@@ -16,6 +16,7 @@ import org.jeffpiazza.derby.profiles.JitRacemaster;
 import org.jeffpiazza.derby.profiles.NewBold;
 import org.jeffpiazza.derby.profiles.Pdt;
 import org.jeffpiazza.derby.profiles.TheJudge;
+import org.jeffpiazza.derby.profiles.SuperTimerII;
 import org.jeffpiazza.derby.timer.Profile;
 import org.jeffpiazza.derby.timer.TimerDeviceWithProfile;
 
@@ -35,28 +36,10 @@ public class AllDeviceTypes {
         DerbyMagic.class,
         DerbyMagic9600.class,
         BertDrake.class,
-        JitRacemaster.class
-      };
-  @SuppressWarnings(value = "unchecked")
-  private static final Class<? extends TimerDevice>[] legacyDeviceClasses
-      = (Class<? extends TimerDevice>[]) new Class[]{
-        SmartLineLegacy.class,
-        FastTrackLegacy.class,
-        OlderFastTrackLegacy.class,
-        TheJudgeLegacy.class,
-        NewBoldLegacy.class,
-        DerbyTimerLegacy.class,
-        MiscJunkLegacy.class,
-        DerbyMagicLegacy.class,
-        DerbyMagic9600Legacy.class,
-        DerbyMagic19200Legacy.class,
-        BertDrakeLegacy.class,
-        RacemasterLegacy.class
+        JitRacemaster.class,
+        SuperTimerII.class
       };
   public static final Class<? extends TimerDevice>[] allTimerDeviceClasses() {
-    if (Flag.legacy_implementations.value()) {
-      return legacyDeviceClasses;
-    }
     return allDeviceClasses;
   }
 

@@ -11,6 +11,9 @@ function all_classes() {
                        .(schema_version() >= 3 ? 'Classes.ntrophies, ' : '-1 as ntrophies, ')
                        .(schema_version() >= 3 ? 'constituents, ' : '\'\' as constituents, ')
                        .(schema_version() >= 5 ? 'rankids, ' : '\'\' as rankids, ')
+                       .(schema_version() >= PER_SUBGROUP_AWARDS_SCHEMA
+                         ? 'Ranks.ntrophies AS rank_ntrophies, '
+                         : '-1 as rank_ntrophies, ')
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.classid = Classes.classid) AS nclass,'
                        .' (SELECT COUNT(*) FROM RegistrationInfo WHERE RegistrationInfo.rankid = Ranks.rankid) AS nrank,'
                        .' (SELECT COUNT(*) FROM Rounds'
@@ -42,7 +45,8 @@ function all_classes() {
     if ($row['rankid']) {
       $current['ranks'][] = array('rankid' => $row['rankid'],
                                   'name' => $row['rank'],
-                                  'count' => $row['nrank']);
+                                  'count' => $row['nrank'],
+                                  'ntrophies' => $row['rank_ntrophies']);
     }
   }
 
@@ -69,7 +73,9 @@ function classes_and_ranks() {
                         ? 'constituents, Classes.ntrophies AS ntrophies, '
                         : '\'\' AS constituents, -1 AS ntrophies, ')
                       .(schema_version() >= RANK_AGGREGATE_SCHEMA
-                        ? 'rankids' : '\'\' AS rankids')
+                        ? 'rankids, ' : '\'\' AS rankids, ')
+                      .(schema_version() >= PER_SUBGROUP_AWARDS_SCHEMA
+                        ? 'Ranks.ntrophies AS rank_ntrophies' : '-1 AS rank_ntrophies')
                       .' FROM Classes'
                       .' LEFT JOIN Ranks ON Classes.classid = Ranks.classid'
                       .' ORDER BY '.(schema_version() >= 2
@@ -92,6 +98,7 @@ function classes_and_ranks() {
                                      'classid' => $row['classid'],
                                      'rank' => $row['rank'],
                                      'rankid' => $row['rankid'],
+                                     'ntrophies' => $row['rank_ntrophies'],
                                      'seq' => count($rankseq));
     }
   }

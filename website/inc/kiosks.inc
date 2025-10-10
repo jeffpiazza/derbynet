@@ -90,14 +90,16 @@ function madlib_string($addr) {
   return $adjs[$crc % count($adjs)]." ".$nouns[($crc >> 16) % count($nouns)];
 }
 
-// Splits $row['params'] into separate ['page'] and ['params'] fields.
+// Splits $row['page'] into separate ['page'] and ['parameters'] fields.  Since
+// PHP doesn't distinguish between an empty array and an empty (json) object, we
+// return a json string as 'parameters', and leave it for the client to parse.
 function parse_kiosk_params(&$row) {
   $ex = explode('#', $row['page'], 2);
   if (count($ex) > 1) {
     $row['page'] = $ex[0];
-    $row['params'] = $ex[1];
+    $row['parameters'] = $ex[1];
   } else {
-    $row['params'] = '';
+    $row['parameters'] = '{}';
   }
 }
 
@@ -108,7 +110,7 @@ function parse_kiosk_params(&$row) {
 // page.
 //
 // Returns an array with a 'page' key and optionally 'name' (of the kiosk) and
-// 'params' (a customization string).
+// 'parameters' (a json string).
 function kiosk_page($addr) {
   global $db;
   do {  // Retry loop to allow for having to create the table
@@ -159,8 +161,9 @@ function kiosk_page($addr) {
     }
   } while ($retry);
   // Return global kiosk-page RaceInfo setting, or identify.kiosk.
-  return array('page' => read_raceinfo('kiosk-page', 'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'),
-               'params' => '',
+  return array('page' => read_raceinfo('kiosk-page',
+                                       'kiosks'.DIRECTORY_SEPARATOR.'identify.kiosk'),
+               'parameters' => '{}',
                'reload' => false);
 }
 
@@ -185,7 +188,8 @@ function mark_all_kiosks_for_reload() {
   }
 }
 
-// Returns an array of {address, name, page, parameters, last_contact}
+// Returns an array of entries, one for each currently-active kiosk.
+// Each entry is {address, name, page, parameters, last_contact}
 function all_kiosks() {
   global $db;
   $kiosks = array();
@@ -254,6 +258,7 @@ function remove_prefixes($prefix, $entries) {
   return $entries;
 }
 
+// Returns all the available kiosk pages from the global or per-instance /kiosks directories
 function all_kiosk_pages() {
   $configdir = isset($_SERVER['DERBYNET_CONFIG_DIR']) ? $_SERVER['DERBYNET_CONFIG_DIR'] : 'local';
   return remove_prefixes(dirname($_SERVER['SCRIPT_FILENAME']).DIRECTORY_SEPARATOR,

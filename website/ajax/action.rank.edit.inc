@@ -2,6 +2,7 @@
 // Renaming a rank:
 // $_POST['rankid']
 // $_POST['name']
+// $_POST['ntrophies']
 
 require_once('inc/json-classes.inc');
 require_once('inc/partitions.inc');
@@ -18,6 +19,13 @@ if (have_permission(SET_UP_PERMISSION)) {
     $stmt->execute(array(':rankid' => $_POST['rankid'],
                          ':name' => $name));
 
+    if (isset($_POST['ntrophies'])) {
+      $stmt = $db->prepare('UPDATE Ranks SET ntrophies = :ntrophies'
+                           .' WHERE rankid = :rankid');
+      $stmt->execute(array(':rankid' => $_POST['rankid'],
+                           ':ntrophies' => $_POST['ntrophies']));
+    }
+    
     json_out('classes', json_all_classes());
     json_success();
   } else {

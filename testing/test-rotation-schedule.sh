@@ -25,11 +25,11 @@ TMP=$(mktemp)
 jq >$TMP <<EOF
 {"schedule": [
 [1, 6, null, null, null, null],
-[null, 1, 6, null, null, null],
-[null, null, 1, 6, null, null],
-[null, null, null, 1, 6, null],
+[6, null, null, null, null, 1],
 [null, null, null, null, 1, 6],
-[6, null, null, null, null, 1]
+[null, null, null, 1, 6, null],
+[null, null, 1, 6, null, null],
+[null, 1, 6, null, null, null]
     ]
 }
 EOF
@@ -53,15 +53,15 @@ curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsucce
 jq >$TMP <<EOF
 {"schedule":[
 [1, 6, 11, 16, 21, 26],
-[46, 1, 6, 11, 16, 21],
-[41, 46, 1, 6, 11, 16],
-[36, 41, 46, 1, 6, 11],
-[31, 36, 41, 46, 1, 6],
-[26, 31, 36, 41, 46, 1],
-[21, 26, 31, 36, 41, 46],
-[16, 21, 26, 31, 36, 41],
+[6, 11, 16, 21, 26, 31],
 [11, 16, 21, 26, 31, 36],
-[6, 11, 16, 21, 26, 31]
+[16, 21, 26, 31, 36, 41],
+[21, 26, 31, 36, 41, 46],
+[26, 31, 36, 41, 46, 1],
+[31, 36, 41, 46, 1, 6],
+[36, 41, 46, 1, 6, 11],
+[41, 46, 1, 6, 11, 16],
+[46, 1, 6, 11, 16, 21]
     ]
 }
 EOF

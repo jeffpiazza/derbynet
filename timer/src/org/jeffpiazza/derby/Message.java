@@ -93,6 +93,10 @@ public interface Message {
       this.time = time;
       this.place = place;
     }
+
+    boolean equals(LaneResult other) {
+      return this.time == other.time && this.place == other.place;
+    }
   }
 
   public static class Finished implements Message {

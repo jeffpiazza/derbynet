@@ -70,6 +70,7 @@ class StateMachine {
       switch (event) {
       case 'GATE_CLOSED':
         if (this.gateEventMarksAChange(true)) {
+          TimerEvent.send('GET_SET');
           this.state = 'SET';
         }
         break;

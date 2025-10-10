@@ -9,6 +9,17 @@
 //  TimerProxy.create(pw, all_profiles()[1]);
 
 
+function embeddedFieldCommand(command, offset, nbytes, arg) {
+  command = command + (arg << offset);
+  var bytes = new Array(nbytes);
+  // Assemble the bytes in reverse order, then convert to a string of chars
+  for (var i = 0; i < nbytes; ++i) {
+    bytes[nbytes - i - 1] = command & 0xFF;
+    command = command >>> 8;
+  }
+  return String.fromCharCode.apply(null, bytes);
+}
+
 class TimerProxy {
   port_wrapper;
   profile;
@@ -25,6 +36,10 @@ class TimerProxy {
   detected_lane_count = 0;
   // If not zero, a deadline for expecting heat results
   overdue_time;
+
+  // Populated on PARTIAL_LANE_RESULT_LANE_NUM, then combined with following
+  // PARTIAL_LANE_RESULT_TIME.
+  partialResultLane = null;
 
   static async create(port_wrapper, profile) {
     this.destroy();
@@ -172,6 +187,10 @@ class TimerProxy {
     this.port_wrapper.close();
   }
 
+  argsForRaceFinished() {
+    return [this.roundid, this.heat, this.result];
+  }
+
   async onEvent(event, args) {
     // Make sure a RACE_STARTED event advances us to RUNNING state, as polling
     // (at least) needs to stop while race is running.  (Issue #200.)
@@ -235,10 +254,24 @@ class TimerProxy {
         var valid = this.result.setLane(/*lane*/args[0], /*time*/args[1], /*place*/args[2]);
         // Send just a single RACE_FINISHED event, even if we get some extra
         // results for masked-out lanes, etc.
+        //
+        // Testing for results being present and valid should happen within
+        // the recipient of the RACE_FINISHED event(s), allowing RACE_FINISHED
+        // to be idempotent.  But since we convey this.result with the event,
+        // maybe not.
         if (valid && this.result.isFilled() && !was_filled) {
-          TimerEvent.send('RACE_FINISHED', [this.roundid, this.heat, this.result]);
+          TimerEvent.send('RACE_FINISHED', this.argsForRaceFinished());
         }
       }
+      break;
+    }
+    case 'PARTIAL_LANE_RESULT_LANE_NUM': {
+      this.partialResultLane = args[0];
+      break;
+    }
+    case 'PARTIAL_LANE_RESULT_TIME': {
+      TimerEvent.send('LANE_RESULT', [this.partialResultLane, args[0]]);
+      this.partialResultLane = null;
       break;
     }
     case 'LANE_COUNT':
@@ -276,6 +309,10 @@ class TimerProxy {
                 String.fromCharCode(this.profile.heat_prep.lane.charCodeAt(0) + lane));
           }
         }
+      } else if (this.profile.heat_prep.hasOwnProperty('embedded_mask_command')) {
+        var cmd = this.profile.heat_prep.embedded_mask_command;
+        await this.port_wrapper.drain();
+        await this.port_wrapper.write(embeddedFieldCommand(cmd.command, cmd.offset, cmd.nbytes, lanemask));
       }
       await this.resetForHeatPrep();
       this.port_wrapper.drain();

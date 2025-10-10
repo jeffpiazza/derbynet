@@ -99,6 +99,13 @@ $scoring = read_raceinfo('scoring', 0);
 
 list($car_numbering_mult, $car_numbering_smallest) = read_car_numbering_values();
 
+if (read_raceinfo('max-runs-per-car', 0) != 0) {
+  $schedule_method = 'abbreviated';
+} else if (read_raceinfo_boolean('rotation-schedule')) {
+  $schedule_method = 'rotation';
+} else {
+  $schedule_method = 'normal';
+}
 ?>
 
 <div class="block_buttons">
@@ -136,6 +143,10 @@ list($car_numbering_mult, $car_numbering_smallest) = read_car_numbering_values()
         <input id="reverse-lanes" name="reverse-lanes" class="not-mobile"
                type="checkbox"<?php if (read_raceinfo_boolean('reverse-lanes')) echo ' checked="checked"';?>/>
         <label for="reverse-lanes">Number lanes in reverse</label>
+        <a href="#" class="small-button" style="margin-left: 20px;"
+             onclick="on_set_lane_colors_click(); return false;">Set Lane Colors</a>
+        <input type="hidden" id="lane-colors" name="lane-colors"
+           value="<?php echo read_raceinfo('lane-colors', ''); ?>"/>
       </p>
       <p>
         <input id="track-length" name="track-length" type="number" min="0" max="999"
@@ -341,14 +352,7 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
             if (read_raceinfo_boolean('use-points')) echo ' checked="checked"';?>/>
         <label>Race by points (place) instead of by times?</label>
       </p>
-      <p>
-        <input type="hidden" name="max-runs-per-car" id="max-runs-per-car"
-               value="<?php echo read_raceinfo("max-runs-per-car", 0); ?>"/>
-        <input type="checkbox" id="max-runs" class="not-mobile"<?php
-          if (read_raceinfo("max-runs-per-car", 0) != 0) echo ' checked="checked"'; ?>
-          onchange="on_max_runs_change();"/>
-        <label>Abbreviated single-run-per-car schedule?</label>
-      </p>
+
       <p>Scoring method:</p>
         <input type='radio' name='scoring' id='scoring_avg' value='0' class="not-mobile"
                 <?php if ($scoring == 0) echo 'checked="checked"'; ?>/>
@@ -360,9 +364,58 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
                 <?php if ($scoring == 2) echo 'checked="checked"'; ?>/>
         <label for='scoring_avg'>Take single fastest heat</label>
 
+      <p>
+        <a href="#" class="small-button" style="width: 200px;"
+             onclick="on_scheduling_method_click(); return false;">Change Scheduling Method</a>
+      </p>
+
     </div>
   </div>
 </form>
+</div>
+
+<div id="lane_colors_modal" class="modal_dialog hidden block_buttons">
+  <p>Some tracks mark lanes by color rather than number.</p>
+  <input id='lane-colors' name='lane-colors' type='hidden'
+         />
+  <form id="lane_colors_modal_form">
+  </form>
+</div>
+
+<div id="scheduling_method_modal" class="modal_dialog wide_modal hidden block_buttons">
+      <p>Scheduling method:</p>
+        <input type='radio' name='schedule-method' id='schedule-method-normal'
+                value='normal' class="do-not-post not-mobile"
+                <?php if ($schedule_method == 'normal') echo 'checked="checked"'; ?>/>
+        <label for='schedule-method-normal'>Normal scheduling</label>
+        <p class="schedule_method_note">Prefer this unless you have a
+                reason to need one of the other choices.</p>
+
+        <input type='radio' name='schedule-method' id='schedule-method-abbreviated'
+                value='abbreviated' class="do-not-post not-mobile"
+                <?php if ($schedule_method == 'abbreviated') echo 'checked="checked"'; ?>/>
+        <label for='schedule-method-abbreviated'>Abbreviated single-run-per-car schedule</label>
+        <p class="schedule_method_note">Each car runs just once in a round.
+                Sometimes useful for preiminary rounds if you have a very large field.</p>
+
+        <input type='radio' name='schedule-method' id='schedule-method-rotation'
+                value='rotation' class="do-not-post not-mobile"
+                <?php if ($schedule_method == 'rotation') echo 'checked="checked"'; ?>/>
+        <label for='schedule-method-rotation'>Lane rotation scheduling</label>
+        <p class="schedule_method_note">Cars shift over one lane for each heat, e.g.,
+                A-B-C-D is followed by B-C-D-E, then C-D-E-F, etc.  Racers meet
+                fewer competitors head to head, but this method may be slightly
+                easier for an inexperienced race crew to manage.</p>
+
+
+        <input id="max-runs-per-car" type="hidden" name="max-runs-per-car"
+               value="<?php echo read_raceinfo("max-runs-per-car", 0); ?>"/>
+        <input id="rotation-schedule" type="hidden" name="rotation-schedule"
+               value="<?php echo (read_raceinfo_boolean('rotation-schedule')) ? "1" : "0";?>"/>
+
+      <form id="scheduling_method_modal_form">
+        <input type='submit' value='Close'/>
+      </form>
 </div>
 
 <?php require('inc/chooser.inc'); ?>

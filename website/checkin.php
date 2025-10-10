@@ -90,6 +90,7 @@ $(window).on('resize', set_checkin_table_height);
 <script type="text/javascript" src="js/video-device-picker.js"></script>
 <script type="text/javascript" src="js/imagecapture.js"></script>
 <script type="text/javascript" src="js/photo-capture-modal.js"></script>
+<script type="text/javascript" src="js/find-racer.js"></script>
 <script type="text/javascript" src="js/checkin.js"></script>
 </head>
 <body>
@@ -426,13 +427,19 @@ mobile_select_refresh($("#bulk_who"));
 </div>
 
 <?php require_once('inc/ajax-pending.inc'); ?>
-<div id="find-racer">
+
+<div id="find-racer" class="hidden">
   <div id="find-racer-form">
     Find Racer:
     <input type="text" id="find-racer-text" name="narrowing-text" class="not-mobile"/>
-    <span id="find-racer-message"><span id="find-racer-index" data-index="1">1</span> of <span id="find-racer-count">0</span></span>
+    <span id="find-racer-message"
+        ><span id="find-racer-index" data-index="1">1</span>
+        of
+        <span id="find-racer-count">0</span>
+    </span>
     <img onclick="cancel_find_racer()" src="img/cancel-20.png"/>
   </div>
 </div>
+
 </body>
 </html>

@@ -47,6 +47,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 1,
                     "count": 17,
+                    "ntrophies": -1,
                     "name": "Lions & Tigers"
                 }
             ]
@@ -61,6 +62,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 2,
                     "count": 17,
+                    "ntrophies": -1,
                     "name": "White's Wolves"
                 }
             ]
@@ -75,11 +77,13 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 8,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "New Rank Name"
                 },
                 {
                     "rankid": 3,
                     "count": 16,
+                    "ntrophies": -1,
                     "name": "Bears and Fr\u00e8res"
                 }
             ]
@@ -94,6 +98,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 4,
                     "count": 16,
+                    "ntrophies": -1,
                     "name": "Webelos (\"Webes\")"
                 }
             ]
@@ -108,6 +113,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 5,
                     "count": 16,
+                    "ntrophies": -1,
                     "name": "Arrows <<--<<"
                 }
             ]
@@ -122,6 +128,7 @@ cat >$GOLDEN <<EOF
                 {
                     "rankid": 7,
                     "count": 0,
+                    "ntrophies": -1,
                     "name": "TheLastClass"
                 }
             ]

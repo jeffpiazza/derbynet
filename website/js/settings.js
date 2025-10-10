@@ -1,5 +1,33 @@
 'use strict';
 
+function on_set_lane_colors_click() {
+  show_modal("#lane_colors_modal", $("lane1_select"), function() {
+    console.log('closed lane colors modal');
+    close_modal("#lane_colors_modal");
+  });
+}
+
+function on_lane_color_change() {
+  var nlanes = $("#n-lanes").val();
+  var val = '';
+  var any_color = false;
+  $("#lane_colors_modal select").each(function() {
+    var color = $(this).val();
+    any_color |= (color != 'none');
+    val += ',' + color;
+  });
+  if (!any_color) {
+    val = '';
+  } else {
+    val = val.substring(1);
+  }
+  if (val != $("#lane-colors").val()) {
+    $("#lane-colors").val(val);
+    PostSettingChange($("#lane-colors"));
+  }
+  return false;
+}
+
 function on_lane_count_change() {
   $("#lanes-in-use").empty();
   var nlanes = $("#n-lanes").val();
@@ -16,6 +44,30 @@ function on_lane_count_change() {
   $("#unused-lane-mask").val(mask & ~(-1 << nlanes));
   
   $("#lanes-in-use img").on('click', on_lane_click);
+
+  // Also update the number of lane color pickers
+  var lane_colors = $("#lane-colors").val().split(',');
+  $("#lane_colors_modal_form").empty();
+  for (var i = 0; i < nlanes; ++i) {
+    $("#lane_colors_modal_form")
+      .append("<br/>")
+      .append("<label for='lane" + (i + 1) + "_select'>Color for Lane " + (i + 1) + "</label>");
+    var sel = $("<select id='lane" + (i + 1) + "_select' class='mselect'></select>")
+        .appendTo($("#lane_colors_modal_form"));
+    ['none', 'blue', 'green', 'orange', 'pink', 'purple', 'red', 'yellow'].forEach(
+      function(color) {
+        $("<option value='" + color + "'>" + color + "</option>").appendTo(sel);
+      });
+    if (i < lane_colors.length) {
+      console.log('Selecting ' + lane_colors[i] + ' for lane ' + (i + 1));
+      sel.val(lane_colors[i]);
+    }
+
+    sel.on('change', on_lane_color_change);
+    mobile_select(sel);
+    mobile_select_refresh(sel);
+  }
+  $("#lane_colors_modal_form").append("<input type='submit' value='Close'/>");
 }
 
 function on_lane_click(event) {
@@ -36,11 +88,6 @@ function on_linger_time_change() {
   $("#now-racing-linger-ms").val($("#now-racing-linger-sec").val() * 1000);
   PostSettingChange($("#now-racing-linger-ms"));
   return false;
-}
-
-function on_max_runs_change() {
-  $("#max-runs-per-car").val(document.getElementById('max-runs').checked ? 1 : 0);
-  PostSettingChange($("#max-runs-per-car"));
 }
 
 function on_car_numbering_change(event) {
@@ -111,6 +158,34 @@ function on_supergroup_label_change() {
 function on_partition_label_change() {
   $("span.partition-label").text($("#partition-label").val().toLowerCase());
 }
+
+
+function on_scheduling_method_click() {
+  show_modal('#scheduling_method_modal', function() {
+    close_modal("#scheduling_method_modal");
+  });
+}
+
+function on_schedule_method_change(event) {
+  var input = $(this);
+  if (input.is('label')) {
+    input = $('#' + input.attr('for'));
+  }
+  var val = input.val();
+
+  var max_runs = (val == 'abbreviated') ? 1 : 0;
+  if ($("#max-runs-per-car").val() != max_runs) {
+    $("#max-runs-per-car").val(max_runs);
+    PostSettingChange($("#max-runs-per-car"));
+  }
+
+  var rotation = (val == 'rotation') ? 1 : 0;
+  if ($("#rotation-schedule").val() != rotation) {
+    $("#rotation-schedule").val(rotation);
+    PostSettingChange($("#rotation-schedule"));
+  }
+}
+
 
 // PostSettingChange(input) responds to a change in an <input> element by
 // sending an ajax POST request with the input element's current value.  Handles
@@ -209,5 +284,10 @@ $(function() {
   $("#photo-dir").on("change", function() { render_directory_status_icon("#photo-dir"); });
   $("#car-photo-dir").on("change", function() { render_directory_status_icon("#car-photo-dir"); });
   $("#video-dir").on("change", function() { render_directory_status_icon("#video-dir"); });
+
+  $("#schedule-method-normal, label[for='schedule-method-normal'], " +
+    "#schedule-method-abbreviated, label[for='schedule-method-abbreviated'], " +
+    "#schedule-method-rotation, label[for='schedule-method-rotation']")
+    .on("keyup mouseup", on_schedule_method_change);
 
 });

@@ -11,13 +11,26 @@ import org.jeffpiazza.derby.LogWriter;
 // going to abandon the state machine and everything else altogether.
 public enum Event {
   PREPARE_HEAT_RECEIVED,
-  ABORT_HEAT_RECEIVED, // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
+  ABORT_HEAT_RECEIVED,
+  // GATE_OPEN and GATE_CLOSED may be repeatedly signaled
   GATE_OPEN,
   GATE_CLOSED,
+  // PREPARE_HEAT_RECEIVED marks the transition from IDLE to (on your) MARK.
+  // GET_SET marks the transition from MARK to SET
+  GET_SET,
+
   RACE_STARTED,
-  RACE_FINISHED, // An OVERDUE event signals that expected results have not yet arrived
+  // RACE_FINISHED gets signaled either when all the expected lane results have
+  // been reported, or (for some timers) when the timer says it's done.
+  // Processing for RACE_FINISHED must be idempotent, as there may be two or
+  // more RACE_FINISHED events triggered for the same race.
+  RACE_FINISHED,
   LANE_RESULT, // Just one
-  OVERDUE, // Eventually, overdue results give way to a GIVING_UP event,
+  PARTIAL_LANE_RESULT_LANE_NUM, // First of 2 events to make a lane result
+  PARTIAL_LANE_RESULT_TIME, // Last of 2 events to make a lane result, combines first and fires a LANE_RESULT
+  // An OVERDUE event signals that expected results have not yet arrived
+  OVERDUE,
+  // Eventually, overdue results give way to a GIVING_UP event,
   // which is roughly treated like another PREPARE_HEAT_RECEIVED.
   GIVING_UP,
   LANE_COUNT, // Some timers report how many lanes
@@ -27,8 +40,7 @@ public enum Event {
   PROFILE_UPDATED,
   // Some FastTrack timers may not support "LR" laser reset command, which we
   // try to send during MARK
-  FASTTRACK_NO_LASER_RESET
-  ;
+  FASTTRACK_NO_LASER_RESET;
 
   public static interface Handler {
     void onEvent(Event event, String[] args);
@@ -57,7 +69,8 @@ public enum Event {
 
   public static void sendAt(long deadline, Event event) {
     synchronized (eventsQueue) {
-      delayedEvents.add(new DelayedEvent(deadline, new EventRecord(event, null)));
+      delayedEvents.
+          add(new DelayedEvent(deadline, new EventRecord(event, null)));
       eventsQueue.notifyAll();
     }
   }
@@ -74,11 +87,17 @@ public enum Event {
       this.event = event;
       this.args = args;
     }
-    public Event event() { return event; }
-    public String[] args() { return args; }
+
+    public Event event() {
+      return event;
+    }
+
+    public String[] args() {
+      return args;
+    }
   }
-  private static ArrayDeque<EventRecord> eventsQueue =
-      new ArrayDeque<EventRecord>();
+  private static ArrayDeque<EventRecord> eventsQueue
+      = new ArrayDeque<EventRecord>();
 
   private static class DelayedEvent {
     private long deadline;
@@ -105,8 +124,8 @@ public enum Event {
           long timeout = 10000;  // Arbitrarily high
           if (!delayedEvents.isEmpty()) {
             // Wake up for the next delayed event's deadline
-            timeout = delayedEvents.first().deadline -
-                System.currentTimeMillis();
+            timeout = delayedEvents.first().deadline
+                - System.currentTimeMillis();
           }
           if (eventsQueue.isEmpty() && timeout > 0) {
             try {

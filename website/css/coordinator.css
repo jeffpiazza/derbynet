@@ -412,3 +412,12 @@ div.block_buttons[data-name=buttons] {
   padding: 10px;
   background: #ffffff;
 }
+@media(max-width: 900px) {
+    .double_control_column,
+    .control_column_container {
+      width: 490px;
+    }
+    #not-racing-warning {
+        width: 480px;
+    }
+}

@@ -63,49 +63,7 @@ $agg_classes = aggregate_classes();
 $pack_aggregate_id = read_raceinfo('full-field-calc', 0);
 $pack_trophies = read_raceinfo('n-pack-trophies', 3);
 
-$awards = array();
-$bias_overall = add_speed_awards($awards);
-$awards = array_merge($awards,
-                      all_awards(/* include_ad_hoc */ true,
-                                 $bias_overall));
-
-$awards_per_class = array();
-$awards_per_rank = array();
-$supergroup_awards = 0;
-foreach ($awards as $aw) {
-  if (isset($aw['rankid'])) {
-    $r = @$awards_per_rank[$aw['rankid']];
-    if (!isset($r)) {
-      $r = 0;
-    }
-    $awards_per_rank[$aw['rankid']] = $r + 1;
-  }
-  if (isset($aw['classid'])) {
-    $c = @$awards_per_class[$aw['classid']];
-    if (!isset($c)) {
-      $c = 0;
-    }
-    $awards_per_class[$aw['classid']] = $c + 1;
-  } else {
-    ++$supergroup_awards;
-  }
-}
-
-function compare_by_sort($lhs, $rhs) {
-  if ($lhs['sort'] != $rhs['sort']) {
-    return $lhs['sort'] < $rhs['sort'] ? -1 : 1;
-  }
-  if ($lhs['lastname'] != $rhs['lastname']) {
-    return $lhs['lastname'] < $rhs['lastname'] ? -1 : 1;
-  }
-  if ($lhs['firstname'] != $rhs['firstname']) {
-    return $lhs['firstname'] < $rhs['firstname'] ? -1 : 1;
-  }
-  return 0;
-}
-
-// This shouldn't actually do anything:
-usort($awards, 'compare_by_sort');
+list($awards, $supergroup_awards, $awards_per_class, $awards_per_rank) = compute_awards_for_presentation();
 ?>
 <div class="block_buttons">
 
@@ -246,7 +204,21 @@ foreach ($awards as &$row) {
 <div class="block_buttons">
     <input type="button" value="Clear" onclick="on_clear_awards()"/>
 </div>
+<?php
+    if (false) {
+      echo "<div>\n";
+      echo "<pre>\n";
 
+      //echo json_encode($awards, JSON_PRETTY_PRINT);
+      $oracle = new StandingsOracle();
+      echo json_encode($oracle->debug_summary(), JSON_PRETTY_PRINT);
+
+      // echo json_encode($oracle->award_ladder_subgroup($r), JSON_PRETTY_PRINT);
+
+      echo "</pre>\n";
+      echo "</div>\n";
+    }
+?>
 </div>
 
 </div>

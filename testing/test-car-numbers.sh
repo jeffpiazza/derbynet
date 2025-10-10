@@ -6,8 +6,51 @@ source `dirname $0`/common.sh
 
 # user_login_coordinator
 
-RESET_SOURCE=car-numbers `dirname $0`/reset-database.sh "$BASE_URL"
+RESET_SOURCE=car-numbers-x `dirname $0`/reset-database.sh "$BASE_URL"
 
+curl_postj action.php "action=class.add&name=First%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 1 and .[0].partitionid == 1 and .[0].next_carnumber == 101' \
+    > /dev/null || test_fails
+
+curl_postj action.php "action=class.add&name=Second%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 2
+           and .[0].partitionid == 1 and .[0].next_carnumber == 101
+           and .[1].partitionid == 2 and .[1].next_carnumber == 201' \
+    > /dev/null || test_fails
+
+RESET_SOURCE=car-numbers-y `dirname $0`/reset-database.sh "$BASE_URL"
+
+curl_postj action.php "action=settings.write&car-numbering=0%2B1" | check_jsuccess
+
+curl_postj action.php "action=class.add&name=First%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 1 and .[0].partitionid == 1 and .[0].next_carnumber == 1' \
+    > /dev/null || test_fails
+
+curl_postj action.php "action=class.add&name=Second%20Group" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 2
+           and .[0].partitionid == 1 and .[0].next_carnumber == 1
+           and .[1].partitionid == 2 and .[1].next_carnumber == 1' \
+    > /dev/null || test_fails
+
+curl_postj action.php "action=racer.add&firstname=First&lastname=Racer&carno=1&partitionid=2" | check_jsuccess
+
+curl_getj "action.php?query=poll&values=car-numbers" | \
+    jq -e '.["car-numbers"] | length == 2
+           and .[0].partitionid == 1 and .[0].next_carnumber == 2
+           and .[1].partitionid == 2 and .[1].next_carnumber == 2' \
+    > /dev/null || test_fails
+
+exit
+
+RESET_SOURCE=car-numbers `dirname $0`/reset-database.sh "$BASE_URL"
 
 # $1 first-last
 # $2 partition

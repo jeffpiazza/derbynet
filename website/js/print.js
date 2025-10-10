@@ -17,7 +17,7 @@ function print_selected() {
     // ids aren't meaningful for this, but we need at least one.
     ids = [0];
   }
-  if (ids.length == 0) {
+  if (ids.length == 0 && $("#walkins-count").val() == 0) {
     // Button should have been disabled anyway
     return;
   }
@@ -39,7 +39,9 @@ function print_selected() {
   });
   
   window.open("render-document.php/" + doc_class_details['type'] + "/" + doc_class
-              + "?options=" + encodeURIComponent(JSON.stringify(options))
+              + "?walkins=" + $("#walkins-count").val()
+                + ($("#walkins-by-partition").is(':checked') ? "p" : "")
+              + "&options=" + encodeURIComponent(JSON.stringify(options))
               + "&ids=" + ids.join(),
               "_blank");
 }
@@ -55,6 +57,7 @@ function update_print_button() {
   } else if (doc_class_details['type'] == 'summary') {
     enabled = true;
   }
+  enabled = enabled || $("#walkins-count").val() > 0;
   $("#print-selected").prop('disabled', !enabled);
 }
 
@@ -165,6 +168,10 @@ function process_award_list(data) {
     // TODO ranks
     $(cells[3]).text(award.firstname + ' ' + award.lastname);
   });
+  if (data.awards.length == 0) {
+    table.find("tr").remove();
+    table.append("<tr><td>(No awards defined.)</td></tr>");
+  }
 }
 
 function handle_sortorder_racers_change() {
@@ -245,6 +252,11 @@ function reveal_doc_specific_options() {
   var doc_class_details = doc_classes[doc_class];
   $("div[data-docname='" + doc_class + "']").removeClass("hidden");
 
+  $("#walkins-div").toggleClass('hidden', doc_class_details['type'] != 'racer');
+  if (doc_class_details['type'] != 'racer') {
+    $("#walkins-count").val(0);
+  }
+
   // Switch between award/racer selections, depending on type of docclass
   if (doc_class_details['type'] == 'racer') {
     $("#subject-racers, #sortorder-racers-div").removeClass("hidden");
@@ -257,9 +269,14 @@ function reveal_doc_specific_options() {
   update_print_button();
 }
 
+function on_walkins_count_change() {
+  update_print_button();
+}
+
 $(function() {
   poll();
   g_poll_interval = setInterval(function() { poll(); }, 10000);
   reveal_doc_specific_options();
   $("input[type=radio][name='doc-class']").change(function() { reveal_doc_specific_options(); });
+  $("#walkins-count").on('keyup mouseup', on_walkins_count_change);
 });

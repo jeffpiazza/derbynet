@@ -86,6 +86,17 @@ function on_edit_rank(event) {
   var rank_name = list_item.children("p").clone().find('span').remove().end().text();
   $("#edit_rank_name").val(rank_name);
 
+  var ntrophies = list_item.attr('data-ntrophies');
+  $("#edit_rank_ntrophies option").prop('selected', false);
+  if (ntrophies < 0) {
+    $("#edit_rank_ntrophies option[value='-1']").prop('selected', true)
+  } else {
+    $('#edit_rank_ntrophies option')
+      .filter(function () { return $(this).text() == ntrophies; })
+      .prop('selected', true);
+  }
+  mobile_select_refresh($('#edit_rank_ntrophies'));
+
   // True if we're the only rank for this class:
   var only_rank = list_item.closest("ul.subgroups").find("li.subgroup").length == 1;
   var count = list_item.attr('data-count');
@@ -98,7 +109,8 @@ function on_edit_rank(event) {
            {type: 'POST',
             data: {action: 'rank.edit',
                    rankid: list_item.attr('data-rankid'),
-                   name: $("#edit_rank_name").val()},
+                   name: $("#edit_rank_name").val(),
+                   ntrophies: Number($("#edit_rank_ntrophies").val())},
             success: function(data) {
               poll_for_structure();
             }});

@@ -24,7 +24,16 @@ require_once('inc/schema_version.inc');
 <!-- For measure_text -->
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript">
-   var g_nlanes = <?php echo get_lane_count_from_results(); ?>;
+   <?php
+      $nlanes = get_lane_count_from_results();
+      $colors_info = read_raceinfo('lane-colors', '');
+      $lane_colors = empty($colors_info) ? [] : explode(',', $colors_info);
+      while (count($lane_colors) < $nlanes) {  // Including the case of no colors assigned
+        $lane_colors[] = 'none';
+      }
+   ?>
+   var g_nlanes = <?php echo $nlanes; ?>;
+   var g_lane_colors = <?php echo json_encode($lane_colors); ?>;
    var g_show_car_photos = <?php echo read_raceinfo_boolean('show-cars-on-deck') ? "true" : "false"; ?>;
    var g_set_nextheat = true;
 </script>
@@ -39,6 +48,7 @@ require_once('inc/schema_version.inc');
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
 <link rel="stylesheet" type="text/css" href="css/main-table.css"/>
+<link rel="stylesheet" type="text/css" href="css/lane-colors.css"/>
 <link rel="stylesheet" type="text/css" href="css/ondeck.css"/>
 </head>
 <body>
