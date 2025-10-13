@@ -482,6 +482,12 @@ function handle_start_playlist() {
          });
 }
 
+function clear_notifications() {
+  $("#notifications p").remove();
+  $("#notifications").addClass('hidden');
+  return false;
+}
+
 function populate_new_round_modals() {
   // Each round in completed_rounds is the highest round for its class and all
   // its heats have been run.

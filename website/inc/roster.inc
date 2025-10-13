@@ -27,28 +27,35 @@ function make_new_round($classid, $roundno) {
 
 function calculate_roster_from_classes($classids, $bucketed, $bucket_limit) {
   $standings = new StandingsOracle();
+  list($classes, $classseq,  $ranks, $rankseq) = classes_and_ranks();
 
   $bucket_keys = array();
+  $bucket_names = array();
   foreach ($classids as $cl) {
     $bucket_keys[] = $standings->class_key($cl);
+    $bucket_names[] = $classes[$cl]['class'];
   }
 
-  return calculate_roster_from_keys($bucket_keys, $bucketed ? 1 : 0, $bucket_limit, $standings);
+  return calculate_roster_from_keys($bucket_keys, $bucket_names,
+                                    $bucketed ? 1 : 0, $bucket_limit, $standings);
 }
 
 function calculate_roster_from_subgroups($rankids, $bucketed, $bucket_limit) {
   $standings = new StandingsOracle();
+  list($classes, $classseq,  $ranks, $rankseq) = classes_and_ranks();
 
   $bucket_keys = array();
+  $bucket_names = array();
   foreach ($rankids as $rankid) {
     $bucket_keys[] = $standings->rank_key($rankid);
+    $bucket_names[] = $ranks[$rankid]['rank'];
   }
 
-  return calculate_roster_from_keys($bucket_keys, $bucketed ? 1 : 0, $bucket_limit, $standings);
+  return calculate_roster_from_keys($bucket_keys, $bucket_names,
+                                    $bucketed ? 1 : 0, $bucket_limit, $standings);
 }
 
 // For a follow-on round to an existing racing round ("organic" roster), 
-// $roundid must be the highest-numbered round for a class that has racing rounds
 function calculate_roster_follow_on_round($classid, $bucketed, $bucket_limit) {
   global $db;
 
@@ -65,10 +72,16 @@ function calculate_roster_follow_on_round($classid, $bucketed, $bucket_limit) {
 
 
 // $bucket_keys: An array of standings key symbols
+// $bucket_names: An array of names for the buckets, parallel to $bucket_keys
 // $bucket_multiplier is 0 for no bucketing (take top overall), or 1 for bucketing by key
 // $bucket_limit: How many racers per bucket.  May be exceeded for ties within a bucket.
 // $standings: A StandingsOracle instance
-function calculate_roster_from_keys($bucket_keys, $bucket_multiplier, $bucket_limit, &$standings) {
+//
+// Returns two values: (1) an unordered list of trophy-eligible racers, capped
+// to $bucket_limit racers from each bucket, and (2) a list of "concerns" about
+// buckets that weren't fully filled.
+function calculate_roster_from_keys($bucket_keys, $bucket_names, $bucket_multiplier,
+                                    $bucket_limit, &$standings) {
   global $db;
 
   $buckets = array();
@@ -89,21 +102,28 @@ function calculate_roster_from_keys($bucket_keys, $bucket_multiplier, $bucket_li
       }
     }
   }
-  /*
-  json_out('debug', array('bucket_multiplier' => $bucket_multiplier,
-                          'bucket_keys' => $bucket_keys,
-                          'bucket_limit' => $bucket_limit,
-                          'buckets' => $buckets));
-  */
   $finalists = array();
 
-  foreach ($buckets as $b) {
+  // Some or all buckets may be smaller than anticipated/desired.
+  // That may be benign (only two racers in one of the classes), or it may be confusing.
+  // We'll report any of these as "concerns" about the roster.
+  $concerns = array();
+
+  for ($b_index = 0; $b_index < count($buckets); ++$b_index) {
+    $b = $buckets[$b_index];
+    if (count($b) < $bucket_limit) {
+      if (count($b) == 0) {
+        $concerns[] = 'There are no eligible '.$bucket_names[$b_index].' racer(s).';
+      } else {
+        $concerns[] = 'There are only '.count($b).' eligible '.$bucket_names[$b_index].' racer(s).';
+      }
+    }
     foreach ($b as $racer) {
       $finalists[] = array('racerid' => $racer['racerid'] + 0,
                            'score' => $racer['score'] + 0);
     }
   }
-  return $finalists;
+  return array($finalists, $concerns);
 }
 
 function write_roster_entries($new_roundid, $classid, &$finalists) {

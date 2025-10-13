@@ -71,6 +71,9 @@ input.lane-time::-webkit-outer-spin-button {
   <div id="now-racing-group" class="scheduling_control_group">
     <p>Waiting for poll.coordinator query...</p>
   </div>
+  <div id="notifications" class="hidden">
+    <img src="img/cancel-20.png" onclick="clear_notifications()"/>
+  </div>
 </div>
 
 <div class="control_column_container">
