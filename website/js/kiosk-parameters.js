@@ -222,7 +222,7 @@ g_kiosk_page_handlers['kiosks/award-presentations.kiosk'] = {
 //////////////////////////////////////////////////////////////////////////
 
 function show_config_qrcode_modal(event) {
-  var kiosk = event.data.parameters;  // parameters are { title, content }
+  var parameters = event.data.parameters;  // parameters are { title, content }
   $("#qrcode-content").val(g_url + "/vote.php");
   if (parameters) {
     if (parameters.title) {
