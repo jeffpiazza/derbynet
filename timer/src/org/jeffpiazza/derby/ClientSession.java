@@ -230,6 +230,9 @@ public class ClientSession {
         writer.close(); // writer.close() may block.
       }
     } while ((url = urlFromRedirection(connection)) != null);
+    // HttpURLConnection.getFollowRedirects() returns true; the connection likely
+    // sees and acts on a 302 response before urlFromRedirection gets a chance
+    // to see it.
 
     return getResponse(connection);
   }
@@ -351,16 +354,18 @@ public class ClientSession {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
       return db.parse(inputStream).getDocumentElement();
-    } catch (Exception e) {
+    } catch (Throwable e) {
       LogWriter.stacktrace(e);
     }
     LogWriter.httpResponse("Unparseable response for message");
-    inputStream.reset();
-    byte[] buffer = new byte[1024];
-    int bytesRead;
-    while ((bytesRead = inputStream.read(buffer)) != -1) {
-      System.out.write(buffer, 0, bytesRead);
-      LogWriter.httpResponse(new String(buffer, 0, bytesRead));
+    if (inputStream.markSupported()) {
+      inputStream.reset();
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+        System.out.write(buffer, 0, bytesRead);
+        LogWriter.httpResponse(new String(buffer, 0, bytesRead));
+      }
     }
     return null;
   }

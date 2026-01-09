@@ -97,6 +97,9 @@ public class HttpTask implements Runnable {
           HttpTask task = new HttpTask(session);
           connector.setHttpTask(task);
           task.run();
+          // The login didn't actually fail, but we want to communicate the
+          // status change to the user somehow.
+          callback.onLoginFailed("Connection to server lost");
         }
       }
     }).start();
@@ -233,7 +236,10 @@ public class HttpTask implements Runnable {
           }
         }
 
-        while (response == null) {
+        // If the message doesn't go through or there's a problem with the
+        // response, try again for a while, but eventually give up.
+        long deadline = System.currentTimeMillis() + 10 * 60 * 1000;  // 10min
+        while (response == null && System.currentTimeMillis() < deadline) {
           String params = null;
           try {
             params = nextMessage.asParameters();
@@ -258,6 +264,13 @@ public class HttpTask implements Runnable {
             LogWriter.stacktrace(t);
           }
         }
+      }
+
+      if (response == null) {
+        // Something's not working, time to give up.
+        LogWriter.info("Giving up after being unable to complete message " +
+                       "exchange with server at " + session.getBaseUrl());
+        return;
       }
 
       if (ClientSession.wasSuccessful(response)) {
