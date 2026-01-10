@@ -558,6 +558,17 @@ function offer_new_rounds(rounds, classes) {
 }
 
 function process_coordinator_poll_json(json) {
+  if (json['concerns']) {
+    // When building a new roster (for a follow-on or aggregate round), there
+    // may not be enough racers of a given group or subgroup to populate that
+    // piece of the roster fully.  Messages about this come back as "concerns"
+    // from the roster.new request.
+    for (var concern of json['concerns']) {
+      $("<p></p>").text(concern).appendTo("#notifications");
+    }
+    $("#notifications").removeClass('hidden');
+  }
+
   json['current-heat'].heat_results = [];
   for (var i = 0; i < json['heat-results'].length; ++i) {
     json['current-heat'].heat_results.push(json['heat-results'][i]);

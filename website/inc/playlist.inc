@@ -90,18 +90,18 @@ function activate_playlist_entry(&$playlist_entry) {
                           .' WHERE classid = :classid',
                           array(':classid' => $playlist_entry['classid']));
       if (empty($rankids)) {
-        $finalists = calculate_roster_from_classes(explode(',', $constituents),
-                                                   $playlist_entry['bucketed'],
-                                                   $playlist_entry['bucket_limit']);
+        list($finalists, $concerns) = calculate_roster_from_classes(explode(',', $constituents),
+                                                                    $playlist_entry['bucketed'],
+                                                                    $playlist_entry['bucket_limit']);
       } else {
-        $finalists = calculate_roster_from_subgroups(explode(',', $rankids),
-                                                     $playlist_entry['bucketed'],
-                                                     $playlist_entry['bucket_limit']);
+        list($finalists, $concerns) = calculate_roster_from_subgroups(explode(',', $rankids),
+                                                                      $playlist_entry['bucketed'],
+                                                                      $playlist_entry['bucket_limit']);
       }
     } else {
-      $finalists = calculate_roster_follow_on_round($playlist_entry['classid'],
-                                                    $playlist_entry['bucketed'],
-                                                    $playlist_entry['bucket_limit']);
+      list($finalists, $concerns) = calculate_roster_follow_on_round($playlist_entry['classid'],
+                                                                     $playlist_entry['bucketed'],
+                                                                     $playlist_entry['bucket_limit']);
     }
     json_out('finalists', $finalists);
     write_roster_entries($roundid, $playlist_entry['classid'], $finalists);

@@ -80,11 +80,15 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
   list($classid, $old_round) = read_single_row('SELECT classid, round FROM Rounds'
                                                .' WHERE roundid = :roundid',
                                                array(':roundid' => $roundid));
-  // TODO: Handle not-found case
-  $new_roundid = prepare_new_round($classid, 1 + $old_round);
-  $finalists = calculate_roster_follow_on_round($classid, $bucketed, $bucket_limit);
+  if (is_null($classid) || is_null($old_round)) {
+    json_failure('Invalid roundid', $roundid);
+  } else {
+    $new_roundid = prepare_new_round($classid, 1 + $old_round);
+    list($finalists, $concerns) = calculate_roster_follow_on_round($classid, $bucketed, $bucket_limit);
+  }
 } else {
   if (isset($_POST['classname'])) {
+    // Construct a new aggregate class from the posted classids or rankids.
     list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
     $classids = array();
     $rankids = array();
@@ -120,15 +124,16 @@ if (isset($_POST['roundid']) && strlen($_POST['roundid']) > 0) {
                              PDO::FETCH_ASSOC);
 
   if (empty($details['rankids'])) {
-    $finalists = calculate_roster_from_classes(
+    list($finalists, $concerns) = calculate_roster_from_classes(
       array_filter(explode(',', $details['constituents']), 'strlen'), $bucketed, $bucket_limit);
   } else {
-    $finalists = calculate_roster_from_subgroups(
+    list($finalists, $concerns) = calculate_roster_from_subgroups(
       array_filter(explode(',', $details['rankids']), 'strlen'), $bucketed, $bucket_limit);
   }
 }
 
 json_out('finalists', $finalists);
+if (count($concerns) > 0) { json_out('concerns', $concerns); }
 
 write_roster_entries($new_roundid, $classid, $finalists);
 
