@@ -1,4 +1,3 @@
-
 // Returns:
 //    "" if acceptable
 //    "unacceptable-hover-filled"
@@ -90,53 +89,61 @@ function on_vote_choose(event) {
   close_modal("#ballot_results_modal");
 }
 
+// --- MODIFIED FUNCTION ---
 function on_votes_click(event) {
   $("#ballot_results_tabulation").empty();
   var votes = $(event.target).data('votes');
   var awardid = $(event.target).attr('data-awardid');
 
+  // Get sets of racerids who have won design or speed awards
+  var design_award_winners = new Set();
+  var speed_award_winners = new Set();
+
+  // Find design award winners from regular awards
+  $("#awards li").each(function() {
+    var racerid = $(this).attr('data-racerid');
+    if (racerid && racerid !== "0") {
+      design_award_winners.add(racerid);
+    }
+  });
+
+  // Find speed award winners from speed-awards data if available
+  if (window.latest_awards_data && window.latest_awards_data["speed-awards"]) {
+    window.latest_awards_data["speed-awards"].forEach(function(speedAward) {
+      speed_award_winners.add(String(speedAward.racerid));
+    });
+  }
+
   for (var i = 0; i < votes.length; ++i) {
     var vote = votes[i];
+    var alreadyWonDesign = design_award_winners.has(String(vote.racerid));
+    var alreadyWonSpeed = speed_award_winners.has(String(vote.racerid));
 
-    var alreadyWonDesign = vote.design_award === 1;
-    var alreadyWonSpeed = vote.speed_award === 1;
-
-    // Create the base text for the vote entry
     var voteText = vote.score + " vote(s) for " + vote.carnumber + ": " + vote.firstname + " " + vote.lastname;
-
-    // Create the vote display div
     var voteDiv = $("<div/>").text(voteText);
 
-    // Append icons if the racer has won awards
     if (alreadyWonDesign) {
       voteDiv.append($("<span/>").html(" 📜").attr("title", "Design Award Winner"));
     }
     if (alreadyWonSpeed) {
       voteDiv.append($("<span/>").html(" 🏆").attr("title", "Speed Award Winner"));
     }
-
-    // Highlight in red if the racer has won **any** award
     if (alreadyWonDesign || alreadyWonSpeed) {
       voteDiv.css("color", "red");
     }
 
-    // Append the Choose button
     var chooseButton = $("<input type='button' value='Choose'/>")
       .attr('data-awardid', awardid)
       .attr('data-racerid', vote.racerid)
       .on('click', on_vote_choose);
-
-    // OPTIONAL: Disable the button if the racer already won any award
-    //if (alreadyWonDesign || alreadyWonSpeed) {chooseButton.prop("disabled", true);}
 
     voteDiv.append(chooseButton);
     $("#ballot_results_tabulation").append(voteDiv);
   }
 
   show_modal("#ballot_results_modal");
-
   return false;
-
+}
 
 function classid_to_class(classid, classes) {
   if (classid == 0) return "";
@@ -160,44 +167,15 @@ function rankid_to_rank(rankid, classes) {
   return "Can't resolve rankid " + rankid;
 }
 
+// --- MODIFIED FUNCTION ---
 function update_awards(data) {
+  window.latest_awards_data = data; // <-- Add this line
+
   var awards = data.awards;
 
-  // Track which racers have won design and speed awards separately
-  let design_award_winners = new Set();
-  let speed_award_winners = new Set();
-
-  // Loop through regular awards to find Design Award winners
-  awards.forEach(award => {
-    if (award.racerid && award.racerid !== "0") {
-      design_award_winners.add(award.racerid);
-    }
-  });
-
-  // Loop through Speed Awards to find Speed Award winners
-  var speed_awards = data["speed-awards"];
-  speed_awards.forEach(speedAward => {
-    speed_award_winners.add(speedAward.racerid);
-  });
-
-  // Modify votes to include "design_award" and/or "speed_award"
-  awards.forEach(award => {
-    award.votes = award.votes.map(vote => {
-      let updatedVote = { ...vote };
-
-      if (design_award_winners.has(vote.racerid)) {
-        updatedVote["design_award"] = 1;
-      }
-      if (speed_award_winners.has(vote.racerid)) {
-        updatedVote["speed_award"] = 1;
-      }
-
-      return updatedVote;
-    });
-  });
-
-  $(".award_marker, .adhoc_marker").addClass('hidden');  // Hide all award markers initially
-  $(".judging_racer").removeAttr('data-adhoc').css('background-image', 'none');
+  $(".award_marker, .adhoc_marker").addClass('hidden');  // Hide all the award markers, unhide as needed below
+  $(".judging_racer").removeAttr('data-adhoc')
+                     .css('background-image', 'none');
 
   var adhoc_count = 0;
   for (var i = 0; i < awards.length; ++i) {
@@ -210,13 +188,22 @@ function update_awards(data) {
     }
   }
 
-  // Add more empty list items as necessary
+  var speed_awards = data["speed-awards"];
+  for (var i = 0; i < speed_awards.length; ++i) {
+    var racerid = speed_awards[i].racerid;
+    $(".judging_racer[data-racerid='" + racerid + "']")
+      .css("background-image", "url('img/laurel.png')");
+  }
+  
+  // Add more empty list items, as necessary
   if ($("#awards li").length < awards.length - adhoc_count) {
     while ($("#awards li").length < awards.length - adhoc_count) {
       $('<li></li>')
         .append($('<a class="votes">Votes</a>').on('click', on_votes_click))
         .append('<p class="awardname"></p>' +
-                '<p><span class="awardtype"></span></p>' +
+                '<p>' +
+                    '<span class="awardtype"></span>' +
+                '</p>' +
                 '<p class="class-and-rank">' +
                     '<span class="rankname"></span>' +
                     '<span class="classname"></span> ' +
@@ -226,8 +213,10 @@ function update_awards(data) {
     }
     make_awards_draggable_and_droppable();
   }
-
+  
   // Update the list items to match the data from the server.
+  // NOTE This assumes that all the ad hoc awards are at the end of the list, so
+  // the named awards and the #awards <li> elements have matching indices.
   $("#awards li").each(function(i) {
     if (i >= awards.length - adhoc_count) {
       $(this).remove();
@@ -273,7 +262,7 @@ function update_awards(data) {
           .data('votes', awards[i].votes)
           .attr('data-awardid', awards[i].awardid)
           .toggleClass('hidden', awards[i].votes.length == 0);
-
+        
         var racerid = awards[i].racerid;
         if (racerid != '' && racerid != '0') {
           $(".judging_racer[data-racerid='" + racerid + "'] .award_marker").removeClass('hidden');
@@ -290,6 +279,7 @@ function update_awards(data) {
           }
           // An award with a recipient can't be re-awarded, so constrain its draggability
           var offsets = $(this).offset();
+          // These offsets depend a lot on the size of the helper, and the cursorAt values
           $(this).draggable("option", "containment", racerid == "" || racerid == "0" ? false :
                             [ offsets.left, offsets.top , offsets.left + 240, offsets.top + 30 ] );
         }
@@ -300,7 +290,6 @@ function update_awards(data) {
   $("#awards-empty").toggleClass('hidden', $("#awards li").length != 0);
   update_ballot_awards(awards);
 }
-
 
 function on_ballot_depth_change(event) {
   var awardid = $(event.target).attr('data-awardid');
@@ -449,7 +438,6 @@ $(function() {
                    ballot_password: $("#ballot_password").val()}
            });
   });
-  
   
   // TODO We want to mark racers with ad-hoc awards, just not list them as awardable
   query_for_award_list();
