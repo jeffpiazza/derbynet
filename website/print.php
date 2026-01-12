@@ -180,6 +180,7 @@ foreach ($doc_classes as $c => $details) {
     } else if ($opt_data['type'] == 'radio') {
       // values:
       $first_radio = true;
+      echo "<p>".$opt_data['desc']."</p>";
       echo "<div class='mradiogroup'>\n";
       foreach ($opt_data['values'] as $v) {
         // {value:, desc:}
