@@ -270,7 +270,14 @@ class TimerProxy {
       break;
     }
     case 'PARTIAL_LANE_RESULT_TIME': {
-      TimerEvent.send('LANE_RESULT', [this.partialResultLane, args[0]]);
+      let s = args[0];
+      if (s.indexOf(".") < 0) {
+        // The PARTIAL_LANE_RESULT_xxx events are used only for SuperTimer II,
+        // at least for the present.  SuperTimer II doesn't include a decimal
+        // point in its result, but instead reports the time in milliseconds.
+        s = s.substring(0, s.length - 3) + "." + s.substring(s.length - 3);
+      }
+      TimerEvent.send('LANE_RESULT', [this.partialResultLane, s]);
       this.partialResultLane = null;
       break;
     }
