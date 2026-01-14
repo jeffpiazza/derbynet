@@ -308,7 +308,7 @@ function update_ballot_awards(awards,data) {
   $("#ballot_modal_awards").empty();
   for (var i = 0; i < awards.length; ++i) {
     var id = 'ballot_' + awards[i].awardid;
-    var classname = classid_to_class(awards[i].classid, data.classes);
+    var classname = awards[i].classid == 0 ? "Pack" : classid_to_class(awards[i].classid, data.classes);
     $("#ballot_modal_awards").append(
       $("<div>")
         .append($("<h3/>").text(awards[i].awardname+" - "+classname))
