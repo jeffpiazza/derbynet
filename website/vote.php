@@ -9,8 +9,11 @@ require_once('inc/awards.inc');
 require_once('inc/voterid.inc');
 require_once('inc/standings.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/classes.inc');
 
 $is_open = read_raceinfo('balloting', 'closed') == 'open';
+
+list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
 ?><!DOCTYPE html>
 <html>
@@ -111,7 +114,9 @@ foreach ($db->query($sql) as $rs) {
     echo " data-eligible-classids='".implode(',', $award['eligible-classids'])."'";
     echo " data-eligible-rankids='".implode(',', $award['eligible-rankids'])."'";
     echo " onclick='click_one_award($(this));'>";
-    echo "<p class='award-name'>".htmlspecialchars($award['awardname'], ENT_QUOTES, 'UTF-8')."</p>";
+    $classId = $award['classid'];
+    $class = $classId == 0 ? "Pack" : $classes[$award['classid']]['class'];
+    echo "<p class='award-name'>".htmlspecialchars($award['awardname']." - ".$class, ENT_QUOTES, 'UTF-8')."</p>";
     echo "<p class='please-vote-for'>Please vote for no more than <span class='please-vote-count'>UNSET</span>.</p>";
     echo "</div>\n";
   }
