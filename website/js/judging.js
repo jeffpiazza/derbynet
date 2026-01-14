@@ -288,7 +288,7 @@ function update_awards(data) {
   });
 
   $("#awards-empty").toggleClass('hidden', $("#awards li").length != 0);
-  update_ballot_awards(awards);
+  update_ballot_awards(awards,data);
 }
 
 function on_ballot_depth_change(event) {
@@ -304,13 +304,14 @@ function on_ballot_depth_change(event) {
          });
 }
 
-function update_ballot_awards(awards) {
+function update_ballot_awards(awards,data) {
   $("#ballot_modal_awards").empty();
   for (var i = 0; i < awards.length; ++i) {
     var id = 'ballot_' + awards[i].awardid;
+    var classname = classid_to_class(awards[i].classid, data.classes);
     $("#ballot_modal_awards").append(
       $("<div>")
-        .append($("<h3/>").text(awards[i].awardname))
+        .append($("<h3/>").text(awards[i].awardname+" - "+classname))
         .append($("<label/>").attr('for', id).text("Votes allowed per ballot:"))
         .append($("<select/>")
                 .attr('id', id)
