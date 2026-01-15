@@ -27,9 +27,12 @@ RUN apk update && \
     apk add php-pdo_odbc && \
     apk add php-pdo_mysql
 
+RUN ls /usr/sbin/
+
 # This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
-# PHP 8.2.  If that changes, it's time to update.
-RUN ls /usr/sbin/php-fpm83 || exit 1
+# PHP 8.4.  If that changes, it's time to update.
+# (Run alpine image in debug to see what php-fpm version it has.)
+RUN ls /usr/sbin/php-fpm84 || exit 1
 
 ARG WWW_ROOT=/var/www/html
 
@@ -58,4 +61,4 @@ VOLUME /var/lib/derbynet
 EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm83 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm84 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
