@@ -29,7 +29,7 @@ var g_kiosk_page_handlers = {};
 // If there are any classids specified in the parameter, attach a <p> element to
 // kiosk_div to describe the current setting.
 function add_classids_description(parameters, kiosk_div) {
-  if (parameters.hasOwnProperty('classids') && parameters.classids.length > 0) {
+  if (parameters.hasOwnProperty('classids')) {
     var s = '';
     var classids = parameters.classids;
     for (var i = 0; i < classids.length; ++i) {
@@ -41,7 +41,7 @@ function add_classids_description(parameters, kiosk_div) {
 
 // Update the UI controls to show the current set of classids
 function populate_classids(parameters) {
-  if (parameters.classids && parameters.classids.length > 0) {
+  if (parameters.classids) {
     $("#config_classes_modal input[type='checkbox']").prop("checked", false);
     var classids = parameters.classids;
     for (var i = 0; i < classids.length; ++i) {
@@ -59,19 +59,13 @@ function populate_classids(parameters) {
 
 // Extract classids from user's choices in the UI
 function compute_classids() {
-  var any_unchecked = false;
   var classids = [];
   $("#config_classes_modal input[type='checkbox']").each(function() {
     if ($(this).is(":checked")) {
       classids.push(parseInt($(this).data("classid")));
-    } else {
-      any_unchecked = true;
     }
   });
 
-  if (!any_unchecked) {
-    classids = [];
-  }
   return classids;
 }
 
@@ -126,7 +120,7 @@ function show_config_slideshow_modal(event) {
   $("#slideshow_div").removeClass('hidden');
   $("#title_text").val(parameters.title);
   $("#slideshow_subdir").val(parameters.subdir || '');
-  mobile_select_refresh($("#slideshow_subdir"))
+  mobile_select_refresh($("#slideshow_subdir"));
   populate_classids(parameters);
   show_modal("#config_classes_modal", function(ev) {
     close_modal("#config_classes_modal");

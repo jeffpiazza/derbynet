@@ -83,7 +83,7 @@ function mainphoto_onload(img) {
       next_query.subdir = kiosk_parameters.subdir;
     }
     var classids = kiosk_parameters.classids;
-    if (classids && classids.length > 0) {
+    if (classids) {
       next_query.classids = classids.join(',');
     }
     $.ajax('action.php',

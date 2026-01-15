@@ -40,8 +40,8 @@ if (isset($_GET['racerid'])) {
   $racerid = $_GET['racerid'];
 }
 
-$classids = '';
-if (isset($_GET['classids'])) {
+$has_classids = isset($_GET['classids']);
+if ($has_classids) {
   $classids = $_GET['classids'];
 }
 
@@ -74,7 +74,7 @@ if (!$done && $mode == 'racer') {
                          .'  AND passedinspection'
                          .'  AND ((imagefile IS NOT NULL AND imagefile <> \'\') OR'
                          .'       (carphoto IS NOT NULL AND carphoto <> \'\'))'
-                         .($classids
+                         .($has_classids
                            ? ' AND classid IN ('.$classids.')'
                            : '')
                          .' ORDER BY racerid',
