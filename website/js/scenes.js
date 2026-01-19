@@ -172,7 +172,7 @@ function on_page_change(event, synthetic) {
     // Remove any old param controls
     deco_div.empty();
 
-    if (g_kiosk_page_handlers.hasOwnProperty(page.full)) {
+    if (page && g_kiosk_page_handlers.hasOwnProperty(page.full)) {
       var handler = g_kiosk_page_handlers[page.full];
       if (handler.hasOwnProperty('decorate')) {
         var page_name = page.full;
@@ -187,7 +187,7 @@ function on_page_change(event, synthetic) {
             data: {action: 'scene.setkiosk',
                    sceneid: $("#scenes-select").val(),
                    kiosk_name: kdiv.attr('data-kiosk'),
-                   page:  page.full}
+                   page:  page ? page.full : ''}
            });
   }
 }
