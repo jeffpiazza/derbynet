@@ -212,6 +212,10 @@ public class ClientSession {
     do {
       connection = (HttpURLConnection) url.openConnection();
 
+      // Set timeouts to prevent hanging when server is unresponsive
+      connection.setConnectTimeout(10000);  // 10 seconds to establish connection
+      connection.setReadTimeout(5000);      // 5 seconds to read response
+
       connection.setRequestMethod(method);
       connection.addRequestProperty("User-Agent",
                                     "derby-timer.jar/" + Version.get());
@@ -239,6 +243,10 @@ public class ClientSession {
     HttpURLConnection connection;
     do {
       connection = (HttpURLConnection) url.openConnection();
+
+      // Set timeouts to prevent hanging when server is unresponsive
+      connection.setConnectTimeout(10000);  // 10 seconds to establish connection
+      connection.setReadTimeout(5000);      // 5 seconds to read response
 
       connection.setRequestMethod(method);
       connection.addRequestProperty("User-Agent",
