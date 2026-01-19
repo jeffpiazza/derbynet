@@ -129,6 +129,8 @@ make_index("Ranks", "rank"),
 ."  `carname` VARCHAR(30), "
 ."  `lastname` VARCHAR(30) NOT NULL COLLATE NOCASE, "
 ."  `firstname` VARCHAR(30) NOT NULL COLLATE NOCASE, "
+.(expected_schema_version() < PHONETIC_NAMES_SCHEMA ? "" : "  `phonetic_lastname` VARCHAR(30) COLLATE NOCASE, ")
+.(expected_schema_version() < PHONETIC_NAMES_SCHEMA ? "" : "  `phonetic_firstname` VARCHAR(30) COLLATE NOCASE, ")
 ."  `classid` INTEGER NOT NULL, "
 ."  `rankid` INTEGER NOT NULL, "
 ."  `partitionid` INTEGER NOT NULL,"

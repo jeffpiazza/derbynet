@@ -60,6 +60,14 @@ if (have_permission(EDIT_RACER_PERMISSION)) {
     $assignments .= ', lastname = :lastname';
     $values[':lastname'] = trim($_POST['lastname']);
   }
+  if (isset($_POST['phonetic_firstname'])) { 
+    $assignments .= ', phonetic_firstname = :phonetic_firstname'; 
+    $values[':phonetic_firstname'] = trim($_POST['phonetic_firstname']); 
+  }
+  if (isset($_POST['phonetic_lastname'])) {
+    $assignments .= ', phonetic_lastname = :phonetic_lastname';
+    $values[':phonetic_lastname'] = trim($_POST['phonetic_lastname']); 
+  }
   if ($ok && isset($_POST['carno'])) {
     $assignments .= ', carnumber = :carnumber';
     $values[':carnumber'] = trim($_POST['carno']);

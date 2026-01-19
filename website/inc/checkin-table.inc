@@ -9,6 +9,8 @@ function checkin_table_SELECT_FROM_sql() {
   $schema_version = schema_version();
   return
     'SELECT racerid, carnumber, lastname, firstname, carname, imagefile,'
+    .($schema_version < PHONETIC_NAMES_SCHEMA ? " '' AS phonetic_lastname, '' AS phonetic_firstname,"
+                                               : " phonetic_lastname, phonetic_firstname,")
     .($schema_version < 2 ? " '' AS carphoto," : " carphoto,")
     .($schema_version < PARTITION_SCHEMA
       ? " 1 AS partitionid, 1 AS partition_sortorder, '".DEFAULT_PARTITION_NAME."' AS partition_name,"

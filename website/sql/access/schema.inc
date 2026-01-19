@@ -216,6 +216,8 @@ array(
 .'	CarName          VARCHAR (30),'
 .'	LastName         VARCHAR (30),'
 .'	FirstName        VARCHAR (30),'
+.(expected_schema_version() < PHONETIC_NAMES_SCHEMA ? '' : '	PhoneticLastName VARCHAR (30),')
+.(expected_schema_version() < PHONETIC_NAMES_SCHEMA ? '' : '	PhoneticFirstName VARCHAR (30),')
 .'	ClassID          INTEGER,'
 .'	RankID           INTEGER,'
 .'  PartitionID       INTEGER,'
