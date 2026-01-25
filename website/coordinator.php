@@ -225,6 +225,9 @@ input.lane-time::-webkit-outer-spin-button {
         <!-- <option value="5500">5.5</option> -->
         <option value="6000">6.0</option>
         <!-- <option value="6500">6.5</option> -->
+        <option value="8000">8.0</option>
+        <option value="10000">10.0</option>
+        <option value="12000">12.0</option>
     </select>
 
     <label for="replay-num-showings">Number of times to show replay:</label>
