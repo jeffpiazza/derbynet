@@ -66,7 +66,7 @@ public class SuperTimerII extends TimerDeviceWithProfile {
                   SerialPort.PARITY_NONE)
         .max_lanes(6)
         .gate_state_is_knowable(false)
-        .timer_scale_factor(1000)
+        .timer_scale_factor(10000)
         .end_of_line("\r")
         .prober("UUUUc", "UUUUt")
         // .setup("3O5A\r3O5A")

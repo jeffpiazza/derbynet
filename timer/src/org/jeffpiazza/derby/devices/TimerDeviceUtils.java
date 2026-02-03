@@ -120,7 +120,7 @@ public class TimerDeviceUtils {
     }
 
     try {
-      return String.format("%.4d", Double.parseDouble(time) / scale);
+      return String.format("%.4f", Double.parseDouble(time) / scale);
     } catch (NumberFormatException e) {
       return time;
     }
