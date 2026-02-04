@@ -327,14 +327,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       }
       case PARTIAL_LANE_RESULT_TIME: {
-        String s = args[0];
-        if (!s.contains(".")) {
-          // The PARTIAL_LANE_RESULT_xxx events are used only for SuperTimer II,
-          // at least for the present.  SuperTimer II doesn't include a decimal
-          // point in its result, but instead reports the time in milliseconds.
-          s = s.substring(0, s.length() - 3) + "." + s.substring(s.length() - 3);
-        }
-        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, s});
+        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, args[0]});
         partialResultLane = null;
         break;
       }
