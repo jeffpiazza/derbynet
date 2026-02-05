@@ -318,7 +318,7 @@ function send_canvas_photo(canvas, racerid, repo, photo_base_name) {
   }
 
   // Testing for <failure> elements occurs in dashboard-ajax.js
-  $.ajax(g_action_url,
+  $.ajax(g_action_url + "?query=photo.capture-canvas",
          {type: 'POST',
           data: form_data,
           contentType: false,
