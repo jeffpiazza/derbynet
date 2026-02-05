@@ -264,7 +264,7 @@ function capture_photo(repo) {
   }
   console.log(form_data.keys());
 
-  $.ajax('action.php',
+  $.ajax('action.php?query=photo.upload-mobile',
          {type: 'POST',
           data: form_data,
           contentType: false,

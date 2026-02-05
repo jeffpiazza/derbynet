@@ -18,6 +18,10 @@ class RoleFinder {
       await $.ajax(HostPoller.url,
                    {data: {query: 'role.list'},
                     success: function(data) {
+                      if (typeof data == "object" && data["cease"]) {
+                        window.location.href = '../index.php';
+                        return;
+                      }
                       console.log('role.list returned with', data);
                       if ('roles' in data) {
                         for (var i = 0; i < data.roles.length; ++i) {

@@ -341,7 +341,10 @@ async function on_connect_button(event) {
                    name:  $("#role-select").val(),
                    password: $("#host-password").val()},
             success: function(data) {
-              console.log(data);
+              if (typeof data == "object" && data["cease"]) {
+                window.location.href = '../index.php';
+                return;
+              }
               if (data.outcome.summary == 'success') {
                 console.log('Login succeeded, creating host poller.');
                 g_host_poller = new HostPoller();

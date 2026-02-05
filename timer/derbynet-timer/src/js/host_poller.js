@@ -152,6 +152,11 @@ class HostPoller {
   }
 
   decodeResponse(response) {
+    if (typeof response == "object" && response["cease"]) {
+      window.location.href = '../index.php';
+      return;
+    }
+
     this.message_in_flight = false;
     this.next_message_time = Date.now() + HEARTBEAT_PACE;
     g_clock_worker.postMessage(['HEARTBEAT', HEARTBEAT_PACE, 'HEARTBEAT']);

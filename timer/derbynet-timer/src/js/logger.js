@@ -143,6 +143,12 @@ class Logger {
     $.ajax(Logger.url,
            {type: 'POST',
             data: p,
+            success: function(data) {
+              if (typeof data == "object" && data["cease"]) {
+                window.location.href = '../index.php';
+                return;
+              }
+            }
            });
   }
 
