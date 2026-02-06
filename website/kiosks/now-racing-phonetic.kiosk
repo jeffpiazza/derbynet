@@ -1,0 +1,106 @@
+<?php @session_start();
+$nlanes = get_lane_count();
+$colors_info = read_raceinfo('lane-colors', '');
+$lane_colors = empty($colors_info) ? [] : explode(',', $colors_info);
+while (count($lane_colors) < $nlanes) {  // Including the case of no colors assigned
+  $lane_colors[] = 'none';
+}
+$use_points = read_raceinfo_boolean('use-points');
+$linger_ms = read_raceinfo('now-racing-linger-ms', 10000);
+require_once('inc/banner.inc');
+require_once('inc/name-mangler.inc');
+?><!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Derby Racing Main Board - Phonetic Names</title>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/global.css"/>
+<link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
+<link rel="stylesheet" type="text/css" href="css/lane-colors.css"/>
+<link rel="stylesheet" type="text/css" href="css/now-racing.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+<?php require('inc/kiosk-poller.inc'); ?>
+<script type="text/javascript" src="js/now-racing-overlay.js"></script>
+<script type="text/javascript" src="js/now-racing-poller-phonetic.js"></script>
+<script type="text/javascript" src="js/now-racing.js"></script>
+<script type="text/javascript" src="js/now-racing-adjust-fonts.js"></script>
+<?php if (@$simulated_polling_url) { ?>
+<script type="text/javascript" src="<?php echo @$simulated_polling_url; ?>"></script>
+<?php } ?>
+<?php // If $nlanes not yet set, then this page isn't ready for display.
+    if ($nlanes <= 0) {
+?><script type="text/javascript">
+$(function () {
+    setTimeout(function() {
+        console.log("Reloading because nlanes not set yet.");
+        location.reload(true);
+      },
+      5000);
+  });
+</script>
+<?php }  // if ($nlanes <= 0)
+?>
+<script type="text/javascript">
+var g_linger_ms = <?php echo $linger_ms; ?>;
+</script>
+</head>
+<body>
+<?php make_banner('Racing - Phonetic Names', /* back_button */ false); ?>
+<?php if ($nlanes > 0) { ?>
+<table id="main-table">
+<tr id="table-headers">
+    <th>Lane</th>
+    <th class='carnumber no-test'>Car</th>
+    <th colspan="2" class='no-test'>Racer</th>
+<?php if (!$use_points) { ?>
+    <th>Time</th>
+    <th class='no-test'><div id="speed-div">Speed <span class="aside">(scale MPH)</span></div></th>
+<?php } ?>
+    <th>Place</th>
+</tr>
+
+<?php
+  for ($i = 1; $i <= $nlanes; ++$i) {
+    $color = $lane_colors[$i - 1];
+    echo "<tr data-lane='$i'>"
+      ."<td class='lane ${color}_row_color'>$i</td>"
+      ."<td class='carnumber no-test ${color}_row_color'></td>"
+      ."<td class='photo no-test ${color}_row_color'></td>"
+      ."<td class='name no-test ${color}_row_color'></td>";
+    if (!$use_points) {
+      echo "<td class='time ${color}_row_color'></td>"
+        ."<td class='speed no-test ${color}_row_color'></td>";
+    }
+    echo "<td class='place ${color}_row_color'><span class='sp'/></td>"
+      ."</tr>\n";
+  }
+?>
+
+</table>
+<?php
+  for ($i = 1; $i <= $nlanes; ++$i) {
+      echo '<div id="place'.$i.'" class="flying"><span>'.$i.'</span></div>'."\n";
+  }
+?>
+<?php } else { ?>
+<h2>Number of lanes not yet recorded...</h2>
+<?php } ?>
+
+<?php require_once('inc/ajax-failure.inc'); ?>
+
+<div id="overlay_background"></div>
+<div id="paused_overlay" class="overlay_foreground">
+ <img src="img/pause.png"/>
+</div>
+<div id="timer_overlay" class="overlay_foreground">
+ <img src="img/timer-red.png"/>
+ <p>Check timer.</p>
+</div>
+<div id="reschedule_overlay" class="overlay_foreground">
+ <img src="img/warning-icon.png"/>
+ <p>Schedule adjustment needed.</p>
+</div>
+</body>
+</html>
