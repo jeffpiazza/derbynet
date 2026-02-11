@@ -7,7 +7,6 @@
 <?php require('inc/kiosk-poller.inc'); ?>
 <?php require('inc/stylesheet.inc'); ?>
 <link rel="stylesheet" type="text/css" href="css/kiosks.css"/>
-<link rel="stylesheet" type="text/css" href="css/award-presentations-kiosk.css"/>
 <style type="text/css">
 html {
   background-color: rgb(230, 230, 230);
@@ -23,7 +22,7 @@ html {
 #top-margin {
   height: 5%;
 }
-#flag {
+#flag {  
   display: block; 
   max-height: 90%;
   max-width: 90%;
@@ -41,8 +40,8 @@ make_banner('', /* back_button */ false);
 ?>
 
 <div id="flagdiv">
-       <div id="top-margin">&nbsp;</div>
-  <img id="flag" src="image.php/flag"/>
+   <div id="top-margin">&nbsp;</div>
+   <img id="flag" src="image.php/flag"/>
 </div>
 
 <?php require('inc/ajax-failure.inc'); ?>
