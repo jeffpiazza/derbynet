@@ -7,7 +7,7 @@ if (have_permission(SET_UP_PERMISSION)) {
     json_failure('duplicate-name', "Scene $name already exists.");
   } else {
     $stmt = $db->prepare('INSERT INTO Scenes(name, sortorder)'
-                         .' VALUES(:name, 1 + (SELECT MAX(sortorder) FROM Scenes))');
+                         .' VALUES(:name, 1 + (SELECT COALESCE(MAX(sortorder), 0) FROM Scenes))');
     $stmt->execute(array(':name' => $name));
 
     json_out('scene-id', read_single_value('SELECT sceneid FROM Scenes WHERE name = :name',

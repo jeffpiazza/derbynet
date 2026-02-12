@@ -187,7 +187,10 @@ function on_page_change(event, synthetic) {
             data: {action: 'scene.setkiosk',
                    sceneid: $("#scenes-select").val(),
                    kiosk_name: kdiv.attr('data-kiosk'),
-                   page:  page ? page.full : ''}
+                   page:  page ? page.full : ''},
+            success: function(data) {
+              g_all_scenes = data['all-scenes'];
+            }
            });
   }
 }
@@ -216,7 +219,10 @@ function set_scene_kiosk_params(kdiv, full_page_name, params) {
                  sceneid: g_current_scene,
                  kiosk_name: kdiv.attr('data-kiosk'),
                  page:  full_page_name,
-                 params: param_string}
+                 params: param_string},
+          success: function(data) {
+            g_all_scenes = data['all-scenes'];
+          }
          });
 }
 
@@ -259,19 +265,22 @@ function on_add_kiosk() {
 }
 
 function on_delete_scene() {
-  $.ajax('action.php',
-         {type: 'POST',
-          data: {action: 'scene.delete',
-                 sceneid: g_current_scene},
-          success: function(data) {
-            var scene_index = g_all_scenes.findIndex((s) => s.sceneid == g_current_scene);
-            if (scene_index >= 0) {  // Should always be true
-              g_all_scenes.splice(scene_index, 1);
+  var scene = g_all_scenes.find((s) => s.sceneid == g_current_scene);
+  if (confirm("Really delete scene " + scene.name + "?")) {
+    $.ajax('action.php',
+           {type: 'POST',
+            data: {action: 'scene.delete',
+                   sceneid: g_current_scene},
+            success: function(data) {
+              var scene_index = g_all_scenes.findIndex((s) => s.sceneid == g_current_scene);
+              if (scene_index >= 0) {  // Should always be true
+                g_all_scenes.splice(scene_index, 1);
+              }
+              g_current_scene = '';
+              setup_scenes_select_control(g_all_scenes, g_current_scene);
             }
-            g_current_scene = '';
-            setup_scenes_select_control(g_all_scenes, g_current_scene);
-          }
-         });
+           });
+  }
 }
 
 $(function() {
