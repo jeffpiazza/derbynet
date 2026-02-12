@@ -40,3 +40,4 @@ dist/
 adapter-webrtc/
 .idea
 *.iml
+.DS_Store
