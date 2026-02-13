@@ -99,7 +99,7 @@ function on_scene_change() {
       return element.getAttribute('data-kiosk') == unspecified[i];
     });
     kdiv.find("select.kdiv-select").val("-1").trigger('change', /*synthetic*/true);
-    update_kiosk_iframe(kdiv, false, false);
+    show_selected_page_for_kiosk(kdiv, false, {});
   }
 }
 
