@@ -86,6 +86,12 @@ if ($ok) {
   if (isset($_POST['partition'])) {
     $options['partition'] = trim(@$_POST['partition']);
   }
+  if (isset($_POST['phonetic_firstname'])) { 
+    $options['phonetic_firstname'] = trim($_POST['phonetic_firstname']); 
+  } 
+  if (isset($_POST['phonetic_lastname'])) {
+    $options['phonetic_lastname'] = trim($_POST['phonetic_lastname']); 
+  }
   $racerid = insert_new_racer($options);
   json_out('racerid', $racerid);
 

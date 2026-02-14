@@ -238,6 +238,11 @@ mobile_select_refresh($("#bulk_who"));
       <label for="edit_lastname">Last name:</label>
       <input id="edit_lastname" type="text" name="edit_lastname" value=""/>
 
+      <label for="edit_phonetic_firstname">Phonetic first name:</label>
+      <input id="edit_phonetic_firstname" type="text" name="edit_phonetic_firstname" value=""/>
+      <label for="edit_phonetic_lastname">Phonetic last name:</label>
+      <input id="edit_phonetic_lastname" type="text" name="edit_phonetic_lastname" value=""/>
+
       <label for="edit_carno">Car number:</label>
       <input id="edit_carno" type="text" name="edit_carno" value=""/>
 
@@ -390,7 +395,7 @@ mobile_select_refresh($("#bulk_who"));
                data-off-text="Excluded"
                data-on-text="Eligible"/>
       </div>
-    
+
       <input type="submit"/>
       <input type="button" value="Cancel"
         onclick='pop_modal("#bulk_details_modal");'/>
