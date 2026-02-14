@@ -257,6 +257,8 @@ public class HttpTask implements Runnable {
               }
             }
             response = session.sendTimerMessage(params);
+          } catch (ClientSession.CeasePollingException cpe) {
+            return;
           } catch (ClientSession.HttpException he) {
             LogWriter.httpResponse(he.getMessage());
           } catch (Throwable t) {

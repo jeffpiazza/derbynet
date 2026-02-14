@@ -25,6 +25,8 @@ public class ClientSession {
   private static final List<String> kTimerLogHeaders = new ArrayList<String>(
       Arrays.asList("Content-Type", "text/plain"));
 
+  // Thrown when an unsuccessful HTTP response code is received.  Interpreted by
+  // the ...WithVariations methods.
   public static class HttpException extends IOException {
     public HttpException(int responseCode, String responseMessage, URL url) {
       this.responseCode = responseCode;
@@ -51,6 +53,9 @@ public class ClientSession {
 
     }
   }
+
+  // Thrown when the server sends with a "cease polling" response
+  public static class CeasePollingException extends IOException { }
 
   public ClientSession(String base_url) {
     LogWriter.info("Attempting connection to " + base_url);
@@ -353,7 +358,22 @@ public class ClientSession {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
-      return db.parse(inputStream).getDocumentElement();
+      Element response = db.parse(inputStream).getDocumentElement();
+      if (response.hasAttribute("itemprop")
+          && response.getAttribute("itemprop").equals("cease-polling")) {
+        throw new CeasePollingException();
+      }
+      return response;
+    } catch (CeasePollingException cpe) {
+      throw cpe;
+    } catch (org.xml.sax.SAXParseException e) {
+      // This happens if the server responds with JSON instead of HTML.
+      // Mostly happens when a cease-polling response is substituted for the
+      // normal one (hosted derbynet).
+      if (e.getLineNumber() == 1 && e.getColumnNumber() == 1) {
+        throw new CeasePollingException();
+      }
+      LogWriter.stacktrace(e);
     } catch (Throwable e) {
       LogWriter.stacktrace(e);
     }
