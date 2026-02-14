@@ -103,7 +103,12 @@ public class LogWriter {
               if (clientSession != null) {
                 try {
                   clientSession.sendTimerLogFragment(fragment);
+                } catch (ClientSession.CeasePollingException ex) {
+                  LogWriter.setRemoteLogging(false);
+                  clientSession = null;
+                  return;
                 } catch (IOException ex) {
+                  LogWriter.stacktrace(ex);
                 }
               }
             }
