@@ -102,7 +102,10 @@ if (!$done && $mode == 'racer') {
 }
 
 if (!$done && $mode == 'title') {
-  json_out('photo', array('photo' => 'slide.php/title',
+  if (!empty($subdir)) {
+    $subdir = $subdir.DIRECTORY_SEPARATOR;
+  }
+  json_out('photo', array('photo' => 'slide.php/'.$subdir.'title',
                           'title' => true,
                           'next' => array('mode' => 'slide',
                                           'file' => '')));
