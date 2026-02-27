@@ -5,21 +5,20 @@
 g_next_carnumbers = [];
 g_poll_max_interval = 0;
 function poll_max_carnumbers() {
-  $.ajax(g_action_url,
-         {type: 'GET',
-          data: {query: 'poll',
-                 values: 'car-numbers'},
-          success: function (data) {
-            if (data["cease"]) {
-              clearInterval(g_poll_max_interval);
-              window.location.href = '../index.php';
-              return;
-            }
-            if (data.hasOwnProperty('car-numbers')) {
-              read_next_carnumbers(data['car-numbers']);
-            }
-          }
-         });
+  $.ajax(g_action_url, {
+    type: "GET",
+    data: { query: "poll", values: "car-numbers" },
+    success: function (data) {
+      if (data["cease"]) {
+        clearInterval(g_poll_max_interval);
+        window.location.href = "../index.php";
+        return;
+      }
+      if (data.hasOwnProperty("car-numbers")) {
+        read_next_carnumbers(data["car-numbers"]);
+      }
+    },
+  });
 }
 
 // carnos is an array of {partitionid, next_carnumber}
@@ -32,13 +31,13 @@ function read_next_carnumbers(carnos) {
 function next_carnumber(partitionid) {
   return g_next_carnumbers[partitionid] || 999;
 }
-$(function() {
+$(function () {
   g_poll_max_interval = setInterval(poll_max_carnumbers, 10000);
   poll_max_carnumbers();
 
-  $("#edit_partition").on('change', function(event) {
+  $("#edit_partition").on("change", function (event) {
     // The car number field is updatable only for new racers
-    if ($("#edit_carno").attr('data-updatable')) {
+    if ($("#edit_carno").attr("data-updatable")) {
       var p = parseInt($("#edit_partition").val());
       if (p && p >= 0) {
         $("#edit_carno").val(next_carnumber(p));
@@ -52,20 +51,21 @@ $(function() {
 // This executes when a checkbox for "Passed" is clicked.
 function handlechange_passed(cb, racer) {
   // cb is the checkbox element, with name "passed-" plus the racer id, e.g., passed-1234
-  if (!cb.checked && !confirm("Are you sure you want to unregister " + racer + "?")) {
-	cb.checked = true;
-	return;
+  if (
+    !cb.checked &&
+    !confirm("Are you sure you want to unregister " + racer + "?")
+  ) {
+    cb.checked = true;
+    return;
   }
   // 7 = length of "passed-" prefix
   var racer = cb.name.substring(7);
   var value = cb.checked ? 1 : 0;
 
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: 'racer.pass',
-                 racer: racer,
-                 value: value},
-         });
+  $.ajax(g_action_url, {
+    type: "POST",
+    data: { action: "racer.pass", racer: racer, value: value },
+  });
 }
 
 // This executes when a checkbox for "Exclusively by Scout" is clicked.
@@ -75,12 +75,10 @@ function handlechange_xbs(cb) {
   var racer = cb.name.substring(4);
   var value = cb.checked ? 1 : 0;
 
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: 'award.xbs',
-                 racer: racer,
-                 value: value},
-         });
+  $.ajax(g_action_url, {
+    type: "POST",
+    data: { action: "award.xbs", racer: racer, value: value },
+  });
 }
 
 // Two <select> controls for choosing partitions (namely, the one in the
@@ -94,19 +92,18 @@ function on_edit_partition_change(select, partitions_modal) {
       pop_modal();
     }
     push_modal(partitions_modal);
-    select.val(select.prop('last-selected')).trigger('change');
+    select.val(select.prop("last-selected")).trigger("change");
   } else {
-    select.prop('last-selected', select.val());
+    select.prop("last-selected", select.val());
   }
 }
 
 function callback_after_partition_modal(op, arg) {
-  console.log('callback_after_partition_modal', op, arg);
-  if (op == 'add') {  // arg = {partitionid, name}
+  console.log("callback_after_partition_modal", op, arg);
+  if (op == "add") {
+    // arg = {partitionid, name}
     poll_max_carnumbers();
-    var opt = $("<option/>")
-      .attr('value', arg.partitionid)
-        .text(arg.name);
+    var opt = $("<option/>").attr("value", arg.partitionid).text(arg.name);
     opt.appendTo("#edit_partition");
     opt.clone().appendTo("#bulk_who");
     // Delete "Default" partition, if any, after creating a real partition
@@ -114,64 +111,84 @@ function callback_after_partition_modal(op, arg) {
     $("#bulk_who option[value=0]").remove();
     divid = -1;
     // Move the "Edit Partitions" option to the end and select the new partition
-    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"))
-      .val(arg.partitionid).trigger('change');
+    $("#edit_partition")
+      .append($("#edit_partition option[value=" + divid + "]"))
+      .val(arg.partitionid)
+      .trigger("change");
     mobile_select_refresh("#edit_partition");
-    $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"))
+    $("#bulk_who")
+      .append($("#bulk_who option[value=" + divid + "]"))
       .val(arg.partitionid);
     mobile_select_refresh("#bulk_who");
-  } else if (op == 'delete') {  // arg = {partitionid}
+  } else if (op == "delete") {
+    // arg = {partitionid}
     $("#edit_partition option[value=" + arg.partitionid + "]").remove();
     $("#bulk_who option[value=" + arg.partitionid + "]").remove();
-  } else if (op == 'rename') {  // arg = {partitionid, name}
+  } else if (op == "rename") {
+    // arg = {partitionid, name}
     $("#edit_partition option[value=" + arg.partitionid + "]").text(arg.name);
     $("#bulk_who option[value=" + arg.partitionid + "]").text(arg.name);
     // Change the name for every racer in that partition
-    $("#main_tbody td[data-partitionid=" + arg.partitionid + "]").text(arg.name);
-  } else if (op == 'reorder') { // arg = array of partitionid
+    $("#main_tbody td[data-partitionid=" + arg.partitionid + "]").text(
+      arg.name
+    );
+  } else if (op == "reorder") {
+    // arg = array of partitionid
     for (var i = 0; i < arg.length; ++i) {
       var divid = arg[i];
       // Move the existing elements around
-      $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
+      $("#edit_partition").append(
+        $("#edit_partition option[value=" + divid + "]")
+      );
       $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
     }
     // Move the "Edit Partitions" option to the end
     divid = -1;
-    $("#edit_partition").append($("#edit_partition option[value=" + divid + "]"));
+    $("#edit_partition").append(
+      $("#edit_partition option[value=" + divid + "]")
+    );
     $("#bulk_who").append($("#bulk_who option[value=" + divid + "]"));
   }
 }
 
 function show_edit_racer_form(racerid) {
-  var first_name = $('#firstname-' + racerid).text();
-  var last_name = $('#lastname-' + racerid).text();
-  var car_no = $('#car-number-' + racerid).text();
-  var car_name = $('#car-name-' + racerid).text();
+  var first_name = $("#firstname-" + racerid).text();
+  var last_name = $("#lastname-" + racerid).text();
+  var car_no = $("#car-number-" + racerid).text();
+  var car_name = $("#car-name-" + racerid).text();
 
-  var class_name = $('#class-' + racerid).text();
-  var rank_name = $('#rank-' + racerid).text();
-  var note_from = $('#note-from-' + racerid).text();
+  var class_name = $("#class-" + racerid).text();
+  var rank_name = $("#rank-" + racerid).text();
+  var note_from = $("#note-from-" + racerid).text();
 
   $("#edit_racer").val(racerid);
 
   $("#edit_firstname").val(first_name);
   $("#edit_lastname").val(last_name);
+  $("#edit_phonetic_firstname").val(
+    $("#div-" + racerid).attr("data-phonetic-firstname") || ""
+  );
+  $("#edit_phonetic_lastname").val(
+    $("#div-" + racerid).attr("data-phonetic-lastname") || ""
+  );
 
-  $("#edit_carno").removeAttr('data-updatable').val(car_no);
+  $("#edit_carno").removeAttr("data-updatable").val(car_no);
   $("#edit_carname").val(car_name);
   $("#edit_note_from").val(note_from);
 
-  var partitionid = $('#div-' + racerid).attr('data-partitionid');
-  $("#edit_partition").val(partitionid).prop('last-selected', partitionid);
+  var partitionid = $("#div-" + racerid).attr("data-partitionid");
+  $("#edit_partition").val(partitionid).prop("last-selected", partitionid);
   $("#edit_partition").change();
 
-  $("#eligible").prop("checked",
-                      parseInt($('#lastname-' + racerid).attr("data-exclude")) == 0);
+  $("#eligible").prop(
+    "checked",
+    parseInt($("#lastname-" + racerid).attr("data-exclude")) == 0
+  );
   $("#eligible").trigger("change", true);
 
-  $("#delete_racer_extension").removeClass('hidden');
+  $("#delete_racer_extension").removeClass("hidden");
 
-  show_modal("#edit_racer_modal", "#edit_firstname", function(event) {
+  show_modal("#edit_racer_modal", "#edit_firstname", function (event) {
     handle_edit_racer();
     return false;
   });
@@ -184,22 +201,24 @@ function show_new_racer_form() {
   $("#edit_firstname").focus();
 
   $("#edit_lastname").val("");
+  $("#edit_phonetic_firstname").val("");
+  $("#edit_phonetic_lastname").val("");
 
-  var partitionid = $("#edit_partition option").first().attr('value');
-  
-  $("#edit_carno").attr('data-updatable', '1').val(next_carnumber(partitionid));
+  var partitionid = $("#edit_partition option").first().attr("value");
+
+  $("#edit_carno").attr("data-updatable", "1").val(next_carnumber(partitionid));
   $("#edit_carname").val("");
   $("#edit_note_from").val("");
 
-  $("#edit_partition").val(partitionid).prop('last-selected', partitionid);
+  $("#edit_partition").val(partitionid).prop("last-selected", partitionid);
   $("#edit_partition").change();
 
   $("#eligible").prop("checked", true);
   $("#eligible").trigger("change", true);
 
-  $("#delete_racer_extension").addClass('hidden');
-  
-  show_modal("#edit_racer_modal", "#edit_firstname", function(event) {
+  $("#delete_racer_extension").addClass("hidden");
+
+  show_modal("#edit_racer_modal", "#edit_firstname", function (event) {
     handle_edit_racer();
     return false;
   });
@@ -212,60 +231,74 @@ function handle_edit_racer() {
 
   var new_firstname = $("#edit_firstname").val().trim();
   var new_lastname = $("#edit_lastname").val().trim();
+  var new_phonetic_firstname = $("#edit_phonetic_firstname").val().trim();
+  var new_phonetic_lastname = $("#edit_phonetic_lastname").val().trim();
   var new_carno = $("#edit_carno").val().trim();
   var new_carname = $("#edit_carname").val().trim();
   var new_note_from = $("#edit_note_from").val().trim();
 
   var new_div_id = $("#edit_partition").val();
-  var new_div_name = $('[value="' + new_div_id + '"]', $("#edit_partition")).text();
+  var new_div_name = $(
+    '[value="' + new_div_id + '"]',
+    $("#edit_partition")
+  ).text();
 
-  var exclude = $("#eligible").is(':checked') ? 0 : 1;
+  var exclude = $("#eligible").is(":checked") ? 0 : 1;
 
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: racerid >= 0 ? 'racer.edit' : 'racer.add',
-                 racer: racerid,
-                 firstname: new_firstname,
-                 lastname: new_lastname,
-                 carno: new_carno,
-                 carname: new_carname,
-                 note_from: new_note_from,
-                 partitionid: new_div_id,
-                 exclude: exclude},
-          success: function(data) {
-            if (new_div_id <= 0) {
-              // Default partition id, used for the first racer (only); load the real partition id
-              location.reload(true);
-            }
-            if (data.hasOwnProperty('warnings')) {
-              window.alert("WARNING: " + data.warnings[0]);
-            }
-            if (data.hasOwnProperty('car-numbers')) {
-              read_next_carnumbers(data['car-numbers']);
-            }
-            if (data.hasOwnProperty('new-row')) {
-              var row = addrow0(data['new-row']);
-              flipswitch(row.find('input[type="checkbox"].flipswitch'));
-              setTimeout(function() { scroll_and_flash_row(row); }, 100);
-            } else {
-              console.log('Changing partition to ' + new_div_name);
-              $("#div-" + racerid)
-                .attr('data-partitionid', new_div_id)
-                .attr('data-div-sortorder', data['partition-sortorder'])
-                .text(new_div_name);
-              $("#lastname-" + racerid)
-                .attr("data-exclude", exclude ? 1 : 0)
-                .text(new_lastname)
-                .parents('tr').toggleClass('exclude', exclude == 1);
-              $("#firstname-" + racerid).text(new_firstname);
-              $("#car-number-" + racerid).attr('data-car-number', new_carno).text(new_carno);
-              $("#car-name-" + racerid).text(new_carname);
-              $("#note-from-" + racerid).text(new_note_from);
-            }
+  $.ajax(g_action_url, {
+    type: "POST",
+    data: {
+      action: racerid >= 0 ? "racer.edit" : "racer.add",
+      racer: racerid,
+      firstname: new_firstname,
+      lastname: new_lastname,
+      phonetic_firstname: new_phonetic_firstname,
+      phonetic_lastname: new_phonetic_lastname,
+      carno: new_carno,
+      carname: new_carname,
+      note_from: new_note_from,
+      partitionid: new_div_id,
+      exclude: exclude,
+    },
+    success: function (data) {
+      if (new_div_id <= 0) {
+        // Default partition id, used for the first racer (only); load the real partition id
+        location.reload(true);
+      }
+      if (data.hasOwnProperty("warnings")) {
+        window.alert("WARNING: " + data.warnings[0]);
+      }
+      if (data.hasOwnProperty("car-numbers")) {
+        read_next_carnumbers(data["car-numbers"]);
+      }
+      if (data.hasOwnProperty("new-row")) {
+        var row = addrow0(data["new-row"]);
+        flipswitch(row.find('input[type="checkbox"].flipswitch'));
+        setTimeout(function () {
+          scroll_and_flash_row(row);
+        }, 100);
+      } else {
+        console.log("Changing partition to " + new_div_name);
+        $("#div-" + racerid)
+          .attr("data-partitionid", new_div_id)
+          .attr("data-div-sortorder", data["partition-sortorder"])
+          .text(new_div_name);
+        $("#lastname-" + racerid)
+          .attr("data-exclude", exclude ? 1 : 0)
+          .text(new_lastname)
+          .parents("tr")
+          .toggleClass("exclude", exclude == 1);
+        $("#firstname-" + racerid).text(new_firstname);
+        $("#car-number-" + racerid)
+          .attr("data-car-number", new_carno)
+          .text(new_carno);
+        $("#car-name-" + racerid).text(new_carname);
+        $("#note-from-" + racerid).text(new_note_from);
+      }
 
-            sort_checkin_table();
-          },
-         });
+      sort_checkin_table();
+    },
+  });
 }
 
 function handle_delete_racer() {
@@ -273,58 +306,63 @@ function handle_delete_racer() {
 
   var racerid = $("#edit_racer").val();
 
-  var first_name = $('#firstname-' + racerid).text();
-  var last_name = $('#lastname-' + racerid).text();
-  var car_no = $('#car-number-' + racerid).text();
+  var first_name = $("#firstname-" + racerid).text();
+  var last_name = $("#lastname-" + racerid).text();
+  var car_no = $("#car-number-" + racerid).text();
 
-  if (confirm("Really delete car #" + car_no + ": " + first_name + " " + last_name + "?")) {
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'racer.delete',
-                   racer: racerid}
-           });
+  if (
+    confirm(
+      "Really delete car #" + car_no + ": " + first_name + " " + last_name + "?"
+    )
+  ) {
+    $.ajax(g_action_url, {
+      type: "POST",
+      data: { action: "racer.delete", racer: racerid },
+    });
   }
 
   return false;
 }
 
-
 function show_bulk_form() {
-  show_modal("#bulk_modal", function(event) {
+  show_modal("#bulk_modal", function (event) {
     return false;
   });
 }
 
 function bulk_who_value() {
-  if ($("#bulk_who").val() == 'all') {
-    return 'all';
+  if ($("#bulk_who").val() == "all") {
+    return "all";
   }
-  return 'd' + $("#bulk_who").val();
+  return "d" + $("#bulk_who").val();
 }
 
 function bulk_check_in(value) {
   close_modal_leave_background("#bulk_modal");
   $("#bulk_details_title").text(value ? "Bulk Check-In" : "Bulk Check-In Undo");
-  $("#who_label").text(value ? "Check in racers in" : "Undo check-in of racers in");
+  $("#who_label").text(
+    value ? "Check in racers in" : "Undo check-in of racers in"
+  );
   $("#bulk_details div.hidable").addClass("hidden");
 
-  show_modal("#bulk_details_modal", function(event) {
+  show_modal("#bulk_details_modal", function (event) {
     close_modal("#bulk_details_modal");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'racer.bulk',
-                   what: 'checkin',
-                   who: bulk_who_value(),
-                   value: value ? 1 : 0},
-           });
+    $.ajax(g_action_url, {
+      type: "POST",
+      data: {
+        action: "racer.bulk",
+        what: "checkin",
+        who: bulk_who_value(),
+        value: value ? 1 : 0,
+      },
+    });
     return false;
   });
 }
 
-
 function on_bulk_numbering_change() {
-  $("#bulk_numbering_start").prop('disabled', $("#number_auto").is(':checked'));
-  if (!$("#number_auto").is(':checked')) {
+  $("#bulk_numbering_start").prop("disabled", $("#number_auto").is(":checked"));
+  if (!$("#number_auto").is(":checked")) {
     $("#numbering_start_div").slideDown(500);
     $("#bulk_numbering_explanation").slideUp(500);
     $("#bulk_numbering_start").focus();
@@ -333,8 +371,8 @@ function on_bulk_numbering_change() {
     $("#bulk_numbering_explanation").slideDown(500);
   }
 }
-$(function() {
-  $("#number_auto").on('change', on_bulk_numbering_change);
+$(function () {
+  $("#number_auto").on("change", on_bulk_numbering_change);
 });
 
 function bulk_numbering() {
@@ -344,18 +382,19 @@ function bulk_numbering() {
   $("#bulk_details div.hidable").addClass("hidden");
   $("#numbering_controls").removeClass("hidden");
 
-  show_modal("#bulk_details_modal", function(event) {
+  show_modal("#bulk_details_modal", function (event) {
     close_modal("#bulk_details_modal");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'racer.bulk',
-                   what: 'number',
-                   who: bulk_who_value(),
-                   auto: $("#number_auto").is(':checked') ? 1 : 0,
-                   start: $("#bulk_numbering_start").val(),
-                  }
-           });
-    
+    $.ajax(g_action_url, {
+      type: "POST",
+      data: {
+        action: "racer.bulk",
+        what: "number",
+        who: bulk_who_value(),
+        auto: $("#number_auto").is(":checked") ? 1 : 0,
+        start: $("#bulk_numbering_start").val(),
+      },
+    });
+
     return false;
   });
 }
@@ -367,16 +406,18 @@ function bulk_eligibility() {
   $("#bulk_details div.hidable").addClass("hidden");
   $("#elibility_controls").removeClass("hidden");
 
-  show_modal("#bulk_details_modal", function(event) {
+  show_modal("#bulk_details_modal", function (event) {
     close_modal("#bulk_details_modal");
-    $.ajax(g_action_url,
-           {type: 'POST',
-            data: {action: 'racer.bulk',
-                   what: 'eligibility',
-                   who: bulk_who_value(),
-                   value: $("#bulk_eligible").is(':checked') ? 1 : 0},
-           });
-    
+    $.ajax(g_action_url, {
+      type: "POST",
+      data: {
+        action: "racer.bulk",
+        what: "eligibility",
+        who: bulk_who_value(),
+        value: $("#bulk_eligible").is(":checked") ? 1 : 0,
+      },
+    });
+
     return false;
   });
 }
@@ -390,37 +431,47 @@ function compare_first(a, b) {
 }
 
 function handle_sorting_event(event) {
-  g_order = $(event.target).attr('data-order');
-  $("thead a[data-order]").prop('href', '#');
-  $(event.target).removeAttr('href');
+  g_order = $(event.target).attr("data-order");
+  $("thead a[data-order]").prop("href", "#");
+  $(event.target).removeAttr("href");
   sort_checkin_table();
   return false;
 }
 
 function sorting_key(row) {
-  if (g_order == 'partition') {
+  if (g_order == "partition") {
     // partition sortorder, lastname, firstname
-    return [parseInt(row.querySelector('[data-div-sortorder]').getAttribute('data-div-sortorder')),
-            row.getElementsByClassName('sort-lastname')[0].innerHTML,
-            row.getElementsByClassName('sort-firstname')[0].innerHTML]
-  } else if (g_order == 'car') {
+    return [
+      parseInt(
+        row
+          .querySelector("[data-div-sortorder]")
+          .getAttribute("data-div-sortorder")
+      ),
+      row.getElementsByClassName("sort-lastname")[0].innerHTML,
+      row.getElementsByClassName("sort-firstname")[0].innerHTML,
+    ];
+  } else if (g_order == "car") {
     // carnumber (numeric), lastname, firstname
-    return [parseInt(row.getElementsByClassName('sort-car-number')[0].innerHTML),
-            row.getElementsByClassName('sort-lastname')[0].innerHTML,
-            row.getElementsByClassName('sort-firstname')[0].innerHTML]
-  } else /* 'name' */ {
+    return [
+      parseInt(row.getElementsByClassName("sort-car-number")[0].innerHTML),
+      row.getElementsByClassName("sort-lastname")[0].innerHTML,
+      row.getElementsByClassName("sort-firstname")[0].innerHTML,
+    ];
+  } /* 'name' */ else {
     // lastname, firstname
-    return [row.getElementsByClassName('sort-lastname')[0].innerHTML,
-            row.getElementsByClassName('sort-firstname')[0].innerHTML]
+    return [
+      row.getElementsByClassName("sort-lastname")[0].innerHTML,
+      row.getElementsByClassName("sort-firstname")[0].innerHTML,
+    ];
   }
 }
 
 function sort_checkin_table() {
   row_array = [];
-  rows = $("#main_tbody").get(0).getElementsByTagName('tr');
+  rows = $("#main_tbody").get(0).getElementsByTagName("tr");
 
   for (var j = 0; j < rows.length; ++j) {
-	row_array[row_array.length] = [sorting_key(rows[j]), rows[j]];
+    row_array[row_array.length] = [sorting_key(rows[j]), rows[j]];
   }
 
   row_array.sort(compare_first);
@@ -428,9 +479,9 @@ function sort_checkin_table() {
   tb = $("#main_tbody").get(0);
 
   for (var j = 0; j < row_array.length; ++j) {
-    row_array[j][1].classList.remove('d' + (j & 1));
-    row_array[j][1].classList.add('d' + ((j + 1) & 1));
-	tb.appendChild(row_array[j][1]);
+    row_array[j][1].classList.remove("d" + (j & 1));
+    row_array[j][1].classList.add("d" + ((j + 1) & 1));
+    tb.appendChild(row_array[j][1]);
   }
 
   delete row_array;
@@ -438,16 +489,21 @@ function sort_checkin_table() {
 
 // g_action_on_barcode is set in checkin.php with a value persisted in the PHP
 // session for this user.
-$(function() {
-  $("input[name='barcode-handling']").prop('checked', false);
-  $("input[name='barcode-handling'][value='" + g_action_on_barcode + "']").prop('checked', 'checked');
+$(function () {
+  $("input[name='barcode-handling']").prop("checked", false);
+  $("input[name='barcode-handling'][value='" + g_action_on_barcode + "']").prop(
+    "checked",
+    "checked"
+  );
   mobile_radio_refresh($("#barcode_settings_modal input[type=radio]"));
 
-  $("#barcode_settings_modal input[type=radio]")
-    .on('change', on_barcode_handling_change);
+  $("#barcode_settings_modal input[type=radio]").on(
+    "change",
+    on_barcode_handling_change
+  );
 });
 function handle_barcode_button_click() {
-  show_modal("#barcode_settings_modal", function(event) {
+  show_modal("#barcode_settings_modal", function (event) {
     close_modal("#barcode_settings_modal");
     console.log($("#barcode_settings_modal input[type=radio]:checked"));
     return false;
@@ -456,11 +512,13 @@ function handle_barcode_button_click() {
 function on_barcode_handling_change() {
   g_action_on_barcode = $("input[name='barcode-handling']:checked").val();
   // Update the session to persist this choice
-  $.ajax(g_action_url,
-         {type: 'POST',
-          data: {action: 'session.write',
-                 'session_barcode-action': g_action_on_barcode}
-         });
+  $.ajax(g_action_url, {
+    type: "POST",
+    data: {
+      action: "session.write",
+      "session_barcode-action": g_action_on_barcode,
+    },
+  });
 
   return false;
 }
@@ -468,27 +526,28 @@ function on_barcode_handling_change() {
 function update_qrcode() {
   $("#mobile-checkin-qrcode").empty();
   $("#mobile-checkin-title").text($("#mobile-checkin-url").val());
-  new QRCode(document.getElementById('mobile-checkin-qrcode'),
-             {text: $("#mobile-checkin-url").val(),
-              width: 256,
-              height: 256});
+  new QRCode(document.getElementById("mobile-checkin-qrcode"), {
+    text: $("#mobile-checkin-url").val(),
+    width: 256,
+    height: 256,
+  });
 }
 function handle_qrcode_button_click() {
   update_qrcode();
   show_modal("#qrcode_settings_modal");
 }
 function on_mobile_checkin_submit() {
-  console.log('on_mobile_checkin_submit');
+  console.log("on_mobile_checkin_submit");
   update_qrcode();
   return false;
 }
-$(function() {
+$(function () {
   $("#mobile-checkin-url").val(g_preferred_urls[0] + "/mcheckin.php");
-  $("#mobile-checkin-form").on('submit', on_mobile_checkin_submit);
+  $("#mobile-checkin-form").on("submit", on_mobile_checkin_submit);
 });
 
 function remove_search_highlighting() {
-  $("span.found-racer").each(function() {
+  $("span.found-racer").each(function () {
     var p = $(this).parent();
     $(this).contents().unwrap();
     p.get()[0].normalize();
@@ -499,48 +558,49 @@ function remove_search_highlighting() {
 function scroll_and_flash_row(row) {
   scroll_to_row(row);
 
-  row.addClass('highlight');
-  setTimeout(function() {
-    row.removeClass('highlight');
+  row.addClass("highlight");
+  setTimeout(function () {
+    row.removeClass("highlight");
     $("#find-racer-text").val("");
   }, 250);
-  setTimeout(function() {
-    row.addClass('highlight');
+  setTimeout(function () {
+    row.addClass("highlight");
   }, 500);
-  setTimeout(function() {
-    row.removeClass('highlight');
+  setTimeout(function () {
+    row.removeClass("highlight");
   }, 750);
 }
 
 // Returns true if processed as a barcode scan
 function maybe_barcode(raw_search) {
-  if (raw_search.startsWith('PWD') && raw_search.endsWith('.')) {
-    $.ajax(g_action_url,
-           {type: 'GET',
-            data: {query: 'racer.list',
-                   barcode: raw_search},
-            success: function (data) {
-              console.log('racer.list returns', data);  // TODO
-              if (data.hasOwnProperty('racers')) {
-                var racers = data.racers;
-                if (racers.length == 1 && racers[0].hasOwnProperty('racerid')) {
-                  console.log('racer.list finds racerid ' + racers[0].racerid);
-                  if (data.hasOwnProperty('car-numbers')) {
-                    read_next_carnumbers(data['car-numbers']);
-                  }
-                  if (data.hasOwnProperty('new-row')) {
-                    console.log('new-row property', data['new-row']);
-                    var row = addrow0(data['new-row']);
-                    console.log('added row', row);
-                    flipswitch(row.find('input[type="checkbox"].flipswitch'));
-                    setTimeout(function() { apply_barcode_action(racers[0].racerid); }, 100);
-                  } else {
-                    apply_barcode_action(racers[0].racerid);
-                  }
-                }
-              }
+  if (raw_search.startsWith("PWD") && raw_search.endsWith(".")) {
+    $.ajax(g_action_url, {
+      type: "GET",
+      data: { query: "racer.list", barcode: raw_search },
+      success: function (data) {
+        console.log("racer.list returns", data); // TODO
+        if (data.hasOwnProperty("racers")) {
+          var racers = data.racers;
+          if (racers.length == 1 && racers[0].hasOwnProperty("racerid")) {
+            console.log("racer.list finds racerid " + racers[0].racerid);
+            if (data.hasOwnProperty("car-numbers")) {
+              read_next_carnumbers(data["car-numbers"]);
             }
-           });
+            if (data.hasOwnProperty("new-row")) {
+              console.log("new-row property", data["new-row"]);
+              var row = addrow0(data["new-row"]);
+              console.log("added row", row);
+              flipswitch(row.find('input[type="checkbox"].flipswitch'));
+              setTimeout(function () {
+                apply_barcode_action(racers[0].racerid);
+              }, 100);
+            } else {
+              apply_barcode_action(racers[0].racerid);
+            }
+          }
+        }
+      },
+    });
     return true;
   } else {
     return false;
@@ -552,20 +612,21 @@ function apply_barcode_action(racerid) {
 
   scroll_and_flash_row(row);
 
-  var racerid = row.attr('data-racerid');
+  var racerid = row.attr("data-racerid");
   if (g_action_on_barcode == "locate") {
   } else if (g_action_on_barcode == "checkin") {
     var cb = $("#passed-" + racerid);
 
-    setTimeout(function() {
-      cb.prop('checked', true);
+    setTimeout(function () {
+      cb.prop("checked", true);
       // This will update the flipswitch and post the check-in.
       cb.change();
     }, 750);
-  } else {  // racer-photo, car-photo
+  } else {
+    // racer-photo, car-photo
     var repo = g_action_on_barcode == "racer-photo" ? "head" : "car";
-    setTimeout(function() {
-      console.log('show_photo_modal ' + racerid + ', ' + repo);
+    setTimeout(function () {
+      console.log("show_photo_modal " + racerid + ", " + repo);
       show_photo_modal(racerid, repo);
     }, 750);
   }
@@ -575,16 +636,18 @@ function apply_barcode_action(racerid) {
 function search_for_racers(search_string) {
   // domain is a jquery for all the td's that we're interested in searching
   // (firstname, lastname, car number)
-  var domain = $("#main-checkin-table tbody tr")
-      .find("td.sort-firstname, td.sort-lastname, td.sort-car-number");
-  var find_count = domain.filter(function() {
+  var domain = $("#main-checkin-table tbody tr").find(
+    "td.sort-firstname, td.sort-lastname, td.sort-car-number"
+  );
+  var find_count = domain.filter(function () {
     // this = <td> element for firstname, lastname, or car number
     return $(this).text().toLowerCase().indexOf(search_string) != -1;
   }).length;
 
   if (find_count != 0) {
-    domain.contents().each(function() {
-      if (this.nodeType === 3) {  // Node.TEXT_NODE Text node
+    domain.contents().each(function () {
+      if (this.nodeType === 3) {
+        // Node.TEXT_NODE Text node
         // $.text() ignores any <span> elements within and just presents the
         // text alone.
         var where = $(this).text().toLowerCase().indexOf(search_string);
@@ -601,112 +664,167 @@ function search_for_racers(search_string) {
   return find_count;
 }
 
-function scroll_to_row(row) {  // row is a jquery for one tr element
-  console.log('scroll_to_row', row);
+function scroll_to_row(row) {
+  // row is a jquery for one tr element
+  console.log("scroll_to_row", row);
   var div = $("#main-checkin-table-div");
-  var th_height = $("#main-checkin-table th").eq(0).closest('tr').height();
+  var th_height = $("#main-checkin-table th").eq(0).closest("tr").height();
   // delta is the number of pixels from the top of the table to the middle of the row
-  var delta = row.offset().top + row.height() / 2 - $("#main-checkin-table").offset().top;
+  var delta =
+    row.offset().top + row.height() / 2 - $("#main-checkin-table").offset().top;
 
   // pixels from the top of the div that vertically centers the tr, excluding the th row
   var goal = (div.height() - th_height) / 2 + th_height;
 
   // scrollTop + goal = delta, so scrollTop = delta - goal
 
-  var padding = 10;  // 10 pixels vertical padding on tbody
-  $("#main-checkin-table-div").animate({scrollTop: delta - goal + padding});
+  var padding = 10; // 10 pixels vertical padding on tbody
+  $("#main-checkin-table-div").animate({ scrollTop: delta - goal + padding });
 }
 
 function scroll_to_nth_found_racer(n) {
-  scroll_to_row($("span.found-racer").eq(n - 1).closest('tr'));
+  scroll_to_row(
+    $("span.found-racer")
+      .eq(n - 1)
+      .closest("tr")
+  );
 }
 
-$(function() {
-  $("thead a[data-order]").on('click', handle_sorting_event);
+$(function () {
+  $("thead a[data-order]").on("click", handle_sorting_event);
 });
-
 
 // TODO We might be in a better position to know the row number (and parity)
 // than the server (which sends rowno).
 function make_table_row(racer, xbs) {
-  var tr = $('<tr/>').attr('data-racerid', racer.racerid)
-      .addClass('d' + (racer.rowno & 1))
-      .toggleClass('den_scheduled', racer.denscheduled)
-      .toggleClass('exclude', racer.exclude);
-  tr.append($('<td>')
-            .append('<input type="button" class="white-button" value="Change"' +
-                    ' onclick="show_edit_racer_form(' + racer.racerid + ')"/>'));
+  var tr = $("<tr/>")
+    .attr("data-racerid", racer.racerid)
+    .addClass("d" + (racer.rowno & 1))
+    .toggleClass("den_scheduled", racer.denscheduled)
+    .toggleClass("exclude", racer.exclude);
+  tr.append(
+    $("<td>").append(
+      '<input type="button" class="white-button" value="Change"' +
+        ' onclick="show_edit_racer_form(' +
+        racer.racerid +
+        ')"/>'
+    )
+  );
 
-  tr.append($('<td>')
-            .attr('id', 'div-' + racer.racerid)
-            .attr('data-partitionid', racer.partitionid)
-            .attr('data-div-sortorder', racer.partition_sortorder)
-            .text(racer.partition));
+  tr.append(
+    $("<td>")
+      .attr("id", "div-" + racer.racerid)
+      .attr("data-partitionid", racer.partitionid)
+      .attr("data-div-sortorder", racer.partition_sortorder)
+      .attr("data-phonetic-firstname", racer.phonetic_firstname || "")
+      .attr("data-phonetic-lastname", racer.phonetic_lastname || "")
+      .text(racer.partition)
+  );
 
-  tr.append($('<td class="sort-car-number"/>')
-            .attr('data-car-number', racer.carnumber)
-            .attr('id', 'car-number-' + racer.racerid)
-            .text(racer.carnumber));
+  tr.append(
+    $('<td class="sort-car-number"/>')
+      .attr("data-car-number", racer.carnumber)
+      .attr("id", "car-number-" + racer.racerid)
+      .text(racer.carnumber)
+  );
 
-  tr.append($('<td/>').attr('id', 'photo-' + racer.racerid)
-            .append($('<a href="javascript:show_racer_photo_modal(' + racer.racerid + ')"/>')
-                    .append($('<img class="checkin-photo" data-repo="head"/>')
-                            .attr('src', racer.headshot)))
-            .append($('<a href="javascript:show_car_photo_modal(' + racer.racerid + ')"/>')
-                    .append($('<img class="checkin-photo" data-repo="car"/>')
-                            .attr('src', racer.carphoto))));
+  tr.append(
+    $("<td/>")
+      .attr("id", "photo-" + racer.racerid)
+      .append(
+        $(
+          '<a href="javascript:show_racer_photo_modal(' + racer.racerid + ')"/>'
+        ).append(
+          $('<img class="checkin-photo" data-repo="head"/>').attr(
+            "src",
+            racer.headshot
+          )
+        )
+      )
+      .append(
+        $(
+          '<a href="javascript:show_car_photo_modal(' + racer.racerid + ')"/>'
+        ).append(
+          $('<img class="checkin-photo" data-repo="car"/>').attr(
+            "src",
+            racer.carphoto
+          )
+        )
+      )
+  );
 
-  tr.append($('<td class="sort-lastname"/>')
-            .attr('id', 'lastname-' + racer.racerid)
-            .attr('data-exclude', racer.exclude ? 1 : 0)
-            .text(racer.lastname));
-  tr.append($('<td class="sort-firstname"/>')
-            .attr('id', 'firstname-' + racer.racerid)
-            .text(racer.firstname));
-  tr.append($('<td/>')
-            .append($("<div/>")
-                    .attr('id', 'car-name-' + racer.racerid)
-                    .addClass('carname')
-                    .text(racer.carname))
-            .append($("<div/>")
-                    .attr('id', 'note-from-' + racer.racerid)
-                    .text(racer.note)));
+  tr.append(
+    $('<td class="sort-lastname"/>')
+      .attr("id", "lastname-" + racer.racerid)
+      .attr("data-exclude", racer.exclude ? 1 : 0)
+      .text(racer.lastname)
+  );
+  tr.append(
+    $('<td class="sort-firstname"/>')
+      .attr("id", "firstname-" + racer.racerid)
+      .text(racer.firstname)
+  );
+  tr.append(
+    $("<td/>")
+      .append(
+        $("<div/>")
+          .attr("id", "car-name-" + racer.racerid)
+          .addClass("carname")
+          .text(racer.carname)
+      )
+      .append(
+        $("<div/>")
+          .attr("id", "note-from-" + racer.racerid)
+          .text(racer.note)
+      )
+  );
 
   var checkin = $('<td class="checkin-status"/>').appendTo(tr);
-  checkin.append('<br/>');
-  checkin.append($('<input type="checkbox" class="flipswitch"/>')
-                 .attr('id', 'passed-' + racer.racerid)
-                 .attr('name', 'passed-' + racer.racerid)
-                 .prop('checked', racer.passed)
-                 .attr('data-on-text', 'Yes')
-                 .attr('data-off-text', 'No')
-                 // prop onchange doesn't seem to allow a string, but attr does
-                 .attr('onchange', 'handlechange_passed(this, ' +
-                       JSON.stringify(racer.firstname + ' ' + racer.lastname) +
-                       ')'));
+  checkin.append("<br/>");
+  checkin.append(
+    $('<input type="checkbox" class="flipswitch"/>')
+      .attr("id", "passed-" + racer.racerid)
+      .attr("name", "passed-" + racer.racerid)
+      .prop("checked", racer.passed)
+      .attr("data-on-text", "Yes")
+      .attr("data-off-text", "No")
+      // prop onchange doesn't seem to allow a string, but attr does
+      .attr(
+        "onchange",
+        "handlechange_passed(this, " +
+          JSON.stringify(racer.firstname + " " + racer.lastname) +
+          ")"
+      )
+  );
   if (racer.scheduled) {
     if (racer.passed) {
-      checkin.append(' Racing!');
+      checkin.append(" Racing!");
     } else {
-      checkin.append(' Scheduled but not passed');
+      checkin.append(" Scheduled but not passed");
     }
   } else if (racer.denscheduled) {
     // denscheduled means their racing group has a schedule
-    checkin.append(' Late!');
+    checkin.append(" Late!");
   }
 
   if (xbs) {
-    tr.append($('<td/>')
-              .append($('<label/>')
-                      .attr('for', 'xbs-' + racer.racerid)
-                      .text(xbs + '?'))
-              .append('<br/>')
-              .append($('<input type="checkbox" class="flipswitch"/>')
-                      .attr('name', 'xbs-' + racer.racerid)
-                      .prop('checked', racer.xbs)
-                      .attr('data-on-text', 'Yes')
-                      .attr('data-off-text', 'No')
-                      .attr('onchange', 'handlechange_xbs(this);')));
+    tr.append(
+      $("<td/>")
+        .append(
+          $("<label/>")
+            .attr("for", "xbs-" + racer.racerid)
+            .text(xbs + "?")
+        )
+        .append("<br/>")
+        .append(
+          $('<input type="checkbox" class="flipswitch"/>')
+            .attr("name", "xbs-" + racer.racerid)
+            .prop("checked", racer.xbs)
+            .attr("data-on-text", "Yes")
+            .attr("data-off-text", "No")
+            .attr("onchange", "handlechange_xbs(this);")
+        )
+    );
   }
 
   return tr;

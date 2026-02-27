@@ -122,6 +122,40 @@ function json_common_1($key, &$now_running) {
                json_current_racers($now_running, read_name_style(), $render, $render2));
     }
     break;
+  case 'racers-phonetic': // Same as 'racers' but forces phonetic name style
+    require_once('inc/name-mangler.inc');
+    require_once('inc/json-current-racers.inc'); 
+    if ($now_running['roundid'] == TIMER_TEST_ROUNDID) { 
+      $racers = array(); 
+      $nlanes = get_lane_count(); 
+      for ($lane = 1; $lane <= $nlanes; ++$lane) { 
+        if (($tt['mask'] & (1 << ($lane - 1))) == 0) {
+          $racers[] = array('lane' => $lane); 
+        } 
+      } 
+      json_out('racers', $racers); 
+    } else {
+      require_once('inc/photos-on-now-racing.inc'); 
+      $render = false; 
+      $render2 = false;
+      if (isset($_GET['head-size'])) { 
+        $render = photo_repository('head')->lookup_or_any($_GET['head-size']); 
+        if (isset($_GET['car-size'])) { 
+          $render2 = photo_repository('car')->lookup_or_any($_GET['car-size']); 
+        } 
+      } else if (isset($_GET['row-height']) && $_GET['row-height'] > 0) { 
+        if (isset($_GET['repo'])) { 
+          $photos = $_GET['repo']; 
+          if (!photo_repository($photos)) { $photos = 0; } 
+        } else { 
+          $photos = read_photos_on_now_racing(); 
+        } if ($photos) { 
+          $render_name = (2 * $_GET['row-height']).'x'.$_GET['row-height']; 
+          $render = photo_repository($photos)->lookup_or_any($render_name); 
+        } 
+      } 
+      json_out('racers', json_current_racers($now_running, PHONETIC_NAME, $render, $render2)); 
+    } 
   case 'replay-state':
     require_once('inc/json-replay.inc');
     json_out('replay-state', json_replay());

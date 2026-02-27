@@ -10,7 +10,7 @@ if (schema_version() < 2) {
   $updates[] = "ALTER TABLE Ranks ADD COLUMN SortOrder INTEGER";
 
   $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN CarPhoto VARCHAR(255)";
-  
+
   $updates[] = "DELETE FROM RaceInfo WHERE ItemKey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(ItemKey, ItemValue) VALUES('schema', '2')";
 }
@@ -65,7 +65,7 @@ if (schema_version() < 8) {
   $updates[] = "CREATE TABLE ConstituentClasses ("
           ."  antecedent INTEGER, dependent  INTEGER)";
   $updates[] = "CREATE UNIQUE INDEX AnteDependent ON ConstituentClasses(antecedent, dependent)";
-  
+
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '8')";
 }
@@ -78,6 +78,24 @@ if (schema_version() < 9) {
 
   $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
   $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '9')";
+}
+
+if (schema_version() < 10) {
+  $updates = array_merge($updates,
+                         @include(sql_file_path('action-history')));
+  $updates[] = "ALTER TABLE Ranks ADD COLUMN ntrophies INTEGER DEFAULT -1";
+  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN checkin_time INTEGER";
+
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '10')";
+}
+
+if (schema_version() < 11) {
+  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN PhoneticLastName VARCHAR(30)";
+  $updates[] = "ALTER TABLE RegistrationInfo ADD COLUMN PhoneticFirstName VARCHAR(30)";
+
+  $updates[] = "DELETE FROM RaceInfo WHERE itemkey = 'schema'";
+  $updates[] = "INSERT INTO RaceInfo(itemkey, itemvalue) VALUES('schema', '11')";
 }
 
 // For each new schema version, copy the DELETE and INSERT for schema version

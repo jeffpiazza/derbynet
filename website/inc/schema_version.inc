@@ -5,7 +5,7 @@ function schema_version() {
 }
 
 function expected_schema_version() {
-  return 10;
+  return 11;
 }
 
 define('RANK_AGGREGATE_SCHEMA', 5);  // Classes.rankids for aggregates formed from ranks
@@ -15,4 +15,5 @@ define('PARTITION_SCHEMA', 8);
 define('TIMER_RESULT_SCHEMA', 9);
 define('PER_SUBGROUP_AWARDS_SCHEMA', 10);
 define('REGISTRATION_CHECKIN_SCHEMA', 10);
+define('PHONETIC_NAMES_SCHEMA', 11);
 ?>
