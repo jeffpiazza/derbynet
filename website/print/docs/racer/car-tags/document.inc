@@ -7,6 +7,7 @@
 // - optionally show a group-specific image
 
 require_once('inc/path-info.inc');
+require_once('inc/data.inc');
 
 class CarTagsDocument extends PrintableRacerDocument {
   function name() { return "Car Tag"; }
@@ -78,8 +79,38 @@ class CarTagsDocument extends PrintableRacerDocument {
   // instead, and assuming that the hundreds digit identifies which image is
   // desired.
   static protected function path_to_century_emblem(&$racer) {
-    $grade = intval($racer['carnumber'] / 100);
-    return image_file_path("centuries".DIRECTORY_SEPARATOR. $grade . '00-series');
+    // Check if segment-based numbering is enabled
+    $numbering_by_segment = read_raceinfo('car-numbering', 0);
+    
+    if ($numbering_by_segment == 100) {
+      // Use car number hundreds place when segment numbering is enabled
+      $grade = intval($racer['carnumber'] / 100);
+      return image_file_path("centuries".DIRECTORY_SEPARATOR. $grade . '00-series');
+    } else {
+      // Use rank/class name to determine the emblem when not using segment numbering
+      $rank_name = strtolower($racer['rank']);
+      
+      // Map rank names to century series (adjust these mappings as needed)
+      $rank_to_century = array(
+        'lion' => 0,
+        'tiger' => 1,
+        'wolf' => 2,
+        'bear' => 3,
+        'webelos' => 4,
+        'arrow of light' => 5,
+        'aol' => 5
+      );
+      
+      foreach ($rank_to_century as $key => $century) {
+        if (strpos($rank_name, $key) !== false) {
+          return image_file_path("centuries".DIRECTORY_SEPARATOR. $century . '00-series');
+        }
+      }
+      
+      // Fallback to car number method if rank name doesn't match
+      $grade = intval($racer['carnumber'] / 100);
+      return image_file_path("centuries".DIRECTORY_SEPARATOR. $grade . '00-series');
+    }
   }
 
   protected function RotatedCenteredName($cx, $cy, &$racer) {
