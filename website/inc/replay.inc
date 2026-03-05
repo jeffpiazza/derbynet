@@ -13,7 +13,7 @@ define('REPLAY_REPORTED_PLAYING', 2);
 // A registration request causes a HELLO message to be sent, and the state
 // becomes either CONNECTED or TROUBLE depending on the outcome.
 
-// replay_last_contact gets updated with succesful message sent.  replay_trouble
+// replay_last_contact gets updated with successful message sent.  replay_trouble
 // gets set to the error message for an unsuccessful message send.
 
 // REPLAY_CONNECTED or REPLAY_TROUBLE become REPLAY_NOT_CONNECTED if
