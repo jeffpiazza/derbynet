@@ -396,7 +396,7 @@ function photo_settings($purpose, $photo_dir_id, $photo_dir_value) {
                 <?php if ($schedule_method == 'abbreviated') echo 'checked="checked"'; ?>/>
         <label for='schedule-method-abbreviated'>Abbreviated single-run-per-car schedule</label>
         <p class="schedule_method_note">Each car runs just once in a round.
-                Sometimes useful for preiminary rounds if you have a very large field.</p>
+                Sometimes useful for preliminary rounds if you have a very large field.</p>
 
         <input type='radio' name='schedule-method' id='schedule-method-rotation'
                 value='rotation' class="do-not-post not-mobile"
