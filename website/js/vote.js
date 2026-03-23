@@ -49,7 +49,8 @@ function set_up_ballot() {
 // From the main screen, clicking on an award opens the "racers" modal, which
 // lets the user choose a racer.
 function click_one_award(div) {
-  g_awardid = div.attr('data-awardid');
+  var award_id = div.attr('data-awardid');
+  g_awardid = award_id;
   write_racers_headline();
   set_full_ballot_message();
 
@@ -60,17 +61,42 @@ function click_one_award(div) {
   $("#racers_modal").width(ww - 200).height(wh - 200);
   $("#racer_view_award_name").text(award_name);
 
-  $("#racers div.ballot_racer").removeClass('hidden');
+  // Check if this is a design award
+  if (g_is_design_award && g_is_design_award[award_id]) {
+    $.ajax('action.php', {
+      type: 'GET',
+      data: {
+        query: 'award.eligible-racers',
+        awardid: award_id
+      },
+      success: function(data) {
+        // Hide all racers initially
+        $("#racers div.ballot_racer").addClass('hidden');
 
-  var classids = div.attr('data-eligible-classids').split(',');
-  var rankids = div.attr('data-eligible-rankids').split(',');
-  $("#racers div.ballot_racer").each(function() {
-    $(this).toggleClass('hidden',
-                        classids.indexOf($(this).attr('data-classid')) < 0 ||
-                        rankids.indexOf($(this).attr('data-rankid')) < 0);
-  });
-  
+        // Show only eligible racers
+        var eligible_racers = data.eligible_racers || [];
+        eligible_racers.forEach(function(racer) {
+          $("#racers div.ballot_racer[data-racerid=" + racer.racerid + "]").removeClass('hidden');
+        });
+      },
+      error: function(xhr, status, error) {
+      }
+    });
+  } else {
+    // For non-design awards, use existing class/rank filtering
+    $("#racers div.ballot_racer").removeClass('hidden');
+
+    var classids = div.attr('data-eligible-classids').split(',');
+    var rankids = div.attr('data-eligible-rankids').split(',');
+    $("#racers div.ballot_racer").each(function() {
+      $(this).toggleClass('hidden',
+                          classids.indexOf($(this).attr('data-classid')) < 0 ||
+                          rankids.indexOf($(this).attr('data-rankid')) < 0);
+    });
+  }
+
   show_modal("#racers_modal", function() {});
+  return false;
 }
 
 function write_racers_headline() {
@@ -105,17 +131,41 @@ function show_racer_view_modal(div) {
 
 function toggle_vote(div) {
   var award_ballot = g_ballot[g_awardid];
-  if (award_ballot['votes'].includes(g_racerid)) {
-    award_ballot['votes'] =
-      award_ballot['votes'].filter(function(v) { return v != g_racerid; });
+  var wasChecked = award_ballot['votes'].includes(g_racerid);
+  
+  if (wasChecked) {
+    // Unchecking the box
+    award_ballot['votes'] = award_ballot['votes'].filter(function(v) { return v != g_racerid; });
     div.find('img').attr('src', 'img/checkbox-without-check.png');
-  } else if (award_ballot['votes'].length >= award_ballot['max_votes']) {
-    console.log("Full ballot!");
+    // Do not close when unchecking
   } else {
-    award_ballot['votes'].push(g_racerid);
-    div.find('img').attr('src', 'img/checkbox-with-check.png');
+    // Checking the box
+    if (award_ballot['votes'].length >= award_ballot['max_votes']) {
+    } else {
+      award_ballot['votes'].push(g_racerid);
+      div.find('img').attr('src', 'img/checkbox-with-check.png');
+      
+      // Send AJAX request and update UI
+      $.ajax('action.php',
+        {type: 'POST',
+         data: {action: 'vote.cast',
+                awardid: g_awardid,
+                'votes': JSON.stringify(award_ballot['votes'])},
+         success: function() {
+           // Close modal after checking and successful save
+           setTimeout(function() {
+             close_secondary_modal("#racer_view_modal");
+           }, 300);
+         }
+        });
+      
+      write_racers_headline();
+      set_up_ballot();
+      return; // Early return to prevent the code below from executing
+    }
   }
 
+  // This AJAX call only happens for unchecking or when ballot is full
   $.ajax('action.php',
          {type: 'POST',
           data: {action: 'vote.cast',
@@ -141,9 +191,6 @@ function set_full_ballot_message() {
 
   $("#full-ballot-max").text(max_votes);
 
-  console.log("Award_ballot:");console.log(award_ballot);
-  console.log("g_racerid: " + g_racerid + ", includes=" + (award_ballot['votes'].includes(g_racerid)));
-  console.log("max_votes=" + max_votes + ", votes length=" + award_ballot['votes'].length);
   $("#full-ballot").toggleClass('hidden',
                                 award_ballot['votes'].includes(g_racerid) ||
                                 award_ballot['votes'].length < max_votes);
