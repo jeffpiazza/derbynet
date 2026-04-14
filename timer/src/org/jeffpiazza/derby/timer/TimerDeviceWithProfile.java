@@ -80,6 +80,29 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
 
   private String partialResultLane = null;
 
+  private void applyLaneResult(String laneArg, String timeArg, String placeArg) {
+    char lane_char = laneArg.charAt(0);
+    int lane = ('0' <= lane_char && lane_char <= '9')
+               ? lane_char - '1' + 1
+               : lane_char - 'A' + 1;
+    String time = TimerDeviceUtils.zeroesToNines(timeArg);
+    time = TimerDeviceUtils.scaledTime(time, profile.options.timer_scale_factor);
+
+    if (result != null) {
+      boolean wasFilled = result.isFilled();
+      if (placeArg == null || placeArg.isEmpty()) {
+        result.setLane(lane, time);
+      } else {
+        result.setLane(lane, time, placeArg.charAt(0) - '!' + 1);
+      }
+      // Send just a single RACE_FINISHED event, even if we get some extra
+      // results for masked-out lanes, etc.
+      if (result.isFilled() && !wasFilled) {
+        Event.send(Event.RACE_FINISHED);
+      }
+    }
+  }
+
   public void abortHeat() throws SerialPortException {
     Event.send(Event.ABORT_HEAT_RECEIVED);
   }
@@ -299,27 +322,7 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
 
       case LANE_RESULT: {
-        // Lane (char), time, optional place
-        char lane_char = args[0].charAt(0);
-        int lane = ('0' <= lane_char && lane_char <= '9')
-                   ? lane_char - '1' + 1
-                   : lane_char - 'A' + 1;
-        String time = TimerDeviceUtils.zeroesToNines(args[1]);
-        time = TimerDeviceUtils.scaledTime(time, profile.options.timer_scale_factor);
-
-        if (result != null) {
-          boolean wasFilled = result.isFilled();
-          if (args.length == 2 || args[2] == null || args[2].isEmpty()) {
-            result.setLane(lane, time);
-          } else {
-            result.setLane(lane, time, args[2].charAt(0) - '!' + 1);
-          }
-          // Send just a single RACE_FINISHED event, even if we get some extra
-          // results for masked-out lanes, etc.
-          if (result.isFilled() && !wasFilled) {
-            Event.send(Event.RACE_FINISHED);
-          }
-        }
+        applyLaneResult(args[0], args[1], args.length > 2 ? args[2] : null);
         break;
       }
       case PARTIAL_LANE_RESULT_LANE_NUM: {
@@ -327,7 +330,9 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       }
       case PARTIAL_LANE_RESULT_TIME: {
-        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, args[0]});
+        if (partialResultLane != null) {
+          applyLaneResult(partialResultLane, args[0], null);
+        }
         partialResultLane = null;
         break;
       }

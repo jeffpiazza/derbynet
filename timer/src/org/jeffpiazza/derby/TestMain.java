@@ -5,11 +5,13 @@ package org.jeffpiazza.derby;
 // java -cp timer/dist/lib/derby-timer.jar org.jeffpiazza.derby.TestMain
 //
 import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jssc.SerialPortException;
 import org.jeffpiazza.derby.devices.TimerDevice.RaceFinishedCallback;
 import org.jeffpiazza.derby.devices.TimerResult;
+import org.jeffpiazza.derby.profiles.SuperTimerII;
 import org.jeffpiazza.derby.profiles.NewBold;
 import org.jeffpiazza.derby.profiles.TheJudge;
 import org.jeffpiazza.derby.serialport.MockTimerPortWrapper;
@@ -156,6 +158,35 @@ public class TestMain {
     return finished[0];
   }
 
+  public static boolean testSuperTimerIILastLaneOrdering() throws SerialPortException {
+    TimerDeviceWithProfile dev = new SuperTimerII(new MockTimerPortWrapper());
+    dev.prepareHeat(300, 1, 15);
+    dev.onEvent(Event.PREPARE_HEAT_RECEIVED, null);
+    dev.onEvent(Event.LANE_RESULT, new String[]{"1", "25000"});
+    dev.onEvent(Event.LANE_RESULT, new String[]{"2", "25100"});
+    dev.onEvent(Event.LANE_RESULT, new String[]{"3", "25200"});
+    dev.onEvent(Event.PARTIAL_LANE_RESULT_LANE_NUM, new String[]{"4"});
+    dev.onEvent(Event.PARTIAL_LANE_RESULT_TIME, new String[]{"25595"});
+
+    try {
+      Field resultField = TimerDeviceWithProfile.class.getDeclaredField("result");
+      resultField.setAccessible(true);
+      TimerResult result = (TimerResult) resultField.get(dev);
+      Message msg = new Message.Finished(300, 1, result.toArray());
+      String got = msg.asParameters();
+      String expected =
+          "message=FINISHED&roundid=300&heat=1"
+          + "&lane1=2.5000&lane2=2.5100&lane3=2.5200&lane4=2.5595";
+      if (!got.equals(expected)) {
+        System.err.println("got: " + got);
+      }
+      return got.equals(expected);
+    } catch (ReflectiveOperationException ex) {
+      Logger.getLogger(TestMain.class.getName()).log(Level.SEVERE, null, ex);
+      return false;
+    }
+  }
+
   public static void main(String[] args) throws SerialPortException {
     if (!testTheJudge()) {
       System.err.println("testTheJudge fails");
@@ -163,6 +194,10 @@ public class TestMain {
     }
     if (!testNewBoldDnf()) {
       System.err.println("testNewBoldDnf fails");
+      System.exit(1);
+    }
+    if (!testSuperTimerIILastLaneOrdering()) {
+      System.err.println("testSuperTimerIILastLaneOrdering fails");
       System.exit(1);
     }
 
