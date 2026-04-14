@@ -483,7 +483,7 @@
      <text:p text:style-name="P25">Install a separate stack by downloading a MAMP installer.</text:p>
     </text:list-item>
    </text:list>
-   <text:p text:style-name="P18">(Of course, these are other options available, but they&apos;re outside the scope of this document.)</text:p>
+   <text:p text:style-name="P18">(Of course, there are other options available, but they&apos;re outside the scope of this document.)</text:p>
    <text:h text:style-name="P4" text:outline-level="1">Option 1: Activate and Configure Existing Software</text:h>
    <text:h text:style-name="Heading_20_2" text:outline-level="2">Activate Apache Server (Web Sharing)</text:h>
    <text:h text:style-name="Heading_20_3" text:outline-level="3">Using System Preferences Plug-In</text:h>

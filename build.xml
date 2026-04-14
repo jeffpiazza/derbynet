@@ -19,6 +19,8 @@
   <!-- Contains a recent copy of
         https://webrtc.github.io/adapter/adapter-latest.js -->
   <property name="webrtc-adapter-cache" location="adapter-webrtc"/>
+    <property name="docker.image" value="derbynet_server"/>
+    <property name="docker.platform" value="linux/amd64,linux/arm64"/>
 
   <condition property="is_mac">
     <os family="mac"/>
@@ -570,7 +572,48 @@
 </target>
 
 <target name="docker-deps" depends="generated, timer-in-browser"
-        description="Builds prerequisites for building derbynet_server docker image">
+    description="Builds prerequisites for building derbynet_server docker image">
+</target>
+
+<target name="check-buildx">
+  <exec executable="docker" resultproperty="buildx.exit.code" failonerror="false" outputproperty="buildx.out" errorproperty="buildx.err">
+    <arg value="buildx"/>
+    <arg value="version"/>
+  </exec>
+  <condition property="buildx.available">
+    <equals arg1="${buildx.exit.code}" arg2="0"/>
+  </condition>
+</target>
+
+<target name="docker-build-x" if="buildx.available">
+  <echo message="Using docker buildx..."/>
+  <exec executable="docker" failonerror="true">
+    <arg value="buildx"/>
+    <arg value="build"/>
+    <arg value="--platform"/>
+    <arg value="${docker.platform}"/>
+    <arg value="-t"/>
+    <arg value="${docker.image}"/>
+    <arg value="-f"/>
+    <arg value="installer/docker/Dockerfile"/>
+    <arg value="."/>
+  </exec>
+</target>
+
+<target name="docker-build-default" unless="buildx.available">
+  <echo message="Using standard docker build..."/>
+  <exec executable="docker" failonerror="true">
+    <arg value="build"/>
+    <arg value="-t"/>
+    <arg value="${docker.image}"/>
+    <arg value="-f"/>
+    <arg value="installer/docker/Dockerfile"/>
+    <arg value="."/>
+  </exec>
+</target>
+
+<target name="docker-build" depends="docker-deps, check-buildx, docker-build-x, docker-build-default"
+    description="Build derbynet_server Docker image. Use -Ddocker.image=... to override">
 </target>
 
 <target name="demo" description="demo">

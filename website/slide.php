@@ -26,8 +26,8 @@ if (count($exploded) != 2) {
 }
 
 $glob = $exploded[1];
-if ($glob == 'title') {
-  $glob = 'title.*';
+if ($glob == 'title' || str_ends_with($glob, '/title')) {
+  $glob .= '.*';
 }
 $file_path = slide_file_path($glob);
 

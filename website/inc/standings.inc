@@ -437,25 +437,33 @@ class StandingsOracle {
     return $rankids;
   }
 
+  // Returns the number of columns per row in the table.
   private function write_standings_table_headers() {
     echo "<tr class='headers'>";
     echo "<th>Place</th>";
     echo "<th>Car Number</th>";
     echo "<th>Name</th>";
+    $ncolumns = 3;
     if (show_car_name_in_standings()) {
       echo "<th>Car Name</th>";
+      ++$ncolumns;
     }
     if ($this->use_groups) {
       echo "<th class='col-group'>".group_label()."</th>";
       echo "<th class='col-ingroup'>In <span id='per-group-label'>".group_label()."</span></th>";
+      $ncolumns += 2;
     }
     if ($this->use_subgroups) {
       echo "<th class='col-subgroup'>".subgroup_label()."</th>";
       echo "<th class='col-insubgroup'>In <span id='per-subgroup-label'>".subgroup_label()."</span></th>";
+      $ncolumns += 2;
     }
     if ($this->has_full_field_standings()) {
       echo "<th class='col-insuper'>In ".supergroup_label()."</th>";
+      ++$ncolumns;
     }
+
+    $ncolumns += 5;
     echo "<th class='col-inround'>In Round</th>";
 
     echo "<th>Heats</th>";
@@ -468,6 +476,7 @@ class StandingsOracle {
     echo "<th>Best</th>";
     echo "<th>Worst</th>";
     echo "</tr>\n";
+    return $ncolumns;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -593,9 +602,65 @@ class StandingsOracle {
     }
   }
 
+  // For rounds that include any trophy-ineligible racers, add a row pointing
+  // out that these racers weren't included in the standings.  It occasionally
+  // happens that all the racers in a group or the whole field get marked as
+  // "ineligible" for trophies, and the standings page doesn't show anything
+  // useful; this should help make clear what's going on in that case.
+  private function write_footnote_rows($ncolumns) {
+    global $db;
+
+    if ($this->use_groups) {
+      $stmt = $db->query('SELECT roundid, Rounds.classid, COUNT(*) AS count'
+                         .' FROM Roster JOIN RegistrationInfo USING (racerid)'
+                         .'             JOIN Rounds USING (roundid)'
+                         .' WHERE passedinspection = 1 AND exclude = 1'
+                         .' GROUP BY Rounds.classid');
+      foreach($stmt as $row) {
+        echo "<tr class='".stkey_round($row['roundid'])."'>";
+        echo "<td colspan='$ncolumns'>";
+        echo "Results for ".$row['count']." ineligible racer".($row['count'] == 1 ? '' : 's')
+                           ." not shown";
+        echo "</td>";
+        echo "</tr>";
+      }
+    }
+
+    if ($this->use_subgroups) {
+      $stmt = $db->query('SELECT roundid, rankid, COUNT(*) AS count'
+                         .' FROM Roster JOIN RegistrationInfo USING (racerid)'
+                         .'             JOIN Rounds USING (roundid)'
+                         .' WHERE passedinspection = 1 AND exclude = 1'
+                         .' GROUP BY rankid');
+      foreach($stmt as $row) {
+        echo "<tr class='".stkey_round_subgroup($row['roundid'], $row['rankid'])."'>";
+        echo "<td colspan='$ncolumns'>";
+        echo "Results for ".$row['count']." ineligible racer".($row['count'] == 1 ? '' : 's')
+                           ." not shown";
+        echo "</td>";
+        echo "</tr>";
+      }
+    }
+
+    if ($this->has_full_field_standings()) {
+      $stmt = $db->query('SELECT COUNT(*) AS count'
+                         .' FROM RegistrationInfo'
+                         .' WHERE passedinspection = 1 AND exclude = 1');
+      foreach($stmt as $row) {  // Only one
+        echo "<tr class='".stkey_full_field()."'>";
+        echo "<td colspan='$ncolumns'>";
+        echo "Results for ".$row['count']." ineligible racer".($row['count'] == 1 ? '' : 's')
+                           ." not shown";
+        echo "</td>";
+        echo "</tr>";
+      }
+    }
+  }
+
   public function write_standings_table() {
-    $this->write_standings_table_headers();
+    $ncolumns = $this->write_standings_table_headers();
     $this->write_standings_table_rows();
+    $this->write_footnote_rows($ncolumns);
   }
 
   function highest_round($classid) {

@@ -7,6 +7,7 @@ require_once('inc/authorize.inc');
 session_write_close();
 require_once('inc/banner.inc');
 require_once('inc/kiosks.inc');
+require_once('inc/locked.inc');
 require_once('inc/scenes.inc');
 require_once('inc/schema_version.inc');
 require_once('inc/standings.inc');
@@ -52,6 +53,11 @@ var g_current_scene = <?php echo json_encode(read_raceinfo('current_scene', ''),
                                              JSON_HEX_TAG | JSON_HEX_AMP); ?>;
 var g_all_pages = <?php echo json_encode(all_kiosk_pages(),
                                          JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT); ?>;
+
+var g_url = <?php  // for QR code
+          $urls = preferred_urls();
+          echo json_encode($urls[0], JSON_HEX_TAG | JSON_HEX_AMP | JSON_PRETTY_PRINT);
+?>;
 
 <?php
     $oracle = new StandingsOracle();

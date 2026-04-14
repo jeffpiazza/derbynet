@@ -100,6 +100,10 @@ function initialize_award_controls() {
           data: {query: 'award.current'},
           success: function(data) {
             var award;
+            if (data.hasOwnProperty('cease')) {
+              window.location.href = '../index.php';
+              return;
+            }
             if (!data.hasOwnProperty('current')) {
               $("#rankname").text('');
               award = {key: '',

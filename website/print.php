@@ -179,6 +179,7 @@ foreach ($doc_classes as $c => $details) {
       echo "<input type='text' name='".$ctrl_name."' value='".$opt_data['default']."' class='param-string'/><br/>\n";
     } else if ($opt_data['type'] == 'radio') {
       // values:
+      echo "<label for='".$ctrl_name."'>".$opt_data['desc']."</label><br/>\n";
       $first_radio = true;
       echo "<div class='mradiogroup'>\n";
       foreach ($opt_data['values'] as $v) {

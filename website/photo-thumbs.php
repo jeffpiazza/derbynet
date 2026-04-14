@@ -121,7 +121,7 @@ var g_photo_repo_name = '<?php echo $photo_repository->name(); ?>';
 
 <?php } else { ?>
 
-  <form id="upload_target" action="action.php" class="dropzone">
+  <form id="upload_target" action="action.php?query=photo.upload-thumbs" class="dropzone">
     <div class="fallback">
       <input type="file" name="photo" value="Upload Files"/>
     </div>

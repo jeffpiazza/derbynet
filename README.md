@@ -24,7 +24,7 @@ application is not available.)
 3. If desired, do one or both of the following.  (If you do neither, you won't
 be able to connect to a hardware timer.)
 
-   1. Execute `ant timer-in-brower` to build the in-browser timer interface.
+   1. Execute `ant timer-in-browser` to build the in-browser timer interface.
    2. Execute `ant timer-jar` to build the derby-timer.jar timer interface.
 
 4. Instantiate the docker container, but use your local sources rather than

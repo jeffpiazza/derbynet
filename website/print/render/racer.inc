@@ -18,15 +18,19 @@ function derez_photos(&$racer) {
   $racer['imagefile_fullrez'] = $racer['imagefile'];
   // If there's a 400x400 version of the image, use that, but otherwise use
   // the full (cropped) photo, don't try to create a lower-rez one.
-  $imgfile = headshots()->lookup_or_any('400x400')->file_path(basename($racer['imagefile']));
-  if (is_file($imgfile)) {
-    $racer['imagefile'] = $imgfile;
+  if (is_string($racer['imagefile'])) {
+    $imgfile = headshots()->lookup_or_any('400x400')->file_path(basename($racer['imagefile']));
+    if (is_file($imgfile)) {
+      $racer['imagefile'] = $imgfile;
+    }
   }
 
   $racer['carphoto_fullrez'] = $racer['carphoto'];
-  $imgfile = car_photo_repository()->lookup_or_any('400x400')->file_path(basename($racer['carphoto']));
-  if (is_file($imgfile)) {
-    $racer['carphoto'] = $imgfile;
+  if (is_string($racer['carphoto'])) {
+    $imgfile = car_photo_repository()->lookup_or_any('400x400')->file_path(basename($racer['carphoto']));
+    if (is_file($imgfile)) {
+      $racer['carphoto'] = $imgfile;
+    }
   }
 }
 

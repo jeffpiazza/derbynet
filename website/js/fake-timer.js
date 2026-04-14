@@ -179,6 +179,10 @@ function send_hello() {
           data: {action: 'timer-message',
                  message: 'HELLO'},
           success: function(data) {
+            if (typeof data == "object" && data["cease"]) {
+              window.location.href = '../index.php';
+              return;
+            }
             process_timer_messages(data);
             send_identified();
           }
@@ -197,6 +201,10 @@ function send_identified() {
                  // options: 'fake:true'
                 },
           success: function(data) {
+            if (typeof data == "object" && data["cease"]) {
+              window.location.href = '../index.php';
+              return;
+            }
             process_timer_messages(data);
           }
          });
@@ -209,6 +217,10 @@ function send_heartbeat() {
                  message: 'HEARTBEAT',
                  confirmed: 1},
           success: function(data) {
+            if (typeof data == "object" && data["cease"]) {
+              window.location.href = '../index.php';
+              return;
+            }
             process_timer_messages(data);
           }
          });
@@ -222,6 +234,10 @@ function send_started() {
                  message: 'STARTED',
                  confirmed: 1},
           success: function(data) {
+            if (typeof data == "object" && data["cease"]) {
+              window.location.href = '../index.php';
+              return;
+            }
             process_timer_messages(data);
           }
          });
@@ -239,6 +255,10 @@ function send_finished() {
          {type: 'POST',
           data: data,
           success: function(data) {
+            if (typeof data == "object" && data["cease"]) {
+              window.location.href = '../index.php';
+              return;
+            }
             show_not_racing();  // Will be immediately changed back, most likely.
             process_timer_messages(data);
           }

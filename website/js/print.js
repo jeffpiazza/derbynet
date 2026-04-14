@@ -70,6 +70,11 @@ function on_tr_click(event) {
 }
 
 function process_racer_list(data) {
+  if (data.hasOwnProperty('cease')) {
+    clearInterval(g_poll_interval);
+    window.location.href = '../index.php';
+    return;
+  }
   var table = $("div#subject-racers table");
   $.each(data.racers, function (index, racer) {
     var racerid = racer.racerid;
@@ -132,6 +137,11 @@ function make_classes_and_ranks(data) {
 }
 
 function process_award_list(data) {
+  if (data.hasOwnProperty('cease')) {
+    clearInterval(g_poll_interval);
+    window.location.href = '../index.php';
+    return;
+  }
   var awardtypes = make_award_types(data);
   var classes_and_ranks = make_classes_and_ranks(data);
   var table = $("div#subject-awards table");
@@ -208,10 +218,6 @@ function poll() {
           data: {query: "racer.list",
                  order: $("#sortorder-racers option:selected").val()},
           success: function(data) {
-            if (data.hasOwnProperty('cease')) {
-              clearInterval(g_poll_interval);
-              window.location.href = '../index.php';
-            }
             process_racer_list(data);
           },
          });

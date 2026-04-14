@@ -27,9 +27,12 @@ RUN apk update && \
     apk add php-pdo_odbc && \
     apk add php-pdo_mysql
 
+RUN ls /usr/sbin/
+
 # This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
-# PHP 8.2.  If that changes, it's time to update.
-RUN ls /usr/sbin/php-fpm83 || exit 1
+# PHP 8.4.  If that changes, it's time to update.
+# (Run alpine image in debug to see what php-fpm version it has.)
+RUN ls /usr/sbin/php-fpm84 || exit 1
 
 ARG WWW_ROOT=/var/www/html
 
@@ -44,7 +47,7 @@ RUN rm -rf $WWW_ROOT/local/* $WWW_ROOT/index*.html && \
 
 # The set-timeout.sh script may be needed to prevent timeouts under automated testing.
 # Under "normal" production use, stock timeouts are probably OK.
-COPY installer/docker/alpine-* installer/docker/set-timeout.sh /usr/local/bin
+COPY installer/docker/alpine-* installer/docker/set-timeout.sh /usr/local/bin/
 
 # How large are the pictures you want to upload?  8M covers an 18-megapixel
 # photo.
@@ -53,9 +56,15 @@ ENV MAX_UPLOAD_SIZE=16M
 RUN bash /usr/local/bin/alpine-snakeoil.sh && \
     bash /usr/local/bin/alpine-configure-nginx.sh
 
+# Redirect logs to stdout/stderr
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    sed -i 's/^;* *error_log = .*/error_log = \/dev\/stderr/' /etc/php84/php-fpm.conf && \
+    sed -i 's/^;* *catch_workers_output = .*/catch_workers_output = yes/' /etc/php84/php-fpm.d/www.conf
+
 VOLUME /var/lib/derbynet
 
 EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm83 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm84 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]

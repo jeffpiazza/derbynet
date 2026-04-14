@@ -36,11 +36,11 @@ $(function() {
 
     KioskPoller.param_callback = function(parameters) {
       console.log(parameters);
-      if (parameters.title != title) {
+      if (parameters.hasOwnProperty('title') && parameters.title != title) {
         console.log('Changing title');
         $("#qrcode-title").text(title = parameters.title);
       }
-      if (parameters.content != content) {
+      if (parameters.hasOwnProperty('content') && parameters.content != content) {
         console.log('Changing content');
         if (!qrcode) {
           console.log('dim', dim, 'content', parameters.content);

@@ -21,14 +21,52 @@ class DriversLicenseDocument extends PrintableRacerDocument {
       'date_of_issue' => array('type' => 'string',
                                'desc' => 'Date of Issue',
                                'default' => date('F j, Y')),
-      );
+      'header_text' => array('type' => 'string',
+                             'desc' => 'Header text',
+                             'default' => 'Pinewood Derby Racing License'),
+      'footer_text' => array('type' => 'string',
+                             'desc' => 'Footer text',
+                             'default' => 'Registry of Pinewood Vehicles'),
+      'color_scheme' => array('type' => 'radio',
+                              'desc' => 'Color Scheme',
+                              'values' => array(array('value' => 'blue',
+                                                      'desc' => 'Blue'),
+                                                array('value' => 'pink',
+                                                      'desc' => 'Pink')),
+                              'default' => 'Blue'),
+    );
   }
 
+  function AverageColor($color1, $color2) {
+    return array(($color1[0] + $color2[0]) / 2,
+                 ($color1[0] + $color2[0]) / 2,
+                 ($color1[0] + $color2[0]) / 2);
+  }
+  function SetFillColor($rgb) {
+    $this->pdf->SetFillColor($rgb[0], $rgb[1], $rgb[2]);
+  }
+  function SetTextColor($rgb) {
+    $this->pdf->SetTextColor($rgb[0], $rgb[1], $rgb[2]);
+  }
+
+  protected $stripes_color;
+  protected $font_color;  // for header and footer
+
+  
   function StartDocument() {
     $this->initialize_pdf('L', 'in', 'Letter');
     $this->initialize_layout(3.5, 2.5);
     $this->layout->SetHorizontalGap(0.1);
     $this->layout->SetVerticalGap(0.1);
+
+    $color_scheme = $this->get_option('color_scheme');
+    if ($color_scheme == 'pink') {
+      $this->stripes_color = array(0xd8, 0x2e, 0x8a);
+      $this->font_color = array(0xff, 0xff, 0xff);
+    } else {  // 'blue', the default
+      $this->stripes_color = array(0x02, 0x38, 0x82);
+      $this->font_color = array(0xf7, 0xd1, 0x17);
+    }
   }
 
   function DrawOneAt($x, $y, &$racer) {
@@ -80,14 +118,15 @@ class DriversLicenseDocument extends PrintableRacerDocument {
                              array(new SetFontTag('Times', '', 10), 'Date of Issue: ',
                                    new SetFontTag('Times', 'B', 10), $issue_date->format('l, F j, Y')));
 
-    $this->pdf->SetFillColor(0x02, 0x38, 0x82);
+    $this->SetFillColor($this->stripes_color);
     $this->pdf->Rect($x + 0.625, $y + 2.285, 2.75, 0.15, 'F');
+
     $this->pdf->LinearGradient($x + 0.625, $y + 2.285, 1.5, 0.15,
-                               array(129, 155, 192),  // Halfway between white and final blue
-                               array(0x02, 0x38, 0x82));
-    $this->pdf->SetTextColor(0xf7, 0xd1, 0x17);
+                               $this->AverageColor($this->stripes_color, array(0xff, 0xff, 0xff)),
+                               $this->stripes_color);
+    $this->SetTextColor($this->font_color);
     $this->pdf->SetFont('Arial', 'B', 8);
-    $this->pdf->Text($x + 1.75 - 0.0625, $y + 2.40, 'Registry of Pinewood Vehicles');
+    $this->pdf->Text($x + 1.75 - 0.0625, $y + 2.40, $this->get_option('footer_text'));
     $this->pdf->SetTextColor(0);
 
     // Watermark over everything, including the photo
@@ -100,7 +139,7 @@ class DriversLicenseDocument extends PrintableRacerDocument {
 
   // The "banner" comprises a blue horizontal line, with small lines above and below.
   protected function DrawBanner($x, $y) {
-    $this->pdf->SetFillColor(0x02, 0x38, 0x82);
+    $this->SetFillColor($this->stripes_color);
 
     $this->pdf->Rect($x + 0.125, $y + 0.125, 3.25, 0.010, 'F');
     $this->pdf->Rect($x + 0.125, $y + 0.150, 3.25, 0.010, 'F');
@@ -113,8 +152,8 @@ class DriversLicenseDocument extends PrintableRacerDocument {
 
   protected function DrawBannerText($x, $y) {
     $this->pdf->SetFont('Arial', 'B', 10);
-    $this->pdf->SetTextColor(0xf7, 0xd1, 0x17);
-    $this->pdf->Text($x + 0.175, $y + 0.305, 'Pinewood Derby Racing License');
+    $this->SetTextColor($this->font_color);
+    $this->pdf->Text($x + 0.175, $y + 0.305, $this->get_option('header_text'));
     $this->pdf->SetTextColor(0);
   }
 }

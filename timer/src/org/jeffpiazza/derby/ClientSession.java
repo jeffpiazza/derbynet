@@ -25,6 +25,8 @@ public class ClientSession {
   private static final List<String> kTimerLogHeaders = new ArrayList<String>(
       Arrays.asList("Content-Type", "text/plain"));
 
+  // Thrown when an unsuccessful HTTP response code is received.  Interpreted by
+  // the ...WithVariations methods.
   public static class HttpException extends IOException {
     public HttpException(int responseCode, String responseMessage, URL url) {
       this.responseCode = responseCode;
@@ -51,6 +53,9 @@ public class ClientSession {
 
     }
   }
+
+  // Thrown when the server sends with a "cease polling" response
+  public static class CeasePollingException extends IOException { }
 
   public ClientSession(String base_url) {
     LogWriter.info("Attempting connection to " + base_url);
@@ -230,6 +235,9 @@ public class ClientSession {
         writer.close(); // writer.close() may block.
       }
     } while ((url = urlFromRedirection(connection)) != null);
+    // HttpURLConnection.getFollowRedirects() returns true; the connection likely
+    // sees and acts on a 302 response before urlFromRedirection gets a chance
+    // to see it.
 
     return getResponse(connection);
   }
@@ -350,17 +358,34 @@ public class ClientSession {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
-      return db.parse(inputStream).getDocumentElement();
-    } catch (Exception e) {
+      Element response = db.parse(inputStream).getDocumentElement();
+      if (response.hasAttribute("itemprop")
+          && response.getAttribute("itemprop").equals("cease-polling")) {
+        throw new CeasePollingException();
+      }
+      return response;
+    } catch (CeasePollingException cpe) {
+      throw cpe;
+    } catch (org.xml.sax.SAXParseException e) {
+      // This happens if the server responds with JSON instead of HTML.
+      // Mostly happens when a cease-polling response is substituted for the
+      // normal one (hosted derbynet).
+      if (e.getLineNumber() == 1 && e.getColumnNumber() == 1) {
+        throw new CeasePollingException();
+      }
+      LogWriter.stacktrace(e);
+    } catch (Throwable e) {
       LogWriter.stacktrace(e);
     }
     LogWriter.httpResponse("Unparseable response for message");
-    inputStream.reset();
-    byte[] buffer = new byte[1024];
-    int bytesRead;
-    while ((bytesRead = inputStream.read(buffer)) != -1) {
-      System.out.write(buffer, 0, bytesRead);
-      LogWriter.httpResponse(new String(buffer, 0, bytesRead));
+    if (inputStream.markSupported()) {
+      inputStream.reset();
+      byte[] buffer = new byte[1024];
+      int bytesRead;
+      while ((bytesRead = inputStream.read(buffer)) != -1) {
+        System.out.write(buffer, 0, bytesRead);
+        LogWriter.httpResponse(new String(buffer, 0, bytesRead));
+      }
     }
     return null;
   }
