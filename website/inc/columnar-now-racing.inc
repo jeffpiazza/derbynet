@@ -65,7 +65,7 @@ $now_running = get_running_round();
 for ($lane = 1; $lane <= $nlanes; ++$lane) {
 ?>
   <div class="lane">
-      <div class="lane_number <?php echo $lane_colors[$lane - 1]; ?>_solid_color">X</div>
+      <div class="lane_number <?php echo $lane_colors[lane_to_column($lane)]; ?>_solid_color">X</div>
       <div class="rollable">
 <?php  // Don't be fooled -- this is just the initial, empty racer-entry for each lane.
        // Real content is created by javascript code dynamically. ?> 
