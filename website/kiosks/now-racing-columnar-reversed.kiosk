@@ -1,6 +1,9 @@
 <?php @session_start();
 
-$lane_to_column_fn =
+function lane_to_column($lane) {  // PHP
+  return get_lane_count() - $lane;
+}
+$lane_to_column_fn =    // javascript
 "function lane_to_column(lane) {
   return g_number_of_lanes - lane;
 }";

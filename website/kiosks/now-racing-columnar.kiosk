@@ -1,6 +1,9 @@
 <?php @session_start();
 
-$lane_to_column_fn =
+function lane_to_column($lane) {  // PHP
+  return $lane - 1;
+}
+$lane_to_column_fn =    // javascript
 "function lane_to_column(lane) {
   return lane - 1;
 }";
