@@ -260,7 +260,7 @@ class TimerProxy {
         // to be idempotent.  But since we convey this.result with the event,
         // maybe not.
         if (valid && this.result.isFilled() && !was_filled) {
-          TimerEvent.send('RACE_FINISHED', this.argsForRaceFinished());
+          TimerEvent.sendImmediately('RACE_FINISHED', this.argsForRaceFinished());
         }
       }
       break;
@@ -270,7 +270,7 @@ class TimerProxy {
       break;
     }
     case 'PARTIAL_LANE_RESULT_TIME': {
-      TimerEvent.send('LANE_RESULT', [this.partialResultLane, args[0]]);
+      TimerEvent.sendImmediately('LANE_RESULT', [this.partialResultLane, args[0]]);
       this.partialResultLane = null;
       break;
     }

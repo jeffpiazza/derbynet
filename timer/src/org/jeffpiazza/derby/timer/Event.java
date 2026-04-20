@@ -67,6 +67,10 @@ public enum Event {
     }
   }
 
+  public static void sendImmediately(Event event, String[] args) {
+    handleEvent(event, args);
+  }
+
   public static void sendAt(long deadline, Event event) {
     synchronized (eventsQueue) {
       delayedEvents.
@@ -115,6 +119,18 @@ public enum Event {
         }
       });
 
+  private static void handleEvent(Event e, String[] args) {
+    for (Handler handler : Event.handlers) {
+      try {
+        handler.onEvent(e, args);
+      } catch (Throwable th) {
+        LogWriter.info("Caught throwable from handler for "
+            + e.name());
+        LogWriter.stacktrace(th);
+      }
+    }
+  }
+
   private static Thread eventPoller = new Thread() {
     @Override
     public void run() {
@@ -145,15 +161,7 @@ public enum Event {
           }
         }
         if (e != null) {
-          for (Handler handler : Event.handlers) {
-            try {
-              handler.onEvent(e.event(), e.args());
-            } catch (Throwable th) {
-              LogWriter.info("Caught throwable from handler for "
-                  + e.event().name());
-              LogWriter.stacktrace(th);
-            }
-          }
+          handleEvent(e.event(), e.args());
         }
       }
     }

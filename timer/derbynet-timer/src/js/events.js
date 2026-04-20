@@ -77,10 +77,14 @@ class TimerEvent {
   }
 
   static sendAt(when, event, args) {
-    sendAfterMs(when - Date.now(), event, args);
+    this.sendAfterMs(when - Date.now(), event, args);
+  }
+
+  static sendImmediately(event, args) {
+    this.handleEvent(event, args);
   }
   
-  static trigger(event, args) {
+  static handleEvent(event, args) {
     if (Flag.debug_serial.value) {
       g_logger.debug_msg('trigger ' + event);
     }

@@ -13,7 +13,7 @@ if (window.Worker) {
     case 'EVENT':
       var event = e.data[0];
       var args = e.data[1];
-      TimerEvent.trigger(event, args);
+      TimerEvent.handleEvent(event, args);
       break;
     case 'LOGGER':
       g_logger && g_logger.poll();
