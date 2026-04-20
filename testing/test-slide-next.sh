@@ -118,7 +118,7 @@ curl_getj "action.php?query=slide.next&mode=slide&file=zzz" |
 
 # Alt slideshow
 curl_getj "action.php?query=slide.next&subdir=alt" | \
-    jq '    (.photo.photo | test("slide.php/title"))' | \
+    jq '    (.photo.photo | test("slide.php/alt/title"))' | \
     expect_eq true
 
 curl_getj "action.php?query=slide.next&subdir=alt&mode=slide" | \
