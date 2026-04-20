@@ -327,7 +327,8 @@ public class TimerDeviceWithProfile extends TimerDeviceBase
         break;
       }
       case PARTIAL_LANE_RESULT_TIME: {
-        Event.send(Event.LANE_RESULT, new String[]{partialResultLane, args[0]});
+        Event.sendImmediately(Event.LANE_RESULT,
+                              new String[]{partialResultLane, args[0]});
         partialResultLane = null;
         break;
       }

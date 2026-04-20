@@ -1,6 +1,10 @@
 events.js -- This is the central control mechanism.
     TimerEvent.register(handler) registers an object to receive events.
-    TimerEvent.send(event, args) sends an event to all registered event handlers.
+    TimerEvent.send(event, args) posts (via the clock-worker thread) an event to
+        all registered event handlers.
+    TimerEvent.sendImmediately(event, args) posts an event for immediate
+        processing to all registered event handlers, without queuing behind
+        any other pending events.
 
 host_poller.js -- handles communicating with the web server.  Messages from the
 server get converted into timer events, and relevant timer events get reported
