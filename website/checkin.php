@@ -6,6 +6,7 @@ session_write_close();
 require_once('inc/banner.inc');
 require_once('inc/car-numbering.inc');
 require_once('inc/schema_version.inc');
+require_once('inc/token.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/classes.inc');
 require_once('inc/partitions.inc');
@@ -420,7 +421,10 @@ mobile_select_refresh($("#bulk_who"));
     <div id="mobile-checkin-qrcode" style="width: 256px; margin-left: 122px;"></div>
     <div id="mobile-checkin-title" style="text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 25px; margin-top: 10px;"></div>
     <input id="mobile-checkin-url" name="mobile-checkin-url" type="text" />
-
+    <input id="mobile-checkin-token" type="hidden" value="<?php
+       // If the user isn't logged in, they'll be redirected to a login page and won't
+       // receive this HTML text.
+       echo token_for_mcheckin(); ?>"/>
     <a id="mcheckin-link" class="button_link" href="mcheckin.php">Mobile Check-In &gt;</a>
     <input type="button" value="Close" onclick="close_modal('#qrcode_settings_modal');"/>
   </form>

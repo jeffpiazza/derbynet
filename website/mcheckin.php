@@ -1,13 +1,21 @@
 <?php @session_start();
 require_once('inc/banner.inc');
 require_once('inc/authorize.inc');
+require_once('inc/token.inc');
 
-$_SESSION['permissions'] |=
+if (isset($_GET['tok']) && validate_token_for_mcheckin($_GET['tok'])) {
+  $_SESSION['permissions'] |=
     CHECK_IN_RACERS_PERMISSION |
     REVERT_CHECK_IN_PERMISSION |
     PHOTO_UPLOAD_PERMISSION
-;
+  ;
+}
 session_write_close();
+
+require_permission(CHECK_IN_RACERS_PERMISSION);
+require_permission(REVERT_CHECK_IN_PERMISSION);
+require_permission(PHOTO_UPLOAD_PERMISSION);
+    
 ?><!DOCTYPE html>
 <html>
 <head>

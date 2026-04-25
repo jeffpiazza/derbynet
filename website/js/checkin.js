@@ -477,14 +477,24 @@ function handle_qrcode_button_click() {
   update_qrcode();
   show_modal("#qrcode_settings_modal");
 }
+
 function on_mobile_checkin_submit() {
   console.log('on_mobile_checkin_submit');
-  update_qrcode();
+  // update_qrcode();
   return false;
 }
+
 $(function() {
-  $("#mobile-checkin-url").val(g_preferred_urls[0] + "/mcheckin.php");
-  $("#mobile-checkin-form").on('submit', on_mobile_checkin_submit);
+  // TODO We want the timestamp to be valid for 10min after the dialog opens,
+  // not 10min after the page loads.
+  // TODO The secret has to remain on the server, so generating the timestamp has to be callback.
+  // But then how to ensure only a valid caller?  Proving legitimacy requires a secret.
+  // Getting a new token by merely reloading the page means anyone can get a new token, which
+  // undercuts the point of the token.
+  $("#mobile-checkin-url").val(g_preferred_urls[0] + "/mcheckin.php?tok=" + $("#mobile-checkin-token").val());
+  $("#mobile-checkin-url").on('keyup mouseup', update_qrcode);
+  // TODO Remove on_mobile_checkin_submit?
+  // $("#mobile-checkin-form").on('submit', on_mobile_checkin_submit);
 });
 
 function remove_search_highlighting() {
