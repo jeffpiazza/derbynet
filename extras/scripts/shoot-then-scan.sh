@@ -37,34 +37,40 @@ trap cleanup 2 3 6
 
 # Depends on $PHOTO_DIR being defined when executed.
 loop_to_capture_tethered() {
-    EVER_FOUND_CAMERA=0
-
+    # If camera is or becomes disconnected, gphoto2 returns immediately with an error, without
+    # invoking hook script for "start".
+    #
+    # Otherwise, it invokes the hook script with "start" (once) and then
+    # continuously captures photos from the tethered camera, invoking the hook
+    # script with a "download" argument each time.
+    
     HOOK_SCRIPT="`mktemp`"
     cat <<EOF >"$HOOK_SCRIPT"
 #! /bin/sh
-if [ "\$ACTION" = "download" ] ; then
+>&2 echo gphoto2 hook script "ACTION=\$ACTION"
+if [ "\$ACTION" = "start" ] ; then
+    >&2 echo Ready for my close-up
+    test -x /usr/bin/flite && flite -t "Ready for my close-up"
+    #
     # For "announce" command definition:
     . "$LIB_DIR"/photo-preamble.sh
     . "$LIB_DIR"/photo-functions.sh
+    test -f /etc/derbynet.conf  && . /etc/derbynet.conf
+    announce idle
+elif [ "\$ACTION" = "download" ] ; then
+    # A file download from the camera has finished
+    #
+    # For "announce" command definition:
+    . "$LIB_DIR"/photo-preamble.sh
+    . "$LIB_DIR"/photo-functions.sh
+    test -f /etc/derbynet.conf  && . /etc/derbynet.conf
 
-    # The file is already downloaded from the camera by the time 
-    # this action comes
-    >&2 echo Download action "\$ARGUMENT"
+    >&2 echo Downloaded photo to "\$ARGUMENT"
     ln -sf "\$ARGUMENT" "$CUR_DIR/last-photo.jpg"
     >&2 echo Link formed
-    test -f /etc/derbynet.conf  && . /etc/derbynet.conf
     announce capture-ok &
-elif [ "\$ACTION" = "start" ] ; then
-    if [ $EVER_FOUND_CAMERA -eq 0 ] ; then
-       >&2 echo Ready for my close-up
-       test -x /usr/bin/flite && flite -t "Ready for my close-up"
-       EVER_FOUND_CAMERA=1
-    else
-       >&2 echo hook script action start
-    fi
-else
-    >&2 echo hook script action "\$ACTION"
 fi
+>&2 echo gphoto2 hook script finished
 EOF
     chmod +x "$HOOK_SCRIPT"
 
@@ -80,7 +86,7 @@ EOF
         if [ $GPHOTO2_OK -eq 0 ] ; then
             announce no-camera
             sleep 5s
-	fi
+	    fi
         sleep 1s
     done
 }
