@@ -6,6 +6,7 @@ require_once('inc/authorize.inc');
 session_write_close();
 require_once('inc/partitions.inc');
 require_once('inc/banner.inc');
+require_once('inc/emblems.inc');
 require_once('inc/photo-config.inc');
 
 require_once('print/inc/printable_racer_document.inc');
@@ -66,16 +67,20 @@ uasort($doc_classes, 'order_by_name');
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
 <?php require('inc/stylesheet.inc'); ?>
+<link rel="stylesheet" type="text/css" href="css/image-picker.css"/>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/print.css"/>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/ajax-setup.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="js/image-picker.min.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/print.js"></script>
 <script type="text/javascript">
-var doc_classes = <?php echo json_encode($doc_classes); ?>;
+    var doc_classes = <?php echo json_encode($doc_classes); ?>;
+    var g_emblems = <?php echo json_encode(all_emblem_image_stems()); ?>;
 </script>
 </head>
 <body>
@@ -122,7 +127,9 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
      <p id="sortorder-paragraph">
        <label for="sortorder-racers">Choose sort order:</label>
 
-       <select id="sortorder-racers" onchange="handle_sortorder_racers_change()">
+       <select id="sortorder-racers"
+                 data-wrapper-class="mini-mselect"
+                 onchange="handle_sortorder_racers_change()">
          <option value="checkin">Check-In Order</option>
           <option value="name">Last Name</option>
           <option value="class"><?php echo htmlspecialchars(group_label(), ENT_QUOTES, 'UTF-8'); ?></option>
@@ -141,24 +148,28 @@ var doc_classes = <?php echo json_encode($doc_classes); ?>;
     <div id="sortorder-summary-div">
     </div>
 
-    <input type="button" value="Select All" onclick="select_all(true)"/>
-    <input type="button" value="Deselect All" onclick="select_all(false)"/>
+    <input type="button" value="Select All" onclick="select_all(true)" class="mini-mini"/>
+    <input type="button" value="Deselect All" onclick="select_all(false)" class="mini-mini"/>
 </div>
 
 <div id="walkins-div" class="hidden">
   Add
   <input id="walkins-count" type="number" class="not-mobile" value="0"/>
   extras
-  <input id='walkins-by-partition' type='checkbox' class='flipswitch' checked='checked'
+  <input id='walkins-by-partition' type='checkbox' class='flipswitch mini-flipswitch' checked='checked'
      data-on-text="Per <?php echo group_label();?>"
      data-off-text="Overall"/>
 </div>
 
+<div id="document-scroll">
 <?php
 // Options for each document type are in a div[data-docname='...'], and so can
 // be switched on and off depending on which document type is chosen.
 $doc_index = 0;  // To distinguish radio options, if needed
 foreach ($doc_classes as $c => $details) {
+  if (empty($details['options'])) {
+    continue;
+  }
   ++$doc_index;
   echo "<div data-docname=\"".$c."\" class=\"sub-options hidden\">";
   echo "<p>Options for <b>".$details['name']."</b></p>";
@@ -191,6 +202,52 @@ foreach ($doc_classes as $c => $details) {
         $first_radio = false;
       }
       echo "</div>\n";
+    } else if ($opt_data['type'] == 'emblems') {
+      $emblems_default = $opt_data['default'];
+
+      $century_assignments = $emblems_default['centuries'];
+      $partition_assignments = $emblems_default['partitions'];
+
+      echo "<label for='${ctrl_name}'>Emblems:</label>";
+      echo "<select id='{$ctrl_name}' name='{$ctrl_name}' style='font-size:24px;' onchange='on_emblems_select_change(this)'>";
+      echo "<option value='by-carno' selected='selected'>By car number</option>";
+      // TODO
+      echo "<option value='by-part' >By ".partition_label_lc()."</option>";
+      echo "<option value='none'>None</option>";
+      echo "</select>";
+      
+      echo "<div id='{$ctrl_name}-bycarno'><ul class='mlistview has-alts'>\n";
+      $max_carno = read_single_value('SELECT COALESCE(MAX(carnumber), 999) FROM RegistrationInfo');
+      $max_century = 1 + intdiv($max_carno, 100);
+      for ($century = 0; $century < $max_century; ++$century) {
+        echo "<li data-emblem='{$century}' style='height: 60px; background-color: #f6f6f6;'>";
+        echo "<p style='height: 60px; font-weight: bold; font-size: 16px;'>{$century}00-{$century}99";
+        if (!is_null($century_assignments[$century])) {
+          $image_url = "image.php/{$century_assignments[$century]}";
+          echo " <img style='max-height:60px; position: absolute; top: 0; right: 0;' src='{$image_url}'/>";
+        }
+        echo "</p>";
+        echo "<a onclick='on_cartags_image_click(this)'></a>";
+        echo "</li>\n";
+      }
+      echo "</ul></div>\n";
+
+      echo "<div id='${ctrl_name}-bypart' class='hidden'><ul class='mlistview has-alts'>\n";
+      $century = -1;
+      foreach (all_partitions() as $partition) {  // all_partitions returns in sort order
+        ++$century;
+        echo "<li data-emblem='{$century}' style='height: 60px; background-color: #f6f6f6;'>";
+        echo "<p style='height: 60px; font-weight: bold; font-size: 16px;'>";
+        echo htmlspecialchars($partition, ENT_QUOTES, 'UTF-8');
+        if (!is_null($partition_assignments[$century])) {
+          $image_url = "image.php/{$partition_assignments[$century]}";
+          echo " <img style='max-height:60px; position: absolute; top: 0; right: 0;' src='{$image_url}'/>";
+        }
+        echo "</p>";
+        echo "<a onclick='on_cartags_image_click(this)'></a>";
+        echo "</li>\n";
+      }
+      echo "</ul></div>\n";
     }
     echo "</div>\n";
   }
@@ -198,7 +255,7 @@ foreach ($doc_classes as $c => $details) {
 }
 ?>
 </div>
-
+</div>
 
 
 <div id="subjects-context">
@@ -219,6 +276,22 @@ foreach ($doc_classes as $c => $details) {
     </div>
   </div>
   &nbsp;
+</div>
+
+<div id="image-picker-modal" class="modal_dialog wide_modal hidden block_buttons">
+ <p>CarTags image picker</p>
+
+ <select id="image-picker-select" class='not-mobile'>
+  <?php
+    $stem_index = 0;
+    foreach (all_emblem_image_stems() as $stem) {
+      $image_url = "image.php/{$stem}";
+      echo "<option data-img-src='$image_url'  data-img-class='image-picker-thumb'>$stem_index</option>\n";
+      ++$stem_index;
+    }
+  ?>
+ </select>
+ <input id="image-picker-close" type="button" value="Close"/>
 </div>
 
 </body>

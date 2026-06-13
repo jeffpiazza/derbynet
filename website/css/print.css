@@ -9,9 +9,6 @@ td.photo-column {
 div#racers table tr:hover {
   cursor: pointer;
 }
-div.sub-options {
-  margin-top: 50px;
-}
 
 div.sub-options .param-string {
   width: 100%;
@@ -23,11 +20,18 @@ div.sub-options .param {
 
 div#page-controls {
   float: left;
-  width: 20%;
-  min-width: 260px;
+  width: 300px;
   height: 100%;
   margin-left: 30px;
   margin-right: 30px;
+}
+
+div#document-scroll {
+  position: absolute;
+  top: 410px;
+  bottom: 0px;
+  width: 300px; /* Has to match div#page-controls */
+  overflow-y: auto;
 }
 
 #sortorder-paragraph {
@@ -35,6 +39,9 @@ div#page-controls {
   margin-right: 10px; 
 }
 
+#walkins-div {
+  margin-top: 10px;
+}
 #walkins-count {
   width: 3em;
 }
@@ -76,4 +83,9 @@ div#subjects-context td p.awardname {
 }
 div#subjects-context td .awardtype {
   font-style: italic;
+}
+
+ul.thumbnails.image_picker_selector li .thumbnail img.image-picker-thumb {
+  max-height: 100px;
+  max-width:  100px;
 }

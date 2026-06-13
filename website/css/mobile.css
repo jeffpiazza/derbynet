@@ -202,6 +202,13 @@ div.mselect-inner:after {
   right: .5625em;
 }
 
+div.mini-mselect {
+  font-size: 16px;
+}
+div.mini-mselect span {
+  font-size: 1em;
+}
+
 
 div.flipswitch {
   background-clip:	padding-box;
@@ -226,6 +233,10 @@ div.flipswitch {
   user-select:	none;
   vertical-align:	middle;
   -webkit-tap-highlight-color:	rgba(0, 0, 0, 0);
+}
+
+.mini-flipswitch {
+  font-size: 12px;
 }
 
 div.flipswitch .on {
@@ -400,20 +411,17 @@ div.flipswitch.racing.checked {
 
 .mlistview.has-alts > li > a:first-child,
 .mlistview.has-alts > li > p:first-child {
-  font-size: 1em;
   line-height: 1.3;
   font-family: sans-serif;
 
   font-weight: bold;
-  border-width: 1px;
+  border-width: 1px 0 0 0;
   border-style: solid;
 
   font-size: 16px;
-  margin: .5em 0;
   padding: .7em 1em;
   display: block;
   position: relative;
-  text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -424,15 +432,7 @@ div.flipswitch.racing.checked {
   user-select: none;
 
   margin: 0;
-  display: block;
-  position: relative;
   text-align: left;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-
-  border-width: 1px 0 0 0;
-  border-style: solid;
 
   margin-right: 2.5em;
   border-right-width: 0;

@@ -89,11 +89,11 @@ function flipswitch(checkboxes) {
 
     checkbox
       .removeClass(classes)
-      .wrap('<div>')
+      .wrap('<div>')  // Returns checkbox
       .before($('<span class="on"></span>').text(ontext))
       .before($('<span class="off"></span>').text(offtext))
       .on('change', function(event) { checkbox.parent().toggleClass('checked', checkbox.is(':checked')); })
-      .parent()
+      .parent()  // Switch to wrapping <div/>
       .addClass(classes)
       .toggleClass('checked', checkbox.is(':checked'))
       .on('click', function(event) {

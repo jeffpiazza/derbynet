@@ -22,7 +22,7 @@ function PartitionsModal(div_label, div_label_plural, partitions, callback) {
     // partitions_list is free
     $("<li/>")
       .appendTo(partitions_list)
-      .addClass('mlistview has-alts')
+      // .addClass('mlistview has-alts')
       .attr('data-partitionid', partitionid)
       .attr('data-partition', name)
       .attr('data-count', count)

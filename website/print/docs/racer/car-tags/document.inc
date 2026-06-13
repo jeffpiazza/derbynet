@@ -7,19 +7,67 @@
 // - optionally show a group-specific image
 
 require_once('inc/path-info.inc');
+require_once('inc/emblems.inc');
+
+function default_century_image_assignments() {
+  $all_emblem_images = all_emblem_image_stems();
+  $assignments = array();
+  $max_carno = read_single_value('SELECT COALESCE(MAX(carnumber), 999) FROM RegistrationInfo');
+  $max_century = intdiv($max_carno, 100);
+  for ($century = 0; $century <= $max_century; ++$century) {
+    if ($century < count($all_emblem_images)) {
+      $assignments[] = $all_emblem_images[$century];
+    } else {
+      $assignments[] = null;
+    }
+  }
+  return $assignments;
+}
+
+function default_partition_image_assignments() {
+  $all_emblem_images = all_emblem_image_stems();
+  $assignments = array();
+  $n_parts = read_single_value('SELECT COUNT(*) FROM Partitions');
+  for ($p = 0; $p < $n_parts; ++$p) {
+    if ($p < count($all_emblem_images)) {
+      $assignments[] = $all_emblem_images[$p];
+    } else {
+      $assignments[] = null;
+    }
+  }
+  return $assignments;
+}
 
 class CarTagsDocument extends PrintableRacerDocument {
+  protected $partitions = array();  // gives partition sortorder indexed by partitionid
+
   function name() { return "Car Tag"; }
 
   function get_available_options() {
-    return array('century_emblem' => array('type' => 'bool',
-                                       'desc' => 'Include emblems based on car number',
-                                       'default' => true));
+    // The 'default' value here gives default assignments by car number and by
+    // partition sortorder.
+    //
+    // The option value that's received is different: an array whose first
+    // element is a string, and the remaining elements give emblem numbers,
+    // indexed either by car number century or partition sortorder.
+    return array('emblems' => array('type' => 'emblems',
+                                    'desc' => 'Include emblems',
+                                    'default' =>
+                                        array('style' => 'century',
+                                              'centuries' => default_century_image_assignments(),
+                                              'partitions' => default_partition_image_assignments())));
   }
 
   function StartDocument() {
+    global $db;
     $this->initialize_pdf('L', 'in', 'Letter');
     $this->initialize_layout(2.75, 8.5);
+
+    $nparts = read_single_value('SELECT 1 + COALESCE(MAX(partitionid), 1) FROM Partitions', array(), 1);
+    $this->partitions = array_fill(0, $nparts, 0);
+    foreach($db->query('SELECT partitionid, sortorder FROM Partitions ORDER BY partitionid') AS $row) {
+      $this->partitions[$row['partitionid']] = $row['sortorder'];
+    }
   }
 
   function DrawOneAt($left, $top, &$racer) {
@@ -38,17 +86,22 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->RotatedCenteredName($left + 0.7, 2.75, $racer);
 
     $this->pdf->SetFont('Times', 'I', 15);
-    $this->pdf->RotatedCenteredText($left + 1.1, 2.75,  $racer['carname']);
+    $this->pdf->RotatedCenteredText($left + 1.1, 2.75, $racer['carname']);
 
     $this->pdf->SetFont('Times', '', 15);
     $this->pdf->RotatedCenteredText($left + 1.4, 2.75,  is_null($racer['note']) ? "" : $racer['note']);
 
-    if ($this->get_option('century_emblem')) {
+    $emblems = $this->get_option('emblems');
+    if ($emblems[0] != 'none') {
       // 2-inch rank image
       $this->pdf->SetXY($left, 5.5);
       $this->pdf->SetFont('Arial', '', 16);
       $this->pdf->SetFillColor(200, 200, 255);
-      $img_path = $this->path_to_century_emblem($racer);
+
+      $img_path = path_to_emblem_image(
+        $emblems[($emblems[0] == 'by-carno')
+                 ? 1+ intval($racer['carnumber'] / 100)
+                 : $this->partitions[intval($racer['partitionid'])]]);
       // $this->pdf->Rect($left, 5.5, 2.75, 2.00);
       if ($img_path && is_readable($img_path)) {
         list($width, $height) = @getimagesize($img_path);
@@ -71,15 +124,6 @@ class CarTagsDocument extends PrintableRacerDocument {
     $this->pdf->SetXY($left, 7.75);
     $this->pdf->SetFillColor(255, 255, 200);
     $this->pdf->Cell(2.75, 0.5, $racer['carnumber'], /* border */ 0, /* ln */ 0, "C");
-  }
-
-  // Group (class) names may vary from one event to another, and the assignment of
-  // classid to name is definitely unstable.  This is using the car number
-  // instead, and assuming that the hundreds digit identifies which image is
-  // desired.
-  static protected function path_to_century_emblem(&$racer) {
-    $grade = intval($racer['carnumber'] / 100);
-    return image_file_path("centuries".DIRECTORY_SEPARATOR. $grade . '00-series');
   }
 
   protected function RotatedCenteredName($cx, $cy, &$racer) {

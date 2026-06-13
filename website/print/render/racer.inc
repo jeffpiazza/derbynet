@@ -34,12 +34,13 @@ function derez_photos(&$racer) {
   }
 }
 
-function emit_walkins($next, $howmany) {
+function emit_walkins($next, $howmany, $partitionid) {
   global $doc;
   for ($car_no = $next; $car_no < $next + $howmany; ++$car_no) {
     $racer = array('racerid' => 0, 'carnumber' => $car_no,
                    'lastname' => '', 'firstname' => '',
                    'carname' => '', 'classid' => 0, 'class' => '', 'rankid' => 0, 'rank' => '',
+                   'partitionid' => $partitionid,
                    'imagefile' => '', 'carphoto' => '',
                    'note' => '', 'barcode' => sprintf('PWDwi%03d.', $car_no));
     $doc->DrawOne($racer);
@@ -69,7 +70,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
 
   $base_sql = 'SELECT racerid, carnumber, lastname, firstname, carname, '
     .' RegistrationInfo.classid, class, RegistrationInfo.rankid, rank,'
-    .' imagefile,'
+    .' RegistrationInfo.partitionid, imagefile,'
     .(schema_version() < 2 ? ' \'\' as carphoto' : ' carphoto').', '
     .(schema_version() < PARTITION_SCHEMA ? ' \'\' as note' : ' note')
     .' FROM '.inner_join('RegistrationInfo', 'Classes',
@@ -87,6 +88,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       global $db, $sql, $doc;
       $racer = array('racerid' => 0, 'carnumber' => $car_no, 'lastname' => '', 'firstname' => '',
                      'carname' => '', 'classid' => 0, 'class' => '', 'rankid' => 0, 'rank' => '',
+                     'partitionid' => 0,
                      'imagefile' => '', 'carphoto' => '',
                      'barcode' => sprintf('PWD%03d.', $car_no));
       $rs = $db->prepare($sql);
@@ -157,7 +159,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
       $walkins = intval(substr($walkins, 0, -1));
       foreach (next_car_numbers() as $partition) {
         $next = max($prev + $walkins, $partition['next_carnumber']);
-        emit_walkins($next, $walkins);
+        emit_walkins($next, $walkins, $partition['partitionid']);
         $prev = $next;
       }
     } else {
@@ -167,7 +169,7 @@ if (!is_subclass_of(document_class(), 'PrintableRacerDocument')) {
         $next = 1 + $max_carno;
       } else {
         // Assumes that the effect of $smallest is already reflected in MAX(carnumber)
-        $next = 1 + $mult * (1 + intdiv($max_carno, $mult));
+        $next = 1 + $mult * (1 + intdiv($max_carno, $mult, /*partitionid*/0));
       }
       emit_walkins($next, intval($walkins));
     }

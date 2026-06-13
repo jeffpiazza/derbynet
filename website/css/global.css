@@ -196,6 +196,17 @@ tbody {
   margin-bottom: 3px;
 }
 
+.block_buttons input.mini-mini {
+  height: 24px;
+  width: 140px;
+  padding: 5px;
+  line-height: 0.9;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+
 #ajax_working {
   position: fixed;
   background-color: green;
