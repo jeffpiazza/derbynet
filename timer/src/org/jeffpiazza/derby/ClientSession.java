@@ -217,6 +217,16 @@ public class ClientSession {
     do {
       connection = (HttpURLConnection) url.openConnection();
 
+      // Log default timeout values before setting them
+      int defaultConnectTimeout = connection.getConnectTimeout();
+      int defaultReadTimeout = connection.getReadTimeout();
+      LogWriter.info("Default timeouts - Connect: " + defaultConnectTimeout + "ms, Read: " + defaultReadTimeout + "ms");
+      System.err.println(Timestamp.string() + ": Default timeouts - Connect: " + defaultConnectTimeout + "ms, Read: " + defaultReadTimeout + "ms");
+
+      // Set timeouts to prevent hanging when server is unresponsive
+      connection.setConnectTimeout(10000);  // 10 seconds to establish connection
+      connection.setReadTimeout(5000);      // 5 seconds to read response
+
       connection.setRequestMethod(method);
       connection.addRequestProperty("User-Agent",
                                     "derby-timer.jar/" + Version.get());
@@ -247,6 +257,16 @@ public class ClientSession {
     HttpURLConnection connection;
     do {
       connection = (HttpURLConnection) url.openConnection();
+
+      // Log default timeout values before setting them
+      int defaultConnectTimeout = connection.getConnectTimeout();
+      int defaultReadTimeout = connection.getReadTimeout();
+      LogWriter.info("Default timeouts - Connect: " + defaultConnectTimeout + "ms, Read: " + defaultReadTimeout + "ms");
+      System.err.println(Timestamp.string() + ": Default timeouts - Connect: " + defaultConnectTimeout + "ms, Read: " + defaultReadTimeout + "ms");
+
+      // Set timeouts to prevent hanging when server is unresponsive
+      connection.setConnectTimeout(10000);  // 10 seconds to establish connection
+      connection.setReadTimeout(5000);      // 5 seconds to read response
 
       connection.setRequestMethod(method);
       connection.addRequestProperty("User-Agent",
