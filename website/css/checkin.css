@@ -302,3 +302,20 @@ p.warning a.ui-link {
 div.delete-extension {
   margin-top: 40px;
 }
+
+/* Design Categories Styling */
+#design_categories_section {
+  margin-top: 15px;
+  border-top: 1px solid #ddd;
+  padding-top: 15px;
+}
+
+#design_categories_section h3 {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+#design_categories_list label {
+  font-weight: normal;
+  font-size: 16px;
+}

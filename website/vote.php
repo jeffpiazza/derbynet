@@ -3,7 +3,7 @@
 require_once('inc/data.inc');
 require_once('inc/authorize.inc');
 session_write_close();
-require_once('inc/banner.inc');
+require_once('inc/save-banner.inc');
 require_once('inc/photo-config.inc');
 require_once('inc/awards.inc');
 require_once('inc/voterid.inc');
@@ -27,8 +27,22 @@ $is_open = read_raceinfo('balloting', 'closed') == 'open';
 var g_ballot;
 var g_awardid;
 var g_racerid;
+var g_is_design_award = {};
 <?php if ($is_open) { ?>
   $(function() { get_ballot(); });
+  $(function() {
+    $.ajax('action.php', {
+      type: 'GET',
+      data: {
+        query: 'award.design-list'
+      },
+      success: function(data) {
+        (data.awards || []).forEach(function(award) {
+          g_is_design_award[award.awardid] = true;
+        });
+      }
+    });
+  });
 <?php } ?>
 </script>
 <?php require('inc/stylesheet.inc'); ?>
