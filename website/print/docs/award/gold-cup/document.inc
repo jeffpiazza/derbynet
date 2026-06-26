@@ -1,7 +1,8 @@
 <?php
 
-require_once('inc/photo-config.inc');
+require_once('inc/partitions.inc');
 require_once('inc/path-info.inc');
+require_once('inc/photo-config.inc');
 
 class GoldCupAwardDocument extends PrintableAwardDocument {
   function name() { return "Gold Cup Award Certificate"; }
@@ -19,6 +20,18 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
       'logo' => array('type' => 'bool',
                       'desc' => 'Include logo in corner',
                       'default' => true),
+      'show_number' => array('type' => 'bool',
+                             'desc' => 'Show car number',
+                             'default' => false),
+      'show_car_name' => array('type' => 'bool',
+                               'desc' => 'Show car name',
+                               'default' => false),
+      'show_class_name' => array('type' => 'bool',
+                                'desc' => 'Show '.group_label(),
+                                'default' => false),
+      'show_rank_name' => array('type' => 'bool',
+                                'desc' => 'Show '.subgroup_label(),
+                                'default' => false),
         );
   }
 
@@ -27,6 +40,7 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
     $this->initialize_layout(11.0, 8.5);
   }
 
+  // Draw an underlaying rounded white rect with 3/4 opacity
   protected function DrawUnderlay($x, $y, $w, $h) {
     $this->pdf->SetAlpha(0.75);
     $this->pdf->SetFillColor(255, 255, 255);
@@ -37,6 +51,12 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
   // Horizontally-centered underlay
   protected function DrawCenteredUnderlay($cx, $y, $w, $h) {
     $this->DrawUnderlay($cx - $w / 2, $y, $w, $h);
+  }
+
+  protected function DrawCenteredTextWithUnderlay($cx, $y, $text, $line_height = 0.5, $box_height = 0.75) {
+    $width = $this->pdf->GetStringWidth($text);
+    $this->DrawCenteredUnderlay($cx, $y, $width + 1.0, $box_height);
+    $this->pdf->CenteredSequence($cx, $y + $line_height, array($text));
   }
   
   // $award argument contains these keys:
@@ -61,20 +81,33 @@ class GoldCupAwardDocument extends PrintableAwardDocument {
 
     $this->pdf->SetFont('BlackChancery', '', 30);
 
-    // Award name
-    $award_name_width = $this->pdf->GetStringWidth($award['awardname']);
-    $this->DrawCenteredUnderlay($cx, $top + 2.0, $award_name_width + 1.0, 0.75);
-    $this->pdf->CenteredSequence($cx, $top + 2.5, array($award['awardname']));
+    $this->DrawCenteredTextWithUnderlay($cx, $top + 2.0, $award['awardname']);
 
     $this->pdf->SetLineWidth(0.01);
     // Recipient
     if (isset($award['firstname'])) {
       $this->pdf->SetFont('BlackChancery', '', 50);
       $recip = $award['firstname'].' '.$award['lastname'];
-      $recip_width = $this->pdf->GetStringWidth($recip);
-      $recip_width += 1.0;
-      $this->DrawCenteredUnderlay($cx, $cy - 0.5, $recip_width, 1.0);
-      $this->pdf->CenteredSequence($cx, $cy, array($recip));
+      $this->DrawCenteredTextWithUnderlay($cx, $cy - 0.5, $recip);
+
+      $this->pdf->SetFont('BlackChancery', '', 28);
+      $y_details = $cy + 0.35;
+      if ($this->get_option('show_number')) {
+        $this->DrawCenteredTextWithUnderlay($cx, $y_details, $award['carnumber']."", 0.25, 0.37);
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_car_name')) {
+        $this->DrawCenteredTextWithUnderlay($cx, $y_details, $award['carname'], 0.25, 0.37);
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_class_name')) {
+        $this->DrawCenteredTextWithUnderlay($cx, $y_details, $award['class'], 0.25, 0.37);
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_rank_name')) {
+        $this->DrawCenteredTextWithUnderlay($cx, $y_details, $award['rank'], 0.25, 0.37);
+        $y_details += 0.37;
+      }
     } else {
       $this->pdf->SetDrawColor(0);
       $recip_width = 6.0;

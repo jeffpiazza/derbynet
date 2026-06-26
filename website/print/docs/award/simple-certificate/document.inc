@@ -1,5 +1,6 @@
 <?php
 
+require_once('inc/partitions.inc');
 require_once('inc/photo-config.inc');
 
 class SimpleAwardDocument extends PrintableAwardDocument {
@@ -15,6 +16,18 @@ class SimpleAwardDocument extends PrintableAwardDocument {
       'signatory2' => array('type' => 'string',
                              'desc' => 'Second Signatory',
                             'default' => 'Pinewood Derby Chair'),
+      'show_number' => array('type' => 'bool',
+                             'desc' => 'Show car number',
+                             'default' => false),
+      'show_car_name' => array('type' => 'bool',
+                               'desc' => 'Show car name',
+                               'default' => false),
+      'show_class_name' => array('type' => 'bool',
+                                'desc' => 'Show '.group_label(),
+                                'default' => false),
+      'show_rank_name' => array('type' => 'bool',
+                                'desc' => 'Show '.subgroup_label(),
+                                'default' => false),
         );
   }
 
@@ -59,6 +72,25 @@ class SimpleAwardDocument extends PrintableAwardDocument {
     if (isset($award['firstname'])) {
       $this->pdf->SetFont('BlackChancery', '', 50);
       $this->pdf->CenteredSequence($cx, $cy, array($award['firstname'].' '.$award['lastname']));
+
+      $this->pdf->SetFont('BlackChancery', '', 28);
+      $y_details = $cy + 0.35;
+      if ($this->get_option('show_number')) {
+        $this->pdf->CenteredSequence($cx, $y_details, array($award['carnumber'].""));
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_car_name')) {
+        $this->pdf->CenteredSequence($cx, $y_details, array($award['carname']));
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_class_name')) {
+        $this->pdf->CenteredSequence($cx, $y_details, array($award['class']));
+        $y_details += 0.37;
+      }
+      if ($this->get_option('show_rank_name')) {
+        $this->pdf->CenteredSequence($cx, $y_details, array($award['rank']));
+        $y_details += 0.37;
+      }
     } else {
       $this->pdf->SetLineWidth(0.01);
       $this->pdf->SetDrawColor(0);
