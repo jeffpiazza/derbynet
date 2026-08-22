@@ -147,13 +147,20 @@ if (have_permission(TIMER_MESSAGE_PERMISSION)) {
       write_raceinfo('refused-results', 1 + read_raceinfo('refused-results', 0));
       record_timer_finish(EVENT_TIMER_RESULT_REFUSED, $results, null);
     } else {
-      if (write_heat_results($results)) {
+      if (is_all_zeroes($results)) {
+        // Stop racing and get a human to intervene
         send_replay_REPLAY();
-        write_raceinfo('timer_current', '');
-        $current = get_running_round();
-        advance_heat($current, 'next', /* show failure */ false);
-        $racing_state = get_racing_state();
-        record_timer_finish(EVENT_HEAT_RESULT_FROM_TIMER, $results, $current);
+        set_racing_state(0);
+        echo "\n  <success/>\n";
+      } else {
+        if (write_heat_results($results)) {
+          send_replay_REPLAY();
+          write_raceinfo('timer_current', '');
+          $current = get_running_round();
+          advance_heat($current, 'next', /* show failure */ false);
+          $racing_state = get_racing_state();
+          record_timer_finish(EVENT_HEAT_RESULT_FROM_TIMER, $results, $current);
+        }
         echo "\n  <success/>\n";
       }
     }

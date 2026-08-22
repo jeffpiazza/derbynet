@@ -59,7 +59,7 @@ if (have_permission(CONTROL_RACE_PERMISSION)) {
       if (isset($_POST['roundid'])) {
         json_failure('cant_race',
                      "The first heat in this group has already been run.  "
-                     + "Please choose a heat without results.");
+                     ."Please choose a heat without results.");
       } else {
         // Clean up refused-results, even if the attempt was unsuccessful.
         write_raceinfo('refused-results', 0);

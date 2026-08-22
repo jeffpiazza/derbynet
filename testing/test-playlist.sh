@@ -54,6 +54,14 @@ curl_postj action.php "action=playlist.add&classid=4&round=1&top=3&bucketed=0&n_
 curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
 curl_getj "action.php?query=poll.kiosk&address=$KIOSK1" | expect_one now-racing.kiosk
 
+run_heat 1 1   101:0.00 102:0.00 - - x
+# An all-zeroes heat turns off now-racing
+curl_getj "action.php?query=poll.coordinator" | \
+    jq -e ".[\"current-heat\"] | .[\"now_racing\"] == false" >/dev/null || \
+    test_fails Still racing
+# Back to normal testing:
+curl_postj action.php "action=heat.select&roundid=1&now_racing=1" | check_jsuccess
+
 run_heat 1 1   101:1.00 102:2.00 - -
 run_heat 1 2   102:1.00 101:2.00 - -    x
 
