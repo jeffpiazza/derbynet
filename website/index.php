@@ -23,6 +23,9 @@ try {
   exit();
 }
 session_write_close();
+if ($_SESSION['role'] == '') {
+  $_SESSION['permissions'] = $roles['']['permissions'];
+}
 
 $show_voting_button =
   $schema_version >= BALLOTING_SCHEMA &&
