@@ -203,6 +203,9 @@ function handle_schedule_submit(roundid, n_times_per_lane, then_race) {
                    roundid: roundid,
                    n_times_per_lane: n_times_per_lane},
             success: function(data) {
+              if (data.outcome.summary != 'success') {
+                alert("Unsuccessful scheduling: " + data.outcome.description);
+              }
               process_coordinator_poll_json(data);
               if (then_race && data.outcome.summary == "success") {
                 handle_race_button(roundid);
