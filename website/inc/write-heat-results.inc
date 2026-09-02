@@ -6,7 +6,10 @@ require_once('inc/timer-test.inc');
 // Utility function used in action.timer-message
 function is_all_zeroes($results) {
   foreach ($results as $value) {
-    if (preg_match_all('/[^0.]/', $value['time']) > 0) {
+    if (!isset($value['time'])) {
+      return false;
+    } else if (preg_match('/[^0.]/', $value['time']) == 1) {
+      // At least one match for a non-zero character
       return false;
     }
   }
