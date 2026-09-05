@@ -22,6 +22,9 @@ public class HttpTask implements Runnable {
   private RemoteStartCallback remoteStartCallback;
   private AssignPortCallback assignPortCallback;
   private AssignDeviceCallback assignDeviceCallback;
+  // Store credentials for automatic re-authentication
+  private String role;
+  private String password;
 
   public static final long heartbeatPace = 500;  // ms.
 
@@ -94,7 +97,7 @@ public class HttpTask implements Runnable {
 
         if (login_ok) {
           callback.onLoginSuccess();
-          HttpTask task = new HttpTask(session);
+          HttpTask task = new HttpTask(session, role, password);
           connector.setHttpTask(task);
           task.run();
         }
@@ -102,8 +105,10 @@ public class HttpTask implements Runnable {
     }).start();
   }
 
-  public HttpTask(ClientSession session) {
+  public HttpTask(ClientSession session, String role, String password) {
     this.session = session;
+    this.role = role;
+    this.password = password;
     this.queue = new ArrayList<Message>();
     synchronized (queue) {
       queueMessage(new Message.Hello());
@@ -200,6 +205,44 @@ public class HttpTask implements Runnable {
     }
   }
 
+  // Check if the response indicates "not authorized"
+  private boolean isNotAuthorized(Element response) {
+    if (response == null) {
+      return false;
+    }
+    NodeList failures = response.getElementsByTagName("failure");
+    for (int i = 0; i < failures.getLength(); i++) {
+      Element failure = (Element) failures.item(i);
+      String code = failure.getAttribute("code");
+      if ("notauthorized".equals(code)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Attempt to re-authenticate with the server
+  private boolean reAuthenticate() {
+    try {
+      LogWriter.info("Session lost, attempting to re-authenticate...");
+      System.err.println(Timestamp.string() + ": Session lost, re-authenticating...");
+      JSONObject login_response = session.login(role, password);
+      boolean success = ClientSession.wasSuccessful(login_response);
+      if (success) {
+        LogWriter.info("Re-authentication successful");
+        System.err.println(Timestamp.string() + ": Re-authentication successful");
+      } else {
+        LogWriter.info("Re-authentication failed");
+        System.err.println(Timestamp.string() + ": Re-authentication failed");
+      }
+      return success;
+    } catch (IOException e) {
+      LogWriter.stacktrace(e);
+      System.err.println(Timestamp.string() + ": Re-authentication error: " + e.getMessage());
+      return false;
+    }
+  }
+
   // HttpTask has a queue for events to send, registers callbacks
   // for HEAT-READY(with lane mask) and ABORT.  Continually checks
   // queue, sending queued events; otherwise sends a HEARTBEAT and
@@ -255,11 +298,33 @@ public class HttpTask implements Runnable {
             return;
           } catch (ClientSession.HttpException he) {
             LogWriter.httpResponse(he.getMessage());
+            // Brief delay before retry to avoid hammering a recovering server
+            try {
+              Thread.sleep(1000);  // 1 second
+            } catch (InterruptedException ie) {
+            }
           } catch (Throwable t) {
             LogWriter.trace("Unable to send HTTP message " + params);
             LogWriter.stacktrace(t);
+            // Brief delay before retry to avoid hammering a recovering server
+            try {
+              Thread.sleep(1000);  // 1 second
+            } catch (InterruptedException ie) {
+            }
           }
         }
+      }
+
+      // Check for "not authorized" and attempt re-authentication
+      if (isNotAuthorized(response)) {
+        if (reAuthenticate()) {
+          // Re-authentication successful, retry the message
+          synchronized (queue) {
+            queue.add(0, nextMessage);  // Put message back at front of queue
+          }
+          continue;  // Skip to next iteration to retry the message
+        }
+        // Re-authentication failed, continue to log the failure below
       }
 
       if (ClientSession.wasSuccessful(response)) {
