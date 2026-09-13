@@ -185,3 +185,156 @@ $(function() {
           }
          });
 });
+
+// Design Categories Management
+// Map to keep track of current assignments
+var designCategoryAssignments = {};
+var currentAwardId = null;
+
+function loadDesignCategoryAssignments(awardId) {
+  designCategoryAssignments = {};
+  currentAwardId = awardId;
+  $('#design_category_name').text($('li[data-awardid="' + awardId + '"]').attr('data-awardname'));
+  
+  // Get the entry count for this award
+  updateEntryCount();
+  
+  // First get all racers
+  $.ajax(g_action_url, {
+    type: 'GET',
+    data: {
+      query: 'racer.list'
+    },
+    success: function(data) {
+      var racers = data.racers || [];
+      
+      // Then get current assignments for this award
+      $.ajax(g_action_url, {
+        type: 'GET',
+        data: {
+          query: 'award.eligible-racers',
+          awardid: awardId
+        },
+        success: function(data) {
+          var eligibleRacers = data.eligible_racers || [];
+          var tbody = $('#racer_assignments tbody');
+          tbody.empty();
+          
+          // Mark eligible racers
+          eligibleRacers.forEach(function(racer) {
+            designCategoryAssignments[racer.racerid] = true;
+          });
+          
+          // Create table rows for all racers
+          racers.forEach(function(racer) {
+            if (racer.exclude) return; // Skip excluded racers
+            
+            var isAssigned = designCategoryAssignments[racer.racerid] || false;
+            var row = $('<tr data-racerid="' + racer.racerid + '"></tr>');
+            
+            row.append('<td>' + racer.carnumber + '</td>');
+            row.append('<td>' + racer.firstname + ' ' + racer.lastname + '</td>');
+            
+            var checkbox = $('<input type="checkbox"' + (isAssigned ? ' checked' : '') + '>');
+            checkbox.change(function() {
+              toggleDesignCategoryAssignment(awardId, racer.racerid, this.checked);
+            });
+            
+            row.append($('<td></td>').append(checkbox));
+            tbody.append(row);
+          });
+        }
+      });
+    }
+  });
+}
+
+function toggleDesignCategoryAssignment(awardId, racerId, assign) {
+  $.ajax(g_action_url, {
+    type: 'POST',
+    data: {
+      action: 'design.toggle-entry',
+      racerid: racerId,
+      awardid: awardId,
+      selected: assign ? 'true' : 'false'
+    },
+    success: function(data) {
+      designCategoryAssignments[racerId] = assign;
+      updateEntryCount();
+    }
+  });
+}
+
+function updateEntryCount() {
+  if (!currentAwardId) return;
+  
+  $.ajax(g_action_url, {
+    type: 'GET',
+    data: {
+      query: 'design.entry-count',
+      awardid: currentAwardId
+    },
+    success: function(data) {
+      var count = data.entry_count || 0;
+      $('#entry_count_display').text('Current entries: ' + count + ' racer' + (count != 1 ? 's' : ''));
+    }
+  });
+}
+
+function autoEnterAllRacers() {
+  if (!currentAwardId) return;
+  
+  if (confirm('This will enter ALL racers for this award. Continue?')) {
+    $.ajax(g_action_url, {
+      type: 'POST',
+      data: {
+        action: 'design.auto-enter',
+        awardid: currentAwardId
+      },
+      success: function() {
+        // Reload assignments
+        loadDesignCategoryAssignments(currentAwardId);
+        alert('All racers have been entered for this award');
+      }
+    });
+  }
+}
+
+// Add buttons to awards for managing design categories
+function addDesignCategoryButtons() {
+  $('#all_awards li').each(function() {
+    var awardtypeid = $(this).attr('data-awardtypeid');
+    var awardtype = $(this).find('.awardtype').text();
+    
+    // Only add button for design awards
+    if (awardtype.indexOf('Design') >= 0) {
+      if ($(this).find('.design-category-btn').length === 0) {
+        var btn = $('<a class="design-category-btn" style="margin-left: 10px; color: blue; cursor: pointer;">Manage Entries</a>');
+        btn.click(function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var awardId = $(this).closest('li').attr('data-awardid');
+          loadDesignCategoryAssignments(awardId);
+          show_modal('#design_category_modal');
+        });
+        
+        $(this).find('.class-and-rank').append(btn);
+      }
+    }
+  });
+}
+
+// Auto-enter button handler
+$(function() {
+  $('#auto_enter_all_btn').click(function(e) {
+    e.preventDefault();
+    autoEnterAllRacers();
+  });
+  
+  // Override the update_awards function to add our buttons
+  var originalUpdateAwards = update_awards;
+  update_awards = function(data) {
+    originalUpdateAwards(data);
+    addDesignCategoryButtons();
+  };
+});

@@ -23,7 +23,7 @@ require_permission(EDIT_AWARDS_PERMISSION);
 <script type="text/javascript" src="js/dashboard-ajax.js"></script>
 <script type="text/javascript" src="js/mobile.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
-<script type="text/javascript" src="js/awards-editor.js"></script>
+<script type="text/javascript" src="js/awards-editor.js?v=2"></script>
 <link rel="stylesheet" type="text/css" href="css/mobile.css"/>
 <link rel="stylesheet" type="text/css" href="css/awards-editor.css"/>
 </head>
@@ -121,6 +121,31 @@ list($classes, $classseq, $ranks, $rankseq) = classes_and_ranks();
 
   </form>
 </div><!-- award_editor_modal -->
+
+<div id="design_category_modal" class="modal_dialog hidden block_buttons wide_modal">
+  <h2>Design Category: <span id="design_category_name"></span></h2>
+  <p>Assign racers to this design category:</p>
+  <p><a href="#" id="auto_enter_all_btn" class="button_link" style="width: auto; display: inline-block; padding: 5px 10px;">Auto-Enter All Racers</a></p>
+  <p id="entry_count_display"></p>
+  <div class="listview" style="position: relative; top: 0; height: 400px; left: 0; width: 100%;">
+    <table id="racer_assignments" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>Car #</th>
+          <th>Racer</th>
+          <th>Assigned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filled by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+  
+  <div style="text-align: center; margin-top: 20px;">
+<input type="button" value="Close" onclick="close_modal('#design_category_modal');"/>
+  </div>
+</div>
 
 </body>
 </html>
