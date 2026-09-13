@@ -119,16 +119,19 @@ function parse_replay_options(cmdline) {
 // If non-zero, holds the timeout ID of a pending timeout that will trigger a
 // replay based on the start of a heat.
 var g_replay_timeout = 0;
-// Milliseconds short of g_replay_length to start a replay after a race start.
-var g_replay_timeout_epsilon = 0;
 
 function handle_replay_message(cmdline) {
   console.log('* Replay message:', cmdline);
+  var lag = $("#lag")[0].valueAsNumber * 1000;
   var root = g_video_name_root;
   if (cmdline.startsWith("HELLO")) {
   } else if (cmdline.startsWith("TEST")) {
     parse_replay_options(cmdline);
-    on_replay(root);
+    if (lag > 0) {
+        setTimeout(function() { on_replay(root) }, lag);
+    } else {
+        on_replay(root);
+    }
   } else if (cmdline.startsWith("START")) {  // Setting up for a new heat
     // This assumes that we'll get a queued START when the page is freshly
     // loaded.
@@ -138,10 +141,20 @@ function handle_replay_message(cmdline) {
     // REPLAY skipback showings rate
     // (Must be exactly one space between fields:)
     parse_replay_options(cmdline);
-    if (!g_preempted) {
-      clearTimeout(g_replay_timeout);
-      console.log('Triggering replay from REPLAY message', root);
-      on_replay(root);
+    if (lag > 0) {
+      setTimeout(function() {
+        if (!g_preempted) {
+          clearTimeout(g_replay_timeout);
+          console.log('Triggering replay from REPLAY message', root);
+          on_replay(root);
+        }
+      }, lag);
+    } else {
+      if (!g_preempted) {
+        clearTimeout(g_replay_timeout);
+        console.log('Triggering replay from REPLAY message', root);
+        on_replay(root);
+      }
     }
   } else if (cmdline.startsWith("CANCEL")) {
     clearTimeout(g_replay_timeout);
@@ -155,7 +168,7 @@ function handle_replay_message(cmdline) {
         console.log('Triggering replay from timeout after RACE_STARTS', root);
         on_replay(root);
       },
-      g_replay_options.length - g_replay_timeout_epsilon);
+      g_replay_options.length + lag);
   } else {
     console.log("Unrecognized replay message: " + cmdline);
   }
@@ -441,6 +454,11 @@ $(window).on('resize', function(event) { on_setup(); });
     <input type="number" name="delay" id="delay" min="0" step="0.1" value="0.0" size="8"
            style="font-size: 1em; width: 5em; "/>
     (s) after heat ends
+    </p>
+    <p style="font-size: 1em; margin-left: 10%;">Delay recording by:
+    <input type="number" name="lag" id="lag" min="0" step="0.1" value="0.0" size="8"
+           style="font-size: 1em; width: 5em; "/>
+    In case there is lag from the camera (e.g. it is remote).
     </p>
 
     <input type="button" value="Proceed" onclick="on_proceed();"/>
