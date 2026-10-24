@@ -67,4 +67,4 @@ VOLUME /var/lib/derbynet
 EXPOSE 80 443
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/bash", "-c", "php-fpm84 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "php-fpm85 && chmod 777 /var/run/php/php-fpm.sock && nginx -g 'daemon off;'"]
