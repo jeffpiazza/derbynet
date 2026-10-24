@@ -32,7 +32,7 @@ RUN ls /usr/sbin/
 # This Dockerfile and the companion alpine-configure-nginx.sh assume we're using
 # PHP 8.4.  If that changes, it's time to update.
 # (Run alpine image in debug to see what php-fpm version it has.)
-RUN ls /usr/sbin/php-fpm84 || exit 1
+RUN ls /usr/sbin/php-fpm85 || exit 1
 
 ARG WWW_ROOT=/var/www/html
 
@@ -59,8 +59,8 @@ RUN bash /usr/local/bin/alpine-snakeoil.sh && \
 # Redirect logs to stdout/stderr
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log && \
-    sed -i 's/^;* *error_log = .*/error_log = \/dev\/stderr/' /etc/php84/php-fpm.conf && \
-    sed -i 's/^;* *catch_workers_output = .*/catch_workers_output = yes/' /etc/php84/php-fpm.d/www.conf
+    sed -i 's/^;* *error_log = .*/error_log = \/dev\/stderr/' /etc/php85/php-fpm.conf && \
+    sed -i 's/^;* *catch_workers_output = .*/catch_workers_output = yes/' /etc/php85/php-fpm.d/www.conf
 
 VOLUME /var/lib/derbynet
 
